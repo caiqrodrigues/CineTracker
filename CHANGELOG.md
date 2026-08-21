@@ -2,6 +2,27 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.2.8 — 2026-08-21
+
+### Adicionado
+- Todos os cards de Descobrir, Calendário, busca e rankings passam a ser clicáveis.
+- Nova tela de detalhes para filmes e séries com sinopse, ano, gêneros e nota TMDB.
+- Integração com o identificador/ficha oficial do IMDb quando disponível.
+- Elenco principal clicável, abrindo tela própria do ator/atriz.
+- Tela de ator/atriz com biografia e filmografia combinada de filmes e séries.
+- Onde assistir focado somente em streaming por assinatura no Brasil (`flatrate`) e cinema para filmes quando a TMDB informa lançamento teatral; compra e aluguel são ocultados.
+- Cards e telas novas usam `poster_path` da TMDB em proporção vertical 2:3, priorizando a capa original em vez do backdrop horizontal.
+
+### Observação
+- A API TMDB não fornece a nota numérica do IMDb. Para não exibir dado incorreto, a tela mostra a nota TMDB e oferece acesso à ficha oficial IMDb pelo `imdb_id`. Uma nota IMDb numérica exigirá uma fonte/API adicional.
+
+## Android 0.0.4 — 2026-08-21
+
+### Ajustado
+- Shell Android sincronizado com a Web 0.2.8.
+- Telas de detalhes, elenco, filmografia, streaming/cinema e capas verticais ficam disponíveis na mesma WebView leve.
+- `versionCode` incrementado para 4 e `versionName` para `0.0.4`.
+
 ## Web 0.2.7 — 2026-08-21
 
 ### Ajustado
