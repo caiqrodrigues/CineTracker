@@ -6,7 +6,7 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com i
 
 | Plataforma | Versão | Status |
 |---|---:|---|
-| Web | **0.2.2** | 🟢 Produção / Supabase conectado |
+| Web | **0.2.3** | 🟢 Produção / Supabase conectado |
 | Android | **0.0.1** | 🟡 Estrutura inicial |
 | Windows | **—** | ⏳ Planejado após Web + Android |
 
@@ -19,6 +19,7 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com i
 ## O que o projeto entrega
 
 - Login e criação de conta via Supabase Auth.
+- Entrada imediata após autenticação bem-sucedida; TMDB e consultas opcionais carregam em segundo plano.
 - Dados persistentes por usuário com Row Level Security.
 - Watchlist real e histórico de títulos vistos.
 - Estados: visto, concluído, em andamento, sem interesse, gostei, não gostei, ver depois e Watchlist.
@@ -44,7 +45,7 @@ A TMDB já é usada pelo CineTracker para descoberta, metadados, elenco, capas e
 
 ```text
 CineTracker
-├── apps/web                 Web 0.2.2 / referência funcional
+├── apps/web                 Web 0.2.3 / referência funcional
 ├── apps/android             Android 0.0.1 / wrapper nativo inicial
 ├── supabase/functions       Funções Edge compartilhadas
 ├── docs                     Arquitetura, segurança e produto
