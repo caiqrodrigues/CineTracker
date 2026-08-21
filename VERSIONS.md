@@ -4,7 +4,7 @@ As versões do CineTracker são independentes por plataforma.
 
 | Plataforma | Versão oficial atual |
 |---|---:|
-| Web | **0.2.2** |
+| Web | **0.2.3** |
 | Android | **0.0.1** |
 | Windows | **—** |
 
@@ -21,6 +21,7 @@ As versões do CineTracker são independentes por plataforma.
 - **0.2.0** — início da linha oficial com autenticação e persistência Supabase, importação JSON/ZIP e arquitetura de sincronização.
 - **0.2.1** — identidade Black/Blue, favicon CineTracker, configurações de conta e correção da área de perfil.
 - **0.2.2** — aplicação principal volta a ser servida diretamente, configurações persistidas no perfil Supabase, recuperação resiliente do estado do banco, nome/e-mail sem overflow e domínio oficial `mycinetracker.vercel.app`.
+- **0.2.3** — correção do fluxo de login: a navegação autenticada passa a acontecer imediatamente após o Supabase aceitar as credenciais; TMDB, recomendações e consultas opcionais deixam de bloquear a entrada no aplicativo.
 
 ## Linha Android
 
