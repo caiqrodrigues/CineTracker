@@ -10,17 +10,13 @@ const patch025 = resolve(web, 'patch-v025.js');
 const patch025Profile = resolve(web, 'patch-v025-profile-sync.js');
 const patch027 = resolve(web, 'patch-v027.js');
 const patch028 = resolve(web, 'patch-v028.js');
+const patch029 = resolve(web, 'patch-v029.js');
 const rootDist = resolve(root, 'dist');
 const webDist = resolve(root, 'apps/web/dist');
 
 const raw = await readFile(source, 'utf8');
-const withIcon = raw.includes('rel="icon"')
-  ? raw
-  : raw.replace('</head>', '<link rel="icon" type="image/svg+xml" href="/favicon.svg"></head>');
-const built = withIcon.replace(
-  '</body>',
-  '<script src="/patch-v024.js"></script><script src="/patch-v025.js"></script><script src="/patch-v025-profile-sync.js"></script><script src="/patch-v027.js"></script><script src="/patch-v028.js"></script></body>'
-);
+const withIcon = raw.includes('rel="icon"') ? raw : raw.replace('</head>', '<link rel="icon" type="image/svg+xml" href="/favicon.svg"></head>');
+const built = withIcon.replace('</body>', '<script src="/patch-v024.js"></script><script src="/patch-v025.js"></script><script src="/patch-v025-profile-sync.js"></script><script src="/patch-v027.js"></script><script src="/patch-v028.js"></script><script src="/patch-v029.js"></script></body>');
 
 for (const dist of [rootDist, webDist]) {
   await rm(dist, { recursive: true, force: true });
@@ -32,6 +28,7 @@ for (const dist of [rootDist, webDist]) {
   await cp(patch025Profile, resolve(dist, 'patch-v025-profile-sync.js'));
   await cp(patch027, resolve(dist, 'patch-v027.js'));
   await cp(patch028, resolve(dist, 'patch-v028.js'));
+  await cp(patch029, resolve(dist, 'patch-v029.js'));
 }
 
-console.log('CineTracker Web 0.2.8 publicado em dist/ e apps/web/dist/');
+console.log('CineTracker Web 0.2.9 publicado em dist/ e apps/web/dist/');
