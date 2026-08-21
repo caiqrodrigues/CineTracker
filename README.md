@@ -6,11 +6,15 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com i
 
 | Plataforma | Versão | Status |
 |---|---:|---|
-| Web | **0.2.1** | 🟢 Produção / Supabase conectado |
+| Web | **0.2.2** | 🟢 Produção / Supabase conectado |
 | Android | **0.0.1** | 🟡 Estrutura inicial |
 | Windows | **—** | ⏳ Planejado após Web + Android |
 
 > As versões são independentes por plataforma. Alterações em uma plataforma não obrigam incremento nas demais.
+
+## Produção
+
+**Web oficial:** https://mycinetracker.vercel.app
 
 ## O que o projeto entrega
 
@@ -26,7 +30,8 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com i
 - Busca por filmes, séries, animes e pessoas.
 - Importação de `.json` e `.zip` com prévia, conciliação e histórico da importação.
 - Interface responsiva Black/Blue para desktop e mobile.
-- Configurações de conta com nome do perfil, e-mail, telefone e idioma PT-BR/English.
+- Configurações de conta com nome do perfil, e-mail, telefone, senha e idioma PT-BR/English.
+- Nome, telefone e idioma persistidos no perfil Supabase para sincronização entre plataformas.
 - Base Android preparada para usar a mesma conta e os mesmos dados do Web.
 
 ## Notificações e calendário de lançamentos
@@ -39,7 +44,7 @@ A TMDB já é usada pelo CineTracker para descoberta, metadados, elenco, capas e
 
 ```text
 CineTracker
-├── apps/web                 Web 0.2.1 / referência funcional
+├── apps/web                 Web 0.2.2 / referência funcional
 ├── apps/android             Android 0.0.1 / wrapper nativo inicial
 ├── supabase/functions       Funções Edge compartilhadas
 ├── docs                     Arquitetura, segurança e produto
@@ -74,11 +79,11 @@ npm run verify
 npm run build
 ```
 
-A saída Web fica em `dist/`.
+A saída Web fica em `dist/` e em `apps/web/dist/` para a configuração atual do Vercel.
 
 ## Deploy
 
-A produção Web é publicada pelo Vercel a partir do GitHub. O diretório de referência é `apps/web` e o script de build gera a saída oficial em `dist/`.
+A produção Web é publicada automaticamente pelo Vercel a partir da branch `main` no GitHub. O diretório do projeto no Vercel é `apps/web` e o build oficial injeta somente as correções versionadas da linha 0.2.x sobre a aplicação aprovada.
 
 ## Regra de validação
 
