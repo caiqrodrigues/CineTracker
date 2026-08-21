@@ -2,6 +2,27 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.2.7 — 2026-08-21
+
+### Ajustado
+- `Lançamentos` passa a se chamar `Calendário`.
+- `Calendário` foi movido para a última posição das opções de Descobrir.
+
+### Adicionado
+- Filtro `Somente meus` no Calendário.
+- Para Séries, o filtro mostra somente títulos da Watchlist ou em acompanhamento.
+- Para Filmes, o filtro mostra somente títulos da Watchlist com lançamento na data selecionada.
+- Nova aba `Mais bem avaliados`.
+- `Mais bem avaliados` possui abas separadas de `Filmes` e `Séries` usando os rankings da TMDB.
+- A aba `Séries` inclui animes porque a TMDB cataloga anime televisivo dentro do tipo TV.
+
+## Android 0.0.3 — 2026-08-21
+
+### Ajustado
+- Shell Android sincronizado com a Web 0.2.7.
+- Calendário pessoal e ranking Mais bem avaliados disponíveis dentro da mesma experiência WebView leve.
+- `versionCode` incrementado para 3 e `versionName` para `0.0.3`.
+
 ## Web 0.2.6 — 2026-08-21
 
 ### Adicionado
