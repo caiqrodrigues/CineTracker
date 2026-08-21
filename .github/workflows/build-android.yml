@@ -25,7 +25,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
-            -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.1"}'
+            -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.6"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -36,7 +36,7 @@ jobs:
         run: gradle assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.1-debug
+          name: cinetracker-android-0.0.6-debug
           path: apps/android/app/build/outputs/apk/debug/app-debug.apk
       - name: Mark Android build success
         if: success()
@@ -47,7 +47,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
-            -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.1 APK built successfully"}'
+            -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.6 APK built successfully"}'
       - name: Mark Android build failure
         if: failure()
         env:
@@ -57,4 +57,4 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
-            -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.1 build failed"}'
+            -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.6 build failed"}'
