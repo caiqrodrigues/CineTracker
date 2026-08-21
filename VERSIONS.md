@@ -4,7 +4,7 @@ As versões do CineTracker são independentes por plataforma.
 
 | Plataforma | Versão oficial atual |
 |---|---:|
-| Web | **0.2.4** |
+| Web | **0.2.5** |
 | Android | **0.0.1** |
 | Windows | **—** |
 
@@ -20,12 +20,13 @@ As versões do CineTracker são independentes por plataforma.
 - **0.1.x** — protótipos funcionais, refinamento visual, TMDB, capas, atores, streaming e recomendações.
 - **0.2.0** — início da linha oficial com autenticação e persistência Supabase, importação JSON/ZIP e arquitetura de sincronização.
 - **0.2.1** — identidade Black/Blue, favicon CineTracker, configurações de conta e correção da área de perfil.
-- **0.2.2** — aplicação principal volta a ser servida diretamente, configurações persistidas no perfil Supabase, recuperação resiliente do estado do banco, nome/e-mail sem overflow e domínio oficial `mycinetracker.vercel.app`.
-- **0.2.3** — correção do fluxo de login para não depender de TMDB e consultas opcionais antes de mostrar a área autenticada.
-- **0.2.4** — hotfix de renderização: remove patches com MutationObserver recursivo e consolida tema, perfil, configurações e login em um único patch estável e idempotente.
+- **0.2.2** — aplicação principal servida diretamente, configurações persistidas no perfil Supabase e recuperação resiliente do banco.
+- **0.2.3** — login deixa de depender de TMDB/recomendações para entrar na aplicação.
+- **0.2.4** — consolidação dos patches e correção da tela em branco.
+- **0.2.5** — sidebar reenquadrada, Importar movido para Configurações, exportação JSON/ZIP e preferência de notificações sincronizada.
 
 ## Linha Android
 
-- **0.0.1** — estrutura inicial para reaproveitar o Web responsivo e compartilhar conta/dados via Supabase.
+- **0.0.1** — shell Android leve apontando para a Web oficial, sessão via WebView/DOM storage, importação por seletor nativo, navegação externa no navegador e mesma conta/dados Supabase do Web.
 
 O histórico consolidado fica em `CHANGELOG.md`.
