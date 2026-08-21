@@ -2,6 +2,17 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.2.4 — 2026-08-21
+
+### Corrigido
+- Corrigida a tela em branco causada por patches anteriores que usavam `MutationObserver` de forma recursiva e podiam gerar um ciclo contínuo de mutações/renderizações no navegador.
+- Removido o carregamento conjunto dos patches 0.2.1/0.2.2/0.2.3; a produção agora carrega um único patch estável e idempotente.
+- Tema Black/Blue, favicon, perfil, configurações e fluxo de login foram consolidados no patch 0.2.4 sem observadores recursivos.
+- O login continua exibindo a área autenticada imediatamente após o Supabase aceitar as credenciais; banco, TMDB e recomendações carregam em segundo plano.
+
+### Deploy
+- Build atualizado para publicar somente `patch-v024.js` junto do `index.html` e `favicon.svg`.
+
 ## Web 0.2.3 — 2026-08-21
 
 ### Corrigido
