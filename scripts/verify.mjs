@@ -3,11 +3,12 @@ import { readFile } from 'node:fs/promises';
 const html = await readFile('apps/web/index.html', 'utf8');
 const patch024 = await readFile('apps/web/patch-v024.js', 'utf8');
 const patch025 = await readFile('apps/web/patch-v025.js', 'utf8');
+const patch027 = await readFile('apps/web/patch-v027.js', 'utf8');
 const profileSync = await readFile('apps/web/patch-v025-profile-sync.js', 'utf8');
 const android = await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java', 'utf8');
 const androidGradle = await readFile('apps/android/app/build.gradle', 'utf8');
 
-for (const [name, source] of [['patch-v024.js', patch024], ['patch-v025.js', patch025], ['patch-v025-profile-sync.js', profileSync]]) {
+for (const [name, source] of [['patch-v024.js', patch024], ['patch-v025.js', patch025], ['patch-v027.js', patch027], ['patch-v025-profile-sync.js', profileSync]]) {
   try { new Function(source); }
   catch (error) {
     console.error(`ERRO - sintaxe ${name}: ${error.message}`);
@@ -26,6 +27,9 @@ const checks = [
   ['Exportação JSON', patch025.includes("exportData('json')")],
   ['Exportação ZIP', patch025.includes("exportData('zip')") && patch025.includes('makeZip')],
   ['Preferência de notificações', patch025.includes('notifications_enabled')],
+  ['Calendário por séries e filmes', patch027.includes('data-ct27-kind="tv"') && patch027.includes('data-ct27-kind="movie"')],
+  ['Filtro somente meus', patch027.includes('Somente meus') && patch027.includes('interestIds')],
+  ['Mais bem avaliados', patch027.includes('Mais bem avaliados') && patch027.includes('/movie/top_rated') && patch027.includes('/tv/top_rated')],
   ['Sincronização de perfil', profileSync.includes('profiles?id=eq.') && profileSync.includes('window.ctProfile')],
   ['Android produção', androidGradle.includes('https://mycinetracker.vercel.app')],
   ['Android importação nativa', android.includes('onShowFileChooser') && android.includes('ACTION_OPEN_DOCUMENT')],
