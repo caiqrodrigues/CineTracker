@@ -4,7 +4,7 @@ As versões do CineTracker são independentes por plataforma.
 
 | Plataforma | Versão oficial atual |
 |---|---:|
-| Web | **0.2.0** |
+| Web | **0.2.1** |
 | Android | **0.0.1** |
 | Windows | **—** |
 
@@ -19,6 +19,7 @@ As versões do CineTracker são independentes por plataforma.
 
 - **0.1.x** — protótipos funcionais, refinamento visual, TMDB, capas, atores, streaming e recomendações.
 - **0.2.0** — início da linha oficial com autenticação e persistência Supabase, importação JSON/ZIP e arquitetura de sincronização.
+- **0.2.1** — identidade Black/Blue, favicon CineTracker, configurações de conta e correção da área de perfil.
 
 ## Linha Android
 
