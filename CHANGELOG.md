@@ -2,6 +2,26 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.2.6 — 2026-08-21
+
+### Adicionado
+- Cabeçalho `CINETRACKER / Seu universo de mídia` passa a ser clicável e retorna para a Home.
+- Aba Descobrir reorganizada em `Em Alta`, `Lançamentos`, `Mais Aguardados` e `Populares`.
+- Calendário de lançamentos com navegação por dia/semana e atalho `Hoje`.
+- Alternância entre calendário de `Séries` e `Filmes`.
+- Séries exibem temporada/episódio quando a TMDB informa o próximo episódio para a data selecionada.
+- Busca direta de filmes, séries e animes permanece disponível dentro de Descobrir.
+
+### Desempenho
+- Cache de respostas de descoberta/TMDB em memória e `sessionStorage` por 10 minutos para reduzir chamadas repetidas e travamentos na WebView e no navegador.
+- Limite de enriquecimento de detalhes no calendário para evitar dezenas de chamadas simultâneas.
+
+## Android 0.0.2 — 2026-08-21
+
+### Ajustado
+- Shell Android continua leve em WebView, mas passa a consumir automaticamente a experiência Descobrir/Calendário da Web 0.2.6.
+- `versionCode` incrementado para 2 e `versionName` para `0.0.2`.
+
 ## Web 0.2.5 — 2026-08-21
 
 ### Ajustado
