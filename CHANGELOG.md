@@ -2,6 +2,32 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.3.0 — 2026-08-21
+
+### Ajustado
+- `Hoje` passa a se chamar `Home` na navegação desktop e mobile.
+- Biblioteca deixa de ser apenas uma lista textual e passa a exibir Watchlist e itens em andamento como cards com capas oficiais.
+- Capas da Home e Biblioteca recebem uma segunda camada de hidratação TMDB para preencher títulos que ainda estavam sem poster.
+- Filmografia passa a indicar explicitamente se cada crédito é `FILME` ou `SÉRIE`, mantendo ordenação do mais recente para o mais antigo.
+
+### Adicionado
+- Nova aba `Histórico` com filtros `Mídia`, `Séries` e `Filmes`.
+- Histórico de séries usa `episode_progress.watched_at` e mostra temporada, episódio, data e horário vistos.
+- Histórico de filmes usa `media_overrides.watched_at` para registrar visualizações daqui em diante.
+- Cards do histórico reutilizam a tela global de detalhes já existente.
+
+### Banco
+- Migration `media_watch_history_timestamp_v030` adiciona `watched_at` a `media_overrides` e índice por perfil/data.
+- Filmes marcados como vistos a partir desta versão passam a registrar a data real de visualização.
+- Registros antigos importados sem timestamp original de filme continuam sem data até a retomada/reconciliação do histórico Trakt.
+
+## Android 0.0.6 — 2026-08-21
+
+### Ajustado
+- Shell Android sincronizado com a Web 0.3.0.
+- Home, Biblioteca, Histórico e capas seguem a mesma experiência da versão Web.
+- `versionCode` 6 e `versionName` `0.0.6`.
+
 ## Web 0.2.9 — 2026-08-21
 
 ### Ajustado
