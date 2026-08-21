@@ -2,6 +2,26 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.2.2 — 2026-08-21
+
+### Corrigido
+- A aplicação principal deixa de depender de um wrapper/iframe e volta a ser servida diretamente pelo build oficial.
+- Estado persistente do Supabase passa a tolerar falha de consultas opcionais sem marcar todo o banco como desconectado.
+- Watchlist e histórico locais são limpos antes da leitura autenticada, evitando dados de exemplo quando a conta real está vazia.
+- Nome do perfil e e-mail ficam limitados à largura da sidebar com truncamento visual seguro.
+
+### Adicionado / refinado
+- Tema Black/Blue aplicado diretamente ao Web oficial.
+- Favicon oficial de TV + reprodução/cinema.
+- Área Configurações dentro da aplicação com nome do perfil, telefone, idioma PT-BR/English, alteração de e-mail e alteração de senha.
+- Nome, telefone e idioma persistidos no registro `profiles` do Supabase; nome também é sincronizado ao metadata do Auth.
+- Idioma salvo é aplicado ao documento e traduz os principais pontos de navegação quando configurado como English.
+- Versão visual atualizada para 0.2.2.
+- Domínio oficial definido como `https://mycinetracker.vercel.app`.
+
+### Notificações
+- Acompanhamento de estreias/novos episódios via TMDB está definido como próxima camada do produto. Push notification ainda não faz parte da 0.2.2.
+
 ## Web 0.2.1 — 2026-08-21
 
 ### Adicionado
@@ -16,7 +36,7 @@ Todas as mudanças relevantes do CineTracker são registradas aqui.
 - Web oficial passa a exibir a versão 0.2.1.
 
 ### Observação técnica
-- A camada 0.2.1 envolve a aplicação 0.2.0 já aprovada, preservando sua lógica existente enquanto a interface/configurações é refinada antes da importação do histórico legado.
+- A camada 0.2.1 envolvia a aplicação 0.2.0 em um wrapper temporário. A 0.2.2 substitui essa abordagem pela aplicação direta.
 
 ## Web 0.2.0 — 2026-08-21
 
