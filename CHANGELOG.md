@@ -2,6 +2,22 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.2.1 — 2026-08-21
+
+### Adicionado
+- Identidade visual Black/Blue.
+- Favicon oficial com TV e símbolo de reprodução/cinema.
+- Configurações de conta com nome do perfil, e-mail, telefone e idioma PT-BR/English.
+- Persistência de nome e idioma no perfil de autenticação Supabase.
+
+### Ajustado
+- Área lateral passa a priorizar o nome do perfil e mantém o e-mail como informação secundária.
+- Nome e e-mail usam truncamento visual e não extrapolam a sidebar.
+- Web oficial passa a exibir a versão 0.2.1.
+
+### Observação técnica
+- A camada 0.2.1 envolve a aplicação 0.2.0 já aprovada, preservando sua lógica existente enquanto a interface/configurações é refinada antes da importação do histórico legado.
+
 ## Web 0.2.0 — 2026-08-21
 
 ### Adicionado
