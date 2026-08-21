@@ -1,12 +1,12 @@
 # 🎬 CineTracker
 
-CineTracker é um companion multiplataforma para filmes, séries e animes, com identidade Dark/Gold, conta única, biblioteca sincronizada, Watchlist, histórico de vistos, progresso, recomendações sem repetição, descoberta por ator e importação de dados.
+CineTracker é um companion multiplataforma para filmes, séries e animes, com identidade Black/Blue, conta única, biblioteca sincronizada, Watchlist, histórico de vistos, progresso, recomendações sem repetição, descoberta por ator e importação de dados.
 
 ## Versões oficiais
 
 | Plataforma | Versão | Status |
 |---|---:|---|
-| Web | **0.2.0** | 🟡 Base oficial / Supabase conectado |
+| Web | **0.2.1** | 🟢 Produção / Supabase conectado |
 | Android | **0.0.1** | 🟡 Estrutura inicial |
 | Windows | **—** | ⏳ Planejado após Web + Android |
 
@@ -25,14 +25,21 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com i
 - Atores clicáveis, perfil e filmografia.
 - Busca por filmes, séries, animes e pessoas.
 - Importação de `.json` e `.zip` com prévia, conciliação e histórico da importação.
-- Interface responsiva Dark/Gold para desktop e mobile.
+- Interface responsiva Black/Blue para desktop e mobile.
+- Configurações de conta com nome do perfil, e-mail, telefone e idioma PT-BR/English.
 - Base Android preparada para usar a mesma conta e os mesmos dados do Web.
+
+## Notificações e calendário de lançamentos
+
+Ainda **não está implementado** o monitoramento automático de novos episódios/estreias nem push notifications.
+
+A TMDB já é usada pelo CineTracker para descoberta, metadados, elenco, capas e disponibilidade. A próxima camada de acompanhamento deverá consultar datas de exibição/lançamento da TMDB, persistir eventos relevantes da Watchlist e séries em andamento, e enviar notificações no Web/Android quando houver novo episódio, retorno de temporada ou estreia de filme.
 
 ## Arquitetura
 
 ```text
 CineTracker
-├── apps/web                 Web 0.2.0 / referência funcional
+├── apps/web                 Web 0.2.1 / referência funcional
 ├── apps/android             Android 0.0.1 / wrapper nativo inicial
 ├── supabase/functions       Funções Edge compartilhadas
 ├── docs                     Arquitetura, segurança e produto
@@ -71,7 +78,7 @@ A saída Web fica em `dist/`.
 
 ## Deploy
 
-A produção Web deve ser publicada pelo Vercel a partir do GitHub. O diretório de referência é `apps/web` ou a saída `dist`, de acordo com a configuração do projeto Vercel.
+A produção Web é publicada pelo Vercel a partir do GitHub. O diretório de referência é `apps/web` e o script de build gera a saída oficial em `dist/`.
 
 ## Regra de validação
 
