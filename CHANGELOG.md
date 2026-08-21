@@ -2,6 +2,18 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.2.3 — 2026-08-21
+
+### Corrigido
+- O login não fica mais condicionado ao carregamento de recomendações, TMDB ou consultas opcionais do banco.
+- Assim que o Supabase autentica com sucesso, a interface autenticada é exibida imediatamente.
+- Carregamento de estado persistente e sugestões passa a ocorrer em segundo plano após a entrada.
+- O formulário de autenticação recebe estado visual de carregamento e tratamento explícito de erro.
+
+### Validação
+- O backend Supabase continua aceitando a conta existente sem troca de credenciais.
+- O deploy de produção da correção foi concluído com sucesso no Vercel.
+
 ## Web 0.2.2 — 2026-08-21
 
 ### Corrigido
