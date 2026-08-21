@@ -2,6 +2,30 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui.
 
+## Web 0.2.9 — 2026-08-21
+
+### Ajustado
+- Filmes e séries passam a ser clicáveis também em Home, Biblioteca e cards principais do sistema, não somente em Descobrir.
+- Capas originais verticais da TMDB passam a substituir os placeholders também nas áreas legadas sempre que o título pode ser conciliado.
+- Filmografia de atores/atrizes é ordenada do trabalho mais recente para o mais antigo.
+
+### Adicionado
+- Tela unificada de filme/série para todo o sistema, com sinopse, ano, gêneros, nota TMDB e acesso à ficha IMDb.
+- Para filmes: duração total e data/estado de lançamento.
+- Para séries: status traduzido (`Cancelada`, `Finalizada`, `Em andamento / renovada`, `Em produção`, `Planejada`) e duração média por episódio.
+- Temporadas e episódios clicáveis por temporada, com imagem, número, nome, duração e data de exibição quando disponíveis.
+- Seção de filmes/séries relacionados usando recomendações + similares da TMDB.
+- Relacionados removem títulos já presentes na Watchlist do usuário.
+- Onde assistir continua restrito a streaming por assinatura (`flatrate`) no Brasil; compra e aluguel permanecem ocultados.
+- Elenco clicável e tela de pessoa com biografia e filmografia cronológica.
+
+## Android 0.0.5 — 2026-08-21
+
+### Ajustado
+- Shell Android sincronizado com a Web 0.2.9.
+- Home, Biblioteca e Descobrir usam a mesma experiência de detalhes, temporadas/episódios, relacionados e capas originais.
+- `versionCode` incrementado para 5 e `versionName` para `0.0.5`.
+
 ## Web 0.2.8 — 2026-08-21
 
 ### Adicionado
@@ -95,7 +119,7 @@ Todas as mudanças relevantes do CineTracker são registradas aqui.
 ### Corrigido
 - Corrigida a tela em branco causada por patches anteriores que usavam `MutationObserver` de forma recursiva e podiam gerar um ciclo contínuo de mutações/renderizações no navegador.
 - Removido o carregamento conjunto dos patches 0.2.1/0.2.2/0.2.3; a produção passa a usar a linha de patches estáveis sem observadores recursivos.
-- Tema Black/Blue, favicon, perfil, configurações e fluxo de login foram consolidados no patch 0.2.4.
+- Tema Black/Blue, favicon, configurações e fluxo de login foram consolidados no patch 0.2.4.
 - O login exibe a área autenticada imediatamente após o Supabase aceitar as credenciais; banco, TMDB e recomendações carregam em segundo plano.
 
 ## Web 0.2.3 — 2026-08-21
