@@ -9,7 +9,7 @@ on:
       - '.github/workflows/build-android.yml'
 
 permissions:
-  contents: read
+  contents: write
   statuses: write
 
 jobs:
@@ -34,10 +34,18 @@ jobs:
       - name: Build debug APK
         working-directory: apps/android
         run: gradle assembleDebug
+      - name: Prepare APK name
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.6-debug.apk
       - uses: actions/upload-artifact@v4
         with:
           name: cinetracker-android-0.0.6-debug
-          path: apps/android/app/build/outputs/apk/debug/app-debug.apk
+          path: cinetracker-android-0.0.6-debug.apk
+      - name: Publish test APK release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view android-v0.0.6 >/dev/null 2>&1 || gh release create android-v0.0.6 --title "CineTracker Android 0.0.6" --notes "APK de teste sincronizado com CineTracker Web 0.3.0."
+          gh release upload android-v0.0.6 cinetracker-android-0.0.6-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
@@ -47,7 +55,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
-            -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.6 APK built successfully"}'
+            -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.6 APK built and published"}'
       - name: Mark Android build failure
         if: failure()
         env:
