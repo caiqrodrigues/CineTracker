@@ -1,6 +1,7 @@
 (() => {
   'use strict';
   const VERSION = '0.2.5';
+  let settingsOpen = false;
 
   const style = document.createElement('style');
   style.id = 'ct-v025-layout';
@@ -16,205 +17,28 @@
   `;
   document.head.appendChild(style);
 
-  function settingsData() {
-    const raw = (typeof ctProfile !== 'undefined' && ctProfile?.settings && typeof ctProfile.settings === 'object') ? ctProfile.settings : {};
-    return {
-      ...raw,
-      language: raw.language || 'pt-BR',
-      country: raw.country || 'BR',
-      phone: raw.phone || '',
-      notifications_enabled: raw.notifications_enabled === true
-    };
-  }
+  function settingsData(){const raw=(typeof ctProfile!=='undefined'&&ctProfile?.settings&&typeof ctProfile.settings==='object')?ctProfile.settings:{};return{...raw,language:raw.language||'pt-BR',country:raw.country||'BR',phone:raw.phone||'',notifications_enabled:raw.notifications_enabled===true};}
+  function removeImportFromNavigation(){document.querySelectorAll('.nav button,.mobile-nav button').forEach(button=>{const text=(button.textContent||'').trim().toLowerCase();if(button.dataset.view==='import'||text.includes('importar'))button.remove();});}
+  function profileName(){return(typeof ctProfile!=='undefined'&&ctProfile?.display_name)||currentUser?.user_metadata?.display_name||currentUser?.email?.split('@')[0]||'Usuário';}
+  function status(message,error=false){const el=document.querySelector('#ct-v025-status');if(!el)return;el.textContent=message||'';el.style.color=error?'#e7a5a5':'#9dccf5';}
+  function markSettingsActive(){document.querySelectorAll('.nav button,.mobile-nav button').forEach(b=>b.classList.remove('active'));document.querySelectorAll('[data-ct-settings="1"]').forEach(b=>b.classList.add('active'));}
 
-  function removeImportFromNavigation() {
-    document.querySelectorAll('.nav button,.mobile-nav button').forEach((button) => {
-      const text = (button.textContent || '').trim().toLowerCase();
-      if (button.dataset.view === 'import' || text.includes('importar')) button.remove();
-    });
-  }
+  async function savePreferences(){const name=(document.querySelector('#ct-v025-name')?.value||'').trim();const phone=(document.querySelector('#ct-v025-phone')?.value||'').trim();const language=document.querySelector('#ct-v025-language')?.value||'pt-BR';const notifications_enabled=!!document.querySelector('#ct-v025-notifications')?.checked;if(!name)throw new Error('Informe um nome para o perfil.');const settings={...settingsData(),phone,language,country:'BR',notifications_enabled};await sbApi(`profiles?id=eq.${currentUser.id}`,{method:'PATCH',body:JSON.stringify({display_name:name,settings,updated_at:new Date().toISOString()})});if(typeof ctProfile!=='undefined')ctProfile={...(ctProfile||{}),display_name:name,settings};try{const r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{method:'PUT',headers:{...authHeaders(),'Content-Type':'application/json'},body:JSON.stringify({data:{...(currentUser?.user_metadata||{}),display_name:name,language}})});if(r.ok){const updated=await r.json();currentUser=updated;if(ctSession){ctSession.user=updated;localStorage.setItem('cinetracker_session',JSON.stringify(ctSession));}}}catch(_){}}
 
-  function profileName() {
-    return (typeof ctProfile !== 'undefined' && ctProfile?.display_name)
-      || currentUser?.user_metadata?.display_name
-      || currentUser?.email?.split('@')[0]
-      || 'Usuário';
-  }
+  async function collectExport(){const[profile,overrides,progress,history,imports]=await Promise.all([sbApi(`profiles?id=eq.${currentUser.id}&select=id,display_name,settings,created_at,updated_at&limit=1`),sbApi('media_overrides?select=state,origin,created_at,updated_at,media:media(*)&order=updated_at.desc'),sbApi('episode_progress?select=season_number,episode_number,watched,watched_at,origin,created_at,updated_at,media:media(*)&order=updated_at.desc'),sbApi('recommendation_history?select=context,slot,shown_at,action,media:media(*)&order=shown_at.desc'),sbApi('imports?select=id,filename,status,created_at,updated_at&order=created_at.desc')]);return{format:'cinetracker-export',schema_version:1,app_version:VERSION,exported_at:new Date().toISOString(),profile:Array.isArray(profile)?profile[0]||null:null,media_overrides:overrides||[],episode_progress:progress||[],recommendation_history:history||[],imports:imports||[]};}
+  function crc32(bytes){let c=0xffffffff;for(const b of bytes){c^=b;for(let k=0;k<8;k++)c=(c>>>1)^(0xedb88320&-(c&1));}return(c^0xffffffff)>>>0;}function u16(v){return[v&255,(v>>>8)&255]}function u32(v){return[v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255]}
+  function makeZip(filename,text){const enc=new TextEncoder(),name=enc.encode(filename),data=enc.encode(text),crc=crc32(data);const local=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),...u16(0),...name,...data]);const central=new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(0),...name]);const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(1),...u16(1),...u32(central.length),...u32(local.length),...u16(0)]);return new Blob([local,central,end],{type:'application/zip'});}
+  function downloadBlob(blob,filename){const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+  async function exportData(format){status('Preparando exportação…');const payload=await collectExport(),text=JSON.stringify(payload,null,2),date=new Date().toISOString().slice(0,10);if(format==='zip')downloadBlob(makeZip(`cinetracker-${date}.json`,text),`cinetracker-${date}.zip`);else downloadBlob(new Blob([text],{type:'application/json;charset=utf-8'}),`cinetracker-${date}.json`);status(`Exportação ${format.toUpperCase()} concluída.`);}
+  function openImport(){settingsOpen=false;if(typeof view!=='undefined')view='import';if(typeof render==='function')render();}
 
-  function status(message, error = false) {
-    const el = document.querySelector('#ct-v025-status');
-    if (!el) return;
-    el.textContent = message || '';
-    el.style.color = error ? '#e7a5a5' : '#9dccf5';
-  }
+  function settingsHtml025(){const s=settingsData(),email=currentUser?.email||'';return `<header class="header"><div><div class="eyebrow">CONTA</div><h1 class="h1">Configurações</h1><p class="subtitle">Conta, preferências, importação e backup do CineTracker.</p></div></header><section class="panel section" style="padding:18px"><div class="settings-grid"><label class="settings-group"><span>Nome do perfil</span><input id="ct-v025-name" class="settings-input" maxlength="60" value="${escapeHtml(profileName())}"></label><label class="settings-group"><span>Telefone</span><input id="ct-v025-phone" class="settings-input" type="tel" maxlength="30" value="${escapeHtml(String(s.phone||''))}"></label><label class="settings-group"><span>Idioma</span><select id="ct-v025-language" class="settings-select"><option value="pt-BR"${s.language==='pt-BR'?' selected':''}>Português (Brasil)</option><option value="en"${s.language==='en'?' selected':''}>English</option></select></label><label class="settings-group"><span>País / disponibilidade</span><select class="settings-select" disabled><option>Brasil</option></select></label><div class="settings-group full"><span>E-mail atual</span><input class="settings-input" value="${escapeHtml(email)}" disabled></div></div><div class="ct-settings-section"><h2>Notificações</h2><label class="ct-toggle"><span><strong>Ativar notificações</strong><div class="settings-note">Preferência sincronizada entre Web e Android.</div></span><input id="ct-v025-notifications" type="checkbox"${s.notifications_enabled?' checked':''}></label></div><div class="settings-actions"><button id="ct-v025-save" class="btn-primary" type="button">Salvar configurações</button></div><div id="ct-v025-status" class="settings-status"></div><div class="ct-settings-section"><h2>Importar e exportar</h2><p class="settings-note">Importe seu histórico antigo ou faça um backup completo da sua conta CineTracker.</p><div class="ct-settings-row"><button id="ct-v025-import" class="btn-secondary" type="button">⇧ Importar dados</button></div><div class="ct-export-format"><button id="ct-v025-export-json" class="btn-secondary" type="button">Exportar JSON</button><button id="ct-v025-export-zip" class="btn-secondary" type="button">Exportar ZIP</button></div></div><div class="ct-settings-section"><h2>Segurança e acesso</h2><div class="settings-grid"><label class="settings-group full"><span>Novo e-mail</span><input id="ct-v025-email" class="settings-input" type="email" placeholder="novo@email.com"></label><label class="settings-group"><span>Nova senha</span><input id="ct-v025-password" class="settings-input" type="password" minlength="6"></label><label class="settings-group"><span>Confirmar nova senha</span><input id="ct-v025-password2" class="settings-input" type="password" minlength="6"></label></div><div class="settings-actions"><button id="ct-v025-update-email" class="btn-secondary" type="button">Alterar e-mail</button><button id="ct-v025-update-password" class="btn-secondary" type="button">Alterar senha</button></div></div></section>`;}
+  async function updateAuth(payload){const r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{method:'PUT',headers:{...authHeaders(),'Content-Type':'application/json'},body:JSON.stringify(payload)}),d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.msg||d.message||d.error_description||d.error||'Não foi possível atualizar a conta.');currentUser=d;if(ctSession){ctSession.user=d;localStorage.setItem('cinetracker_session',JSON.stringify(ctSession));}}
 
-  async function savePreferences() {
-    const name = (document.querySelector('#ct-v025-name')?.value || '').trim();
-    const phone = (document.querySelector('#ct-v025-phone')?.value || '').trim();
-    const language = document.querySelector('#ct-v025-language')?.value || 'pt-BR';
-    const notifications_enabled = !!document.querySelector('#ct-v025-notifications')?.checked;
-    if (!name) throw new Error('Informe um nome para o perfil.');
-    const settings = { ...settingsData(), phone, language, country:'BR', notifications_enabled };
-    await sbApi(`profiles?id=eq.${currentUser.id}`, {
-      method:'PATCH',
-      body:JSON.stringify({ display_name:name, settings, updated_at:new Date().toISOString() })
-    });
-    if (typeof ctProfile !== 'undefined') ctProfile = { ...(ctProfile || {}), display_name:name, settings };
-    try {
-      const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-        method:'PUT',
-        headers:{ ...authHeaders(), 'Content-Type':'application/json' },
-        body:JSON.stringify({ data:{ ...(currentUser?.user_metadata || {}), display_name:name, language } })
-      });
-      if (r.ok) {
-        const updated = await r.json();
-        currentUser = updated;
-        if (ctSession) {
-          ctSession.user = updated;
-          localStorage.setItem('cinetracker_session', JSON.stringify(ctSession));
-        }
-      }
-    } catch (_) {}
-  }
-
-  async function collectExport() {
-    const [profile, overrides, progress, history, imports] = await Promise.all([
-      sbApi(`profiles?id=eq.${currentUser.id}&select=id,display_name,settings,created_at,updated_at&limit=1`),
-      sbApi('media_overrides?select=state,origin,created_at,updated_at,media:media(*)&order=updated_at.desc'),
-      sbApi('episode_progress?select=season_number,episode_number,watched,watched_at,origin,created_at,updated_at,media:media(*)&order=updated_at.desc'),
-      sbApi('recommendation_history?select=context,slot,shown_at,action,media:media(*)&order=shown_at.desc'),
-      sbApi('imports?select=id,filename,status,created_at,updated_at&order=created_at.desc')
-    ]);
-    return {
-      format:'cinetracker-export',
-      schema_version:1,
-      app_version:VERSION,
-      exported_at:new Date().toISOString(),
-      profile:Array.isArray(profile) ? profile[0] || null : null,
-      media_overrides:overrides || [],
-      episode_progress:progress || [],
-      recommendation_history:history || [],
-      imports:imports || []
-    };
-  }
-
-  function crc32(bytes) {
-    let c = 0xffffffff;
-    for (const b of bytes) {
-      c ^= b;
-      for (let k=0;k<8;k++) c = (c >>> 1) ^ (0xedb88320 & -(c & 1));
-    }
-    return (c ^ 0xffffffff) >>> 0;
-  }
-  function u16(v){return [v&255,(v>>>8)&255]}
-  function u32(v){return [v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255]}
-  function makeZip(filename, text) {
-    const enc = new TextEncoder();
-    const name = enc.encode(filename);
-    const data = enc.encode(text);
-    const crc = crc32(data);
-    const local = new Uint8Array([
-      ...u32(0x04034b50),...u16(20),...u16(0),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),...u16(0),...name,...data
-    ]);
-    const central = new Uint8Array([
-      ...u32(0x02014b50),...u16(20),...u16(20),...u16(0),...u16(0),...u16(0),...u16(0),...u32(crc),...u32(data.length),...u32(data.length),...u16(name.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(0),...name
-    ]);
-    const end = new Uint8Array([
-      ...u32(0x06054b50),...u16(0),...u16(0),...u16(1),...u16(1),...u32(central.length),...u32(local.length),...u16(0)
-    ]);
-    return new Blob([local,central,end], {type:'application/zip'});
-  }
-  function downloadBlob(blob, filename) {
-    const a=document.createElement('a');
-    const url=URL.createObjectURL(blob);
-    a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),1500);
-  }
-
-  async function exportData(format) {
-    status('Preparando exportação…');
-    const payload = await collectExport();
-    const text = JSON.stringify(payload, null, 2);
-    const date = new Date().toISOString().slice(0,10);
-    if (format === 'zip') {
-      const inner = `cinetracker-${date}.json`;
-      downloadBlob(makeZip(inner, text), `cinetracker-${date}.zip`);
-    } else {
-      downloadBlob(new Blob([text], {type:'application/json;charset=utf-8'}), `cinetracker-${date}.json`);
-    }
-    status(`Exportação ${format.toUpperCase()} concluída.`);
-  }
-
-  function openImport() {
-    if (typeof view !== 'undefined') view = 'import';
-    if (typeof render === 'function') render();
-  }
-
-  function settingsHtml025() {
-    const s=settingsData();
-    const email=currentUser?.email||'';
-    return `<header class="header"><div><div class="eyebrow">CONTA</div><h1 class="h1">Configurações</h1><p class="subtitle">Conta, preferências, importação e backup do CineTracker.</p></div></header>
-      <section class="panel section" style="padding:18px">
-        <div class="settings-grid">
-          <label class="settings-group"><span>Nome do perfil</span><input id="ct-v025-name" class="settings-input" maxlength="60" value="${escapeHtml(profileName())}"></label>
-          <label class="settings-group"><span>Telefone</span><input id="ct-v025-phone" class="settings-input" type="tel" maxlength="30" value="${escapeHtml(String(s.phone||''))}"></label>
-          <label class="settings-group"><span>Idioma</span><select id="ct-v025-language" class="settings-select"><option value="pt-BR"${s.language==='pt-BR'?' selected':''}>Português (Brasil)</option><option value="en"${s.language==='en'?' selected':''}>English</option></select></label>
-          <label class="settings-group"><span>País / disponibilidade</span><select class="settings-select" disabled><option>Brasil</option></select></label>
-          <div class="settings-group full"><span>E-mail atual</span><input class="settings-input" value="${escapeHtml(email)}" disabled></div>
-        </div>
-        <div class="ct-settings-section"><h2>Notificações</h2><label class="ct-toggle"><span><strong>Ativar notificações</strong><div class="settings-note">Preferência sincronizada entre Web e Android. A entrega automática de episódios/estreias será conectada à camada de notificações.</div></span><input id="ct-v025-notifications" type="checkbox"${s.notifications_enabled?' checked':''}></label></div>
-        <div class="settings-actions"><button id="ct-v025-save" class="btn-primary" type="button">Salvar configurações</button></div>
-        <div id="ct-v025-status" class="settings-status"></div>
-        <div class="ct-settings-section"><h2>Importar e exportar</h2><p class="settings-note">Importe seu histórico antigo ou faça um backup completo da sua conta CineTracker.</p><div class="ct-settings-row"><button id="ct-v025-import" class="btn-secondary" type="button">⇧ Importar dados</button></div><div class="ct-export-format"><button id="ct-v025-export-json" class="btn-secondary" type="button">Exportar JSON</button><button id="ct-v025-export-zip" class="btn-secondary" type="button">Exportar ZIP</button></div></div>
-        <div class="ct-settings-section"><h2>Segurança e acesso</h2><div class="settings-grid"><label class="settings-group full"><span>Novo e-mail</span><input id="ct-v025-email" class="settings-input" type="email" placeholder="novo@email.com"></label><label class="settings-group"><span>Nova senha</span><input id="ct-v025-password" class="settings-input" type="password" minlength="6"></label><label class="settings-group"><span>Confirmar nova senha</span><input id="ct-v025-password2" class="settings-input" type="password" minlength="6"></label></div><div class="settings-actions"><button id="ct-v025-update-email" class="btn-secondary" type="button">Alterar e-mail</button><button id="ct-v025-update-password" class="btn-secondary" type="button">Alterar senha</button></div></div>
-      </section>`;
-  }
-
-  async function updateAuth(payload) {
-    const r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{method:'PUT',headers:{...authHeaders(),'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    const d=await r.json().catch(()=>({}));
-    if(!r.ok) throw new Error(d.msg||d.message||d.error_description||d.error||'Não foi possível atualizar a conta.');
-    currentUser=d;if(ctSession){ctSession.user=d;localStorage.setItem('cinetracker_session',JSON.stringify(ctSession));}
-  }
-
-  function openSettings025() {
-    if (!currentUser) return;
-    const content=document.querySelector('main.content');if(!content)return;
-    const cloud=content.querySelector('.cloud-bar')?.outerHTML||'';
-    const mobile=content.querySelector('.mobile-nav')?.outerHTML||'';
-    content.innerHTML=`${cloud}${settingsHtml025()}${mobile}<div id="toast" class="toast hidden" aria-live="polite"></div>`;
-    removeImportFromNavigation();
-    bindSettings025();
-  }
-
-  function bindSettings025() {
-    document.querySelector('#ct-v025-save')?.addEventListener('click',async()=>{try{status('Salvando…');await savePreferences();status('Configurações salvas e sincronizadas.');patchUi025();}catch(e){status(e instanceof Error?e.message:'Falha ao salvar.',true);}});
-    document.querySelector('#ct-v025-import')?.addEventListener('click',openImport);
-    document.querySelector('#ct-v025-export-json')?.addEventListener('click',()=>exportData('json').catch(e=>status(e instanceof Error?e.message:'Falha ao exportar.',true)));
-    document.querySelector('#ct-v025-export-zip')?.addEventListener('click',()=>exportData('zip').catch(e=>status(e instanceof Error?e.message:'Falha ao exportar.',true)));
-    document.querySelector('#ct-v025-update-email')?.addEventListener('click',async()=>{const email=(document.querySelector('#ct-v025-email')?.value||'').trim();if(!email)return status('Informe o novo e-mail.',true);try{status('Solicitando alteração…');await updateAuth({email});status('Alteração solicitada. Confira os e-mails de confirmação.');}catch(e){status(e instanceof Error?e.message:'Falha ao alterar e-mail.',true);}});
-    document.querySelector('#ct-v025-update-password')?.addEventListener('click',async()=>{const p1=document.querySelector('#ct-v025-password')?.value||'',p2=document.querySelector('#ct-v025-password2')?.value||'';if(p1.length<6)return status('A senha precisa ter pelo menos 6 caracteres.',true);if(p1!==p2)return status('As senhas não coincidem.',true);try{status('Alterando senha…');await updateAuth({password:p1});status('Senha alterada com sucesso.');}catch(e){status(e instanceof Error?e.message:'Falha ao alterar senha.',true);}});
-  }
-
-  function replaceSettingsButton() {
-    document.querySelectorAll('[data-ct-settings="1"]').forEach((old)=>{
-      if(old.dataset.ctV025==='1') return;
-      const b=old.cloneNode(true);b.dataset.ctV025='1';b.textContent=old.closest('.mobile-nav')?'Conta':'⚙ Configurações';old.replaceWith(b);b.addEventListener('click',openSettings025);
-    });
-  }
-
-  function patchUi025() {
-    removeImportFromNavigation();
-    replaceSettingsButton();
-    document.querySelectorAll('.cloud-bar .small.muted').forEach(el=>{if(el.textContent?.includes('CineTracker Oficial'))el.textContent=`CineTracker Oficial v${VERSION}`;});
-  }
-
-  const previousRender = render;
-  render = function ctRender025() {
-    previousRender();
-    patchUi025();
-  };
-
+  function openSettings025(){if(!currentUser)return;settingsOpen=true;const content=document.querySelector('main.content');if(!content)return;const cloud=content.querySelector('.cloud-bar')?.outerHTML||'',mobile=content.querySelector('.mobile-nav')?.outerHTML||'';content.innerHTML=`${cloud}${settingsHtml025()}${mobile}<div id="toast" class="toast hidden" aria-live="polite"></div>`;removeImportFromNavigation();markSettingsActive();bindSettings025();}
+  function bindSettings025(){document.querySelector('#ct-v025-save')?.addEventListener('click',async()=>{try{status('Salvando…');await savePreferences();status('Configurações salvas e sincronizadas.');markSettingsActive();}catch(e){status(e instanceof Error?e.message:'Falha ao salvar.',true);}});document.querySelector('#ct-v025-import')?.addEventListener('click',openImport);document.querySelector('#ct-v025-export-json')?.addEventListener('click',()=>exportData('json').catch(e=>status(e instanceof Error?e.message:'Falha ao exportar.',true)));document.querySelector('#ct-v025-export-zip')?.addEventListener('click',()=>exportData('zip').catch(e=>status(e instanceof Error?e.message:'Falha ao exportar.',true)));document.querySelector('#ct-v025-update-email')?.addEventListener('click',async()=>{const email=(document.querySelector('#ct-v025-email')?.value||'').trim();if(!email)return status('Informe o novo e-mail.',true);try{status('Solicitando alteração…');await updateAuth({email});status('Alteração solicitada. Confira os e-mails de confirmação.');}catch(e){status(e instanceof Error?e.message:'Falha ao alterar e-mail.',true);}});document.querySelector('#ct-v025-update-password')?.addEventListener('click',async()=>{const p1=document.querySelector('#ct-v025-password')?.value||'',p2=document.querySelector('#ct-v025-password2')?.value||'';if(p1.length<6)return status('A senha precisa ter pelo menos 6 caracteres.',true);if(p1!==p2)return status('As senhas não coincidem.',true);try{status('Alterando senha…');await updateAuth({password:p1});status('Senha alterada com sucesso.');}catch(e){status(e instanceof Error?e.message:'Falha ao alterar senha.',true);}});}
+  function replaceSettingsButton(){document.querySelectorAll('[data-ct-settings="1"]').forEach(old=>{if(old.dataset.ctV025==='1')return;const b=old.cloneNode(true);b.dataset.ctV025='1';b.textContent=old.closest('.mobile-nav')?'Conta':'⚙ Configurações';old.replaceWith(b);b.addEventListener('click',openSettings025);});}
+  function patchUi025(){removeImportFromNavigation();replaceSettingsButton();if(settingsOpen)markSettingsActive();document.querySelectorAll('.cloud-bar .small.muted').forEach(el=>{if(el.textContent?.includes('CineTracker Oficial'))el.textContent=`CineTracker Oficial v${VERSION}`;});}
+  const previousRender=render;render=function ctRender025(){settingsOpen=false;previousRender();patchUi025();};
   patchUi025();
-  setTimeout(patchUi025,250);
 })();
