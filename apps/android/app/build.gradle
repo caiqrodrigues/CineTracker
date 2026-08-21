@@ -1,0 +1,18 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.cinetracker.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.cinetracker.app'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.0.1'
+        def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://example.invalid'
+        buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
+    }
+
+    buildFeatures { buildConfig true }
+}
