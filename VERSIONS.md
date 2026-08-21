@@ -4,8 +4,8 @@ As versões do CineTracker são independentes por plataforma.
 
 | Plataforma | Versão oficial atual |
 |---|---:|
-| Web | **0.2.8** |
-| Android | **0.0.4** |
+| Web | **0.2.9** |
+| Android | **0.0.5** |
 | Windows | **—** |
 
 ## Regra
@@ -24,15 +24,17 @@ As versões do CineTracker são independentes por plataforma.
 - **0.2.3** — login deixa de depender de TMDB/recomendações para entrar na aplicação.
 - **0.2.4** — consolidação dos patches e correção da tela em branco.
 - **0.2.5** — sidebar reenquadrada, Importar movido para Configurações, exportação JSON/ZIP e preferência de notificações sincronizada.
-- **0.2.6** — CineTracker clicável para Home, Descobrir com Em Alta/Lançamentos/Mais Aguardados/Populares, calendário por data e abas Séries/Filmes, cache de descoberta para reduzir travamentos.
-- **0.2.7** — `Lançamentos` renomeado para `Calendário` e movido para o fim, filtro `Somente meus` para séries acompanhadas/Watchlist e filmes da Watchlist, e nova aba `Mais bem avaliados` com separação entre Filmes e Séries.
-- **0.2.8** — cards de Descobrir/Calendário clicáveis, tela completa de detalhes, sinopse, ano, elenco clicável, filmografia, streaming por assinatura/cinema, capas verticais oficiais e integração com a ficha IMDb.
+- **0.2.6** — CineTracker clicável para Home, Descobrir com calendário e cache.
+- **0.2.7** — Calendário pessoal, filtro Somente meus e Mais bem avaliados.
+- **0.2.8** — detalhes clicáveis em Descobrir, elenco/filmografia, streaming/cinema e capas verticais.
+- **0.2.9** — experiência de detalhes aplicada ao sistema inteiro (Home, Biblioteca, Descobrir e cards principais), capas originais também no legado, temporadas/episódios, status e duração de séries/filmes, relacionados filtrados fora da Watchlist e filmografia do mais recente para o mais antigo.
 
 ## Linha Android
 
-- **0.0.1** — shell Android leve apontando para a Web oficial, sessão via WebView/DOM storage, importação por seletor nativo, navegação externa no navegador e mesma conta/dados Supabase do Web.
-- **0.0.2** — sincroniza a experiência Descobrir/Calendário da Web e incrementa versionCode mantendo o shell WebView leve.
-- **0.0.3** — sincroniza filtro pessoal do Calendário e ranking Mais bem avaliados, mantendo o shell Android leve.
-- **0.0.4** — sincroniza as novas telas de detalhes, elenco/filmografia e capas originais via mesma WebView de produção.
+- **0.0.1** — shell Android leve em WebView sincronizado com Web/Supabase.
+- **0.0.2** — calendário e Descobrir sincronizados.
+- **0.0.3** — calendário pessoal e Mais bem avaliados.
+- **0.0.4** — detalhes, elenco/filmografia e capas originais.
+- **0.0.5** — sincroniza a experiência global de mídia 0.2.9, incluindo temporadas/episódios e relacionados filtrados, mantendo o shell leve.
 
 O histórico consolidado fica em `CHANGELOG.md`.
