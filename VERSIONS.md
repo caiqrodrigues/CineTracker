@@ -4,8 +4,8 @@ As versões do CineTracker são independentes por plataforma.
 
 | Plataforma | Versão oficial atual |
 |---|---:|
-| Web | **0.2.5** |
-| Android | **0.0.1** |
+| Web | **0.2.6** |
+| Android | **0.0.2** |
 | Windows | **—** |
 
 ## Regra
@@ -24,9 +24,11 @@ As versões do CineTracker são independentes por plataforma.
 - **0.2.3** — login deixa de depender de TMDB/recomendações para entrar na aplicação.
 - **0.2.4** — consolidação dos patches e correção da tela em branco.
 - **0.2.5** — sidebar reenquadrada, Importar movido para Configurações, exportação JSON/ZIP e preferência de notificações sincronizada.
+- **0.2.6** — CineTracker clicável para Home, Descobrir com Em Alta/Lançamentos/Mais Aguardados/Populares, calendário por data e abas Séries/Filmes, cache de descoberta para reduzir travamentos.
 
 ## Linha Android
 
 - **0.0.1** — shell Android leve apontando para a Web oficial, sessão via WebView/DOM storage, importação por seletor nativo, navegação externa no navegador e mesma conta/dados Supabase do Web.
+- **0.0.2** — sincroniza a experiência Descobrir/Calendário da Web e incrementa versionCode mantendo o shell WebView leve.
 
 O histórico consolidado fica em `CHANGELOG.md`.
