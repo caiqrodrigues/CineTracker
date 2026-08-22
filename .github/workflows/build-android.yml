@@ -21,32 +21,36 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.31"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.32"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Wire Android 0.0.31 runtime
+      - name: Wire Android 0.0.32 runtime
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java')
           s = p.read_text()
-          s = s.replace('CineTrackerAndroid/0.0.27', 'CineTrackerAndroid/0.0.31')
-          s = s.replace('apk=27', 'apk=31')
-          s = s.replace('ctAndroid27', 'ctAndroid31').replace('ct27', 'ct31').replace('ct-android27', 'ct-android31')
-          s = s.replace('build 0.0.27', 'build 0.0.31')
-          s = s.replace("try{view='account';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid31)window.ctAndroid31();},0);return true;}catch(e){}", "if(window.ct31OpenSettings){return window.ct31OpenSettings();}")
+          s = s.replace('CineTrackerAndroid/0.0.27', 'CineTrackerAndroid/0.0.32')
+          s = s.replace('apk=27', 'apk=32')
+          s = s.replace('ctAndroid27', 'ctAndroid32').replace('ct27', 'ct32').replace('ct-android27', 'ct-android32')
+          s = s.replace('build 0.0.27', 'build 0.0.32')
+          s = s.replace("try{view='account';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid32)window.ctAndroid32();},0);return true;}catch(e){}", "if(window.ct32OpenSettings){return window.ct32OpenSettings();}")
           s = s.replace("document.querySelector('[data-view=account],[data-view=settings]')", "document.querySelector('[data-view=settings]')")
           if 'applyCt31();' not in s:
-              s = s.replace('applyAndroidRuntime();\n                CookieManager.getInstance().flush();', 'applyAndroidRuntime();\n                applyCt31();\n                CookieManager.getInstance().flush();')
-              s = s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);', 'webView.postDelayed(() -> { applyAndroidRuntime(); applyCt31(); }, 150);')
+              s = s.replace('applyAndroidRuntime();\n                CookieManager.getInstance().flush();', 'applyAndroidRuntime();\n                applyCt31();\n                applyCt32Settings();\n                CookieManager.getInstance().flush();')
+              s = s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);', 'webView.postDelayed(() -> { applyAndroidRuntime(); applyCt31(); applyCt32Settings(); }, 150);')
+          else:
+              s = s.replace('applyCt31();\n                CookieManager.getInstance().flush();', 'applyCt31();\n                applyCt32Settings();\n                CookieManager.getInstance().flush();')
+              s = s.replace('applyCt31(); }, 150);', 'applyCt31(); applyCt32Settings(); }, 150);')
+          marker = '    @Override protected void onSaveInstanceState(Bundle outState)'
           if 'private void applyCt31()' not in s:
-              marker = '    @Override protected void onSaveInstanceState(Bundle outState)'
-              method = '''    private void applyCt31() {\n        try (java.io.InputStream in = getAssets().open("ct31.js")) {\n            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();\n            byte[] buf = new byte[8192];\n            int read;\n            while ((read = in.read(buf)) != -1) out.write(buf, 0, read);\n            webView.evaluateJavascript(new String(out.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), null);\n        } catch (Exception ignored) { }\n    }\n\n'''
-              if marker not in s:
-                  raise SystemExit('MainActivity save-state marker not found')
-              s = s.replace(marker, method + marker, 1)
+              method31 = '''    private void applyCt31() {\n        try (java.io.InputStream in = getAssets().open("ct31.js")) {\n            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();\n            byte[] buf = new byte[8192];\n            int read;\n            while ((read = in.read(buf)) != -1) out.write(buf, 0, read);\n            webView.evaluateJavascript(new String(out.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), null);\n        } catch (Exception ignored) { }\n    }\n\n'''
+              s = s.replace(marker, method31 + marker, 1)
+          if 'private void applyCt32Settings()' not in s:
+              method32 = '''    private void applyCt32Settings() {\n        try (java.io.InputStream in = getAssets().open("ct32-settings.js")) {\n            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();\n            byte[] buf = new byte[8192];\n            int read;\n            while ((read = in.read(buf)) != -1) out.write(buf, 0, read);\n            webView.evaluateJavascript(new String(out.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), null);\n        } catch (Exception ignored) { }\n    }\n\n'''
+              s = s.replace(marker, method32 + marker, 1)
           p.write_text(s)
           PY
       - name: Restore persistent Android signing key
@@ -71,26 +75,26 @@ jobs:
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.31-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.32-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.31-debug
-          path: cinetracker-android-0.0.31-debug.apk
+          name: cinetracker-android-0.0.32-debug
+          path: cinetracker-android-0.0.32-debug.apk
       - name: Publish APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.31 >/dev/null 2>&1 || gh release create android-v0.0.31 --title "CineTracker Android 0.0.31" --notes "Configurações sem Stats intermediário; Perfil com Tempo de Tela e Histórico expansíveis; cache de consultas entre abas; hidratação global de nomes e capas."
-          gh release upload android-v0.0.31 cinetracker-android-0.0.31-debug.apk --clobber
+          gh release view android-v0.0.32 >/dev/null 2>&1 || gh release create android-v0.0.32 --title "CineTracker Android 0.0.32" --notes "Configurações corrigidas na origem do Android: Stats/account redirecionados para Settings real, sem segundo clique."
+          gh release upload android-v0.0.32 cinetracker-android-0.0.32-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.31 APK built and published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.32 APK built and published"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.31 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.32 build failed"}'
