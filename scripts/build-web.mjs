@@ -31,4 +31,4 @@ for (const dist of [rootDist, webDist]) {
   await cp(favicon, resolve(dist, 'favicon.svg'));
   for (const f of [patch024,patch025,patch025Profile,patch027,patch028,patch029,patch030,patch034,patch035,patch036,patch037,patch038]) await cp(f, resolve(dist, f.split('/').pop()));
 }
-console.log('CineTracker Web 0.4.0 publicado em dist/ e apps/web/dist/');
+console.log('CineTracker Web 0.4.1 publicado em dist/ e apps/web/dist/');
