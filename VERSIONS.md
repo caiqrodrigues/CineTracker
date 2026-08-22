@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.3.1** |
-| Android | **0.0.7** |
+| Android | **0.0.44** |
 | Windows | **—** |
 
 ## Regra
@@ -14,31 +14,24 @@ As versões do CineTracker são independentes por plataforma.
 - Mudança somente no Android → incrementa apenas Android.
 - Mudança compartilhada que afete Web e Android → cada plataforma afetada recebe seu próprio incremento.
 - Windows inicia sua linha de versão quando a implementação começar.
+- Uma versão Android só é considerada concluída quando código, documentação, workflow, Release e APK estiverem publicados.
 
 ## Linha Web
 
 - **0.1.x** — protótipos funcionais, refinamento visual, TMDB, capas, atores, streaming e recomendações.
-- **0.2.0** — início da linha oficial com autenticação e persistência Supabase, importação JSON/ZIP e arquitetura de sincronização.
-- **0.2.1** — identidade Black/Blue, favicon CineTracker, configurações de conta e correção da área de perfil.
-- **0.2.2** — aplicação principal servida diretamente, configurações persistidas no perfil Supabase e recuperação resiliente do banco.
-- **0.2.3** — login deixa de depender de TMDB/recomendações para entrar na aplicação.
-- **0.2.4** — consolidação dos patches e correção da tela em branco.
-- **0.2.5** — sidebar reenquadrada, Importar movido para Configurações, exportação JSON/ZIP e preferência de notificações sincronizada.
-- **0.2.6** — CineTracker clicável para Home, Descobrir com calendário e cache.
-- **0.2.7** — Calendário pessoal, filtro Somente meus e Mais bem avaliados.
-- **0.2.8** — detalhes clicáveis em Descobrir, elenco/filmografia, streaming/cinema e capas verticais.
-- **0.2.9** — experiência de detalhes aplicada ao sistema inteiro, temporadas/episódios, status, duração, relacionados filtrados e filmografia cronológica.
-- **0.3.0** — Home renomeada, Biblioteca em cards com capas oficiais e Histórico por data.
-- **0.3.1** — Perfil completo com estatísticas, favoritos e histórico; calendário exclusivo das séries em acompanhamento; histórico Trakt consolidado com datas reais; filmografia com identificação Filme/Série.
+- **0.2.0** — autenticação e persistência Supabase, importação JSON/ZIP e arquitetura de sincronização.
+- **0.2.1–0.2.9** — identidade visual, configurações, calendário, detalhes de mídia, elenco, filmografia e capas TMDB.
+- **0.3.0** — Home/Biblioteca/Histórico em cards com dados persistentes.
+- **0.3.1** — Perfil completo com estatísticas, favoritos, histórico e calendário de acompanhamento.
 
 ## Linha Android
 
-- **0.0.1** — shell Android leve em WebView sincronizado com Web/Supabase.
-- **0.0.2** — calendário e Descobrir sincronizados.
-- **0.0.3** — calendário pessoal e Mais bem avaliados.
-- **0.0.4** — detalhes, elenco/filmografia e capas originais.
-- **0.0.5** — experiência global de mídia 0.2.9.
-- **0.0.6** — sincroniza Home/Biblioteca/Histórico da Web 0.3.0.
-- **0.0.7** — sincroniza Perfil, estatísticas, favoritos e calendário de acompanhamento da Web 0.3.1.
+- **0.0.1–0.0.7** — shell Android, sincronização Web/Supabase, calendário, detalhes, perfil e histórico.
+- **0.0.8–0.0.43** — ciclo iterativo de otimização móvel, navegação, Home, Assistir, Perfil, Configurações, resolução de nomes/capas e Tempo de Tela.
+- **0.0.44** — consolidação da experiência Assistir: Carrossel padrão, Grade/Lista, ordenação Em dia → Acompanhando → Juntando poeira → Não iniciadas; detalhes de série/temporada/episódio; marcação persistente de episódios; Descobrir com três cards por linha; gráfico diário único em dark mode.
 
-O histórico consolidado fica em `CHANGELOG.md`.
+## Documentação por release
+
+Cada release nova recebe arquivo próprio em `docs/releases/`. A versão 0.0.44 está documentada em `docs/releases/0.0.44.md`.
+
+O histórico detalhado permanece em `CHANGELOG.md` e no histórico de commits/releases do GitHub.
