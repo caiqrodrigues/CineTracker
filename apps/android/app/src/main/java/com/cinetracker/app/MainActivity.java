@@ -2,8 +2,12 @@ package com.cinetracker.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowInsets;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -20,9 +24,39 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setStatusBarColor(Color.rgb(9, 9, 9));
+        getWindow().setNavigationBarColor(Color.rgb(9, 9, 9));
+        getWindow().getDecorView().setSystemUiVisibility(0);
+
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webview);
+
+        // Keep all web content inside the usable Android area. This prevents
+        // headers from going under the clock/battery and the bottom menu from
+        // going under the system Back/Home/Recents navigation bar.
+        webView.setOnApplyWindowInsetsListener((view, insets) -> {
+            int top = 0;
+            int bottom = 0;
+            int left = 0;
+            int right = 0;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars());
+                top = bars.top;
+                bottom = bars.bottom;
+                left = bars.left;
+                right = bars.right;
+            } else {
+                top = insets.getSystemWindowInsetTop();
+                bottom = insets.getSystemWindowInsetBottom();
+                left = insets.getSystemWindowInsetLeft();
+                right = insets.getSystemWindowInsetRight();
+            }
+            view.setPadding(left, top, right, bottom);
+            return insets;
+        });
+
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
@@ -31,8 +65,19 @@ public class MainActivity extends Activity {
         settings.setAllowContentAccess(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setMediaPlaybackRequiresUserGesture(true);
+
+        // App-like fixed scale: no pinch zoom / accidental zoom.
         settings.setSupportZoom(false);
         settings.setBuiltInZoomControls(false);
+        settings.setDisplayZoomControls(false);
+        settings.setLoadWithOverviewMode(false);
+        settings.setUseWideViewPort(false);
+        settings.setTextZoom(100);
+        webView.setInitialScale(100);
+        webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        webView.setHorizontalScrollBarEnabled(false);
+        webView.setVerticalScrollBarEnabled(false);
+        webView.setOnTouchListener((v, event) -> event.getPointerCount() > 1);
 
         CookieManager cookies = CookieManager.getInstance();
         cookies.setAcceptCookie(true);
@@ -60,6 +105,22 @@ public class MainActivity extends Activity {
                 if (host.equals("mycinetracker.vercel.app") || host.endsWith("supabase.co")) return false;
                 startActivity(new Intent(Intent.ACTION_VIEW, uri));
                 return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // Android shell adjustments only: rename the bottom entry and
+                // make sure the page cannot re-enable zoom through its viewport.
+                String js = "(function(){" +
+                        "var meta=document.querySelector('meta[name=viewport]');" +
+                        "if(!meta){meta=document.createElement('meta');meta.name='viewport';document.head.appendChild(meta);}" +
+                        "meta.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';" +
+                        "document.documentElement.style.touchAction='pan-x pan-y';" +
+                        "var els=document.querySelectorAll('a,button,span,div');" +
+                        "for(var i=0;i<els.length;i++){if((els[i].textContent||'').trim()==='Conta'){els[i].textContent='Configurações';}}" +
+                        "})();";
+                view.evaluateJavascript(js, null);
             }
         });
 
