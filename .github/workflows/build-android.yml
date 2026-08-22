@@ -21,29 +21,24 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.29"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.30"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Patch 0.0.27 base for 0.0.29
+      - name: Patch 0.0.27 base for 0.0.30
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java')
           s=p.read_text()
-          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.29')
-          s=s.replace('apk=27','apk=29')
-          s=s.replace('ctAndroid27','ctAndroid29').replace('ct27','ct29').replace('ct-android27','ct-android29')
-          s=s.replace('build 0.0.27','build 0.0.29')
-          s=s.replace("try{view='account';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid29)window.ctAndroid29();},0);return true;}catch(e){}","")
+          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.30')
+          s=s.replace('apk=27','apk=30')
+          s=s.replace('ctAndroid27','ctAndroid30').replace('ct27','ct30').replace('ct-android27','ct-android30')
+          s=s.replace('build 0.0.27','build 0.0.30')
+          # Configurações: não usar a antiga view account/Stats.
+          s=s.replace("try{view='account';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid30)window.ctAndroid30();},0);return true;}catch(e){}","")
           s=s.replace("document.querySelector('[data-view=account],[data-view=settings]')","document.querySelector('[data-view=settings]')")
-          # Se a primeira ação ainda cair em Estatísticas, executa automaticamente o mesmo clique de Configurações uma segunda vez.
-          old='webView.evaluateJavascript(js, null);\n    }\n\n    private void navigateView'
-          new='webView.evaluateJavascript(js, value -> webView.postDelayed(() -> webView.evaluateJavascript(js, null), 90));\n    }\n\n    private void navigateView'
-          if old not in s:
-              raise SystemExit('openSettings patch target not found')
-          s=s.replace(old,new,1)
           p.write_text(s)
           PY
       - name: Restore persistent Android signing key
@@ -68,26 +63,26 @@ jobs:
         working-directory: apps/android
         run: gradle assembleDebug
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.29-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.30-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.29-debug
-          path: cinetracker-android-0.0.29-debug.apk
+          name: cinetracker-android-0.0.30-debug
+          path: cinetracker-android-0.0.30-debug.apk
       - name: Publish test APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.29 >/dev/null 2>&1 || gh release create android-v0.0.29 --title "CineTracker Android 0.0.29" --notes "Base 0.0.27 preservada. Corrige Configurações abrindo Estatísticas e mantém as correções de perfil/Home. Catálogo está sendo enriquecido no backend para preencher capas e títulos ausentes."
-          gh release upload android-v0.0.29 cinetracker-android-0.0.29-debug.apk --clobber
+          gh release view android-v0.0.30 >/dev/null 2>&1 || gh release create android-v0.0.30 --title "CineTracker Android 0.0.30" --notes "Base correta preservada. Remove Stats de Configurações, adiciona no Perfil os blocos expansíveis Tempo de Tela e Histórico com tela completa, melhora cache entre abas e reforça hidratação global de capas e títulos."
+          gh release upload android-v0.0.30 cinetracker-android-0.0.30-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.29 APK built and published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.30 APK built and published"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.29 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.30 build failed"}'
