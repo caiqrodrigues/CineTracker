@@ -10,8 +10,16 @@ css.textContent=`
 .ct41-stat{text-align:center!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important}
 .ct41-stat span,.ct41-stat strong,.ct41-stat small{text-align:center!important;width:100%!important}
 .ct42-build{margin:26px 0 6px;padding:14px 0 4px;border-top:1px solid #1d2a36;color:#6f8191;font-size:11px;text-align:center}
+#ct42-settings-bridge{display:none!important}
 `;
 document.head.appendChild(css);
+
+function ensureSettingsBridge(){
+  let b=document.getElementById('ct42-settings-bridge');if(b)return b;
+  b=document.createElement('button');b.id='ct42-settings-bridge';b.type='button';b.dataset.view='settings';b.textContent='Configurações';
+  b.onclick=()=>{const old=document.getElementById('ct40-settings-target');if(old){old.click();return}for(const candidate of ['settings','account']){try{window.view=candidate;render();const t=(document.body.textContent||'').toLowerCase();if(t.includes('segurança e acesso')||t.includes('importar e exportar')){window.scrollTo(0,0);return}}catch{}}};
+  document.body.prepend(b);return b;
+}
 
 const directPoster=p=>p?`https://image.tmdb.org/t/p/w342${p}`:'';
 const detailCache=new Map();
@@ -43,7 +51,7 @@ function settingsFooter(){
   if(onAuth())return;const body=(document.body.textContent||'').toLowerCase();const isSettings=body.includes('segurança e acesso')||body.includes('importar e exportar');if(!isSettings)return;
   const content=document.querySelector('.content,#app');if(!content||document.getElementById('ct42-build'))return;const f=document.createElement('div');f.id='ct42-build';f.className='ct42-build';f.textContent=`CineTracker Android • build ${BUILD}`;content.appendChild(f);
 }
-function run(){if(onAuth())return;observeCards();settingsFooter()}
+function run(){ensureSettingsBridge();if(onAuth())return;observeCards();settingsFooter()}
 let q=false;new MutationObserver(()=>{if(q)return;q=true;requestAnimationFrame(()=>{q=false;run()})}).observe(document.getElementById('app')||document.documentElement,{childList:true,subtree:true});
 setTimeout(run,0);setTimeout(run,350);
 })();
