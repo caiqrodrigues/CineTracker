@@ -26,27 +26,27 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Wire persistent Android 0.0.31 runtime
+      - name: Wire Android 0.0.31 runtime
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
-          p=Path('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java')
-          s=p.read_text()
-          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.31')
-          s=s.replace('apk=27','apk=31')
-          s=s.replace('ctAndroid27','ctAndroid31').replace('ct27','ct31').replace('ct-android27','ct-android31')
-          s=s.replace('build 0.0.27','build 0.0.31')
-          s=s.replace('applyAndroidRuntime();\n                CookieManager.getInstance().flush();','applyAndroidRuntime();\n                applyCt31();\n                CookieManager.getInstance().flush();')
-          s=s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);','webView.postDelayed(() -> { applyAndroidRuntime(); applyCt31(); }, 150);')
-          pattern=r'    private void openSettings\(\) \{.*?\n    \}\n\n    private void navigateView'
-          repl='''    private void openSettings() {\n        String js = "(function(){if(window.ct31OpenSettings){return window.ct31OpenSettings();}var b=[].slice.call(document.querySelectorAll(\\\'button,a\\\')).find(function(x){return /^(configurações|configuracoes|config\\.)$/i.test((x.textContent||\\\'\\\').trim())});if(b){b.click();setTimeout(function(){b.click();},90);return true;}return false;})();";\n        webView.evaluateJavascript(js, null);\n    }\n\n    private void navigateView'''
-          s,n=re.subn(pattern,repl,s,flags=re.S)
-          if n!=1: raise SystemExit('openSettings method not replaced')
-          marker='    @Override protected void onSaveInstanceState(Bundle outState)'
-          method='''    private void applyCt31() {\n        try (java.io.InputStream in = getAssets().open("ct31.js")) {\n            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();\n            byte[] buf = new byte[8192];\n            int n;\n            while ((n = in.read(buf)) > 0) out.write(buf, 0, n);\n            webView.evaluateJavascript(out.toString("UTF-8"), null);\n        } catch (Exception ignored) {}\n    }\n\n'''
-          if marker not in s: raise SystemExit('save-state marker not found')
-          s=s.replace(marker,method+marker,1)
+          p = Path('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java')
+          s = p.read_text()
+          s = s.replace('CineTrackerAndroid/0.0.27', 'CineTrackerAndroid/0.0.31')
+          s = s.replace('apk=27', 'apk=31')
+          s = s.replace('ctAndroid27', 'ctAndroid31').replace('ct27', 'ct31').replace('ct-android27', 'ct-android31')
+          s = s.replace('build 0.0.27', 'build 0.0.31')
+          s = s.replace("try{view='account';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid31)window.ctAndroid31();},0);return true;}catch(e){}", "if(window.ct31OpenSettings){return window.ct31OpenSettings();}")
+          s = s.replace("document.querySelector('[data-view=account],[data-view=settings]')", "document.querySelector('[data-view=settings]')")
+          if 'applyCt31();' not in s:
+              s = s.replace('applyAndroidRuntime();\n                CookieManager.getInstance().flush();', 'applyAndroidRuntime();\n                applyCt31();\n                CookieManager.getInstance().flush();')
+              s = s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);', 'webView.postDelayed(() -> { applyAndroidRuntime(); applyCt31(); }, 150);')
+          if 'private void applyCt31()' not in s:
+              marker = '    @Override protected void onSaveInstanceState(Bundle outState)'
+              method = '''    private void applyCt31() {\n        try (java.io.InputStream in = getAssets().open("ct31.js")) {\n            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();\n            byte[] buf = new byte[8192];\n            int read;\n            while ((read = in.read(buf)) != -1) out.write(buf, 0, read);\n            webView.evaluateJavascript(new String(out.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), null);\n        } catch (Exception ignored) { }\n    }\n\n'''
+              if marker not in s:
+                  raise SystemExit('MainActivity save-state marker not found')
+              s = s.replace(marker, method + marker, 1)
           p.write_text(s)
           PY
       - name: Restore persistent Android signing key
@@ -69,18 +69,18 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Build debug APK
         working-directory: apps/android
-        run: gradle assembleDebug
+        run: gradle assembleDebug --stacktrace
       - name: Prepare APK name
         run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.31-debug.apk
       - uses: actions/upload-artifact@v4
         with:
           name: cinetracker-android-0.0.31-debug
           path: cinetracker-android-0.0.31-debug.apk
-      - name: Publish test APK release
+      - name: Publish APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.31 >/dev/null 2>&1 || gh release create android-v0.0.31 --title "CineTracker Android 0.0.31" --notes "Correções Android persistentes: Configurações sem Stats intermediário; Perfil com Tempo de Tela e Histórico expansíveis; cache de consultas entre abas; hidratação global de nomes e capas com TMDB ID e fallback por título."
+          gh release view android-v0.0.31 >/dev/null 2>&1 || gh release create android-v0.0.31 --title "CineTracker Android 0.0.31" --notes "Configurações sem Stats intermediário; Perfil com Tempo de Tela e Histórico expansíveis; cache de consultas entre abas; hidratação global de nomes e capas."
           gh release upload android-v0.0.31 cinetracker-android-0.0.31-debug.apk --clobber
       - name: Mark Android build success
         if: success()
