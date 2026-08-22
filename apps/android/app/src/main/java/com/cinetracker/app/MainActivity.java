@@ -14,8 +14,6 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.PopupMenu;
 
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
@@ -26,8 +24,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Android 15: keep the app inside the real usable window instead of
-        // drawing below the clock/battery or below Back/Home/Recents.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             getWindow().setDecorFitsSystemWindows(true);
         } else {
@@ -50,15 +46,14 @@ public class MainActivity extends Activity {
         settings.setLoadsImagesAutomatically(true);
         settings.setBlockNetworkImage(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-
-        // Real phone viewport. Do not use desktop overview scaling.
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(false);
         settings.setSupportZoom(false);
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
         settings.setTextZoom(100);
-        settings.setUserAgentString(settings.getUserAgentString() + " CineTrackerAndroid/0.0.11");
+        settings.setUserAgentString(settings.getUserAgentString() + " CineTrackerAndroid/0.0.12");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) settings.setOffscreenPreRaster(true);
 
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         webView.setHorizontalScrollBarEnabled(false);
@@ -115,25 +110,10 @@ public class MainActivity extends Activity {
         findViewById(R.id.nav_home).setOnClickListener(v -> navigateTo("home", "hoje"));
         findViewById(R.id.nav_library).setOnClickListener(v -> navigateTo("biblioteca"));
         findViewById(R.id.nav_discover).setOnClickListener(v -> navigateTo("descobrir"));
+        findViewById(R.id.nav_history).setOnClickListener(v -> navigateTo("histórico", "historico"));
+        findViewById(R.id.nav_profile).setOnClickListener(v -> navigateTo("perfil"));
         findViewById(R.id.nav_stats).setOnClickListener(v -> navigateTo("estatísticas", "estatisticas", "stats"));
-        findViewById(R.id.nav_more).setOnClickListener(v -> showMoreMenu((Button) v));
-    }
-
-    private void showMoreMenu(Button anchor) {
-        PopupMenu popup = new PopupMenu(this, anchor);
-        popup.getMenu().add("Configurações");
-        popup.getMenu().add("Histórico");
-        popup.getMenu().add("Perfil");
-        popup.getMenu().add("Importar dados");
-        popup.setOnMenuItemClickListener(item -> {
-            String title = item.getTitle().toString();
-            if (title.equals("Configurações")) navigateTo("configurações", "configuracoes", "conta");
-            else if (title.equals("Histórico")) navigateTo("histórico", "historico");
-            else if (title.equals("Perfil")) navigateTo("perfil");
-            else if (title.equals("Importar dados")) navigateTo("importar");
-            return true;
-        });
-        popup.show();
+        findViewById(R.id.nav_settings).setOnClickListener(v -> navigateTo("configurações", "configuracoes", "conta"));
     }
 
     private void navigateTo(String... terms) {
