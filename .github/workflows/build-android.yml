@@ -21,7 +21,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.20"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.21"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -48,26 +48,26 @@ jobs:
         working-directory: apps/android
         run: gradle assembleDebug
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.20-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.21-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.20-debug
-          path: cinetracker-android-0.0.20-debug.apk
+          name: cinetracker-android-0.0.21-debug
+          path: cinetracker-android-0.0.21-debug.apk
       - name: Publish test APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.20 >/dev/null 2>&1 || gh release create android-v0.0.20 --title "CineTracker Android 0.0.20" --notes "Nova tela Assistir a seguir com filtros, lista/grade/carrossel e calendário recolhido; enriquecimento persistente de capas e títulos; estatísticas recalculadas pelo banco completo disponível."
-          gh release upload android-v0.0.20 cinetracker-android-0.0.20-debug.apk --clobber
+          gh release view android-v0.0.21 >/dev/null 2>&1 || gh release create android-v0.0.21 --title "CineTracker Android 0.0.21" --notes "Android simplificado: aba Stats removida da navegação inferior e calendário de séries removido da Home. Estatísticas continuam disponíveis no Perfil; calendário permanece na tela Assistir a seguir."
+          gh release upload android-v0.0.21 cinetracker-android-0.0.21-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.20 APK built and published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.21 APK built and published"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.20 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.21 build failed"}'
