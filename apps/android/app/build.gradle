@@ -16,3 +16,5 @@ android {
 
     buildFeatures { buildConfig true }
 }
+
+// build-trigger: android-0.0.36
