@@ -4,7 +4,7 @@
 
 **Última atualização:** 2026-08-22  
 **Branch principal:** `main`  
-**Android em desenvolvimento:** `0.0.44`
+**Android em desenvolvimento:** `0.0.45`
 
 ## 1. Objetivo
 
@@ -29,24 +29,61 @@ Não criar tabela separada `CompletedSeries`. Conclusão deve ser derivada de pr
 - tempo de filmes, séries e total;
 - Tempo de Tela diário com interação por data.
 
-## 5. Estado Android 0.0.44
+## 5. Correção arquitetural Android 0.0.45
 
-Implementado, aguardando validação real após build/instalação:
+A 0.0.44 compilava a partir de um `MainActivity.java` antigo e o workflow reescrevia esse arquivo temporariamente, além de empilhar módulos Android de várias versões. Isso permitia uma build `success` sem garantir que a experiência instalada refletisse as alterações pretendidas.
 
-- gráfico diário em dark mode como único gráfico de Tempo de Tela;
-- Descobrir com três cards por linha;
-- Assistir organizado em `Em dia` → `Acompanhando` → `Juntando poeira` → `Não iniciadas`, abrindo posicionado em `Acompanhando`;
-- Carrossel como modo padrão, além de Grade e Lista;
-- abertura de série, temporadas e episódios;
-- tela de episódio;
+A 0.0.45 muda essa regra:
+
+- `MainActivity.java` no repositório já é a Activity real da versão 0.0.45;
+- o workflow não reescreve mais a Activity durante a compilação;
+- o Java compila diretamente o código versionado;
+- módulos conflitantes `ct40.js`, `ct42.js` e `ct44.js` deixam de ser carregados pela Activity;
+- o módulo final de comportamento é `ct45.js`;
+- `versionCode = 45` e `versionName = 0.0.45`.
+
+## 6. Comportamento implementado na 0.0.45
+
+### Tempo de Tela
+
+- remover/ocultar gráfico antigo de atividade por horário;
+- manter a experiência diária em dark mode;
+- evitar cards/botões brancos herdados do estilo padrão do WebView.
+
+### Descobrir
+
+- três cards por linha;
+- posters compactos em proporção 2:3;
+- regra aplicada ao grid padrão usado pelas diferentes categorias/filtros de Descobrir.
+
+### Assistir
+
+- Carrossel como modo inicial/padrão;
+- modos alternativos Grade e Lista;
+- ordem física: `Em dia` → `Acompanhando` → `Juntando poeira` → `Não iniciadas`;
+- abertura posicionada automaticamente em `Acompanhando`, permitindo subir para `Em dia` e descer para as demais seções;
+- cards de série e filme clicáveis;
+- série abre detalhes;
+- temporadas expansíveis;
+- episódios clicáveis;
+- tela própria de episódio;
 - marcar/desmarcar episódio como assistido;
-- RPCs `cinetracker_episode_state` e `cinetracker_set_episode_watched` para persistência manual e sincronização com histórico.
+- persistência via Supabase.
 
-## 6. Regra de validação
+## 7. Backend de episódios
+
+RPCs utilizados:
+
+- `cinetracker_episode_state`
+- `cinetracker_set_episode_watched`
+
+A persistência usa `episode_progress` e atualiza o estado manual do episódio por perfil.
+
+## 8. Regra de validação
 
 Implementado/compilado não significa validado. Android, instalação, atualização, GitHub Actions e comportamento visual só são considerados validados após teste real correspondente.
 
-## 7. Regra de documentação e publicação
+## 9. Regra de documentação e publicação
 
 Toda nova versão deve atualizar o projeto no GitHub, não apenas anexar o APK. O pacote mínimo de release é:
 
@@ -61,16 +98,16 @@ Toda nova versão deve atualizar o projeto no GitHub, não apenas anexar o APK. 
 9. Release GitHub + APK;
 10. status `Android Build` concluído.
 
-## 8. Pendências que exigem teste do usuário
+## 10. Pendências que exigem teste real
 
-- confirmar que o gráfico antigo foi totalmente removido;
+- confirmar visualmente remoção total do gráfico antigo;
 - confirmar 3 cards por linha em todas as categorias de Descobrir;
-- confirmar posição inicial em Acompanhando e ordem das seções;
-- confirmar persistência Carrossel/Grade/Lista;
+- confirmar posição inicial em Acompanhando e ordem correta das seções;
+- confirmar Carrossel/Grade/Lista;
 - confirmar abertura série → temporada → episódio;
-- confirmar marcar/desmarcar visto e reflexo no histórico/estatísticas;
+- confirmar marcação/desmarcação e persistência após reabrir;
 - continuar validando nomes e capas em todas as telas.
 
-## 9. Continuidade
+## 11. Continuidade
 
 Antes de alterações importantes: ler este arquivo, conferir commits/builds atuais, preservar decisões arquiteturais e registrar separadamente implementação, compilação e validação real.
