@@ -8,11 +8,13 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 27
-        versionName '0.0.27'
-        def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
-        buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
+        versionCode 28
+        versionName '0.0.28'
     }
 
     buildFeatures { buildConfig true }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
 }
