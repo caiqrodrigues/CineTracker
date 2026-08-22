@@ -1,79 +1,106 @@
 # 🎬 CineTracker
 
-CineTracker é um companion multiplataforma para filmes, séries e animes, com identidade Black/Blue, conta única, biblioteca sincronizada, Watchlist, histórico de vistos, progresso, recomendações sem repetição, descoberta por ator, importação e backup.
+CineTracker é um companion multiplataforma para filmes, séries e animes, com conta única, biblioteca sincronizada, Watchlist, histórico, progresso de episódios, recomendações, descoberta TMDB, importação e backup.
 
-## Versões oficiais
+## Versões atuais
 
 | Plataforma | Versão | Status |
 |---|---:|---|
-| Web | **0.2.5** | 🟢 Produção / Supabase conectado |
-| Android | **0.0.1** | 🟢 Shell funcional / build automatizado |
-| Windows | **—** | ⏳ Planejado após Web + Android |
+| Web | **0.3.1** | Produção / Supabase |
+| Android | **0.0.44** | Build automatizado / Release GitHub |
+| Windows | — | Planejado |
 
 ## Produção
 
-**Web oficial:** https://mycinetracker.vercel.app
-
-## O que o projeto entrega
-
-- Login e criação de conta via Supabase Auth.
-- Entrada imediata após autenticação bem-sucedida; TMDB e consultas opcionais carregam em segundo plano.
-- Dados persistentes por usuário com Row Level Security.
-- Watchlist real, histórico e progresso por temporada/episódio.
-- Recomendações por tipo com regra anti-repetição.
-- TMDB para capas, ano, gêneros, elenco, filmografia e disponibilidade em streaming no Brasil.
-- Busca por filmes, séries, animes e pessoas.
-- Configurações de conta com nome, e-mail, telefone, senha, idioma e preferência de notificações.
-- Importação JSON/ZIP dentro de Configurações.
-- Exportação/backup em JSON ou ZIP.
-- Interface responsiva Black/Blue para desktop e mobile.
-- Android 0.0.1 leve, baseado em Activity + WebView nativos, usando a mesma aplicação Web e os mesmos dados Supabase.
-
-## Notificações e calendário de lançamentos
-
-A preferência para ativar/desativar notificações já é persistida no perfil e sincronizada entre Web e Android.
-
-O serviço automático que consulta datas de episódios/estreias na TMDB e envia push notifications **ainda não está implementado**. Essa é uma camada posterior: consultar agenda TMDB, cruzar com Watchlist/séries em andamento e disparar notificações de novo episódio, retorno de temporada ou estreia de filme.
+**Web:** https://mycinetracker.vercel.app
 
 ## Arquitetura
 
 ```text
 CineTracker
-├── apps/web                 Web 0.2.5 / referência funcional
-├── apps/android             Android 0.0.1 / shell nativo leve
-├── supabase/functions       Funções Edge compartilhadas
-├── docs                     Arquitetura, segurança e produto
-├── scripts                  Build e validações
-└── .github/workflows        CI Web e build Android
+├── apps/web                         aplicação Web e referência funcional
+├── apps/android                     shell Android nativo (Java + WebView)
+│   └── app/src/main/assets          módulos Android versionados ctXX.js
+├── supabase                         migrations e funções compartilhadas
+├── docs
+│   └── releases                     documentação de cada versão Android
+├── scripts                          build e validações
+├── CHANGELOG.md                     histórico consolidado
+├── VERSIONS.md                      linha de versões por plataforma
+├── PROJECT_STATE.md                 estado técnico atual
+└── .github/workflows                CI/CD Web e Android
 ```
 
-Web e Android usam a mesma conta e o mesmo backend Supabase, portanto Watchlist, histórico, progresso e preferências pertencem ao usuário e não ao dispositivo.
+Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist, histórico, progresso, favoritos e preferências pertencem à conta, não ao dispositivo.
 
-## Tecnologias
+## Principais recursos
 
-**Frontend Web:** HTML5, CSS3 e JavaScript.  
-**Backend:** Supabase Auth, PostgreSQL, RLS e Edge Functions.  
-**Metadados de mídia:** TMDB.  
-**Deploy Web:** Vercel conectado ao GitHub.  
+- Supabase Auth e sessão persistente.
+- Biblioteca e Watchlist por usuário.
+- Histórico real de filmes e episódios.
+- Progresso persistente por série, temporada e episódio.
+- Marcação manual de episódios assistidos com prioridade sobre inferências automáticas.
+- Perfil com estatísticas e Tempo de Tela.
+- Descobrir com TMDB, capas, nomes, elenco, filmografia e calendário.
+- Assistir separado em Em dia, Acompanhando, Juntando poeira e Não iniciadas.
+- Modos Carrossel, Grade e Lista no Android.
+- Importação e exportação de dados.
+
+## Android 0.0.44
+
+A 0.0.44 consolida a experiência móvel de Assistir e Perfil:
+
+- Tempo de Tela usa apenas o gráfico diário interativo em dark mode.
+- Descobrir usa grade compacta com três cards por linha.
+- Assistir abre posicionado em Acompanhando; Em dia fica acima, Juntando poeira e Não iniciadas abaixo.
+- Carrossel é o modo inicial; Grade e Lista são alternativos persistentes.
+- Cards de séries abrem detalhes, temporadas e episódios.
+- Episódios possuem tela própria e podem ser marcados/desmarcados como assistidos.
+- Progresso manual é persistido no Supabase e refletido no histórico.
+
+Detalhes completos: `docs/releases/0.0.44.md`.
+
+## Backend
+
+**Supabase:** Auth, PostgreSQL, RLS e RPCs autenticadas.  
+**Metadados:** TMDB via funções/proxy de backend.  
+**Deploy Web:** Vercel.  
 **Android:** Java, Android WebView e Gradle.  
 **CI/CD:** GitHub Actions.
 
+### RPCs relevantes para episódios
+
+- `cinetracker_episode_state(tmdb_id)` — lê o estado de episódios da série para o usuário autenticado.
+- `cinetracker_set_episode_watched(tmdb_id, season, episode, watched, title)` — persiste marcação manual e sincroniza `episode_progress`/`watch_history`.
+
+## Build Android
+
+A versão Android mantém o mesmo `applicationId` (`com.cinetracker.app`) e chave de assinatura persistente no GitHub Actions, permitindo instalar novas versões como atualização do app existente.
+
+O workflow `.github/workflows/build-android.yml`:
+
+1. injeta os módulos Android versionados;
+2. compila com Gradle;
+3. gera o APK;
+4. publica o artifact;
+5. cria/atualiza a Release correspondente;
+6. marca `Android Build` como `success` somente após a publicação.
+
+## Regra de publicação
+
+Uma versão nova não é considerada concluída somente com o APK. Cada versão deve atualizar também:
+
+- código-fonte;
+- `README.md` quando arquitetura/recursos mudarem;
+- `VERSIONS.md`;
+- documentação em `docs/releases/<versão>.md`;
+- `CHANGELOG.md` quando aplicável;
+- Release do GitHub e APK;
+- status do workflow de build.
+
 ## Segurança
 
-- Token de leitura TMDB fica no backend/Edge Function.
-- Navegador usa somente a chave publicável do Supabase.
-- Tabelas de usuário usam RLS e escopo por `auth.uid()`.
-- Importações não devem sobrescrever silenciosamente decisões manuais.
-
-## Desenvolvimento Web
-
-```bash
-npm run verify
-npm run build
-```
-
-A saída Web fica em `dist/` e `apps/web/dist/` para a configuração atual do Vercel.
-
-## Deploy
-
-A produção Web é publicada automaticamente pelo Vercel a partir da branch `main`. O Android é compilado pelo workflow `.github/workflows/build-android.yml` e gera um APK debug como artifact do GitHub Actions.
+- Navegador e Android usam somente chave publicável do Supabase.
+- Dados privados ficam protegidos por autenticação/RLS.
+- RPCs de progresso usam `auth.uid()` para limitar alterações ao próprio perfil.
+- Decisões manuais do usuário não devem ser apagadas por novas importações.
