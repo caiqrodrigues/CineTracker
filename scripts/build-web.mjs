@@ -14,6 +14,7 @@ const patch029 = resolve(web, 'patch-v029.js');
 const patch030 = resolve(web, 'patch-v030.js');
 const patch034 = resolve(web, 'patch-v034.js');
 const patch035 = resolve(web, 'patch-v035.js');
+const patch036 = resolve(web, 'patch-v036.js');
 const rootDist = resolve(root, 'dist');
 const webDist = resolve(root, 'apps/web/dist');
 
@@ -21,7 +22,7 @@ const raw = await readFile(source, 'utf8');
 const withIcon = raw.includes('rel="icon"') ? raw : raw.replace('</head>', '<link rel="icon" type="image/svg+xml" href="/favicon.svg"></head>');
 // v031/v032/v033 were cumulative hotfixes that duplicated TMDB hydration,
 // MutationObservers and render wrappers. v034 supersedes their runtime duties.
-const built = withIcon.replace('</body>', '<script src="/patch-v024.js"></script><script src="/patch-v025.js"></script><script src="/patch-v025-profile-sync.js"></script><script src="/patch-v027.js"></script><script src="/patch-v028.js"></script><script src="/patch-v029.js"></script><script src="/patch-v030.js"></script><script src="/patch-v034.js"></script><script src="/patch-v035.js"></script></body>');
+const built = withIcon.replace('</body>', '<script src="/patch-v024.js"></script><script src="/patch-v025.js"></script><script src="/patch-v025-profile-sync.js"></script><script src="/patch-v027.js"></script><script src="/patch-v028.js"></script><script src="/patch-v029.js"></script><script src="/patch-v030.js"></script><script src="/patch-v034.js"></script><script src="/patch-v035.js"></script><script src="/patch-v036.js"></script></body>');
 
 for (const dist of [rootDist, webDist]) {
   await rm(dist, { recursive: true, force: true });
@@ -37,5 +38,6 @@ for (const dist of [rootDist, webDist]) {
   await cp(patch030, resolve(dist, 'patch-v030.js'));
   await cp(patch034, resolve(dist, 'patch-v034.js'));
   await cp(patch035, resolve(dist, 'patch-v035.js'));
+  await cp(patch036, resolve(dist, 'patch-v036.js'));
 }
-console.log('CineTracker Web 0.3.7 publicado em dist/ e apps/web/dist/');
+console.log('CineTracker Web 0.3.8 publicado em dist/ e apps/web/dist/');
