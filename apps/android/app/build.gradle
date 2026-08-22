@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 37
-        versionName '0.0.37'
+        versionCode 38
+        versionName '0.0.38'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -17,4 +17,4 @@ android {
     buildFeatures { buildConfig true }
 }
 
-// build-trigger: android-0.0.37
+// build-trigger: android-0.0.38
