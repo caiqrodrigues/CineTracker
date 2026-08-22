@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId 'com.cinetracker.app'
         minSdk 26
-        targetSdk 35
-        versionCode 10
-        versionName '0.0.10'
+        targetSdk 34
+        versionCode 11
+        versionName '0.0.11'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
