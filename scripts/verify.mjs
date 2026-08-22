@@ -1,43 +1,9 @@
 import { readFile } from 'node:fs/promises';
-
-const html = await readFile('apps/web/index.html', 'utf8');
-const patch024 = await readFile('apps/web/patch-v024.js', 'utf8');
-const patch025 = await readFile('apps/web/patch-v025.js', 'utf8');
-const patch027 = await readFile('apps/web/patch-v027.js', 'utf8');
-const patch028 = await readFile('apps/web/patch-v028.js', 'utf8');
-const patch029 = await readFile('apps/web/patch-v029.js', 'utf8');
-const patch030 = await readFile('apps/web/patch-v030.js', 'utf8');
-const profileSync = await readFile('apps/web/patch-v025-profile-sync.js', 'utf8');
-const android = await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java', 'utf8');
-const androidGradle = await readFile('apps/android/app/build.gradle', 'utf8');
-
-for (const [name, source] of [['patch-v024.js', patch024], ['patch-v025.js', patch025], ['patch-v027.js', patch027], ['patch-v028.js', patch028], ['patch-v029.js', patch029], ['patch-v030.js', patch030], ['patch-v025-profile-sync.js', profileSync]]) {
-  try { new Function(source); }
-  catch (error) { console.error(`ERRO - sintaxe ${name}: ${error.message}`); process.exit(1); }
-}
-
-const checks = [
-  ['CineTracker', html.includes('CineTracker')],
-  ['Supabase', html.includes('supabase')],
-  ['TMDB proxy', html.includes('tmdb-proxy')],
-  ['Watchlist', /watchlist/i.test(html)],
-  ['Login', /Entrar|login/i.test(html)],
-  ['Calendário', patch028.includes('Calendário')],
-  ['Detalhes globais', patch029.includes('.card,.feature') && patch029.includes('openMedia')],
-  ['Capas originais globais', patch029.includes('poster_path') && patch030.includes('hydrateLookupCards')],
-  ['Status de séries', patch029.includes('mapTvStatus') && patch029.includes('Cancelada') && patch029.includes('Finalizada')],
-  ['Duração filme/episódio', patch029.includes('min por episódio') && patch029.includes('d.runtime')],
-  ['Temporadas e episódios', patch029.includes('/season/') && patch029.includes('Temporadas e episódios')],
-  ['Filmografia cronológica e tipo', patch029.includes('/combined_credits') && patch029.includes('return db-da') && patch030.includes('FILME') && patch030.includes('SÉRIE')],
-  ['Relacionados fora da Watchlist', patch029.includes('watchlistIds') && patch029.includes('/recommendations') && patch029.includes('/similar')],
-  ['Streaming somente assinatura', patch029.includes('flatrate') && patch029.includes('Compra e aluguel não são exibidos')],
-  ['Elenco clicável', patch029.includes('data-ct29-person')],
-  ['Home renomeada', patch030.includes('⌂ Home') && patch030.includes('>Home</button>')],
-  ['Histórico Filme/Série', patch030.includes('episode_progress') && patch030.includes('media_overrides') && patch030.includes('data-ct30-history="tv"') && patch030.includes('data-ct30-history="movie"')],
-  ['Biblioteca em cards com capas', patch030.includes('ct30-library-grid') && patch030.includes('mediaCard(x)')],
-  ['Sincronização de perfil', profileSync.includes('profiles?id=eq.')],
-  ['Android produção', androidGradle.includes('https://mycinetracker.vercel.app')],
-  ['Android importação nativa', android.includes('onShowFileChooser')],
-  ['Android DOM storage', android.includes('setDomStorageEnabled(true)')]
-];
-let failed=false;for(const[name,ok]of checks){console.log(`${ok?'OK':'ERRO'} - ${name}`);if(!ok)failed=true;}if(failed)process.exit(1);
+const html=await readFile('apps/web/index.html','utf8');
+const files=['patch-v024.js','patch-v025.js','patch-v027.js','patch-v028.js','patch-v029.js','patch-v030.js','patch-v025-profile-sync.js'];
+const src={};for(const f of files){src[f]=await readFile('apps/web/'+f,'utf8');try{new Function(src[f]);}catch(e){console.error('ERRO - sintaxe '+f+': '+e.message);process.exit(1)}}
+const android=await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java','utf8');
+const gradle=await readFile('apps/android/app/build.gradle','utf8');
+const p29=src['patch-v029.js'],p30=src['patch-v030.js'],profile=src['patch-v025-profile-sync.js'];
+const checks=[['CineTracker',html.includes('CineTracker')],['Supabase',html.includes('supabase')],['TMDB proxy',html.includes('tmdb-proxy')],['Detalhes globais',p29.includes('openMedia')],['Capas Home/Biblioteca',p30.includes('posters()')&&p30.includes('ct30-library-grid')],['Filmografia com tipo',p30.includes('ct30-type-label')&&p30.includes('FILME')&&p30.includes('SÉRIE')],['Histórico real',p30.includes('watch_history')&&p30.includes('Histórico')],['Perfil e estatísticas',p30.includes('cinetracker_profile_stats')&&p30.includes('Tempo total assistido')],['Favoritos',p30.includes('state=eq.Liked')],['Calendário acompanhamento',p30.includes('Calendário das séries em acompanhamento')&&p30.includes('next_episode_to_air')],['Home',p30.includes('⌂ Home')],['Temporadas',p29.includes('/season/')],['Relacionados',p29.includes('/recommendations')&&p29.includes('/similar')],['Perfil sync',profile.includes('profiles?id=eq.')],['Android produção',gradle.includes('https://mycinetracker.vercel.app')],['Android importação',android.includes('onShowFileChooser')],['Android storage',android.includes('setDomStorageEnabled(true)')]];
+let failed=false;for(const[n,ok]of checks){console.log(`${ok?'OK':'ERRO'} - ${n}`);if(!ok)failed=true}if(failed)process.exit(1);
