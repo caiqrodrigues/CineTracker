@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'apps/android/**'
+      - 'apps/web/**'
+      - 'scripts/build-web.mjs'
       - '.github/workflows/build-android.yml'
 
 permissions:
@@ -21,7 +23,16 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.27"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.28"}'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build embedded Web UI
+        run: |
+          node scripts/build-web.mjs
+          rm -rf apps/android/app/src/main/assets
+          mkdir -p apps/android/app/src/main/assets
+          cp -R dist/. apps/android/app/src/main/assets/
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -48,26 +59,26 @@ jobs:
         working-directory: apps/android
         run: gradle assembleDebug
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.27-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.28-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.27-debug
-          path: cinetracker-android-0.0.27-debug.apk
+          name: cinetracker-android-0.0.28-debug
+          path: cinetracker-android-0.0.28-debug.apk
       - name: Publish test APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.27 >/dev/null 2>&1 || gh release create android-v0.0.27 --title "CineTracker Android 0.0.27" --notes "Perfil com estatísticas centralizadas; Configurações abre direto e exibe a build 0.0.27; capas passam a usar CDN direta do TMDB com cache e concorrência limitada para reduzir atraso."
-          gh release upload android-v0.0.27 cinetracker-android-0.0.27-debug.apk --clobber
+          gh release view android-v0.0.28 >/dev/null 2>&1 || gh release create android-v0.0.28 --title "CineTracker Android 0.0.28" --notes "Web UI empacotada dentro do APK, sem depender da Vercel para correções; capas corrigidas com hidratação ativa e CDN direta do TMDB; Perfil centralizado; Configurações direta; build 0.0.28 exibida na tela."
+          gh release upload android-v0.0.28 cinetracker-android-0.0.28-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.27 APK built and published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.28 APK built and published"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.27 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.28 build failed"}'
