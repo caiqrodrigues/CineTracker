@@ -4,8 +4,8 @@ As versões do CineTracker são independentes por plataforma.
 
 | Plataforma | Versão oficial atual |
 |---|---:|
-| Web | **0.3.0** |
-| Android | **0.0.6** |
+| Web | **0.3.1** |
+| Android | **0.0.7** |
 | Windows | **—** |
 
 ## Regra
@@ -28,7 +28,8 @@ As versões do CineTracker são independentes por plataforma.
 - **0.2.7** — Calendário pessoal, filtro Somente meus e Mais bem avaliados.
 - **0.2.8** — detalhes clicáveis em Descobrir, elenco/filmografia, streaming/cinema e capas verticais.
 - **0.2.9** — experiência de detalhes aplicada ao sistema inteiro, temporadas/episódios, status, duração, relacionados filtrados e filmografia cronológica.
-- **0.3.0** — Home renomeada, Biblioteca convertida para cards com capas oficiais, Histórico por data com filtros Mídia/Séries/Filmes e tipo explícito na filmografia.
+- **0.3.0** — Home renomeada, Biblioteca em cards com capas oficiais e Histórico por data.
+- **0.3.1** — Perfil completo com estatísticas, favoritos e histórico; calendário exclusivo das séries em acompanhamento; histórico Trakt consolidado com datas reais; filmografia com identificação Filme/Série.
 
 ## Linha Android
 
@@ -37,6 +38,7 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.3** — calendário pessoal e Mais bem avaliados.
 - **0.0.4** — detalhes, elenco/filmografia e capas originais.
 - **0.0.5** — experiência global de mídia 0.2.9.
-- **0.0.6** — sincroniza Home/Biblioteca/Histórico da Web 0.3.0 mantendo o shell leve.
+- **0.0.6** — sincroniza Home/Biblioteca/Histórico da Web 0.3.0.
+- **0.0.7** — sincroniza Perfil, estatísticas, favoritos e calendário de acompanhamento da Web 0.3.1.
 
 O histórico consolidado fica em `CHANGELOG.md`.
