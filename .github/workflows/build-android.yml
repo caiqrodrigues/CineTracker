@@ -21,26 +21,26 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.40"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.41"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Wire Android 0.0.40 runtime
+      - name: Wire Android 0.0.41 runtime
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java')
           s=p.read_text()
-          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.40')
-          s=s.replace('apk=27','apk=40')
-          s=s.replace('ctAndroid27','ctAndroid40').replace('ct27','ct40').replace('ct-android27','ct-android40')
-          s=s.replace('build 0.0.27','build 0.0.40')
-          calls='applyAndroidRuntime();\n                applyCt33();\n                applyCt34();\n                applyCt35();\n                applyCt36();\n                applyCt37();\n                applyCt38();\n                applyCt39();\n                applyCt40();\n                CookieManager.getInstance().flush();'
+          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.41')
+          s=s.replace('apk=27','apk=41')
+          s=s.replace('ctAndroid27','ctAndroid41').replace('ct27','ct41').replace('ct-android27','ct-android41')
+          s=s.replace('build 0.0.27','build 0.0.41')
+          calls='applyAndroidRuntime();\n                applyCt33();\n                applyCt34();\n                applyCt35();\n                applyCt36();\n                applyCt37();\n                applyCt38();\n                applyCt39();\n                applyCt40();\n                applyCt41();\n                CookieManager.getInstance().flush();'
           s=s.replace('applyAndroidRuntime();\n                CookieManager.getInstance().flush();',calls)
-          s=s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);','webView.postDelayed(() -> { applyAndroidRuntime(); applyCt33(); applyCt34(); applyCt35(); applyCt36(); applyCt37(); applyCt38(); applyCt39(); applyCt40(); }, 150);')
+          s=s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);','webView.postDelayed(() -> { applyAndroidRuntime(); applyCt33(); applyCt34(); applyCt35(); applyCt36(); applyCt37(); applyCt38(); applyCt39(); applyCt40(); applyCt41(); }, 150);')
           marker='    @Override protected void onSaveInstanceState(Bundle outState)'
-          for n in (33,34,35,36,37,38,39,40):
+          for n in (33,34,35,36,37,38,39,40,41):
               sig=f'private void applyCt{n}()'
               if sig not in s:
                   method=f'''    private void applyCt{n}() {{\n        try (java.io.InputStream in = getAssets().open("ct{n}.js")) {{\n            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();\n            byte[] buf = new byte[8192];\n            int read;\n            while ((read = in.read(buf)) != -1) out.write(buf, 0, read);\n            webView.evaluateJavascript(new String(out.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), null);\n        }} catch (Exception ignored) {{ }}\n    }}\n\n'''
@@ -64,26 +64,26 @@ jobs:
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.40-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.41-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.40-debug
-          path: cinetracker-android-0.0.40-debug.apk
+          name: cinetracker-android-0.0.41-debug
+          path: cinetracker-android-0.0.41-debug.apk
       - name: Publish APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.40 >/dev/null 2>&1 || gh release create android-v0.0.40 --title "CineTracker Android 0.0.40" --notes "Assistir separado em Acompanhando, Em dia, Não iniciadas e Juntando poeira; cards abrem detalhes e episódios; gráfico mostra os últimos 7 dias reais; ajustes de navegação."
-          gh release upload android-v0.0.40 cinetracker-android-0.0.40-debug.apk --clobber
+          gh release view android-v0.0.41 >/dev/null 2>&1 || gh release create android-v0.0.41 --title "CineTracker Android 0.0.41" --notes "Tempo de Tela simplificado para um gráfico diário interativo: hoje centralizado, 3 dias para cada lado, navegação por até 15 dias anteriores e detalhes do que foi assistido ao tocar em uma data."
+          gh release upload android-v0.0.41 cinetracker-android-0.0.41-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.40 APK built and published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.41 APK built and published"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.40 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.41 build failed"}'
