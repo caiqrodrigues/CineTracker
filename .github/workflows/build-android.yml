@@ -21,33 +21,32 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.30"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.31"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Patch stable Android base for 0.0.30
+      - name: Wire persistent Android 0.0.31 runtime
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java')
           s=p.read_text()
-          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.30')
-          s=s.replace('apk=27','apk=30')
-          s=s.replace('ctAndroid27','ctAndroid30').replace('ct27','ct30').replace('ct-android27','ct-android30')
-          s=s.replace('build 0.0.27','build 0.0.30')
-          # Configurações abre diretamente a view correta; account/Stats não participa mais.
-          old="try{view='account';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid30)window.ctAndroid30();},0);return true;}catch(e){}"
-          new="try{view='settings';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid30)window.ctAndroid30();},0);return true;}catch(e){}"
-          s=s.replace(old,new)
-          s=s.replace("document.querySelector('[data-view=account],[data-view=settings]')","document.querySelector('[data-view=settings]')")
-          # Perfil inspirado na referência: Tempo de Tela + Histórico expansíveis antes dos favoritos.
-          inject="""function ct30RefProfile(){try{if(typeof view==='undefined'||view!=='profile'||document.getElementById('ct30-refblocks'))return;var fav=[].slice.call(document.querySelectorAll('section,.ct29-section')).find(function(x){var h=x.querySelector('h2');return h&&/séries favoritas/i.test(h.textContent||'');});if(!fav)return;var vals={};document.querySelectorAll('.ct41-stat,.ct30-stat').forEach(function(x){var k=(x.querySelector('span')?.textContent||'').toLowerCase(),v=x.querySelector('strong')?.textContent||'—';vals[k]=v;});function val(k){var n=Object.keys(vals).find(function(x){return x.indexOf(k)>=0;});return n?vals[n]:'—';}var r=document.createElement('div');r.id='ct30-refblocks';r.innerHTML=`<section style='margin:22px 0;border-top:1px solid #202933;padding-top:15px'><div style='display:flex;justify-content:space-between;align-items:center'><button id='ct30-screen-full' style='border:0;background:none;color:#fff;font-size:20px;font-weight:800;padding:4px'>Tempo de Tela ›</button><button data-ct30-toggle='screen' style='border:0;background:none;color:#fff;font-size:22px'>⌃</button></div><div id='ct30-screen' style='display:grid;grid-auto-flow:column;grid-auto-columns:150px;gap:8px;overflow-x:auto;margin-top:10px;padding-bottom:7px'><div class='ct30-mini'><span>Tempo total</span><strong>${val('tempo total')}</strong></div><div class='ct30-mini'><span>Tempo em séries</span><strong>${val('tempo em séries')}</strong></div><div class='ct30-mini'><span>Tempo em filmes</span><strong>${val('tempo em filmes')}</strong></div><div class='ct30-mini'><span>Episódios vistos</span><strong>${val('episódios')}</strong></div><div class='ct30-mini'><span>Filmes vistos</span><strong>${val('filmes')}</strong></div></div></section><section style='margin:22px 0;border-top:1px solid #202933;padding-top:15px'><div style='display:flex;justify-content:space-between;align-items:center'><button id='ct30-hist-full' style='border:0;background:none;color:#fff;font-size:20px;font-weight:800;padding:4px'>Histórico ›</button><button data-ct30-toggle='hist' style='border:0;background:none;color:#fff;font-size:22px'>⌃</button></div><div id='ct30-hist' style='display:grid;grid-auto-flow:column;grid-auto-columns:150px;gap:8px;overflow-x:auto;margin-top:10px;padding-bottom:7px'><div class='ct30-mini'><span>Toque em Histórico para abrir a tela completa</span></div></div></section>`;fav.before(r);document.querySelectorAll('.ct30-mini').forEach(function(x){x.style.cssText='min-height:112px;border:1px solid #172b3d;background:#0b0d10;border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:space-between';var st=x.querySelector('strong');if(st){st.style.fontSize='18px';st.style.whiteSpace='nowrap';}var sp=x.querySelector('span');if(sp)sp.style.color='#8f98a3';});r.querySelectorAll('[data-ct30-toggle]').forEach(function(b){b.onclick=function(){var id=b.dataset.ct30Toggle==='screen'?'ct30-screen':'ct30-hist',el=document.getElementById(id),hide=el.style.display==='none';el.style.display=hide?'grid':'none';b.textContent=hide?'⌃':'⌄';};});document.getElementById('ct30-hist-full').onclick=function(){view='history';render();};document.getElementById('ct30-screen-full').onclick=function(){var c=document.querySelector('.content')||document.getElementById('app');c.innerHTML=`<button id='ct30-back-profile' class='btn-secondary'>← Perfil</button><h1>Tempo de Tela</h1><div style='display:grid;grid-template-columns:1fr 1fr;gap:9px'><div class='ct30-mini'><span>Tempo total</span><strong>${val('tempo total')}</strong></div><div class='ct30-mini'><span>Tempo em séries</span><strong>${val('tempo em séries')}</strong></div><div class='ct30-mini'><span>Tempo em filmes</span><strong>${val('tempo em filmes')}</strong></div><div class='ct30-mini'><span>Episódios vistos</span><strong>${val('episódios')}</strong></div><div class='ct30-mini'><span>Filmes vistos</span><strong>${val('filmes')}</strong></div></div>`;document.querySelectorAll('.ct30-mini').forEach(function(x){x.style.cssText='min-height:120px;border:1px solid #172b3d;background:#0b0d10;border-radius:14px;padding:12px;display:flex;flex-direction:column;justify-content:space-between';});document.getElementById('ct30-back-profile').onclick=function(){view='profile';render();};};}catch(e){}}function ct30GlobalPosters(){try{if(typeof currentUser==='undefined'||!currentUser)return;document.querySelectorAll('.card,.feature,.ct38-card,.ct30-fav,.ct30-history-card').forEach(function(card){if(card.dataset.ct30img)return;var p=card.querySelector('.poster,.tmdb-poster,.ct38-poster,.ct30-fav-poster,.ct30-history-poster');if(!p)return;var rc=card.getBoundingClientRect();if(rc.bottom<-400||rc.top>innerHeight+700)return;var h=card.querySelector('h3,h2,.ct38-title,.ct30-fav-body strong,.ct30-history-body strong'),title=(h?.textContent||'').trim(),mid=card.dataset.mediaId||'',item=null;try{item=typeof mediaRegistry!=='undefined'?mediaRegistry.get(mid):null;}catch(e){}var id=Number(item?.tmdbId||card.dataset.tmdbId||card.dataset.ct29Id||card.dataset.ct30Id||0),type=String(item?.apiType||card.dataset.apiType||card.dataset.ct29Type||'').toLowerCase();var m=mid.match(/^tmdb-(movie|tv)-(\\d+)$/);if(!id&&m){type=m[1];id=Number(m[2]);}type=(type.indexOf('movie')>=0||type.indexOf('filme')>=0)?'movie':'tv';if(item?.posterUrl){p.style.backgroundImage='url('+item.posterUrl+')';p.style.backgroundSize='cover';card.dataset.ct30img='1';return;}card.dataset.ct30img='1';(async function(){try{var path=id?'/'+type+'/'+id:'/search/multi',u=new URL('https://pjmkxryboypluleuuupp.supabase.co/functions/v1/tmdb-proxy');u.searchParams.set('path',path);u.searchParams.set('language','pt-BR');if(!id){if(!title)return;u.searchParams.set('query',title);u.searchParams.set('include_adult','false');}var r=await fetch(u,{headers:typeof authHeaders==='function'?authHeaders():{}});if(!r.ok)throw 0;var d=await r.json();if(!id)d=(d.results||[]).find(function(x){return x.media_type==='movie'||x.media_type==='tv';})||{};var name=d.title||d.name;if(name&&h)h.textContent=name;if(d.poster_path){p.style.backgroundImage='url(https://image.tmdb.org/t/p/w342'+d.poster_path+')';p.style.backgroundSize='cover';p.style.backgroundPosition='center 18%';}}catch(e){card.dataset.ct30img='';}})();});}catch(e){}}"""
-          target='window.ctAndroid30=function(){'
-          if target not in s:
-              raise SystemExit('runtime target not found')
-          s=s.replace(target,inject+target,1)
-          s=s.replace('window.ctAndroid30=function(){fixWatchlistPicker();','window.ctAndroid30=function(){ct30RefProfile();ct30GlobalPosters();fixWatchlistPicker();',1)
+          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.31')
+          s=s.replace('apk=27','apk=31')
+          s=s.replace('ctAndroid27','ctAndroid31').replace('ct27','ct31').replace('ct-android27','ct-android31')
+          s=s.replace('build 0.0.27','build 0.0.31')
+          s=s.replace('applyAndroidRuntime();\n                CookieManager.getInstance().flush();','applyAndroidRuntime();\n                applyCt31();\n                CookieManager.getInstance().flush();')
+          s=s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);','webView.postDelayed(() -> { applyAndroidRuntime(); applyCt31(); }, 150);')
+          pattern=r'    private void openSettings\(\) \{.*?\n    \}\n\n    private void navigateView'
+          repl='''    private void openSettings() {\n        String js = "(function(){if(window.ct31OpenSettings){return window.ct31OpenSettings();}var b=[].slice.call(document.querySelectorAll(\\\'button,a\\\')).find(function(x){return /^(configurações|configuracoes|config\\.)$/i.test((x.textContent||\\\'\\\').trim())});if(b){b.click();setTimeout(function(){b.click();},90);return true;}return false;})();";\n        webView.evaluateJavascript(js, null);\n    }\n\n    private void navigateView'''
+          s,n=re.subn(pattern,repl,s,flags=re.S)
+          if n!=1: raise SystemExit('openSettings method not replaced')
+          marker='    @Override protected void onSaveInstanceState(Bundle outState)'
+          method='''    private void applyCt31() {\n        try (java.io.InputStream in = getAssets().open("ct31.js")) {\n            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();\n            byte[] buf = new byte[8192];\n            int n;\n            while ((n = in.read(buf)) > 0) out.write(buf, 0, n);\n            webView.evaluateJavascript(out.toString("UTF-8"), null);\n        } catch (Exception ignored) {}\n    }\n\n'''
+          if marker not in s: raise SystemExit('save-state marker not found')
+          s=s.replace(marker,method+marker,1)
           p.write_text(s)
           PY
       - name: Restore persistent Android signing key
@@ -72,26 +71,26 @@ jobs:
         working-directory: apps/android
         run: gradle assembleDebug
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.30-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.31-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.30-debug
-          path: cinetracker-android-0.0.30-debug.apk
+          name: cinetracker-android-0.0.31-debug
+          path: cinetracker-android-0.0.31-debug.apk
       - name: Publish test APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.30 >/dev/null 2>&1 || gh release create android-v0.0.30 --title "CineTracker Android 0.0.30" --notes "Configurações direta sem Stats; Perfil com Tempo de Tela e Histórico expansíveis e tela completa; hidratação global de capas/títulos com fallback por título; base Android estável preservada."
-          gh release upload android-v0.0.30 cinetracker-android-0.0.30-debug.apk --clobber
+          gh release view android-v0.0.31 >/dev/null 2>&1 || gh release create android-v0.0.31 --title "CineTracker Android 0.0.31" --notes "Correções Android persistentes: Configurações sem Stats intermediário; Perfil com Tempo de Tela e Histórico expansíveis; cache de consultas entre abas; hidratação global de nomes e capas com TMDB ID e fallback por título."
+          gh release upload android-v0.0.31 cinetracker-android-0.0.31-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.30 APK built and published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.31 APK built and published"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.30 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.31 build failed"}'
