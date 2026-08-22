@@ -32,5 +32,4 @@ for (const dist of [rootDist, webDist]) {
   await cp(patch029, resolve(dist, 'patch-v029.js'));
   await cp(patch030, resolve(dist, 'patch-v030.js'));
 }
-
-console.log('CineTracker Web 0.3.0 publicado em dist/ e apps/web/dist/');
+console.log('CineTracker Web 0.3.1 publicado em dist/ e apps/web/dist/');
