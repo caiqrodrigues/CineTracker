@@ -21,34 +21,28 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.35"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.36"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Wire Android 0.0.35 runtime
+      - name: Wire Android 0.0.36 runtime
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p=Path('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java')
           s=p.read_text()
-          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.35')
-          s=s.replace('apk=27','apk=35')
-          s=s.replace('ctAndroid27','ctAndroid35').replace('ct27','ct35').replace('ct-android27','ct-android35')
-          s=s.replace('build 0.0.27','build 0.0.35')
-          s=s.replace("try{view='account';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid35)window.ctAndroid35();},0);return true;}catch(e){}", "if(window.ct34OpenSettings){return window.ct34OpenSettings();}")
+          s=s.replace('CineTrackerAndroid/0.0.27','CineTrackerAndroid/0.0.36')
+          s=s.replace('apk=27','apk=36')
+          s=s.replace('ctAndroid27','ctAndroid36').replace('ct27','ct36').replace('ct-android27','ct-android36')
+          s=s.replace('build 0.0.27','build 0.0.36')
+          s=s.replace("try{view='account';render();window.scrollTo(0,0);setTimeout(function(){if(window.ctAndroid36)window.ctAndroid36();},0);return true;}catch(e){}", "if(window.ct34OpenSettings){return window.ct34OpenSettings();}")
           s=s.replace("document.querySelector('[data-view=account],[data-view=settings]')", "document.querySelector('[data-view=settings]')")
-          def add_call(name):
-              nonlocal_s=None
-          if 'applyCt33();' not in s:
-              s=s.replace('applyAndroidRuntime();\n                CookieManager.getInstance().flush();','applyAndroidRuntime();\n                applyCt33();\n                applyCt34();\n                applyCt35();\n                CookieManager.getInstance().flush();')
-              s=s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);','webView.postDelayed(() -> { applyAndroidRuntime(); applyCt33(); applyCt34(); applyCt35(); }, 150);')
-          else:
-              if 'applyCt35();' not in s:
-                  s=s.replace('applyCt34();\n                CookieManager.getInstance().flush();','applyCt34();\n                applyCt35();\n                CookieManager.getInstance().flush();')
-                  s=s.replace('applyCt34(); }, 150);','applyCt34(); applyCt35(); }, 150);')
+          calls='applyAndroidRuntime();\n                applyCt33();\n                applyCt34();\n                applyCt35();\n                applyCt36();\n                CookieManager.getInstance().flush();'
+          s=s.replace('applyAndroidRuntime();\n                CookieManager.getInstance().flush();',calls)
+          s=s.replace('webView.postDelayed(this::applyAndroidRuntime, 150);','webView.postDelayed(() -> { applyAndroidRuntime(); applyCt33(); applyCt34(); applyCt35(); applyCt36(); }, 150);')
           marker='    @Override protected void onSaveInstanceState(Bundle outState)'
-          for n in (33,34,35):
+          for n in (33,34,35,36):
               sig=f'private void applyCt{n}()'
               if sig not in s:
                   method=f'''    private void applyCt{n}() {{\n        try (java.io.InputStream in = getAssets().open("ct{n}.js")) {{\n            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();\n            byte[] buf = new byte[8192];\n            int read;\n            while ((read = in.read(buf)) != -1) out.write(buf, 0, read);\n            webView.evaluateJavascript(new String(out.toByteArray(), java.nio.charset.StandardCharsets.UTF_8), null);\n        }} catch (Exception ignored) {{ }}\n    }}\n\n'''
@@ -72,26 +66,26 @@ jobs:
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.35-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.36-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.35-debug
-          path: cinetracker-android-0.0.35-debug.apk
+          name: cinetracker-android-0.0.36-debug
+          path: cinetracker-android-0.0.36-debug.apk
       - name: Publish APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.35 >/dev/null 2>&1 || gh release create android-v0.0.35 --title "CineTracker Android 0.0.35" --notes "Correção global de nomes e capas: resolução por TMDB ID em todas as telas, cache local e enriquecimento do catálogo em segundo plano."
-          gh release upload android-v0.0.35 cinetracker-android-0.0.35-debug.apk --clobber
+          gh release view android-v0.0.36 >/dev/null 2>&1 || gh release create android-v0.0.36 --title "CineTracker Android 0.0.36" --notes "Corrige resolvedor de nomes/capas no Android, cache de dados entre abas e Tempo de Tela em carrossel com atividade por horário e episódios por dia da semana."
+          gh release upload android-v0.0.36 cinetracker-android-0.0.36-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.35 APK built and published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.36 APK built and published"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.35 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.36 build failed"}'
