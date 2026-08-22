@@ -3,8 +3,8 @@
     <application
         android:theme="@style/Theme.CineTracker"
         android:label="CineTracker"
-        android:icon="@drawable/ic_launcher"
-        android:roundIcon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="false">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
