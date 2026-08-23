@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma, com paridade funci
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.9 publicada / 0.5.0 em código** |
-| Android | **0.0.53 em publicação** |
+| Android | **0.0.53 publicada** |
 | Windows | — |
 
 ## Regras
@@ -13,13 +13,13 @@ As versões do CineTracker são independentes por plataforma, com paridade funci
 - Uma versão Android só é concluída quando código, documentação, workflow, Release e APK estão publicados.
 - Compilado não significa validado; Android exige teste real em aparelho.
 - `applicationId` permanece `com.cinetracker.app` e `versionCode` sempre cresce.
-- Assinatura estável atual usa o keystore v6 criado na 0.0.52 e o baseline registrado em `ci-status/android-signing-baseline.sha256`.
+- A 0.0.53 estabelece a nova assinatura estável `v7`; o baseline efetivo fica em `ci-status/android-signing-baseline.sha256`.
 
 ## Android
 
 - **0.0.49** — última base confirmada pelo usuário como funcional.
 - **0.0.50–0.0.52** — não usar como base funcional; introduziram regressões em runtime/navegação.
-- **0.0.53** — restaura a arquitetura da 0.0.49 (`ct41 + ct47 + ct48 + ct49`) e acrescenta somente `ct53.js` para: marcação inteligente de episódios anteriores, Home rolável/clicável, Voltar interno, Descobrir em três colunas, ordenação de Acompanhando por atividade recente, atualização imediata após progresso e disponibilidade de streaming/cinema.
+- **0.0.53** — publicada; restaura a arquitetura da 0.0.49 (`ct41 + ct47 + ct48 + ct49`) e acrescenta somente `ct53.js` para marcação inteligente, Home rolável/clicável, Voltar interno, Descobrir em três colunas, ordenação por atividade recente, atualização imediata e disponibilidade de streaming/cinema.
 
 ## Web
 
