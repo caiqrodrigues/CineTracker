@@ -30,69 +30,55 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.49"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.50"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Restore CineTracker 0.0.49 signing key
+      - name: Restore stable CineTracker signing key
         uses: actions/cache@v4
         with:
           path: ~/.cinetracker49/cinetracker.keystore
           key: cinetracker-signing-v3-0.0.49
-
-      - name: Initialize CineTracker 0.0.49 signing key
+      - name: Require stable signing key
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p ~/.cinetracker49 ~/.android
-          if [ ! -f ~/.cinetracker49/cinetracker.keystore ]; then
-            keytool -genkeypair -v \
-              -keystore ~/.cinetracker49/cinetracker.keystore \
-              -storepass android \
-              -alias androiddebugkey \
-              -keypass android \
-              -keyalg RSA -keysize 2048 -validity 10000 \
-              -dname "CN=CineTracker Android,O=CineTracker,C=BR"
-          fi
+          mkdir -p ~/.android
+          test -f ~/.cinetracker49/cinetracker.keystore
           cp ~/.cinetracker49/cinetracker.keystore ~/.android/debug.keystore
           keytool -list -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey | grep -E 'SHA256|Owner' || true
-
       - uses: gradle/actions/setup-gradle@v4
-
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
         run: |
           set -o pipefail
           gradle assembleDebug --stacktrace 2>&1 | tee /tmp/android-build.log
-
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.49-debug.apk
-
-      - name: Verify package and capture new signing baseline
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.50-debug.apk
+      - name: Verify package and stable signer
         shell: bash
         run: |
           set -euo pipefail
           exec > >(tee /tmp/signing-check.log) 2>&1
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          INFO="$($APKSIGNER verify --print-certs cinetracker-android-0.0.49-debug.apk 2>&1)"
+          INFO="$($APKSIGNER verify --print-certs cinetracker-android-0.0.50-debug.apk 2>&1)"
           printf '%s\n' "$INFO"
           CERT="$(printf '%s\n' "$INFO" | grep -i 'certificate SHA-256 digest' | head -1 | sed 's/.*digest:[[:space:]]*//')"
-          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.49-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.50-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          EXPECTED="$(tr -d '[:space:]' < ci-status/android-signing-baseline.sha256)"
+          echo "Stored baseline: $EXPECTED"
+          echo "Built signer:    $CERT"
+          echo "Built package:   $PACKAGE"
           test -n "$CERT"
           test "$PACKAGE" = "com.cinetracker.app"
-          echo "$CERT" > /tmp/android-signing-baseline.sha256
-          echo "New stable signer: $CERT"
-          echo "Built package: $PACKAGE"
-
+          test "$CERT" = "$EXPECTED"
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.49-debug
-          path: cinetracker-android-0.0.49-debug.apk
-
+          name: cinetracker-android-0.0.50-debug
+          path: cinetracker-android-0.0.50-debug.apk
       - name: Publish APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -100,53 +86,37 @@ jobs:
         run: |
           set -euo pipefail
           exec > >(tee /tmp/release-publish.log) 2>&1
-          gh release view android-v0.0.49 >/dev/null 2>&1 || gh release create android-v0.0.49 --title "CineTracker Android 0.0.49" --notes-file docs/releases/0.0.49.md
-          gh release upload android-v0.0.49 cinetracker-android-0.0.49-debug.apk --clobber
-          gh release view android-v0.0.49 --json url,tagName,name
-
-      - name: Persist 0.0.49 signing baseline
-        if: success()
-        shell: bash
-        run: |
-          mkdir -p ci-status
-          cp /tmp/android-signing-baseline.sha256 ci-status/android-signing-baseline.sha256
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ci-status/android-signing-baseline.sha256
-          git commit -m "ci: set Android 0.0.49 signing baseline" || exit 0
-          git pull --rebase origin main
-          git push origin HEAD:main
-
+          gh release view android-v0.0.50 >/dev/null 2>&1 || gh release create android-v0.0.50 --title "CineTracker Android 0.0.50" --notes-file docs/releases/0.0.50.md
+          gh release upload android-v0.0.50 cinetracker-android-0.0.50-debug.apk --clobber
+          gh release view android-v0.0.50 --json url,tagName,name
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.49 published as new stable signing baseline"}'
-
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.50 published with stable 0.0.49 signer"}'
       - name: Save failure diagnostic
         if: failure()
         run: |
           mkdir -p ci-status
           {
-            echo "# Android 0.0.49 - last build failure"
+            echo "# Android 0.0.50 - last build failure"
             echo
             echo '```text'
             if [ -f /tmp/android-build.log ]; then tail -n 120 /tmp/android-build.log; else echo "Build failed before Gradle produced a log."; fi
             if [ -f /tmp/signing-check.log ]; then echo; echo '--- signing check ---'; cat /tmp/signing-check.log; fi
             if [ -f /tmp/release-publish.log ]; then echo; echo '--- release publish ---'; cat /tmp/release-publish.log; fi
             echo '```'
-          } > ci-status/android-0.0.49-last-failure.md
+          } > ci-status/android-0.0.50-last-failure.md
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ci-status/android-0.0.49-last-failure.md
-          git commit -m "ci: record Android 0.0.49 build failure" || true
+          git add ci-status/android-0.0.50-last-failure.md
+          git commit -m "ci: record Android 0.0.50 build failure" || true
           git pull --rebase origin main || true
           git push origin HEAD:main || true
-
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.49 build/signing/release failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.50 build/signing/release failed"}'
