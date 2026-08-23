@@ -7,7 +7,7 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 | Plataforma | Versão | Status |
 |---|---:|---|
 | Web | **0.4.8** | Código publicado / deploy Vercel |
-| Android | **0.0.60** | Código + pipeline de Release GitHub |
+| Android | **0.0.61** | Código + pipeline de Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
@@ -32,16 +32,15 @@ CineTracker
 
 Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist, histórico, progresso, favoritos e decisões manuais pertencem à conta, não ao dispositivo.
 
-## Android 0.0.60
+## Android 0.0.61
 
-A 0.0.60 carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js` e `ct50.js`.
+A 0.0.61 carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js` e `ct51.js`.
 
-- Descobrir oculta itens já vistos, concluídos, em progresso, acompanhados ou presentes em listas/estados persistentes da conta em todos os filtros e rerenders.
-- Detalhes de filme/série seguem um padrão visual único: poster, título/metadados, nota TMDB, ações, sinopse, disponibilidade e temporadas/episódios.
-- `Onde assistir` aparece uma única vez e usa cards horizontais de provedores informados pela TMDB no Brasil, incluindo streaming/aluguel/compra quando disponíveis.
-- Episódios recebem nota TMDB quando disponível e ação textual `Assistido`.
-- Cards Android recebem nota TMDB quando disponível.
-- Configurações exibe a build `0.0.60`.
+- Descobrir passa a bloquear conteúdo conhecido por duas chaves: identificador TMDB e título normalizado. Isso cobre Destaque e os demais filtros/rerenders, mesmo quando o card não expõe `data-media-id` diretamente.
+- São excluídos títulos vistos, concluídos, em progresso, acompanhados, Watchlist, Watch Later ou qualquer outro estado persistente da conta.
+- `Onde assistir` mantém apenas um card por serviço. Variantes do mesmo provedor, como múltiplos canais/planos do Paramount+, são consolidadas em uma única entrada.
+- O padrão visual de detalhes, notas, ações e episódios da 0.0.60 é preservado.
+- Configurações exibe a build `0.0.61`.
 
 A validação visual/funcional final depende de instalação e teste real no aparelho.
 
@@ -53,22 +52,6 @@ A validação visual/funcional final depende de instalação e teste real no apa
 **Android:** Java, Android WebView, WorkManager e Gradle.  
 **CI/CD:** GitHub Actions.
 
-### RPCs relevantes
-
-- `cinetracker_continue_items_v2`
-- `cinetracker_episode_state`
-- `cinetracker_set_episode_watched`
-- `cinetracker_watch_daily_timeline`
-- `cinetracker_watch_day_details`
-- `cinetracker_due_notifications`
-
 ## Regra de publicação
 
 Uma versão nova não é considerada concluída somente com binário/deploy. Código-fonte, documentação, versionamento e pipeline correspondente devem permanecer sincronizados. Android também exige Release + APK.
-
-## Segurança
-
-- Navegador e Android usam somente chave publicável do Supabase.
-- Dados privados ficam protegidos por autenticação/RLS.
-- RPCs usam `auth.uid()` para limitar dados ao próprio perfil.
-- Decisões manuais do usuário não devem ser apagadas por novas importações.
