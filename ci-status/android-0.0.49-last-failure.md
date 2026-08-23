@@ -35,36 +35,36 @@ to this project's gradle.properties.
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:mergeDebugShaders
+> Task :app:processDebugManifestForPackage
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
-> Task :app:processDebugJavaRes NO-SOURCE
 > Task :app:compressDebugAssets
-> Task :app:processDebugManifestForPackage
+> Task :app:processDebugJavaRes NO-SOURCE
 > Task :app:desugarDebugFileDependencies
 > Task :app:mergeDebugStartupProfile
 > Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugJniLibFolders
-> Task :app:mergeLibDexDebug
-> Task :app:mergeDebugJavaResource
-> Task :app:mergeDebugNativeLibs NO-SOURCE
-> Task :app:stripDebugDebugSymbols NO-SOURCE
 > Task :app:processDebugResources
-> Task :app:validateSigningDebug
-> Task :app:mergeExtDexDebug
+> Task :app:mergeDebugJavaResource
 
 > Task :app:compileDebugJavaWithJavac
 Note: /home/runner/work/CineTracker/CineTracker/apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 
+> Task :app:mergeLibDexDebug
 > Task :app:dexBuilderDebug
+> Task :app:mergeExtDexDebug
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
-> Task :app:mergeProjectDexDebug
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1787454760192.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1787455033574.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/CineTracker/CineTracker/apps/android/build/reports/problems/problems-report.html
 
@@ -74,16 +74,16 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 34s
+BUILD SUCCESSFUL in 32s
 33 actionable tasks: 33 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html
 
 --- signing check ---
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: fcac3a6a0bfdaf475adc8044b6c040cfe9c241dd36427a4c6b649a21475f2790
-V2 Signer: certificate SHA-1 digest: 0c2dcd5af4f15201b7072cdcb6e4e25f64a6da2d
-V2 Signer: certificate MD5 digest: 3a6aa94c166ac4a05aa417646d329b2f
+V2 Signer: certificate SHA-256 digest: 5725c1ebd11f95f74d6914d9b174cfea510790785ace489d1f47f00fbd10b236
+V2 Signer: certificate SHA-1 digest: 53f1ddb20295d3ada16558effc5b434199a9ea25
+V2 Signer: certificate MD5 digest: d5ac05db72750e3b1083d767539b7b41
 Stored baseline: fe69519cd5669429446e4701cd5d0ad78c5a936b3130f27e478a05c0591353d3
-Built signer:    fcac3a6a0bfdaf475adc8044b6c040cfe9c241dd36427a4c6b649a21475f2790
+Built signer:    5725c1ebd11f95f74d6914d9b174cfea510790785ace489d1f47f00fbd10b236
 Built package:   com.cinetracker.app
 ```
