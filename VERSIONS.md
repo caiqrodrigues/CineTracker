@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.8** |
-| Android | **0.0.61** |
+| Android | **0.0.62** |
 | Windows | **—** |
 
 ## Regra
@@ -30,10 +30,9 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.49–0.0.58** — evolução de navegação, perfil, ações e progresso absoluto de séries.
 - **0.0.59** — botão `Assistido`, episódios restantes, filtro inicial de Descobrir, Perfil e build.
 - **0.0.60** — padrão visual de detalhes, notas e disponibilidade.
-- **0.0.61** — filtro de Descobrir reforçado por ID e título em todos os filtros/rerenders; `Onde assistir` consolida variantes do mesmo serviço em um único provedor.
+- **0.0.61** — Descobrir reforçado por ID+título; provedores deduplicados por família.
+- **0.0.62** — gráfico do Perfil auto-recuperável, botão `Assistido` apagado por padrão e verde somente quando visto, correção de metadados corrompidos nos cards de continuidade e limpeza de carregamentos residuais.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.61.md`.
-
-O histórico detalhado permanece em `CHANGELOG.md`, `PROJECT_STATE.md` e no histórico de commits/releases do GitHub.
+Release Android atual: `docs/releases/0.0.62.md`.
