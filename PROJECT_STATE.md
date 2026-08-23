@@ -6,7 +6,7 @@
 **Branch principal:** `main`  
 **Web publicada:** `0.4.9`  
 **Web 0.5.0:** código pronto  
-**Android publicado:** `0.0.51`
+**Android publicado:** `0.0.52`
 
 ## 1. Regras permanentes
 
@@ -19,77 +19,57 @@
 ## 2. Assinatura Android
 
 - `applicationId`: `com.cinetracker.app`.
-- `versionCode`: `51`.
-- `versionName`: `0.0.51`.
-- A 0.0.51 criou uma nova chave `v5`, persistida no cache após o build bem-sucedido.
-- Baseline SHA-256 atual: `d4954df3952a7bd63519db79e7369ff55e5fe3d330aa4d5630287621cc79fd43`.
-- 0.0.52+ devem reutilizar `cinetracker-signing-v5-0.0.51-stable` e falhar se o certificado divergir.
+- `versionCode`: `52`.
+- `versionName`: `0.0.52`.
+- A 0.0.52 estabelece a chave estável `v6`, persistida no cache após build bem-sucedido.
+- Baseline SHA-256: `231fab65f7af070000c37788e18ba7b1eaec3b40f87dd4772955ff241e8b57b7`.
+- 0.0.53+ devem restaurar a mesma chave `v6` e falhar se o certificado divergir.
 
-## 3. Causa confirmada dos bugs 0.0.50
+## 3. 0.0.51 reprovada
 
-A 0.0.50 injetava `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js` e `ct50.js` na mesma WebView. Cada módulo mantinha handlers e observers próprios. Em aparelho, isso causou disputa de navegação e renderização: `Continuar assistindo` podia cair em outra view, o gesto horizontal não era confiável e telas antigas reapareciam.
+A 0.0.51 substituiu todos os módulos Android por `ct51.js`. Em teste real, o aplicativo deixou de carregar corretamente e a versão foi reprovada. Ela não deve ser considerada base funcional.
 
-## 4. Android 0.0.51 — runtime consolidado
+## 4. Android 0.0.52 — recuperação estável
 
-A Activity injeta somente `ct51.js`.
+A Activity volta a carregar a pilha que efetivamente funcionava antes da regressão:
 
-### Home
+`ct41.js + ct47.js + ct48.js + ct49.js + ct50.js + ct52.js`
 
-- `Continuar assistindo` usa `cinetracker_continue_items_v2`, filtrado em `following`, a mesma origem de Assistir/Acompanhando.
-- Carrossel horizontal com `overflow-x:auto`, `touch-action:pan-x` e scroll snap.
-- Clique no card chama a ficha diretamente pelo TMDB ID; não passa por Estatísticas nem por outra aba intermediária.
-- Check do próximo episódio disponível na Home.
+`ct52.js` é propositalmente pequeno e corrige apenas os pontos pendentes, evitando reescrever o aplicativo inteiro.
 
-### Assistir
+### Home / Continuar assistindo
 
-- Carrossel padrão; Grade e Lista disponíveis.
-- Ordem: Em dia → Acompanhando → Juntando poeira → Não iniciadas.
-- Abertura reposiciona a viewport em Acompanhando.
-- Acompanhando ordenado por `last_watched_at` decrescente.
+- Mantém a mesma origem de dados de Acompanhando.
+- Rolagem horizontal reforçada com `display:flex`, `overflow-x:auto`, `touch-action:pan-x` e scroll snap.
+- Clique no card abre diretamente a ficha da série pelo TMDB ID; não passa por Estatísticas nem por aba intermediária.
+- Botões dentro do card continuam independentes do clique do card.
 
-### Série / episódios
+### Série / temporada / episódio
 
-- Série abre ficha própria com poster, sinopse e Onde assistir.
-- Temporadas expansíveis.
-- Episódios clicáveis com tela individual.
+- Ficha da série com poster, temporadas e episódios.
+- Episódios abrem tela própria.
 - Check por episódio.
-- Ao marcar episódio posterior, se houver anteriores não vistos, pergunta se devem ser marcados também; confirmação usa `cinetracker_mark_episode_through`.
+- Marcação inteligente pergunta sobre episódios anteriores da mesma temporada.
 
 ### Navegação
 
-- Botão Assistir da barra nativa chama `assist`, não `library`.
-- Botão/gesto Voltar chama `ct51Back()` e percorre a pilha interna antes de sair.
+- Barra inferior nativa volta a usar o fluxo estável anterior.
+- Botão/gesto Voltar chama primeiro `ct52Back()`, depois o fallback `ct50Back()`.
 
 ### Descobrir
 
-- Runtime força três colunas compactas para containers reais de `.card`, com poster 2:3.
+- Reforço final em JavaScript identifica containers reais de cards e aplica três colunas compactas.
 
 ### Configurações
 
-- Exibe `0.0.51` e remove build Android duplicada no DOM.
+- Exibe build `0.0.52` e remove identificação duplicada no rodapé.
 
 ### Notificações
 
-- WorkManager e infraestrutura nativa permanecem preservados.
+- WorkManager e notificações nativas permanecem preservados.
 
-## 5. Backend relevante
+## 5. Validação
 
-- `cinetracker_continue_items_v2`
-- `cinetracker_episode_state`
-- `cinetracker_set_episode_watched`
-- `cinetracker_mark_episode_through`
-- `cinetracker_profile_stats`
-- `cinetracker_due_notifications`
+O CI da 0.0.52 passou: sintaxe dos módulos carregados, compilação Gradle, package `com.cinetracker.app`, assinatura e publicação da Release.
 
-## 6. Validação pendente da 0.0.51
-
-- confirmar instalação e login;
-- confirmar Home rolável horizontalmente;
-- confirmar clique da Home abrindo série, nunca Estatísticas;
-- confirmar temporada → episódio;
-- confirmar check do próximo episódio e marcação inteligente;
-- confirmar Voltar interno;
-- confirmar Acompanhando reordenando após episódio visto;
-- confirmar três cards por linha em Descobrir;
-- confirmar Onde assistir;
-- confirmar Configurações mostrando somente build 0.0.51.
+Ainda depende de validação em aparelho para comportamento visual e interação real. Não marcar essas etapas como comprovadas antes do teste do usuário.
