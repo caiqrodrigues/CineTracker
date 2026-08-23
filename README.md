@@ -1,12 +1,12 @@
 # 🎬 CineTracker
 
-CineTracker é um companion multiplataforma para filmes, séries e animes, com conta única, biblioteca sincronizada, Watchlist, histórico, progresso de episódios, recomendações, descoberta TMDB, importação, backup e notificações de lançamentos.
+CineTracker é um companion multiplataforma para filmes, séries e animes, com conta única, biblioteca sincronizada, Watchlist, histórico, progresso de episódios, recomendações, descoberta TMDB, importação e backup. Notificações de lançamentos são nativas do Android.
 
 ## Versões atuais
 
 | Plataforma | Versão | Status |
 |---|---:|---|
-| Web | **0.3.1** | Produção / Supabase |
+| Web | **0.4.8** | Código publicado / deploy Vercel |
 | Android | **0.0.48** | Build automatizado / Release GitHub |
 | Windows | — | Planejado |
 
@@ -18,67 +18,51 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 
 ```text
 CineTracker
-├── apps/web                         aplicação Web e referência funcional
+├── apps/web                         aplicação Web
 ├── apps/android                     Android nativo (Java + WebView)
 │   └── app/src/main/assets          runtime móvel versionado ctXX.js
 ├── supabase                         migrations e funções compartilhadas
-├── docs/releases                    documentação de cada versão
+├── docs/releases                    documentação por versão
 ├── scripts                          build e validações
 ├── CHANGELOG.md                     histórico consolidado
-├── VERSIONS.md                      linha de versões por plataforma
+├── VERSIONS.md                      versões por plataforma
 ├── PROJECT_STATE.md                 estado técnico atual
 └── .github/workflows                CI/CD Web e Android
 ```
 
-Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist, histórico, progresso, favoritos e preferências pertencem à conta, não ao dispositivo.
+Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist, histórico, progresso, favoritos e decisões manuais pertencem à conta, não ao dispositivo.
 
-## Principais recursos
+## Paridade Web / Android
 
-- Supabase Auth e sessão persistente.
-- Biblioteca e Watchlist por usuário.
-- Histórico real de filmes e episódios.
-- Progresso persistente por série, temporada e episódio.
-- Marcação manual de episódios assistidos.
-- Perfil com estatísticas e Tempo de Tela diário.
-- Descobrir com TMDB, capas, nomes, elenco, filmografia e calendário.
-- Assistir separado em Em dia, Acompanhando, Juntando poeira e Não iniciadas.
-- Modos Carrossel, Grade e Lista no Android.
-- Importação e exportação de dados.
-- Notificações Android para lançamentos de filmes da Watchlist e novos episódios de séries acompanhadas.
+A Web 0.4.8 adapta as funcionalidades do Android 0.0.48 ao navegador, exceto notificações nativas.
+
+- Perfil com estatísticas e Tempo de Tela diário interativo.
+- Sete dias visíveis no gráfico, hoje centralizado, navegação para dias anteriores e detalhe do que foi assistido ao clicar no dia.
+- Assistir separado em `Em dia`, `Acompanhando`, `Juntando poeira` e `Não iniciadas`.
+- Carrossel como padrão, com Grade e Lista disponíveis.
+- Série → temporada → episódio, com marcação persistente de episódios vistos.
+- Descobrir com grid compacto de três colunas e posters 2:3.
+- Resolução global de nomes/capas com cache e TMDB.
+- Configurações com alteração de e-mail/senha, importação e exportação de backup.
+
+Detalhes Web: `docs/releases/web-0.4.8.md`.
 
 ## Android 0.0.48
 
-A 0.0.48 consolida a camada Android e remove da inicialização a cadeia de patches antigos que continuava reintroduzindo telas desatualizadas.
+A 0.0.48 consolida a camada Android e carrega somente `ct41.js`, `ct47.js` e `ct48.js` para evitar que patches antigos reintroduzam telas desatualizadas.
 
-### Runtime
+- Perfil sem gráfico antigo por horário/horário de pico.
+- Descobrir com três cards por linha.
+- Assistir com Carrossel/Grade/Lista e ordem Em dia → Acompanhando → Juntando poeira → Não iniciadas.
+- Série → temporada → episódio e marcação persistente.
+- Configurações exibe uma única build `0.0.48`.
+- Notificações nativas validadas anteriormente são preservadas.
 
-A Activity passa a carregar somente `ct41.js`, `ct47.js` e `ct48.js`.
+### Migração única de assinatura
 
-- `ct41.js`: gráfico diário interativo.
-- `ct47.js`: Assistir, temporadas e episódios.
-- `ct48.js`: correções finais de Perfil, Descobrir, Configurações e navegação.
+A APK publicada da 0.0.46 foi assinada por uma chave privada que não está mais disponível. A chave persistente atual usa outro certificado. Por isso, instalações antigas precisam ser removidas **uma única vez** antes da 0.0.48. A 0.0.48 passa a ser o baseline permanente de assinatura; versões 0.0.49+ devem instalar por sobreposição e o CI bloqueia mudança de certificado.
 
-### Interface
-
-- Perfil: remove gráfico antigo por horário e card Horário de pico; mantém gráfico diário em dark mode.
-- Descobrir: três cards por linha em todas as categorias e filtros.
-- Assistir: Carrossel como padrão, com Grade e Lista.
-- Assistir abre em Acompanhando; Em dia fica acima; Juntando poeira e Não iniciadas ficam abaixo.
-- Séries abrem temporadas e episódios; episódios têm tela própria e marcação de assistido.
-- Configurações exibe uma única versão de build: 0.0.48.
-
-### Atualização sem desinstalar
-
-- `applicationId`: `com.cinetracker.app`.
-- `versionCode`: sempre crescente.
-- Chave de assinatura persistente no CI.
-- O workflow baixa o APK publicado da 0.0.46 e compara o certificado SHA-256 e o package id com o APK novo antes de publicar. Se houver divergência, a Release falha.
-
-### Notificações
-
-A infraestrutura nativa validada na 0.0.46 é preservada: WorkManager, canal `Lançamentos e episódios`, sessão Supabase nativa e deduplicação de eventos.
-
-Detalhes completos: `docs/releases/0.0.48.md`.
+Detalhes Android: `docs/releases/0.0.48.md`.
 
 ## Backend
 
@@ -90,13 +74,16 @@ Detalhes completos: `docs/releases/0.0.48.md`.
 
 ### RPCs relevantes
 
-- `cinetracker_episode_state(tmdb_id)` — estado de episódios por usuário.
-- `cinetracker_set_episode_watched(...)` — persiste marcação manual.
-- `cinetracker_due_notifications()` — retorna lançamentos elegíveis para notificações.
+- `cinetracker_continue_items_v2` — classificação das séries em acompanhamento.
+- `cinetracker_episode_state` — estado de episódios por usuário.
+- `cinetracker_set_episode_watched` — persiste marcação manual.
+- `cinetracker_watch_daily_timeline` — timeline diária do Perfil.
+- `cinetracker_watch_day_details` — itens assistidos em um dia.
+- `cinetracker_due_notifications` — eventos de notificação Android.
 
 ## Regra de publicação
 
-Uma versão nova não é considerada concluída somente com o APK. Cada versão deve atualizar código-fonte, documentação, versionamento, Release do GitHub e status do workflow.
+Uma versão nova não é considerada concluída somente com binário/deploy. Código-fonte, documentação, versionamento e pipeline correspondente devem permanecer sincronizados. Android também exige Release + APK.
 
 ## Segurança
 
