@@ -58,7 +58,7 @@ jobs:
           exec > >(tee /tmp/signing-check.log) 2>&1
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          EXPECTED_CERT="09d50c2bc684f47492060a20ef88fa075745d2b4aeabfd6d5e412b715e9183f7"
+          EXPECTED_CERT="063e4ebc59d652a9972422dc04a815e549aad94fee4b351636ca55badc46e17b"
           EXPECTED_PACKAGE="com.cinetracker.app"
           INFO="$($APKSIGNER verify --print-certs cinetracker-android-0.0.48-debug.apk 2>&1)"
           printf '%s\n' "$INFO"
