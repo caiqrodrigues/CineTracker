@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
 **Web atual:** `0.4.8`  
-**Android atual:** `0.0.68`
+**Android atual:** `0.0.69`
 
 ## 1. Objetivo
 
@@ -17,47 +17,45 @@ Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Lik
 
 Descobrir deve mostrar apenas conteúdo realmente fora do universo do usuário. Qualquer título já visto, concluído, em progresso, acompanhado, em Watchlist/Watch Later ou com outro estado persistente deve ser excluído de todos os filtros e destaques.
 
-## 3. Estado Android 0.0.68
+## 3. Estado Android 0.0.69
 
 ### Runtime
 
-A Activity carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js`, `ct51.js`, `ct52.js`, `ct53.js`, `ct54.js`, `ct55.js`, `ct56.js` e `ct57.js`.
+A Activity carrega `ct41.js` até `ct58.js`. O novo `ct58.js` é responsável pela recuperação do carregamento de episódios e exibição da nota individual TMDB de cada episódio.
 
 ### Correções desta versão
 
-- notificações nativas passam a deduplicar por impressão digital estável de título + mensagem por 7 dias, além de `event_key`;
-- o worker imediato de notificações passa a ser único, reduzindo disparos duplicados ao salvar a sessão repetidamente;
-- marcação de próximo episódio recebe atualização visual imediata e otimista, com reversão em caso de falha;
-- progresso/faltantes do card são atualizados imediatamente ao marcar um episódio;
-- repetição crescente de notas em Home/Assistir é reduzida para uma única nota;
-- `Carregando perfil...` é removido quando o gráfico/conteúdo já está disponível;
-- loaders residuais em Histórico/Descobrir são removidos quando a tela já possui dados;
-- Descobrir estrito, deduplicação de streaming, estados de acompanhamento e cálculo de faltantes são preservados.
+- notificações usam esquema de deduplicação v3 persistente;
+- o backlog existente é absorvido como baseline na primeira execução da 0.0.69 para impedir que as mesmas notificações antigas reapareçam;
+- não existe mais worker imediato disparado a cada `saveSession`; permanece apenas o worker periódico único;
+- temporadas que ficam presas em `Carregando episódios...` recebem timeout, até 3 tentativas e botão manual de nova tentativa;
+- episódios carregados exibem data, estado `Assistido` e nota TMDB individual quando disponível;
+- as correções anteriores de Descobrir estrito, streaming deduplicado, progresso e feedback otimista permanecem.
 
 ### Configurações
 
-- build exibida: `0.0.68`.
+- build exibida: `0.0.69`.
 
 ## 4. Build e publicação
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionCode`: `68`;
-- `versionName`: `0.0.68`;
-- artefato esperado: `cinetracker-android-0.0.68-debug.apk`;
-- tag/release esperada: `android-v0.0.68`;
-- workflow valida `ct41.js` até `ct57.js` antes da compilação.
+- `versionCode`: `69`;
+- `versionName`: `0.0.69`;
+- artefato esperado: `cinetracker-android-0.0.69-debug.apk`;
+- tag/release esperada: `android-v0.0.69`;
+- workflow valida `ct41.js` até `ct58.js` antes da compilação.
 
 ## 5. Validação
 
-Implementado/compilado não significa validado. A 0.0.68 precisa ser instalada e testada em aparelho real.
+Implementado/compilado não significa validado. A 0.0.69 precisa ser instalada e testada em aparelho real.
 
 Pendências específicas:
-- confirmar que as mesmas três notificações não reaparecem;
-- confirmar resposta visual imediata ao marcar Chaves/próximo episódio;
-- confirmar uma única nota por card;
-- confirmar Perfil sem `Carregando perfil...` abaixo do gráfico;
-- reconfirmar Assistir, Descobrir, Histórico, Watchlist e streaming;
-- confirmar build `0.0.68` em Configurações.
+- confirmar que as três notificações antigas não reaparecem;
+- confirmar que novas notificações reais continuam chegando apenas uma vez;
+- confirmar abertura de todas as temporadas e carregamento de episódios;
+- confirmar nota individual por episódio;
+- reconfirmar estados Assistido e progresso após marcação;
+- confirmar build `0.0.69` em Configurações.
 
 ## 6. Publicação
 
