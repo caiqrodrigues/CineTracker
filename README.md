@@ -1,18 +1,16 @@
 # 🎬 CineTracker
 
-CineTracker é um companion multiplataforma para filmes, séries e animes, com conta única, biblioteca sincronizada, Watchlist, histórico, progresso de episódios, recomendações, descoberta TMDB, importação e backup. Notificações de lançamentos são nativas do Android.
+CineTracker é um companion multiplataforma para filmes, séries e animes, com conta única, biblioteca sincronizada, Watchlist, histórico, progresso por episódio, favoritos, recomendações, descoberta TMDB, estatísticas, backup e notificações nativas no Android.
 
-## Versões atuais
+## Versões
 
-| Plataforma | Versão | Status |
-|---|---:|---|
-| Web | **0.4.8** | Código publicado / deploy Vercel |
-| Android | **0.0.48** | Build automatizado / Release GitHub |
-| Windows | — | Planejado |
+| Plataforma | Publicada | Em implementação |
+|---|---:|---:|
+| Web | **0.4.9** | **0.5.0** |
+| Android | **0.0.49** | **0.0.50** |
+| Windows | — | planejado |
 
-## Produção
-
-**Web:** https://mycinetracker.vercel.app
+Produção Web: `https://mycinetracker.vercel.app`
 
 ## Arquitetura
 
@@ -20,74 +18,78 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 CineTracker
 ├── apps/web                         aplicação Web
 ├── apps/android                     Android nativo (Java + WebView)
-│   └── app/src/main/assets          runtime móvel versionado ctXX.js
-├── supabase                         migrations e funções compartilhadas
+│   └── app/src/main/assets          runtime móvel ctXX.js
 ├── docs/releases                    documentação por versão
-├── scripts                          build e validações
+├── scripts                          build e validações Web
+├── ci-status                        baseline/diagnósticos de CI
 ├── CHANGELOG.md                     histórico consolidado
-├── VERSIONS.md                      versões por plataforma
+├── VERSIONS.md                      matriz de versões
 ├── PROJECT_STATE.md                 estado técnico atual
-└── .github/workflows                CI/CD Web e Android
+└── .github/workflows                CI/CD Android e validações
 ```
 
-Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist, histórico, progresso, favoritos e decisões manuais pertencem à conta, não ao dispositivo.
+Web e Android compartilham autenticação, Supabase, histórico, Watchlist, progresso, favoritos e metadados TMDB. Notificações são exclusivas do Android.
 
-## Paridade Web / Android
+## Funcionalidades principais
 
-A Web 0.4.8 adapta as funcionalidades do Android 0.0.48 ao navegador, exceto notificações nativas.
-
-- Perfil com estatísticas e Tempo de Tela diário interativo.
-- Sete dias visíveis no gráfico, hoje centralizado, navegação para dias anteriores e detalhe do que foi assistido ao clicar no dia.
+- Home com recomendações, Watchlist e `Continuar assistindo` sincronizado com `Assistir > Acompanhando`.
 - Assistir separado em `Em dia`, `Acompanhando`, `Juntando poeira` e `Não iniciadas`.
-- Carrossel como padrão, com Grade e Lista disponíveis.
-- Série → temporada → episódio, com marcação persistente de episódios vistos.
-- Descobrir com grid compacto de três colunas e posters 2:3.
-- Resolução global de nomes/capas com cache e TMDB.
-- Configurações com alteração de e-mail/senha, importação e exportação de backup.
+- Carrossel como modo principal, além de Grade e Lista.
+- Série → temporada → episódio → marcação/desmarcação de assistido.
+- Marcação inteligente: ao marcar um episódio posterior, pode marcar automaticamente os anteriores da mesma temporada.
+- Ordenação de Acompanhando por atividade recente.
+- Perfil com estatísticas e Tempo de Tela diário interativo.
+- Descobrir com cards compactos e objetivo de três colunas no mobile.
+- Capas e nomes resolvidos via TMDB com cache.
+- Onde assistir no Brasil via TMDB Watch Providers; filmes recentes podem indicar janela de cinema/lançamento.
+- Configurações com conta, senha, importação e exportação.
+- Android com notificações de filmes da Watchlist e novos episódios.
 
-Detalhes Web: `docs/releases/web-0.4.8.md`.
+## Android 0.0.50
 
-## Android 0.0.48
+A camada final `ct50.js` adiciona:
 
-A 0.0.48 consolida a camada Android e carrega somente `ct41.js`, `ct47.js` e `ct48.js` para evitar que patches antigos reintroduzam telas desatualizadas.
+- Home rolável e clicável para abrir a série;
+- Voltar físico/gesto integrado ao histórico interno do app;
+- marcação inteligente de episódios anteriores;
+- reordenação por último episódio visto;
+- atualização visual imediata após progresso;
+- disponibilidade de streaming/cinema;
+- reforço final de Descobrir em três colunas.
 
-- Perfil sem gráfico antigo por horário/horário de pico.
-- Descobrir com três cards por linha.
-- Assistir com Carrossel/Grade/Lista e ordem Em dia → Acompanhando → Juntando poeira → Não iniciadas.
-- Série → temporada → episódio e marcação persistente.
-- Configurações exibe uma única build `0.0.48`.
-- Notificações nativas validadas anteriormente são preservadas.
+A Activity carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js` e `ct50.js`.
 
-### Migração única de assinatura
+### Assinatura Android
 
-A APK publicada da 0.0.46 foi assinada por uma chave privada que não está mais disponível. A chave persistente atual usa outro certificado. Por isso, instalações antigas precisam ser removidas **uma única vez** antes da 0.0.48. A 0.0.48 passa a ser o baseline permanente de assinatura; versões 0.0.49+ devem instalar por sobreposição e o CI bloqueia mudança de certificado.
+A 0.0.49 é a base permanente de assinatura após a reinstalação única autorizada. Baseline SHA-256 atual:
 
-Detalhes Android: `docs/releases/0.0.48.md`.
+`277a81b60c689c801ea9d45a311de29c2e5ed97fdc5bea0f4705f8531153e1ed`
+
+0.0.50+ só são publicadas se package `com.cinetracker.app` e certificado coincidirem com esse baseline.
+
+## Web 0.5.0
+
+A Web recebe paridade das funções não nativas da 0.0.50 por `patch-v050.js`: marcação inteligente, ordenação recente, atualização de progresso, disponibilidade e reforço de três colunas.
 
 ## Backend
 
-**Supabase:** Auth, PostgreSQL, RLS e RPCs autenticadas.  
-**Metadados:** TMDB via funções/proxy de backend.  
-**Deploy Web:** Vercel.  
-**Android:** Java, Android WebView, WorkManager e Gradle.  
-**CI/CD:** GitHub Actions.
+- Supabase Auth/PostgreSQL/RLS/RPCs autenticadas.
+- TMDB para títulos, posters, elenco, temporadas, episódios e Watch Providers.
+- Vercel para produção Web.
+- Android Java + WebView + WorkManager + Gradle.
+- GitHub Actions para build, assinatura e Release Android.
 
 ### RPCs relevantes
 
-- `cinetracker_continue_items_v2` — classificação das séries em acompanhamento.
-- `cinetracker_episode_state` — estado de episódios por usuário.
-- `cinetracker_set_episode_watched` — persiste marcação manual.
-- `cinetracker_watch_daily_timeline` — timeline diária do Perfil.
-- `cinetracker_watch_day_details` — itens assistidos em um dia.
-- `cinetracker_due_notifications` — eventos de notificação Android.
+- `cinetracker_continue_items_v2`
+- `cinetracker_episode_state`
+- `cinetracker_set_episode_watched`
+- `cinetracker_watch_daily_timeline`
+- `cinetracker_watch_day_details`
+- `cinetracker_due_notifications` — Android apenas
 
 ## Regra de publicação
 
-Uma versão nova não é considerada concluída somente com binário/deploy. Código-fonte, documentação, versionamento e pipeline correspondente devem permanecer sincronizados. Android também exige Release + APK.
+Uma versão não é considerada concluída apenas porque compilou. Código, documentação, versionamento e pipeline precisam estar sincronizados. Android exige também Release + APK e teste real em aparelho; Web exige deploy real e validação no ambiente publicado.
 
-## Segurança
-
-- Navegador e Android usam somente chave publicável do Supabase.
-- Dados privados ficam protegidos por autenticação/RLS.
-- RPCs usam `auth.uid()` para limitar dados ao próprio perfil.
-- Decisões manuais do usuário não devem ser apagadas por novas importações.
+Detalhes: `VERSIONS.md`, `PROJECT_STATE.md` e `docs/releases/`.
