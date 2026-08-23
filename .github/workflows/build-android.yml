@@ -26,7 +26,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.46"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.47"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -50,42 +50,42 @@ jobs:
           set -o pipefail
           gradle assembleDebug --stacktrace 2>&1 | tee /tmp/android-build.log
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.46-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.47-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.46-debug
-          path: cinetracker-android-0.0.46-debug.apk
+          name: cinetracker-android-0.0.47-debug
+          path: cinetracker-android-0.0.47-debug.apk
       - name: Publish APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view android-v0.0.46 >/dev/null 2>&1 || gh release create android-v0.0.46 --title "CineTracker Android 0.0.46" --notes-file docs/releases/0.0.46.md
-          gh release upload android-v0.0.46 cinetracker-android-0.0.46-debug.apk --clobber
+          gh release view android-v0.0.47 >/dev/null 2>&1 || gh release create android-v0.0.47 --title "CineTracker Android 0.0.47" --notes-file docs/releases/0.0.47.md
+          gh release upload android-v0.0.47 cinetracker-android-0.0.47-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.46 APK built and published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.47 APK built and published"}'
       - name: Save failure diagnostic
         if: failure()
         run: |
           mkdir -p ci-status
           {
-            echo "# Android 0.0.46 - last build failure"
+            echo "# Android 0.0.47 - last build failure"
             echo
             echo '```text'
             if [ -f /tmp/android-build.log ]; then tail -n 180 /tmp/android-build.log; else echo "Build failed before Gradle produced a log."; fi
             echo '```'
-          } > ci-status/android-0.0.46-last-failure.md
+          } > ci-status/android-0.0.47-last-failure.md
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ci-status/android-0.0.46-last-failure.md
-          git commit -m "ci: record Android 0.0.46 build failure" || true
+          git add ci-status/android-0.0.47-last-failure.md
+          git commit -m "ci: record Android 0.0.47 build failure" || true
           git push || true
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.46 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"CineTracker Android 0.0.47 build failed"}'
