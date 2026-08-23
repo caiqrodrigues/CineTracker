@@ -4,11 +4,12 @@
 
 **Última atualização:** 2026-08-22  
 **Branch principal:** `main`  
-**Android em desenvolvimento:** `0.0.48`
+**Web atual:** `0.4.8`  
+**Android atual:** `0.0.48`
 
 ## 1. Objetivo
 
-Companion multiplataforma para acompanhar filmes, séries e animes, com experiência sincronizada Web/Android, histórico real, progresso por episódio, Watchlist, favoritos, estatísticas, descoberta de conteúdo e notificações de lançamentos.
+Companion multiplataforma para acompanhar filmes, séries e animes, com experiência sincronizada Web/Android, histórico real, progresso por episódio, Watchlist, favoritos, estatísticas, descoberta de conteúdo e notificações nativas no Android.
 
 ## 2. Integrações
 
@@ -16,90 +17,118 @@ Companion multiplataforma para acompanhar filmes, séries e animes, com experiê
 - Supabase: Auth, PostgreSQL, RLS, progresso, histórico, sincronização e RPCs autenticadas.
 - GitHub: código, documentação, Releases e CI/CD.
 - Vercel: publicação Web.
-- Android WorkManager: notificações periódicas em segundo plano.
+- Android WorkManager: notificações periódicas em segundo plano exclusivamente no Android.
 
 ## 3. Regras de domínio
 
 Não criar tabela separada `CompletedSeries`. Conclusão deve ser derivada de progresso importado/manual + metadados oficiais. Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater`, `AddedToWatchlist`) têm prioridade e não podem ser apagados por nova importação.
 
-## 4. Regra permanente de atualização Android
-
-Toda versão Android deve instalar por cima da anterior, sem exigir desinstalação.
+## 4. Assinatura e atualização Android
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionCode` sempre crescente;
-- mesma chave de assinatura em todas as versões;
-- cache persistente `cinetracker-debug-signing-v1`;
-- se a chave não existir, a build falha;
-- desde a 0.0.48, o CI baixa o APK publicado da 0.0.46 e compara certificado SHA-256 e package id antes de publicar uma nova Release.
+- a instalação antiga/publicada da 0.0.46 foi comprovadamente assinada pelo certificado `5a5e16933b91f015b5f5da0f178543b63c92e49e595c8c2a8a5862b6487dc876`;
+- a chave privada antiga não está disponível;
+- a chave persistente atual do CI assina com `09d50c2bc684f47492060a20ef88fa075745d2b4aeabfd6d5e412b715e9183f7`;
+- a `0.0.48` é a migração única: instalações antigas precisam ser removidas uma vez antes de instalar a 0.0.48;
+- da 0.0.49 em diante, o CI deve bloquear qualquer certificado diferente do baseline da 0.0.48 e as APKs devem atualizar por sobreposição normalmente.
 
 ## 5. Estado Android 0.0.48
 
 ### Notificações
 
-A infraestrutura da 0.0.46 foi preservada e já foi validada em aparelho real: notificações para novo episódio e filme elegível da Watchlist funcionam.
+Infraestrutura da 0.0.46 preservada e já validada em aparelho real: novo episódio e filme elegível da Watchlist. Após a reinstalação 0.0.48 é necessário fazer login novamente para reativar a sessão nativa.
 
-### Runtime Android consolidado
+### Runtime consolidado
 
-A Activity não carrega mais a pilha antiga `ct33/34/35/37/38/39/46`. A sequência passa a ser apenas:
+A Activity carrega somente:
 
 1. `ct41.js` — gráfico diário interativo;
 2. `ct47.js` — Assistir e detalhes de série/temporada/episódio;
 3. `ct48.js` — correções finais de Perfil, Descobrir, Configurações e navegação.
 
+### Interface
+
+- Perfil: sem gráfico de horário/horário de pico; timeline diária dark e interativa.
+- Descobrir: três cards por linha, posters 2:3.
+- Assistir: Carrossel padrão, Grade/Lista, ordem `Em dia` → `Acompanhando` → `Juntando poeira` → `Não iniciadas`, abertura posicionada em Acompanhando.
+- Série → temporada → episódio com marcação persistente.
+- Configurações: versão única `0.0.48`.
+
+## 6. Estado Web 0.4.8
+
+A Web passa a ter paridade funcional com o Android 0.0.48, exceto notificações nativas.
+
 ### Perfil / Tempo de Tela
 
-- gráfico antigo de atividade por horário removido/ocultado;
-- card `Horário de pico` removido;
-- gráfico diário permanece em dark mode;
-- toque em um dia abre o que foi assistido.
-
-### Descobrir
-
-- três cards por linha em todas as categorias/filtros;
-- posters compactos 2:3;
-- metadados reduzidos para layout móvel.
+- remove atividade por horário e horário de pico;
+- timeline diária em dark mode;
+- 7 dias visíveis, hoje centralizado com 3 dias anteriores e 3 posteriores;
+- navegação horizontal até 15 dias anteriores;
+- clique em um dia abre itens assistidos naquele dia.
 
 ### Assistir
 
-- Carrossel como padrão;
-- Grade e Lista disponíveis;
-- ordem física: `Em dia` → `Acompanhando` → `Juntando poeira` → `Não iniciadas`;
-- abertura posicionada em `Acompanhando`;
-- cards clicáveis;
-- série → temporadas → episódios → tela do episódio;
-- marcação/desmarcação persistente de episódio assistido.
+- Carrossel inicial e persistente;
+- Grade e Lista;
+- seções físicas `Em dia`, `Acompanhando`, `Juntando poeira`, `Não iniciadas`;
+- abertura posicionada em Acompanhando;
+- filmes e séries clicáveis;
+- série → temporada → episódio;
+- marcação/desmarcação de episódios persistida no Supabase.
+
+### Descobrir / Metadados
+
+- três colunas nos grids principais;
+- resolvedor global de nomes/capas `patch-v045.js` permanece ativo;
+- `patch-v046.js` é carregado por último e consolida a paridade sem polling periódico adicional.
 
 ### Configurações
 
-- build deve aparecer uma única vez como `0.0.48`;
-- valores antigos `0.0.37` são substituídos no runtime Android.
+- alteração de e-mail e senha;
+- importação e exportação de backup;
+- versão única `CineTracker Web 0.4.8`.
 
-## 6. Backend relevante
+### Diferença intencional
 
+Notificações de lançamentos/episódios não são portadas para Web nesta versão.
+
+## 7. Backend relevante
+
+- `cinetracker_continue_items_v2`
 - `cinetracker_episode_state`
 - `cinetracker_set_episode_watched`
-- `cinetracker_due_notifications`
+- `cinetracker_watch_daily_timeline`
+- `cinetracker_watch_day_details`
+- `cinetracker_due_notifications` — Android apenas
 
-## 7. Regra de validação
+## 8. Regra de validação
 
-Implementado/compilado não significa validado. Cada item visual/funcional só é validado após instalação e teste real no aparelho.
+Implementado/compilado não significa validado. Android exige instalação e teste real. Web exige build/deploy real e teste das telas no ambiente publicado.
 
-## 8. Regra de documentação e publicação
+## 9. Regra de documentação e publicação
 
-Toda versão deve atualizar código, Gradle, workflow, `README.md`, `VERSIONS.md`, `PROJECT_STATE.md`, `docs/releases/<versão>.md`, `CHANGELOG.md` quando aplicável, Release GitHub e APK.
+Toda versão relevante deve atualizar código-fonte, versionamento, `README.md`, `VERSIONS.md`, `PROJECT_STATE.md`, documentação de release, `CHANGELOG.md` quando aplicável e pipeline correspondente. Android também exige Release + APK.
 
-## 9. Pendências de validação 0.0.48
+## 10. Pendências de validação
 
-- confirmar instalação por cima da 0.0.46;
-- confirmar versão única 0.0.48 em Configurações;
-- confirmar remoção total do gráfico de horário;
-- confirmar três cards por linha em Descobrir;
-- confirmar ordem e posição inicial de Assistir;
-- confirmar Carrossel/Grade/Lista;
-- confirmar série → temporada → episódio e marcação persistente;
-- confirmar continuidade das notificações.
+### Android 0.0.48
 
-## 10. Continuidade
+- instalar após remover uma build assinada pela chave antiga;
+- confirmar versão única 0.0.48;
+- confirmar Perfil, Descobrir e Assistir;
+- confirmar série → temporada → episódio;
+- confirmar continuidade das notificações após login.
+
+### Web 0.4.8
+
+- confirmar deploy real;
+- confirmar timeline diária e detalhe por dia;
+- confirmar seções/modos de Assistir;
+- confirmar marcação persistente de episódio;
+- confirmar três colunas em Descobrir;
+- confirmar Configurações e resolvedor de capas/nomes.
+
+## 11. Continuidade
 
 Antes de alterações importantes: ler este arquivo, conferir a Release/commit atual e preservar as decisões arquiteturais e regras de validação.
