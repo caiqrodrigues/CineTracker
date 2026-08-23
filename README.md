@@ -4,11 +4,11 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 
 ## Versões
 
-| Plataforma | Publicada | Em implementação |
-|---|---:|---:|
-| Web | **0.4.9** | **0.5.0** |
-| Android | **0.0.49** | **0.0.50** |
-| Windows | — | planejado |
+| Plataforma | Status |
+|---|---|
+| Web | **0.4.9 publicada / 0.5.0 em código** |
+| Android | **0.0.50 publicada** |
+| Windows | planejado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
@@ -39,37 +39,29 @@ Web e Android compartilham autenticação, Supabase, histórico, Watchlist, prog
 - Marcação inteligente: ao marcar um episódio posterior, pode marcar automaticamente os anteriores da mesma temporada.
 - Ordenação de Acompanhando por atividade recente.
 - Perfil com estatísticas e Tempo de Tela diário interativo.
-- Descobrir com cards compactos e objetivo de três colunas no mobile.
+- Descobrir compacto em três colunas no mobile.
 - Capas e nomes resolvidos via TMDB com cache.
-- Onde assistir no Brasil via TMDB Watch Providers; filmes recentes podem indicar janela de cinema/lançamento.
+- Onde assistir no Brasil via TMDB Watch Providers; filmes recentes podem indicar cinema/lançamento.
 - Configurações com conta, senha, importação e exportação.
 - Android com notificações de filmes da Watchlist e novos episódios.
 
 ## Android 0.0.50
 
-A camada final `ct50.js` adiciona:
-
-- Home rolável e clicável para abrir a série;
-- Voltar físico/gesto integrado ao histórico interno do app;
-- marcação inteligente de episódios anteriores;
-- reordenação por último episódio visto;
-- atualização visual imediata após progresso;
-- disponibilidade de streaming/cinema;
-- reforço final de Descobrir em três colunas.
+A camada final `ct50.js` adiciona Home rolável/clicável, Voltar integrado à navegação interna, marcação inteligente de episódios anteriores, ordenação pelo último episódio visto, atualização imediata após progresso, disponibilidade de streaming/cinema e reforço de Descobrir em três colunas.
 
 A Activity carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js` e `ct50.js`.
 
 ### Assinatura Android
 
-A 0.0.49 é a base permanente de assinatura após a reinstalação única autorizada. Baseline SHA-256 atual:
+A 0.0.50 é a base atual de assinatura estabilizada pelo CI. Baseline SHA-256:
 
-`277a81b60c689c801ea9d45a311de29c2e5ed97fdc5bea0f4705f8531153e1ed`
+`651e737a4e1de5d5db89773116528cd3ab3b0764a736dbd12dd8894fcc55bae7`
 
-0.0.50+ só são publicadas se package `com.cinetracker.app` e certificado coincidirem com esse baseline.
+Próximas versões devem preservar `com.cinetracker.app` e essa assinatura.
 
 ## Web 0.5.0
 
-A Web recebe paridade das funções não nativas da 0.0.50 por `patch-v050.js`: marcação inteligente, ordenação recente, atualização de progresso, disponibilidade e reforço de três colunas.
+A Web recebe paridade das funções não nativas da 0.0.50 por `patch-v050.js`: marcação inteligente, ordenação recente, atualização de progresso, disponibilidade e três colunas. O último deploy de produção pode depender do limite de builds do Vercel.
 
 ## Backend
 
@@ -84,6 +76,7 @@ A Web recebe paridade das funções não nativas da 0.0.50 por `patch-v050.js`: 
 - `cinetracker_continue_items_v2`
 - `cinetracker_episode_state`
 - `cinetracker_set_episode_watched`
+- `cinetracker_mark_episode_through`
 - `cinetracker_watch_daily_timeline`
 - `cinetracker_watch_day_details`
 - `cinetracker_due_notifications` — Android apenas
