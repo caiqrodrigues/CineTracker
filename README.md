@@ -7,7 +7,7 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 | Plataforma | Versão | Status |
 |---|---:|---|
 | Web | **0.4.8** | Código publicado / deploy Vercel |
-| Android | **0.0.48** | Build automatizado / Release GitHub |
+| Android | **0.0.59** | Build automatizado / Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
@@ -34,10 +34,9 @@ Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist,
 
 ## Paridade Web / Android
 
-A Web 0.4.8 adapta as funcionalidades do Android 0.0.48 ao navegador, exceto notificações nativas.
+A Web 0.4.8 mantém a base compartilhada usada pelo Android. O Android adiciona navegação e ajustes móveis, além de notificações nativas.
 
 - Perfil com estatísticas e Tempo de Tela diário interativo.
-- Sete dias visíveis no gráfico, hoje centralizado, navegação para dias anteriores e detalhe do que foi assistido ao clicar no dia.
 - Assistir separado em `Em dia`, `Acompanhando`, `Juntando poeira` e `Não iniciadas`.
 - Carrossel como padrão, com Grade e Lista disponíveis.
 - Série → temporada → episódio, com marcação persistente de episódios vistos.
@@ -47,22 +46,22 @@ A Web 0.4.8 adapta as funcionalidades do Android 0.0.48 ao navegador, exceto not
 
 Detalhes Web: `docs/releases/web-0.4.8.md`.
 
-## Android 0.0.48
+## Android 0.0.59
 
-A 0.0.48 consolida a camada Android e carrega somente `ct41.js`, `ct47.js` e `ct48.js` para evitar que patches antigos reintroduzam telas desatualizadas.
+A 0.0.59 mantém os módulos estáveis `ct41.js`, `ct47.js` e `ct48.js` e adiciona `ct49.js` apenas para as correções desta versão.
 
-- Perfil sem gráfico antigo por horário/horário de pico.
-- Descobrir com três cards por linha.
-- Assistir com Carrossel/Grade/Lista e ordem Em dia → Acompanhando → Juntando poeira → Não iniciadas.
-- Série → temporada → episódio e marcação persistente.
-- Configurações exibe uma única build `0.0.48`.
-- Notificações nativas validadas anteriormente são preservadas.
+- Botões que avançam episódio exibem `Assistido` em vez de `Próximo episódio`.
+- Progresso de séries exibe também `Faltam X episódios` nas áreas de série suportadas.
+- Descobrir oculta títulos já vistos/concluídos, em progresso/acompanhamento e presentes na Watchlist/Watch Later.
+- O gráfico do Perfil deixa de ser ocultado pelo patch Android anterior.
+- Configurações exibe a build `0.0.59`.
+- Notificações nativas permanecem preservadas.
 
 ### Migração única de assinatura
 
-A APK publicada da 0.0.46 foi assinada por uma chave privada que não está mais disponível. A chave persistente atual usa outro certificado. Por isso, instalações antigas precisam ser removidas **uma única vez** antes da 0.0.48. A 0.0.48 passa a ser o baseline permanente de assinatura; versões 0.0.49+ devem instalar por sobreposição e o CI bloqueia mudança de certificado.
+A APK publicada da 0.0.46 foi assinada por uma chave privada que não está mais disponível. A 0.0.48 estabeleceu o baseline permanente de assinatura; versões 0.0.49+ devem instalar por sobreposição e manter o mesmo certificado.
 
-Detalhes Android: `docs/releases/0.0.48.md`.
+Detalhes Android: `docs/releases/0.0.59.md`.
 
 ## Backend
 
