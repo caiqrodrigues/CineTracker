@@ -7,50 +7,29 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 | Plataforma | Versão | Status |
 |---|---:|---|
 | Web | **0.4.8** | Código publicado / deploy Vercel |
-| Android | **0.0.61** | Código + pipeline de Release GitHub |
+| Android | **0.0.62** | Código + pipeline de Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
 
 **Web:** https://mycinetracker.vercel.app
 
-## Arquitetura
+## Android 0.0.62
 
-```text
-CineTracker
-├── apps/web
-├── apps/android
-│   └── app/src/main/assets          runtime móvel versionado ctXX.js
-├── supabase
-├── docs/releases
-├── scripts
-├── CHANGELOG.md
-├── VERSIONS.md
-├── PROJECT_STATE.md
-└── .github/workflows
-```
+A 0.0.62 acrescenta `ct52.js` à camada Android.
 
-Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist, histórico, progresso, favoritos e decisões manuais pertencem à conta, não ao dispositivo.
-
-## Android 0.0.61
-
-A 0.0.61 carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js` e `ct51.js`.
-
-- Descobrir passa a bloquear conteúdo conhecido por duas chaves: identificador TMDB e título normalizado. Isso cobre Destaque e os demais filtros/rerenders, mesmo quando o card não expõe `data-media-id` diretamente.
-- São excluídos títulos vistos, concluídos, em progresso, acompanhados, Watchlist, Watch Later ou qualquer outro estado persistente da conta.
-- `Onde assistir` mantém apenas um card por serviço. Variantes do mesmo provedor, como múltiplos canais/planos do Paramount+, são consolidadas em uma única entrada.
-- O padrão visual de detalhes, notas, ações e episódios da 0.0.60 é preservado.
-- Configurações exibe a build `0.0.61`.
+- Perfil: o gráfico diário passa a ser restaurado automaticamente se um rerender remover o componente.
+- `Assistido`: botões ficam neutros/apagados por padrão e mudam para verde quando o item/episódio está efetivamente marcado como visto.
+- Continuidade/Home: metadados quebrados ou repetidos nos cards são normalizados para uma linha estável.
+- Carregamentos residuais fora de contexto são removidos para evitar telas presas em `Carregando detalhes...`/`Carregando histórico...`.
+- Descobrir estrito e deduplicação de streaming da 0.0.61 são preservados.
+- Configurações exibe a build `0.0.62`.
 
 A validação visual/funcional final depende de instalação e teste real no aparelho.
 
-## Backend
+## Arquitetura
 
-**Supabase:** Auth, PostgreSQL, RLS e RPCs autenticadas.  
-**Metadados:** TMDB via funções/proxy de backend.  
-**Deploy Web:** Vercel.  
-**Android:** Java, Android WebView, WorkManager e Gradle.  
-**CI/CD:** GitHub Actions.
+Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist, histórico, progresso, favoritos e decisões manuais pertencem à conta, não ao dispositivo.
 
 ## Regra de publicação
 
