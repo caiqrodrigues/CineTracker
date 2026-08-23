@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.8** |
-| Android | **0.0.62** |
+| Android | **0.0.63** |
 | Windows | **—** |
 
 ## Regra
@@ -32,7 +32,8 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.60** — padrão visual de detalhes, notas e disponibilidade.
 - **0.0.61** — Descobrir reforçado por ID+título; provedores deduplicados por família.
 - **0.0.62** — gráfico do Perfil auto-recuperável, botão `Assistido` apagado por padrão e verde somente quando visto, correção de metadados corrompidos nos cards de continuidade e limpeza de carregamentos residuais.
+- **0.0.63** — build de publicação das correções da 0.0.62, com versionCode 63, build marker próprio e pipeline apontado para Release/APK 0.0.63.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.62.md`.
+Release Android atual: `docs/releases/0.0.63.md`.
