@@ -17,7 +17,7 @@ As versões do CineTracker são independentes por plataforma.
 - Compilação bem-sucedida não equivale a validação visual/funcional; a validação exige instalação e teste real.
 - `applicationId` permanece `com.cinetracker.app` e `versionCode` é sempre crescente.
 - A `0.0.48` é a migração única para a assinatura permanente comprovada pelo CI.
-- A partir da `0.0.48`, toda versão futura deve ser assinada pelo certificado SHA-256 `063e4ebc59d652a9972422dc04a815e549aad94fee4b351636ca55badc46e17b`; o CI falha se o certificado mudar.
+- A partir da `0.0.48`, toda versão futura deve ser assinada pelo certificado SHA-256 `fe69519cd5669429446e4701cd5d0ad78c5a936b3130f27e478a05c0591353d3`; o CI falha se o certificado mudar.
 
 ## Linha Web
 
