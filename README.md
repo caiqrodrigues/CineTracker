@@ -7,24 +7,25 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 | Plataforma | Versão | Status |
 |---|---:|---|
 | Web | **0.4.8** | Código publicado / deploy Vercel |
-| Android | **0.0.65** | Código + pipeline de Release GitHub |
+| Android | **0.0.66** | Código + pipeline de Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
 
 **Web:** https://mycinetracker.vercel.app
 
-## Android 0.0.65
+## Android 0.0.66
 
-A 0.0.65 corrige os problemas restantes observados no vídeo da 0.0.64.
+A 0.0.66 corrige os problemas observados na validação em vídeo da 0.0.65.
 
-- restaura `ct53.js` para a função correta de marcador de build, eliminando a duplicação acidental da lógica do `ct54.js`;
-- corrige metadados repetidos/corrompidos nos cards da Watchlist;
-- corrige o cálculo de episódios restantes para `total - assistidos`;
-- mantém apenas uma nota por card;
-- remove definitivamente o texto residual `Carregando perfil...` quando o Perfil já renderizou;
-- preserva os estados de `Assistido`, `Acompanhando`, Descobrir estrito e streaming deduplicado;
-- Configurações exibe a build `0.0.65`.
+- estabiliza Assistir, Descobrir, Histórico e Perfil contra carregamentos presos;
+- tenta nova carga automaticamente em falhas transitórias e oferece tentativa manual se necessário;
+- evita o rerender extra do Perfil que podia fazê-lo voltar para `Carregando perfil...`;
+- atualiza corretamente o rodapé de Configurações para a build `0.0.66`;
+- remove notas e metadados duplicados no detalhe/cards;
+- elimina `Carregando episódios...` residual em temporadas;
+- mantém `Assistido` verde após uma marcação bem-sucedida;
+- preserva Descobrir estrito e streaming deduplicado.
 
 A validação visual/funcional final depende de instalação e teste real no aparelho.
 
