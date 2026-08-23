@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
 **Web atual:** `0.4.8`  
-**Android atual:** `0.0.66`
+**Android atual:** `0.0.67`
 
 ## 1. Objetivo
 
@@ -17,40 +17,41 @@ Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Lik
 
 Descobrir deve mostrar apenas conteúdo realmente fora do universo do usuário. Qualquer título já visto, concluído, em progresso, acompanhado, em Watchlist/Watch Later ou com outro estado persistente deve ser excluído de todos os filtros e destaques.
 
-## 3. Estado Android 0.0.66
+## 3. Estado Android 0.0.67
 
 ### Runtime
 
-A Activity continua carregando `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js`, `ct51.js`, `ct52.js`, `ct53.js`, `ct54.js` e `ct55.js`. As correções da 0.0.66 foram consolidadas no `ct55.js` para evitar mais uma camada duplicada de observer.
+A Activity carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js`, `ct51.js`, `ct52.js`, `ct53.js`, `ct54.js`, `ct55.js` e `ct56.js`.
+
+A 0.0.67 corrige o desalinhamento deixado pela tentativa 0.0.66: Gradle, Activity, query `apk=`, build footer, workflow e documentação agora apontam para a mesma versão.
 
 ### Correções desta versão
 
-- navegação entre Assistir, Descobrir, Histórico e Perfil deixa de forçar rerenders desnecessários;
-- loaders presos são detectados, recebem tentativa automática de recuperação e, se persistirem, viram ação manual de nova tentativa;
-- Perfil deixa de sofrer o refresh/rerender extra que podia apagar o conteúdo já carregado;
-- footer antigo de Web/Android em Configurações é normalizado para a versão atual;
-- notas/metadados duplicados são limpos;
-- temporadas deixam de exibir `Carregando episódios...` indefinidamente quando ainda não foram abertas;
-- botões de próximo episódio permanecem verdes após uma marcação bem-sucedida;
-- cálculo de faltantes continua baseado em `total - assistidos`;
-- Descobrir estrito e provedores de streaming deduplicados permanecem preservados.
+- navegação nativa tenta primeiro `ct67Navigate`, reduzindo disputa com os navegadores antigos;
+- `ct56.js` faz recuperação controlada de loaders presos em Assistir, Descobrir, Histórico e Perfil;
+- loaders que não se resolvem deixam de ficar infinitos e oferecem tentativa manual;
+- Perfil remove `Carregando perfil...` residual quando já há conteúdo útil;
+- detalhes removem rating bars duplicadas e mensagens residuais de temporadas;
+- botões de próximo episódio preservam o destaque verde após marcação;
+- metadados duplicados são consolidados;
+- Descobrir estrito, streaming deduplicado e cálculo de faltantes permanecem preservados.
 
 ### Configurações
 
-- build exibida: `0.0.66`.
+- build exibida: `0.0.67`.
 
 ## 4. Build e publicação
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionCode`: `66`;
-- `versionName`: `0.0.66`;
-- artefato esperado: `cinetracker-android-0.0.66-debug.apk`;
-- tag/release esperada: `android-v0.0.66`;
-- workflow valida `ct41.js` até `ct55.js` antes da compilação.
+- `versionCode`: `67`;
+- `versionName`: `0.0.67`;
+- artefato esperado: `cinetracker-android-0.0.67-debug.apk`;
+- tag/release esperada: `android-v0.0.67`;
+- workflow valida `ct41.js` até `ct56.js` antes da compilação.
 
 ## 5. Validação
 
-Implementado/compilado não significa validado. A 0.0.66 precisa ser instalada e testada em aparelho real.
+Implementado/compilado não significa validado. A 0.0.67 precisa ser instalada e testada em aparelho real.
 
 Pendências específicas:
 - confirmar Assistir sem `Failed to fetch`/loading infinito;
@@ -59,7 +60,7 @@ Pendências específicas:
 - confirmar Perfil sem voltar para `Carregando perfil...`;
 - confirmar temporadas sem loaders residuais;
 - confirmar `Assistido` verde após marcação;
-- confirmar footer `0.0.66` em Configurações;
+- confirmar footer `0.0.67` em Configurações;
 - reconfirmar Watchlist, notas, faltantes e streaming.
 
 ## 6. Publicação
