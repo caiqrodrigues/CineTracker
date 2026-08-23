@@ -29,9 +29,9 @@ Não criar tabela separada `CompletedSeries`. Conclusão deve ser derivada de pr
 - `versionCode` sempre crescente;
 - a instalação antiga/publicada da 0.0.46 foi comprovadamente assinada pelo certificado `5a5e16933b91f015b5f5da0f178543b63c92e49e595c8c2a8a5862b6487dc876`;
 - a chave privada antiga não está disponível;
-- a chave persistente atual do CI assina com `09d50c2bc684f47492060a20ef88fa075745d2b4aeabfd6d5e412b715e9183f7`;
+- a build final da 0.0.48 produzida pelo CI usa o certificado `063e4ebc59d652a9972422dc04a815e549aad94fee4b351636ca55badc46e17b`;
 - a `0.0.48` é a migração única: instalações antigas precisam ser removidas uma vez antes de instalar a 0.0.48;
-- da 0.0.49 em diante, o CI deve bloquear qualquer certificado diferente do baseline da 0.0.48 e as APKs devem atualizar por sobreposição normalmente.
+- da 0.0.49 em diante, o CI bloqueia qualquer certificado diferente desse baseline e as APKs devem atualizar por sobreposição normalmente.
 
 ## 5. Estado Android 0.0.48
 
