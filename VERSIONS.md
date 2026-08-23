@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.8** |
-| Android | **0.0.69** |
+| Android | **0.0.70** |
 | Windows | **—** |
 
 ## Regra
@@ -28,7 +28,8 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.1–0.0.58** — base Android e evolução inicial.
 - **0.0.59–0.0.68** — progresso, Descobrir, detalhes, streaming, Perfil, loaders, botões e notificações.
 - **0.0.69** — elimina repetição do backlog de notificações, remove disparo de worker em cada sessão e torna o carregamento de temporadas resiliente, com nota TMDB por episódio.
+- **0.0.70** — estabiliza o carregamento de `Continuar assistindo`/Assistir, mostra o nome do próximo episódio em ambas as áreas e centraliza o botão `Assistido` abaixo dele.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.69.md`.
+Release Android atual: `docs/releases/0.0.70.md`.
