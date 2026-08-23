@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
 **Web atual:** `0.4.8`  
-**Android atual:** `0.0.67`
+**Android atual:** `0.0.68`
 
 ## 1. Objetivo
 
@@ -17,51 +17,47 @@ Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Lik
 
 Descobrir deve mostrar apenas conteúdo realmente fora do universo do usuário. Qualquer título já visto, concluído, em progresso, acompanhado, em Watchlist/Watch Later ou com outro estado persistente deve ser excluído de todos os filtros e destaques.
 
-## 3. Estado Android 0.0.67
+## 3. Estado Android 0.0.68
 
 ### Runtime
 
-A Activity carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js`, `ct51.js`, `ct52.js`, `ct53.js`, `ct54.js`, `ct55.js` e `ct56.js`.
-
-A 0.0.67 corrige o desalinhamento deixado pela tentativa 0.0.66: Gradle, Activity, query `apk=`, build footer, workflow e documentação agora apontam para a mesma versão.
+A Activity carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js`, `ct51.js`, `ct52.js`, `ct53.js`, `ct54.js`, `ct55.js`, `ct56.js` e `ct57.js`.
 
 ### Correções desta versão
 
-- navegação nativa tenta primeiro `ct67Navigate`, reduzindo disputa com os navegadores antigos;
-- `ct56.js` faz recuperação controlada de loaders presos em Assistir, Descobrir, Histórico e Perfil;
-- loaders que não se resolvem deixam de ficar infinitos e oferecem tentativa manual;
-- Perfil remove `Carregando perfil...` residual quando já há conteúdo útil;
-- detalhes removem rating bars duplicadas e mensagens residuais de temporadas;
-- botões de próximo episódio preservam o destaque verde após marcação;
-- metadados duplicados são consolidados;
-- Descobrir estrito, streaming deduplicado e cálculo de faltantes permanecem preservados.
+- notificações nativas passam a deduplicar por impressão digital estável de título + mensagem por 7 dias, além de `event_key`;
+- o worker imediato de notificações passa a ser único, reduzindo disparos duplicados ao salvar a sessão repetidamente;
+- marcação de próximo episódio recebe atualização visual imediata e otimista, com reversão em caso de falha;
+- progresso/faltantes do card são atualizados imediatamente ao marcar um episódio;
+- repetição crescente de notas em Home/Assistir é reduzida para uma única nota;
+- `Carregando perfil...` é removido quando o gráfico/conteúdo já está disponível;
+- loaders residuais em Histórico/Descobrir são removidos quando a tela já possui dados;
+- Descobrir estrito, deduplicação de streaming, estados de acompanhamento e cálculo de faltantes são preservados.
 
 ### Configurações
 
-- build exibida: `0.0.67`.
+- build exibida: `0.0.68`.
 
 ## 4. Build e publicação
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionCode`: `67`;
-- `versionName`: `0.0.67`;
-- artefato esperado: `cinetracker-android-0.0.67-debug.apk`;
-- tag/release esperada: `android-v0.0.67`;
-- workflow valida `ct41.js` até `ct56.js` antes da compilação.
+- `versionCode`: `68`;
+- `versionName`: `0.0.68`;
+- artefato esperado: `cinetracker-android-0.0.68-debug.apk`;
+- tag/release esperada: `android-v0.0.68`;
+- workflow valida `ct41.js` até `ct57.js` antes da compilação.
 
 ## 5. Validação
 
-Implementado/compilado não significa validado. A 0.0.67 precisa ser instalada e testada em aparelho real.
+Implementado/compilado não significa validado. A 0.0.68 precisa ser instalada e testada em aparelho real.
 
 Pendências específicas:
-- confirmar Assistir sem `Failed to fetch`/loading infinito;
-- confirmar Descobrir carregando títulos normalmente e mantendo o filtro estrito;
-- confirmar Histórico carregando normalmente;
-- confirmar Perfil sem voltar para `Carregando perfil...`;
-- confirmar temporadas sem loaders residuais;
-- confirmar `Assistido` verde após marcação;
-- confirmar footer `0.0.67` em Configurações;
-- reconfirmar Watchlist, notas, faltantes e streaming.
+- confirmar que as mesmas três notificações não reaparecem;
+- confirmar resposta visual imediata ao marcar Chaves/próximo episódio;
+- confirmar uma única nota por card;
+- confirmar Perfil sem `Carregando perfil...` abaixo do gráfico;
+- reconfirmar Assistir, Descobrir, Histórico, Watchlist e streaming;
+- confirmar build `0.0.68` em Configurações.
 
 ## 6. Publicação
 
