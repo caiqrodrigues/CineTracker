@@ -4,10 +4,10 @@
 
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
-**Web publicada:** `0.4.8`  
-**Web em código:** `0.4.9`  
-**Android publicado:** `0.0.48`  
-**Android em código:** `0.0.49`
+**Web publicada:** `0.4.9`  
+**Web em implementação:** `0.5.0`  
+**Android publicado:** `0.0.49`  
+**Android em implementação:** `0.0.50`
 
 ## 1. Regras permanentes
 
@@ -15,34 +15,67 @@
 - Estados manuais do usuário têm prioridade e não podem ser apagados por importação.
 - Web e Android devem manter paridade funcional, exceto recursos explicitamente nativos como notificações.
 - Implementado/compilado não significa validado.
+- Toda versão deve atualizar código, documentação, versionamento e pipelines; Android exige também APK + Release.
 
 ## 2. Assinatura Android
 
 - `applicationId`: `com.cinetracker.app`.
 - `versionCode` sempre crescente.
-- O APK 0.0.48 publicado foi validado com SHA-256 `fe69519cd5669429446e4701cd5d0ad78c5a936b3130f27e478a05c0591353d3`.
-- O build 0.0.49 compila, porém o cache do GitHub restaurou uma chave cujo certificado é `fcac3a6a0bfdaf475adc8044b6c040cfe9c241dd36427a4c6b649a21475f2790`.
-- Portanto a 0.0.49 NÃO deve ser publicada nem entregue como atualização enquanto a chave privada correspondente ao baseline da 0.0.48 não for recuperada. Não mascarar esse bloqueio trocando o baseline.
+- A 0.0.49 foi autorizada como reinstalação única e passou a ser a nova base permanente de assinatura.
+- Baseline SHA-256 atual: `277a81b60c689c801ea9d45a311de29c2e5ed97fdc5bea0f4705f8531153e1ed`.
+- 0.0.50+ devem reutilizar o cache `cinetracker-signing-v3-0.0.49`; o CI falha se package ou certificado divergirem.
 
-## 3. Android 0.0.49 — código pronto, publicação bloqueada
+## 3. Android 0.0.50
 
-Runtime: `ct41.js` + `ct47.js` + `ct48.js` + `ct49.js`.
+Runtime final: `ct41.js` + `ct47.js` + `ct48.js` + `ct49.js` + `ct50.js`.
 
-- `Home > Continuar assistindo` usa exatamente itens `status='following'`, a mesma origem de `Assistir > Acompanhando`.
-- Home e Acompanhando têm botão de check para marcar o próximo episódio como visto.
-- O próximo episódio é determinado por `cinetracker_episode_state` + metadados TMDB.
-- A marcação persiste via `cinetracker_set_episode_watched` e invalida a leitura de progresso.
-- Descobrir identifica os contêineres reais de cards e força 3 colunas.
-- Configurações exibe `0.0.49`.
-- Notificações nativas permanecem inalteradas.
+### Progresso inteligente
 
-## 4. Web 0.4.9 — código pronto, deploy pendente
+- Ao marcar um episódio posterior como visto, o app verifica o estado real da temporada.
+- Se houver episódios anteriores não vistos, pergunta se o usuário já os assistiu.
+- Confirmando, marca automaticamente os anteriores da mesma temporada e depois o episódio selecionado.
+- Toda mudança dispara invalidação/atualização visual imediata.
 
-- mesma sincronização Home ↔ Acompanhando;
-- check do próximo episódio nas duas áreas;
-- Descobrir em três colunas;
-- `patch-v047.js` também reconhece o runtime Android 0.0.48, permitindo aplicar essas correções ao APK 0.0.48 quando a Web 0.4.9 estiver em produção;
-- deploy automático bloqueado atualmente pelo limite de builds do Vercel.
+### Home / Assistir
+
+- `Continuar assistindo` e `Assistir > Acompanhando` continuam consumindo a mesma origem.
+- Home recebe rolagem horizontal explícita e cards clicáveis para abrir a série.
+- Acompanhando é ordenado por atividade recente (`last_watched_at`, `last_activity_at`, `last_seen_at`, `watched_at` ou `updated_at`, nessa prioridade de fallback).
+- A série cujo episódio foi visto mais recentemente sobe para o início.
+
+### Navegação Android
+
+- O botão/gesto Voltar chama primeiro `ct50Back()`.
+- Detalhes de série/episódio retornam à tela interna anterior.
+- Se não houver histórico interno, volta para Home; depois disso o Android pode sair do app.
+
+### Estatísticas
+
+- Após marcar episódio/filme como visto, a camada final dispara atualização da interface e, no Perfil, nova renderização para refletir totais imediatamente.
+
+### Disponibilidade
+
+- TMDB Watch Providers com região `BR` é usado para mostrar plataformas de streaming/locação/compra quando disponíveis.
+- Filmes recentes sem provider digital podem indicar `Cinema / lançamento` como fallback de janela de lançamento.
+
+### Descobrir
+
+- Nova detecção dos containers reais de cards.
+- Força `repeat(3, minmax(0, 1fr))` com posters 2:3 e conteúdo compacto.
+
+### Notificações
+
+- Permanecem exclusivas do Android e sem mudança funcional nesta versão.
+
+## 4. Web 0.5.0
+
+- Paridade com Android 0.0.50, exceto notificações e integração do botão físico Voltar.
+- Marcação inteligente dos episódios anteriores da temporada.
+- Ordenação de Acompanhando por atividade recente.
+- Atualização visual imediata após progresso.
+- Disponibilidade de streaming via TMDB Watch Providers.
+- Descobrir reforçado em três colunas.
+- `patch-v050.js` carregado por último.
 
 ## 5. Backend relevante
 
@@ -53,8 +86,20 @@ Runtime: `ct41.js` + `ct47.js` + `ct48.js` + `ct49.js`.
 - `cinetracker_watch_day_details`
 - `cinetracker_due_notifications` — Android apenas
 
-## 6. Próximos passos obrigatórios
+## 6. Validação pendente
 
-1. Recuperar a chave privada que gerou o certificado `fe69519...53d3` da 0.0.48, ou assumir explicitamente uma nova migração de assinatura antes de publicar outro APK.
-2. Publicar Web 0.4.9 assim que o Vercel liberar novo build; isso também corrige a experiência do Android 0.0.48 sem novo APK.
-3. Validar em aparelho: Home=Acompanhando, check do próximo episódio e Descobrir em três colunas.
+### Android 0.0.50
+
+- confirmar build/release assinados pelo baseline da 0.0.49;
+- confirmar atualização por cima da 0.0.49;
+- confirmar Voltar interno;
+- confirmar marcação inteligente de episódios anteriores;
+- confirmar ordenação por atividade recente;
+- confirmar Home rolável/clicável;
+- confirmar Perfil atualizado imediatamente;
+- confirmar disponibilidade e três colunas em Descobrir.
+
+### Web 0.5.0
+
+- confirmar deploy real;
+- validar marcação inteligente, ordenação, disponibilidade e três colunas.
