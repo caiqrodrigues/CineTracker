@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
 **Web atual:** `0.4.8`  
-**Android atual:** `0.0.69`
+**Android atual:** `0.0.70`
 
 ## 1. Objetivo
 
@@ -17,45 +17,49 @@ Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Lik
 
 Descobrir deve mostrar apenas conteúdo realmente fora do universo do usuário. Qualquer título já visto, concluído, em progresso, acompanhado, em Watchlist/Watch Later ou com outro estado persistente deve ser excluído de todos os filtros e destaques.
 
-## 3. Estado Android 0.0.69
+## 3. Estado Android 0.0.70
 
 ### Runtime
 
-A Activity carrega `ct41.js` até `ct58.js`. O novo `ct58.js` é responsável pela recuperação do carregamento de episódios e exibição da nota individual TMDB de cada episódio.
+A Activity carrega `ct41.js` até `ct59.js`. O `ct59.js` estabiliza especificamente Home e Assistir para conteúdo em andamento/próximo episódio.
 
 ### Correções desta versão
 
-- notificações usam esquema de deduplicação v3 persistente;
-- o backlog existente é absorvido como baseline na primeira execução da 0.0.69 para impedir que as mesmas notificações antigas reapareçam;
-- não existe mais worker imediato disparado a cada `saveSession`; permanece apenas o worker periódico único;
-- temporadas que ficam presas em `Carregando episódios...` recebem timeout, até 3 tentativas e botão manual de nova tentativa;
-- episódios carregados exibem data, estado `Assistido` e nota TMDB individual quando disponível;
-- as correções anteriores de Descobrir estrito, streaming deduplicado, progresso e feedback otimista permanecem.
+- Home consulta `cinetracker_continue_items_v2` com timeout e retentativas para evitar `Continuar assistindo` vazio enquanto há séries em andamento;
+- os cards básicos aparecem antes de terminar o enriquecimento TMDB do próximo episódio;
+- a aba Assistir tenta recuperar automaticamente uma lista que permaneça em `Carregando...`;
+- cards de séries em Home e Assistir mostram o nome do próximo episódio quando disponível;
+- nome do episódio usa fonte maior e quebra de linha normal;
+- botão `Assistido` fica centralizado abaixo do episódio;
+- marcação usa feedback otimista e persiste em segundo plano;
+- após marcar, o próximo episódio do card é recalculado;
+- correções de temporadas, notas individuais, notificações e streaming das versões anteriores permanecem.
 
 ### Configurações
 
-- build exibida: `0.0.69`.
+- build exibida: `0.0.70`.
 
 ## 4. Build e publicação
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionCode`: `69`;
-- `versionName`: `0.0.69`;
-- artefato esperado: `cinetracker-android-0.0.69-debug.apk`;
-- tag/release esperada: `android-v0.0.69`;
-- workflow valida `ct41.js` até `ct58.js` antes da compilação.
+- `versionCode`: `70`;
+- `versionName`: `0.0.70`;
+- artefato esperado: `cinetracker-android-0.0.70-debug.apk`;
+- tag/release esperada: `android-v0.0.70`;
+- workflow valida `ct41.js` até `ct59.js` antes da compilação.
 
 ## 5. Validação
 
-Implementado/compilado não significa validado. A 0.0.69 precisa ser instalada e testada em aparelho real.
+Implementado/compilado não significa validado. A 0.0.70 precisa ser instalada e testada em aparelho real.
 
 Pendências específicas:
-- confirmar que as três notificações antigas não reaparecem;
-- confirmar que novas notificações reais continuam chegando apenas uma vez;
-- confirmar abertura de todas as temporadas e carregamento de episódios;
-- confirmar nota individual por episódio;
-- reconfirmar estados Assistido e progresso após marcação;
-- confirmar build `0.0.69` em Configurações.
+- confirmar Home preenchendo `Continuar assistindo` sem demora excessiva;
+- confirmar Assistir saindo de `Carregando...`;
+- confirmar nome do próximo episódio em Home e Assistir;
+- confirmar botão `Assistido` centralizado e resposta imediata;
+- confirmar atualização para o próximo episódio após marcação;
+- reconfirmar temporadas/notas/notificações/streaming;
+- confirmar build `0.0.70` em Configurações.
 
 ## 6. Publicação
 
