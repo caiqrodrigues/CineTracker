@@ -42,7 +42,7 @@ function fixSettingsBuild(){
     if(/^CineTracker Android\s*[•·-]?\s*build\s+0\.0\.\d+$/i.test(t))el.style.setProperty('display','none','important');
   }
   if(!$('#ct49-build-footer',root)){
-    const footer=document.createElement('div');footer.id='ct49-build-footer';footer.className='ct49-build-footer';footer.textContent='CineTracker Android • build 0.0.59';
+    const footer=document.createElement('div');footer.id='ct49-build-footer';footer.className='ct49-build-footer';footer.textContent='CineTracker Android • build 0.0.60';
     ($('.content',root)||root).appendChild(footer);
   }
 }
