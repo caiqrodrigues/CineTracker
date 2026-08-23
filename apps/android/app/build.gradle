@@ -8,10 +8,9 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 54
-        versionName '0.0.54'
-        def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
-        buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
+        versionCode 55
+        versionName '0.0.55'
+        buildConfigField 'String', 'WEB_URL', '"file:///android_asset/stable49/index.html"'
     }
 
     buildFeatures { buildConfig true }
@@ -22,4 +21,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// build-trigger: android-0.0.54-recovery
+// build-trigger: android-0.0.55-frozen49
