@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.8** |
-| Android | **0.0.66** |
+| Android | **0.0.67** |
 | Windows | **—** |
 
 ## Regra
@@ -35,8 +35,9 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.63** — build de publicação das correções da 0.0.62.
 - **0.0.64** — remove repetição de notas, compacta cards, corrige estados de `Assistido`/`Acompanhando`, elimina `Carregando perfil...` residual e unifica notas no detalhe.
 - **0.0.65** — remove duplicação acidental entre `ct53`/`ct54`, corrige metadados da Watchlist, cálculo de episódios restantes, notas duplicadas e carregamento residual do Perfil.
-- **0.0.66** — estabiliza navegação e loaders, corrige footer antigo, evita carregamentos infinitos, mantém `Assistido` verde e limpa detalhes/temporadas.
+- **0.0.66** — tentativa de estabilização dos loaders; ficou com desalinhamento entre Gradle e Activity e não é considerada release final.
+- **0.0.67** — consolida o runtime, alinha todas as referências de versão e carrega `ct56.js` com recuperação controlada das telas.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.66.md`.
+Release Android atual: `docs/releases/0.0.67.md`.
