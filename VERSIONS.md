@@ -4,7 +4,7 @@ As versões do CineTracker são independentes por plataforma.
 
 | Plataforma | Versão oficial atual |
 |---|---:|
-| Web | **0.3.1** |
+| Web | **0.4.8** |
 | Android | **0.0.48** |
 | Windows | **—** |
 
@@ -21,7 +21,8 @@ As versões do CineTracker são independentes por plataforma.
 
 ## Linha Web
 
-- **0.1.x–0.3.1** — evolução da aplicação Web, autenticação, Supabase, importação, TMDB, biblioteca, histórico, perfil e estatísticas.
+- **0.1.x–0.4.7** — evolução da aplicação Web: autenticação, Supabase, importação, TMDB, biblioteca, histórico, perfil, estatísticas, configurações e resolvedor global de nomes/capas.
+- **0.4.8** — paridade funcional com Android 0.0.48, exceto notificações nativas: Tempo de Tela diário interativo, Assistir com seções Em dia/Acompanhando/Juntando poeira/Não iniciadas, Carrossel padrão com Grade/Lista, série → temporada → episódio com marcação persistente, Descobrir compacto em três colunas e Configurações com conta, segurança e backup.
 
 ## Linha Android
 
@@ -36,6 +37,7 @@ As versões do CineTracker são independentes por plataforma.
 
 Cada release nova recebe arquivo próprio em `docs/releases/`.
 
+- `docs/releases/web-0.4.8.md`
 - `docs/releases/0.0.44.md`
 - `docs/releases/0.0.45.md`
 - `docs/releases/0.0.46.md`
