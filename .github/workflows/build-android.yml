@@ -64,8 +64,14 @@ jobs:
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           test -x "$APKSIGNER"
           test -x "$AAPT"
-          OLD_CERT="$($APKSIGNER verify --print-certs /tmp/ct-prev/cinetracker-android-0.0.46-debug.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -1)"
-          NEW_CERT="$($APKSIGNER verify --print-certs cinetracker-android-0.0.48-debug.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | head -1)"
+          OLD_INFO="$($APKSIGNER verify --print-certs /tmp/ct-prev/cinetracker-android-0.0.46-debug.apk 2>&1)"
+          NEW_INFO="$($APKSIGNER verify --print-certs cinetracker-android-0.0.48-debug.apk 2>&1)"
+          echo "--- apksigner 0.0.46 ---"
+          printf '%s\n' "$OLD_INFO"
+          echo "--- apksigner 0.0.48 ---"
+          printf '%s\n' "$NEW_INFO"
+          OLD_CERT="$(printf '%s\n' "$OLD_INFO" | grep -i 'certificate SHA-256 digest' | head -1 | sed 's/.*digest:[[:space:]]*//')"
+          NEW_CERT="$(printf '%s\n' "$NEW_INFO" | grep -i 'certificate SHA-256 digest' | head -1 | sed 's/.*digest:[[:space:]]*//')"
           OLD_PACKAGE="$($AAPT dump badging /tmp/ct-prev/cinetracker-android-0.0.46-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
           NEW_PACKAGE="$($AAPT dump badging cinetracker-android-0.0.48-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
           echo "0.0.46 signer: $OLD_CERT"
@@ -74,8 +80,8 @@ jobs:
           echo "0.0.48 package: $NEW_PACKAGE"
           echo "Signing caches visible to repository:"
           gh api "repos/${GITHUB_REPOSITORY}/actions/caches?per_page=100" --jq '.actions_caches[] | select(.key=="cinetracker-debug-signing-v1") | [.id,.ref,.key,.created_at,.last_accessed_at] | @tsv' || true
-          if [ -z "$OLD_CERT" ] || [ "$OLD_CERT" != "$NEW_CERT" ]; then
-            echo "Signing certificate mismatch: refusing to publish an APK that cannot update the published 0.0.46." >&2
+          if [ -z "$OLD_CERT" ] || [ -z "$NEW_CERT" ] || [ "$OLD_CERT" != "$NEW_CERT" ]; then
+            echo "Signing certificate mismatch/unreadable: refusing to publish an APK that cannot update the published 0.0.46." >&2
             exit 1
           fi
           if [ "$OLD_PACKAGE" != "com.cinetracker.app" ] || [ "$NEW_PACKAGE" != "com.cinetracker.app" ]; then
