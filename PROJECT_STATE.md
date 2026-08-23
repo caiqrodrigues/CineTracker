@@ -29,7 +29,7 @@ Não criar tabela separada `CompletedSeries`. Conclusão deve ser derivada de pr
 - `versionCode` sempre crescente;
 - a instalação antiga/publicada da 0.0.46 foi comprovadamente assinada pelo certificado `5a5e16933b91f015b5f5da0f178543b63c92e49e595c8c2a8a5862b6487dc876`;
 - a chave privada antiga não está disponível;
-- a build final da 0.0.48 produzida pelo CI usa o certificado `063e4ebc59d652a9972422dc04a815e549aad94fee4b351636ca55badc46e17b`;
+- a build final da 0.0.48 usa keystore dedicado do CineTracker e o baseline persistido pelo CI é `fe69519cd5669429446e4701cd5d0ad78c5a936b3130f27e478a05c0591353d3`;
 - a `0.0.48` é a migração única: instalações antigas precisam ser removidas uma vez antes de instalar a 0.0.48;
 - da 0.0.49 em diante, o CI bloqueia qualquer certificado diferente desse baseline e as APKs devem atualizar por sobreposição normalmente.
 
