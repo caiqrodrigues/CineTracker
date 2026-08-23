@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
 **Web atual:** `0.4.8`  
-**Android atual:** `0.0.64`
+**Android atual:** `0.0.65`
 
 ## 1. Objetivo
 
@@ -17,49 +17,45 @@ Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Lik
 
 Descobrir deve mostrar apenas conteúdo realmente fora do universo do usuário. Qualquer título já visto, concluído, em progresso, acompanhado, em Watchlist/Watch Later ou com outro estado persistente deve ser excluído de todos os filtros e destaques.
 
-## 3. Estado Android 0.0.64
+## 3. Estado Android 0.0.65
 
 ### Runtime
 
-A Activity carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js`, `ct51.js`, `ct52.js`, `ct53.js` e `ct54.js`.
+A Activity carrega `ct41.js`, `ct47.js`, `ct48.js`, `ct49.js`, `ct50.js`, `ct51.js`, `ct52.js`, `ct53.js`, `ct54.js` e `ct55.js`.
 
 ### Correções desta versão
 
-- notas repetidas/acumuladas nos cards são deduplicadas;
-- cards de acompanhamento/continuidade ficam mais compactos;
-- `Assistido` permanece neutro por padrão e recebe destaque verde apenas quando visto/clicado;
-- séries em andamento exibem `Acompanhando` no detalhe em vez de uma ação contraditória de Watchlist;
-- `Carregando perfil...` residual é removido quando o Perfil já possui gráfico/conteúdo;
-- detalhes de mídia usam uma única área oficial de notas, evitando duas apresentações diferentes do mesmo título;
-- filtro estrito de Descobrir e deduplicação de streaming permanecem ativos.
+- `ct53.js` volta a ser apenas marcador de build; a duplicação acidental da lógica de `ct54.js` foi removida;
+- metadados da Watchlist são normalizados para evitar texto repetido/corrompido;
+- episódios restantes usam `total - assistidos`;
+- notas repetidas em Home/Assistir são consolidadas;
+- `Carregando perfil...` residual é ocultado quando o Perfil já renderizou;
+- estados de `Assistido`, `Acompanhando`, Descobrir estrito e streaming deduplicado permanecem preservados.
 
 ### Configurações
 
-- build exibida: `0.0.64`.
+- build exibida: `0.0.65`.
 
 ## 4. Build e publicação
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionCode`: `64`;
-- `versionName`: `0.0.64`;
-- artefato esperado: `cinetracker-android-0.0.64-debug.apk`;
-- tag/release esperada: `android-v0.0.64`;
-- workflow valida `ct41.js` até `ct54.js` antes da compilação.
+- `versionCode`: `65`;
+- `versionName`: `0.0.65`;
+- artefato esperado: `cinetracker-android-0.0.65-debug.apk`;
+- tag/release esperada: `android-v0.0.65`;
+- workflow valida `ct41.js` até `ct55.js` antes da compilação.
 
 ## 5. Validação
 
-Implementado/compilado não significa validado. A 0.0.64 precisa ser instalada e testada em aparelho real.
+Implementado/compilado não significa validado. A 0.0.65 precisa ser instalada e testada em aparelho real.
 
 Pendências específicas:
-- confirmar ausência de notas repetidas nos cards;
-- confirmar cards compactos sem corte de conteúdo;
-- confirmar botão `Assistido` neutro e verde no estado correto;
-- confirmar `Acompanhando` em séries com progresso;
+- confirmar Watchlist sem metadados repetidos;
+- confirmar `33/314` resultando em `Faltam 281 episódios`;
+- confirmar uma única nota por card;
 - confirmar Perfil sem `Carregando perfil...` preso;
-- confirmar um único padrão de notas no detalhe;
-- reconfirmar Descobrir e streaming;
-- confirmar build `0.0.64` em Configurações;
-- confirmar atualização por sobreposição.
+- reconfirmar Descobrir, botões e streaming;
+- confirmar build `0.0.65` em Configurações.
 
 ## 6. Publicação
 
