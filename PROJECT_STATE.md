@@ -2,98 +2,63 @@
 
 > Documento persistente de continuidade do projeto. Deve ser atualizado a cada mudança relevante para que o desenvolvimento possa ser retomado sem depender do histórico do ChatGPT.
 
-**Última atualização:** 2026-08-22  
+**Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
-**Web atual:** `0.4.8`  
-**Android atual:** `0.0.48`
+**Web atual:** `0.4.9`  
+**Android atual:** `0.0.49`
 
 ## 1. Objetivo
 
-Companion multiplataforma para acompanhar filmes, séries e animes, com experiência sincronizada Web/Android, histórico real, progresso por episódio, Watchlist, favoritos, estatísticas, descoberta de conteúdo e notificações nativas no Android.
+Companion multiplataforma para filmes, séries e animes, com conta única, histórico real, progresso por episódio, Watchlist, favoritos, estatísticas, descoberta e notificações nativas no Android.
 
-## 2. Integrações
+## 2. Regras permanentes
 
-- TMDB: títulos, capas, elenco, imagens e metadados oficiais.
-- Supabase: Auth, PostgreSQL, RLS, progresso, histórico, sincronização e RPCs autenticadas.
-- GitHub: código, documentação, Releases e CI/CD.
-- Vercel: publicação Web.
-- Android WorkManager: notificações periódicas em segundo plano exclusivamente no Android.
+- Não criar tabela separada `CompletedSeries`; conclusão é derivada de progresso + TMDB + decisões manuais.
+- Estados manuais do usuário têm prioridade e não podem ser apagados por importação.
+- Web e Android devem manter paridade funcional, exceto recursos explicitamente nativos como notificações.
+- Implementado/compilado não significa validado; Android exige teste em aparelho e Web exige deploy/teste real.
 
-## 3. Regras de domínio
+## 3. Assinatura Android
 
-Não criar tabela separada `CompletedSeries`. Conclusão deve ser derivada de progresso importado/manual + metadados oficiais. Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater`, `AddedToWatchlist`) têm prioridade e não podem ser apagados por nova importação.
+- `applicationId`: `com.cinetracker.app`.
+- `versionCode` sempre crescente.
+- A 0.0.48 estabeleceu o keystore dedicado permanente.
+- Baseline SHA-256: `fe69519cd5669429446e4701cd5d0ad78c5a936b3130f27e478a05c0591353d3`.
+- Da 0.0.49 em diante o CI falha se assinatura ou package id divergirem.
 
-## 4. Assinatura e atualização Android
+## 4. Android 0.0.49
 
-- `applicationId`: `com.cinetracker.app`;
-- `versionCode` sempre crescente;
-- a instalação antiga/publicada da 0.0.46 foi comprovadamente assinada pelo certificado `5a5e16933b91f015b5f5da0f178543b63c92e49e595c8c2a8a5862b6487dc876`;
-- a chave privada antiga não está disponível;
-- a build final da 0.0.48 usa keystore dedicado do CineTracker e o baseline persistido pelo CI é `fe69519cd5669429446e4701cd5d0ad78c5a936b3130f27e478a05c0591353d3`;
-- a `0.0.48` é a migração única: instalações antigas precisam ser removidas uma vez antes de instalar a 0.0.48;
-- da 0.0.49 em diante, o CI bloqueia qualquer certificado diferente desse baseline e as APKs devem atualizar por sobreposição normalmente.
+Runtime: `ct41.js` + `ct47.js` + `ct48.js` + `ct49.js`.
 
-## 5. Estado Android 0.0.48
+### Home / Assistir
 
-### Notificações
+- `Home > Continuar assistindo` usa exatamente os itens com status `following`, a mesma origem de `Assistir > Acompanhando`.
+- As duas áreas exibem botão de check para marcar o próximo episódio como visto.
+- O próximo episódio é determinado pelo estado real retornado por `cinetracker_episode_state`, não apenas pela contagem total assistida.
+- A marcação persiste via `cinetracker_set_episode_watched` e força nova leitura do progresso.
 
-Infraestrutura da 0.0.46 preservada e já validada em aparelho real: novo episódio e filme elegível da Watchlist. Após a reinstalação 0.0.48 é necessário fazer login novamente para reativar a sessão nativa.
+### Descobrir
 
-### Runtime consolidado
-
-A Activity carrega somente:
-
-1. `ct41.js` — gráfico diário interativo;
-2. `ct47.js` — Assistir e detalhes de série/temporada/episódio;
-3. `ct48.js` — correções finais de Perfil, Descobrir, Configurações e navegação.
-
-### Interface
-
-- Perfil: sem gráfico de horário/horário de pico; timeline diária dark e interativa.
-- Descobrir: três cards por linha, posters 2:3.
-- Assistir: Carrossel padrão, Grade/Lista, ordem `Em dia` → `Acompanhando` → `Juntando poeira` → `Não iniciadas`, abertura posicionada em Acompanhando.
-- Série → temporada → episódio com marcação persistente.
-- Configurações: versão única `0.0.48`.
-
-## 6. Estado Web 0.4.8
-
-A Web passa a ter paridade funcional com o Android 0.0.48, exceto notificações nativas.
-
-### Perfil / Tempo de Tela
-
-- remove atividade por horário e horário de pico;
-- timeline diária em dark mode;
-- 7 dias visíveis, hoje centralizado com 3 dias anteriores e 3 posteriores;
-- navegação horizontal até 15 dias anteriores;
-- clique em um dia abre itens assistidos naquele dia.
-
-### Assistir
-
-- Carrossel inicial e persistente;
-- Grade e Lista;
-- seções físicas `Em dia`, `Acompanhando`, `Juntando poeira`, `Não iniciadas`;
-- abertura posicionada em Acompanhando;
-- filmes e séries clicáveis;
-- série → temporada → episódio;
-- marcação/desmarcação de episódios persistida no Supabase.
-
-### Descobrir / Metadados
-
-- três colunas nos grids principais;
-- resolvedor global de nomes/capas `patch-v045.js` permanece ativo;
-- `patch-v046.js` é carregado por último e consolida a paridade sem polling periódico adicional.
+- a camada final identifica os contêineres reais cujos filhos são cards e força `repeat(3, minmax(0, 1fr))`;
+- poster 2:3 e metadados compactos permanecem preservados.
 
 ### Configurações
 
-- alteração de e-mail e senha;
-- importação e exportação de backup;
-- versão única `CineTracker Web 0.4.8`.
+- build exibida como `0.0.49`.
 
-### Diferença intencional
+### Notificações
 
-Notificações de lançamentos/episódios não são portadas para Web nesta versão.
+- infraestrutura WorkManager/Supabase preservada sem alteração funcional nesta versão.
 
-## 7. Backend relevante
+## 5. Web 0.4.9
+
+- mesma sincronização Home/Continuar assistindo ↔ Assistir/Acompanhando;
+- check do próximo episódio nas duas áreas;
+- Descobrir reforçado em três colunas;
+- `patch-v047.js` carregado por último;
+- notificações continuam exclusivas do Android.
+
+## 6. Backend relevante
 
 - `cinetracker_continue_items_v2`
 - `cinetracker_episode_state`
@@ -102,33 +67,21 @@ Notificações de lançamentos/episódios não são portadas para Web nesta vers
 - `cinetracker_watch_day_details`
 - `cinetracker_due_notifications` — Android apenas
 
-## 8. Regra de validação
+## 7. Pendências de validação
 
-Implementado/compilado não significa validado. Android exige instalação e teste real. Web exige build/deploy real e teste das telas no ambiente publicado.
+### Android 0.0.49
 
-## 9. Regra de documentação e publicação
+- confirmar atualização por cima da 0.0.48;
+- confirmar Home e Acompanhando com exatamente os mesmos itens;
+- confirmar check do próximo episódio nas duas áreas e atualização imediata do progresso;
+- confirmar Descobrir com três cards por linha em todas as categorias/filtros;
+- confirmar versão 0.0.49 e continuidade das notificações.
 
-Toda versão relevante deve atualizar código-fonte, versionamento, `README.md`, `VERSIONS.md`, `PROJECT_STATE.md`, documentação de release, `CHANGELOG.md` quando aplicável e pipeline correspondente. Android também exige Release + APK.
-
-## 10. Pendências de validação
-
-### Android 0.0.48
-
-- instalar após remover uma build assinada pela chave antiga;
-- confirmar versão única 0.0.48;
-- confirmar Perfil, Descobrir e Assistir;
-- confirmar série → temporada → episódio;
-- confirmar continuidade das notificações após login.
-
-### Web 0.4.8
+### Web 0.4.9
 
 - confirmar deploy real;
-- confirmar timeline diária e detalhe por dia;
-- confirmar seções/modos de Assistir;
-- confirmar marcação persistente de episódio;
-- confirmar três colunas em Descobrir;
-- confirmar Configurações e resolvedor de capas/nomes.
+- confirmar os mesmos três pontos de paridade da versão Android.
 
-## 11. Continuidade
+## 8. Continuidade
 
-Antes de alterações importantes: ler este arquivo, conferir a Release/commit atual e preservar as decisões arquiteturais e regras de validação.
+Antes de alterações importantes: ler este arquivo, conferir Release/commit atual e preservar as regras de domínio, assinatura e validação.
