@@ -5,101 +5,87 @@
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
 **Web publicada:** `0.4.9`  
-**Web em implementação:** `0.5.0`  
-**Android publicado:** `0.0.49`  
-**Android em implementação:** `0.0.50`
+**Web 0.5.0:** código pronto; último deploy pode aguardar limite do Vercel  
+**Android publicado:** `0.0.50`
 
 ## 1. Regras permanentes
 
 - Não criar tabela separada `CompletedSeries`; conclusão é derivada de progresso + TMDB + decisões manuais.
 - Estados manuais do usuário têm prioridade e não podem ser apagados por importação.
-- Web e Android devem manter paridade funcional, exceto recursos explicitamente nativos como notificações.
+- Web e Android mantêm paridade funcional, exceto recursos nativos como notificações e botão físico Voltar.
 - Implementado/compilado não significa validado.
-- Toda versão deve atualizar código, documentação, versionamento e pipelines; Android exige também APK + Release.
+- Toda versão atualiza código, documentação, versionamento e pipelines; Android exige Release + APK.
 
 ## 2. Assinatura Android
 
 - `applicationId`: `com.cinetracker.app`.
-- `versionCode` sempre crescente.
-- A 0.0.49 foi autorizada como reinstalação única e passou a ser a nova base permanente de assinatura.
-- Baseline SHA-256 atual: `277a81b60c689c801ea9d45a311de29c2e5ed97fdc5bea0f4705f8531153e1ed`.
-- 0.0.50+ devem reutilizar o cache `cinetracker-signing-v3-0.0.49`; o CI falha se package ou certificado divergirem.
+- `versionCode`: `50`.
+- `versionName`: `0.0.50`.
+- A 0.0.50 foi publicada com sucesso e passa a ser a base de assinatura atual.
+- Baseline SHA-256 registrado pelo CI: `651e737a4e1de5d5db89773116528cd3ab3b0764a736dbd12dd8894fcc55bae7`.
+- Próximas versões devem manter esse certificado; não trocar assinatura silenciosamente.
 
 ## 3. Android 0.0.50
 
-Runtime final: `ct41.js` + `ct47.js` + `ct48.js` + `ct49.js` + `ct50.js`.
+Runtime: `ct41.js` + `ct47.js` + `ct48.js` + `ct49.js` + `ct50.js`.
 
 ### Progresso inteligente
 
-- Ao marcar um episódio posterior como visto, o app verifica o estado real da temporada.
-- Se houver episódios anteriores não vistos, pergunta se o usuário já os assistiu.
-- Confirmando, marca automaticamente os anteriores da mesma temporada e depois o episódio selecionado.
-- Toda mudança dispara invalidação/atualização visual imediata.
+- Ao marcar um episódio posterior, verifica os episódios anteriores da mesma temporada.
+- Se houver lacunas, pergunta se o usuário já viu os anteriores.
+- Confirmando, usa `cinetracker_mark_episode_through` para marcar do episódio 1 até o selecionado.
+- `cinetracker_set_episode_watched` continua registrando progresso e histórico manual.
 
 ### Home / Assistir
 
-- `Continuar assistindo` e `Assistir > Acompanhando` continuam consumindo a mesma origem.
-- Home recebe rolagem horizontal explícita e cards clicáveis para abrir a série.
-- Acompanhando é ordenado por atividade recente (`last_watched_at`, `last_activity_at`, `last_seen_at`, `watched_at` ou `updated_at`, nessa prioridade de fallback).
-- A série cujo episódio foi visto mais recentemente sobe para o início.
+- `Home > Continuar assistindo` e `Assistir > Acompanhando` usam a mesma origem de dados.
+- Home tem rolagem horizontal e cards clicáveis para abrir a série.
+- Acompanhando é ordenado pelo `last_watched_at` mais recente, portanto a série vista por último sobe para a frente.
+- Após marcar progresso, a interface e o Perfil são invalidados/recalculados imediatamente.
 
-### Navegação Android
+### Navegação
 
-- O botão/gesto Voltar chama primeiro `ct50Back()`.
-- Detalhes de série/episódio retornam à tela interna anterior.
-- Se não houver histórico interno, volta para Home; depois disso o Android pode sair do app.
-
-### Estatísticas
-
-- Após marcar episódio/filme como visto, a camada final dispara atualização da interface e, no Perfil, nova renderização para refletir totais imediatamente.
-
-### Disponibilidade
-
-- TMDB Watch Providers com região `BR` é usado para mostrar plataformas de streaming/locação/compra quando disponíveis.
-- Filmes recentes sem provider digital podem indicar `Cinema / lançamento` como fallback de janela de lançamento.
+- O botão/gesto Voltar do Android tenta primeiro `ct50Back()`.
+- Série/episódio voltam para a tela interna anterior antes de sair do app.
 
 ### Descobrir
 
-- Nova detecção dos containers reais de cards.
-- Força `repeat(3, minmax(0, 1fr))` com posters 2:3 e conteúdo compacto.
+- A camada final identifica os containers reais dos cards e força três colunas compactas no mobile, com posters 2:3.
+
+### Onde assistir
+
+- TMDB Watch Providers para região `BR` informa streaming, aluguel e compra quando disponíveis.
+- Filmes recentes podem receber indicação de `Cinema / lançamento` quando aplicável.
 
 ### Notificações
 
-- Permanecem exclusivas do Android e sem mudança funcional nesta versão.
+- Permanecem nativas do Android e preservadas.
 
-## 4. Web 0.5.0
+## 4. Backend 0.0.50 / Web 0.5.0
 
-- Paridade com Android 0.0.50, exceto notificações e integração do botão físico Voltar.
-- Marcação inteligente dos episódios anteriores da temporada.
-- Ordenação de Acompanhando por atividade recente.
-- Atualização visual imediata após progresso.
-- Disponibilidade de streaming via TMDB Watch Providers.
-- Descobrir reforçado em três colunas.
-- `patch-v050.js` carregado por último.
+Migration `activity_order_smart_episode_and_movie_watch_v050`:
 
-## 5. Backend relevante
+- `cinetracker_continue_items_v2` passa a ordenar Acompanhando por atividade recente;
+- `cinetracker_mark_episode_through` marca uma sequência de episódios;
+- `cinetracker_set_state` grava `watched_at` e histórico manual de filme quando marcado como visto;
+- estatísticas de Perfil usam os dados persistidos e podem refletir a mudança imediatamente.
 
-- `cinetracker_continue_items_v2`
-- `cinetracker_episode_state`
-- `cinetracker_set_episode_watched`
-- `cinetracker_watch_daily_timeline`
-- `cinetracker_watch_day_details`
-- `cinetracker_due_notifications` — Android apenas
+Migration `restrict_progress_notification_rpcs_v050` restringe RPCs sensíveis de progresso/notificação a usuários autenticados.
+
+## 5. Web 0.5.0
+
+`patch-v050.js` leva para Web as funções não nativas da 0.0.50:
+
+- marcação inteligente;
+- ordenação recente;
+- atualização imediata do progresso;
+- disponibilidade via Watch Providers;
+- Descobrir em três colunas.
+
+Notificações e botão físico Voltar continuam exclusivos do Android.
 
 ## 6. Validação pendente
 
-### Android 0.0.50
+Android: testar em aparelho Home rolável/clicável, Voltar interno, confirmação dos episódios anteriores, ordenação recente, atualização imediata do Perfil, Onde assistir e três colunas em Descobrir.
 
-- confirmar build/release assinados pelo baseline da 0.0.49;
-- confirmar atualização por cima da 0.0.49;
-- confirmar Voltar interno;
-- confirmar marcação inteligente de episódios anteriores;
-- confirmar ordenação por atividade recente;
-- confirmar Home rolável/clicável;
-- confirmar Perfil atualizado imediatamente;
-- confirmar disponibilidade e três colunas em Descobrir.
-
-### Web 0.5.0
-
-- confirmar deploy real;
-- validar marcação inteligente, ordenação, disponibilidade e três colunas.
+Web 0.5.0: validar após o próximo deploy de produção bem-sucedido no Vercel.
