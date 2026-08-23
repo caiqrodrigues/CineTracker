@@ -6,7 +6,7 @@
 **Branch principal:** `main`  
 **Web publicada:** `0.4.9`  
 **Web 0.5.0:** código pronto  
-**Android publicado:** `0.0.52`
+**Android em publicação:** `0.0.53`
 
 ## 1. Regras permanentes
 
@@ -16,60 +16,62 @@
 - Implementado/compilado não significa validado.
 - Toda versão atualiza código, documentação, versionamento e pipelines; Android exige Release + APK.
 
-## 2. Assinatura Android
+## 2. Base Android válida
 
-- `applicationId`: `com.cinetracker.app`.
-- `versionCode`: `52`.
-- `versionName`: `0.0.52`.
-- A 0.0.52 estabelece a chave estável `v6`, persistida no cache após build bem-sucedido.
-- Baseline SHA-256: `231fab65f7af070000c37788e18ba7b1eaec3b40f87dd4772955ff241e8b57b7`.
-- 0.0.53+ devem restaurar a mesma chave `v6` e falhar se o certificado divergir.
+A última base confirmada pelo usuário como funcional é a tag `android-v0.0.49`.
 
-## 3. 0.0.51 reprovada
+A 0.0.53 restaura deliberadamente essa arquitetura e não carrega os runtimes experimentais posteriores:
 
-A 0.0.51 substituiu todos os módulos Android por `ct51.js`. Em teste real, o aplicativo deixou de carregar corretamente e a versão foi reprovada. Ela não deve ser considerada base funcional.
+`ct41.js + ct47.js + ct48.js + ct49.js + ct53.js`
 
-## 4. Android 0.0.52 — recuperação estável
+`ct53.js` contém somente correções incrementais solicitadas após a 0.0.49.
 
-A Activity volta a carregar a pilha que efetivamente funcionava antes da regressão:
+## 3. Correções 0.0.53
 
-`ct41.js + ct47.js + ct48.js + ct49.js + ct50.js + ct52.js`
-
-`ct52.js` é propositalmente pequeno e corrige apenas os pontos pendentes, evitando reescrever o aplicativo inteiro.
+### Marcação inteligente
+- Ao marcar um episódio posterior, consulta o estado real da temporada.
+- Se houver episódios anteriores não vistos, pergunta se o usuário já os viu.
+- Confirmando, usa `cinetracker_mark_episode_through` ou fallback sequencial.
 
 ### Home / Continuar assistindo
+- Mantém a origem de `Acompanhando` da base 0.0.49.
+- Rolagem horizontal recebe `touch-action: pan-x`, `overflow-x:auto` e scroll snap.
+- Card de série passa a abrir a série; botão de check continua independente.
 
-- Mantém a mesma origem de dados de Acompanhando.
-- Rolagem horizontal reforçada com `display:flex`, `overflow-x:auto`, `touch-action:pan-x` e scroll snap.
-- Clique no card abre diretamente a ficha da série pelo TMDB ID; não passa por Estatísticas nem por aba intermediária.
-- Botões dentro do card continuam independentes do clique do card.
-
-### Série / temporada / episódio
-
-- Ficha da série com poster, temporadas e episódios.
-- Episódios abrem tela própria.
-- Check por episódio.
-- Marcação inteligente pergunta sobre episódios anteriores da mesma temporada.
-
-### Navegação
-
-- Barra inferior nativa volta a usar o fluxo estável anterior.
-- Botão/gesto Voltar chama primeiro `ct52Back()`, depois o fallback `ct50Back()`.
+### Voltar Android
+- Primeiro tenta o botão interno da ficha/episódio.
+- Fora das fichas, retorna para a aba anterior registrada na navegação nativa.
+- Só sai do app quando não existe histórico interno.
 
 ### Descobrir
+- Detecta os containers reais que possuem cards e força `repeat(3,minmax(0,1fr))` com largura mínima zerada.
 
-- Reforço final em JavaScript identifica containers reais de cards e aplica três colunas compactas.
+### Acompanhando
+- Ordenação por `last_watched_at`, com fallbacks de atividade/atualização.
+- Após marcar episódio, a lista é reordenada novamente.
 
-### Configurações
+### Atualização imediata
+- Marcação de episódio dispara evento `cinetracker:data-changed`, atualiza Home/Acompanhando e força nova leitura das estatísticas quando Perfil estiver aberto.
+- Ações de filme marcadas como visto também disparam atualização das áreas dependentes.
 
-- Exibe build `0.0.52` e remove identificação duplicada no rodapé.
+### Onde assistir
+- Consulta `/watch/providers` do TMDB para Brasil.
+- Exibe provedores disponíveis nos cards suportados.
+- Filmes recentes podem receber indicação `Cinema / lançamento`.
 
 ### Notificações
+- WorkManager e notificações nativas existentes permanecem preservados.
 
-- WorkManager e notificações nativas permanecem preservados.
+## 4. Assinatura Android
+
+- `applicationId`: `com.cinetracker.app`.
+- `versionCode`: `53`.
+- `versionName`: `0.0.53`.
+- Usa a chave estável `v6` persistida pela 0.0.52.
+- O CI compara a assinatura gerada contra `ci-status/android-signing-baseline.sha256` e falha se divergir.
 
 ## 5. Validação
 
-O CI da 0.0.52 passou: sintaxe dos módulos carregados, compilação Gradle, package `com.cinetracker.app`, assinatura e publicação da Release.
+CI deve comprovar: sintaxe dos módulos efetivamente carregados, compilação Gradle, package, assinatura e publicação da Release.
 
-Ainda depende de validação em aparelho para comportamento visual e interação real. Não marcar essas etapas como comprovadas antes do teste do usuário.
+Comportamento visual/interação em aparelho não deve ser marcado como validado até teste real do usuário.
