@@ -7,7 +7,7 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 | Plataforma | Versão | Status |
 |---|---:|---|
 | Web | **0.3.1** | Produção / Supabase |
-| Android | **0.0.46** | Build automatizado / Release GitHub |
+| Android | **0.0.47** | Build automatizado / Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
@@ -39,35 +39,40 @@ Web e Android usam a mesma autenticação e o mesmo backend Supabase. Watchlist,
 - Histórico real de filmes e episódios.
 - Progresso persistente por série, temporada e episódio.
 - Marcação manual de episódios assistidos.
-- Perfil com estatísticas e Tempo de Tela.
+- Perfil com estatísticas e Tempo de Tela diário.
 - Descobrir com TMDB, capas, nomes, elenco, filmografia e calendário.
 - Assistir separado em Em dia, Acompanhando, Juntando poeira e Não iniciadas.
 - Modos Carrossel, Grade e Lista no Android.
 - Importação e exportação de dados.
 - Notificações Android para lançamentos de filmes da Watchlist e novos episódios de séries acompanhadas.
 
-## Android 0.0.46
+## Android 0.0.47
 
-A 0.0.46 adiciona uma política obrigatória de atualização por sobreposição e notificações nativas em segundo plano.
+A 0.0.47 corrige a prioridade do runtime móvel: `ct47.js` é carregado por último e assume diretamente as telas que continuavam sendo sobrescritas pela interface antiga.
+
+### Interface
+
+- Tempo de Tela: remove o gráfico antigo de horário e mantém o gráfico diário em dark mode.
+- Descobrir: três cards por linha em todas as categorias/filtros.
+- Assistir: Carrossel como padrão, com Grade e Lista.
+- Assistir abre posicionado em Acompanhando; Em dia fica acima; Juntando poeira e Não iniciadas ficam abaixo.
+- Cards de séries e filmes são clicáveis.
+- Séries abrem temporadas e episódios.
+- Episódios possuem tela própria e podem ser marcados/desmarcados como assistidos.
+- O calendário antigo da Home fica oculto no Android.
 
 ### Atualização sem desinstalar
 
 - `applicationId`: `com.cinetracker.app`.
 - `versionCode`: sempre crescente.
 - Chave de assinatura persistente e única no CI.
-- Se a chave persistente estiver ausente, a build falha em vez de gerar outra chave e quebrar a atualização sobre o app existente.
+- A build falha se a chave persistente não estiver disponível.
 
 ### Notificações
 
-- Permissão `POST_NOTIFICATIONS` no Android 13+.
-- Canal `Lançamentos e episódios`.
-- WorkManager verifica eventos em segundo plano a cada 1 hora.
-- A sessão Supabase do WebView é sincronizada com a camada nativa.
-- Notifica quando um filme da Watchlist/WatchLater estreia no dia atual.
-- Notifica quando o próximo episódio de uma série `InProgress` é exibido no dia atual.
-- Eventos são deduplicados para não repetir a mesma notificação.
+A infraestrutura da 0.0.46 é preservada: WorkManager, canal `Lançamentos e episódios`, sessão Supabase nativa e deduplicação de eventos.
 
-Detalhes completos: `docs/releases/0.0.46.md`.
+Detalhes completos: `docs/releases/0.0.47.md`.
 
 ## Backend
 
@@ -81,21 +86,15 @@ Detalhes completos: `docs/releases/0.0.46.md`.
 
 - `cinetracker_episode_state(tmdb_id)` — estado de episódios por usuário.
 - `cinetracker_set_episode_watched(...)` — persiste marcação manual.
-- `cinetracker_due_notifications()` — retorna lançamentos elegíveis para notificações do usuário autenticado.
+- `cinetracker_due_notifications()` — retorna lançamentos elegíveis para notificações.
 
 ## Build Android
 
-O workflow `.github/workflows/build-android.yml`:
-
-1. exige a chave de assinatura persistente já usada nas versões anteriores;
-2. compila o código Android versionado no repositório;
-3. gera o APK;
-4. publica artifact e Release;
-5. marca `Android Build` como `success` somente após a publicação.
+O workflow `.github/workflows/build-android.yml` exige a chave de assinatura persistente, compila o código versionado no repositório, gera o APK, publica artifact + Release e só então marca `Android Build` como `success`.
 
 ## Regra de publicação
 
-Uma versão nova não é considerada concluída somente com o APK. Cada versão deve atualizar também código-fonte, documentação, versionamento, Release do GitHub e status do workflow.
+Uma versão nova não é considerada concluída somente com o APK. Cada versão deve atualizar código-fonte, documentação, versionamento, Release do GitHub e status do workflow.
 
 ## Segurança
 
