@@ -34,8 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
-    private static final String APP_VERSION = "0.0.55";
-    private static final String LOCAL_WEB = "file:///android_asset/stable49/index.html";
+    private static final String APP_VERSION = "0.0.48";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
 
@@ -52,10 +51,8 @@ public class MainActivity extends Activity {
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setAllowFileAccess(true);
+        settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(true);
-        settings.setAllowFileAccessFromFileURLs(true);
-        settings.setAllowUniversalAccessFromFileURLs(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setLoadsImagesAutomatically(true);
         settings.setBlockNetworkImage(false);
@@ -95,9 +92,8 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
-                String scheme = uri.getScheme() == null ? "" : uri.getScheme();
                 String host = uri.getHost() == null ? "" : uri.getHost();
-                if ("file".equals(scheme) || host.endsWith("supabase.co") || host.equals("mycinetracker.vercel.app")) return false;
+                if (host.equals("mycinetracker.vercel.app") || host.endsWith("supabase.co")) return false;
                 startActivity(new Intent(Intent.ACTION_VIEW, uri));
                 return true;
             }
@@ -112,7 +108,8 @@ public class MainActivity extends Activity {
         bindNativeNavigation();
         requestNotificationPermission();
         if (savedInstanceState == null) {
-            webView.loadUrl(LOCAL_WEB + "?android=1&ui=phone&apk=55");
+            String separator = BuildConfig.WEB_URL.contains("?") ? "&" : "?";
+            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=48");
         } else {
             webView.restoreState(savedInstanceState);
             webView.postDelayed(() -> { applyAndroidBase(); applyStableModules(); }, 180);
@@ -136,10 +133,9 @@ public class MainActivity extends Activity {
 
     private void navigate(String target) {
         String js = "(function(){try{" +
-                "if(window.ct54Navigate&&window.ct54Navigate('" + target + "'))return true;" +
-                "if(window.ct48Navigate&&window.ct48Navigate('" + target + "')){setTimeout(function(){window.ct49Refresh&&window.ct49Refresh();},50);return true;}" +
-                "if(window.ct47Navigate&&window.ct47Navigate('" + target + "')){setTimeout(function(){window.ct49Refresh&&window.ct49Refresh();},50);return true;}" +
-                "view='" + target + "';render();window.scrollTo(0,0);setTimeout(function(){window.ct49Refresh&&window.ct49Refresh();},50);return true;" +
+                "if(window.ct48Navigate&&window.ct48Navigate('" + target + "'))return true;" +
+                "if(window.ct47Navigate&&window.ct47Navigate('" + target + "'))return true;" +
+                "view='" + target + "';render();window.scrollTo(0,0);return true;" +
                 "}catch(e){return false;}})();";
         webView.evaluateJavascript(js, null);
     }
@@ -148,14 +144,14 @@ public class MainActivity extends Activity {
         if (webView == null) return;
         String js = "(function(){" +
                 "var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';" +
-                "if(!document.getElementById('ct55-base')){var s=document.createElement('style');s.id='ct55-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
-                "window.__ctAndroidBuild='0.0.55';window.__ctFrozenWebBase='android-v0.0.49';" +
+                "if(!document.getElementById('ct48-base')){var s=document.createElement('style');s.id='ct48-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
+                "window.__ctAndroidBuild='0.0.48';" +
                 "})();";
         webView.evaluateJavascript(js, null);
     }
 
     private void applyStableModules() {
-        String[] assets = {"ct41.js", "ct47.js", "ct48.js", "ct49.js", "ct54.js"};
+        String[] assets = {"ct41.js", "ct47.js", "ct48.js"};
         for (String asset : assets) applyAsset(asset);
     }
 
@@ -171,6 +167,7 @@ public class MainActivity extends Activity {
     public static class AndroidBridge {
         private final Context context;
         AndroidBridge(Context context) { this.context = context.getApplicationContext(); }
+
         @JavascriptInterface public void saveSession(String json) {
             try {
                 JSONObject obj = new JSONObject(json == null ? "{}" : json);
@@ -187,15 +184,9 @@ public class MainActivity extends Activity {
     @Override protected void onSaveInstanceState(Bundle outState) {
         webView.saveState(outState); super.onSaveInstanceState(outState);
     }
-
     @Override public void onBackPressed() {
-        if (webView == null) { super.onBackPressed(); return; }
-        webView.evaluateJavascript("(function(){try{return !!(window.ct54Back&&window.ct54Back());}catch(e){return false;}})();", value -> {
-            if ("true".equals(value)) return;
-            if (webView.canGoBack()) webView.goBack(); else MainActivity.super.onBackPressed();
-        });
+        if (webView != null && webView.canGoBack()) webView.goBack(); else super.onBackPressed();
     }
-
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != FILE_CHOOSER_REQUEST || fileChooserCallback == null) return;
