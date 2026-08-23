@@ -63,7 +63,9 @@ jobs:
 
       - name: Validate consolidated JavaScript runtime
         shell: bash
-        run: node --check apps/android/app/src/main/assets/ct51.js
+        run: |
+          set -o pipefail
+          node --check apps/android/app/src/main/assets/ct51.js 2>&1 | tee /tmp/node-check.log
 
       - name: Build debug APK
         working-directory: apps/android
@@ -136,7 +138,8 @@ jobs:
             echo "# Android 0.0.51 - last build failure"
             echo
             echo '```text'
-            if [ -f /tmp/android-build.log ]; then tail -n 120 /tmp/android-build.log; fi
+            if [ -f /tmp/node-check.log ]; then echo '--- node check ---'; cat /tmp/node-check.log; fi
+            if [ -f /tmp/android-build.log ]; then echo; echo '--- gradle ---'; tail -n 120 /tmp/android-build.log; fi
             if [ -f /tmp/signing-check.log ]; then echo; echo '--- signing check ---'; cat /tmp/signing-check.log; fi
             if [ -f /tmp/release-publish.log ]; then echo; echo '--- release publish ---'; cat /tmp/release-publish.log; fi
             echo '```'
