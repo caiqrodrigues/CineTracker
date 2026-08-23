@@ -38,14 +38,14 @@ to this project's gradle.properties.
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
-> Task :app:processDebugManifestForPackage
-> Task :app:compressDebugAssets
 > Task :app:processDebugJavaRes NO-SOURCE
+> Task :app:compressDebugAssets
+> Task :app:processDebugManifestForPackage
 > Task :app:desugarDebugFileDependencies
-> Task :app:mergeDebugStartupProfile
 > Task :app:checkDebugDuplicateClasses
-> Task :app:mergeDebugJniLibFolders
+> Task :app:mergeDebugStartupProfile
 > Task :app:mergeLibDexDebug
+> Task :app:mergeDebugJniLibFolders
 > Task :app:mergeDebugNativeLibs NO-SOURCE
 > Task :app:stripDebugDebugSymbols NO-SOURCE
 > Task :app:processDebugResources
@@ -64,7 +64,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1787449746791.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1787449878372.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/CineTracker/CineTracker/apps/android/build/reports/problems/problems-report.html
 
@@ -74,7 +74,17 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 32s
+BUILD SUCCESSFUL in 31s
 33 actionable tasks: 33 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html
+
+--- signing check ---
+V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
+V2 Signer: certificate SHA-256 digest: 063e4ebc59d652a9972422dc04a815e549aad94fee4b351636ca55badc46e17b
+V2 Signer: certificate SHA-1 digest: 697425fb8f4b375fc333b53c27f98e32e029ab96
+V2 Signer: certificate MD5 digest: be6219cf1c2311fac237d85c7970227b
+Expected signer: 09d50c2bc684f47492060a20ef88fa075745d2b4aeabfd6d5e412b715e9183f7
+Built signer:    063e4ebc59d652a9972422dc04a815e549aad94fee4b351636ca55badc46e17b
+Expected package: com.cinetracker.app
+Built package:    com.cinetracker.app
 ```
