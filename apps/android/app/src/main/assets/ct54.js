@@ -65,8 +65,7 @@ function bindHomeCards(){
     card.dataset.ct54Bound='1';
     card.addEventListener('click',e=>{
       if(e.target.closest('button,a,input,select'))return;
-      const id=Number(card.dataset.id||0);
-      openSeriesFromHome(id);
+      openSeriesFromHome(Number(card.dataset.id||0));
     });
   });
 }
@@ -162,18 +161,15 @@ async function addAvailability(){
 
 function refreshVersion(){
   if(typeof view==='undefined'||view!=='settings')return;
-  $$('*','#app').forEach?.(()=>{});
   for(const el of $$('#app *')){
-    if(el.children.length)return;
+    if(el.children.length)continue;
     const t=(el.textContent||'').trim();
     if(/^0\.0\.\d+$/.test(t)&&el.parentElement&&/\bBuild\b/i.test(el.parentElement.textContent||''))el.textContent='0.0.54';
     if(/^CineTracker Android/i.test(t)&&/build/i.test(t))el.textContent='CineTracker Android • build 0.0.54';
   }
 }
 
-function refresh(){
-  forceDiscover3();bindHomeCards();sortFollowing();addAvailability();refreshVersion();
-}
+function refresh(){forceDiscover3();bindHomeCards();sortFollowing();addAvailability();refreshVersion()}
 
 window.ct54Navigate=(target)=>{
   try{
