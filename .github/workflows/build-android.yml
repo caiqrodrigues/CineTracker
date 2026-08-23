@@ -57,6 +57,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          exec > >(tee /tmp/update-compat.log) 2>&1
           mkdir -p /tmp/ct-prev
           gh release download android-v0.0.46 -p 'cinetracker-android-0.0.46-debug.apk' -D /tmp/ct-prev
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
@@ -71,8 +72,10 @@ jobs:
           echo "0.0.48 signer: $NEW_CERT"
           echo "0.0.46 package: $OLD_PACKAGE"
           echo "0.0.48 package: $NEW_PACKAGE"
+          echo "Signing caches visible to repository:"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/caches?per_page=100" --jq '.actions_caches[] | select(.key=="cinetracker-debug-signing-v1") | [.id,.ref,.key,.created_at,.last_accessed_at] | @tsv' || true
           if [ -z "$OLD_CERT" ] || [ "$OLD_CERT" != "$NEW_CERT" ]; then
-            echo "Signing certificate mismatch: refusing to publish an APK that cannot update 0.0.46." >&2
+            echo "Signing certificate mismatch: refusing to publish an APK that cannot update the published 0.0.46." >&2
             exit 1
           fi
           if [ "$OLD_PACKAGE" != "com.cinetracker.app" ] || [ "$NEW_PACKAGE" != "com.cinetracker.app" ]; then
@@ -103,7 +106,13 @@ jobs:
             echo "# Android 0.0.48 - last build failure"
             echo
             echo '```text'
-            if [ -f /tmp/android-build.log ]; then tail -n 180 /tmp/android-build.log; else echo "Build/signature verification failed before Gradle produced a log."; fi
+            if [ -f /tmp/android-build.log ]; then tail -n 120 /tmp/android-build.log; fi
+            if [ -f /tmp/update-compat.log ]; then
+              echo
+              echo "--- update compatibility ---"
+              cat /tmp/update-compat.log
+            fi
+            if [ ! -f /tmp/android-build.log ] && [ ! -f /tmp/update-compat.log ]; then echo "Build failed before diagnostics were produced."; fi
             echo '```'
           } > ci-status/android-0.0.48-last-failure.md
           git config user.name "github-actions[bot]"
