@@ -7,19 +7,14 @@ on:
     paths:
       - 'apps/android/**'
       - '.github/workflows/build-android.yml'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - 'VERSIONS.md'
-      - 'PROJECT_STATE.md'
-      - 'docs/**'
 
 permissions:
   contents: write
   statuses: write
 
 concurrency:
-  group: cinetracker-android-signing
-  cancel-in-progress: true
+  group: cinetracker-android-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   android:
