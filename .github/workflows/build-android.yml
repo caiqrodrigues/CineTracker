@@ -30,7 +30,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.56 from 0.0.48 base"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.57 from 0.0.48 base"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -69,7 +69,7 @@ jobs:
           set -o pipefail
           gradle assembleDebug --stacktrace 2>&1 | tee /tmp/android-build.log
       - name: Prepare APK name
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.56-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.57-debug.apk
       - name: Verify package and version
         shell: bash
         run: |
@@ -77,18 +77,18 @@ jobs:
           exec > >(tee /tmp/signing-check.log) 2>&1
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          INFO="$($APKSIGNER verify --print-certs cinetracker-android-0.0.56-debug.apk 2>&1)"
+          INFO="$($APKSIGNER verify --print-certs cinetracker-android-0.0.57-debug.apk 2>&1)"
           printf '%s\n' "$INFO"
-          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.56-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION="$($AAPT dump badging cinetracker-android-0.0.56-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.57-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging cinetracker-android-0.0.57-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.56"
+          test "$VERSION" = "0.0.57"
           echo "Built package: $PACKAGE"
           echo "Built version: $VERSION"
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.56-debug
-          path: cinetracker-android-0.0.56-debug.apk
+          name: cinetracker-android-0.0.57-debug
+          path: cinetracker-android-0.0.57-debug.apk
       - name: Publish APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -96,18 +96,18 @@ jobs:
         run: |
           set -euo pipefail
           exec > >(tee /tmp/release-publish.log) 2>&1
-          gh release view android-v0.0.56 >/dev/null 2>&1 || gh release create android-v0.0.56 --title "CineTracker Android 0.0.56" --notes-file docs/releases/0.0.56.md
-          gh release upload android-v0.0.56 cinetracker-android-0.0.56-debug.apk --clobber
-          gh release view android-v0.0.56 --json url,tagName,name
+          gh release view android-v0.0.57 >/dev/null 2>&1 || gh release create android-v0.0.57 --title "CineTracker Android 0.0.57" --notes-file docs/releases/0.0.57.md
+          gh release upload android-v0.0.57 cinetracker-android-0.0.57-debug.apk --clobber
+          gh release view android-v0.0.57 --json url,tagName,name
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"0.0.56 published from unchanged 0.0.48 module structure"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"0.0.57 published from unchanged 0.0.48 module structure"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"0.0.56 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"failure","context":"Android Build","description":"0.0.57 build failed"}'
