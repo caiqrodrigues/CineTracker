@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
-    private static final String APP_VERSION = "0.0.50";
+    private static final String APP_VERSION = "0.0.51";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
 
@@ -65,7 +65,6 @@ public class MainActivity extends Activity {
         settings.setTextZoom(100);
         settings.setUserAgentString(settings.getUserAgentString() + " CineTrackerAndroid/" + APP_VERSION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) settings.setOffscreenPreRaster(true);
-
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         webView.setHorizontalScrollBarEnabled(false);
         webView.setVerticalScrollBarEnabled(true);
@@ -100,7 +99,7 @@ public class MainActivity extends Activity {
             @Override public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 applyAndroidBase();
-                applyStableModules();
+                applyAsset("ct51.js");
                 CookieManager.getInstance().flush();
             }
         });
@@ -109,10 +108,10 @@ public class MainActivity extends Activity {
         requestNotificationPermission();
         if (savedInstanceState == null) {
             String separator = BuildConfig.WEB_URL.contains("?") ? "&" : "?";
-            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=50");
+            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=51");
         } else {
             webView.restoreState(savedInstanceState);
-            webView.postDelayed(() -> { applyAndroidBase(); applyStableModules(); }, 180);
+            webView.postDelayed(() -> { applyAndroidBase(); applyAsset("ct51.js"); }, 180);
         }
     }
 
@@ -124,7 +123,7 @@ public class MainActivity extends Activity {
 
     private void bindNativeNavigation() {
         findViewById(R.id.nav_home).setOnClickListener(v -> navigate("home"));
-        findViewById(R.id.nav_library).setOnClickListener(v -> navigate("library"));
+        findViewById(R.id.nav_library).setOnClickListener(v -> navigate("assist"));
         findViewById(R.id.nav_discover).setOnClickListener(v -> navigate("discover"));
         findViewById(R.id.nav_history).setOnClickListener(v -> navigate("history"));
         findViewById(R.id.nav_profile).setOnClickListener(v -> navigate("profile"));
@@ -133,10 +132,8 @@ public class MainActivity extends Activity {
 
     private void navigate(String target) {
         String js = "(function(){try{" +
-                "if(window.ct50Navigate&&window.ct50Navigate('" + target + "'))return true;" +
-                "if(window.ct48Navigate&&window.ct48Navigate('" + target + "')){setTimeout(function(){window.ct50Refresh&&window.ct50Refresh();},50);return true;}" +
-                "if(window.ct47Navigate&&window.ct47Navigate('" + target + "')){setTimeout(function(){window.ct50Refresh&&window.ct50Refresh();},50);return true;}" +
-                "view='" + target + "';render();window.scrollTo(0,0);setTimeout(function(){window.ct50Refresh&&window.ct50Refresh();},50);return true;" +
+                "if(window.ct51Navigate&&window.ct51Navigate('" + target + "'))return true;" +
+                "view='" + target + "';render();window.scrollTo(0,0);return true;" +
                 "}catch(e){return false;}})();";
         webView.evaluateJavascript(js, null);
     }
@@ -145,15 +142,10 @@ public class MainActivity extends Activity {
         if (webView == null) return;
         String js = "(function(){" +
                 "var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';" +
-                "if(!document.getElementById('ct50-base')){var s=document.createElement('style');s.id='ct50-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
-                "window.__ctAndroidBuild='0.0.50';" +
+                "if(!document.getElementById('ct51-base')){var s=document.createElement('style');s.id='ct51-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
+                "window.__ctAndroidBuild='0.0.51';" +
                 "})();";
         webView.evaluateJavascript(js, null);
-    }
-
-    private void applyStableModules() {
-        String[] assets = {"ct41.js", "ct47.js", "ct48.js", "ct49.js", "ct50.js"};
-        for (String asset : assets) applyAsset(asset);
     }
 
     private void applyAsset(String asset) {
@@ -188,7 +180,7 @@ public class MainActivity extends Activity {
 
     @Override public void onBackPressed() {
         if (webView == null) { super.onBackPressed(); return; }
-        webView.evaluateJavascript("(function(){try{return !!(window.ct50Back&&window.ct50Back());}catch(e){return false;}})();", value -> {
+        webView.evaluateJavascript("(function(){try{return !!(window.ct51Back&&window.ct51Back());}catch(e){return false;}})();", value -> {
             boolean handled = "true".equals(value);
             if (!handled) {
                 if (webView.canGoBack()) webView.goBack();
