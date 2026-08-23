@@ -2,6 +2,8 @@ name: Build Android
 
 on:
   workflow_dispatch:
+  issues:
+    types: [opened]
   push:
     branches: [main]
     paths:
@@ -18,6 +20,7 @@ concurrency:
 
 jobs:
   android:
+    if: github.event_name != 'issues' || github.event.issue.title == '[build-android] 0.0.63'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
