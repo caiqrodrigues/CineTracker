@@ -6,7 +6,7 @@ let knownSync=false,lastKnownSync=0,knownIds=new Set(),seriesMap=new Map(),activ
 
 const css=document.createElement('style');
 css.id='ct49-style';
-css.textContent=`body.ct49-profile .ct33-chart{display:block!important}`;
+css.textContent=`body.ct49-profile .ct33-chart{display:block!important}.ct49-build-footer{margin-top:12px;text-align:center;color:#6f7d88;font-size:10px}`;
 document.head.appendChild(css);
 
 function pt(n){return Number(n||0).toLocaleString('pt-BR')}
@@ -21,7 +21,7 @@ function appendRemaining(el,row){
   if(!el||!row)return;
   const extra=remainingText(row);if(!extra)return;
   const base=(el.textContent||'').replace(/\s*[·•-]\s*Faltam\s+[\d.]+\s+episódios?/i,'').trim();
-  el.textContent=`${base} · ${extra}`;
+  if(!base.includes(extra))el.textContent=`${base} · ${extra}`;
 }
 function fixSeriesButtons(){
   $$('.ct48-next,.ct48-card-check').forEach(b=>{if(!b.disabled&&!/^Em dia$/i.test((b.textContent||'').trim())&&!/Tentar novamente/i.test(b.textContent||''))b.textContent='✓ Assistido'});
@@ -36,11 +36,15 @@ function fixProfileChart(){
 function fixSettingsBuild(){
   if(typeof view==='undefined'||view!=='settings')return;
   const root=$('#app');if(!root)return;
-  $$('*',root).filter(el=>el.children.length===0).forEach(el=>{
+  const leaves=$$('*',root).filter(el=>el.children.length===0);
+  for(const el of leaves){
     const t=(el.textContent||'').trim();
-    if(/^0\.0\.\d+$/.test(t)&&el.parentElement&&/\bBuild\b/i.test(el.parentElement.textContent||''))el.textContent='0.0.59';
-    if(/^CineTracker Android\s*[•·-]?\s*build\s+0\.0\.\d+$/i.test(t))el.textContent='CineTracker Android • build 0.0.59';
-  });
+    if(/^CineTracker Android\s*[•·-]?\s*build\s+0\.0\.\d+$/i.test(t))el.style.setProperty('display','none','important');
+  }
+  if(!$('#ct49-build-footer',root)){
+    const footer=document.createElement('div');footer.id='ct49-build-footer';footer.className='ct49-build-footer';footer.textContent='CineTracker Android • build 0.0.59';
+    ($('.content',root)||root).appendChild(footer);
+  }
 }
 async function syncKnown(){
   if(knownSync||Date.now()-lastKnownSync<1800)return;
@@ -60,8 +64,7 @@ function filterDiscover(){
   if(typeof view==='undefined'||view!=='discover')return;
   $$('#tmdb-results .card[data-media-id]').forEach(card=>{
     const blocked=knownIds.has(card.dataset.mediaId||'');
-    card.style.setProperty('display',blocked?'none':'','important');
-    if(!blocked)card.style.removeProperty('display');
+    if(blocked)card.style.setProperty('display','none','important');else card.style.removeProperty('display');
   });
 }
 function annotateSeries(){
