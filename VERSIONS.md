@@ -2,30 +2,29 @@
 
 As versões do CineTracker são independentes por plataforma, com paridade funcional sempre que a função não for exclusivamente nativa.
 
-| Plataforma | Versão publicada | Próxima versão em implementação |
-|---|---:|---:|
-| Web | **0.4.9** | **0.5.0** |
-| Android | **0.0.49** | **0.0.50** |
-| Windows | — | — |
+| Plataforma | Versão oficial atual |
+|---|---:|
+| Web | **0.4.9 publicada / 0.5.0 em código** |
+| Android | **0.0.50 publicada** |
+| Windows | — |
 
 ## Regras
 
 - Uma versão Android só é concluída quando código, documentação, workflow, Release e APK estão publicados.
 - Compilado não significa validado; Android exige teste em aparelho e Web exige deploy/teste real.
 - `applicationId` Android permanece `com.cinetracker.app` e `versionCode` sempre cresce.
-- A 0.0.49 tornou-se a nova base definitiva de assinatura após reinstalação única autorizada pelo usuário.
-- Baseline atual de assinatura: `277a81b60c689c801ea9d45a311de29c2e5ed97fdc5bea0f4705f8531153e1ed`.
-- 0.0.50+ só podem ser publicados se o CI confirmar exatamente esse certificado.
+- A 0.0.50 é a nova base de assinatura estabilizada pelo CI.
+- Baseline SHA-256 atual: `651e737a4e1de5d5db89773116528cd3ab3b0764a736dbd12dd8894fcc55bae7`.
 
 ## Web
 
 - **0.4.9** — Home/Continuar assistindo sincronizado com Acompanhando, check do próximo episódio e Descobrir reforçado em três colunas.
-- **0.5.0** — marcação inteligente de episódios anteriores, ordenação por atividade recente, atualização imediata de progresso/estatísticas, disponibilidade de streaming e reforço final de Descobrir em três colunas.
+- **0.5.0** — código pronto: marcação inteligente de episódios anteriores, ordenação por atividade recente, atualização imediata de progresso/estatísticas, disponibilidade de streaming e reforço final de Descobrir em três colunas. Deploy do último commit ainda depende da janela do Vercel.
 
 ## Android
 
-- **0.0.49** — nova base estável de assinatura; Home/Acompanhando sincronizados, check do próximo episódio e Descobrir compacto.
-- **0.0.50** — marcação inteligente de episódio com confirmação dos anteriores, Home rolável/clicável, botão Voltar integrado à navegação interna, Acompanhando ordenado pelo último episódio visto, atualização imediata de estatísticas, disponibilidade de streaming/cinema e três cards reais por linha em Descobrir.
+- **0.0.49** — transição de assinatura e Home/Acompanhando sincronizados.
+- **0.0.50** — publicada: marcação inteligente de episódio com confirmação dos anteriores, Home rolável/clicável, botão Voltar integrado à navegação interna, Acompanhando ordenado pelo último episódio visto, atualização imediata de estatísticas, disponibilidade de streaming/cinema e três cards por linha em Descobrir.
 
 ## Documentação por release
 
