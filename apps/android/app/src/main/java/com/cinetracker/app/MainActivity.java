@@ -29,17 +29,14 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
-    private static final String APP_VERSION = "0.0.53";
+    private static final String APP_VERSION = "0.0.54";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
-    private final ArrayDeque<String> navHistory = new ArrayDeque<>();
-    private String currentTab = "home";
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +109,7 @@ public class MainActivity extends Activity {
         requestNotificationPermission();
         if (savedInstanceState == null) {
             String separator = BuildConfig.WEB_URL.contains("?") ? "&" : "?";
-            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=53");
+            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=54");
         } else {
             webView.restoreState(savedInstanceState);
             webView.postDelayed(() -> { applyAndroidBase(); applyStableModules(); }, 180);
@@ -126,21 +123,20 @@ public class MainActivity extends Activity {
     }
 
     private void bindNativeNavigation() {
-        findViewById(R.id.nav_home).setOnClickListener(v -> navigate("home", true));
-        findViewById(R.id.nav_library).setOnClickListener(v -> navigate("library", true));
-        findViewById(R.id.nav_discover).setOnClickListener(v -> navigate("discover", true));
-        findViewById(R.id.nav_history).setOnClickListener(v -> navigate("history", true));
-        findViewById(R.id.nav_profile).setOnClickListener(v -> navigate("profile", true));
-        findViewById(R.id.nav_settings).setOnClickListener(v -> navigate("settings", true));
+        findViewById(R.id.nav_home).setOnClickListener(v -> navigate("home"));
+        findViewById(R.id.nav_library).setOnClickListener(v -> navigate("library"));
+        findViewById(R.id.nav_discover).setOnClickListener(v -> navigate("discover"));
+        findViewById(R.id.nav_history).setOnClickListener(v -> navigate("history"));
+        findViewById(R.id.nav_profile).setOnClickListener(v -> navigate("profile"));
+        findViewById(R.id.nav_settings).setOnClickListener(v -> navigate("settings"));
     }
 
-    private void navigate(String target, boolean pushHistory) {
-        if (pushHistory && !target.equals(currentTab)) navHistory.push(currentTab);
-        currentTab = target;
+    private void navigate(String target) {
         String js = "(function(){try{" +
-                "if(window.ct48Navigate&&window.ct48Navigate('" + target + "')){setTimeout(function(){window.ct53Refresh&&window.ct53Refresh();},60);return true;}" +
-                "if(window.ct47Navigate&&window.ct47Navigate('" + target + "')){setTimeout(function(){window.ct53Refresh&&window.ct53Refresh();},60);return true;}" +
-                "view='" + target + "';render();window.scrollTo(0,0);setTimeout(function(){window.ct53Refresh&&window.ct53Refresh();},60);return true;" +
+                "if(window.ct54Navigate&&window.ct54Navigate('" + target + "'))return true;" +
+                "if(window.ct48Navigate&&window.ct48Navigate('" + target + "')){setTimeout(function(){window.ct49Refresh&&window.ct49Refresh();},50);return true;}" +
+                "if(window.ct47Navigate&&window.ct47Navigate('" + target + "')){setTimeout(function(){window.ct49Refresh&&window.ct49Refresh();},50);return true;}" +
+                "view='" + target + "';render();window.scrollTo(0,0);setTimeout(function(){window.ct49Refresh&&window.ct49Refresh();},50);return true;" +
                 "}catch(e){return false;}})();";
         webView.evaluateJavascript(js, null);
     }
@@ -149,14 +145,14 @@ public class MainActivity extends Activity {
         if (webView == null) return;
         String js = "(function(){" +
                 "var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';" +
-                "if(!document.getElementById('ct53-base')){var s=document.createElement('style');s.id='ct53-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
-                "window.__ctAndroidBuild='0.0.53';" +
+                "if(!document.getElementById('ct49-base')){var s=document.createElement('style');s.id='ct49-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
+                "window.__ctAndroidBuild='0.0.54';" +
                 "})();";
         webView.evaluateJavascript(js, null);
     }
 
     private void applyStableModules() {
-        String[] assets = {"ct41.js", "ct47.js", "ct48.js", "ct49.js", "ct53.js"};
+        String[] assets = {"ct41.js", "ct47.js", "ct48.js", "ct49.js", "ct54.js"};
         for (String asset : assets) applyAsset(asset);
     }
 
@@ -192,18 +188,9 @@ public class MainActivity extends Activity {
 
     @Override public void onBackPressed() {
         if (webView == null) { super.onBackPressed(); return; }
-        webView.evaluateJavascript("(function(){try{var b=document.querySelector('.ct47-back');if(b){b.click();return true;}return false;}catch(e){return false;}})();", value -> {
+        webView.evaluateJavascript("(function(){try{return !!(window.ct54Back&&window.ct54Back());}catch(e){return false;}})();", value -> {
             if ("true".equals(value)) return;
-            if (!navHistory.isEmpty()) {
-                String previous = navHistory.pop();
-                navigate(previous, false);
-            } else if (!"home".equals(currentTab)) {
-                navigate("home", false);
-            } else if (webView.canGoBack()) {
-                webView.goBack();
-            } else {
-                MainActivity.super.onBackPressed();
-            }
+            if (webView.canGoBack()) webView.goBack(); else MainActivity.super.onBackPressed();
         });
     }
 
