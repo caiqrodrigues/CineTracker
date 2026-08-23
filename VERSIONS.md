@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.8** |
-| Android | **0.0.64** |
+| Android | **0.0.65** |
 | Windows | **—** |
 
 ## Regra
@@ -34,7 +34,8 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.62** — gráfico do Perfil auto-recuperável, botão `Assistido` apagado por padrão e verde somente quando visto, correção de metadados e limpeza de carregamentos residuais.
 - **0.0.63** — build de publicação das correções da 0.0.62.
 - **0.0.64** — remove repetição de notas, compacta cards, corrige estados de `Assistido`/`Acompanhando`, elimina `Carregando perfil...` residual e unifica notas no detalhe.
+- **0.0.65** — remove duplicação acidental entre `ct53`/`ct54`, corrige metadados da Watchlist, cálculo de episódios restantes, notas duplicadas e carregamento residual do Perfil.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.64.md`.
+Release Android atual: `docs/releases/0.0.65.md`.
