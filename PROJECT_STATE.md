@@ -4,61 +4,47 @@
 
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
-**Web atual:** `0.4.9`  
-**Android atual:** `0.0.49`
+**Web publicada:** `0.4.8`  
+**Web em código:** `0.4.9`  
+**Android publicado:** `0.0.48`  
+**Android em código:** `0.0.49`
 
-## 1. Objetivo
-
-Companion multiplataforma para filmes, séries e animes, com conta única, histórico real, progresso por episódio, Watchlist, favoritos, estatísticas, descoberta e notificações nativas no Android.
-
-## 2. Regras permanentes
+## 1. Regras permanentes
 
 - Não criar tabela separada `CompletedSeries`; conclusão é derivada de progresso + TMDB + decisões manuais.
 - Estados manuais do usuário têm prioridade e não podem ser apagados por importação.
 - Web e Android devem manter paridade funcional, exceto recursos explicitamente nativos como notificações.
-- Implementado/compilado não significa validado; Android exige teste em aparelho e Web exige deploy/teste real.
+- Implementado/compilado não significa validado.
 
-## 3. Assinatura Android
+## 2. Assinatura Android
 
 - `applicationId`: `com.cinetracker.app`.
 - `versionCode` sempre crescente.
-- A 0.0.48 estabeleceu o keystore dedicado permanente.
-- Baseline SHA-256: `fe69519cd5669429446e4701cd5d0ad78c5a936b3130f27e478a05c0591353d3`.
-- Da 0.0.49 em diante o CI falha se assinatura ou package id divergirem.
+- O APK 0.0.48 publicado foi validado com SHA-256 `fe69519cd5669429446e4701cd5d0ad78c5a936b3130f27e478a05c0591353d3`.
+- O build 0.0.49 compila, porém o cache do GitHub restaurou uma chave cujo certificado é `fcac3a6a0bfdaf475adc8044b6c040cfe9c241dd36427a4c6b649a21475f2790`.
+- Portanto a 0.0.49 NÃO deve ser publicada nem entregue como atualização enquanto a chave privada correspondente ao baseline da 0.0.48 não for recuperada. Não mascarar esse bloqueio trocando o baseline.
 
-## 4. Android 0.0.49
+## 3. Android 0.0.49 — código pronto, publicação bloqueada
 
 Runtime: `ct41.js` + `ct47.js` + `ct48.js` + `ct49.js`.
 
-### Home / Assistir
+- `Home > Continuar assistindo` usa exatamente itens `status='following'`, a mesma origem de `Assistir > Acompanhando`.
+- Home e Acompanhando têm botão de check para marcar o próximo episódio como visto.
+- O próximo episódio é determinado por `cinetracker_episode_state` + metadados TMDB.
+- A marcação persiste via `cinetracker_set_episode_watched` e invalida a leitura de progresso.
+- Descobrir identifica os contêineres reais de cards e força 3 colunas.
+- Configurações exibe `0.0.49`.
+- Notificações nativas permanecem inalteradas.
 
-- `Home > Continuar assistindo` usa exatamente os itens com status `following`, a mesma origem de `Assistir > Acompanhando`.
-- As duas áreas exibem botão de check para marcar o próximo episódio como visto.
-- O próximo episódio é determinado pelo estado real retornado por `cinetracker_episode_state`, não apenas pela contagem total assistida.
-- A marcação persiste via `cinetracker_set_episode_watched` e força nova leitura do progresso.
+## 4. Web 0.4.9 — código pronto, deploy pendente
 
-### Descobrir
-
-- a camada final identifica os contêineres reais cujos filhos são cards e força `repeat(3, minmax(0, 1fr))`;
-- poster 2:3 e metadados compactos permanecem preservados.
-
-### Configurações
-
-- build exibida como `0.0.49`.
-
-### Notificações
-
-- infraestrutura WorkManager/Supabase preservada sem alteração funcional nesta versão.
-
-## 5. Web 0.4.9
-
-- mesma sincronização Home/Continuar assistindo ↔ Assistir/Acompanhando;
+- mesma sincronização Home ↔ Acompanhando;
 - check do próximo episódio nas duas áreas;
-- Descobrir reforçado em três colunas;
-- `patch-v047.js` carregado por último;
-- notificações continuam exclusivas do Android.
+- Descobrir em três colunas;
+- `patch-v047.js` também reconhece o runtime Android 0.0.48, permitindo aplicar essas correções ao APK 0.0.48 quando a Web 0.4.9 estiver em produção;
+- deploy automático bloqueado atualmente pelo limite de builds do Vercel.
 
-## 6. Backend relevante
+## 5. Backend relevante
 
 - `cinetracker_continue_items_v2`
 - `cinetracker_episode_state`
@@ -67,21 +53,8 @@ Runtime: `ct41.js` + `ct47.js` + `ct48.js` + `ct49.js`.
 - `cinetracker_watch_day_details`
 - `cinetracker_due_notifications` — Android apenas
 
-## 7. Pendências de validação
+## 6. Próximos passos obrigatórios
 
-### Android 0.0.49
-
-- confirmar atualização por cima da 0.0.48;
-- confirmar Home e Acompanhando com exatamente os mesmos itens;
-- confirmar check do próximo episódio nas duas áreas e atualização imediata do progresso;
-- confirmar Descobrir com três cards por linha em todas as categorias/filtros;
-- confirmar versão 0.0.49 e continuidade das notificações.
-
-### Web 0.4.9
-
-- confirmar deploy real;
-- confirmar os mesmos três pontos de paridade da versão Android.
-
-## 8. Continuidade
-
-Antes de alterações importantes: ler este arquivo, conferir Release/commit atual e preservar as regras de domínio, assinatura e validação.
+1. Recuperar a chave privada que gerou o certificado `fe69519...53d3` da 0.0.48, ou assumir explicitamente uma nova migração de assinatura antes de publicar outro APK.
+2. Publicar Web 0.4.9 assim que o Vercel liberar novo build; isso também corrige a experiência do Android 0.0.48 sem novo APK.
+3. Validar em aparelho: Home=Acompanhando, check do próximo episódio e Descobrir em três colunas.
