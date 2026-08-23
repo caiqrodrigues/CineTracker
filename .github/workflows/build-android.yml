@@ -39,13 +39,16 @@ jobs:
       - name: Require existing signing key
         run: |
           if [ ! -f ~/.android/debug.keystore ]; then
-            echo "Persistent CineTracker signing key is missing. Refusing to generate a new key because that would break in-place updates." >&2
+            echo "Persistent CineTracker signing key is missing. Refusing to generate a new key because that would break in-place updates." | tee /tmp/android-build.log >&2
             exit 1
           fi
       - uses: gradle/actions/setup-gradle@v4
       - name: Build debug APK
         working-directory: apps/android
-        run: gradle assembleDebug --stacktrace
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle assembleDebug --stacktrace 2>&1 | tee /tmp/android-build.log
       - name: Prepare APK name
         run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.46-debug.apk
       - uses: actions/upload-artifact@v4
@@ -64,6 +67,22 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} -d '{"state":"success","context":"Android Build","description":"CineTracker Android 0.0.46 APK built and published"}'
+      - name: Save failure diagnostic
+        if: failure()
+        run: |
+          mkdir -p ci-status
+          {
+            echo "# Android 0.0.46 - last build failure"
+            echo
+            echo '```text'
+            if [ -f /tmp/android-build.log ]; then tail -n 180 /tmp/android-build.log; else echo "Build failed before Gradle produced a log."; fi
+            echo '```'
+          } > ci-status/android-0.0.46-last-failure.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ci-status/android-0.0.46-last-failure.md
+          git commit -m "ci: record Android 0.0.46 build failure" || true
+          git push || true
       - name: Mark Android build failure
         if: failure()
         env:
