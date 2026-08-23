@@ -4,7 +4,7 @@
 
 **Última atualização:** 2026-08-22  
 **Branch principal:** `main`  
-**Android em desenvolvimento:** `0.0.47`
+**Android em desenvolvimento:** `0.0.48`
 
 ## 1. Objetivo
 
@@ -30,46 +30,50 @@ Toda versão Android deve instalar por cima da anterior, sem exigir desinstalaç
 - `versionCode` sempre crescente;
 - mesma chave de assinatura em todas as versões;
 - cache persistente `cinetracker-debug-signing-v1`;
-- se a chave não existir, a build falha.
+- se a chave não existir, a build falha;
+- desde a 0.0.48, o CI baixa o APK publicado da 0.0.46 e compara certificado SHA-256 e package id antes de publicar uma nova Release.
 
-## 5. Estado Android 0.0.47
+## 5. Estado Android 0.0.48
 
 ### Notificações
 
 A infraestrutura da 0.0.46 foi preservada e já foi validada em aparelho real: notificações para novo episódio e filme elegível da Watchlist funcionam.
 
-### Runtime móvel final
+### Runtime Android consolidado
 
-`ct47.js` é carregado por último e assume explicitamente o comportamento das telas que vinham sendo sobrescritas pela UI antiga.
+A Activity não carrega mais a pilha antiga `ct33/34/35/37/38/39/46`. A sequência passa a ser apenas:
 
-#### Tempo de Tela
+1. `ct41.js` — gráfico diário interativo;
+2. `ct47.js` — Assistir e detalhes de série/temporada/episódio;
+3. `ct48.js` — correções finais de Perfil, Descobrir, Configurações e navegação.
 
-- gráfico de atividade por horário removido/ocultado;
-- somente gráfico diário permanece;
-- cards/barras no tema dark padrão do CineTracker;
-- hoje e dias vizinhos continuam interativos.
+### Perfil / Tempo de Tela
 
-#### Descobrir
+- gráfico antigo de atividade por horário removido/ocultado;
+- card `Horário de pico` removido;
+- gráfico diário permanece em dark mode;
+- toque em um dia abre o que foi assistido.
 
-- todos os grids da tela usam três cards por linha no Android;
-- posters compactos em proporção 2:3;
-- metadados secundários são reduzidos para caber em 3 colunas.
+### Descobrir
 
-#### Assistir
+- três cards por linha em todas as categorias/filtros;
+- posters compactos 2:3;
+- metadados reduzidos para layout móvel.
 
-- `Carrossel` é o modo inicial e persistente;
-- modos `Grade` e `Lista` continuam disponíveis;
+### Assistir
+
+- Carrossel como padrão;
+- Grade e Lista disponíveis;
 - ordem física: `Em dia` → `Acompanhando` → `Juntando poeira` → `Não iniciadas`;
-- ao abrir, a tela posiciona a rolagem em `Acompanhando`, permitindo subir para `Em dia`;
-- cards são clicáveis;
-- série abre detalhes e temporadas;
-- temporada expande episódios;
-- episódio abre tela própria;
-- episódios podem ser marcados/desmarcados como assistidos via Supabase.
+- abertura posicionada em `Acompanhando`;
+- cards clicáveis;
+- série → temporadas → episódios → tela do episódio;
+- marcação/desmarcação persistente de episódio assistido.
 
-### Home
+### Configurações
 
-- calendário de séries em acompanhamento é ocultado no Android, conforme decisão anterior.
+- build deve aparecer uma única vez como `0.0.48`;
+- valores antigos `0.0.37` são substituídos no runtime Android.
 
 ## 6. Backend relevante
 
@@ -85,15 +89,16 @@ Implementado/compilado não significa validado. Cada item visual/funcional só �
 
 Toda versão deve atualizar código, Gradle, workflow, `README.md`, `VERSIONS.md`, `PROJECT_STATE.md`, `docs/releases/<versão>.md`, `CHANGELOG.md` quando aplicável, Release GitHub e APK.
 
-## 9. Pendências de validação 0.0.47
+## 9. Pendências de validação 0.0.48
 
-- confirmar remoção total do gráfico antigo de horário;
-- confirmar três cards por linha em todas as categorias de Descobrir;
-- confirmar posição inicial em Acompanhando e ordem das seções;
+- confirmar instalação por cima da 0.0.46;
+- confirmar versão única 0.0.48 em Configurações;
+- confirmar remoção total do gráfico de horário;
+- confirmar três cards por linha em Descobrir;
+- confirmar ordem e posição inicial de Assistir;
 - confirmar Carrossel/Grade/Lista;
-- confirmar série → temporada → episódio;
-- confirmar marcação/desmarcação persistente de episódio;
-- confirmar atualização da 0.0.47 instalada por cima da 0.0.46.
+- confirmar série → temporada → episódio e marcação persistente;
+- confirmar continuidade das notificações.
 
 ## 10. Continuidade
 
