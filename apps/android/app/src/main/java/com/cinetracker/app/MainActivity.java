@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
-    private static final String APP_VERSION = "0.0.70";
+    private static final String APP_VERSION = "0.0.71";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
 
@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
         requestNotificationPermission();
         if (savedInstanceState == null) {
             String separator = BuildConfig.WEB_URL.contains("?") ? "&" : "?";
-            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=70");
+            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=71");
         } else {
             webView.restoreState(savedInstanceState);
             webView.postDelayed(() -> { applyAndroidBase(); applyStableModules(); }, 180);
@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
 
     private void navigate(String target) {
         String js = "(function(){try{" +
-                "if(window.ct67Navigate&&window.ct67Navigate('" + target + "'))return true;" +
+                "if(window.ct71Navigate&&window.ct71Navigate('" + target + "'))return true;" +
                 "if(window.ct48Navigate&&window.ct48Navigate('" + target + "'))return true;" +
                 "if(window.ct47Navigate&&window.ct47Navigate('" + target + "'))return true;" +
                 "view='" + target + "';render();window.scrollTo(0,0);return true;" +
@@ -145,13 +145,13 @@ public class MainActivity extends Activity {
         String js = "(function(){" +
                 "var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';" +
                 "if(!document.getElementById('ct48-base')){var s=document.createElement('style');s.id='ct48-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
-                "window.__ctAndroidBuild='0.0.70';" +
+                "window.__ctAndroidBuild='0.0.71';" +
                 "})();";
         webView.evaluateJavascript(js, null);
     }
 
     private void applyStableModules() {
-        String[] assets = {"ct41.js", "ct47.js", "ct48.js", "ct49.js", "ct50.js", "ct51.js", "ct52.js", "ct53.js", "ct54.js", "ct55.js", "ct56.js", "ct57.js", "ct58.js", "ct59.js"};
+        String[] assets = {"ct41.js", "ct47.js", "ct48.js", "ct49.js", "ct50.js", "ct51.js", "ct52.js", "ct58.js", "ct59.js", "ct60.js"};
         for (String asset : assets) applyAsset(asset);
     }
 
