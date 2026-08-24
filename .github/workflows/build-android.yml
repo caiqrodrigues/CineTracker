@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js; do node --check "apps/android/app/src/main/assets/$f"; done
+          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js ct68-final.js; do node --check "apps/android/app/src/main/assets/$f"; done
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
@@ -101,4 +101,4 @@ jobs:
         shell: bash
         run: curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android Build","description":"0.0.81 build failed"}'
 
-# release-ready-trigger: 0.0.81-profile-history
+# release-ready-trigger: 0.0.81-final-smooth-preload
