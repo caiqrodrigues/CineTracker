@@ -9,15 +9,15 @@ Esta geração altera a arquitetura de carregamento/cache sem alterar layout ou 
 
 ## Princípio central
 
-O CineTracker usa uma conta única e um backend único para Web, Android e, futuramente, Windows.
+O CineTracker usa uma conta única e um backend único para Web e Android.
 
 ```text
-Web / Android / Windows
-        │
-        ├── Supabase Auth
-        ├── PostgreSQL + RLS
-        ├── Edge Functions
-        └── TMDB via proxy/backend
+Web / Android
+      │
+      ├── Supabase Auth
+      ├── PostgreSQL + RLS
+      ├── Edge Functions
+      └── TMDB via proxy/backend
 ```
 
 A interface não deve depender de uma nova chamada de rede para reconstruir dados já conhecidos. O princípio operacional é:
