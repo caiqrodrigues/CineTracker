@@ -1,18 +1,210 @@
 (() => {
 'use strict';
-if(window.__ct55Final)return;window.__ct55Final=true;
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const tmdbCache=new Map(),historyCache={rows:null,at:0};
-const cacheKey=(p,params={})=>p+'?'+Object.entries(params).sort().map(([k,v])=>`${k}=${v}`).join('&');
-async function tmdbFast(path,params={}){const k=cacheKey(path,params);if(tmdbCache.has(k))return tmdbCache.get(k);const p=(async()=>{const u=new URL(`${SUPABASE_URL}/functions/v1/tmdb-proxy`);u.searchParams.set('path',path);u.searchParams.set('language','pt-BR');for(const[k,v]of Object.entries(params))if(v!=null&&v!=='')u.searchParams.set(k,String(v));const r=await fetch(u,{headers:typeof authHeaders==='function'?authHeaders():{},cache:'force-cache'});if(!r.ok)throw new Error(`TMDB ${r.status}`);return r.json()})();tmdbCache.set(k,p);try{return await p}catch(e){tmdbCache.delete(k);throw e}}
-const img=p=>p?`${SUPABASE_URL}/functions/v1/tmdb-image?path=${encodeURIComponent(p)}&size=w500`:'';
-async function historyRows(force=false){if(!force&&historyCache.rows&&Date.now()-historyCache.at<30000)return historyCache.rows;const rows=await sbApi('watch_history?select=id,item_type,season_number,episode_number,watched_at,title,media:media(id,tmdb_id,media_type,title,poster_path)&order=watched_at.desc&limit=500');historyCache.rows=rows||[];historyCache.at=Date.now();return historyCache.rows}
-async function enrichHistory(){if(typeof view==='undefined'||view!=='history')return;const host=$('#ct54-history')||$('.content');if(!host)return;let rows=[];try{rows=await historyRows()}catch{return}const cards=$$('.ct54-history',host);for(let i=0;i<cards.length&&i<rows.length;i++){const c=cards[i],r=rows[i],m=r.media||{};if(c.querySelector('.ct55-cover'))continue;let poster=m.poster_path||'';let episodeName='';try{if(m.tmdb_id){if(!poster){const d=await tmdbFast(`/${m.media_type==='movie'?'movie':'tv'}/${m.tmdb_id}`);poster=d?.poster_path||''}if(r.item_type==='episode'&&r.season_number!=null&&r.episode_number!=null){const e=await tmdbFast(`/tv/${m.tmdb_id}/season/${r.season_number}/episode/${r.episode_number}`);episodeName=e?.name||''}}}catch{}const cover=document.createElement('div');cover.className='ct55-cover';cover.style.cssText=`width:58px;height:78px;border-radius:10px;flex:0 0 58px;background:#10202c center/cover no-repeat${poster?`;background-image:url('${img(poster)}')`:''}`;c.prepend(cover);c.style.display='grid';c.style.gridTemplateColumns='58px minmax(0,1fr) auto';c.style.alignItems='center';if(episodeName){const body=c.children[1];if(body&&!body.querySelector('.ct55-epname')){const n=document.createElement('div');n.className='ct55-epname';n.textContent=episodeName;n.style.cssText='font-size:12px;font-weight:700;color:#dce8f0;margin-top:4px';body.appendChild(n)}}}}
-function dateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-async function rebuildProfileChart(){if(typeof view==='undefined'||view!=='profile')return;const root=$('#ct54-profile');if(!root||$('#ct55-chart'))return;let rows=[];try{rows=await historyRows()}catch{return}const counts=new Map(),items=new Map();for(const r of rows){if(!r.watched_at)continue;const d=new Date(r.watched_at),k=dateKey(d);counts.set(k,(counts.get(k)||0)+(r.item_type==='episode'?1:0));if(!items.has(k))items.set(k,[]);items.get(k).push(r)}const box=document.createElement('div');box.className='ct54-box';box.id='ct55-chart';box.style.marginTop='12px';const days=[];for(let off=-10;off<=3;off++){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+off);days.push({off,d,k:dateKey(d),count:counts.get(dateKey(d))||0})}const max=Math.max(1,...days.map(x=>x.count));box.innerHTML=`<strong>Episódios por dia</strong><div class="ct54-meta">7 dias visíveis • hoje centralizado • role até 10 dias para trás</div><div style="position:relative;margin-top:12px"><div id="ct55-scroll" style="overflow-x:auto;scroll-snap-type:x mandatory;padding:0 42%;scrollbar-width:none"><div style="height:190px;display:grid;grid-auto-flow:column;grid-auto-columns:54px;gap:8px;align-items:end;min-width:max-content">${days.map(({off,d,k,count})=>`<div data-ct55-day="${k}" data-off="${off}" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;scroll-snap-align:center;cursor:pointer;${off===0?'background:#0d2232;border:1px solid #2b78b7;border-radius:12px;padding:6px 3px 4px':''}"><div style="font-size:11px;font-weight:800">${count}</div><div style="width:70%;min-height:8px;height:${Math.max(8,Math.round(count/max*90))}%;background:#5c8fb5;border-radius:6px 6px 2px 2px"></div><div class="ct54-meta" style="margin:0">${d.toLocaleDateString('pt-BR',{weekday:'short'}).replace('.','')}</div><div class="ct54-meta" style="margin:0">${d.getDate()}</div></div>`).join('')}</div></div><div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#2b78b744;pointer-events:none"></div></div>`;const extra=[...root.querySelectorAll('.ct54-section-head')].find(x=>/Estatísticas extras/i.test(x.textContent||''));if(extra)extra.before(box);else root.appendChild(box);const sc=$('#ct55-scroll',box),today=box.querySelector('[data-off="0"]');requestAnimationFrame(()=>{if(sc&&today)sc.scrollLeft=today.offsetLeft-(sc.clientWidth-today.clientWidth)/2});box.querySelectorAll('[data-ct55-day]').forEach(el=>el.onclick=()=>{const k=el.dataset.ct55Day,dayItems=items.get(k)||[];const html=dayItems.length?dayItems.map(r=>`<div class="ct54-history"><strong>${String(r.title||r.media?.title||'Sem título')}</strong>${r.item_type==='episode'?`<div class="ct54-meta">T${r.season_number} E${r.episode_number}</div>`:''}</div>`).join(''):'<p class="ct54-sub">Nenhum episódio ou filme assistido neste dia.</p>';if(typeof modal==='function')modal(new Date(k+'T12:00:00').toLocaleDateString('pt-BR'),html)}})}
-async function preloadAll(){try{const mediaItems=[...(window.mediaRegistry?.values?.()||[])].slice(0,30);await Promise.allSettled(mediaItems.map(async m=>{if(!m?.id)return;const t=m.type==='FILME'?'movie':'tv';const d=await tmdbFast(`/${t}/${m.id}`);if(d?.poster_path){const im=new Image();im.decoding='async';im.src=img(d.poster_path)}}));await historyRows()}catch{}}
-function smoothNav(){document.documentElement.style.scrollBehavior='auto';$$('.nav button,.mobile-nav button').forEach(b=>{b.style.touchAction='manipulation'})}
-const oldRender=window.render;if(typeof oldRender==='function'&&!window.__ct55FinalRender){window.__ct55FinalRender=oldRender;window.render=function(){const out=window.__ct55FinalRender();smoothNav();setTimeout(()=>{void rebuildProfileChart();void enrichHistory()},0);return out}}
-setTimeout(()=>{smoothNav();void preloadAll();void rebuildProfileChart();void enrichHistory()},0);
-window.ct55RebootMetadata=async()=>{tmdbCache.clear();historyCache.rows=null;historyCache.at=0;try{window.ct53RebootCovers?.()}catch{};await preloadAll();if(typeof render==='function')render()};
+if (window.__ct55Final) return;
+window.__ct55Final = true;
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const tmdbCache = new Map();
+const historyCache = { rows: null, at: 0 };
+
+const cacheKey = (p, params = {}) => p + '?' + Object.entries(params).sort().map(([k, v]) => `${k}=${v}`).join('&');
+
+async function tmdbFast(path, params = {}) {
+  const k = cacheKey(path, params);
+  if (tmdbCache.has(k)) return tmdbCache.get(k);
+  const p = (async () => {
+    const u = new URL(`${SUPABASE_URL}/functions/v1/tmdb-proxy`);
+    u.searchParams.set('path', path);
+    u.searchParams.set('language', 'pt-BR');
+    for (const [key, value] of Object.entries(params)) {
+      if (value != null && value !== '') u.searchParams.set(key, String(value));
+    }
+    const r = await fetch(u, {
+      headers: typeof authHeaders === 'function' ? authHeaders() : {},
+      cache: 'force-cache'
+    });
+    if (!r.ok) throw new Error(`TMDB ${r.status}`);
+    return r.json();
+  })();
+  tmdbCache.set(k, p);
+  try {
+    return await p;
+  } catch (e) {
+    tmdbCache.delete(k);
+    throw e;
+  }
+}
+
+const img = p => p ? `${SUPABASE_URL}/functions/v1/tmdb-image?path=${encodeURIComponent(p)}&size=w500` : '';
+
+async function historyRows(force = false) {
+  if (!force && historyCache.rows && Date.now() - historyCache.at < 30000) return historyCache.rows;
+  const rows = await sbApi('watch_history?select=id,item_type,season_number,episode_number,watched_at,title,media:media(id,tmdb_id,media_type,title,poster_path)&order=watched_at.desc&limit=500');
+  historyCache.rows = rows || [];
+  historyCache.at = Date.now();
+  return historyCache.rows;
+}
+
+async function enrichHistory() {
+  if (typeof view === 'undefined' || view !== 'history') return;
+  const host = $('#ct54-history') || $('.content');
+  if (!host) return;
+  let rows = [];
+  try { rows = await historyRows(); } catch { return; }
+  const cards = $$('.ct54-history', host);
+  for (let i = 0; i < cards.length && i < rows.length; i++) {
+    const c = cards[i], r = rows[i], m = r.media || {};
+    if (c.querySelector('.ct55-cover')) continue;
+    let poster = m.poster_path || '';
+    let episodeName = '';
+    try {
+      if (m.tmdb_id) {
+        if (!poster) {
+          const d = await tmdbFast(`/${m.media_type === 'movie' ? 'movie' : 'tv'}/${m.tmdb_id}`);
+          poster = d?.poster_path || '';
+        }
+        if (r.item_type === 'episode' && r.season_number != null && r.episode_number != null) {
+          const e = await tmdbFast(`/tv/${m.tmdb_id}/season/${r.season_number}/episode/${r.episode_number}`);
+          episodeName = e?.name || '';
+        }
+      }
+    } catch {}
+
+    const cover = document.createElement('div');
+    cover.className = 'ct55-cover';
+    cover.style.cssText = `width:58px;height:78px;border-radius:10px;flex:0 0 58px;background:#10202c center/cover no-repeat${poster ? `;background-image:url('${img(poster)}')` : ''}`;
+    c.prepend(cover);
+    c.style.display = 'grid';
+    c.style.gridTemplateColumns = '58px minmax(0,1fr) auto';
+    c.style.alignItems = 'center';
+
+    if (episodeName) {
+      const body = c.children[1];
+      if (body && !body.querySelector('.ct55-epname')) {
+        const n = document.createElement('div');
+        n.className = 'ct55-epname';
+        n.textContent = episodeName;
+        n.style.cssText = 'font-size:12px;font-weight:700;color:#dce8f0;margin-top:4px';
+        body.appendChild(n);
+      }
+    }
+  }
+}
+
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+async function rebuildProfileChart() {
+  if (typeof view === 'undefined' || view !== 'profile') return;
+  const root = $('#ct54-profile');
+  if (!root || $('#ct55-chart')) return;
+
+  let rows = [];
+  try { rows = await historyRows(); } catch { return; }
+
+  const counts = new Map();
+  const items = new Map();
+  for (const r of rows) {
+    if (!r.watched_at) continue;
+    const d = new Date(r.watched_at);
+    const k = dateKey(d);
+    counts.set(k, (counts.get(k) || 0) + (r.item_type === 'episode' ? 1 : 0));
+    if (!items.has(k)) items.set(k, []);
+    items.get(k).push(r);
+  }
+
+  const box = document.createElement('div');
+  box.className = 'ct54-box';
+  box.id = 'ct55-chart';
+  box.style.marginTop = '12px';
+
+  const days = [];
+  for (let off = -10; off <= 3; off++) {
+    const d = new Date();
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() + off);
+    const k = dateKey(d);
+    days.push({ off, d, k, count: counts.get(k) || 0 });
+  }
+
+  const max = Math.max(1, ...days.map(x => x.count));
+  box.innerHTML = `<strong>Episódios por dia</strong><div class="ct54-meta">7 dias visíveis • hoje centralizado • role até 10 dias para trás</div><div style="position:relative;margin-top:12px"><div id="ct55-scroll" style="overflow-x:auto;scroll-snap-type:x mandatory;padding:0 42%;scrollbar-width:none"><div style="height:190px;display:grid;grid-auto-flow:column;grid-auto-columns:54px;gap:8px;align-items:end;min-width:max-content">${days.map(({ off, d, k, count }) => `<div data-ct55-day="${k}" data-off="${off}" style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;scroll-snap-align:center;cursor:pointer;${off === 0 ? 'background:#0d2232;border:1px solid #2b78b7;border-radius:12px;padding:6px 3px 4px' : ''}"><div style="font-size:11px;font-weight:800">${count}</div><div style="width:70%;min-height:8px;height:${Math.max(8, Math.round(count / max * 90))}%;background:#5c8fb5;border-radius:6px 6px 2px 2px"></div><div class="ct54-meta" style="margin:0">${d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')}</div><div class="ct54-meta" style="margin:0">${d.getDate()}</div></div>`).join('')}</div></div><div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#2b78b744;pointer-events:none"></div></div>`;
+
+  const extra = [...root.querySelectorAll('.ct54-section-head')].find(x => /Estatísticas extras/i.test(x.textContent || ''));
+  if (extra) extra.before(box);
+  else root.appendChild(box);
+
+  const sc = $('#ct55-scroll', box);
+  const today = box.querySelector('[data-off="0"]');
+  requestAnimationFrame(() => {
+    if (sc && today) sc.scrollLeft = today.offsetLeft - (sc.clientWidth - today.clientWidth) / 2;
+  });
+
+  box.querySelectorAll('[data-ct55-day]').forEach(el => {
+    el.onclick = () => {
+      const k = el.dataset.ct55Day;
+      const dayItems = items.get(k) || [];
+      const html = dayItems.length
+        ? dayItems.map(r => `<div class="ct54-history"><strong>${String(r.title || r.media?.title || 'Sem título')}</strong>${r.item_type === 'episode' ? `<div class="ct54-meta">T${r.season_number} E${r.episode_number}</div>` : ''}</div>`).join('')
+        : '<p class="ct54-sub">Nenhum episódio ou filme assistido neste dia.</p>';
+      if (typeof modal === 'function') {
+        modal(new Date(k + 'T12:00:00').toLocaleDateString('pt-BR'), html);
+      }
+    };
+  });
+}
+
+async function preloadAll() {
+  try {
+    const mediaItems = [...(window.mediaRegistry?.values?.() || [])].slice(0, 30);
+    await Promise.allSettled(mediaItems.map(async m => {
+      if (!m?.id) return;
+      const t = m.type === 'FILME' ? 'movie' : 'tv';
+      const d = await tmdbFast(`/${t}/${m.id}`);
+      if (d?.poster_path) {
+        const im = new Image();
+        im.decoding = 'async';
+        im.src = img(d.poster_path);
+      }
+    }));
+    await historyRows();
+  } catch {}
+}
+
+function smoothNav() {
+  document.documentElement.style.scrollBehavior = 'auto';
+  $$('.nav button,.mobile-nav button').forEach(b => { b.style.touchAction = 'manipulation'; });
+}
+
+const oldRender = window.render;
+if (typeof oldRender === 'function' && !window.__ct55FinalRender) {
+  window.__ct55FinalRender = oldRender;
+  window.render = function () {
+    const out = window.__ct55FinalRender();
+    smoothNav();
+    setTimeout(() => {
+      void rebuildProfileChart();
+      void enrichHistory();
+    }, 0);
+    return out;
+  };
+}
+
+setTimeout(() => {
+  smoothNav();
+  void preloadAll();
+  void rebuildProfileChart();
+  void enrichHistory();
+}, 0);
+
+window.ct55RebootMetadata = async () => {
+  tmdbCache.clear();
+  historyCache.rows = null;
+  historyCache.at = 0;
+  try { window.ct53RebootCovers?.(); } catch {}
+  await preloadAll();
+  if (typeof render === 'function') render();
+};
 })();
