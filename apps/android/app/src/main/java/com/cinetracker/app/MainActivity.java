@@ -153,7 +153,7 @@ public class MainActivity extends Activity {
     }
 
     private void applyStableModules() {
-        String[] assets = {"ct47.js", "ct66.js"};
+        String[] assets = {"ct47.js", "ct66.js", "ct67-profile-history.js"};
         for (String asset : assets) applyAsset(asset);
     }
 
