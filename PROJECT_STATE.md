@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
 **Web atual:** `0.4.8`  
-**Android atual:** `0.0.71`
+**Android atual:** `0.0.72`
 
 ## 1. Objetivo
 
@@ -17,45 +17,46 @@ Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Lik
 
 Descobrir deve mostrar apenas conteúdo realmente fora do universo do usuário. Qualquer título já visto, concluído, em progresso, acompanhado, em Watchlist/Watch Later ou com outro estado persistente deve ser excluído de todos os filtros e destaques.
 
-## 3. Estado Android 0.0.71
+## 3. Estado Android 0.0.72
 
 ### Runtime
 
-A Activity passa a carregar somente `ct41`, `ct47`, `ct48`, `ct49`, `ct50`, `ct51`, `ct52`, `ct58`, `ct59` e `ct60`. Os patches intermediários `ct53`–`ct57` deixam de ser carregados para reduzir observers concorrentes e reescritas repetidas do DOM.
+A Activity carrega `ct41`, `ct47`, `ct48`, `ct49`, `ct50`, `ct51`, `ct58`, `ct59`, `ct60` e `ct61`. O `ct52` deixa de ser carregado para eliminar disputa entre duas rotinas diferentes de restauração/posicionamento do gráfico.
 
 ### Correções desta versão
 
-- Home e Assistir deixam de usar observer + intervalo contínuos em `ct59`; atualização passa a ocorrer por navegação e eventos relevantes;
-- gráfico do Perfil é restaurado se desaparecer após rerender/navegação;
-- Carrossel, Grade e Lista ficam escondidos e acessíveis por um filtro `Exibição` recolhido;
-- animações/transições dos cards principais são desativadas para reduzir tremor visual;
-- nome do próximo episódio maior e botão `Assistido` centralizado permanecem;
-- carregamento resiliente de episódios e nota TMDB individual continuam ativos;
-- Descobrir estrito e streaming deduplicado permanecem preservados.
+- o gráfico do Perfil é mantido imediatamente acima da seção `Histórico`;
+- Descobrir monta um conjunto bloqueado por TMDB ID e por título normalizado usando acompanhamento + todos os estados persistentes do usuário;
+- qualquer card já conhecido é ocultado em todos os filtros/destaques de Descobrir;
+- Home e Assistir têm metadados normalizados para impedir repetição crescente de progresso/notas;
+- a aba Assistir recebe recuperação controlada quando permanecer em `Carregando...`;
+- nome do próximo episódio continua maior e o botão `Assistido` centralizado;
+- animações/transições concorrentes dos cards e gráficos são desativadas para reduzir tremor visual;
+- filtro de exibição Carrossel/Grade/Lista continua recolhido.
 
 ### Configurações
 
-- build exibida: `0.0.71`.
+- build exibida: `0.0.72`.
 
 ## 4. Build e publicação
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionCode`: `71`;
-- `versionName`: `0.0.71`;
-- artefato esperado: `cinetracker-android-0.0.71-debug.apk`;
-- tag/release esperada: `android-v0.0.71`;
+- `versionCode`: `72`;
+- `versionName`: `0.0.72`;
+- artefato esperado: `cinetracker-android-0.0.72-debug.apk`;
+- tag/release esperada: `android-v0.0.72`;
 - workflow valida somente os módulos efetivamente carregados pela Activity.
 
 ## 5. Validação
 
-Implementado/compilado não significa validado. A 0.0.71 precisa ser instalada e testada em aparelho real.
+Implementado/compilado não significa validado. A 0.0.72 precisa ser instalada e testada em aparelho real.
 
 Pendências específicas:
-- confirmar que o aplicativo não apresenta mais tremor/re-render perceptível;
-- confirmar gráfico do Perfil após entrar/sair da aba repetidamente;
-- confirmar filtro Exibição recolhido em Assistir;
-- confirmar Home/Assistir carregando normalmente;
-- reconfirmar próximo episódio, episódios por temporada, notas, notificações e streaming.
+- confirmar gráfico sempre acima de Histórico e sem desaparecer ao navegar;
+- confirmar Descobrir sem nenhum título da Watchlist, acompanhado ou já visto;
+- confirmar Home sem metadados repetidos/tremor;
+- confirmar Assistir carregando e sem metadados corrompidos;
+- reconfirmar temporadas, notas individuais, notificações e streaming.
 
 ## 6. Publicação
 
