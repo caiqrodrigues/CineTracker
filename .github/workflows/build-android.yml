@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js ct68-final.js ct70-home-084.js; do
+          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js ct68-final.js ct70-home-084.js ct71-cast-profile-084.js; do
             node --check "apps/android/app/src/main/assets/$f"
           done
       - name: Build debug APK
@@ -90,7 +90,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          gh release view android-v0.0.84 >/dev/null 2>&1 || gh release create android-v0.0.84 --title "CineTracker Android 0.0.84" --notes "Home e Assistir fundidos; filtros de status e visualização; abertura de filmes e séries em Descobrir e Histórico."
+          gh release view android-v0.0.84 >/dev/null 2>&1 || gh release create android-v0.0.84 --title "CineTracker Android 0.0.84" --notes "Home e Assistir fundidos; filtros e visualizações; detalhes clicáveis em todas as abas; elenco principal clicável; tela de ator com filmografia ordenada do mais recente ao mais antigo; ações de assistido e Watchlist; Perfil reorganizado com gráfico antes das estatísticas extras."
           gh release upload android-v0.0.84 cinetracker-android-0.0.84-debug.apk --clobber
       - name: Mark Android build success
         if: success()
@@ -115,4 +115,4 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
             -d '{"state":"failure","context":"Android Build","description":"0.0.84 build failed"}'
 
-# release-ready-trigger: 0.0.84-home-merge-media-details
+# release-ready-trigger: 0.0.84-cast-profile-full
