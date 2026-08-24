@@ -83,7 +83,6 @@ async function registerSw(){
 async function warm(){
   await registerSw();
   await Promise.allSettled([snapshotData(), prewarmMedia()]);
-  try { window.ct55RebootMetadata?.(); } catch {}
 }
 
 window.ct57Cache = {
