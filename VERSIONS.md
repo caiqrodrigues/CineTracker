@@ -4,7 +4,7 @@ As versões do CineTracker são independentes por plataforma.
 
 | Plataforma | Versão oficial atual |
 |---|---:|
-| Web | **0.5.2** |
+| Web | **0.5.3** |
 | Android | **0.0.81** |
 | Windows | **—** |
 
@@ -23,8 +23,9 @@ As versões do CineTracker são independentes por plataforma.
 - **0.1.x–0.4.8** — evolução da aplicação Web.
 - **0.4.9** — pré-carregamento, paridade de Descobrir/Perfil e progresso global de séries.
 - **0.5.0** — navegação e versão.
-- **0.5.1** — coordenador estável de lifecycle.
-- **0.5.2** — remove patches conflitantes de progresso, corrige navegação/Configurações duplicada, adiciona nota e detalhe de episódios e reinicia a resolução global de capas.
+- **0.5.1** — coordenador de lifecycle.
+- **0.5.2** — tentativa de consolidar navegação, episódios e capas.
+- **0.5.3** — remove os controladores 0.5.1/0.5.2 que mantinham observers concorrentes, torna o progresso idempotente, elimina Configurações duplicada, restaura navegação de todas as abas, insere sempre o rodapé oficial `CineTracker Web • versão 0.5.3` em Configurações e reinicia a resolução de capas sem loop.
 
 ## Linha Android
 
