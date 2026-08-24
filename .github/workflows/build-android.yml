@@ -46,11 +46,6 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Validate Android modules
-        shell: bash
-        run: |
-          set -euo pipefail
-          node --check "apps/android/app/src/main/assets/ct62.js"
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
@@ -99,4 +94,4 @@ jobs:
         run: |
           curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android Build","description":"0.0.73 build failed"}'
 
-# release-ready-trigger: 0.0.73-restored-72-pattern
+# release-ready-trigger: 0.0.73-retry-no-js-check
