@@ -7,26 +7,24 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 | Plataforma | Versão | Status |
 |---|---:|---|
 | Web | **0.4.8** | Código publicado / deploy Vercel |
-| Android | **0.0.72** | Código + pipeline de Release GitHub |
+| Android | **0.0.74** | Código + pipeline de Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
 
 **Web:** https://mycinetracker.vercel.app
 
-## Android 0.0.72
+## Android 0.0.74
 
-Esta versão foi criada diretamente sobre a base oficial 0.0.71.
+Esta versão segue a linha corrigida derivada da base oficial 0.0.71 e usa 0.0.74 para evitar conflito com as antigas 0.0.72/0.0.73 descartadas.
 
-- gráfico do Perfil é controlado por uma única camada e fica imediatamente acima de Histórico;
-- `ct52` foi removido do runtime ativo para evitar disputa pelo gráfico;
-- Descobrir exclui títulos já vistos, acompanhados, em progresso, concluídos ou presentes em Watchlist/Watch Later;
-- Home/Continuar assistindo foi estabilizado sem observer permanente;
+- gráfico do Perfil controlado por uma única camada e imediatamente acima de Histórico;
+- Descobrir exclui tudo que já esteja visto, acompanhado, em progresso, concluído ou em Watchlist/Watch Later;
+- Home/Continuar assistindo estabilizado sem observer permanente;
 - Assistir mantém Carrossel/Grade/Lista dentro do filtro `Exibição`;
 - nome do próximo episódio maior e botão `Assistido` centralizado;
-- redução de rerenders concorrentes para eliminar tremor;
-- mantém carregamento resiliente de episódios, notas individuais e streaming deduplicado;
-- Configurações/build Android apontam para `0.0.72`.
+- carregamento resiliente de episódios, notas individuais e streaming deduplicado preservados;
+- Configurações/build Android apontam para `0.0.74`.
 
 A validação visual/funcional final depende de instalação e teste real no aparelho.
 
