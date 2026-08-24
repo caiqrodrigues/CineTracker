@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   android:
-    if: github.event_name != 'issues' || github.event.issue.title == 'android-build: 0.0.75'
+    if: github.event_name != 'issues' || github.event.issue.title == 'android-build: 0.0.81'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.75"}'
+        run: curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.81"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -57,48 +57,48 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js; do node --check "apps/android/app/src/main/assets/$f"; done
+          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js; do node --check "apps/android/app/src/main/assets/$f"; done
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
       - name: Prepare APK name
         shell: bash
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.75-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.81-debug.apk
       - name: Verify package and version
         shell: bash
         run: |
           set -euo pipefail
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          "$APKSIGNER" verify --print-certs cinetracker-android-0.0.75-debug.apk
-          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.75-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION="$($AAPT dump badging cinetracker-android-0.0.75-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          "$APKSIGNER" verify --print-certs cinetracker-android-0.0.81-debug.apk
+          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.81-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging cinetracker-android-0.0.81-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.75"
+          test "$VERSION" = "0.0.81"
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.75-debug
-          path: cinetracker-android-0.0.75-debug.apk
+          name: cinetracker-android-0.0.81-debug
+          path: cinetracker-android-0.0.81-debug.apk
       - name: Publish APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          gh release view android-v0.0.75 >/dev/null 2>&1 || gh release create android-v0.0.75 --title "CineTracker Android 0.0.75" --notes-file docs/releases/0.0.75.md
-          gh release upload android-v0.0.75 cinetracker-android-0.0.75-debug.apk --clobber
+          gh release view android-v0.0.81 >/dev/null 2>&1 || gh release create android-v0.0.81 --title "CineTracker Android 0.0.81" --notes-file docs/releases/0.0.81.md
+          gh release upload android-v0.0.81 cinetracker-android-0.0.81-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android Build","description":"0.0.75 published"}'
+        run: curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android Build","description":"0.0.81 published"}'
       - name: Mark Android build failure
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android Build","description":"0.0.75 build failed"}'
+        run: curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android Build","description":"0.0.81 build failed"}'
 
-# release-ready-trigger: 0.0.75-preload-tabs
+# release-ready-trigger: 0.0.81-approved-ui
