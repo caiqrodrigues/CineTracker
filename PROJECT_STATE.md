@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-23  
 **Branch principal:** `main`  
 **Web atual:** `0.4.8`  
-**Android atual:** `0.0.70`
+**Android atual:** `0.0.71`
 
 ## 1. Objetivo
 
@@ -17,49 +17,45 @@ Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Lik
 
 Descobrir deve mostrar apenas conteúdo realmente fora do universo do usuário. Qualquer título já visto, concluído, em progresso, acompanhado, em Watchlist/Watch Later ou com outro estado persistente deve ser excluído de todos os filtros e destaques.
 
-## 3. Estado Android 0.0.70
+## 3. Estado Android 0.0.71
 
 ### Runtime
 
-A Activity carrega `ct41.js` até `ct59.js`. O `ct59.js` estabiliza especificamente Home e Assistir para conteúdo em andamento/próximo episódio.
+A Activity passa a carregar somente `ct41`, `ct47`, `ct48`, `ct49`, `ct50`, `ct51`, `ct52`, `ct58`, `ct59` e `ct60`. Os patches intermediários `ct53`–`ct57` deixam de ser carregados para reduzir observers concorrentes e reescritas repetidas do DOM.
 
 ### Correções desta versão
 
-- Home consulta `cinetracker_continue_items_v2` com timeout e retentativas para evitar `Continuar assistindo` vazio enquanto há séries em andamento;
-- os cards básicos aparecem antes de terminar o enriquecimento TMDB do próximo episódio;
-- a aba Assistir tenta recuperar automaticamente uma lista que permaneça em `Carregando...`;
-- cards de séries em Home e Assistir mostram o nome do próximo episódio quando disponível;
-- nome do episódio usa fonte maior e quebra de linha normal;
-- botão `Assistido` fica centralizado abaixo do episódio;
-- marcação usa feedback otimista e persiste em segundo plano;
-- após marcar, o próximo episódio do card é recalculado;
-- correções de temporadas, notas individuais, notificações e streaming das versões anteriores permanecem.
+- Home e Assistir deixam de usar observer + intervalo contínuos em `ct59`; atualização passa a ocorrer por navegação e eventos relevantes;
+- gráfico do Perfil é restaurado se desaparecer após rerender/navegação;
+- Carrossel, Grade e Lista ficam escondidos e acessíveis por um filtro `Exibição` recolhido;
+- animações/transições dos cards principais são desativadas para reduzir tremor visual;
+- nome do próximo episódio maior e botão `Assistido` centralizado permanecem;
+- carregamento resiliente de episódios e nota TMDB individual continuam ativos;
+- Descobrir estrito e streaming deduplicado permanecem preservados.
 
 ### Configurações
 
-- build exibida: `0.0.70`.
+- build exibida: `0.0.71`.
 
 ## 4. Build e publicação
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionCode`: `70`;
-- `versionName`: `0.0.70`;
-- artefato esperado: `cinetracker-android-0.0.70-debug.apk`;
-- tag/release esperada: `android-v0.0.70`;
-- workflow valida `ct41.js` até `ct59.js` antes da compilação.
+- `versionCode`: `71`;
+- `versionName`: `0.0.71`;
+- artefato esperado: `cinetracker-android-0.0.71-debug.apk`;
+- tag/release esperada: `android-v0.0.71`;
+- workflow valida somente os módulos efetivamente carregados pela Activity.
 
 ## 5. Validação
 
-Implementado/compilado não significa validado. A 0.0.70 precisa ser instalada e testada em aparelho real.
+Implementado/compilado não significa validado. A 0.0.71 precisa ser instalada e testada em aparelho real.
 
 Pendências específicas:
-- confirmar Home preenchendo `Continuar assistindo` sem demora excessiva;
-- confirmar Assistir saindo de `Carregando...`;
-- confirmar nome do próximo episódio em Home e Assistir;
-- confirmar botão `Assistido` centralizado e resposta imediata;
-- confirmar atualização para o próximo episódio após marcação;
-- reconfirmar temporadas/notas/notificações/streaming;
-- confirmar build `0.0.70` em Configurações.
+- confirmar que o aplicativo não apresenta mais tremor/re-render perceptível;
+- confirmar gráfico do Perfil após entrar/sair da aba repetidamente;
+- confirmar filtro Exibição recolhido em Assistir;
+- confirmar Home/Assistir carregando normalmente;
+- reconfirmar próximo episódio, episódios por temporada, notas, notificações e streaming.
 
 ## 6. Publicação
 
