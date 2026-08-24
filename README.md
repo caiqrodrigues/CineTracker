@@ -7,26 +7,25 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 | Plataforma | Versão | Status |
 |---|---:|---|
 | Web | **0.4.8** | Código publicado / deploy Vercel |
-| Android | **0.0.74** | Código + pipeline de Release GitHub |
+| Android | **0.0.75** | Código + pipeline de Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
 
 **Web:** https://mycinetracker.vercel.app
 
-## Android 0.0.74
+## Android 0.0.75
 
-Esta versão segue a linha corrigida derivada da base oficial 0.0.71 e usa 0.0.74 para evitar conflito com as antigas 0.0.72/0.0.73 descartadas.
+Esta etapa altera somente o carregamento inicial do aplicativo.
 
-- gráfico do Perfil controlado por uma única camada e imediatamente acima de Histórico;
-- Descobrir exclui tudo que já esteja visto, acompanhado, em progresso, concluído ou em Watchlist/Watch Later;
-- Home/Continuar assistindo estabilizado sem observer permanente;
-- Assistir mantém Carrossel/Grade/Lista dentro do filtro `Exibição`;
-- nome do próximo episódio maior e botão `Assistido` centralizado;
-- carregamento resiliente de episódios, notas individuais e streaming deduplicado preservados;
-- Configurações/build Android apontam para `0.0.74`.
+- Home, Assistir, Descobrir, Histórico, Perfil e Configurações são aquecidos em segundo plano na abertura;
+- o WebView só é exibido depois desse pré-carregamento inicial;
+- leituras Supabase/TMDB usadas nesse processo recebem cache temporário para reduzir `Carregando...` na primeira visita às abas;
+- ao terminar, o aplicativo volta para Home e libera a interface;
+- há fallback nativo para nunca deixar a tela invisível indefinidamente;
+- versionCode `75` / versionName `0.0.75`.
 
-A validação visual/funcional final depende de instalação e teste real no aparelho.
+Esta versão não inclui outras correções funcionais; elas serão tratadas uma por vez após validar este comportamento.
 
 ## Arquitetura
 
