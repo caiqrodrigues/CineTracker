@@ -71,7 +71,6 @@ jobs:
           name: cinetracker-android-0.0.74-debug
           path: cinetracker-android-0.0.74-debug.apk
       - name: Publish APK release
-        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
