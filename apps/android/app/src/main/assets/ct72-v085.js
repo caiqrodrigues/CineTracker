@@ -1,192 +1,34 @@
 (() => {
 'use strict';
-if (window.__ct72Loaded) return;
-window.__ct72Loaded = true;
-window.__ctAndroidBuild = '0.0.85';
-
-const $=(s,r=document)=>r.querySelector(s);
-const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+if(window.__ct73Loaded)return;window.__ct73Loaded=true;window.__ctAndroidBuild='0.0.86-test';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const norm=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
-const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
-const poster=(p,size='w342')=>p?`${SUPABASE_URL}/functions/v1/tmdb-image?path=${encodeURIComponent(p)}&size=${size}`:'';
-
-async function api(path,params={}){
-  const u=new URL(`${SUPABASE_URL}/functions/v1/tmdb-proxy`);
-  u.searchParams.set('path',path); u.searchParams.set('language','pt-BR');
-  Object.entries(params).forEach(([k,v])=>{if(v!=null)u.searchParams.set(k,String(v));});
-  const r=await fetch(u,{headers:typeof authHeaders==='function'?authHeaders():{}});
-  if(!r.ok) throw new Error('TMDB '+r.status);
-  return r.json();
-}
-
-const style=document.createElement('style');
-style.id='ct72-style';
-style.textContent=`
-.ct85-search{position:sticky;top:0;z-index:4500;padding:8px 0 10px;background:#090909}.ct85-search-row{display:flex;gap:8px}.ct85-search-row input{flex:1;min-width:0;border:1px solid #29485f;background:#0c141a;color:#fff;border-radius:12px;padding:11px 13px}.ct85-search-row button{border:1px solid #31536d;background:#102230;color:#e7f5ff;border-radius:12px;padding:0 14px}.ct85-results{display:grid;gap:8px;margin-top:8px}.ct85-result{display:grid;grid-template-columns:56px 1fr;gap:9px;border:1px solid #203646;background:#0b1218;border-radius:11px;padding:7px;cursor:pointer}.ct85-result-poster{width:56px;aspect-ratio:2/3;border-radius:7px;background:#101b23 center/cover no-repeat}.ct85-result small{display:block;color:#8193a1;margin-top:4px}.ct85-provider-section{margin-top:18px}.ct85-providers{display:flex;gap:7px;flex-wrap:wrap}.ct85-provider{display:flex;align-items:center;gap:6px;border:1px solid #29404f;border-radius:9px;padding:6px 8px;font-size:10px}.ct85-provider img{width:25px;height:25px;border-radius:6px}.ct85-hidden{display:none!important}.ct85-episode-open{cursor:pointer}.ct85-episode-page{padding-bottom:24px}.ct85-episode-page button{border:1px solid #2c465a;background:#0b141b;color:#fff;border-radius:10px;padding:8px 11px}.ct85-episode-page p{color:#aab7c0;line-height:1.55}.ct85-version{font-weight:700}
-`;
-document.head.appendChild(style);
-
-function mediaType(el){
-  const t=String(el?.dataset?.type||el?.dataset?.mediaType||el?.dataset?.apiType||'').toLowerCase();
-  if(t.includes('movie')||t==='film')return 'movie';
-  if(t.includes('tv')||t.includes('series'))return 'tv';
-  return /\bfilme\b/i.test(el?.textContent||'')?'movie':'tv';
-}
-function mediaId(el){
-  const raw=el?.dataset?.mediaId||'';
-  const m=raw.match(/tmdb-(movie|tv)-(\d+)/);
-  return Number(m?.[2]||el?.dataset?.tmdbId||el?.dataset?.id||0);
-}
-async function resolveCard(el){
-  const node=el.closest?.('[data-tmdb-id],[data-media-id],[data-id],.card,.ct47-card,.history-item,.ct55-history-card,.panel,.ct84-card')||el;
-  const type=mediaType(node); const id=mediaId(node);
-  if(id)return {type,id,node};
-  const title=(node.querySelector?.('h1,h2,h3,strong,.title,.card-title,.ct84-name')?.textContent||'').trim();
-  if(!title)return null;
-  const r=await api(`/search/${type}`,{query:title,page:1});
-  const hit=r?.results?.[0];
-  return hit?.id?{type,id:Number(hit.id),node}:null;
-}
-
-async function openEpisode(tvId,season,episode,back){
-  const app=$('#app'); if(!app)return;
-  app.innerHTML='<div class="app"><main class="content"><div class="ct84-empty">Carregando episódio…</div></main></div>';
-  try{
-    const [show,ep]=await Promise.all([api(`/tv/${tvId}`),api(`/tv/${tvId}/season/${season}/episode/${episode}`)]);
-    app.innerHTML=`<div class="app"><main class="content ct85-episode-page"><button id="ct85-ep-back">← Voltar</button><h1>${esc(show.name||'Série')}</h1><h2>T${season}E${episode} · ${esc(ep.name||'Episódio')}</h2><div class="ct84-meta">★ ${Number(ep.vote_average||0).toFixed(1)} · ${esc(ep.air_date||'')}</div><p>${esc(ep.overview||'Sem sinopse disponível.')}</p></main></div>`;
-    $('#ct85-ep-back').onclick=back;
-  }catch{ if(typeof back==='function')back(); }
-}
-
-function ensureSearch(){
-  const view=String(window.view||'');
-  if(view==='profile'||view==='settings'||!$('.content')){ $('.ct85-search')?.remove(); return; }
-  if($('.ct85-search'))return;
-  const box=document.createElement('div'); box.className='ct85-search';
-  box.innerHTML='<div class="ct85-search-row"><input type="search" placeholder="Buscar filmes e séries por nome"><button type="button">Buscar</button></div><div class="ct85-results"></div>';
-  $('.content').prepend(box);
-  const input=$('input',box), button=$('button',box), results=$('.ct85-results',box);
-  const run=async()=>{
-    const q=input.value.trim(); if(q.length<2){results.innerHTML='';return;}
-    results.innerHTML='<div class="ct84-empty">Buscando…</div>';
-    try{
-      const data=await api('/search/multi',{query:q,page:1,include_adult:false});
-      const rows=(data.results||[]).filter(x=>x.media_type==='movie'||x.media_type==='tv').slice(0,24);
-      results.innerHTML=rows.map(x=>`<article class="ct85-result" data-type="${x.media_type}" data-id="${x.id}"><div class="ct85-result-poster"${x.poster_path?` style="background-image:url('${poster(x.poster_path)}')"`:''}></div><div><b>${esc(x.title||x.name||'Sem título')}</b><small>${x.media_type==='movie'?'FILME':'SÉRIE'} · ${String(x.release_date||x.first_air_date||'').slice(0,4)}</small></div></article>`).join('')||'<div class="ct84-empty">Nenhum resultado.</div>';
-      $$('.ct85-result',results).forEach(el=>el.onclick=()=>window.ct84OpenMedia?.(el.dataset.type,Number(el.dataset.id)));
-    }catch{results.innerHTML='<div class="ct84-empty">Falha na busca.</div>';}
-  };
-  button.onclick=run; input.onkeydown=e=>{if(e.key==='Enter')run();};
-}
-
-async function addProviders(){
-  const detail=$('.ct84-detail'); if(!detail||detail.dataset.ct85Providers)return;
-  let type=detail.dataset.ct71Type||detail.dataset.type||'';
-  let id=Number(detail.dataset.ct71Id||detail.dataset.id||0);
-  if(!type||!id){
-    const h=detail.querySelector('h1'); if(!h)return;
-    type=/\bFILME\b/i.test(detail.textContent||'')?'movie':'tv';
-    try{const r=await api(`/search/${type}`,{query:h.textContent.trim(),page:1});id=Number(r?.results?.[0]?.id||0);}catch{return;}
-  }
-  if(!id)return; detail.dataset.ct85Providers='1';
-  try{
-    const p=await api(`/${type}/${id}/watch/providers`); const br=p?.results?.BR||{};
-    const providers=[...(br.flatrate||[]),...(br.free||[]),...(br.ads||[])].filter((x,i,a)=>a.findIndex(y=>y.provider_id===x.provider_id)===i);
-    const sec=document.createElement('section'); sec.className='ct85-provider-section';
-    sec.innerHTML='<h2>Onde assistir</h2><div class="ct85-providers">'+(providers.length?providers.map(x=>`<div class="ct85-provider"><img src="${poster(x.logo_path,'w92')}"><span>${esc(x.provider_name)}</span></div>`).join(''):'<span class="ct84-meta">Nenhum streaming informado para o Brasil.</span>')+'</div>';
-    const over=detail.querySelector('.ct84-over'); if(over)over.after(sec); else detail.appendChild(sec);
-  }catch{}
-}
-
-function makeEpisodesClickable(){
-  const detail=$('.ct84-detail'); if(!detail)return;
-  const type=detail.dataset.ct71Type||''; const id=Number(detail.dataset.ct71Id||0);
-  if(type!=='tv'||!id)return;
-  $$('.ct84-season').forEach(seasonBox=>{
-    const s=Number(seasonBox.querySelector('[data-season]')?.dataset?.season||0); if(!s)return;
-    $$('.ct84-ep',seasonBox).forEach(ep=>{
-      if(ep.dataset.ct85Open)return; ep.dataset.ct85Open='1'; ep.classList.add('ct85-episode-open');
-      const m=(ep.textContent||'').match(/E(\d+)/i); const n=Number(m?.[1]||0); if(!n)return;
-      ep.onclick=()=>openEpisode(id,s,n,()=>window.ct84OpenMedia?.('tv',id));
-    });
-  });
-}
-
-let excluded=null;
-async function getExcluded(){
-  const out={ids:new Set(),titles:new Set()};
-  try{
-    const rows=await sbApi('media_overrides?select=state,media:media(tmdb_id,media_type,title)&state=in.(AlreadySeen,Completed,AddedToWatchlist,WatchLater,InProgress)&limit=3000');
-    (rows||[]).forEach(x=>{if(x.media?.tmdb_id)out.ids.add(`${x.media.media_type}:${x.media.tmdb_id}`);if(x.media?.title)out.titles.add(norm(x.media.title));});
-    const cont=await sbRpc('cinetracker_continue_items_v2',{})||[];
-    cont.forEach(x=>{if(x.tmdb_id)out.ids.add(`tv:${x.tmdb_id}`);if(x.title)out.titles.add(norm(x.title));});
-  }catch{}
-  return out;
-}
-async function filterDiscover(){
-  if(String(window.view||'')!=='discover')return;
-  const page=norm($('.content')?.textContent||'');
-  if(!['em alta','mais aguardados','populares','mais bem avaliados'].some(x=>page.includes(x)))return;
-  if(!excluded)excluded=await getExcluded();
-  $$('.card,.ct47-card,[data-tmdb-id],[data-media-id]').forEach(el=>{
-    const id=mediaId(el), type=mediaType(el), title=norm(el.querySelector('h2,h3,strong,.title,.card-title')?.textContent||'');
-    if((id&&excluded.ids.has(`${type}:${id}`))||(title&&excluded.titles.has(title)))el.classList.add('ct85-hidden');
-  });
-}
-
-function mergeHomeWatch(){
-  $$('button,a,[role=button]').forEach(el=>{
-    const t=norm(el.textContent);
-    if(t==='assistir'){el.classList.add('ct85-hidden'); el.onclick=e=>{e.preventDefault();window.ct84Navigate?.('home');};}
-  });
-}
-function fixHomeFilter(){
-  if(String(window.view||'')!=='home')return;
-  const sheet=$('.ct84-status'); if(!sheet||sheet.dataset.ct85)return; sheet.dataset.ct85='1';
-  $$('.ct84-radio',sheet).forEach(label=>{
-    const t=norm(label.textContent); const span=label.querySelector('span'); if(!span)return;
-    if(t==='em dia')span.textContent='Histórico'; if(t==='acompanhando')span.textContent='Assistir a seguir';
-  });
-}
-function fixProfile(){
-  if(String(window.view||'')!=='profile')return;
-  const host=$('#ct54-profile')||$('.content'); if(!host)return;
-  $$('button,a,.tab,[role=tab]',host).forEach(e=>{if(norm(e.textContent)==='historico')e.remove();});
-  const main=$('.ct54-profile-main',host);
-  const chart=$$('.ct54-box,.panel,section',host).find(x=>/episódios por dia/i.test(x.textContent||''));
-  const extraHead=$$('h2,h3,.ct54-section-head',host).find(x=>/estatísticas extras/i.test(x.textContent||''));
-  if(main&&chart&&main.nextElementSibling!==chart)main.after(chart);
-  if(chart&&extraHead&&chart.nextElementSibling!==extraHead)chart.after(extraHead);
-}
-function fixSettings(){
-  if(String(window.view||'')!=='settings')return;
-  const host=$('.content')||document.body;
-  $$('*',host).forEach(e=>{const t=e.textContent?.trim()||'';if(/^Web\s*0\./i.test(t)||/vers[aã]o web/i.test(t))e.remove();});
-  let footer=$('.ct85-version',host);
-  if(!footer){footer=document.createElement('div');footer.className='ct85-version';footer.textContent='Android 0.0.85';host.appendChild(footer);}else footer.textContent='Android 0.0.85';
-}
-
-function installClicks(){
-  document.addEventListener('click',async e=>{
-    if(e.target.closest('button,a,input,select,textarea,.ct85-search,.ct84-detail,.ct71-credit'))return;
-    const view=String(window.view||''); if(!['home','discover','history'].includes(view))return;
-    const card=e.target.closest('.card,.ct47-card,.history-item,.ct55-history-card,[data-tmdb-id],[data-media-id],.panel,.ct84-card'); if(!card)return;
-    try{
-      const m=await resolveCard(card); if(!m)return; e.preventDefault(); e.stopPropagation();
-      if(view==='history'&&m.type==='tv'){
-        const txt=card.textContent||'';
-        const hit=txt.match(/T(?:emporada)?\s*(\d+)\D+E(?:pis[oó]dio)?\s*(\d+)/i)||txt.match(/S(\d+)E(\d+)/i);
-        if(hit)return openEpisode(m.id,Number(hit[1]),Number(hit[2]),()=>render?.());
-      }
-      window.ct84OpenMedia?.(m.type,m.id);
-    }catch{}
-  },true);
-}
-
-const oldNav=window.ct84Navigate;
-window.ct85Navigate=target=>{if(target==='watch'||target==='assistir')target='home';if(oldNav)return oldNav(target);window.view=target;render?.();return true;};
-installClicks();
-const refresh=()=>{ensureSearch();addProviders();makeEpisodesClickable();mergeHomeWatch();fixHomeFilter();fixProfile();fixSettings();filterDiscover();};
-new MutationObserver(refresh).observe(document.documentElement,{subtree:true,childList:true});
-setTimeout(refresh,250);
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const img=(p,size='w500')=>p?`${SUPABASE_URL}/functions/v1/tmdb-image?path=${encodeURIComponent(p)}&size=${size}`:'';
+async function api(path,params={}){const u=new URL(`${SUPABASE_URL}/functions/v1/tmdb-proxy`);u.searchParams.set('path',path);u.searchParams.set('language','pt-BR');Object.entries(params).forEach(([k,v])=>v!=null&&u.searchParams.set(k,String(v)));const r=await fetch(u,{headers:typeof authHeaders==='function'?authHeaders():{}});if(!r.ok)throw new Error('TMDB '+r.status);return r.json()}
+const css=document.createElement('style');css.id='ct73-style';css.textContent=`
+.ct86-hidden{display:none!important}.ct86-home{padding-bottom:20px}.ct86-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.ct86-top h1{margin:3px 0;font-size:25px}.ct86-kicker{font-size:9px;color:#55aef2;font-weight:800}.ct86-sub{font-size:11px;color:#8796a1}.ct86-filter{width:38px;height:38px;border:1px solid #31506a;background:#0b151d;color:#eaf6ff;border-radius:12px;font-size:18px}.ct86-kinds{display:flex;gap:8px;margin:14px 0;overflow:auto}.ct86-pill{border:1px solid #294155;background:#0b131a;color:#c8d5df;border-radius:999px;padding:8px 14px;white-space:nowrap}.ct86-pill.on{background:#123d61;border-color:#4399d8;color:#fff}.ct86-section{margin:18px 0 24px}.ct86-section h2{margin:0 0 9px;font-size:17px}.ct86-track{display:grid;gap:9px}.ct86-carousel .ct86-track{grid-auto-flow:column;grid-auto-columns:80%;grid-template-columns:none;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.ct86-grid .ct86-track{grid-template-columns:repeat(2,minmax(0,1fr))}.ct86-list .ct86-track{grid-template-columns:1fr}.ct86-card{display:grid;grid-template-columns:88px minmax(0,1fr);min-height:136px;border:1px solid #203646;background:#0d151b;border-radius:14px;overflow:hidden;cursor:pointer;scroll-snap-align:start}.ct86-grid .ct86-card{display:block}.ct86-poster{background:#101b23 center/cover no-repeat}.ct86-grid .ct86-poster{aspect-ratio:2/3}.ct86-body{padding:10px;min-width:0}.ct86-name{font-size:14px;font-weight:800}.ct86-meta{font-size:9px;color:#8ea0ad;margin-top:6px}.ct86-sheet-bg{position:fixed;inset:0;background:#000a;z-index:200000;display:flex;align-items:flex-end}.ct86-sheet{width:100%;background:#111317;border-radius:22px 22px 0 0;padding:18px 16px 24px;border-top:1px solid #34383c}.ct86-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 18px}.ct86-mode{border:1px solid #343b42;background:#191c1f;color:#d7dde2;border-radius:12px;padding:12px 5px}.ct86-mode.on{border-color:#5b96c0;background:#102230}.ct86-status{display:grid;gap:3px}.ct86-status label{display:flex;gap:10px;align-items:center;padding:10px 2px;border-bottom:1px solid #24282b}.ct86-detail{padding-bottom:28px}.ct86-back{border:1px solid #2c465a;background:#0b141b;color:#fff;border-radius:10px;padding:8px 11px;margin-bottom:12px}.ct86-hero{display:grid;grid-template-columns:112px minmax(0,1fr);gap:13px}.ct86-hero-poster{aspect-ratio:2/3;border-radius:13px;background:#101b23 center/cover no-repeat}.ct86-hero h1{font-size:22px;margin:0 0 6px}.ct86-over{font-size:12px;line-height:1.55;color:#b0bcc5}.ct86-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.ct86-action,.ct86-mini{border:1px solid #31506a;background:#0b151d;color:#e9f1f6;border-radius:10px;padding:9px}.ct86-sec{margin-top:20px}.ct86-sec h2{font-size:16px}.ct86-providers{display:flex;gap:7px;flex-wrap:wrap}.ct86-provider{display:flex;align-items:center;gap:6px;border:1px solid #29404f;border-radius:9px;padding:6px 8px;font-size:10px}.ct86-provider img{width:25px;height:25px;border-radius:6px}.ct86-cast{display:grid;grid-auto-flow:column;grid-auto-columns:92px;gap:9px;overflow-x:auto}.ct86-person{border:0;background:transparent;color:#fff;padding:0;text-align:left}.ct86-face{width:92px;aspect-ratio:2/3;border-radius:12px;background:#101b23 center/cover no-repeat}.ct86-person b{display:block;font-size:10px;margin-top:6px}.ct86-season{border:1px solid #243847;border-radius:11px;margin:8px 0;overflow:hidden}.ct86-season>button{width:100%;text-align:left;border:0;background:#0d151b;color:#fff;padding:11px}.ct86-eps{padding:0 10px 8px}.ct86-ep{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #202c35;font-size:10px;cursor:pointer}.ct86-person-head{display:grid;grid-template-columns:105px 1fr;gap:13px}.ct86-person-photo{aspect-ratio:2/3;border-radius:13px;background:#101b23 center/cover no-repeat}.ct86-film{display:grid;gap:8px}.ct86-credit{display:grid;grid-template-columns:62px 1fr;gap:9px;border:1px solid #203542;background:#0b1218;border-radius:12px;padding:8px}.ct86-credit-p{width:62px;aspect-ratio:2/3;border-radius:8px;background:#101b23 center/cover no-repeat}.ct86-empty{padding:15px;border:1px solid #203646;background:#0b1218;border-radius:12px;color:#83929e}
+`;document.head.appendChild(css);
+let homeMode=localStorage.getItem('ct86_mode')||'carousel',homeStatus=localStorage.getItem('ct86_status')||'all',homeKind=localStorage.getItem('ct86_kind')||'all';
+function app(){return $('#app')}
+function typeOf(el){const t=String(el?.dataset?.type||el?.dataset?.mediaType||el?.dataset?.apiType||'').toLowerCase();if(t.includes('movie')||t==='film')return'movie';if(t.includes('tv')||t.includes('series'))return'tv';return /\bfilme\b/i.test(el?.textContent||'')?'movie':'tv'}
+function idOf(el){const raw=el?.dataset?.mediaId||'',m=raw.match(/tmdb-(movie|tv)-(\d+)/);return Number(m?.[2]||el?.dataset?.tmdbId||el?.dataset?.id||0)}
+async function resolve(el){const n=el.closest?.('[data-tmdb-id],[data-media-id],[data-id],.card,.ct47-card,.history-item,.ct55-history-card,.panel,.ct84-card')||el;let type=typeOf(n),id=idOf(n);if(id)return{type,id,node:n};const title=(n.querySelector?.('h1,h2,h3,strong,.title,.card-title,.ct84-name')?.textContent||'').trim().split('\n')[0];if(!title)return null;for(const t of [type,type==='tv'?'movie':'tv']){try{const r=await api(`/search/${t}`,{query:title,page:1});if(r?.results?.[0]?.id)return{type:t,id:Number(r.results[0].id),node:n}}catch{}}return null}
+async function ensureMedia(type,id,d){let rows=await sbApi(`media?select=id&tmdb_id=eq.${id}&media_type=eq.${type}&limit=1`);if(rows?.[0])return rows[0];rows=await sbApi('media',{method:'POST',body:JSON.stringify({tmdb_id:Number(id),media_type:type,title:d.title||d.name||`TMDB #${id}`,poster_path:d.poster_path||null,release_year:Number(String(d.release_date||d.first_air_date||'').slice(0,4))||null,raw_tmdb:d})});return rows?.[0]||null}
+async function setState(type,id,d,state){try{const m=await ensureMedia(type,id,d);if(!m)return;const rows=await sbApi(`media_overrides?select=id&media_id=eq.${encodeURIComponent(m.id)}&state=eq.${state}&limit=1`);if(rows?.[0])await sbApi(`media_overrides?id=eq.${encodeURIComponent(rows[0].id)}`,{method:'DELETE'});else await sbApi('media_overrides',{method:'POST',body:JSON.stringify({media_id:m.id,state})});}catch{}}
+async function openEpisode(tvId,s,e,back){app().innerHTML='<div class="app"><main class="content"><div class="ct86-empty">Carregando episódio…</div></main></div>';try{const [show,ep]=await Promise.all([api(`/tv/${tvId}`),api(`/tv/${tvId}/season/${s}/episode/${e}`)]);app().innerHTML=`<div class="app"><main class="content ct86-detail"><button class="ct86-back">← Voltar</button><h1>${esc(show.name||'Série')}</h1><h2>T${s}E${e} · ${esc(ep.name||'Episódio')}</h2><div class="ct86-meta">★ ${Number(ep.vote_average||0).toFixed(1)} · ${esc(ep.air_date||'')}</div><p class="ct86-over">${esc(ep.overview||'Sem sinopse disponível.')}</p></main></div>`;$('.ct86-back').onclick=back}catch{back?.()}}
+async function openPerson(id,back){app().innerHTML='<div class="app"><main class="content"><div class="ct86-empty">Carregando ator…</div></main></div>';try{const [p,c]=await Promise.all([api(`/person/${id}`),api(`/person/${id}/combined_credits`)]);const credits=(c.cast||[]).filter(x=>['movie','tv'].includes(x.media_type)).sort((a,b)=>String(b.release_date||b.first_air_date||'').localeCompare(String(a.release_date||a.first_air_date||''))).filter((x,i,a)=>a.findIndex(y=>y.id===x.id&&y.media_type===x.media_type)===i);app().innerHTML=`<div class="app"><main class="content ct86-detail"><button class="ct86-back">← Voltar</button><div class="ct86-person-head"><div class="ct86-person-photo"${p.profile_path?` style="background-image:url('${img(p.profile_path,'w342')}')"`:''}></div><div><h1>${esc(p.name||'Ator')}</h1><div class="ct86-meta">${esc(p.known_for_department||'Elenco')}</div></div></div><p class="ct86-over">${esc(p.biography||'Sem biografia disponível.')}</p><section class="ct86-sec"><h2>Filmografia</h2><div class="ct86-film">${credits.map(x=>`<article class="ct86-credit" data-type="${x.media_type}" data-id="${x.id}"><div class="ct86-credit-p"${x.poster_path?` style="background-image:url('${img(x.poster_path,'w342')}')"`:''}></div><div><b>${esc(x.title||x.name||'Sem título')}</b><div class="ct86-meta">${x.media_type==='movie'?'FILME':'SÉRIE'} · ${String(x.release_date||x.first_air_date||'').slice(0,4)}</div><p><button class="ct86-mini" data-open>Abrir</button> <button class="ct86-mini" data-seen>Assistido</button> <button class="ct86-mini" data-watch>Watchlist</button></p></div></article>`).join('')}</div></section></main></div>`;$('.ct86-back').onclick=back;$$('.ct86-credit').forEach(el=>{const x=credits.find(v=>v.id===Number(el.dataset.id)&&v.media_type===el.dataset.type);el.querySelector('[data-open]').onclick=()=>openMedia(el.dataset.type,Number(el.dataset.id),()=>openPerson(id,back));el.querySelector('[data-seen]').onclick=()=>setState(el.dataset.type,Number(el.dataset.id),x,'AlreadySeen');el.querySelector('[data-watch]').onclick=()=>setState(el.dataset.type,Number(el.dataset.id),x,'AddedToWatchlist');el.querySelector('.ct86-credit-p').onclick=()=>openMedia(el.dataset.type,Number(el.dataset.id),()=>openPerson(id,back))})}catch{back?.()}}
+async function openMedia(type,id,back){if(!id)return;app().innerHTML='<div class="app"><main class="content"><div class="ct86-empty">Carregando detalhes…</div></main></div>';try{const [d,p]=await Promise.all([api(`/${type}/${id}`,{append_to_response:'credits'}),api(`/${type}/${id}/watch/providers`).catch(()=>({}))]);const cast=(d.credits?.cast||[]).slice(0,12),br=p?.results?.BR||{},providers=[...(br.flatrate||[]),...(br.free||[]),...(br.ads||[])].filter((x,i,a)=>a.findIndex(y=>y.provider_id===x.provider_id)===i);app().innerHTML=`<div class="app"><main class="content ct86-detail" data-type="${type}" data-id="${id}"><button class="ct86-back">← Voltar</button><div class="ct86-hero"><div class="ct86-hero-poster"${d.poster_path?` style="background-image:url('${img(d.poster_path)}')"`:''}></div><div><h1>${esc(d.title||d.name||'Sem título')}</h1><div class="ct86-meta">${type==='movie'?'FILME':`SÉRIE · ${d.number_of_seasons||0} temporadas · ${d.number_of_episodes||0} episódios`}</div><div class="ct86-meta">★ ${Number(d.vote_average||0).toFixed(1)} · ${String(d.release_date||d.first_air_date||'').slice(0,4)}</div><div class="ct86-meta">${(d.genres||[]).map(g=>g.name).join(' · ')}</div>${type==='movie'&&d.runtime?`<div class="ct86-meta">${d.runtime} min</div>`:''}</div></div><div class="ct86-actions"><button class="ct86-action" data-seen>Marcar assistido</button><button class="ct86-action" data-watch>Adicionar à Watchlist</button></div><p class="ct86-over">${esc(d.overview||'Sem sinopse disponível.')}</p><section class="ct86-sec"><h2>Onde assistir</h2><div class="ct86-providers">${providers.length?providers.map(x=>`<div class="ct86-provider"><img src="${img(x.logo_path,'w92')}"><span>${esc(x.provider_name)}</span></div>`).join(''):'<div class="ct86-meta">Nenhum streaming informado para o Brasil.</div>'}</div></section><section class="ct86-sec"><h2>Elenco principal</h2><div class="ct86-cast">${cast.map(a=>`<button class="ct86-person" data-person="${a.id}"><div class="ct86-face"${a.profile_path?` style="background-image:url('${img(a.profile_path,'w342')}')"`:''}></div><b>${esc(a.name)}</b><span class="ct86-meta">${esc(a.character||'')}</span></button>`).join('')}</div></section><div id="ct86-seasons"></div></main></div>`;const goBack=typeof back==='function'?back:()=>render?.();$('.ct86-back').onclick=goBack;$('[data-seen]').onclick=()=>setState(type,id,d,'AlreadySeen');$('[data-watch]').onclick=()=>setState(type,id,d,'AddedToWatchlist');$$('[data-person]').forEach(b=>b.onclick=()=>openPerson(Number(b.dataset.person),()=>openMedia(type,id,goBack)));if(type==='tv'){const box=$('#ct86-seasons');box.innerHTML=`<section class="ct86-sec"><h2>Temporadas e episódios</h2>${(d.seasons||[]).filter(s=>s.season_number>0).map(s=>`<div class="ct86-season"><button data-season="${s.season_number}">Temporada ${s.season_number} · ${s.episode_count||0} episódios</button><div class="ct86-eps" hidden></div></div>`).join('')}</section>`;$$('.ct86-season>button',box).forEach(b=>b.onclick=async()=>{const list=b.nextElementSibling;if(!list.hidden){list.hidden=true;return}list.hidden=false;if(list.dataset.loaded)return;const sd=await api(`/tv/${id}/season/${b.dataset.season}`);list.innerHTML=(sd.episodes||[]).map(ep=>`<div class="ct86-ep" data-ep="${ep.episode_number}"><span>E${ep.episode_number} · ${esc(ep.name||'Episódio')}</span><span>›</span></div>`).join('');list.dataset.loaded='1';$$('.ct86-ep',list).forEach(e=>e.onclick=()=>openEpisode(id,Number(b.dataset.season),Number(e.dataset.ep),()=>openMedia(type,id,goBack)))})}}catch{app().innerHTML='<div class="app"><main class="content"><button class="ct86-back">← Voltar</button><div class="ct86-empty">Falha ao abrir detalhes.</div></main></div>';$('.ct86-back').onclick=back||(()=>render?.())}}
+window.ct86OpenMedia=(t,id,b)=>openMedia(t,Number(id),b);
+async function homeRows(){const map=new Map(),put=(r,type,status)=>{const id=Number(r.tmdb_id||r.media?.tmdb_id||0);if(!id)return;const k=`${type}:${id}`;const x={...(r.media||r),tmdb_id:id,__type:type,__status:status||r.status||'not_started'};const prev=map.get(k);if(!prev||['history','following','dusty'].includes(x.__status))map.set(k,x)};try{const cont=await sbRpc('cinetracker_continue_items_v2',{})||[];cont.forEach(r=>put(r,'tv',r.status==='dusty'?'dusty':'following'));}catch{}try{const ov=await sbApi('media_overrides?select=state,updated_at,media:media(tmdb_id,media_type,title,poster_path,release_year)&state=in.(AlreadySeen,Completed,InProgress,AddedToWatchlist,WatchLater)&order=updated_at.desc&limit=3000');(ov||[]).forEach(r=>{const t=r.media?.media_type;if(!['tv','movie'].includes(t))return;const st=['AlreadySeen','Completed'].includes(r.state)?'history':r.state==='InProgress'?'following':'not_started';put(r,t,st)})}catch{}return [...map.values()]}
+function homeCard(r){return `<article class="ct86-card" data-type="${r.__type}" data-id="${r.tmdb_id}"><div class="ct86-poster"${r.poster_path?` style="background-image:url('${img(r.poster_path)}')"`:''}></div><div class="ct86-body"><div class="ct86-name">${esc(r.title||`TMDB #${r.tmdb_id}`)}</div><div class="ct86-meta">${r.__type==='movie'?'FILME':'SÉRIE'} · ${r.release_year||''}</div><div class="ct86-meta">${r.__status==='history'?'Histórico':r.__status==='following'?'Assistir a seguir':r.__status==='dusty'?'Juntando poeira':'Não iniciado'}</div></div></article>`}
+async function renderHome(){window.view='home';app().innerHTML=`<div class="app"><main class="content ct86-home"><div class="ct86-top"><div><div class="ct86-kicker">ACOMPANHAR</div><h1>Início</h1><div class="ct86-sub">Sua fila de séries e filmes.</div></div><button class="ct86-filter">☰</button></div><div class="ct86-kinds"><button class="ct86-pill ${homeKind==='all'?'on':''}" data-kind="all">Todos</button><button class="ct86-pill ${homeKind==='tv'?'on':''}" data-kind="tv">Séries</button><button class="ct86-pill ${homeKind==='movie'?'on':''}" data-kind="movie">Filmes</button></div><div id="ct86-home" class="ct86-${homeMode}"><div class="ct86-empty">Carregando…</div></div></main></div>`;$('.ct86-filter').onclick=filterSheet;$$('[data-kind]').forEach(b=>b.onclick=()=>{homeKind=b.dataset.kind;localStorage.setItem('ct86_kind',homeKind);renderHome()});const rows=await homeRows();let filtered=rows.filter(r=>(homeKind==='all'||r.__type===homeKind)&&(homeStatus==='all'||r.__status===homeStatus));const groups=homeStatus==='all'?[['following','Assistir a seguir'],['dusty','Juntando poeira'],['not_started','Não iniciadas'],['history','Histórico']].map(([s,l])=>[l,filtered.filter(r=>r.__status===s)]).filter(x=>x[1].length):[[homeStatus==='history'?'Histórico':homeStatus==='following'?'Assistir a seguir':homeStatus==='dusty'?'Juntando poeira':'Não iniciadas',filtered]];$('#ct86-home').innerHTML=groups.length?groups.map(([t,a])=>`<section class="ct86-section"><h2>${t}</h2><div class="ct86-track">${a.map(homeCard).join('')}</div></section>`).join(''):'<div class="ct86-empty">Nenhum item neste filtro.</div>';$$('.ct86-card').forEach(c=>c.onclick=()=>openMedia(c.dataset.type,Number(c.dataset.id),renderHome))}
+function filterSheet(){const bg=document.createElement('div');bg.className='ct86-sheet-bg';bg.innerHTML=`<div class="ct86-sheet"><h3>Visualização e filtro</h3><div class="ct86-modes"><button class="ct86-mode ${homeMode==='list'?'on':''}" data-m="list">Lista</button><button class="ct86-mode ${homeMode==='carousel'?'on':''}" data-m="carousel">Carrossel</button><button class="ct86-mode ${homeMode==='grid'?'on':''}" data-m="grid">Grade</button></div><div class="ct86-status">${[['all','Todos os status'],['history','Histórico'],['following','Assistir a seguir'],['dusty','Juntando poeira'],['not_started','Não iniciadas']].map(([v,l])=>`<label><input type="radio" name="ct86s" value="${v}" ${homeStatus===v?'checked':''}><span>${l}</span></label>`).join('')}</div></div>`;document.body.appendChild(bg);bg.onclick=e=>e.target===bg&&bg.remove();$$('[data-m]',bg).forEach(b=>b.onclick=()=>{homeMode=b.dataset.m;localStorage.setItem('ct86_mode',homeMode);bg.remove();renderHome()});$$('input[name=ct86s]',bg).forEach(r=>r.onchange=()=>{homeStatus=r.value;localStorage.setItem('ct86_status',homeStatus);bg.remove();renderHome()})}
+let excluded=null;async function exclusion(){const out={ids:new Set(),titles:new Set()};try{const rows=await sbApi('media_overrides?select=state,media:media(tmdb_id,media_type,title)&state=in.(AlreadySeen,Completed,AddedToWatchlist,WatchLater,InProgress)&limit=3000');(rows||[]).forEach(x=>{if(x.media?.tmdb_id)out.ids.add(`${x.media.media_type}:${x.media.tmdb_id}`);if(x.media?.title)out.titles.add(norm(x.media.title))});const cont=await sbRpc('cinetracker_continue_items_v2',{})||[];cont.forEach(x=>{if(x.tmdb_id)out.ids.add(`tv:${x.tmdb_id}`);if(x.title)out.titles.add(norm(x.title))})}catch{}return out}
+async function filterDiscover(){if(String(window.view||'')!=='discover')return;const text=norm($('.content')?.textContent||'');if(!['em alta','mais aguardados','populares','mais bem avaliados'].some(x=>text.includes(x)))return;if(!excluded)excluded=await exclusion();$$('.card,.ct47-card,[data-tmdb-id],[data-media-id]').forEach(el=>{const id=idOf(el),type=typeOf(el),title=norm(el.querySelector('h2,h3,strong,.title,.card-title')?.textContent||'');if((id&&excluded.ids.has(`${type}:${id}`))||(title&&excluded.titles.has(title)))el.classList.add('ct86-hidden')})}
+function profile(){if(String(window.view||'')!=='profile')return;const host=$('#ct54-profile')||$('.content');if(!host)return;$$('button,a,.tab,[role=tab]',host).forEach(e=>{if(norm(e.textContent)==='historico')e.remove()});const main=$('.ct54-profile-main',host),chart=$$('.ct54-box,.panel,section',host).find(x=>/episódios por dia/i.test(x.textContent||'')),extra=$$('h2,h3,.ct54-section-head',host).find(x=>/estatísticas extras/i.test(x.textContent||''));if(main&&chart&&main.nextElementSibling!==chart)main.after(chart);if(chart&&extra&&chart.nextElementSibling!==extra)chart.after(extra)}
+function settings(){if(String(window.view||'')!=='settings')return;const host=$('.content')||document.body;$$('*',host).forEach(e=>{const t=e.textContent?.trim()||'';if(/^Web\s*0\./i.test(t)||/vers[aã]o web/i.test(t))e.remove()});let f=$('.ct86-version',host);if(!f){f=document.createElement('div');f.className='ct86-version';host.appendChild(f)}f.textContent='Android 0.0.86-test'}
+function installClicks(){document.addEventListener('click',async e=>{if(e.target.closest('.ct86-detail,.ct86-person-head,.ct86-credit,.ct86-card,.ct86-sheet-bg,input,select,textarea'))return;const v=String(window.view||'');if(!['discover','history'].includes(v))return;const card=e.target.closest('.card,.ct47-card,.history-item,.ct55-history-card,[data-tmdb-id],[data-media-id],.panel');if(!card)return;try{const m=await resolve(card);if(!m)return;e.preventDefault();e.stopImmediatePropagation();if(v==='history'&&m.type==='tv'){const txt=card.textContent||'',hit=txt.match(/(?:S|T|Temporada\s*)(\d+)\s*(?:E|x|Epis[oó]dio\s*)(\d+)/i)||txt.match(/(\d+)x(\d+)/i);if(hit)return openEpisode(m.id,Number(hit[1]),Number(hit[2]),()=>render?.())}openMedia(m.type,m.id,()=>render?.())}catch{}},true)}
+installClicks();const oldNav=window.ct84Navigate;window.ct86Navigate=t=>{if(t==='watch'||t==='assistir'||t==='library')t='home';if(t==='home'){renderHome();return true}if(oldNav)return oldNav(t);window.view=t;render?.();return true};window.ct84Navigate=window.ct86Navigate;
+const refresh=()=>{profile();settings();filterDiscover()};new MutationObserver(refresh).observe(document.documentElement,{subtree:true,childList:true});setTimeout(()=>{if(String(window.view||'')==='home')renderHome();refresh()},220);
 })();
