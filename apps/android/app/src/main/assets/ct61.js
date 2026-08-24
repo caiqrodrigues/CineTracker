@@ -2,10 +2,12 @@
 'use strict';
 if (window.__ct61Loaded) return;
 window.__ct61Loaded = true;
-window.__ctAndroidBuild = '0.0.75';
+window.__ctAndroidBuild = '0.0.76';
 
 const CACHE_TTL = 120000;
+const STARTUP_BUDGET = 2200;
 const responseCache = new Map();
+const inFlight = new Map();
 const originalFetch = window.fetch.bind(window);
 const readRpc = new Set([
   'cinetracker_continue_items_v2',
@@ -39,43 +41,54 @@ window.fetch = async function(input, init = {}) {
   const key = cacheKey(input, init);
   const hit = responseCache.get(key);
   if (hit && Date.now() - hit.at < CACHE_TTL) return hit.response.clone();
-  const response = await originalFetch(input, init);
-  if (response.ok) responseCache.set(key, { at: Date.now(), response: response.clone() });
-  return response;
+  if (inFlight.has(key)) {
+    const shared = await inFlight.get(key);
+    return shared.clone();
+  }
+  const job = originalFetch(input, init).then(response => {
+    if (response.ok) responseCache.set(key, { at: Date.now(), response: response.clone() });
+    return response;
+  }).finally(() => inFlight.delete(key));
+  inFlight.set(key, job);
+  return (await job).clone();
 };
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
+const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function goto(target, settle = 520) {
-  try {
-    if (typeof window.ct71Navigate === 'function') window.ct71Navigate(target);
-    else if (typeof window.ct48Navigate === 'function') window.ct48Navigate(target);
-    else if (typeof window.ct47Navigate === 'function' && target === 'library') window.ct47Navigate(target);
-    else {
-      window.view = target;
-      if (typeof window.render === 'function') window.render();
-    }
-  } catch {}
-  await wait(settle);
+async function waitForSession(maxMs = 1100) {
+  const start = Date.now();
+  while (Date.now() - start < maxMs) {
+    if (window.ctSession?.access_token && typeof window.sbRpc === 'function') return true;
+    await wait(60);
+  }
+  return false;
+}
+
+async function warmCoreData() {
+  if (!(await waitForSession())) return;
+  const jobs = [];
+  try { jobs.push(window.sbRpc('cinetracker_continue_items_v2', {})); } catch {}
+  try { jobs.push(window.sbRpc('cinetracker_watch_daily_timeline', { p_days_back: 15, p_days_forward: 3 })); } catch {}
+  try { jobs.push(window.sbApi('media_overrides?select=state,media:media(tmdb_id,media_type,title)&limit=5000')); } catch {}
+  await Promise.race([Promise.allSettled(jobs), timeout(STARTUP_BUDGET)]);
+}
+
+function finishStartup() {
+  try { window.ct59Refresh?.(true); } catch {}
+  try { window.ct51Refresh?.(true); } catch {}
+  try { window.CineTrackerNative?.appReady?.(); } catch {}
 }
 
 async function preload() {
-  const timeout = setTimeout(() => {
-    try { window.CineTrackerNative?.appReady?.(); } catch {}
-  }, 9000);
-
+  const hardStop = setTimeout(finishStartup, 3000);
   try {
-    await wait(180);
-    const order = ['home', 'library', 'discover', 'history', 'profile', 'settings'];
-    for (const target of order) await goto(target);
-    await goto('home', 700);
-    try { window.ct59Refresh?.(true); } catch {}
-    await wait(450);
+    await warmCoreData();
   } finally {
-    clearTimeout(timeout);
-    try { window.CineTrackerNative?.appReady?.(); } catch {}
+    clearTimeout(hardStop);
+    finishStartup();
   }
 }
 
-setTimeout(() => { void preload(); }, 80);
+setTimeout(() => { void preload(); }, 40);
 })();
