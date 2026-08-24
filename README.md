@@ -6,26 +6,26 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 
 | Plataforma | Versão | Status |
 |---|---:|---|
-| Web | **0.4.8** | Código publicado / deploy Vercel |
-| Android | **0.0.75** | Código + pipeline de Release GitHub |
+| Web | **0.4.9** | Código publicado / deploy Vercel |
+| Android | **0.0.77** | Código + pipeline de Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
 
 **Web:** https://mycinetracker.vercel.app
 
-## Android 0.0.75
+## Atualização Web 0.4.9 / Android 0.0.77
 
-Esta etapa altera somente o carregamento inicial do aplicativo.
+- pré-carregamento de informações e imagens com cache e deduplicação de requisições;
+- séries passam a exibir globalmente: `Temporada X • Episódio Y • vistos/total • Faltam N episódios`;
+- Web Home preserva o trio da Watchlist: 1 filme, 1 série e 1 anime;
+- Web Biblioteca recebe correção adicional de posters/imagens;
+- Web Descobrir filtra títulos já vistos, acompanhados ou em Watchlist, alinhando o comportamento ao Android;
+- Web Perfil mantém gráfico de atividade acima do Histórico e remove Horário de pico/analytics duplicados;
+- Importar deixa de aparecer como aba própria na Web, permanecendo dentro de Configurações;
+- Android adiciona `ct62.js` para progresso global de séries e aquecimento de imagens.
 
-- Home, Assistir, Descobrir, Histórico, Perfil e Configurações são aquecidos em segundo plano na abertura;
-- o WebView só é exibido depois desse pré-carregamento inicial;
-- leituras Supabase/TMDB usadas nesse processo recebem cache temporário para reduzir `Carregando...` na primeira visita às abas;
-- ao terminar, o aplicativo volta para Home e libera a interface;
-- há fallback nativo para nunca deixar a tela invisível indefinidamente;
-- versionCode `75` / versionName `0.0.75`.
-
-Esta versão não inclui outras correções funcionais; elas serão tratadas uma por vez após validar este comportamento.
+A validação visual/funcional final depende de teste real no navegador e no aparelho Android.
 
 ## Arquitetura
 
