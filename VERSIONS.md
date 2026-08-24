@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.5.0** |
-| Android | **0.0.78** |
+| Android | **0.0.79** |
 | Windows | **—** |
 
 ## Regra
@@ -30,8 +30,9 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.72–0.0.73** — versões descartadas e não usadas como base oficial.
 - **0.0.74–0.0.76** — correções de estabilidade e pré-carregamento.
 - **0.0.77** — pré-carregamento de dados/imagens e padrão global de progresso de séries.
-- **0.0.78** — elimina looping de Home/Assistir e repetição das linhas de episódios/notas, mantém apenas uma linha padronizada de progresso e atualiza o rodapé das Configurações.
+- **0.0.78** — tentativa de eliminar looping e duplicação de progresso.
+- **0.0.79** — consolida o runtime Android: remove módulos conflitantes, corrige loops de Home/Assistir, navegação entre abas, versão duplicada/triplicada, Perfil/gráfico, Histórico, pré-carregamento e filtro completo do Descobrir.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.78.md`.
+Release Android atual: `docs/releases/0.0.79.md`.
