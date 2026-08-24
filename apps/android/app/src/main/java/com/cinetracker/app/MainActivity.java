@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
-    private static final String APP_VERSION = "0.0.83";
+    private static final String APP_VERSION = "0.0.84";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
 
@@ -111,7 +111,7 @@ public class MainActivity extends Activity {
         webView.postDelayed(() -> webView.setVisibility(View.VISIBLE), 1200);
         if (savedInstanceState == null) {
             String separator = BuildConfig.WEB_URL.contains("?") ? "&" : "?";
-            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=83");
+            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=84");
         } else {
             webView.restoreState(savedInstanceState);
             webView.postDelayed(() -> { applyAndroidBase(); applyStableModules(); }, 120);
@@ -126,7 +126,6 @@ public class MainActivity extends Activity {
 
     private void bindNativeNavigation() {
         findViewById(R.id.nav_home).setOnClickListener(v -> navigate("home"));
-        findViewById(R.id.nav_library).setOnClickListener(v -> navigate("library"));
         findViewById(R.id.nav_discover).setOnClickListener(v -> navigate("discover"));
         findViewById(R.id.nav_history).setOnClickListener(v -> navigate("history"));
         findViewById(R.id.nav_profile).setOnClickListener(v -> navigate("profile"));
@@ -135,8 +134,8 @@ public class MainActivity extends Activity {
 
     private void navigate(String target) {
         String js = "(function(){try{" +
+                "if(window.ct84Navigate&&window.ct84Navigate('" + target + "'))return true;" +
                 "if(window.ct66Navigate&&window.ct66Navigate('" + target + "'))return true;" +
-                "if('" + target + "'==='library'&&window.ct47Navigate&&window.ct47Navigate('library'))return true;" +
                 "view='" + target + "';render();window.scrollTo(0,0);return true;" +
                 "}catch(e){return false;}})();";
         webView.evaluateJavascript(js, null);
@@ -146,14 +145,14 @@ public class MainActivity extends Activity {
         if (webView == null) return;
         String js = "(function(){" +
                 "var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';" +
-                "if(!document.getElementById('ct83-base')){var s=document.createElement('style');s.id='ct83-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
-                "window.__ctAndroidBuild='0.0.83';" +
+                "if(!document.getElementById('ct84-base')){var s=document.createElement('style');s.id='ct84-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
+                "window.__ctAndroidBuild='0.0.84';" +
                 "})();";
         webView.evaluateJavascript(js, null);
     }
 
     private void applyStableModules() {
-        String[] assets = {"ct47.js", "ct66.js", "ct67-profile-history.js", "ct68-final.js"};
+        String[] assets = {"ct47.js", "ct66.js", "ct67-profile-history.js", "ct68-final.js", "ct70-home-084.js"};
         for (String asset : assets) applyAsset(asset);
     }
 
