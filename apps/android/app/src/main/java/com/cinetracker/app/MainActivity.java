@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
-    private static final String APP_VERSION = "0.0.74";
+    private static final String APP_VERSION = "0.0.75";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
 
@@ -46,6 +46,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webview);
+        webView.setVisibility(View.INVISIBLE);
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -69,7 +70,7 @@ public class MainActivity extends Activity {
         webView.setHorizontalScrollBarEnabled(false);
         webView.setVerticalScrollBarEnabled(true);
         webView.setOnTouchListener((v, event) -> event.getPointerCount() > 1);
-        webView.addJavascriptInterface(new AndroidBridge(this), "CineTrackerNative");
+        webView.addJavascriptInterface(new AndroidBridge(), "CineTrackerNative");
 
         CookieManager cookies = CookieManager.getInstance();
         cookies.setAcceptCookie(true);
@@ -106,9 +107,10 @@ public class MainActivity extends Activity {
 
         bindNativeNavigation();
         requestNotificationPermission();
+        webView.postDelayed(() -> webView.setVisibility(View.VISIBLE), 10000);
         if (savedInstanceState == null) {
             String separator = BuildConfig.WEB_URL.contains("?") ? "&" : "?";
-            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=74");
+            webView.loadUrl(BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=75");
         } else {
             webView.restoreState(savedInstanceState);
             webView.postDelayed(() -> { applyAndroidBase(); applyStableModules(); }, 180);
@@ -145,13 +147,13 @@ public class MainActivity extends Activity {
         String js = "(function(){" +
                 "var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';" +
                 "if(!document.getElementById('ct48-base')){var s=document.createElement('style');s.id='ct48-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}" +
-                "window.__ctAndroidBuild='0.0.74';" +
+                "window.__ctAndroidBuild='0.0.75';" +
                 "})();";
         webView.evaluateJavascript(js, null);
     }
 
     private void applyStableModules() {
-        String[] assets = {"ct41.js", "ct47.js", "ct48.js", "ct49.js", "ct50.js", "ct51.js", "ct58.js", "ct59.js", "ct60.js"};
+        String[] assets = {"ct41.js", "ct47.js", "ct48.js", "ct49.js", "ct50.js", "ct51.js", "ct58.js", "ct59.js", "ct60.js", "ct61.js"};
         for (String asset : assets) applyAsset(asset);
     }
 
@@ -164,15 +166,19 @@ public class MainActivity extends Activity {
         } catch (Exception ignored) { }
     }
 
-    public static class AndroidBridge {
-        private final Context context;
-        AndroidBridge(Context context) { this.context = context.getApplicationContext(); }
+    public class AndroidBridge {
+        @JavascriptInterface public void appReady() {
+            runOnUiThread(() -> {
+                if (webView != null) webView.setVisibility(View.VISIBLE);
+            });
+        }
 
         @JavascriptInterface public void saveSession(String json) {
             try {
                 JSONObject obj = new JSONObject(json == null ? "{}" : json);
                 String token = obj.optString("access_token", "");
                 if (token.isEmpty()) return;
+                Context context = MainActivity.this.getApplicationContext();
                 context.getSharedPreferences(NotificationWorker.PREFS, Context.MODE_PRIVATE).edit().putString("access_token", token).apply();
                 PeriodicWorkRequest periodic = new PeriodicWorkRequest.Builder(NotificationWorker.class, 1, TimeUnit.HOURS).build();
                 WorkManager.getInstance(context).enqueueUniquePeriodicWork("cinetracker_release_notifications", ExistingPeriodicWorkPolicy.KEEP, periodic);
