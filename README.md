@@ -8,7 +8,6 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, pensa
 |---|---:|---|
 | Web | **0.5.7** | Código final no GitHub; deploy de produção depende da Vercel |
 | Android | **0.0.83** (`versionCode 83`) | Código final + pipeline GitHub Actions; APK depende do build/release |
-| Windows | — | Planejado |
 
 ## Produção
 
