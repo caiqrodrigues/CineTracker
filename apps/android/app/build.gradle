@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// build-trigger: android-0.0.73-r2
+// build-trigger: android-0.0.73-restored-r1
