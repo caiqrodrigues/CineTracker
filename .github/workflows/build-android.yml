@@ -7,6 +7,8 @@ on:
     paths:
       - 'apps/android/**'
       - '.github/workflows/build-android.yml'
+  issues:
+    types: [opened]
 
 permissions:
   contents: write
@@ -18,6 +20,7 @@ concurrency:
 
 jobs:
   android:
+    if: github.event_name != 'issues' || startsWith(github.event.issue.title, 'android-build:')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -92,4 +95,4 @@ jobs:
         shell: bash
         run: curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android Build","description":"0.0.73 build failed"}'
 
-# release-ready-trigger: 0.0.73-r2
+# release-ready-trigger: 0.0.73-r3
