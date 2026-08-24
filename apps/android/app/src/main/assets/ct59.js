@@ -3,7 +3,7 @@
 if(window.__ct59Loaded)return;window.__ct59Loaded=true;
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=v=>typeof escapeHtml==='function'?escapeHtml(String(v??'')):String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-window.__ctAndroidBuild='0.0.72';
+window.__ctAndroidBuild='0.0.74';
 const cache=new Map();let homeBusy=false;
 const style=document.createElement('style');style.id='ct59-style';style.textContent=`
 .ct48-home-nextname,.ct59-nextname{font-size:13.5px!important;line-height:1.4!important;color:#d1dbe2!important;margin-top:8px!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important}
