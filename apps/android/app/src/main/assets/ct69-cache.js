@@ -7,8 +7,10 @@ async function put(key,value){const d=await openDb();if(!d)return;try{await new 
 async function snapshot(){if(typeof sbApi!=='function'||typeof sbRpc!=='function')return;const jobs=[['continue',()=>sbRpc('cinetracker_continue_items_v2',{})],['history',()=>sbApi('watch_history?select=id,item_type,season_number,episode_number,watched_at,title,media:media(id,tmdb_id,media_type,title,poster_path)&order=watched_at.desc&limit=120')],['overrides',()=>sbApi('media_overrides?select=state,updated_at,media:media(id,tmdb_id,media_type,title,poster_path)&order=updated_at.desc&limit=500')],['profile',()=>sbRpc('cinetracker_profile_stats',{})]];await Promise.allSettled(jobs.map(async([k,f])=>put(k,await f())))}
 function image(path){return path&&typeof SUPABASE_URL!=='undefined'?`${SUPABASE_URL}/functions/v1/tmdb-image?path=${encodeURIComponent(path)}&size=w500`:''}
 async function prewarm(){const vals=[...(window.mediaRegistry?.values?.()||[])].slice(0,42);await Promise.allSettled(vals.map(m=>new Promise(resolve=>{let p=m?.poster_path||m?.posterUrl||'';if(!p)return resolve();const u=String(p).startsWith('http')?String(p):image(p);if(!u)return resolve();const im=new Image();im.decoding='async';im.loading='eager';im.onload=im.onerror=resolve;im.src=u})))}
-async function warm(){await Promise.allSettled([snapshot(),prewarm()]);try{await window.ct68FullRefresh?.()}catch{}}
+function version(){if(typeof view==='undefined'||view!=='settings')return;const host=document.querySelector('.content')||document.querySelector('#app');if(!host)return;let f=document.querySelector('#ct66-version');if(f)f.textContent='CineTracker Android • versão 0.0.83'}
+async function warm(){await Promise.allSettled([snapshot(),prewarm()]);try{await window.ct68FullRefresh?.()}catch{}version()}
 setTimeout(()=>void warm(),0);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(()=>void snapshot(),250)});
+new MutationObserver(()=>version()).observe(document.querySelector('#app')||document.documentElement,{childList:true,subtree:true});
 window.ct69Refresh=warm;
 })();
