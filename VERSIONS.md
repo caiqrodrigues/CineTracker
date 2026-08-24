@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.8** |
-| Android | **0.0.74** |
+| Android | **0.0.75** |
 | Windows | **—** |
 
 ## Regra
@@ -31,8 +31,9 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.70** — carregamento de Continuar assistindo/Assistir, próximo episódio e botão Assistido centralizado.
 - **0.0.71** — base oficial estável.
 - **0.0.72–0.0.73** — versões descartadas e não usadas como base oficial.
-- **0.0.74** — build oficial derivada da linha corrigida da 0.0.71: gráfico acima de Histórico, Descobrir 100% novidade e estabilização de Home/Assistir.
+- **0.0.74** — build oficial derivada da linha corrigida da 0.0.71.
+- **0.0.75** — pré-carregamento das abas na abertura, com cache temporário de leituras Supabase/TMDB e liberação da interface somente após o aquecimento inicial.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.74.md`.
+Release Android atual: `docs/releases/0.0.75.md`.
