@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.8** |
-| Android | **0.0.75** |
+| Android | **0.0.76** |
 | Windows | **—** |
 
 ## Regra
@@ -32,8 +32,9 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.71** — base oficial estável.
 - **0.0.72–0.0.73** — versões descartadas e não usadas como base oficial.
 - **0.0.74** — build oficial derivada da linha corrigida da 0.0.71.
-- **0.0.75** — pré-carregamento das abas na abertura, com cache temporário de leituras Supabase/TMDB e liberação da interface somente após o aquecimento inicial.
+- **0.0.75** — primeira tentativa de pré-carregamento de abas.
+- **0.0.76** — corrige carregamento inicial infinito: remove navegação serial entre abas, aquece apenas dados em paralelo, deduplica requisições simultâneas e limita a espera inicial a 3 segundos.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.75.md`.
+Release Android atual: `docs/releases/0.0.76.md`.
