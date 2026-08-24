@@ -35,7 +35,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.85"}'
+            -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.86-test"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -68,30 +68,28 @@ jobs:
         run: gradle assembleDebug --stacktrace
       - name: Prepare APK name
         shell: bash
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.85-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.86-test.apk
       - name: Verify package and version
         shell: bash
         run: |
           set -euo pipefail
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          "$APKSIGNER" verify --print-certs cinetracker-android-0.0.85-debug.apk
-          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.85-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION="$($AAPT dump badging cinetracker-android-0.0.85-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          "$APKSIGNER" verify --print-certs cinetracker-android-0.0.86-test.apk
+          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.86-test.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging cinetracker-android-0.0.86-test.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.85"
+          test "$VERSION" = "0.0.86-test"
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.85-debug
-          path: cinetracker-android-0.0.85-debug.apk
-      - name: Publish Android 0.0.85 release
+          name: cinetracker-android-0.0.86-test
+          path: cinetracker-android-0.0.86-test.apk
+      - name: Publish Android release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: |
-          set -euo pipefail
-          gh release view android-v0.0.85 >/dev/null 2>&1 || gh release create android-v0.0.85 --title "CineTracker Android 0.0.85" --notes-file docs/releases/0.0.85.md
-          gh release upload android-v0.0.85 cinetracker-android-0.0.85-debug.apk --clobber
+        run: echo "Test branch does not publish releases"
       - name: Mark Android build success
         if: success()
         env:
@@ -102,7 +100,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            -d '{"state":"success","context":"Android Build","description":"0.0.85 published"}'
+            -d '{"state":"success","context":"Android Build","description":"0.0.86-test built"}'
       - name: Mark Android build failure
         if: failure()
         env:
@@ -113,6 +111,4 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            -d '{"state":"failure","context":"Android Build","description":"0.0.85 build failed"}'
-
-# release-ready-trigger: 0.0.85-complete-interaction-pass
+            -d '{"state":"failure","context":"Android Build","description":"0.0.86-test build failed"}'
