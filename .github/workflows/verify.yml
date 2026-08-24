@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   web:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +20,7 @@ jobs:
       - run: npm run verify
       - run: npm run build
 
-  android85:
+  android86test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,4 +65,4 @@ jobs:
           PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.85"
+          test "$VERSION" = "0.0.86-test"
