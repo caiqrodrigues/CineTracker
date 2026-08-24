@@ -6,23 +6,37 @@ CineTracker é um companion multiplataforma para filmes, séries e animes, com c
 
 | Plataforma | Versão | Status |
 |---|---:|---|
-| Web | **0.5.0** | Código publicado / deploy Vercel |
-| Android | **0.0.78** | Código + pipeline de Release GitHub |
+| Web | **0.5.1** | Código publicado / deploy Vercel |
+| Android | **0.0.80** | Código + pipeline de Release GitHub |
 | Windows | — | Planejado |
 
 ## Produção
 
 **Web:** https://mycinetracker.vercel.app
 
-## Atualização Web 0.5.0 / Android 0.0.78
+## Foco desta etapa
 
-- toda versão Web e Android atualiza a versão exibida no rodapé de Configurações;
-- séries usam globalmente o padrão `Temporada X • Episódio Y • vistos/total • Faltam N episódios`;
-- Android Home/Assistir deixa de re-renderizar continuamente a mesma linha de progresso e elimina duplicações de metadados;
-- Web mantém uma única entrada de Configurações e reativa a navegação das abas;
-- Web Home remove o calendário de lançamentos;
-- renderização de progresso passa a ser idempotente para evitar loops por MutationObserver;
-- pré-carregamento e cache continuam ativos sem navegação serial entre abas.
+O ciclo principal deve ser previsível e persistente:
+
+`abre → dados aparecem → navega → marca episódio → tudo atualiza → fecha → abre → continua correto`
+
+### Web 0.5.1
+
+- coordenador de lifecycle único para pré-carregamento curto e sincronização;
+- navegação das abas interceptada por uma única rota;
+- após marcação de episódio, estado principal e nuvem são relidos;
+- apenas uma versão oficial é exibida em Configurações.
+
+### Android 0.0.80
+
+- runtime Android reduzido a `ct47.js` e `ct65.js`, removendo a cadeia de módulos concorrentes;
+- pré-carregamento tem orçamento curto e não bloqueia indefinidamente a abertura;
+- navegação nativa usa uma única rota;
+- marcação de episódio dispara sincronização explícita;
+- histórico não recebe linhas extras de progresso;
+- Perfil recompõe o gráfico acima do Histórico;
+- Descobrir filtra itens pertencentes ao histórico, acompanhamento e Watchlist/overrides;
+- Configurações exibe somente `CineTracker Android • versão 0.0.80`.
 
 A validação visual/funcional final depende de teste real no navegador e no aparelho Android.
 
