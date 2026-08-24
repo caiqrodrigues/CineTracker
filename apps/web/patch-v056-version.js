@@ -12,7 +12,7 @@ const apply=()=>{
   }
   let f=document.querySelector('#ct56-version');
   if(!f){f=document.createElement('div');f.id='ct56-version';f.style.cssText='margin:28px 0 8px;text-align:center;color:#71808b;font-size:11px';host.appendChild(f)}
-  f.textContent='CineTracker Web • versão 0.5.6';
+  f.textContent='CineTracker Web • versão 0.5.7';
 };
 const old=window.render;if(typeof old==='function'&&!window.__ct56Render){window.__ct56Render=old;window.render=function(){const out=window.__ct56Render();setTimeout(apply,0);return out}}
 setTimeout(apply,0);setTimeout(apply,400);
