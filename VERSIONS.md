@@ -5,7 +5,7 @@ As versões do CineTracker são independentes por plataforma.
 | Plataforma | Versão oficial atual |
 |---|---:|
 | Web | **0.4.8** |
-| Android | **0.0.71** |
+| Android | **0.0.72** |
 | Windows | **—** |
 
 ## Regra
@@ -29,8 +29,9 @@ As versões do CineTracker são independentes por plataforma.
 - **0.0.59–0.0.68** — progresso, Descobrir, detalhes, streaming, Perfil, loaders, botões e notificações.
 - **0.0.69** — notificações e carregamento resiliente de temporadas com nota por episódio.
 - **0.0.70** — carregamento de Continuar assistindo/Assistir, próximo episódio e botão Assistido centralizado.
-- **0.0.71** — reduz tremor eliminando patches intermediários redundantes do runtime, torna atualização Home/Assistir orientada por navegação, restaura o gráfico do Perfil e recolhe Carrossel/Grade/Lista em filtro de exibição.
+- **0.0.71** — reduz tremor, restaura o gráfico do Perfil e recolhe Carrossel/Grade/Lista.
+- **0.0.72** — fixa o gráfico imediatamente acima de Histórico, reforça Descobrir como 100% novidade por ID+título, estabiliza Home/Assistir, limpa metadados corrompidos e remove `ct52` do runtime ativo para evitar disputa de gráfico.
 
 ## Documentação por release
 
-Release Android atual: `docs/releases/0.0.71.md`.
+Release Android atual: `docs/releases/0.0.72.md`.
