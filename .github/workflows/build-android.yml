@@ -84,14 +84,16 @@ jobs:
         with:
           name: cinetracker-android-0.0.83-debug
           path: cinetracker-android-0.0.83-debug.apk
-      - name: Publish APK release
+      - name: Publish fresh restored APK release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          gh release view android-v0.0.83 >/dev/null 2>&1 || gh release create android-v0.0.83 --title "CineTracker Android 0.0.83" --notes-file docs/releases/0.0.83.md
-          gh release upload android-v0.0.83 cinetracker-android-0.0.83-debug.apk --clobber
+          gh release create android-v0.0.83-restored \
+            --title "CineTracker Android 0.0.83 - Restaurada" \
+            --notes "Build restaurada baseada na 0.0.82 final aprovada, mantendo versionName 0.0.83." \
+            cinetracker-android-0.0.83-debug.apk
       - name: Mark Android build success
         if: success()
         env:
@@ -102,7 +104,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            -d '{"state":"success","context":"Android Build","description":"0.0.83 published"}'
+            -d '{"state":"success","context":"Android Build","description":"0.0.83 restored release published"}'
       - name: Mark Android build failure
         if: failure()
         env:
@@ -113,6 +115,6 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            -d '{"state":"failure","context":"Android Build","description":"0.0.83 build failed"}'
+            -d '{"state":"failure","context":"Android Build","description":"0.0.83 restored release failed"}'
 
-# release-ready-trigger: 0.0.83-restored-baseline-publish
+# release-ready-trigger: 0.0.83-restored-fresh-release
