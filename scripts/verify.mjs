@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
 const html=await readFile('apps/web/index.html','utf8');
-const webFiles=['patch-v024.js','patch-v029.js','patch-v054.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','service-worker.js'];
+const webFiles=['patch-v024.js','patch-v029.js','patch-v054.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v090-android-export.js','service-worker.js'];
 const src={};for(const f of webFiles){src[f]=await readFile('apps/web/'+f,'utf8');try{new Function(src[f]);}catch(e){console.error('ERRO - sintaxe '+f+': '+e.message);process.exit(1)}}
 const android=await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java','utf8');
 const layout=await readFile('apps/android/app/src/main/res/layout/activity_main.xml','utf8');
 const gradle=await readFile('apps/android/app/build.gradle','utf8');
 const a90=await readFile('apps/android/app/src/main/assets/ct78-v090.js','utf8');try{new Function(a90)}catch(e){console.error('ERRO - sintaxe ct78-v090.js: '+e.message);process.exit(1)}
-const p29=src['patch-v029.js'],p54=src['patch-v054.js'],p58=src['patch-v058-v088.js'],p59=src['patch-v059-v089.js'],p60=src['patch-v060-v090.js'];
+const p29=src['patch-v029.js'],p54=src['patch-v054.js'],p58=src['patch-v058-v088.js'],p59=src['patch-v059-v089.js'],p60=src['patch-v060-v090.js'],p61=src['patch-v061-v090-android-export.js'];
 const checks=[
 ['CineTracker',html.includes('CineTracker')],
 ['Detalhes anteriores preservados',p29.includes('openMedia')&&p29.includes('Temporadas e episódios')],
@@ -23,6 +23,7 @@ const checks=[
 ['Backup ZIP',p60.includes('makeZip')&&p60.includes('readZip')&&p60.includes('cinetracker-backup-v90.zip')],
 ['Restore banco',p60.includes('restoreBackup')&&p60.includes("media_overrides?id=not.is.null")&&p60.includes("watch_history?id=not.is.null")],
 ['Reatividade v90',p60.includes('cinetracker:data-changed')&&p60.includes('react()')],
+['Android export nativo',p61.includes('CineTrackerNative.exportBackup')&&android.includes('ACTION_CREATE_DOCUMENT')&&android.includes('exportBackup(String name,String base64,String mime)')],
 ['Busca global v89 preservada',p59.includes('/search/multi')&&p59.includes('Buscar filmes, séries e atores')],
 ['Gráfico episódios v88 preservado',p58.includes('Avaliação dos episódios')&&p58.includes('scroll-snap-type:x mandatory')],
 ['Home filtros anteriores preservados',p54.includes('Carrossel')&&p54.includes('Grade')&&p54.includes('Juntando poeira')],
