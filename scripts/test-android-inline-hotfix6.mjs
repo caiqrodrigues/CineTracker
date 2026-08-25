@@ -4,8 +4,11 @@ import vm from 'node:vm';
 const path = 'apps/android/app/src/main/assets/hotfix5/index.html';
 const html = await readFile(path, 'utf8');
 
-if (!html.includes("window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'")) {
-  throw new Error('Android inline smoke: HOTFIX 6 bundle marker missing');
+if (!html.includes("window.__ctAndroidBundle = 'hotfix7-p0-inline-authoritative'")) {
+  throw new Error('Android inline smoke: HOTFIX 7 bundle marker missing');
+}
+if (!html.includes("window.__ctP0SessionReset = 'hotfix7-once'")) {
+  throw new Error('Android inline smoke: P0 session reset marker missing');
 }
 if (!html.includes('const media = [')) {
   throw new Error('Android inline smoke: const media block missing');
@@ -31,4 +34,4 @@ for (let i = 0; i < scripts.length; i += 1) {
   }
 }
 
-console.log(`Android inline smoke OK: ${scripts.length} scripts preserved and syntactically valid.`);
+console.log(`Android HOTFIX 7 inline smoke OK: ${scripts.length} scripts preserved and syntactically valid.`);
