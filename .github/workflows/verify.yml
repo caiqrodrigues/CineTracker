@@ -32,7 +32,7 @@ jobs:
           grep -q 'ctFetchWithTimeout' dist/index.html
           grep -q 'ctLooksLikeJwt' dist/index.html
           grep -q "path === 'logout'" dist/index.html
-          grep -q '0.0.97 HOTFIX 5' dist/index.html
+          grep -q '0.0.97 HOTFIX 5' dist/patch-v074-hotfix1-version.js
           ! grep -q 'auth-preboot-fix7.js' dist/index.html
           ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
 
