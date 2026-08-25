@@ -2,7 +2,7 @@ name: Verify
 
 on:
   push:
-    branches: [main, release-v0.0.97-hotfix1]
+    branches: [main, release-v0.0.97-hotfix1, hotfix2-black-screen]
   pull_request:
 
 permissions:
@@ -17,24 +17,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Verify preserved CineTracker features and HOTFIX 1 invariants
+      - name: Verify preserved CineTracker features and HOTFIX 2 invariants
         run: npm run verify
-      - name: Build HOTFIX 1 Web app
+      - name: Build HOTFIX 2 Web app
         run: npm run build
       - name: Execute auth recovery runtime suite
         run: node scripts/test-auth-recovery-red.mjs
-      - name: Assert HOTFIX 1 production HTML
+      - name: Assert HOTFIX 2 production HTML
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-base'" dist/index.html
           grep -q 'void bootstrap();' dist/index.html
           grep -q 'ctFetchWithTimeout' dist/index.html
-          grep -q 'patch-v074-hotfix1-version.js' dist/index.html
+          grep -q 'patch-v075-hotfix2-version.js' dist/index.html
           ! grep -q 'auth-preboot-fix7.js' dist/index.html
           ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
 
-  android97hotfix1:
+  android97hotfix2:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -60,34 +60,28 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Validate HOTFIX 1 Android source and local Web runtime
+      - name: Validate HOTFIX 2 source and prepare self-contained Web
         shell: bash
         run: |
           set -euo pipefail
-          node --check apps/web/patch-v068-v097.js
-          node --check apps/web/patch-v074-hotfix1-version.js
+          npm run verify
           npm run build
           node scripts/test-auth-recovery-red.mjs
-          node scripts/prepare-android-hotfix1-web.mjs
-          test -f apps/android/app/src/main/assets/hotfix1/index.html
-          grep -q "window.__ctAuthRecovery = 'v97-base'" apps/android/app/src/main/assets/hotfix1/index.html
-          grep -q 'patch-v074-hotfix1-version.js' apps/android/app/src/main/assets/hotfix1/index.html
-          ! grep -q 'patch-v073-v097-fix7.js' apps/android/app/src/main/assets/hotfix1/index.html
-          grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          grep -q 'appassets.androidplatform.net/assets/hotfix1/index.html' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          grep -q 'WebSettings.LOAD_DEFAULT' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'LOAD_NO_CACHE' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'clearCache(true)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'ct89-v097-fix7.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'authrev=' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'saveAuthSession' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'applyStableModules' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          grep -q '&release=hotfix1' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-      - name: Build debug HOTFIX 1 APK
+          node scripts/prepare-android-hotfix2-web.mjs
+          test -f apps/android/app/src/main/assets/hotfix2/index.html
+          grep -q "window.__ctAuthRecovery = 'v97-base'" apps/android/app/src/main/assets/hotfix2/index.html
+          grep -q 'data-ct-bundled="patch-v068-v097.js"' apps/android/app/src/main/assets/hotfix2/index.html
+          grep -q 'patch-v075-hotfix2-version.js' apps/android/app/src/main/assets/hotfix2/index.html
+          ! grep -q '<script src=' apps/android/app/src/main/assets/hotfix2/index.html
+          ! grep -q 'patch-v073-v097-fix7.js' apps/android/app/src/main/assets/hotfix2/index.html
+          grep -q 'loadDataWithBaseURL' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q 'appassets.androidplatform.net' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+      - name: Build debug HOTFIX 2 APK and test APK
         working-directory: apps/android
         shell: bash
-        run: gradle assembleDebug --stacktrace
-      - name: Verify package and HOTFIX 1 version
+        run: gradle :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace
+      - name: Verify package and HOTFIX 2 version
         shell: bash
         run: |
           set -euo pipefail
@@ -99,11 +93,57 @@ jobs:
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           VERSION_CODE="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.97 HOTFIX 1"
-          test "$VERSION_CODE" = "979"
-      - name: Upload HOTFIX 1 APK for validation
+          test "$VERSION" = "0.0.97 HOTFIX 2"
+          test "$VERSION_CODE" = "980"
+      - name: Verify self-contained HTML is actually inside APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          unzip -l "$APK" | grep -q 'assets/hotfix2/index.html'
+          unzip -p "$APK" assets/hotfix2/index.html | grep -q 'data-ct-bundled="patch-v068-v097.js"'
+          unzip -p "$APK" assets/hotfix2/index.html | grep -q "window.__ctAuthRecovery = 'v97-base'"
+      - name: Upload HOTFIX 2 APK candidate
         uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-0.0.97-hotfix1-apk
+          name: cinetracker-0.0.97-hotfix2-candidate
           path: apps/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+  android97hotfix2_emulator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Prepare exact HOTFIX 2 runtime for emulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run verify
+          npm run build
+          node scripts/test-auth-recovery-red.mjs
+          node scripts/prepare-android-hotfix2-web.mjs
+      - name: Boot Android 15 emulator and prove login renders
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          script: cd apps/android && gradle connectedDebugAndroidTest --stacktrace
+      - name: Upload instrumentation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hotfix2-android-render-test-results
+          path: |
+            apps/android/app/build/reports/androidTests/
+            apps/android/app/build/outputs/androidTest-results/
+          if-no-files-found: ignore
