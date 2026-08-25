@@ -3,7 +3,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { chromium } from 'playwright-core';
 
-const root = join(process.cwd(), 'dist');
+const root = join(process.cwd(), process.env.CINETRACKER_TEST_ROOT || 'dist');
 const mime = new Map([
   ['.html', 'text/html; charset=utf-8'], ['.js', 'text/javascript; charset=utf-8'],
   ['.css', 'text/css; charset=utf-8'], ['.svg', 'image/svg+xml']
@@ -79,7 +79,7 @@ try {
 
   await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 50)));
   if (errors.length) throw new Error(`Browser errors:\n${errors.join('\n')}`);
-  console.log(`POST_LOGIN_OK shell visible; hydration=${required.join(',')}; browser errors=0`);
+  console.log(`POST_LOGIN_OK root=${process.env.CINETRACKER_TEST_ROOT || 'dist'}; hydration=${required.join(',')}; browser errors=0`);
 } finally {
   await browser.close().catch(() => {});
   await new Promise(resolve => server.close(resolve));
