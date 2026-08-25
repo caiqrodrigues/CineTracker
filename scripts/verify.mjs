@@ -13,6 +13,7 @@ const android = await readFile('apps/android/app/src/main/java/com/cinetracker/a
 const gradle = await readFile('apps/android/app/build.gradle', 'utf8');
 const layout = await readFile('apps/android/app/src/main/res/layout/activity_main.xml', 'utf8');
 const buildWeb = await readFile('scripts/build-web.mjs', 'utf8');
+const prepareAndroid = await readFile('scripts/prepare-android-hotfix1-web.mjs', 'utf8');
 const patchArrayLine = buildWeb.split('\n').find(line => line.startsWith('const patches =')) || '';
 const p29 = src['patch-v029.js'];
 const p54 = src['patch-v054.js'];
@@ -48,8 +49,10 @@ const checks = [
   ['FIX7 fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
   ['HOTFIX1 no build web', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfixVersion.includes('0.0.97 HOTFIX 1')],
   ['HOTFIX1 rotaciona cache', sw.includes("ct-web-0.0.97-hotfix1")],
-  ['Android v97 base modules', android.includes('ct84-v097.js') && !android.includes('ct89-v097-fix7.js')],
-  ['Android HOTFIX1 version asset', android.includes('ct90-hotfix1-version.js') && gradle.includes('copyHotfix1VersionAsset')],
+  ['Android usa Web local corrigida', android.includes('WebViewAssetLoader') && android.includes('appassets.androidplatform.net/assets/hotfix1/index.html')],
+  ['Android não injeta cadeia antiga', !android.includes('ct89-v097-fix7.js') && !android.includes('applyStableModules')],
+  ['Android prepara dist validado', prepareAndroid.includes("window.__ctAuthRecovery = 'v97-base'") && prepareAndroid.includes('patch-v074-hotfix1-version.js') && prepareAndroid.includes("src=\"./")],
+  ['Android WebKit asset loader', gradle.includes("androidx.webkit:webkit:1.12.1")],
   ['Android cache original', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
   ['Android sem authrev/fix', !android.includes('authrev=') && !android.includes('&fix=7')],
   ['Android release marker', android.includes('&release=hotfix1')],
@@ -61,7 +64,7 @@ const checks = [
 
 let failed = false;
 for (const [name, ok] of checks) {
-  console.log(`${ok ? 'OK' : 'ERRO'} - ${name}`);
+  console.log(`${ok ? 'OK':'ERRO'} - ${name}`);
   if (!ok) failed = true;
 }
 if (failed) process.exit(1);
