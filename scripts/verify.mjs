@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 
 const html = await readFile('apps/web/index.html', 'utf8');
-const files = ['patch-v024.js','patch-v029.js','patch-v054.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','service-worker.js'];
+const files = ['patch-v024.js','patch-v029.js','patch-v054.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','patch-v074-hotfix1-version.js','service-worker.js'];
 const src = {};
 for (const f of files) {
   src[f] = await readFile('apps/web/' + f, 'utf8');
@@ -22,6 +22,8 @@ const p91 = src['patch-v061-v091.js'];
 const p92 = src['patch-v063-v092.js'];
 const p95 = src['patch-v067-v095.js'];
 const p97 = src['patch-v068-v097.js'];
+const hotfixVersion = src['patch-v074-hotfix1-version.js'];
+const sw = src['service-worker.js'];
 
 const checks = [
   ['CineTracker base', html.includes('CineTracker')],
@@ -44,11 +46,15 @@ const checks = [
   ['Recovery storage isolado', buildWeb.includes('sessão válida em memória')],
   ['Recovery mantém bootstrap base', buildWeb.includes("if (!built.includes('void bootstrap();'))")],
   ['FIX7 fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
+  ['HOTFIX1 no build web', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfixVersion.includes('0.0.97 HOTFIX 1')],
+  ['HOTFIX1 rotaciona cache', sw.includes("ct-web-0.0.97-hotfix1")],
   ['Android v97 base modules', android.includes('ct84-v097.js') && !android.includes('ct89-v097-fix7.js')],
+  ['Android HOTFIX1 version asset', android.includes('ct90-hotfix1-version.js') && gradle.includes('copyHotfix1VersionAsset')],
   ['Android cache original', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
   ['Android sem authrev/fix', !android.includes('authrev=') && !android.includes('&fix=7')],
+  ['Android release marker', android.includes('&release=hotfix1')],
   ['Android sem sessão nativa FIX7', !android.includes('saveAuthSession') && !android.includes('getAuthSession') && !android.includes('clearAuthSession')],
-  ['Android recovery version', gradle.includes('versionCode 978') && gradle.includes("versionName '0.0.97 RECOVERY'") && !gradle.includes('copyV097Fix7Asset')],
+  ['Android HOTFIX1 version', gradle.includes('versionCode 979') && gradle.includes("versionName '0.0.97 HOTFIX 1'") && !gradle.includes('copyV097Fix7Asset')],
   ['Android seleção ZIP CSV', android.includes('EXTRA_ALLOW_MULTIPLE') && android.includes('application/zip')],
   ['Home unificada', !layout.includes('nav_library')]
 ];
