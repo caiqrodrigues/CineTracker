@@ -14,6 +14,7 @@ const gradle = await readFile('apps/android/app/build.gradle', 'utf8');
 const layout = await readFile('apps/android/app/src/main/res/layout/activity_main.xml', 'utf8');
 const buildWeb = await readFile('scripts/build-web.mjs', 'utf8');
 const prepareAndroid = await readFile('scripts/prepare-android-hotfix2-web.mjs', 'utf8');
+const startupSmoke = await readFile('scripts/test-startup-hotfix6.mjs', 'utf8');
 const patchArrayLine = buildWeb.split('\n').find(line => line.startsWith('const patches =')) || '';
 const p29 = src['patch-v029.js'];
 const p54 = src['patch-v054.js'];
@@ -42,31 +43,36 @@ const checks = [
   ['Episódio inteligente', p91.includes('Você já assistiu aos episódios anteriores') && p91.includes('markPrevious')],
   ['Perfil gráfico diário', p97.includes('today.offsetLeft-sc.clientWidth/2') && p95.includes('openDay95')],
   ['Importador ZIP/CSV', p97.includes('unzipCSV') && p97.includes('library.csv') && p97.includes('watches.csv')],
-  ['HOTFIX5 aplica timeout auth', buildWeb.includes('ctFetchWithTimeout') && buildWeb.includes('8000')],
-  ['HOTFIX5 Home antes da hidratação', buildWeb.includes('function enterAuthenticatedHome()') && buildWeb.includes("view = 'home';") && buildWeb.includes('void runPostAuthHydration();')],
-  ['HOTFIX5 storage isolado', buildWeb.includes('sessão válida em memória')],
-  ['HOTFIX5 valida JWT', buildWeb.includes('function ctLooksLikeJwt(token)') && buildWeb.includes('Sessão local inválida')],
-  ['HOTFIX5 login/refresh isolam Authorization antigo', buildWeb.includes("const headers = { apikey: SUPABASE_KEY") && buildWeb.includes("path === 'logout'") && !buildWeb.includes("headers: { ...authHeaders(), 'Content-Type': 'application/json' }")],
-  ['HOTFIX5 mantém bootstrap base', buildWeb.includes("if (!built.includes('void bootstrap();'))")],
-  ['FIX7 fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
-  ['Web HOTFIX5 version', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfixVersion.includes('0.0.97 HOTFIX 5') && hotfixVersion.includes('__ctHotfix5Version')],
-  ['Web cache HOTFIX5 rotacionado', sw.includes('ct-web-0.0.97-hotfix5')],
 
-  ['Android HOTFIX5 usa HTML inline', android.includes('loadDataWithBaseURL') && android.includes('hotfix5/index.html')],
-  ['Android HOTFIX5 remove AssetLoader', !android.includes('WebViewAssetLoader') && !gradle.includes('androidx.webkit:webkit')],
-  ['Android HOTFIX5 usa origem HTTPS normal', android.includes('String baseUrl = runtimeUrl()') && android.includes('BuildConfig.WEB_URL')],
-  ['Android HOTFIX5 ignora estado WebView antigo', android.includes('loadBundledWeb();') && !android.includes('restoreState(savedInstanceState)')],
-  ['Android HOTFIX5 sem fallback remoto', !android.includes('verifyStartupOrFallback') && !android.includes('loadRemoteFallback') && !android.includes('fallback=remote') && !android.includes('webView.loadUrl(runtimeUrl')],
-  ['Android HOTFIX5 intercepta Vercel main frame', android.includes('host.equals("mycinetracker.vercel.app")') && android.includes('request.isForMainFrame()') && android.includes('loadBundledWeb();')],
-  ['Android HOTFIX5 WebView visível desde início', android.includes('webView.setVisibility(View.VISIBLE)')],
-  ['Android HOTFIX5 prepara bundle autocontido', prepareAndroid.includes('scriptPattern') && prepareAndroid.includes('data-ct-inline') && prepareAndroid.includes("window.__ctAndroidBundle = 'hotfix5-inline-authoritative'")],
-  ['Android HOTFIX5 renderiza antes de restaurar sessão', prepareAndroid.includes('render();\n    const restored = await restoreSession();')],
-  ['Android HOTFIX5 não registra service worker no bundle', prepareAndroid.includes('window.__ctAndroidBundle ||')],
-  ['Android HOTFIX5 cache padrão', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
-  ['Android HOTFIX5 sem authrev/fix antigo', !android.includes('authrev=') && !android.includes('&fix=7')],
-  ['Android HOTFIX5 release marker', android.includes('&release=hotfix5&runtime=embedded')],
+  ['Recovery aplica timeout auth', buildWeb.includes('ctFetchWithTimeout') && buildWeb.includes('8000')],
+  ['Recovery Home antes da hidratação', buildWeb.includes('function enterAuthenticatedHome()') && buildWeb.includes("view = 'home';") && buildWeb.includes('void runPostAuthHydration();')],
+  ['Recovery storage isolado', buildWeb.includes('sessão válida em memória')],
+  ['Recovery valida JWT', buildWeb.includes('function ctLooksLikeJwt(token)') && buildWeb.includes('Sessão local inválida')],
+  ['Recovery login/refresh isolam Authorization antigo', buildWeb.includes("const headers = { apikey: SUPABASE_KEY") && buildWeb.includes("path === 'logout'") && !buildWeb.includes("headers: { ...authHeaders(), 'Content-Type': 'application/json' }")],
+  ['Recovery mantém bootstrap base', buildWeb.includes("if (!built.includes('void bootstrap();'))")],
+  ['HOTFIX6 preserva const media', buildWeb.includes("'const media = ['") && buildWeb.includes("built.includes('const media = [')")],
+  ['HOTFIX6 smoke executa bundle emitido', startupSmoke.includes('vm.Script') && startupSmoke.includes('id="auth-form"') && startupSmoke.includes('Entrar no CineTracker')],
+  ['FIX7 fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
+  ['Web version layer preservada', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfixVersion.includes('0.0.97 HOTFIX 5') && hotfixVersion.includes('__ctHotfix5Version')],
+  ['Web cache rotacionado', sw.includes('ct-web-0.0.97-hotfix5')],
+
+  ['Android usa HTML inline', android.includes('loadDataWithBaseURL') && android.includes('hotfix5/index.html')],
+  ['Android remove AssetLoader', !android.includes('WebViewAssetLoader') && !gradle.includes('androidx.webkit:webkit')],
+  ['Android usa origem HTTPS normal', android.includes('String baseUrl = runtimeUrl()') && android.includes('BuildConfig.WEB_URL')],
+  ['Android ignora estado WebView antigo', android.includes('loadBundledWeb();') && !android.includes('restoreState(savedInstanceState)')],
+  ['Android sem fallback remoto', !android.includes('verifyStartupOrFallback') && !android.includes('loadRemoteFallback') && !android.includes('fallback=remote') && !android.includes('webView.loadUrl(runtimeUrl')],
+  ['Android intercepta Vercel main frame', android.includes('host.equals("mycinetracker.vercel.app")') && android.includes('request.isForMainFrame()') && android.includes('loadBundledWeb();')],
+  ['Android WebView visível desde início', android.includes('webView.setVisibility(View.VISIBLE)')],
+  ['Android HOTFIX6 prepara bundle autocontido', prepareAndroid.includes('scriptPattern') && prepareAndroid.includes('data-ct-inline') && prepareAndroid.includes("window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'")],
+  ['Android HOTFIX6 inliner usa callback literal', prepareAndroid.includes('html.replace(match[0], () =>') && prepareAndroid.includes('corrupting helpers')],
+  ['Android HOTFIX6 preserva $$', prepareAndroid.includes("html.includes('$$=(s,r=document)=>')")],
+  ['Android renderiza antes de restaurar sessão', prepareAndroid.includes('render();\n    const restored = await restoreSession();')],
+  ['Android não registra service worker no bundle', prepareAndroid.includes('window.__ctAndroidBundle ||')],
+  ['Android cache padrão', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
+  ['Android sem authrev/fix antigo', !android.includes('authrev=') && !android.includes('&fix=7')],
+  ['Android release marker atual preservado até promoção', android.includes('&release=hotfix5&runtime=embedded')],
   ['Android sem sessão nativa FIX7', !android.includes('saveAuthSession') && !android.includes('getAuthSession') && !android.includes('clearAuthSession')],
-  ['Android HOTFIX5 version', gradle.includes('versionCode 983') && gradle.includes("versionName '0.0.97 HOTFIX 5'")],
+  ['Android package/version ainda não promovidos', gradle.includes('versionCode 983') && gradle.includes("versionName '0.0.97 HOTFIX 5'")],
   ['Android seleção ZIP CSV', android.includes('EXTRA_ALLOW_MULTIPLE') && android.includes('application/zip')],
   ['Home unificada', !layout.includes('nav_library')]
 ];
