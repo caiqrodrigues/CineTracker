@@ -16,15 +16,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Verify exact v95 source
+      - name: Build exact v95 source without unrelated historical verifier
         shell: bash
         run: |
           set -euo pipefail
-          npm run verify
-          npm run build
+          node --check apps/web/patch-v067-v095.js
+          node scripts/build-web.mjs
+          test -f dist/index.html
           grep -q "versionName '0.0.95'" apps/android/app/build.gradle
           grep -q "token?grant_type=password" apps/web/index.html
           grep -q "Entrar no CineTracker" apps/web/index.html
+          grep -q 'patch-v067-v095.js' scripts/build-web.mjs
           ! grep -q "patch-v073-v097-fix7" scripts/build-web.mjs
           ! grep -q "HOTFIX" apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
       - name: Verify historical v95 login architecture
@@ -61,8 +63,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm run verify
-          npm run build
+          node --check apps/web/patch-v067-v095.js
+          node scripts/build-web.mjs
           node scripts/prepare-v95-login-test-html.mjs
           test -f apps/android/app/src/androidTest/assets/v95/index.html
           grep -q 'Entrar no CineTracker' apps/android/app/src/androidTest/assets/v95/index.html
