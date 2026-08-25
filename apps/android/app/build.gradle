@@ -37,6 +37,7 @@ preBuild.dependsOn copyV095Asset, copyV097Asset, copyHotfix1VersionAsset
 dependencies {
     implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.work:work-runtime:2.9.1'
+    implementation 'androidx.webkit:webkit:1.12.1'
 }
 
-// release: android-0.0.97-hotfix1-auth-recovery
+// release: android-0.0.97-hotfix1-auth-recovery-local-web
