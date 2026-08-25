@@ -2,7 +2,7 @@ name: Verify
 
 on:
   push:
-    branches: [main, hotfix5-recovery]
+    branches: [main, hotfix5-recovery, recovery/v097-hotfix6-startup]
   pull_request:
 
 permissions:
@@ -19,15 +19,16 @@ jobs:
           node-version: 20
       - name: Verify preserved CineTracker features and recovery invariants
         run: npm run verify
-      - name: Build recovered Web app
+      - name: Build and execute recovered Web startup
         run: npm run build
       - name: Execute auth recovery runtime suite
         run: node scripts/test-auth-recovery-red.mjs
-      - name: Assert HOTFIX 5 production HTML
+      - name: Assert HOTFIX 6 startup production HTML
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "window.__ctAuthRecovery = 'v97-hotfix5'" dist/index.html
+          grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
+          grep -q 'const media = \[' dist/index.html
           grep -q 'void bootstrap();' dist/index.html
           grep -q 'ctFetchWithTimeout' dist/index.html
           grep -q 'ctLooksLikeJwt' dist/index.html
@@ -36,7 +37,7 @@ jobs:
           ! grep -q 'auth-preboot-fix7.js' dist/index.html
           ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
 
-  android97hotfix5:
+  android_startup_recovery:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +63,7 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build and validate authoritative HOTFIX 5 runtime
+      - name: Build and validate authoritative startup runtime
         shell: bash
         run: |
           set -euo pipefail
@@ -70,11 +71,13 @@ jobs:
           node scripts/test-auth-recovery-red.mjs
           node scripts/prepare-android-hotfix2-web.mjs
           test -f apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q "window.__ctAuthRecovery = 'v97-hotfix5'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q "window.__ctAndroidBundle = 'hotfix5-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '0.0.97 HOTFIX 5' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'const media = \[' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '0.0.97 HOTFIX 6' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'ctLooksLikeJwt' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'data-ct-inline=' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq '$$=(s,r=document)=>' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '<script src="/' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q 'patch-v073-v097-fix7.js' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q 'auth-preboot-fix7.js' apps/android/app/src/main/assets/hotfix5/index.html
@@ -88,11 +91,11 @@ jobs:
           ! grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'appassets.androidplatform.net' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'restoreState(savedInstanceState)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-      - name: Build debug HOTFIX 5 APK
+      - name: Build debug APK for startup validation only
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
-      - name: Verify embedded runtime, package and HOTFIX 5 version
+      - name: Verify embedded runtime and existing package identity
         shell: bash
         run: |
           set -euo pipefail
@@ -100,8 +103,9 @@ jobs:
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           unzip -l "$APK" | grep -q 'assets/hotfix5/index.html'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'hotfix5-inline-authoritative'"
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q '0.0.97 HOTFIX 5'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'"
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'const media = \['
+          unzip -p "$APK" assets/hotfix5/index.html | grep -Fq '$$=(s,r=document)=>'
           unzip -p "$APK" assets/hotfix5/index.html | grep -q 'ctLooksLikeJwt'
           if unzip -p "$APK" assets/hotfix5/index.html | grep -q 'patch-v073-v097-fix7.js'; then exit 1; fi
           "$APKSIGNER" verify --print-certs "$APK"
@@ -111,9 +115,9 @@ jobs:
           test "$PACKAGE" = "com.cinetracker.app"
           test "$VERSION" = "0.0.97 HOTFIX 5"
           test "$VERSION_CODE" = "983"
-      - name: Upload HOTFIX 5 APK for validation
+      - name: Upload startup-validation APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-0.0.97-hotfix5-apk
+          name: cinetracker-hotfix6-startup-validation
           path: apps/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
