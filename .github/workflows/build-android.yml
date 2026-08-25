@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: cinetracker-android-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   android:
@@ -116,4 +116,4 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
             -d '{"state":"failure","context":"Android Build","description":"0.0.94 build failed"}'
 
-# release-ready-trigger: android-0.0.94-local-forced-final
+# release-ready-trigger: android-0.0.94-prioritize-latest
