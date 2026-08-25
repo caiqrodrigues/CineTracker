@@ -2,7 +2,7 @@ name: Verify
 
 on:
   push:
-    branches: [main]
+    branches: [main, recovery-auth-v97-redtest]
   pull_request:
 
 permissions:
@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Reproduce auth recovery regression before any fix
+        run: node scripts/test-auth-recovery-red.mjs
       - run: npm run verify
       - name: Execute FIX 7 login runtime stress suite
         run: node scripts/test-auth-fix7-runtime.mjs
