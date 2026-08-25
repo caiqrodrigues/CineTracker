@@ -53,8 +53,8 @@ const checks = [
   ['HOTFIX6 preserva const media', buildWeb.includes("'const media = ['") && buildWeb.includes("built.includes('const media = [')")],
   ['HOTFIX6 smoke executa bundle emitido', startupSmoke.includes('vm.Script') && startupSmoke.includes('id="auth-form"') && startupSmoke.includes('Entrar no CineTracker')],
   ['FIX7 fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
-  ['Web version layer preservada', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfixVersion.includes('0.0.97 HOTFIX 5') && hotfixVersion.includes('__ctHotfix5Version')],
-  ['Web cache rotacionado', sw.includes('ct-web-0.0.97-hotfix5')],
+  ['Web HOTFIX6 version', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfixVersion.includes('0.0.97 HOTFIX 6') && hotfixVersion.includes('__ctHotfix6Version')],
+  ['Web cache HOTFIX6 rotacionado', sw.includes('ct-web-0.0.97-hotfix6')],
 
   ['Android usa HTML inline', android.includes('loadDataWithBaseURL') && android.includes('hotfix5/index.html')],
   ['Android remove AssetLoader', !android.includes('WebViewAssetLoader') && !gradle.includes('androidx.webkit:webkit')],
@@ -70,9 +70,9 @@ const checks = [
   ['Android não registra service worker no bundle', prepareAndroid.includes('window.__ctAndroidBundle ||')],
   ['Android cache padrão', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
   ['Android sem authrev/fix antigo', !android.includes('authrev=') && !android.includes('&fix=7')],
-  ['Android release marker atual preservado até promoção', android.includes('&release=hotfix5&runtime=embedded')],
+  ['Android origem interna preservada', android.includes('&release=hotfix5&runtime=embedded')],
   ['Android sem sessão nativa FIX7', !android.includes('saveAuthSession') && !android.includes('getAuthSession') && !android.includes('clearAuthSession')],
-  ['Android package/version ainda não promovidos', gradle.includes('versionCode 983') && gradle.includes("versionName '0.0.97 HOTFIX 5'")],
+  ['Android HOTFIX6 version', gradle.includes('versionCode 984') && gradle.includes("versionName '0.0.97 HOTFIX 6'")],
   ['Android seleção ZIP CSV', android.includes('EXTRA_ALLOW_MULTIPLE') && android.includes('application/zip')],
   ['Home unificada', !layout.includes('nav_library')]
 ];
