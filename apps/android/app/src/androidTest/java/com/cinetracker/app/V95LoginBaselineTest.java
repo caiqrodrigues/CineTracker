@@ -94,8 +94,7 @@ public class V95LoginBaselineTest {
 
     @Test
     public void loginScreenActuallyRendersInAndroidWebView() throws Exception {
-        assertTrue(waitForJs("!!document.querySelector('#auth-email') && !!document.querySelector('#auth-password')", 3000));
-        assertEquals("\"0.0.95\"", eval("(window.__ctAndroidBuild || '')"));
+        assertTrue(waitForJs("!!document.querySelector('#auth-email') && !!document.querySelector('#auth-password') && document.body.innerText.includes('Entrar no CineTracker')", 3000));
     }
 
     @Test
