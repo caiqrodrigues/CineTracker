@@ -1,0 +1,3 @@
+CineTracker Android 0.0.97 HOTFIX 8
+Production Web verified for post-login MutationObserver loop recovery.
+Trigger official Android build after Vercel production success.
