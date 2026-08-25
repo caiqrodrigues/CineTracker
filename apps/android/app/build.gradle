@@ -18,7 +18,7 @@ android {
 }
 
 tasks.register('copyV095Asset', Copy) {
-    from file('../web/patch-v067-v095.js')
+    from file('../../web/patch-v067-v095.js')
     into file('src/main/assets')
     rename { 'ct83-v095.js' }
 }
