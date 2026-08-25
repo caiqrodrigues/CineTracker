@@ -18,11 +18,11 @@ jobs:
         with:
           node-version: 20
       - run: npm run verify
-      - name: Execute FIX 5 login to Home 25 times
-        run: node scripts/test-auth-fix5-runtime.mjs
+      - name: Execute FIX 6 login runtime suite
+        run: node scripts/test-auth-fix6-runtime.mjs
       - run: npm run build
 
-  android97fix5:
+  android97fix6:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,26 +45,25 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Validate FIX 5 modules and runtime Home flow
+      - name: Validate FIX 6 modules and runtime Home flow
         shell: bash
         run: |
           set -euo pipefail
           node --check apps/web/patch-v068-v097.js
-          node --check apps/web/patch-v071-v097-fix5.js
-          node scripts/test-auth-fix5-runtime.mjs
+          node --check apps/web/patch-v072-v097-fix6.js
+          node scripts/test-auth-fix6-runtime.mjs
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
-      - name: Verify embedded FIX 5 module
+      - name: Verify embedded FIX 6 module
         shell: bash
         run: |
           set -euo pipefail
-          test -f apps/android/app/src/main/assets/ct87-v097-fix5.js
-          node --check apps/android/app/src/main/assets/ct87-v097-fix5.js
-          cmp apps/web/patch-v071-v097-fix5.js apps/android/app/src/main/assets/ct87-v097-fix5.js
-          ! grep -q '"ct85-v097-fix.js"' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q '"ct86-v097-fix4.js"' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          test -f apps/android/app/src/main/assets/ct88-v097-fix6.js
+          node --check apps/android/app/src/main/assets/ct88-v097-fix6.js
+          cmp apps/web/patch-v072-v097-fix6.js apps/android/app/src/main/assets/ct88-v097-fix6.js
+          ! grep -q '"ct87-v097-fix5.js"' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
       - name: Verify package and version
         shell: bash
         run: |
@@ -77,5 +76,5 @@ jobs:
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           VERSION_CODE="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.97 FIX 5"
-          test "$VERSION_CODE" = "975"
+          test "$VERSION" = "0.0.97 FIX 6"
+          test "$VERSION_CODE" = "976"
