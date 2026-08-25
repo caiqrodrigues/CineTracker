@@ -1,8 +1,8 @@
 (() => {
 'use strict';
-if (window.__ctHotfix5Version) return;
-window.__ctHotfix5Version = true;
-const VERSION = '0.0.97 HOTFIX 5';
+if (window.__ctHotfix6Version) return;
+window.__ctHotfix6Version = true;
+const VERSION = '0.0.97 HOTFIX 6';
 function applyHotfixVersion() {
   window.__ctAndroidBuild = VERSION;
   const host = document.querySelector('.content') || document.querySelector('#app');
@@ -16,10 +16,10 @@ function applyHotfixVersion() {
   }
 }
 const oldRender = window.render;
-if (typeof oldRender === 'function' && !window.__ctHotfix5Render) {
-  window.__ctHotfix5Render = oldRender;
+if (typeof oldRender === 'function' && !window.__ctHotfix6Render) {
+  window.__ctHotfix6Render = oldRender;
   window.render = function(...args) {
-    const out = window.__ctHotfix5Render.apply(this, args);
+    const out = window.__ctHotfix6Render.apply(this, args);
     setTimeout(applyHotfixVersion, 0);
     return out;
   };
