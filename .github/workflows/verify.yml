@@ -2,7 +2,7 @@ name: Verify
 
 on:
   push:
-    branches: [main, hotfix5-recovery, recovery/v097-hotfix6-startup]
+    branches: [main, hotfix5-recovery, recovery/v097-hotfix6-startup, recovery/v097-hotfix7-session-reset]
   pull_request:
 
 permissions:
@@ -27,40 +27,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          test -n "$CHROME"
-          echo "Using $CHROME"
-          cat > dist/seed-bad-session.html <<'EOF'
-          <!doctype html><meta charset="utf-8"><script>
-          localStorage.setItem('cinetracker_session', JSON.stringify({
-            access_token:'broken.token.value',
-            refresh_token:'definitely-invalid-refresh-token',
-            expires_at:1,
-            user:{id:'p0-smoke'}
-          }));
-          location.replace('/');
-          </script>
-          EOF
-          python3 -m http.server 4173 --directory dist >/tmp/ct-http.log 2>&1 &
-          SERVER_PID=$!
-          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
-          sleep 1
-          timeout 25s "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --user-data-dir=/tmp/ct-chrome-clean --virtual-time-budget=3000 --dump-dom http://127.0.0.1:4173/ > /tmp/ct-clean-dom.html 2>/tmp/ct-clean-chrome.log
-          grep -q 'id="auth-form"' /tmp/ct-clean-dom.html || { echo 'REAL CHROME CLEAN START FAILED'; cat /tmp/ct-clean-chrome.log; tail -c 8000 /tmp/ct-clean-dom.html; exit 1; }
-          timeout 30s "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --user-data-dir=/tmp/ct-chrome-bad --virtual-time-budget=15000 --dump-dom http://127.0.0.1:4173/seed-bad-session.html > /tmp/ct-bad-dom.html 2>/tmp/ct-bad-chrome.log
-          grep -q 'id="auth-form"' /tmp/ct-bad-dom.html || { echo 'REAL CHROME PERSISTED-SESSION START FAILED'; cat /tmp/ct-bad-chrome.log; tail -c 12000 /tmp/ct-bad-dom.html; exit 1; }
-          echo 'Real Chrome startup OK for clean and persisted-bad-session profiles.'
-      - name: Assert HOTFIX 6 startup production HTML
+          npm install --no-save --no-package-lock playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          node scripts/test-real-browser-p0.mjs
+      - name: Assert P0 startup production HTML
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
+          grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
+          grep -q 'cinetracker_p0_session_reset_hotfix7' dist/index.html
+          grep -q "authRecoveryWithTimeout(restoreSession(), 6500" dist/index.html
           grep -q 'const media = \[' dist/index.html
           grep -q 'void bootstrap();' dist/index.html
           grep -q 'ctFetchWithTimeout' dist/index.html
           grep -q 'ctLooksLikeJwt' dist/index.html
           grep -q "path === 'logout'" dist/index.html
-          grep -q '0.0.97 HOTFIX 6' dist/patch-v074-hotfix1-version.js
           ! grep -q 'auth-preboot-fix7.js' dist/index.html
           ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
 
@@ -100,9 +84,10 @@ jobs:
           node scripts/test-android-inline-hotfix6.mjs
           test -f apps/android/app/src/main/assets/hotfix5/index.html
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctP0SessionReset = 'hotfix7-once'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'cinetracker_p0_session_reset_hotfix7' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q "window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'const media = \[' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '0.0.97 HOTFIX 6' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'ctLooksLikeJwt' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'data-ct-inline=' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq '$$=(s,r=document)=>' apps/android/app/src/main/assets/hotfix5/index.html
@@ -118,11 +103,11 @@ jobs:
           ! grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'appassets.androidplatform.net' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'restoreState(savedInstanceState)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-      - name: Build debug HOTFIX 6 APK
+      - name: Build debug validation APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
-      - name: Verify embedded runtime and HOTFIX 6 package identity
+      - name: Verify embedded runtime and package identity
         shell: bash
         run: |
           set -euo pipefail
@@ -130,11 +115,11 @@ jobs:
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           unzip -l "$APK" | grep -q 'assets/hotfix5/index.html'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'"
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctP0SessionReset = 'hotfix7-once'"
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'cinetracker_p0_session_reset_hotfix7'
           unzip -p "$APK" assets/hotfix5/index.html | grep -q 'const media = \['
           unzip -p "$APK" assets/hotfix5/index.html | grep -Fq '$$=(s,r=document)=>'
           unzip -p "$APK" assets/hotfix5/index.html | grep -q 'ctLooksLikeJwt'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q '0.0.97 HOTFIX 6'
           if unzip -p "$APK" assets/hotfix5/index.html | grep -q 'patch-v073-v097-fix7.js'; then exit 1; fi
           "$APKSIGNER" verify --print-certs "$APK"
           PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
@@ -143,9 +128,9 @@ jobs:
           test "$PACKAGE" = "com.cinetracker.app"
           test "$VERSION" = "0.0.97 HOTFIX 6"
           test "$VERSION_CODE" = "984"
-      - name: Upload HOTFIX 6 validation APK
+      - name: Upload P0 validation APK
         uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-0.0.97-hotfix6-validation
+          name: cinetracker-p0-session-reset-validation
           path: apps/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
