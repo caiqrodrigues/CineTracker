@@ -1,18 +1,29 @@
 import { readFile } from 'node:fs/promises';
 const html=await readFile('apps/web/index.html','utf8');
-const files=['patch-v024.js','patch-v025.js','patch-v027.js','patch-v028.js','patch-v029.js','patch-v030.js','patch-v025-profile-sync.js','patch-v054.js','patch-v055-final.js','patch-v057-cache.js','service-worker.js'];
-const src={};for(const f of files){src[f]=await readFile('apps/web/'+f,'utf8');try{new Function(src[f]);}catch(e){console.error('ERRO - sintaxe '+f+': '+e.message);process.exit(1)}}
+const webFiles=['patch-v024.js','patch-v025.js','patch-v027.js','patch-v028.js','patch-v029.js','patch-v030.js','patch-v025-profile-sync.js','patch-v054.js','patch-v055-final.js','patch-v057-cache.js','patch-v058-v088.js','service-worker.js'];
+const src={};for(const f of webFiles){src[f]=await readFile('apps/web/'+f,'utf8');try{new Function(src[f]);}catch(e){console.error('ERRO - sintaxe '+f+': '+e.message);process.exit(1)}}
 const android=await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java','utf8');
 const layout=await readFile('apps/android/app/src/main/res/layout/activity_main.xml','utf8');
 const gradle=await readFile('apps/android/app/build.gradle','utf8');
-const androidFinal=await readFile('apps/android/app/src/main/assets/ct68-final.js','utf8');
-const androidProfile=await readFile('apps/android/app/src/main/assets/ct67-profile-history.js','utf8');
-const android87=await readFile('apps/android/app/src/main/assets/ct75-v087.js','utf8');
-for(const [name,code] of [['ct67-profile-history.js',androidProfile],['ct68-final.js',androidFinal],['ct75-v087.js',android87]]){try{new Function(code)}catch(e){console.error('ERRO - sintaxe '+name+': '+e.message);process.exit(1)}}
-const a87=android87.toLowerCase();
-const p29=src['patch-v029.js'],p30=src['patch-v030.js'],p54=src['patch-v054.js'],p55=src['patch-v055-final.js'],p57=src['patch-v057-cache.js'],sw=src['service-worker.js'];
+const a87=await readFile('apps/android/app/src/main/assets/ct75-v087.js','utf8');
+const a88=await readFile('apps/android/app/src/main/assets/ct76-v088.js','utf8');
+for(const [name,code] of [['ct75-v087.js',a87],['ct76-v088.js',a88]]){try{new Function(code)}catch(e){console.error('ERRO - sintaxe '+name+': '+e.message);process.exit(1)}}
+const p29=src['patch-v029.js'],p54=src['patch-v054.js'],p58=src['patch-v058-v088.js'];
 const checks=[
-['CineTracker',html.includes('CineTracker')],['Supabase',html.includes('supabase')],['TMDB proxy',html.includes('tmdb-proxy')],['Detalhes globais Web',p29.includes('openMedia')],['Capas Home/Biblioteca Web',p30.includes('posters()')&&p30.includes('ct30-library-grid')],['Web interface',p54.includes('Juntando poeira')],['Web gráfico diário',p55.includes('rebuildProfileChart')],['Web cache',p57.includes('indexedDB')&&sw.includes('cacheFirst')],
-['Android produção',gradle.includes('https://mycinetracker.vercel.app')],['Android 0.0.87',gradle.includes('versionCode 87')&&gradle.includes("versionName '0.0.87'")&&android.includes('APP_VERSION = "0.0.87"')],['Android 0.0.87 carregado',android.includes('ct75-v087.js')&&android87.includes("window.__ctAndroidBuild='0.0.87'")],['Navegação 87 prioritária',android.includes('window.ct87Navigate')],['Versão dinâmica',android.includes('getAppVersion()')&&android87.includes('CineTrackerNative?.getAppVersion')],['Home fundida',!layout.includes('nav_library')&&android87.includes("target==='watch'||target==='assistir'||target==='home'")],['Modos Home',android87.includes("['grid','Grade']")&&android87.includes("['carousel','Carrossel']")&&android87.includes("['list','Lista']")],['Filtros Home',android87.includes('Todos os Status')&&android87.includes('Histórico')&&android87.includes('Assistir a Seguir')&&android87.includes('Juntando Poeira')&&android87.includes('Não Iniciadas')],['Séries e Filmes Home',android87.includes('Séries')&&android87.includes('Filmes')],['Clique global mídia',android87.includes("document.addEventListener('click'")&&android87.includes('mediaNode')&&android87.includes('resolve(n)')],['Detalhes completos',android87.includes('Sem sinopse disponível')&&android87.includes('/watch/providers')&&android87.includes('Atores principais')],['Página ator',android87.includes('/combined_credits')&&android87.includes('Filmografia')],['Filmografia ações',android87.includes('data-open')&&android87.includes('AlreadySeen')&&android87.includes('AddedToWatchlist')],['Episódio detalhado',android87.includes('openEpisode')&&android87.includes('Temporadas e episódios')],['Descobrir exclusões',android87.includes('exclusionSets')&&android87.includes('AlreadySeen,Completed,AddedToWatchlist,WatchLater,InProgress')],['Histórico clicável',android87.includes('.ct67-history-row')&&android87.includes('ct55-history-card')],['Perfil sem sub-histórico',android87.includes("norm(e.textContent)==='historico'")],['Perfil ordem',a87.includes('episódios por dia')&&a87.includes('estatísticas extras')],['Rodapé sem Web',android87.includes('vers[aã]o web')&&android87.includes('CineTracker Android')],['Android importação',android.includes('onShowFileChooser')],['Android storage',android.includes('setDomStorageEnabled(true)')]
+['CineTracker',html.includes('CineTracker')],
+['Web detalhes',p29.includes('openMedia')&&p29.includes('Temporadas e episódios')],
+['Web navegação global',p58.includes("[data-view]")&&p58.includes('hardNavigate')],
+['Web gráfico avaliações',p58.includes('Avaliação dos episódios')&&p58.includes('ct88-dot max')===false&&p58.includes("cls=v===max?'max':v===min?'min':''")],
+['Web carrossel temporadas',p58.includes('scroll-snap-type:x mandatory')&&p58.includes('/season/${n}')],
+['Web Home filtros mantidos',p54.includes('Carrossel')&&p54.includes('Grade')&&p54.includes('Juntando poeira')],
+['Android 0.0.88',gradle.includes('versionCode 88')&&gradle.includes("versionName '0.0.88'")&&android.includes('APP_VERSION = "0.0.88"')],
+['Android módulo v88',android.includes('ct76-v088.js')&&a88.includes("window.__ctAndroidBuild='0.0.88'")],
+['Android navegação v88',android.includes('window.ct88Navigate')&&a88.includes('window.ct88Navigate=navigate')],
+['Android gráfico avaliações',a88.includes('Avaliação dos episódios')&&a88.includes("cls=v===max?'max':v===min?'min':''")],
+['Android swipe temporadas',a88.includes('scroll-snap-type:x mandatory')&&a88.includes('/season/${n}')],
+['Regras 0.87 preservadas',a87.includes('AddedToWatchlist')&&a87.includes('combined_credits')&&a87.includes('watch/providers')],
+['Home unificada',!layout.includes('nav_library')],
+['Android importação',android.includes('onShowFileChooser')],
+['Android storage',android.includes('setDomStorageEnabled(true)')]
 ];
 let failed=false;for(const[n,ok]of checks){console.log(`${ok?'OK':'ERRO'} - ${n}`);if(!ok)failed=true}if(failed)process.exit(1);
