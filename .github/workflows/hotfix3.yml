@@ -18,48 +18,124 @@ jobs:
           node-version: 20
       - name: Prove HOTFIX 3 preserves v95 login
         run: node scripts/test-hotfix3-v95-baseline.mjs
-      - name: Build deployable Web without legacy profile gate
+      - name: Build Web without legacy profile gate
         run: npm run build
-      - name: Verify v95 production patch chain
+      - name: Prepare exact Android v95 bundle
+        run: node scripts/prepare-android-hotfix3-web.mjs
+      - name: Verify v95 production and bundled patch chain
         shell: bash
         run: |
           set -euo pipefail
           test -f dist/index.html
+          test -f apps/android/app/src/main/assets/hotfix3/index.html
           grep -q 'patch-v067-v095.js' dist/index.html
-          ! grep -q 'fix7' dist/index.html
-          ! grep -q 'authrev' dist/index.html
+          grep -q 'cinetracker-android-bundle.*hotfix3-v95-inline' apps/android/app/src/main/assets/hotfix3/index.html
+          grep -q "authRequest('token?grant_type=password'" apps/android/app/src/main/assets/hotfix3/index.html
+          ! grep -q '<script src=' apps/android/app/src/main/assets/hotfix3/index.html
+          ! grep -qi 'fix7' apps/android/app/src/main/assets/hotfix3/index.html
+          ! grep -q 'patch-v068-v097.js' apps/android/app/src/main/assets/hotfix3/index.html
 
   android-v95-shell:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+      - name: Restore dedicated CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize dedicated signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build HOTFIX 3 APK from v95 shell
+      - name: Build exact self-contained v95 bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
+          node scripts/prepare-android-hotfix3-web.mjs
+          node scripts/test-hotfix3-v95-baseline.mjs
+      - name: Build HOTFIX 3 APK
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
-      - name: Verify package, version and v95 runtime
+      - name: Verify package, signature, version and bundled runtime
         shell: bash
         run: |
           set -euo pipefail
           APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          "$APKSIGNER" verify --print-certs "$APK"
           PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           CODE="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = 'com.cinetracker.app'
           test "$VERSION" = '0.0.97 HOTFIX 3'
           test "$CODE" = '981'
-          grep -q 'WebSettings.LOAD_DEFAULT' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          grep -q 'ct83-v095.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          unzip -l "$APK" | grep -q 'assets/hotfix3/index.html'
+          unzip -p "$APK" assets/hotfix3/index.html > /tmp/hotfix3.html
+          grep -q 'hotfix3-v95-inline' /tmp/hotfix3.html
+          grep -q "authRequest('token?grant_type=password'" /tmp/hotfix3.html
+          ! grep -qi 'fix7' /tmp/hotfix3.html
+          ! grep -q 'patch-v068-v097.js' /tmp/hotfix3.html
+          grep -q 'loadDataWithBaseURL' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'HOTFIX3_RENDER_OK' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'authrev=' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
       - name: Prepare HOTFIX 3 candidate
         run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.97-HOTFIX3-debug.apk
       - uses: actions/upload-artifact@v4
         with:
           name: cinetracker-android-0.0.97-HOTFIX3-debug
           path: cinetracker-android-0.0.97-HOTFIX3-debug.apk
+
+  android-emulator-render:
+    needs: [web-v95-baseline, android-v95-shell]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Prepare HOTFIX 3 emulator build
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
+          node scripts/prepare-android-hotfix3-web.mjs
+      - name: Boot Android emulator and prove WebView renders v95
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          script: |
+            cd apps/android
+            gradle assembleDebug --stacktrace
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb shell pm clear com.cinetracker.app
+            adb logcat -c
+            adb shell monkey -p com.cinetracker.app -c android.intent.category.LAUNCHER 1
+            sleep 10
+            adb logcat -d -s CineTrackerStartup:I '*:S' | tee /tmp/hotfix3-startup.log
+            grep -q 'HOTFIX3_BUNDLE_LOAD' /tmp/hotfix3-startup.log
+            grep -q 'HOTFIX3_RENDER_OK' /tmp/hotfix3-startup.log
+            ! grep -q 'HOTFIX3_RENDER_FAIL' /tmp/hotfix3-startup.log
