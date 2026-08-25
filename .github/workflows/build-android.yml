@@ -35,7 +35,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.87"}'
+            -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.88"}'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js ct68-final.js ct70-home-084.js ct71-cast-profile-084.js ct72-v085.js ct74-v086-final.js ct75-v087.js; do
+          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js ct68-final.js ct70-home-084.js ct71-cast-profile-084.js ct72-v085.js ct74-v086-final.js ct75-v087.js ct76-v088.js; do
             node --check "apps/android/app/src/main/assets/$f"
           done
       - name: Build debug APK
@@ -68,31 +68,31 @@ jobs:
         run: gradle assembleDebug --stacktrace
       - name: Prepare APK name
         shell: bash
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.87-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.88-debug.apk
       - name: Verify package and version
         shell: bash
         run: |
           set -euo pipefail
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          "$APKSIGNER" verify --print-certs cinetracker-android-0.0.87-debug.apk
-          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.87-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION="$($AAPT dump badging cinetracker-android-0.0.87-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          "$APKSIGNER" verify --print-certs cinetracker-android-0.0.88-debug.apk
+          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.88-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging cinetracker-android-0.0.88-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.87"
+          test "$VERSION" = "0.0.88"
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.87-debug
-          path: cinetracker-android-0.0.87-debug.apk
-      - name: Publish Android 0.0.87 release
+          name: cinetracker-android-0.0.88-debug
+          path: cinetracker-android-0.0.88-debug.apk
+      - name: Publish Android 0.0.88 release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          gh release view android-v0.0.87 >/dev/null 2>&1 || gh release create android-v0.0.87 --title "CineTracker Android 0.0.87" --notes-file docs/releases/0.0.87.md
-          gh release upload android-v0.0.87 cinetracker-android-0.0.87-debug.apk --clobber
+          gh release view android-v0.0.88 >/dev/null 2>&1 || gh release create android-v0.0.88 --title "CineTracker Android 0.0.88" --notes-file docs/releases/0.0.88.md
+          gh release upload android-v0.0.88 cinetracker-android-0.0.88-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env:
@@ -103,7 +103,7 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            -d '{"state":"success","context":"Android Build","description":"0.0.87 published"}'
+            -d '{"state":"success","context":"Android Build","description":"0.0.88 published"}'
       - name: Mark Android build failure
         if: failure()
         env:
@@ -114,6 +114,6 @@ jobs:
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
-            -d '{"state":"failure","context":"Android Build","description":"0.0.87 build failed"}'
+            -d '{"state":"failure","context":"Android Build","description":"0.0.88 build failed"}'
 
-# release-ready-trigger: android-0.0.87-final
+# release-ready-trigger: android-0.0.88-final
