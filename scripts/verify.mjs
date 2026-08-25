@@ -13,7 +13,7 @@ const android = await readFile('apps/android/app/src/main/java/com/cinetracker/a
 const gradle = await readFile('apps/android/app/build.gradle', 'utf8');
 const layout = await readFile('apps/android/app/src/main/res/layout/activity_main.xml', 'utf8');
 const buildWeb = await readFile('scripts/build-web.mjs', 'utf8');
-const prepareAndroid = await readFile('scripts/prepare-android-hotfix1-web.mjs', 'utf8');
+const prepareAndroid = await readFile('scripts/prepare-android-hotfix2-web.mjs', 'utf8');
 const patchArrayLine = buildWeb.split('\n').find(line => line.startsWith('const patches =')) || '';
 const p29 = src['patch-v029.js'];
 const p54 = src['patch-v054.js'];
@@ -23,7 +23,7 @@ const p91 = src['patch-v061-v091.js'];
 const p92 = src['patch-v063-v092.js'];
 const p95 = src['patch-v067-v095.js'];
 const p97 = src['patch-v068-v097.js'];
-const hotfixVersion = src['patch-v074-hotfix1-version.js'];
+const hotfix1Version = src['patch-v074-hotfix1-version.js'];
 const sw = src['service-worker.js'];
 
 const checks = [
@@ -47,24 +47,30 @@ const checks = [
   ['Recovery storage isolado', buildWeb.includes('sessão válida em memória')],
   ['Recovery mantém bootstrap base', buildWeb.includes("if (!built.includes('void bootstrap();'))")],
   ['FIX7 fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
-  ['HOTFIX1 no build web', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfixVersion.includes('0.0.97 HOTFIX 1')],
-  ['HOTFIX1 rotaciona cache', sw.includes("ct-web-0.0.97-hotfix1")],
-  ['Android usa Web local corrigida', android.includes('WebViewAssetLoader') && android.includes('appassets.androidplatform.net/assets/hotfix1/index.html')],
-  ['Android não injeta cadeia antiga', !android.includes('ct89-v097-fix7.js') && !android.includes('applyStableModules')],
-  ['Android prepara dist validado', prepareAndroid.includes("window.__ctAuthRecovery = 'v97-base'") && prepareAndroid.includes('patch-v074-hotfix1-version.js') && prepareAndroid.includes("src=\"./")],
-  ['Android WebKit asset loader', gradle.includes("androidx.webkit:webkit:1.12.1")],
-  ['Android cache original', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
-  ['Android sem authrev/fix', !android.includes('authrev=') && !android.includes('&fix=7')],
-  ['Android release marker', android.includes('&release=hotfix1')],
+  ['Web base HOTFIX1 preservada', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfix1Version.includes('0.0.97 HOTFIX 1')],
+  ['Web cache preservado', sw.includes('ct-web-0.0.97-hotfix1')],
+
+  ['Android HOTFIX2 usa HTML inline', android.includes('loadDataWithBaseURL') && android.includes('hotfix2/index.html')],
+  ['Android HOTFIX2 remove AssetLoader', !android.includes('WebViewAssetLoader') && !gradle.includes('androidx.webkit:webkit')],
+  ['Android HOTFIX2 usa origem HTTPS normal', android.includes('String baseUrl = runtimeUrl()') && android.includes('BuildConfig.WEB_URL')],
+  ['Android HOTFIX2 ignora estado WebView antigo', android.includes('loadBundledWeb();') && !android.includes('restoreState(savedInstanceState)')],
+  ['Android HOTFIX2 tem fallback remoto', android.includes('verifyStartupOrFallback') && android.includes('loadRemoteFallback') && android.includes('&fallback=remote')],
+  ['Android HOTFIX2 WebView visível desde início', android.includes('webView.setVisibility(View.VISIBLE)')],
+  ['Android HOTFIX2 prepara bundle autocontido', prepareAndroid.includes('scriptPattern') && prepareAndroid.includes('data-ct-inline') && prepareAndroid.includes("window.__ctAndroidBundle = 'hotfix2-inline'")],
+  ['Android HOTFIX2 renderiza antes de restaurar sessão', prepareAndroid.includes('render();\n    const restored = await restoreSession();')],
+  ['Android HOTFIX2 não registra service worker no bundle', prepareAndroid.includes('window.__ctAndroidBundle ||')],
+  ['Android HOTFIX2 cache padrão', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
+  ['Android HOTFIX2 sem authrev/fix antigo', !android.includes('authrev=') && !android.includes('&fix=7')],
+  ['Android HOTFIX2 release marker', android.includes('&release=hotfix2')],
   ['Android sem sessão nativa FIX7', !android.includes('saveAuthSession') && !android.includes('getAuthSession') && !android.includes('clearAuthSession')],
-  ['Android HOTFIX1 version', gradle.includes('versionCode 979') && gradle.includes("versionName '0.0.97 HOTFIX 1'") && !gradle.includes('copyV097Fix7Asset')],
+  ['Android HOTFIX2 version', gradle.includes('versionCode 980') && gradle.includes("versionName '0.0.97 HOTFIX 2'")],
   ['Android seleção ZIP CSV', android.includes('EXTRA_ALLOW_MULTIPLE') && android.includes('application/zip')],
   ['Home unificada', !layout.includes('nav_library')]
 ];
 
 let failed = false;
 for (const [name, ok] of checks) {
-  console.log(`${ok ? 'OK':'ERRO'} - ${name}`);
+  console.log(`${ok ? 'OK' : 'ERRO'} - ${name}`);
   if (!ok) failed = true;
 }
 if (failed) process.exit(1);
