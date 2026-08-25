@@ -6,7 +6,7 @@ const web = resolve(root, 'apps/web');
 const source = resolve(web, 'index.html');
 const favicon = resolve(web, 'favicon.svg');
 const serviceWorker = resolve(web, 'service-worker.js');
-const patches = ['patch-v024.js','patch-v025.js','patch-v025-profile-sync.js','patch-v027.js','patch-v028.js','patch-v029.js','patch-v030.js','patch-v034.js','patch-v035.js','patch-v036.js','patch-v037.js','patch-v038.js','patch-v040.js','patch-v041.js','patch-v043.js','patch-v042.js','patch-v044.js','patch-v045.js','patch-v046.js','patch-v055-nav-hotfix.js','patch-v053.js','patch-v054.js','patch-v055-final.js','patch-v056-version.js','patch-v057-cache.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v090-android-export.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','patch-v074-hotfix1-version.js'].map(x=>resolve(web,x));
+const patches = ['patch-v024.js','patch-v025.js','patch-v025-profile-sync.js','patch-v027.js','patch-v028.js','patch-v029.js','patch-v030.js','patch-v034.js','patch-v035.js','patch-v036.js','patch-v037.js','patch-v038.js','patch-v040.js','patch-v041.js','patch-v043.js','patch-v042.js','patch-v044.js','patch-v045.js','patch-v046.js','patch-v055-nav-hotfix.js','patch-v053.js','patch-v054.js','patch-v055-final.js','patch-v056-version.js','patch-v057-cache.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v090-android-export.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','patch-v075-hotfix2-version.js'].map(x=>resolve(web,x));
 const rootDist = resolve(root, 'dist');
 const webDist = resolve(root, 'apps/web/dist');
 
@@ -201,7 +201,7 @@ const legacyFix7File = 'patch-v073' + '-v097-fix7.js';
 if (!built.includes("window.__ctAuthRecovery = 'v97-base'")) throw new Error('Auth recovery was not installed in built HTML.');
 if (built.includes('auth-preboot-fix7.js') || built.includes(legacyFix7File)) throw new Error('Legacy FIX 7 auth is still active in built HTML.');
 if (!built.includes('void bootstrap();')) throw new Error('Recovered base bootstrap is not active.');
-if (!built.includes('patch-v074-hotfix1-version.js')) throw new Error('HOTFIX 1 version marker missing from built HTML.');
+if (!built.includes('patch-v075-hotfix2-version.js')) throw new Error('HOTFIX 2 version marker missing from built HTML.');
 
 for (const dist of [rootDist, webDist]) {
   await rm(dist, { recursive: true, force: true });
@@ -211,4 +211,4 @@ for (const dist of [rootDist, webDist]) {
   await cp(serviceWorker, resolve(dist, 'service-worker.js'));
   for (const f of patches) await cp(f, resolve(dist, f.split('/').pop()));
 }
-console.log('CineTracker 0.0.97 HOTFIX 1: auth recovery active; Home before database/TMDB; FIX 7 removed from runtime');
+console.log('CineTracker 0.0.97 HOTFIX 2: auth recovery active; Android startup recovery build; FIX 7 removed from runtime');
