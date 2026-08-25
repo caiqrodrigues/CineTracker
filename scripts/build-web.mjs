@@ -6,14 +6,18 @@ const web = resolve(root, 'apps/web');
 const source = resolve(web, 'index.html');
 const favicon = resolve(web, 'favicon.svg');
 const serviceWorker = resolve(web, 'service-worker.js');
-const patches = ['patch-v024.js','patch-v025.js','patch-v025-profile-sync.js','patch-v027.js','patch-v028.js','patch-v029.js','patch-v030.js','patch-v034.js','patch-v035.js','patch-v036.js','patch-v037.js','patch-v038.js','patch-v040.js','patch-v041.js','patch-v043.js','patch-v042.js','patch-v044.js','patch-v045.js','patch-v046.js','patch-v055-nav-hotfix.js','patch-v053.js','patch-v054.js','patch-v055-final.js','patch-v056-version.js','patch-v057-cache.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v090-android-export.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','patch-v072-v097-fix6.js'].map(x=>resolve(web,x));
+const patches = ['patch-v024.js','patch-v025.js','patch-v025-profile-sync.js','patch-v027.js','patch-v028.js','patch-v029.js','patch-v030.js','patch-v034.js','patch-v035.js','patch-v036.js','patch-v037.js','patch-v038.js','patch-v040.js','patch-v041.js','patch-v043.js','patch-v042.js','patch-v044.js','patch-v045.js','patch-v046.js','patch-v055-nav-hotfix.js','patch-v053.js','patch-v054.js','patch-v055-final.js','patch-v056-version.js','patch-v057-cache.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v090-android-export.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','patch-v073-v097-fix7.js'].map(x=>resolve(web,x));
 const rootDist = resolve(root, 'dist');
 const webDist = resolve(root, 'apps/web/dist');
 
 const raw = await readFile(source, 'utf8');
-const withIcon = raw.includes('rel="icon"') ? raw : raw.replace('</head>', '<link rel="icon" type="image/svg+xml" href="/favicon.svg"></head>');
+if (!raw.includes('void bootstrap();')) throw new Error('Legacy bootstrap marker not found; refusing unsafe auth build.');
+const withoutLegacyBootstrap = raw.replace('void bootstrap();', 'window.__ctBaseBootstrapDeferred = bootstrap;');
+const withIcon = withoutLegacyBootstrap.includes('rel="icon"') ? withoutLegacyBootstrap : withoutLegacyBootstrap.replace('</head>', '<link rel="icon" type="image/svg+xml" href="/favicon.svg"></head>');
 const tags = patches.map(f=>`<script src="/${f.split('/').pop()}"></script>`).join('');
 const built = withIcon.replace('</body>', tags+'</body>');
+if (built.includes('void bootstrap();')) throw new Error('Legacy bootstrap still active in built HTML.');
+if (!built.includes('patch-v073-v097-fix7.js')) throw new Error('FIX 7 auth owner missing from built HTML.');
 
 for (const dist of [rootDist, webDist]) {
   await rm(dist, { recursive: true, force: true });
@@ -23,4 +27,4 @@ for (const dist of [rootDist, webDist]) {
   await cp(serviceWorker, resolve(dist, 'service-worker.js'));
   for (const f of patches) await cp(f, resolve(dist, f.split('/').pop()));
 }
-console.log('CineTracker Web v0.0.97 FIX 6: 8s auth timeout + listener cleanup + safe storage + v97 preservada');
+console.log('CineTracker Web v0.0.97 FIX 7: legacy bootstrap deferred + single auth bootstrap + signup restored');
