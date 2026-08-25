@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 975
-        versionName '0.0.97 FIX 5'
+        versionCode 976
+        versionName '0.0.97 FIX 6'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -27,16 +27,16 @@ tasks.register('copyV097Asset', Copy) {
     into file('src/main/assets')
     rename { 'ct84-v097.js' }
 }
-tasks.register('copyV097Fix5Asset', Copy) {
-    from file('../../web/patch-v071-v097-fix5.js')
+tasks.register('copyV097Fix6Asset', Copy) {
+    from file('../../web/patch-v072-v097-fix6.js')
     into file('src/main/assets')
-    rename { 'ct87-v097-fix5.js' }
+    rename { 'ct88-v097-fix6.js' }
 }
-preBuild.dependsOn copyV095Asset, copyV097Asset, copyV097Fix5Asset
+preBuild.dependsOn copyV095Asset, copyV097Asset, copyV097Fix6Asset
 
 dependencies {
     implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-0.0.97-fix5-single-auth-owner
+// release: android-0.0.97-fix6-definitive-auth
