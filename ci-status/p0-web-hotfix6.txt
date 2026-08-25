@@ -1,0 +1,3 @@
+P0 Web startup recovery validated on 2026-08-25.
+Root cause fixed: auth build replacement must preserve const media = [...] and emitted startup must render #auth-form.
+Android release remains intentionally deferred until Web production is confirmed.
