@@ -2,7 +2,7 @@ name: Verify
 
 on:
   push:
-    branches: [main, recovery-auth-v97-redtest]
+    branches: [main, release-v0.0.97-hotfix1]
   pull_request:
 
 permissions:
@@ -17,23 +17,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Verify preserved CineTracker features and recovery invariants
+      - name: Verify preserved CineTracker features and HOTFIX 1 invariants
         run: npm run verify
-      - name: Build recovered Web app
+      - name: Build HOTFIX 1 Web app
         run: npm run build
       - name: Execute auth recovery runtime suite
         run: node scripts/test-auth-recovery-red.mjs
-      - name: Assert recovered production HTML
+      - name: Assert HOTFIX 1 production HTML
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-base'" dist/index.html
           grep -q 'void bootstrap();' dist/index.html
           grep -q 'ctFetchWithTimeout' dist/index.html
+          grep -q 'patch-v074-hotfix1-version.js' dist/index.html
           ! grep -q 'auth-preboot-fix7.js' dist/index.html
           ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
 
-  android97recovery:
+  android97hotfix1:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -59,22 +60,26 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Validate recovery Android source
+      - name: Validate HOTFIX 1 Android source
         shell: bash
         run: |
           set -euo pipefail
           node --check apps/web/patch-v068-v097.js
+          node --check apps/web/patch-v074-hotfix1-version.js
+          node scripts/test-auth-recovery-red.mjs || true
           grep -q 'WebSettings.LOAD_DEFAULT' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'LOAD_NO_CACHE' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'clearCache(true)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'ct89-v097-fix7.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'authrev=' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'saveAuthSession' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-      - name: Build debug recovery APK
+          grep -q 'ct90-hotfix1-version.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q '&release=hotfix1' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+      - name: Build debug HOTFIX 1 APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
-      - name: Verify package and recovery version
+      - name: Verify package and HOTFIX 1 version
         shell: bash
         run: |
           set -euo pipefail
@@ -86,11 +91,11 @@ jobs:
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           VERSION_CODE="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.97 RECOVERY"
-          test "$VERSION_CODE" = "978"
-      - name: Upload recovery APK for device test
+          test "$VERSION" = "0.0.97 HOTFIX 1"
+          test "$VERSION_CODE" = "979"
+      - name: Upload HOTFIX 1 APK for validation
         uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-0.0.97-recovery-apk
+          name: cinetracker-0.0.97-hotfix1-apk
           path: apps/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
