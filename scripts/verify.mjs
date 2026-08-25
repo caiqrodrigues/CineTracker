@@ -1,12 +1,13 @@
 import { readFile } from 'node:fs/promises';
 const html=await readFile('apps/web/index.html','utf8');
-const files=['patch-v024.js','patch-v029.js','patch-v054.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','patch-v069-v097-fix.js','patch-v070-v097-fix4.js','service-worker.js'];
+const files=['patch-v024.js','patch-v029.js','patch-v054.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','patch-v071-v097-fix5.js','service-worker.js'];
 const src={};for(const f of files){src[f]=await readFile('apps/web/'+f,'utf8');try{new Function(src[f]);}catch(e){console.error('ERRO - sintaxe '+f+': '+e.message);process.exit(1)}}
 const android=await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java','utf8');
 const gradle=await readFile('apps/android/app/build.gradle','utf8');
 const layout=await readFile('apps/android/app/src/main/res/layout/activity_main.xml','utf8');
 const vercel=await readFile('vercel.json','utf8');
-const p29=src['patch-v029.js'],p54=src['patch-v054.js'],p59=src['patch-v059-v089.js'],p60=src['patch-v060-v090.js'],p91=src['patch-v061-v091.js'],p92=src['patch-v063-v092.js'],p95=src['patch-v067-v095.js'],p97=src['patch-v068-v097.js'],fix3=src['patch-v069-v097-fix.js'],fix4=src['patch-v070-v097-fix4.js'];
+const buildWeb=await readFile('scripts/build-web.mjs','utf8');
+const p29=src['patch-v029.js'],p54=src['patch-v054.js'],p59=src['patch-v059-v089.js'],p60=src['patch-v060-v090.js'],p91=src['patch-v061-v091.js'],p92=src['patch-v063-v092.js'],p95=src['patch-v067-v095.js'],p97=src['patch-v068-v097.js'],fix=src['patch-v071-v097-fix5.js'];
 const checks=[
 ['CineTracker base',html.includes('CineTracker')],
 ['Detalhes preservados',p29.includes('openMedia')&&p29.includes('Temporadas e episódios')],
@@ -26,18 +27,17 @@ const checks=[
 ['Importador ZIP/CSV preview',p97.includes('unzipCSV')&&p97.includes('library.csv')&&p97.includes('watches.csv')&&p97.includes('Prévia da importação')&&p97.includes('Substituir meus dados atuais')],
 ['Importação batch 150 e reativa',p97.includes('batch=150')&&p97.includes("action:'library_batch'")&&p97.includes("action:'watches_batch'")&&p97.includes("source:'v97-import'")],
 ['Performance v97',p97.includes('cache97=new Map()')&&p97.includes('ct97-skeleton')&&p97.includes('IntersectionObserver')&&p97.includes("rootMargin:'400px'")],
-['FIX 3 preservado no pacote',fix3.includes('AUTH_TIMEOUT_MS=12000')&&android.includes('ct85-v097-fix.js')],
-['FIX 4 timeout auth robusto',fix4.includes('AbortController')&&fix4.includes('AUTH_TIMEOUT_MS=12000')&&fix4.includes('Promise.race')&&fix4.includes('TimeoutError')],
-['FIX 4 captura submit antes do legado',fix4.includes("document.addEventListener('submit',captureSubmit,true)")&&fix4.includes('event.stopImmediatePropagation()')],
-['FIX 4 usa estado real da aplicação',fix4.includes('saveSession(saved)')&&fix4.includes('if(!ctSession?.access_token)throw new Error')&&fix4.includes("if(!currentUser)throw new Error('O usuário autenticado não foi aplicado ao aplicativo.')")],
-['FIX 4 entra sem reload',fix4.includes('enterAppImmediately();hydrateAfterLogin()')&&!fix4.includes('location.reload(')&&!fix4.includes('restartFromPersistedSession')],
-['FIX 4 não recria formulário',!fix4.includes('cloneNode(true)')&&!fix4.includes('replaceWith(newForm)')],
-['FIX 4 hidratação não bloqueia login',fix4.includes('function hydrateAfterLogin')&&fix4.includes('void (async()=>')&&fix4.includes("loadCloudState==='function'")&&fix4.includes("primeOfficialSuggestions==='function'")],
-['FIX 4 restaura sessão existente',fix4.includes('restoreExistingSession')&&fix4.includes("localStorage.getItem('cinetracker_session')")],
-['Rodapé FIX 4',fix4.includes('CineTracker • v0.0.97 FIX 4')],
+['FIX5 timeout auth robusto',fix.includes('AUTH_TIMEOUT_MS=15000')&&fix.includes('AbortController')&&fix.includes("cache:'no-store'")],
+['FIX5 único dono do submit',fix.includes("window.__ctAuthOwner = 'fix5'")&&fix.includes("document.addEventListener('submit',captureSubmit,true)")&&fix.includes('event.stopImmediatePropagation()')],
+['FIX5 sessão base real',fix.includes("typeof saveSession!=='function'")&&fix.includes('saveSession(saved)')&&fix.includes('ctSession?.access_token')&&fix.includes('currentUser')],
+['FIX5 entra na Home comprovável',fix.includes("view='home'")&&fix.includes("if(auth||!home)throw new Error('A sessão foi aceita, mas a Home não abriu.')")&&fix.includes('__ctFix5HomeReached=true')],
+['FIX5 sem reload',!fix.includes('location.reload(')&&!fix.includes('restartFromPersistedSession')],
+['FIX5 restore',fix.includes('restoreFix5')&&fix.includes('/auth/v1/user')&&fix.includes('grant_type=refresh_token')],
+['Web não carrega FIX3/FIX4',!buildWeb.includes("'patch-v069-v097-fix.js'")&&!buildWeb.includes("'patch-v070-v097-fix4.js'")&&buildWeb.includes("'patch-v071-v097-fix5.js'")],
 ['Cache edge preparado',src['service-worker.js'].includes('ct-web-0.0.97-fix')&&vercel.includes('max-age=31536000')],
-['Android FIX 4',gradle.includes('versionCode 97')&&gradle.includes("versionName '0.0.97 FIX 4'")&&gradle.includes('copyV097Fix4Asset')&&android.includes('ct86-v097-fix4.js')],
-['Android FIX 4 injetado por último',android.includes('"ct85-v097-fix.js","ct86-v097-fix4.js"')&&android.includes('&fix=4')],
+['Android limpa cache legado',android.includes('WebSettings.LOAD_NO_CACHE')&&android.includes('webView.clearCache(true)')&&android.includes('&fix=5&authrev=5')],
+['Android só injeta FIX5 auth',android.includes('ct87-v097-fix5.js')&&!android.includes('"ct85-v097-fix.js"')&&!android.includes('"ct86-v097-fix4.js"')],
+['Android FIX5',gradle.includes('versionCode 975')&&gradle.includes("versionName '0.0.97 FIX 5'")&&gradle.includes('copyV097Fix5Asset')&&gradle.includes('ct87-v097-fix5.js')],
 ['Android FIX navegação prioritária',android.includes('window.ct097FixNavigate')&&android.indexOf('window.ct097FixNavigate')<android.indexOf('window.ct97Navigate')],
 ['Android seleção ZIP CSV',android.includes('EXTRA_ALLOW_MULTIPLE')&&android.includes('text/csv')&&android.includes('application/zip')],
 ['Home unificada',!layout.includes('nav_library')]
