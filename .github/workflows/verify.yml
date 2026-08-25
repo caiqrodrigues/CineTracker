@@ -18,9 +18,10 @@ jobs:
         with:
           node-version: 20
       - run: npm run verify
+      - run: node scripts/test-auth-fix4.mjs
       - run: npm run build
 
-  android97fix3:
+  android97fix4:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,23 +44,25 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Validate FIX 3 modules
+      - name: Validate FIX 4 modules
         shell: bash
         run: |
           set -euo pipefail
           node --check apps/web/patch-v068-v097.js
           node --check apps/web/patch-v069-v097-fix.js
+          node --check apps/web/patch-v070-v097-fix4.js
+          node scripts/test-auth-fix4.mjs
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
-      - name: Verify embedded FIX 3 module
+      - name: Verify embedded FIX 4 module
         shell: bash
         run: |
           set -euo pipefail
-          test -f apps/android/app/src/main/assets/ct85-v097-fix.js
-          node --check apps/android/app/src/main/assets/ct85-v097-fix.js
-          cmp apps/web/patch-v069-v097-fix.js apps/android/app/src/main/assets/ct85-v097-fix.js
+          test -f apps/android/app/src/main/assets/ct86-v097-fix4.js
+          node --check apps/android/app/src/main/assets/ct86-v097-fix4.js
+          cmp apps/web/patch-v070-v097-fix4.js apps/android/app/src/main/assets/ct86-v097-fix4.js
       - name: Verify package and version
         shell: bash
         run: |
@@ -71,4 +74,4 @@ jobs:
           PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.97 FIX 3"
+          test "$VERSION" = "0.0.97 FIX 4"
