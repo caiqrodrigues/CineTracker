@@ -12,8 +12,6 @@ await cp(source, target, { recursive: true });
 const indexPath = resolve(target, 'index.html');
 let html = await readFile(indexPath, 'utf8');
 
-// HOTFIX 6 startup recovery keeps the validated Web runtime inside the APK.
-// Vercel remains the Web deployment target, never an Android boot dependency.
 const scriptPattern = /<script src="\/([^"?#]+)"><\/script>/g;
 const scripts = [...html.matchAll(scriptPattern)];
 for (const match of scripts) {
@@ -21,35 +19,14 @@ for (const match of scripts) {
   const scriptPath = resolve(source, fileName);
   let script = await readFile(scriptPath, 'utf8');
   script = script.replace(/<\/script/gi, '<\\/script');
-  // IMPORTANT: replacement must be a callback. Passing the script as a raw
-  // replacement string makes String.replace interpret $$ as a replacement token,
-  // corrupting helpers such as `const $=..., $$=...` into duplicate `$` bindings.
   html = html.replace(match[0], () => `<script data-ct-inline="${fileName}">\n${script}\n</script>`);
 }
 
-// The APK owns its exact runtime. Never let it register or refresh a Web SW.
+// Android executes the exact validated Web bootstrap. Do not rewrite auth/session
+// startup here: Web and Android must share the same P0 login-first behavior.
 html = html.replace(
   "if (!('serviceWorker' in navigator)) return;",
   "if (window.__ctAndroidBundle || !('serviceWorker' in navigator)) return;"
-);
-
-// Paint the login shell immediately; session restore happens after first paint.
-html = html.replace(
-`async function bootstrap() {
-    const restored = await restoreSession();
-    if (!restored) {
-        render();
-        return;
-    }
-    enterAuthenticatedHome();
-}`,
-`async function bootstrap() {
-    render();
-    const restored = await restoreSession();
-    if (!restored)
-        return;
-    enterAuthenticatedHome();
-}`
 );
 
 const hotfixMarker = `<script>
@@ -77,16 +54,16 @@ html = html.replace(/<link rel="icon"[^>]*>/g, '');
 
 await writeFile(indexPath, html, 'utf8');
 
-if (!html.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'")) throw new Error('Android HOTFIX 6 bundle missing startup auth recovery.');
-if (!html.includes("window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'")) throw new Error('Android HOTFIX 6 marker missing.');
-if (!html.includes('const media = [')) throw new Error('Android HOTFIX 6 lost the critical media startup block.');
-if (!html.includes('0.0.97 HOTFIX 6')) throw new Error('Android HOTFIX 6 version missing.');
-if (!html.includes('ctLooksLikeJwt')) throw new Error('Android HOTFIX 6 JWT guard missing.');
-if (html.includes('<script src="/')) throw new Error('Android HOTFIX 6 still has root script dependencies.');
-if (html.includes('patch-v073-v097-fix7.js') || html.includes('auth-preboot-fix7.js')) throw new Error('Legacy FIX 7 found in Android HOTFIX 6 bundle.');
-if (!html.includes('async function bootstrap() {\n    render();\n    const restored = await restoreSession();')) throw new Error('Android HOTFIX 6 startup render guard missing.');
-// This exact source token exists in current patches. If it disappears after inline,
-// String.replace has corrupted $$ again.
-if (!html.includes('$$=(s,r=document)=>')) throw new Error('Android HOTFIX 6 inliner corrupted the $$ selector helper.');
+if (!html.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'")) throw new Error('Android bundle missing startup auth recovery.');
+if (!html.includes("window.__ctP0SessionReset = 'hotfix7-once'")) throw new Error('Android bundle missing one-time poisoned-session reset.');
+if (!html.includes("window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'")) throw new Error('Android bundle marker missing.');
+if (!html.includes('const media = [')) throw new Error('Android bundle lost the critical media startup block.');
+if (!html.includes('0.0.97 HOTFIX 6')) throw new Error('Android version missing.');
+if (!html.includes('ctLooksLikeJwt')) throw new Error('Android JWT guard missing.');
+if (html.includes('<script src="/')) throw new Error('Android still has root script dependencies.');
+if (html.includes('patch-v073-v097-fix7.js') || html.includes('auth-preboot-fix7.js')) throw new Error('Legacy FIX 7 found in Android bundle.');
+if (!html.includes("restored = await authRecoveryWithTimeout(restoreSession(), 6500, 'Restauração de sessão');")) throw new Error('Android hard session-restore timeout missing.');
+if (!html.includes("localStorage.removeItem('cinetracker_session');")) throw new Error('Android poisoned-session cleanup missing.');
+if (!html.includes('$$=(s,r=document)=>')) throw new Error('Android inliner corrupted the $$ selector helper.');
 
-console.log(`Android HOTFIX 6 startup bundle prepared with ${scripts.length} inlined scripts without replacement-token corruption.`);
+console.log(`Android P0 bundle prepared with ${scripts.length} inlined scripts; session reset and login-first bootstrap preserved.`);
