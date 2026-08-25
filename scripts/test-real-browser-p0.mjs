@@ -33,7 +33,7 @@ await new Promise(resolve => server.listen(4173, '127.0.0.1', resolve));
 const executablePath = process.env.CHROME_BIN || '/usr/bin/google-chrome';
 const browser = await chromium.launch({ headless: true, executablePath, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
 
-async function scenario(name, { poisoned = false, hangAuth = false } = {}) {
+async function basePage({ poisoned = false } = {}) {
   const context = await browser.newContext();
   if (poisoned) {
     await context.addInitScript(() => {
@@ -51,6 +51,11 @@ async function scenario(name, { poisoned = false, hangAuth = false } = {}) {
   page.on('console', msg => {
     if (msg.type() === 'error') pageErrors.push(`console.error: ${msg.text()}`);
   });
+  return { context, page, pageErrors };
+}
+
+async function startupScenario(name, { poisoned = false, hangAuth = false } = {}) {
+  const { context, page, pageErrors } = await basePage({ poisoned });
   if (hangAuth) {
     await page.route('**/auth/v1/**', async route => {
       await new Promise(resolve => setTimeout(resolve, 15000));
@@ -69,9 +74,58 @@ async function scenario(name, { poisoned = false, hangAuth = false } = {}) {
   await context.close();
 }
 
+async function postLoginScenario() {
+  const { context, page, pageErrors } = await basePage();
+  const fakeUser = { id: 'p0-login-user', email: 'p0@example.com', user_metadata: { display_name: 'P0' } };
+  const fakeSession = {
+    access_token: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwMC1sb2dpbi11c2VyIn0.signature',
+    refresh_token: 'refresh-p0-valid-length-token',
+    expires_in: 3600,
+    token_type: 'bearer',
+    user: fakeUser
+  };
+
+  await page.route('**/auth/v1/token?grant_type=password', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeSession) });
+  });
+  await page.route('**/auth/v1/user', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(fakeUser) });
+  });
+  await page.route('**/rest/v1/profiles**', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ id: fakeUser.id, display_name: 'P0', settings: {} }]) });
+  });
+  await page.route('**/rest/v1/**', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
+  });
+  await page.route('**/functions/v1/**', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+  });
+
+  await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded', timeout: 10000 });
+  await page.locator('#auth-form').waitFor({ state: 'visible', timeout: 1000 });
+  await page.locator('#auth-email').fill('p0@example.com');
+  await page.locator('#auth-password').fill('correct-password');
+  await page.locator('#auth-form button[type="submit"]').click();
+
+  await page.locator('#auth-form').waitFor({ state: 'detached', timeout: 1000 });
+  await page.locator('.app').waitFor({ state: 'visible', timeout: 1000 });
+  const state = await page.evaluate(() => ({
+    userId: window.currentUser?.id || null,
+    hasSession: !!window.ctSession?.access_token,
+    authVisible: !!document.querySelector('#auth-form'),
+    appVisible: !!document.querySelector('.app')
+  }));
+  if (!state.appVisible || state.authVisible) throw new Error(`post-login: authenticated shell not visible: ${JSON.stringify(state)}`);
+  await page.waitForTimeout(150);
+  if (pageErrors.length) throw new Error(`post-login: browser errors:\n${pageErrors.join('\n')}`);
+  console.log('OK - successful password login: authenticated Home shell visible within 1s; page errors = 0');
+  await context.close();
+}
+
 try {
-  await scenario('clean profile');
-  await scenario('poisoned persisted session with hung Auth', { poisoned: true, hangAuth: true });
+  await startupScenario('clean profile');
+  await startupScenario('poisoned persisted session with hung Auth', { poisoned: true, hangAuth: true });
+  await postLoginScenario();
 } finally {
   await browser.close();
   await new Promise(resolve => server.close(resolve));
