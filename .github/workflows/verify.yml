@@ -20,7 +20,7 @@ jobs:
       - run: npm run verify
       - run: npm run build
 
-  android86:
+  android87:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js ct68-final.js ct70-home-084.js ct71-cast-profile-084.js ct72-v085.js ct74-v086-final.js; do
+          for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js ct68-final.js ct70-home-084.js ct71-cast-profile-084.js ct72-v085.js ct74-v086-final.js ct75-v087.js; do
             node --check "apps/android/app/src/main/assets/$f"
           done
       - name: Build debug APK
@@ -65,4 +65,4 @@ jobs:
           PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.86"
+          test "$VERSION" = "0.0.87"
