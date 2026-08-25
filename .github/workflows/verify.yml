@@ -60,13 +60,14 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Validate HOTFIX 1 Android source
+      - name: Validate HOTFIX 1 Android source and auth runtime
         shell: bash
         run: |
           set -euo pipefail
           node --check apps/web/patch-v068-v097.js
           node --check apps/web/patch-v074-hotfix1-version.js
-          node scripts/test-auth-recovery-red.mjs || true
+          npm run build
+          node scripts/test-auth-recovery-red.mjs
           grep -q 'WebSettings.LOAD_DEFAULT' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'LOAD_NO_CACHE' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'clearCache(true)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
