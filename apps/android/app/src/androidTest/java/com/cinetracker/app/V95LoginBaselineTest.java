@@ -8,9 +8,9 @@ import android.content.Context;
 import android.webkit.WebView;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.ext.junit.rules.GrantPermissionRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.GrantPermissionRule;
 
 import org.junit.After;
 import org.junit.Before;
