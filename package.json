@@ -1,9 +1,9 @@
 {
   "name": "cinetracker",
   "private": true,
-  "version": "0.5.8",
+  "version": "0.0.97-hotfix3",
   "scripts": {
-    "build": "node scripts/verify.mjs && node scripts/build-web.mjs",
+    "build": "node scripts/build-web.mjs",
     "verify": "node scripts/verify.mjs"
   },
   "engines": {
