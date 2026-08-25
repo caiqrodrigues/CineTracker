@@ -1,0 +1,88 @@
+name: V95 Login Baseline
+
+on:
+  push:
+    branches: [recovery-v095-login-baseline]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web95:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Verify exact v95 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run verify
+          npm run build
+          grep -q "versionName '0.0.95'" apps/android/app/build.gradle
+          grep -q "token?grant_type=password" apps/web/index.html
+          grep -q "Entrar no CineTracker" apps/web/index.html
+          ! grep -q "patch-v073-v097-fix7" scripts/build-web.mjs
+          ! grep -q "HOTFIX" apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+      - name: Verify historical v95 login architecture
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q "settings.setCacheMode(WebSettings.LOAD_DEFAULT)" apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q "webView.loadUrl(BuildConfig.WEB_URL" apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'ct83-v095.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q 'LOAD_NO_CACHE' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+
+  android95_login:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Enable KVM acceleration
+        shell: bash
+        run: |
+          if [ -e /dev/kvm ]; then
+            sudo chmod 666 /dev/kvm
+            ls -l /dev/kvm
+          fi
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Prepare exact historical v95 login page
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run verify
+          npm run build
+          node scripts/prepare-v95-login-test-html.mjs
+          test -f apps/android/app/src/androidTest/assets/v95/index.html
+          grep -q 'Entrar no CineTracker' apps/android/app/src/androidTest/assets/v95/index.html
+          grep -q "async function signIn(email, password)" apps/android/app/src/androidTest/assets/v95/index.html
+      - name: Boot Android 15 and run v95 login tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_6
+          cores: 2
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-metrics
+          script: cd apps/android && gradle connectedDebugAndroidTest --stacktrace --info
+      - name: Upload v95 Android test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v95-login-baseline-test-results
+          path: |
+            apps/android/app/build/reports/androidTests/
+            apps/android/app/build/outputs/androidTest-results/
+          if-no-files-found: ignore
