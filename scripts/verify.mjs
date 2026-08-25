@@ -15,6 +15,7 @@ const layout = await readFile('apps/android/app/src/main/res/layout/activity_mai
 const buildWeb = await readFile('scripts/build-web.mjs', 'utf8');
 const prepareAndroid = await readFile('scripts/prepare-android-hotfix2-web.mjs', 'utf8');
 const startupSmoke = await readFile('scripts/test-startup-hotfix6.mjs', 'utf8');
+const realBrowserSmoke = await readFile('scripts/test-real-browser-p0.mjs', 'utf8');
 const patchArrayLine = buildWeb.split('\n').find(line => line.startsWith('const patches =')) || '';
 const p29 = src['patch-v029.js'];
 const p54 = src['patch-v054.js'];
@@ -50,6 +51,9 @@ const checks = [
   ['Recovery valida JWT', buildWeb.includes('function ctLooksLikeJwt(token)') && buildWeb.includes('Sessão local inválida')],
   ['Recovery login/refresh isolam Authorization antigo', buildWeb.includes("const headers = { apikey: SUPABASE_KEY") && buildWeb.includes("path === 'logout'") && !buildWeb.includes("headers: { ...authHeaders(), 'Content-Type': 'application/json' }")],
   ['Recovery mantém bootstrap base', buildWeb.includes("if (!built.includes('void bootstrap();'))")],
+  ['P0 limpa sessão antiga uma única vez', buildWeb.includes("cinetracker_p0_session_reset_hotfix7") && buildWeb.includes("window.__ctP0SessionReset = 'hotfix7-once'") && buildWeb.includes("localStorage.removeItem('cinetracker_session')")],
+  ['P0 renderiza antes de restaurar sessão', buildWeb.includes("async function bootstrap() {\n    render();\n    let restored = false;") && buildWeb.includes("authRecoveryWithTimeout(restoreSession(), 6500")],
+  ['P0 smoke usa navegador real e Auth pendurado', realBrowserSmoke.includes("poisoned persisted session with hung Auth") && realBrowserSmoke.includes("timeout: 1000") && realBrowserSmoke.includes("page.route('**/auth/v1/**'")],
   ['HOTFIX6 preserva const media', buildWeb.includes("'const media = ['") && buildWeb.includes("built.includes('const media = [')")],
   ['HOTFIX6 smoke executa bundle emitido', startupSmoke.includes('vm.Script') && startupSmoke.includes('id="auth-form"') && startupSmoke.includes('Entrar no CineTracker')],
   ['FIX7 fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
@@ -64,9 +68,9 @@ const checks = [
   ['Android intercepta Vercel main frame', android.includes('host.equals("mycinetracker.vercel.app")') && android.includes('request.isForMainFrame()') && android.includes('loadBundledWeb();')],
   ['Android WebView visível desde início', android.includes('webView.setVisibility(View.VISIBLE)')],
   ['Android HOTFIX6 prepara bundle autocontido', prepareAndroid.includes('scriptPattern') && prepareAndroid.includes('data-ct-inline') && prepareAndroid.includes("window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'")],
-  ['Android HOTFIX6 inliner usa callback literal', prepareAndroid.includes('html.replace(match[0], () =>') && prepareAndroid.includes('corrupting helpers')],
+  ['Android HOTFIX6 inliner usa callback literal', prepareAndroid.includes('html.replace(match[0], () =>')],
   ['Android HOTFIX6 preserva $$', prepareAndroid.includes("html.includes('$$=(s,r=document)=>')")],
-  ['Android renderiza antes de restaurar sessão', prepareAndroid.includes('render();\n    const restored = await restoreSession();')],
+  ['Android preserva bootstrap P0 compartilhado', prepareAndroid.includes('Do not rewrite auth/session') && prepareAndroid.includes("authRecoveryWithTimeout(restoreSession(), 6500") && prepareAndroid.includes("window.__ctP0SessionReset = 'hotfix7-once'")],
   ['Android não registra service worker no bundle', prepareAndroid.includes('window.__ctAndroidBundle ||')],
   ['Android cache padrão', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
   ['Android sem authrev/fix antigo', !android.includes('authrev=') && !android.includes('&fix=7')],
