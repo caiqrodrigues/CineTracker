@@ -1,0 +1,6 @@
+CineTracker 0.0.97 HOTFIX 6 P0 release is validated.
+Web startup smoke: PASS
+Auth recovery suite: PASS
+Android runtime validation: PASS
+Android package target: versionName 0.0.97 HOTFIX 6 / versionCode 984
+No new features included.
