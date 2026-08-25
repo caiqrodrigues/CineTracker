@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 95
-        versionName '0.0.95'
+        versionCode 981
+        versionName '0.0.97 HOTFIX 3'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -29,4 +29,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-0.0.95-recommendations-calendar-performance-profile
+// HOTFIX 3: Android shell from the known-good 0.0.95 baseline; no auth FIX 1-7 runtime patches.
