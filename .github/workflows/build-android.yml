@@ -10,6 +10,7 @@ on:
       - 'apps/web/patch-v074-hotfix1-version.js'
       - 'apps/web/service-worker.js'
       - 'scripts/test-auth-recovery-red.mjs'
+      - 'scripts/prepare-android-hotfix1-web.mjs'
       - 'scripts/build-web.mjs'
       - 'scripts/verify.mjs'
       - '.github/workflows/build-android.yml'
@@ -21,6 +22,7 @@ on:
       - 'apps/web/patch-v074-hotfix1-version.js'
       - 'apps/web/service-worker.js'
       - 'scripts/test-auth-recovery-red.mjs'
+      - 'scripts/prepare-android-hotfix1-web.mjs'
       - 'scripts/build-web.mjs'
       - 'scripts/verify.mjs'
       - 'docs/releases/0.0.97-HOTFIX1.md'
@@ -61,42 +63,45 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Verify Web recovery before Android build
+      - name: Verify and bundle recovered Web before Android build
         shell: bash
         run: |
           set -euo pipefail
           npm run verify
           npm run build
           node scripts/test-auth-recovery-red.mjs
-          grep -q "window.__ctAuthRecovery = 'v97-base'" dist/index.html
-          grep -q 'patch-v074-hotfix1-version.js' dist/index.html
-          ! grep -q 'auth-preboot-fix7.js' dist/index.html
-          ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
+          node scripts/prepare-android-hotfix1-web.mjs
+          grep -q "window.__ctAuthRecovery = 'v97-base'" apps/android/app/src/main/assets/hotfix1/index.html
+          grep -q 'patch-v074-hotfix1-version.js' apps/android/app/src/main/assets/hotfix1/index.html
+          ! grep -q 'auth-preboot-fix7.js' apps/android/app/src/main/assets/hotfix1/index.html
+          ! grep -q 'patch-v073-v097-fix7.js' apps/android/app/src/main/assets/hotfix1/index.html
       - name: Validate HOTFIX 1 Android source
         shell: bash
         run: |
           set -euo pipefail
-          node --check apps/web/patch-v068-v097.js
-          node --check apps/web/patch-v074-hotfix1-version.js
+          grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'appassets.androidplatform.net/assets/hotfix1/index.html' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q 'WebSettings.LOAD_DEFAULT' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'LOAD_NO_CACHE' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'clearCache(true)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'ct89-v097-fix7.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'authrev=' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'saveAuthSession' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          grep -q 'ct90-hotfix1-version.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q 'applyStableModules' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q '&release=hotfix1' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
-      - name: Verify embedded HOTFIX 1 version module
+      - name: Verify recovered Web is embedded in APK
         shell: bash
         run: |
           set -euo pipefail
-          test -f apps/android/app/src/main/assets/ct90-hotfix1-version.js
-          node --check apps/android/app/src/main/assets/ct90-hotfix1-version.js
-          cmp apps/web/patch-v074-hotfix1-version.js apps/android/app/src/main/assets/ct90-hotfix1-version.js
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          unzip -l "$APK" | grep -q 'assets/hotfix1/index.html'
+          unzip -p "$APK" assets/hotfix1/index.html | grep -q "window.__ctAuthRecovery = 'v97-base'"
+          unzip -p "$APK" assets/hotfix1/index.html | grep -q 'patch-v074-hotfix1-version.js'
+          if unzip -p "$APK" assets/hotfix1/index.html | grep -q 'patch-v073-v097-fix7.js'; then exit 1; fi
       - name: Prepare APK name
         shell: bash
         run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.97-HOTFIX1-debug.apk
@@ -139,4 +144,4 @@ jobs:
         run: |
           curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android Build","description":"0.0.97 HOTFIX 1 build failed"}'
 
-# release-ready-trigger: android-0.0.97-hotfix1
+# release-ready-trigger: android-0.0.97-hotfix1-local-web
