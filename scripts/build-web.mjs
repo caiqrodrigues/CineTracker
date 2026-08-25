@@ -83,6 +83,7 @@ function saveSession(session) {
 `, 'saveSession');
 
   safe = replaceSection(safe, 'async function restoreSession() {', 'async function signIn(email, password)', `
+window.__ctP0SessionReset = 'hotfix7-once';
 async function ctRefreshSession() {
     const refreshToken = ctSession?.refresh_token;
     if (!refreshToken)
@@ -94,6 +95,18 @@ async function ctRefreshSession() {
 }
 async function restoreSession() {
     try {
+        const resetKey = 'cinetracker_p0_session_reset_hotfix7';
+        try {
+            if (localStorage.getItem(resetKey) !== '1') {
+                localStorage.removeItem('cinetracker_session');
+                localStorage.setItem(resetKey, '1');
+                ctSession = null;
+                currentUser = null;
+                console.warn('CineTracker P0: sessão legada descartada uma única vez para remover token potencialmente corrompido.');
+                return false;
+            }
+        }
+        catch { }
         const raw = localStorage.getItem('cinetracker_session');
         if (!raw)
             return false;
@@ -130,9 +143,6 @@ async function restoreSession() {
 }
 `, 'restoreSession');
 
-  // IMPORTANT: stop at the media declaration. HOTFIX 5 previously stopped at
-  // const watchlistMedia, which deleted the entire const media = [...] block and
-  // caused ReferenceError: media is not defined before the login shell rendered.
   safe = replaceSection(safe, 'function bindAuth() {', 'const media = [', `
 window.__ctAuthRecovery = 'v97-hotfix6-startup';
 async function authRecoveryWithTimeout(promise, timeoutMs, label) {
@@ -225,11 +235,21 @@ function bindAuth() {
 
   safe = replaceSection(safe, 'async function bootstrap() {', 'function stats()', `
 async function bootstrap() {
-    const restored = await restoreSession();
-    if (!restored) {
+    render();
+    let restored = false;
+    try {
+        restored = await authRecoveryWithTimeout(restoreSession(), 6500, 'Restauração de sessão');
+    }
+    catch (error) {
+        try { localStorage.removeItem('cinetracker_session'); } catch { }
+        ctSession = null;
+        currentUser = null;
+        console.warn('CineTracker P0: restauração de sessão abandonada para não bloquear a interface.', error);
         render();
         return;
     }
+    if (!restored)
+        return;
     enterAuthenticatedHome();
 }
 `, 'bootstrap');
@@ -244,6 +264,7 @@ const tags = patches.map(f=>`<script src="/${f.split('/').pop()}"></script>`).jo
 const built = withIcon.replace('</body>', tags+'</body>');
 const legacyFix7File = 'patch-v073' + '-v097-fix7.js';
 if (!built.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'")) throw new Error('HOTFIX 6 startup recovery was not installed in built HTML.');
+if (!built.includes("window.__ctP0SessionReset = 'hotfix7-once'")) throw new Error('P0 session reset guard missing.');
 if (built.includes('auth-preboot-fix7.js') || built.includes(legacyFix7File)) throw new Error('Legacy FIX 7 auth is still active in built HTML.');
 if (!built.includes('const media = [')) throw new Error('Critical startup data block const media = [...] was removed from built HTML.');
 if (!built.includes('void bootstrap();')) throw new Error('Recovered base bootstrap is not active.');
@@ -259,4 +280,4 @@ for (const dist of [rootDist, webDist]) {
   await cp(serviceWorker, resolve(dist, 'service-worker.js'));
   for (const f of patches) await cp(f, resolve(dist, f.split('/').pop()));
 }
-console.log('CineTracker 0.0.97 HOTFIX 6 startup recovery: media block preserved; auth recovery active');
+console.log('CineTracker P0 recovery: login-first bootstrap + one-time poisoned-session reset active');
