@@ -23,6 +23,33 @@ jobs:
         run: npm run build
       - name: Execute auth recovery runtime suite
         run: node scripts/test-auth-recovery-red.mjs
+      - name: Execute production bundle in real Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          echo "Using $CHROME"
+          cat > dist/seed-bad-session.html <<'EOF'
+          <!doctype html><meta charset="utf-8"><script>
+          localStorage.setItem('cinetracker_session', JSON.stringify({
+            access_token:'broken.token.value',
+            refresh_token:'definitely-invalid-refresh-token',
+            expires_at:1,
+            user:{id:'p0-smoke'}
+          }));
+          location.replace('/');
+          </script>
+          EOF
+          python3 -m http.server 4173 --directory dist >/tmp/ct-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          sleep 1
+          timeout 25s "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --user-data-dir=/tmp/ct-chrome-clean --virtual-time-budget=3000 --dump-dom http://127.0.0.1:4173/ > /tmp/ct-clean-dom.html 2>/tmp/ct-clean-chrome.log
+          grep -q 'id="auth-form"' /tmp/ct-clean-dom.html || { echo 'REAL CHROME CLEAN START FAILED'; cat /tmp/ct-clean-chrome.log; tail -c 8000 /tmp/ct-clean-dom.html; exit 1; }
+          timeout 30s "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --user-data-dir=/tmp/ct-chrome-bad --virtual-time-budget=15000 --dump-dom http://127.0.0.1:4173/seed-bad-session.html > /tmp/ct-bad-dom.html 2>/tmp/ct-bad-chrome.log
+          grep -q 'id="auth-form"' /tmp/ct-bad-dom.html || { echo 'REAL CHROME PERSISTED-SESSION START FAILED'; cat /tmp/ct-bad-chrome.log; tail -c 12000 /tmp/ct-bad-dom.html; exit 1; }
+          echo 'Real Chrome startup OK for clean and persisted-bad-session profiles.'
       - name: Assert HOTFIX 6 startup production HTML
         shell: bash
         run: |
