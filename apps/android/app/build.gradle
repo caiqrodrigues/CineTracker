@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 978
-        versionName '0.0.97 RECOVERY'
+        versionCode 979
+        versionName '0.0.97 HOTFIX 1'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -27,11 +27,16 @@ tasks.register('copyV097Asset', Copy) {
     into file('src/main/assets')
     rename { 'ct84-v097.js' }
 }
-preBuild.dependsOn copyV095Asset, copyV097Asset
+tasks.register('copyHotfix1VersionAsset', Copy) {
+    from file('../../web/patch-v074-hotfix1-version.js')
+    into file('src/main/assets')
+    rename { 'ct90-hotfix1-version.js' }
+}
+preBuild.dependsOn copyV095Asset, copyV097Asset, copyHotfix1VersionAsset
 
 dependencies {
     implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// recovery: v97 base auth, Home before post-login hydration
+// release: android-0.0.97-hotfix1-auth-recovery
