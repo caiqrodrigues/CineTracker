@@ -32,9 +32,9 @@ const checks=[
 ['FIX substitui handler legado',fix.includes('bindAuth=fixedBindAuth')&&fix.includes('authRequest=fixedAuthRequest')&&fix.includes('signIn=fixedSignIn')&&fix.includes('replaceLegacyAuthListeners')&&fix.includes('oldForm.replaceWith(newForm)')],
 ['FIX restore com timeout',fix.includes('restoreSession=fixedRestoreSession')&&fix.includes('fixedRestoreSession')&&fix.includes('/auth/v1/user')&&fix.includes('recoverStuckAuth')],
 ['FIX hidratação não bloqueia login',fix.includes('function hydrateAfterLogin')&&fix.includes("loadCloudState==='function'")&&fix.includes("primeOfficialSuggestions==='function'")&&fix.includes('withDeadline(loadCloudState(),8000')],
-['Rodapé FIX',fix.includes('CineTracker • v0.0.97 FIX')],
+['Rodapé FIX 2',fix.includes('CineTracker • v0.0.97 FIX 2')],
 ['Cache edge preparado',src['service-worker.js'].includes('ct-web-0.0.97-fix')&&vercel.includes('max-age=31536000')],
-['Android FIX',gradle.includes('versionCode 97')&&gradle.includes("versionName '0.0.97 FIX'")&&gradle.includes('copyV097FixAsset')&&android.includes('ct85-v097-fix.js')],
+['Android FIX 2',gradle.includes('versionCode 97')&&gradle.includes("versionName '0.0.97 FIX 2'")&&gradle.includes('copyV097FixAsset')&&android.includes('ct85-v097-fix.js')],
 ['Android FIX navegação prioritária',android.includes('window.ct097FixNavigate')&&android.indexOf('window.ct097FixNavigate')<android.indexOf('window.ct97Navigate')],
 ['Android seleção ZIP CSV',android.includes('EXTRA_ALLOW_MULTIPLE')&&android.includes('text/csv')&&android.includes('application/zip')],
 ['Home unificada',!layout.includes('nav_library')]
