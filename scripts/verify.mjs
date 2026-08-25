@@ -7,6 +7,8 @@ const gradle=await readFile('apps/android/app/build.gradle','utf8');
 const layout=await readFile('apps/android/app/src/main/res/layout/activity_main.xml','utf8');
 const buildWeb=await readFile('scripts/build-web.mjs','utf8');
 const p29=src['patch-v029.js'],p54=src['patch-v054.js'],p59=src['patch-v059-v089.js'],p60=src['patch-v060-v090.js'],p91=src['patch-v061-v091.js'],p92=src['patch-v063-v092.js'],p95=src['patch-v067-v095.js'],p97=src['patch-v068-v097.js'],fix=src['patch-v073-v097-fix7.js'];
+const signinSequence="const session=applyMemorySession(raw);await enterHome();persistLater(session);hydrateLater();return session;";
+const signupSequence="const session=applyMemorySession(raw);await enterHome();persistLater(session);hydrateLater();return{signedIn:true,session};";
 const checks=[
 ['CineTracker base',html.includes('CineTracker')],
 ['Detalhes preservados',p29.includes('openMedia')&&p29.includes('Temporadas e episódios')],
@@ -26,11 +28,11 @@ const checks=[
 ['FIX7 timeout 8s',fix.includes('AUTH_TIMEOUT_MS=8000')&&fix.includes('AbortController')],
 ['FIX7 finally loading',fix.includes('finally{setLoading(false)}')],
 ['FIX7 signup ativo',fix.includes('/auth/v1/signup')&&!fix.includes('Cadastro temporariamente indisponível')],
-['FIX7 memória antes de persistência',fix.indexOf('applyMemorySession(raw)')<fix.indexOf('persistLater(session)')],
+['FIX7 login memória->Home->persistência->hidratação',fix.includes(signinSequence)],
+['FIX7 signup memória->Home->persistência->hidratação',fix.includes(signupSequence)],
 ['FIX7 persistência fora caminho crítico',fix.includes('setTimeout(()=>{safeSet(')],
 ['FIX7 listener cleanup',fix.includes('__ctFix7AuthUnsubscribe')&&fix.includes('__ctFix7Dispose')],
 ['FIX7 único dono',fix.includes("window.__ctAuthOwner = 'fix7'")&&fix.includes('bindAuth=bindAuthFix7')],
-['FIX7 chega Home antes hidratação',fix.indexOf('await enterHome()')<fix.indexOf('hydrateLater()')],
 ['Build desativa bootstrap legado',buildWeb.includes("raw.replace('void bootstrap();', 'window.__ctBaseBootstrapDeferred = bootstrap;')")],
 ['Build só carrega FIX7 auth',buildWeb.includes("'patch-v073-v097-fix7.js'")&&!buildWeb.includes("'patch-v072-v097-fix6.js'")],
 ['Android rev FIX7',android.includes('&fix=7&authrev=7')&&android.includes('ct89-v097-fix7.js')&&!android.includes('"ct88-v097-fix6.js"')],
