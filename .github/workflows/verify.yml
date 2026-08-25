@@ -2,7 +2,7 @@ name: Verify
 
 on:
   push:
-    branches: [main, hotfix5-recovery, recovery/v097-hotfix6-startup, recovery/v097-hotfix7-session-reset]
+    branches: [main, hotfix5-recovery, recovery/v097-hotfix6-startup, recovery/v097-hotfix7-session-reset, release/v0.0.97-hotfix7]
   pull_request:
 
 permissions:
@@ -32,7 +32,7 @@ jobs:
           test -n "$CHROME_BIN"
           export CHROME_BIN
           node scripts/test-real-browser-p0.mjs
-      - name: Assert P0 startup production HTML
+      - name: Assert HOTFIX 7 P0 production HTML
         shell: bash
         run: |
           set -euo pipefail
@@ -45,6 +45,7 @@ jobs:
           grep -q 'ctFetchWithTimeout' dist/index.html
           grep -q 'ctLooksLikeJwt' dist/index.html
           grep -q "path === 'logout'" dist/index.html
+          grep -q '0.0.97 HOTFIX 7' dist/patch-v074-hotfix1-version.js
           ! grep -q 'auth-preboot-fix7.js' dist/index.html
           ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
 
@@ -74,7 +75,7 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build and validate authoritative startup runtime
+      - name: Build and validate HOTFIX 7 authoritative startup runtime
         shell: bash
         run: |
           set -euo pipefail
@@ -86,7 +87,8 @@ jobs:
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'cinetracker_p0_session_reset_hotfix7' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q "window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'hotfix7-p0-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '0.0.97 HOTFIX 7' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'const media = \[' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'ctLooksLikeJwt' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'data-ct-inline=' apps/android/app/src/main/assets/hotfix5/index.html
@@ -103,11 +105,11 @@ jobs:
           ! grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'appassets.androidplatform.net' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'restoreState(savedInstanceState)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-      - name: Build debug validation APK
+      - name: Build debug HOTFIX 7 validation APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
-      - name: Verify embedded runtime and package identity
+      - name: Verify embedded HOTFIX 7 runtime and package identity
         shell: bash
         run: |
           set -euo pipefail
@@ -117,6 +119,8 @@ jobs:
           unzip -l "$APK" | grep -q 'assets/hotfix5/index.html'
           unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctP0SessionReset = 'hotfix7-once'"
           unzip -p "$APK" assets/hotfix5/index.html | grep -q 'cinetracker_p0_session_reset_hotfix7'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'hotfix7-p0-inline-authoritative'"
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q '0.0.97 HOTFIX 7'
           unzip -p "$APK" assets/hotfix5/index.html | grep -q 'const media = \['
           unzip -p "$APK" assets/hotfix5/index.html | grep -Fq '$$=(s,r=document)=>'
           unzip -p "$APK" assets/hotfix5/index.html | grep -q 'ctLooksLikeJwt'
@@ -126,11 +130,11 @@ jobs:
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           VERSION_CODE="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.97 HOTFIX 6"
-          test "$VERSION_CODE" = "984"
-      - name: Upload P0 validation APK
+          test "$VERSION" = "0.0.97 HOTFIX 7"
+          test "$VERSION_CODE" = "985"
+      - name: Upload HOTFIX 7 validation APK
         uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-p0-session-reset-validation
+          name: cinetracker-0.0.97-hotfix7-validation
           path: apps/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
