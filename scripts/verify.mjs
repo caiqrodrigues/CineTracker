@@ -36,7 +36,7 @@ const checks=[
 ['Performance v95 cache skeleton prefetch viewport',p95.includes('const cache=new Map()')&&p95.includes('ct95-skeleton')&&p95.includes('IntersectionObserver')&&p95.includes("rootMargin:'300px'")],
 ['Abertura usa modal skeleton existente sem bloqueio extra',p95.includes('window.ct91OpenMedia?.')&&p91.includes('overlay91()')&&p91.includes('ct91-skeleton')],
 ['Episódio v95 mantém botão Assistido e T/E',p95.includes("btn.textContent='Assistido'")&&p95.includes('T${s}E${e}')&&p91.includes('data-ep91')],
-['Perfil janela -15 até +3',p95.includes('for(let i=-15;i<=3;i++')&&p95.includes('ct95-day today')],
+['Perfil janela -15 até +3',p95.includes('for(let i=-15;i<=3;i++')&&p95.includes("x.i===0?'today':''")],
 ['Perfil Hoje centralizado',p95.includes('todayEl.offsetLeft-sc.clientWidth/2')],
 ['Perfil detalhe por dia',p95.includes('openDay95')&&p95.includes('season_number')&&p95.includes('episode_number')],
 ['Perfil reativo',p95.includes("cinetracker:data-changed")&&p95.includes('graph95()')],
