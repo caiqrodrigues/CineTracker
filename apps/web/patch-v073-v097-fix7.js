@@ -10,7 +10,6 @@ const AUTH_TIMEOUT_MS = 6000;
 let activeController = null;
 let disposed = false;
 let authEventCleanup = null;
-
 function timeoutError(message = 'O login excedeu 6 segundos. Verifique sua conexão e tente novamente.') { const error = new Error(message); error.name = 'TimeoutError'; return error; }
 function setError(message = '') { const el = $('#auth-error') || $('.auth-error'); if (el) el.textContent = message; }
 function setLoading(on) { window.__ctAuthIsLoading = Boolean(on); const form = $('#auth-form'); if (!form) return; form.dataset.fix7Loading = on ? '1' : '0'; const button = $('.auth-submit', form) || $('button[type="submit"]', form); if (!button) return; if (!button.dataset.fix7Label) button.dataset.fix7Label = button.textContent || (authMode === 'signup' ? 'Criar conta' : 'Entrar no CineTracker'); button.disabled = Boolean(on); button.setAttribute('aria-busy', on ? 'true' : 'false'); button.textContent = on ? (authMode === 'signup' ? 'Criando...' : 'Entrando...') : button.dataset.fix7Label; }
@@ -35,11 +34,12 @@ function captureToggle(event) { const button = event.target?.closest?.('#auth-to
 function bindAuthFix7() {}
 function installAuthEventListener() { try { authEventCleanup?.(); } catch {} try { window.__ctFix7AuthUnsubscribe?.(); } catch {} const handler = event => { if (event?.detail?.event === 'SIGNED_OUT' && !window.__ctAuthIsLoading) { try { ctSession = null; currentUser = null; } catch {} } }; window.addEventListener('cinetracker:auth-state-change', handler); authEventCleanup = () => window.removeEventListener('cinetracker:auth-state-change', handler); window.__ctFix7AuthUnsubscribe = authEventCleanup; }
 async function restoreFix7() { if (!$('#auth-form')) return false; let candidate = null; try { candidate = window.__ctFix7TakeQuarantinedSession?.() || null; } catch {} if (!candidate) candidate = readNativeSession(); if (!candidate?.access_token) { clearGhostStorage(); setLoading(false); return false; } setLoading(true); try { const valid = await validateRestoredSession(candidate); if (!valid) return false; await openHome(); hydrateAfterHome(); return true; } catch (error) { clearGhostStorage(); setError(error instanceof Error ? error.message : 'Sessão antiga removida. Entre novamente.'); return false; } finally { setLoading(false); } }
+async function bootFix7() { setLoading(false); if (typeof window.__ctBaseBootstrapDeferred === 'function') { const bootstrap = window.__ctBaseBootstrapDeferred; window.__ctBaseBootstrapDeferred = null; return await bootstrap(); } const restored = await restoreFix7(); if (!restored && typeof render === 'function') render(); return restored; }
 document.addEventListener('submit', captureSubmit, true);
 document.addEventListener('click', captureToggle, true);
 installAuthEventListener();
 try { signIn = signInFix7; signUp = async (email, password) => { const result = await signUpFix7(email, password); if (result.needsConfirmation) throw new Error('Conta criada. Confirme o e-mail enviado e depois entre.'); return result.session; }; restoreSession = restoreFix7; bindAuth = bindAuthFix7; } catch (error) { console.warn('[CineTracker FIX 7] globals:', error); }
-setTimeout(() => { if (!disposed) void restoreFix7().catch(error => console.warn('[CineTracker FIX 7] restore:', error)); }, 0);
 window.__ctFix7Dispose = () => { disposed = true; document.removeEventListener('submit', captureSubmit, true); document.removeEventListener('click', captureToggle, true); try { authEventCleanup?.(); } catch {} authEventCleanup = null; try { activeController?.abort(); } catch {} activeController = null; setLoading(false); };
-window.__ctFix7Test = { submit: submitFix7, restore: restoreFix7, signIn: signInFix7, signUp: signUpFix7, openHome, clearGhostStorage, timeoutMs: AUTH_TIMEOUT_MS, dispose: window.__ctFix7Dispose };
+window.__ctFix7Test = { submit: submitFix7, restore: restoreFix7, signIn: signInFix7, signUp: signUpFix7, openHome, boot: bootFix7, clearGhostStorage, timeoutMs: AUTH_TIMEOUT_MS, dispose: window.__ctFix7Dispose };
+void bootFix7().catch(error => { console.error('[CineTracker FIX 7] bootstrap:', error); clearGhostStorage(); try { ctSession = null; currentUser = null; } catch {} try { if (typeof render === 'function') render(); } catch {} setLoading(false); });
 })();
