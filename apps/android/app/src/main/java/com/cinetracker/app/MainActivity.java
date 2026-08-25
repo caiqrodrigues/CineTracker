@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
-    private static final String APP_VERSION = "0.0.87";
+    private static final String APP_VERSION = "0.0.88";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
 
@@ -41,58 +41,21 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) getWindow().setDecorFitsSystemWindows(true);
         else getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-        getWindow().setStatusBarColor(Color.rgb(9, 9, 9));
-        getWindow().setNavigationBarColor(Color.rgb(9, 9, 9));
-        setContentView(R.layout.activity_main);
-        webView = findViewById(R.id.webview);
-        webView.setVisibility(View.INVISIBLE);
-        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true); settings.setDomStorageEnabled(true); settings.setAllowFileAccess(false); settings.setAllowContentAccess(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT); settings.setLoadsImagesAutomatically(true); settings.setBlockNetworkImage(false); settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setUseWideViewPort(true); settings.setLoadWithOverviewMode(false); settings.setSupportZoom(false); settings.setBuiltInZoomControls(false); settings.setDisplayZoomControls(false); settings.setTextZoom(100);
-        settings.setUserAgentString(settings.getUserAgentString() + " CineTrackerAndroid/" + APP_VERSION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) settings.setOffscreenPreRaster(true);
-        webView.setOverScrollMode(View.OVER_SCROLL_NEVER); webView.setHorizontalScrollBarEnabled(false); webView.setVerticalScrollBarEnabled(true);
-        webView.setOnTouchListener((v, event) -> event.getPointerCount() > 1);
-        webView.addJavascriptInterface(new AndroidBridge(), "CineTrackerNative");
+        getWindow().setStatusBarColor(Color.rgb(9, 9, 9)); getWindow().setNavigationBarColor(Color.rgb(9, 9, 9)); setContentView(R.layout.activity_main);
+        webView = findViewById(R.id.webview); webView.setVisibility(View.INVISIBLE); webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        WebSettings settings = webView.getSettings(); settings.setJavaScriptEnabled(true); settings.setDomStorageEnabled(true); settings.setAllowFileAccess(false); settings.setAllowContentAccess(true); settings.setCacheMode(WebSettings.LOAD_DEFAULT); settings.setLoadsImagesAutomatically(true); settings.setBlockNetworkImage(false); settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW); settings.setUseWideViewPort(true); settings.setLoadWithOverviewMode(false); settings.setSupportZoom(false); settings.setBuiltInZoomControls(false); settings.setDisplayZoomControls(false); settings.setTextZoom(100); settings.setUserAgentString(settings.getUserAgentString() + " CineTrackerAndroid/" + APP_VERSION); if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) settings.setOffscreenPreRaster(true);
+        webView.setOverScrollMode(View.OVER_SCROLL_NEVER); webView.setHorizontalScrollBarEnabled(false); webView.setVerticalScrollBarEnabled(true); webView.setOnTouchListener((v, event) -> event.getPointerCount() > 1); webView.addJavascriptInterface(new AndroidBridge(), "CineTrackerNative");
         CookieManager cookies = CookieManager.getInstance(); cookies.setAcceptCookie(true); cookies.setAcceptThirdPartyCookies(webView, true);
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
-                if (fileChooserCallback != null) fileChooserCallback.onReceiveValue(null); fileChooserCallback = callback;
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); intent.addCategory(Intent.CATEGORY_OPENABLE); intent.setType("*/*");
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"application/json", "application/zip", "application/octet-stream"}); startActivityForResult(intent, FILE_CHOOSER_REQUEST); return true;
-            }
-        });
-        webView.setWebViewClient(new WebViewClient() {
-            @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Uri uri=request.getUrl(); String host=uri.getHost()==null?"":uri.getHost(); if(host.equals("mycinetracker.vercel.app")||host.endsWith("supabase.co"))return false;
-                startActivity(new Intent(Intent.ACTION_VIEW,uri)); return true;
-            }
-            @Override public void onPageFinished(WebView view,String url){super.onPageFinished(view,url);applyAndroidBase();applyStableModules();CookieManager.getInstance().flush();webView.postDelayed(()->webView.setVisibility(View.VISIBLE),250);}
-        });
+        webView.setWebChromeClient(new WebChromeClient() {@Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {if (fileChooserCallback != null) fileChooserCallback.onReceiveValue(null); fileChooserCallback = callback; Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); intent.addCategory(Intent.CATEGORY_OPENABLE); intent.setType("*/*"); intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"application/json", "application/zip", "application/octet-stream"}); startActivityForResult(intent, FILE_CHOOSER_REQUEST); return true;}});
+        webView.setWebViewClient(new WebViewClient() {@Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {Uri uri=request.getUrl(); String host=uri.getHost()==null?"":uri.getHost(); if(host.equals("mycinetracker.vercel.app")||host.endsWith("supabase.co"))return false; startActivity(new Intent(Intent.ACTION_VIEW,uri)); return true;} @Override public void onPageFinished(WebView view,String url){super.onPageFinished(view,url);applyAndroidBase();applyStableModules();CookieManager.getInstance().flush();webView.postDelayed(()->webView.setVisibility(View.VISIBLE),250);}});
         bindNativeNavigation(); requestNotificationPermission(); webView.postDelayed(()->webView.setVisibility(View.VISIBLE),1200);
-        if(savedInstanceState==null){String separator=BuildConfig.WEB_URL.contains("?")?"&":"?";webView.loadUrl(BuildConfig.WEB_URL+separator+"android=1&ui=phone&apk=87");}
-        else {webView.restoreState(savedInstanceState);webView.postDelayed(()->{applyAndroidBase();applyStableModules();},120);}
+        if(savedInstanceState==null){String separator=BuildConfig.WEB_URL.contains("?")?"&":"?";webView.loadUrl(BuildConfig.WEB_URL+separator+"android=1&ui=phone&apk=88");} else {webView.restoreState(savedInstanceState);webView.postDelayed(()->{applyAndroidBase();applyStableModules();},120);}
     }
-
     private void requestNotificationPermission(){if(Build.VERSION.SDK_INT>=33&&checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},NOTIFICATION_PERMISSION_REQUEST);}
     private void bindNativeNavigation(){findViewById(R.id.nav_home).setOnClickListener(v->navigate("home"));findViewById(R.id.nav_discover).setOnClickListener(v->navigate("discover"));findViewById(R.id.nav_history).setOnClickListener(v->navigate("history"));findViewById(R.id.nav_profile).setOnClickListener(v->navigate("profile"));findViewById(R.id.nav_settings).setOnClickListener(v->navigate("settings"));}
-
-    private void navigate(String target) {
-        // Do not trust version-specific wrappers here: Home 0.0.87 replaces #app and older wrappers can
-        // report success without changing the underlying web view. Set the canonical web state directly.
-        String js = "(function(){try{" +
-                "var t='" + target + "';" +
-                "if(t==='home'){view='home';if(typeof window.ct87RenderHome==='function'){window.ct87RenderHome();window.scrollTo(0,0);return true;}}" +
-                "view=t;if(typeof render==='function'){render();window.scrollTo(0,0);return true;}" +
-                "if(window.ct66Navigate)return !!window.ct66Navigate(t);" +
-                "return false;}catch(e){try{if(window.ct66Navigate)return !!window.ct66Navigate('" + target + "');}catch(x){}return false;}})();";
-        webView.evaluateJavascript(js, null);
-    }
-
-    private void applyAndroidBase(){if(webView==null)return;String js="(function(){var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';if(!document.getElementById('ct87-base')){var s=document.createElement('style');s.id='ct87-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}window.__ctAndroidBuild='0.0.87';})();";webView.evaluateJavascript(js,null);}
-    private void applyStableModules(){String[] assets={"ct47.js","ct66.js","ct67-profile-history.js","ct68-final.js","ct70-home-084.js","ct71-cast-profile-084.js","ct72-v085.js","ct74-v086-final.js","ct75-v087.js"};for(String asset:assets)applyAsset(asset);}
+    private void navigate(String target){String js="(function(){try{var t='"+target+"';if(window.ct88Navigate&&window.ct88Navigate(t))return true;view=t;if(typeof render==='function'){render();window.scrollTo(0,0);return true;}if(window.ct66Navigate)return !!window.ct66Navigate(t);return false;}catch(e){return false;}})();";webView.evaluateJavascript(js,null);}
+    private void applyAndroidBase(){if(webView==null)return;String js="(function(){var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';if(!document.getElementById('ct88-base')){var s=document.createElement('style');s.id='ct88-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}window.__ctAndroidBuild='0.0.88';})();";webView.evaluateJavascript(js,null);}
+    private void applyStableModules(){String[] assets={"ct47.js","ct66.js","ct67-profile-history.js","ct68-final.js","ct70-home-084.js","ct71-cast-profile-084.js","ct72-v085.js","ct74-v086-final.js","ct75-v087.js","ct76-v088.js"};for(String asset:assets)applyAsset(asset);}
     private void applyAsset(String asset){try(InputStream in=getAssets().open(asset)){ByteArrayOutputStream out=new ByteArrayOutputStream();byte[] buf=new byte[8192];int read;while((read=in.read(buf,0,buf.length))!=-1)out.write(buf,0,read);webView.evaluateJavascript(new String(out.toByteArray(),StandardCharsets.UTF_8),null);}catch(Exception ignored){}}
     public class AndroidBridge{@JavascriptInterface public void appReady(){runOnUiThread(()->{if(webView!=null)webView.setVisibility(View.VISIBLE);});}@JavascriptInterface public String getAppVersion(){return APP_VERSION;}@JavascriptInterface public void saveSession(String json){try{JSONObject obj=new JSONObject(json==null?"{}":json);String token=obj.optString("access_token","");if(token.isEmpty())return;Context context=MainActivity.this.getApplicationContext();context.getSharedPreferences(NotificationWorker.PREFS,Context.MODE_PRIVATE).edit().putString("access_token",token).apply();PeriodicWorkRequest periodic=new PeriodicWorkRequest.Builder(NotificationWorker.class,1,TimeUnit.HOURS).build();WorkManager.getInstance(context).enqueueUniquePeriodicWork("cinetracker_release_notifications",ExistingPeriodicWorkPolicy.KEEP,periodic);}catch(Exception ignored){}}}
     @Override protected void onSaveInstanceState(Bundle outState){webView.saveState(outState);super.onSaveInstanceState(outState);}
