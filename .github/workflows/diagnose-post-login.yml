@@ -1,0 +1,29 @@
+name: Diagnose Post Login
+
+on:
+  push:
+    branches: [recovery/v097-hotfix8-post-login-render]
+
+permissions:
+  contents: read
+
+jobs:
+  isolate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build current production bundle
+        run: npm run build
+      - name: Install browser driver
+        run: npm install --no-save --no-package-lock playwright-core@1.55.0
+      - name: Isolate post-login render blocker
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          node scripts/diagnose-post-login-render.mjs
