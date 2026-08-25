@@ -30,21 +30,21 @@ html = html.replace(
 );
 
 const hotfixMarker = `<script>
-window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative';
-window.__ctHotfix6Startup = true;
-window.__ctAndroidBuild = '0.0.97 HOTFIX 6';
+window.__ctAndroidBundle = 'hotfix7-p0-inline-authoritative';
+window.__ctHotfix7Startup = true;
+window.__ctAndroidBuild = '0.0.97 HOTFIX 7';
 (function(){
   function apply(){
-    window.__ctAndroidBuild = '0.0.97 HOTFIX 6';
+    window.__ctAndroidBuild = '0.0.97 HOTFIX 7';
     document.querySelectorAll('.ct97-version,.ct-version-footer,#ct56-version').forEach(function(el){
-      if (el.classList && el.classList.contains('ct97-version')) el.textContent='CineTracker • v0.0.97 HOTFIX 6';
-      else if (/CineTracker|versão|v\\d/i.test(el.textContent||'')) el.textContent='CineTracker • v0.0.97 HOTFIX 6';
+      if (el.classList && el.classList.contains('ct97-version')) el.textContent='CineTracker • v0.0.97 HOTFIX 7';
+      else if (/CineTracker|versão|v\\d/i.test(el.textContent||'')) el.textContent='CineTracker • v0.0.97 HOTFIX 7';
     });
   }
   var previous = window.render;
-  if (typeof previous === 'function' && !window.__ctHotfix6BundleRender) {
-    window.__ctHotfix6BundleRender = previous;
-    window.render = function(){ var out = window.__ctHotfix6BundleRender.apply(this, arguments); setTimeout(apply,0); return out; };
+  if (typeof previous === 'function' && !window.__ctHotfix7BundleRender) {
+    window.__ctHotfix7BundleRender = previous;
+    window.render = function(){ var out = window.__ctHotfix7BundleRender.apply(this, arguments); setTimeout(apply,0); return out; };
   }
   setTimeout(apply,0); setTimeout(apply,250);
 })();
@@ -56,9 +56,9 @@ await writeFile(indexPath, html, 'utf8');
 
 if (!html.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'")) throw new Error('Android bundle missing startup auth recovery.');
 if (!html.includes("window.__ctP0SessionReset = 'hotfix7-once'")) throw new Error('Android bundle missing one-time poisoned-session reset.');
-if (!html.includes("window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'")) throw new Error('Android bundle marker missing.');
+if (!html.includes("window.__ctAndroidBundle = 'hotfix7-p0-inline-authoritative'")) throw new Error('Android HOTFIX 7 bundle marker missing.');
 if (!html.includes('const media = [')) throw new Error('Android bundle lost the critical media startup block.');
-if (!html.includes('0.0.97 HOTFIX 6')) throw new Error('Android version missing.');
+if (!html.includes('0.0.97 HOTFIX 7')) throw new Error('Android HOTFIX 7 version missing.');
 if (!html.includes('ctLooksLikeJwt')) throw new Error('Android JWT guard missing.');
 if (html.includes('<script src="/')) throw new Error('Android still has root script dependencies.');
 if (html.includes('patch-v073-v097-fix7.js') || html.includes('auth-preboot-fix7.js')) throw new Error('Legacy FIX 7 found in Android bundle.');
@@ -66,4 +66,4 @@ if (!html.includes("restored = await authRecoveryWithTimeout(restoreSession(), 6
 if (!html.includes("localStorage.removeItem('cinetracker_session');")) throw new Error('Android poisoned-session cleanup missing.');
 if (!html.includes('$$=(s,r=document)=>')) throw new Error('Android inliner corrupted the $$ selector helper.');
 
-console.log(`Android P0 bundle prepared with ${scripts.length} inlined scripts; session reset and login-first bootstrap preserved.`);
+console.log(`Android HOTFIX 7 P0 bundle prepared with ${scripts.length} inlined scripts; session reset and login-first bootstrap preserved.`);
