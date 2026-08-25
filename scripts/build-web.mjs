@@ -130,8 +130,11 @@ async function restoreSession() {
 }
 `, 'restoreSession');
 
-  safe = replaceSection(safe, 'function bindAuth() {', 'const watchlistMedia', `
-window.__ctAuthRecovery = 'v97-hotfix5';
+  // IMPORTANT: stop at the media declaration. HOTFIX 5 previously stopped at
+  // const watchlistMedia, which deleted the entire const media = [...] block and
+  // caused ReferenceError: media is not defined before the login shell rendered.
+  safe = replaceSection(safe, 'function bindAuth() {', 'const media = [', `
+window.__ctAuthRecovery = 'v97-hotfix6-startup';
 async function authRecoveryWithTimeout(promise, timeoutMs, label) {
     let timer;
     try {
@@ -240,12 +243,13 @@ const withIcon = recovered.includes('rel="icon"') ? recovered : recovered.replac
 const tags = patches.map(f=>`<script src="/${f.split('/').pop()}"></script>`).join('');
 const built = withIcon.replace('</body>', tags+'</body>');
 const legacyFix7File = 'patch-v073' + '-v097-fix7.js';
-if (!built.includes("window.__ctAuthRecovery = 'v97-hotfix5'")) throw new Error('HOTFIX 5 auth recovery was not installed in built HTML.');
+if (!built.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'")) throw new Error('HOTFIX 6 startup recovery was not installed in built HTML.');
 if (built.includes('auth-preboot-fix7.js') || built.includes(legacyFix7File)) throw new Error('Legacy FIX 7 auth is still active in built HTML.');
+if (!built.includes('const media = [')) throw new Error('Critical startup data block const media = [...] was removed from built HTML.');
 if (!built.includes('void bootstrap();')) throw new Error('Recovered base bootstrap is not active.');
-if (!built.includes('ctLooksLikeJwt')) throw new Error('HOTFIX 5 JWT validation missing.');
-if (!built.includes("path === 'logout'")) throw new Error('HOTFIX 5 auth request isolation missing.');
-if (!built.includes('patch-v074-hotfix1-version.js')) throw new Error('HOTFIX 5 version layer file missing from built HTML.');
+if (!built.includes('ctLooksLikeJwt')) throw new Error('JWT validation missing.');
+if (!built.includes("path === 'logout'")) throw new Error('Auth request isolation missing.');
+if (!built.includes('patch-v074-hotfix1-version.js')) throw new Error('Version layer file missing from built HTML.');
 
 for (const dist of [rootDist, webDist]) {
   await rm(dist, { recursive: true, force: true });
@@ -255,4 +259,4 @@ for (const dist of [rootDist, webDist]) {
   await cp(serviceWorker, resolve(dist, 'service-worker.js'));
   for (const f of patches) await cp(f, resolve(dist, f.split('/').pop()));
 }
-console.log('CineTracker 0.0.97 HOTFIX 5: local-authoritative auth recovery; JWT/session hardening active');
+console.log('CineTracker 0.0.97 HOTFIX 6 startup recovery: media block preserved; auth recovery active');
