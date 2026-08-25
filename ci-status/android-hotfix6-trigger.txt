@@ -1,0 +1,4 @@
+Trigger Android 0.0.97 HOTFIX 6 after Web production recovery.
+Web production commit: 525fb8d29870c727dbbc08a9c0a84a3123bfddc0
+Required versionName: 0.0.97 HOTFIX 6
+Required versionCode: 984
