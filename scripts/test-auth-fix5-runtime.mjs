@@ -14,79 +14,8 @@ assert.ok(mainActivity.includes('webView.clearCache(true)'), 'cache legado não 
 assert.ok(mainActivity.includes('&fix=5&authrev=5'), 'URL Android não força a revisão FIX 5');
 assert.ok(mainActivity.includes('"ct84-v097.js","ct87-v097-fix5.js"'), 'FIX 5 não é o único hotfix de autenticação injetado pelo Android');
 assert.ok(!mainActivity.includes('"ct85-v097-fix.js"') && !mainActivity.includes('"ct86-v097-fix4.js"'), 'Android ainda injeta FIX 3/FIX 4');
-assert.ok(gradle.includes("versionCode 975") && gradle.includes("versionName '0.0.97 FIX 5'"), 'versão Android FIX 5 incorreta');
+assert.ok(gradle.includes('versionCode 975') && gradle.includes("versionName '0.0.97 FIX 5'"), 'versão Android FIX 5 incorreta');
 assert.ok(gradle.includes("rename { 'ct87-v097-fix5.js' }"), 'asset FIX 5 não está configurado no Gradle');
-
-async function executeLogin(iteration) {
-  const state = { home: false, renderCount: 0, fetchCount: 0, nativeSaveCount: 0, listeners: {} };
-  const storage = new Map();
-  const button = { dataset: {}, disabled: false, setAttribute() {}, textContent: 'Entrar no CineTracker' };
-  const form = { id: 'auth-form', dataset: {}, closest(sel) { return sel === '#auth-form' ? this : null; }, querySelector(sel) { return sel === '.auth-submit' || sel === 'button[type="submit"]' ? button : null; } };
-  const email = { value: `teste${iteration}@example.com` };
-  const password = { value: 'senha-segura' };
-  const error = { textContent: '' };
-  const home = { className: 'app' };
-  const document = {
-    querySelector(sel) {
-      if (sel === '#auth-form') return state.home ? null : form;
-      if (sel === '#auth-email') return state.home ? null : email;
-      if (sel === '#auth-password') return state.home ? null : password;
-      if (sel === '#auth-error' || sel === '.auth-error') return state.home ? null : error;
-      if (sel === '.app' || sel === '.content' || sel === '[data-view="home"]') return state.home ? home : null;
-      return null;
-    },
-    addEventListener(type, handler, capture) { state.listeners[`${type}:${capture ? 'capture' : 'bubble'}`] = handler; }
-  };
-  const localStorage = {
-    getItem(key) { return storage.has(key) ? storage.get(key) : null; },
-    setItem(key, value) { storage.set(key, String(value)); },
-    removeItem(key) { storage.delete(key); }
-  };
-  const session = { access_token: `token-${iteration}`, refresh_token: `refresh-${iteration}`, expires_in: 3600, user: { id: `user-${iteration}`, email: email.value } };
-  const context = {
-    console,
-    document,
-    localStorage,
-    AbortController,
-    CustomEvent: class { constructor(type, init) { this.type = type; this.detail = init?.detail; } },
-    setTimeout() { return 1; },
-    clearTimeout() {},
-    fetch: async (url, options) => {
-      state.fetchCount++;
-      assert.match(String(url), /auth\/v1\/token\?grant_type=password$/);
-      assert.equal(options.method, 'POST');
-      return { ok: true, status: 200, json: async () => session };
-    },
-    URL,
-  };
-  context.window = context;
-  context.scrollTo = () => {};
-  context.dispatchEvent = () => true;
-  context.CineTrackerNative = { saveSession() { state.nativeSaveCount++; } };
-  vm.createContext(context);
-  vm.runInContext(`
-    const SUPABASE_URL='https://example.supabase.co';
-    const SUPABASE_KEY='publishable-test';
-    let ctSession=null;
-    let currentUser=null;
-    let authMode='signin';
-    let view='auth';
-    let cloudConnected=false;
-    let cloudStatus='';
-    function saveSession(session){
-      const expiresAt=Math.floor(Date.now()/1000)+Number(session.expires_in||3600);
-      ctSession={...session,expires_at:session.expires_at||expiresAt};
-      currentUser=session.user||currentUser;
-      localStorage.setItem('cinetracker_session',JSON.stringify(ctSession));
-    }
-    function render(){
-      __state.renderCount++;
-      if(currentUser && ctSession?.access_token && view==='home') __state.home=true;
-    }
-    async function loadCloudState(){ cloudConnected=true; }
-    async function primeOfficialSuggestions(){ return true; }
-  `, vm.createContext ? undefined : undefined);
-}
 
 async function makeRuntime(iteration) {
   const state = { home: false, renderCount: 0, fetchCount: 0, nativeSaveCount: 0, listeners: {} };
