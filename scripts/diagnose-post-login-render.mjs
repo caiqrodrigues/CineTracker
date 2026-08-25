@@ -5,12 +5,9 @@ import { chromium } from 'playwright-core';
 
 const root = join(process.cwd(), 'dist');
 const originalHtml = await readFile(join(root, 'index.html'), 'utf8');
-const patchTags = [...originalHtml.matchAll(/<script src="\/([^"]+\.js)"><\/script>/g)].map(m => m[1]);
-const candidates = [];
-for (const file of patchTags) {
-  const source = await readFile(join(root, file), 'utf8').catch(() => '');
-  if (/\brender\b/.test(source)) candidates.push(file);
-}
+const tagPattern = /<script src="\/([^"]+\.js)"><\/script>/g;
+const patchTags = [...originalHtml.matchAll(tagPattern)].map(m => m[1]);
+const baseHtml = originalHtml.replace(tagPattern, '');
 
 const mime = new Map([
   ['.html', 'text/html; charset=utf-8'],
@@ -23,9 +20,9 @@ const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || '/', 'http://127.0.0.1');
     if (url.pathname === '/') {
-      const omit = url.searchParams.get('omit');
-      let html = originalHtml;
-      if (omit) html = html.replace(`<script src="/${omit}"></script>`, '');
+      const keep = Math.max(0, Math.min(patchTags.length, Number(url.searchParams.get('keep') ?? patchTags.length)));
+      const tags = patchTags.slice(0, keep).map(file => `<script src="/${file}"></script>`).join('');
+      const html = baseHtml.replace('</body>', tags + '</body>');
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
       res.end(html);
       return;
@@ -48,32 +45,20 @@ await new Promise(resolve => server.listen(4173, '127.0.0.1', resolve));
 const executablePath = process.env.CHROME_BIN || '/usr/bin/google-chrome';
 const browser = await chromium.launch({ headless: true, executablePath, args: ['--no-sandbox', '--disable-dev-shm-usage'] });
 
-async function run(name, omit = '') {
+async function run(keep) {
   const context = await browser.newContext({ serviceWorkers: 'block' });
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(`pageerror: ${String(error?.stack || error)}`));
-  page.on('console', msg => {
-    if (msg.type() === 'error') errors.push(`console.error: ${msg.text()}`);
-  });
+  page.on('console', msg => { if (msg.type() === 'error') errors.push(`console.error: ${msg.text()}`); });
   await page.route('https://pjmkxryboypluleuuupp.supabase.co/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname === '/auth/v1/token' && url.searchParams.get('grant_type') === 'password') {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          access_token: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwMC1wb3N0LWxvZ2luIiwiZW1haWwiOiJwMEBleGFtcGxlLmNvbSJ9.signature',
-          refresh_token: 'p0-refresh-token',
-          expires_in: 3600,
-          token_type: 'bearer',
-          user: { id: 'p0-post-login', email: 'p0@example.com' }
-        })
-      });
-      return;
-    }
-    if (url.pathname.startsWith('/rest/v1/profiles')) {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({
+        access_token: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwMC1wb3N0LWxvZ2luIiwiZW1haWwiOiJwMEBleGFtcGxlLmNvbSJ9.signature',
+        refresh_token: 'p0-refresh-token', expires_in: 3600, token_type: 'bearer',
+        user: { id: 'p0-post-login', email: 'p0@example.com' }
+      }) });
       return;
     }
     if (url.pathname.startsWith('/rest/v1/')) {
@@ -90,42 +75,40 @@ async function run(name, omit = '') {
   let ok = false;
   let body = '';
   try {
-    const qs = omit ? `?omit=${encodeURIComponent(omit)}` : '';
-    await page.goto(`http://127.0.0.1:4173/${qs}`, { waitUntil: 'domcontentloaded', timeout: 10000 });
-    await page.locator('#auth-form').waitFor({ state: 'visible', timeout: 1500 });
+    await page.goto(`http://127.0.0.1:4173/?keep=${keep}`, { waitUntil: 'domcontentloaded', timeout: 10000 });
+    await page.locator('#auth-form').waitFor({ state: 'visible', timeout: 1200 });
     await page.locator('#auth-email').fill('p0@example.com');
     await page.locator('#auth-password').fill('password123');
     await page.locator('#auth-form button[type="submit"]').click();
-    await page.getByText('O que vamos assistir hoje?', { exact: true }).waitFor({ state: 'visible', timeout: 1800 });
-    ok = true;
+    await page.locator('.content').waitFor({ state: 'visible', timeout: 1200 });
+    await page.waitForTimeout(80);
+    body = (await page.locator('body').innerText({ timeout: 500 })).slice(0, 500);
+    ok = body.trim().length > 40 && !(await page.locator('#auth-form').isVisible().catch(() => false));
   } catch (error) {
     errors.push(`driver: ${error?.message || error}`);
+    try { body = (await page.locator('body').innerText({ timeout: 500 })).slice(0, 500); } catch {}
   }
-  try { body = (await page.locator('body').innerText({ timeout: 800 })).slice(0, 1200); } catch {}
   await context.close().catch(() => {});
-  console.log(`RESULT ${ok ? 'PASS' : 'FAIL'} | ${name}${omit ? ` | omit=${omit}` : ''}`);
-  if (!ok) {
-    console.log(`BODY ${JSON.stringify(body)}`);
-    if (errors.length) console.log(`ERRORS ${errors.join(' || ')}`);
-  }
-  return { ok, errors, body };
+  const last = keep ? patchTags[keep - 1] : 'BASE';
+  console.log(`PREFIX ${String(keep).padStart(2, '0')}/${patchTags.length} ${ok ? 'PASS' : 'FAIL'} last=${last} body=${JSON.stringify(body.slice(0,120))}`);
+  if (errors.length) console.log(`PREFIX_ERRORS ${keep} ${errors.join(' || ')}`);
+  return ok;
 }
 
 try {
-  const baseline = await run('baseline');
-  if (baseline.ok) {
-    console.log('DIAGNOSIS baseline already passes; post-login blocker not reproduced.');
-    process.exitCode = 2;
-  } else {
-    console.log(`CANDIDATES ${candidates.join(',')}`);
-    const rescuers = [];
-    for (const file of candidates) {
-      const result = await run(file, file);
-      if (result.ok) rescuers.push(file);
-    }
-    console.log(`RESCUERS ${rescuers.join(',') || 'NONE'}`);
-    if (rescuers.length !== 1) process.exitCode = 3;
+  console.log(`PATCH_ORDER ${patchTags.join(',')}`);
+  let previous = await run(0);
+  if (!previous) throw new Error('Base recovered HTML cannot enter authenticated Home; patch isolation invalid.');
+  let firstFailure = -1;
+  for (let keep = 1; keep <= patchTags.length; keep += 1) {
+    const ok = await run(keep);
+    if (previous && !ok && firstFailure < 0) firstFailure = keep;
+    previous = ok;
   }
+  if (firstFailure < 0) throw new Error('Full patch chain did not reproduce post-login blank state.');
+  console.log(`FIRST_FAILURE ${firstFailure} ${patchTags[firstFailure - 1]}`);
+  if (previous) console.log('FINAL_STATE PASS_AFTER_LATER_RECOVERY');
+  else console.log('FINAL_STATE FAIL');
 } finally {
   await browser.close().catch(() => {});
   await new Promise(resolve => server.close(resolve));
