@@ -116,4 +116,4 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
             -d '{"state":"failure","context":"Android Build","description":"0.0.92 build failed"}'
 
-# release-ready-trigger: android-0.0.92-final
+# release-ready-trigger: android-0.0.92-final-with-notes
