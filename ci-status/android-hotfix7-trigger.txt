@@ -1,0 +1,5 @@
+Trigger Android 0.0.97 HOTFIX 7 after P0 Web production validation.
+Production Web commit: a0003e799015e2d43a95b43753adcef075e641d5
+Required versionName: 0.0.97 HOTFIX 7
+Required versionCode: 985
+P0 marker: cinetracker_p0_session_reset_hotfix7
