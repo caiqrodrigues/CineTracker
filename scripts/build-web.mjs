@@ -21,6 +21,12 @@ function applyAuthRecovery(raw) {
   let safe = raw;
 
   safe = replaceSection(safe, 'async function authRequest(path, body) {', 'function saveSession(session) {', `
+function ctLooksLikeJwt(token) {
+    if (typeof token !== 'string')
+        return false;
+    const parts = token.trim().split('.');
+    return parts.length === 3 && parts.every(Boolean);
+}
 async function ctFetchWithTimeout(url, options = {}, timeoutMs = 8000) {
     const controller = typeof AbortController === 'function' ? new AbortController() : null;
     let timer = null;
@@ -40,7 +46,10 @@ async function ctFetchWithTimeout(url, options = {}, timeoutMs = 8000) {
     }
 }
 async function authRequest(path, body) {
-    const r = await ctFetchWithTimeout(\`${'${SUPABASE_URL}'}/auth/v1/${'${path}'}\`, { method: 'POST', headers: { ...authHeaders(), 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) }, 8000);
+    const headers = { apikey: SUPABASE_KEY, 'Content-Type': 'application/json' };
+    if (path === 'logout' && ctLooksLikeJwt(ctSession?.access_token))
+        headers.Authorization = \`Bearer ${'${ctSession.access_token}'}\`;
+    const r = await ctFetchWithTimeout(\`${'${SUPABASE_URL}'}/auth/v1/${'${path}'}\`, { method: 'POST', headers, body: JSON.stringify(body || {}) }, 8000);
     const d = await r.json().catch(() => ({}));
     if (!r.ok)
         throw new Error(d.msg || d.message || d.error_description || d.error || 'Falha na autenticação');
@@ -52,6 +61,8 @@ async function authRequest(path, body) {
 function saveSession(session) {
     if (!session?.access_token)
         return;
+    if (!ctLooksLikeJwt(session.access_token))
+        throw new Error('O servidor retornou uma sessão inválida. Tente entrar novamente.');
     const expiresAt = Math.floor(Date.now() / 1000) + Number(session.expires_in || 3600);
     ctSession = { ...session, expires_at: expiresAt };
     currentUser = session.user || currentUser;
@@ -61,24 +72,53 @@ function saveSession(session) {
     catch (error) {
         console.warn('CineTracker: sessão válida em memória, mas não foi possível persistir no storage.', error);
     }
+    try {
+        if (window.CineTrackerNative?.saveSession)
+            window.CineTrackerNative.saveSession(JSON.stringify(ctSession));
+    }
+    catch (error) {
+        console.warn('CineTracker: sessão Web válida; ponte nativa indisponível.', error);
+    }
 }
 `, 'saveSession');
 
   safe = replaceSection(safe, 'async function restoreSession() {', 'async function signIn(email, password)', `
+async function ctRefreshSession() {
+    const refreshToken = ctSession?.refresh_token;
+    if (!refreshToken)
+        throw new Error('Sessão sem token de renovação');
+    const previousUser = currentUser;
+    const d = await authRequest('token?grant_type=refresh_token', { refresh_token: refreshToken });
+    saveSession({ ...d, user: d.user || previousUser });
+    return true;
+}
 async function restoreSession() {
     try {
         const raw = localStorage.getItem('cinetracker_session');
         if (!raw)
             return false;
         ctSession = JSON.parse(raw);
-        if (ctSession?.expires_at && ctSession.expires_at < Math.floor(Date.now() / 1000) + 60 && ctSession.refresh_token) {
-            const d = await authRequest('token?grant_type=refresh_token', { refresh_token: ctSession.refresh_token });
-            saveSession(d);
+        currentUser = ctSession?.user || currentUser;
+        if (!ctLooksLikeJwt(ctSession?.access_token)) {
+            if (!ctSession?.refresh_token)
+                throw new Error('Sessão local inválida');
+            ctSession = { ...ctSession, access_token: '' };
+            await ctRefreshSession();
         }
-        const r = await ctFetchWithTimeout(\`${'${SUPABASE_URL}'}/auth/v1/user\`, { headers: authHeaders() }, 8000);
+        if (ctSession?.expires_at && ctSession.expires_at < Math.floor(Date.now() / 1000) + 60 && ctSession.refresh_token)
+            await ctRefreshSession();
+        let r = await ctFetchWithTimeout(\`${'${SUPABASE_URL}'}/auth/v1/user\`, { headers: authHeaders() }, 8000);
+        if (!r.ok && ctSession?.refresh_token) {
+            await ctRefreshSession();
+            r = await ctFetchWithTimeout(\`${'${SUPABASE_URL}'}/auth/v1/user\`, { headers: authHeaders() }, 8000);
+        }
         if (!r.ok)
             throw new Error('Sessão expirada');
         currentUser = await r.json();
+        if (ctSession) {
+            ctSession.user = currentUser;
+            try { localStorage.setItem('cinetracker_session', JSON.stringify(ctSession)); } catch { }
+        }
         return true;
     }
     catch (error) {
@@ -91,7 +131,7 @@ async function restoreSession() {
 `, 'restoreSession');
 
   safe = replaceSection(safe, 'function bindAuth() {', 'const watchlistMedia', `
-window.__ctAuthRecovery = 'v97-base';
+window.__ctAuthRecovery = 'v97-hotfix5';
 async function authRecoveryWithTimeout(promise, timeoutMs, label) {
     let timer;
     try {
@@ -161,6 +201,8 @@ function bindAuth() {
                 await signUp(email, password);
             else
                 await signIn(email, password);
+            if (!ctLooksLikeJwt(ctSession?.access_token))
+                throw new Error('Login aceito, mas a sessão recebida é inválida.');
             enterAuthenticatedHome();
         }
         catch (err) {
@@ -198,10 +240,12 @@ const withIcon = recovered.includes('rel="icon"') ? recovered : recovered.replac
 const tags = patches.map(f=>`<script src="/${f.split('/').pop()}"></script>`).join('');
 const built = withIcon.replace('</body>', tags+'</body>');
 const legacyFix7File = 'patch-v073' + '-v097-fix7.js';
-if (!built.includes("window.__ctAuthRecovery = 'v97-base'")) throw new Error('Auth recovery was not installed in built HTML.');
+if (!built.includes("window.__ctAuthRecovery = 'v97-hotfix5'")) throw new Error('HOTFIX 5 auth recovery was not installed in built HTML.');
 if (built.includes('auth-preboot-fix7.js') || built.includes(legacyFix7File)) throw new Error('Legacy FIX 7 auth is still active in built HTML.');
 if (!built.includes('void bootstrap();')) throw new Error('Recovered base bootstrap is not active.');
-if (!built.includes('patch-v074-hotfix1-version.js')) throw new Error('HOTFIX 1 version marker missing from built HTML.');
+if (!built.includes('ctLooksLikeJwt')) throw new Error('HOTFIX 5 JWT validation missing.');
+if (!built.includes("path === 'logout'")) throw new Error('HOTFIX 5 auth request isolation missing.');
+if (!built.includes('patch-v074-hotfix1-version.js')) throw new Error('HOTFIX 5 version layer file missing from built HTML.');
 
 for (const dist of [rootDist, webDist]) {
   await rm(dist, { recursive: true, force: true });
@@ -211,4 +255,4 @@ for (const dist of [rootDist, webDist]) {
   await cp(serviceWorker, resolve(dist, 'service-worker.js'));
   for (const f of patches) await cp(f, resolve(dist, f.split('/').pop()));
 }
-console.log('CineTracker 0.0.97 HOTFIX 1: auth recovery active; Home before database/TMDB; FIX 7 removed from runtime');
+console.log('CineTracker 0.0.97 HOTFIX 5: local-authoritative auth recovery; JWT/session hardening active');
