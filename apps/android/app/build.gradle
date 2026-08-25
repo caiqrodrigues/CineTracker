@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 95
-        versionName '0.0.95'
+        versionCode 97
+        versionName '0.0.97'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,11 +22,16 @@ tasks.register('copyV095Asset', Copy) {
     into file('src/main/assets')
     rename { 'ct83-v095.js' }
 }
-preBuild.dependsOn copyV095Asset
+tasks.register('copyV097Asset', Copy) {
+    from file('../../web/patch-v068-v097.js')
+    into file('src/main/assets')
+    rename { 'ct84-v097.js' }
+}
+preBuild.dependsOn copyV095Asset, copyV097Asset
 
 dependencies {
     implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-0.0.95-recommendations-calendar-performance-profile
+// release: android-0.0.97-recommendations-calendar-import-profile-performance
