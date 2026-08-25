@@ -8,8 +8,9 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 979
-        versionName '0.0.97 HOTFIX 1'
+        versionCode 980
+        versionName '0.0.97 HOTFIX 2'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -27,17 +28,15 @@ tasks.register('copyV097Asset', Copy) {
     into file('src/main/assets')
     rename { 'ct84-v097.js' }
 }
-tasks.register('copyHotfix1VersionAsset', Copy) {
-    from file('../../web/patch-v074-hotfix1-version.js')
-    into file('src/main/assets')
-    rename { 'ct90-hotfix1-version.js' }
-}
-preBuild.dependsOn copyV095Asset, copyV097Asset, copyHotfix1VersionAsset
+preBuild.dependsOn copyV095Asset, copyV097Asset
 
 dependencies {
     implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.work:work-runtime:2.9.1'
-    implementation 'androidx.webkit:webkit:1.12.1'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test:rules:1.6.1'
 }
 
-// release: android-0.0.97-hotfix1-auth-recovery-local-web
+// release candidate: android-0.0.97-hotfix2-black-screen
