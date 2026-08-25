@@ -7,17 +7,17 @@ on:
     paths:
       - 'apps/android/**'
       - 'apps/web/patch-v068-v097.js'
-      - 'apps/web/patch-v069-v097-fix.js'
-      - 'apps/web/patch-v070-v097-fix4.js'
+      - 'apps/web/patch-v071-v097-fix5.js'
+      - 'scripts/test-auth-fix5-runtime.mjs'
       - '.github/workflows/build-android.yml'
   push:
     branches: [main]
     paths:
       - 'apps/android/**'
       - 'apps/web/patch-v068-v097.js'
-      - 'apps/web/patch-v069-v097-fix.js'
-      - 'apps/web/patch-v070-v097-fix4.js'
-      - 'docs/releases/0.0.97-FIX4.md'
+      - 'apps/web/patch-v071-v097-fix5.js'
+      - 'scripts/test-auth-fix5-runtime.mjs'
+      - 'docs/releases/0.0.97-FIX5.md'
       - '.github/workflows/build-android.yml'
 
 permissions:
@@ -37,7 +37,7 @@ jobs:
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
         shell: bash
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.97 FIX 4"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"pending","context":"Android Build","description":"Building CineTracker Android 0.0.97 FIX 5"}'
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
       - name: Restore dedicated CineTracker signing key
@@ -53,62 +53,65 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Validate FIX 4 modules
+      - name: Validate FIX 5 and force login-to-Home runtime test
         shell: bash
         run: |
           set -euo pipefail
           node --check apps/web/patch-v068-v097.js
-          node --check apps/web/patch-v069-v097-fix.js
-          node --check apps/web/patch-v070-v097-fix4.js
-          node scripts/test-auth-fix4.mjs
+          node --check apps/web/patch-v071-v097-fix5.js
+          node scripts/test-auth-fix5-runtime.mjs
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
-      - name: Verify embedded FIX 4 module
+      - name: Verify embedded FIX 5 module
         shell: bash
         run: |
           set -euo pipefail
-          test -f apps/android/app/src/main/assets/ct86-v097-fix4.js
-          node --check apps/android/app/src/main/assets/ct86-v097-fix4.js
-          cmp apps/web/patch-v070-v097-fix4.js apps/android/app/src/main/assets/ct86-v097-fix4.js
+          test -f apps/android/app/src/main/assets/ct87-v097-fix5.js
+          node --check apps/android/app/src/main/assets/ct87-v097-fix5.js
+          cmp apps/web/patch-v071-v097-fix5.js apps/android/app/src/main/assets/ct87-v097-fix5.js
+          ! grep -q '"ct85-v097-fix.js"' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q '"ct86-v097-fix4.js"' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
       - name: Prepare APK name
         shell: bash
-        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.97-FIX4-debug.apk
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.97-FIX5-debug.apk
       - name: Verify package and version
         shell: bash
         run: |
           set -euo pipefail
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          "$APKSIGNER" verify --print-certs cinetracker-android-0.0.97-FIX4-debug.apk
-          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.97-FIX4-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION="$($AAPT dump badging cinetracker-android-0.0.97-FIX4-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          "$APKSIGNER" verify --print-certs cinetracker-android-0.0.97-FIX5-debug.apk
+          PACKAGE="$($AAPT dump badging cinetracker-android-0.0.97-FIX5-debug.apk | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging cinetracker-android-0.0.97-FIX5-debug.apk | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION_CODE="$($AAPT dump badging cinetracker-android-0.0.97-FIX5-debug.apk | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.97 FIX 4"
+          test "$VERSION" = "0.0.97 FIX 5"
+          test "$VERSION_CODE" = "975"
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.0.97-FIX4-debug
-          path: cinetracker-android-0.0.97-FIX4-debug.apk
-      - name: Publish Android 0.0.97 FIX 4 release
+          name: cinetracker-android-0.0.97-FIX5-debug
+          path: cinetracker-android-0.0.97-FIX5-debug.apk
+      - name: Publish Android 0.0.97 FIX 5 release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
         shell: bash
         run: |
           set -euo pipefail
-          gh release view android-v0.0.97-fix4 >/dev/null 2>&1 || gh release create android-v0.0.97-fix4 --title "CineTracker Android 0.0.97 FIX 4" --notes-file docs/releases/0.0.97-FIX4.md
-          gh release upload android-v0.0.97-fix4 cinetracker-android-0.0.97-FIX4-debug.apk --clobber
+          gh release view android-v0.0.97-fix5 >/dev/null 2>&1 || gh release create android-v0.0.97-fix5 --title "CineTracker Android 0.0.97 FIX 5" --notes-file docs/releases/0.0.97-FIX5.md
+          gh release upload android-v0.0.97-fix5 cinetracker-android-0.0.97-FIX5-debug.apk --clobber
       - name: Mark Android build success
         if: success()
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
         shell: bash
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android Build","description":"0.0.97 FIX 4 published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android Build","description":"0.0.97 FIX 5 published"}'
       - name: Mark Android build failure
         if: failure()
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
         shell: bash
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android Build","description":"0.0.97 FIX 4 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android Build","description":"0.0.97 FIX 5 build failed"}'
 
-# release-ready-trigger: android-0.0.97-fix4
+# release-ready-trigger: android-0.0.97-fix5
