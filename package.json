@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.97-hotfix7",
   "scripts": {
-    "build": "node scripts/verify.mjs && node scripts/build-web.mjs && node scripts/test-startup-hotfix6.mjs",
+    "build": "node scripts/verify.mjs && node scripts/build-web.mjs && node scripts/apply-hotfix8-observer-guard.mjs && node scripts/test-startup-hotfix6.mjs",
     "verify": "node scripts/verify.mjs"
   },
   "engines": {
