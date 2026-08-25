@@ -44,8 +44,9 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
     }
   };
   const fastTimer = (fn, ms = 0) => {
-    const t = globalThis.setTimeout(fn, ms > 1000 ? 60 : ms);
-    t.unref?.();
+    const longTimer = ms > 1000;
+    const t = globalThis.setTimeout(fn, longTimer ? 60 : ms);
+    if (longTimer) t.unref?.();
     return t;
   };
   const ctx = { document, console: { ...console, warn() {} }, setTimeout: fastTimer, clearTimeout: globalThis.clearTimeout, AbortController };
@@ -169,7 +170,12 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
 
 {
   const state = { renders: 0, cloud: 0 };
-  const fastTimer = (fn, ms = 0) => { const t = globalThis.setTimeout(fn, ms > 1000 ? 60 : ms); t.unref?.(); return t; };
+  const fastTimer = (fn, ms = 0) => {
+    const longTimer = ms > 1000;
+    const t = globalThis.setTimeout(fn, longTimer ? 60 : ms);
+    if (longTimer) t.unref?.();
+    return t;
+  };
   const ctx = { console: { ...console, warn() {} }, setTimeout: fastTimer, clearTimeout: globalThis.clearTimeout };
   ctx.window = ctx;
   ctx.__state = state;
