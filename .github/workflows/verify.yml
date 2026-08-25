@@ -20,7 +20,7 @@ jobs:
       - run: npm run verify
       - run: npm run build
 
-  android94:
+  android95:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,10 +50,18 @@ jobs:
           for f in ct41.js ct47.js ct48.js ct49.js ct50.js ct51.js ct58.js ct59.js ct60.js ct61.js ct66.js ct67-profile-history.js ct68-final.js ct70-home-084.js ct71-cast-profile-084.js ct72-v085.js ct74-v086-final.js ct75-v087.js ct76-v088.js ct77-v089.js ct78-v090.js ct79-v091.js ct80-v092.js ct81-v093.js ct82-v094.js; do
             node --check "apps/android/app/src/main/assets/$f"
           done
+          node --check apps/web/patch-v067-v095.js
       - name: Build debug APK
         working-directory: apps/android
         shell: bash
         run: gradle assembleDebug --stacktrace
+      - name: Verify embedded v95 module
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apps/android/app/src/main/assets/ct83-v095.js
+          node --check apps/android/app/src/main/assets/ct83-v095.js
+          cmp apps/web/patch-v067-v095.js apps/android/app/src/main/assets/ct83-v095.js
       - name: Verify package and version
         shell: bash
         run: |
@@ -65,4 +73,4 @@ jobs:
           PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
           VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.94"
+          test "$VERSION" = "0.0.95"
