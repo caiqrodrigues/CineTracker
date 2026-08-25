@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
@@ -27,15 +28,20 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
+    private static final int EXPORT_FILE_REQUEST = 1003;
     private static final String APP_VERSION = "0.0.90";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
+    private byte[] pendingExportBytes;
+    private String pendingExportName;
+    private String pendingExportMime;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +63,13 @@ public class MainActivity extends Activity {
     private void applyAndroidBase(){if(webView==null)return;String js="(function(){var m=document.querySelector('meta[name=viewport]');if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}m.content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no';if(!document.getElementById('ct90-base')){var s=document.createElement('style');s.id='ct90-base';s.textContent='html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important;background:#090909!important;-webkit-text-size-adjust:100%!important}body{margin:0!important}.app{display:block!important;width:100%!important;min-width:0!important}.sidebar,.mobile-nav,.cloud-bar{display:none!important}.content{box-sizing:border-box!important;width:100%!important;max-width:none!important;margin:0!important;padding:14px 12px 20px!important;overflow-x:hidden!important}.toast{left:12px!important;right:12px!important;bottom:12px!important;max-width:none!important}';document.head.appendChild(s);}window.__ctAndroidBuild='0.0.90';})();";webView.evaluateJavascript(js,null);}
     private void applyStableModules(){String[] assets={"ct47.js","ct66.js","ct67-profile-history.js","ct68-final.js","ct70-home-084.js","ct71-cast-profile-084.js","ct72-v085.js","ct74-v086-final.js","ct75-v087.js","ct76-v088.js","ct77-v089.js","ct78-v090.js"};for(String asset:assets)applyAsset(asset);}
     private void applyAsset(String asset){try(InputStream in=getAssets().open(asset)){ByteArrayOutputStream out=new ByteArrayOutputStream();byte[] buf=new byte[8192];int read;while((read=in.read(buf,0,buf.length))!=-1)out.write(buf,0,read);webView.evaluateJavascript(new String(out.toByteArray(),StandardCharsets.UTF_8),null);}catch(Exception ignored){}}
-    public class AndroidBridge{@JavascriptInterface public void appReady(){runOnUiThread(()->{if(webView!=null)webView.setVisibility(View.VISIBLE);});}@JavascriptInterface public String getAppVersion(){return APP_VERSION;}@JavascriptInterface public void saveSession(String json){try{JSONObject obj=new JSONObject(json==null?"{}":json);String token=obj.optString("access_token","");if(token.isEmpty())return;Context context=MainActivity.this.getApplicationContext();context.getSharedPreferences(NotificationWorker.PREFS,Context.MODE_PRIVATE).edit().putString("access_token",token).apply();PeriodicWorkRequest periodic=new PeriodicWorkRequest.Builder(NotificationWorker.class,1,TimeUnit.HOURS).build();WorkManager.getInstance(context).enqueueUniquePeriodicWork("cinetracker_release_notifications",ExistingPeriodicWorkPolicy.KEEP,periodic);}catch(Exception ignored){}}}
+    public class AndroidBridge{
+        @JavascriptInterface public void appReady(){runOnUiThread(()->{if(webView!=null)webView.setVisibility(View.VISIBLE);});}
+        @JavascriptInterface public String getAppVersion(){return APP_VERSION;}
+        @JavascriptInterface public void saveSession(String json){try{JSONObject obj=new JSONObject(json==null?"{}":json);String token=obj.optString("access_token","");if(token.isEmpty())return;Context context=MainActivity.this.getApplicationContext();context.getSharedPreferences(NotificationWorker.PREFS,Context.MODE_PRIVATE).edit().putString("access_token",token).apply();PeriodicWorkRequest periodic=new PeriodicWorkRequest.Builder(NotificationWorker.class,1,TimeUnit.HOURS).build();WorkManager.getInstance(context).enqueueUniquePeriodicWork("cinetracker_release_notifications",ExistingPeriodicWorkPolicy.KEEP,periodic);}catch(Exception ignored){}}
+        @JavascriptInterface public void exportBackup(String name,String base64,String mime){try{byte[] bytes=Base64.decode(base64,Base64.DEFAULT);runOnUiThread(()->{pendingExportBytes=bytes;pendingExportName=(name==null||name.isEmpty())?"cinetracker-backup-v90.json":name;pendingExportMime=(mime==null||mime.isEmpty())?"application/octet-stream":mime;Intent intent=new Intent(Intent.ACTION_CREATE_DOCUMENT);intent.addCategory(Intent.CATEGORY_OPENABLE);intent.setType(pendingExportMime);intent.putExtra(Intent.EXTRA_TITLE,pendingExportName);startActivityForResult(intent,EXPORT_FILE_REQUEST);});}catch(Exception ignored){}}
+    }
     @Override protected void onSaveInstanceState(Bundle outState){webView.saveState(outState);super.onSaveInstanceState(outState);}
     @Override public void onBackPressed(){if(webView==null){super.onBackPressed();return;}webView.evaluateJavascript("(function(){try{return !!(window.ct48Back&&window.ct48Back());}catch(e){return false;}})();",value->{if("true".equals(value))return;if(webView.canGoBack())webView.goBack();else MainActivity.super.onBackPressed();});}
-    @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){super.onActivityResult(requestCode,resultCode,data);if(requestCode!=FILE_CHOOSER_REQUEST||fileChooserCallback==null)return;Uri[] result=null;if(resultCode==RESULT_OK&&data!=null&&data.getData()!=null)result=new Uri[]{data.getData()};fileChooserCallback.onReceiveValue(result);fileChooserCallback=null;}
+    @Override protected void onActivityResult(int requestCode,int resultCode,Intent data){super.onActivityResult(requestCode,resultCode,data);if(requestCode==EXPORT_FILE_REQUEST){if(resultCode==RESULT_OK&&data!=null&&data.getData()!=null&&pendingExportBytes!=null){try(OutputStream out=getContentResolver().openOutputStream(data.getData())){if(out!=null){out.write(pendingExportBytes);out.flush();}}catch(Exception ignored){}}pendingExportBytes=null;pendingExportName=null;pendingExportMime=null;return;}if(requestCode!=FILE_CHOOSER_REQUEST||fileChooserCallback==null)return;Uri[] result=null;if(resultCode==RESULT_OK&&data!=null&&data.getData()!=null)result=new Uri[]{data.getData()};fileChooserCallback.onReceiveValue(result);fileChooserCallback=null;}
 }
