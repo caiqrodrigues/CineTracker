@@ -1,4 +1,4 @@
-const VERSION='ct-web-0.0.97-hotfix7';
+const VERSION='ct-web-0.0.97-hotfix8';
 const MEDIA_CACHE=`${VERSION}-media`;
 const META_CACHE=`${VERSION}-meta`;
 
