@@ -60,7 +60,7 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Validate HOTFIX 1 Android source and auth runtime
+      - name: Validate HOTFIX 1 Android source and local Web runtime
         shell: bash
         run: |
           set -euo pipefail
@@ -68,13 +68,20 @@ jobs:
           node --check apps/web/patch-v074-hotfix1-version.js
           npm run build
           node scripts/test-auth-recovery-red.mjs
+          node scripts/prepare-android-hotfix1-web.mjs
+          test -f apps/android/app/src/main/assets/hotfix1/index.html
+          grep -q "window.__ctAuthRecovery = 'v97-base'" apps/android/app/src/main/assets/hotfix1/index.html
+          grep -q 'patch-v074-hotfix1-version.js' apps/android/app/src/main/assets/hotfix1/index.html
+          ! grep -q 'patch-v073-v097-fix7.js' apps/android/app/src/main/assets/hotfix1/index.html
+          grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'appassets.androidplatform.net/assets/hotfix1/index.html' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q 'WebSettings.LOAD_DEFAULT' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'LOAD_NO_CACHE' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'clearCache(true)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'ct89-v097-fix7.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'authrev=' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           ! grep -q 'saveAuthSession' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          grep -q 'ct90-hotfix1-version.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q 'applyStableModules' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q '&release=hotfix1' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
       - name: Build debug HOTFIX 1 APK
         working-directory: apps/android
