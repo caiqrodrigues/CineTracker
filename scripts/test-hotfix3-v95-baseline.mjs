@@ -13,8 +13,9 @@ assert.ok(html.includes("localStorage.setItem('cinetracker_session'"), 'baseline
 assert.ok(html.includes('function bindAuth()'), 'baseline perdeu bindAuth');
 assert.ok(html.includes("authMode === 'signup'"), 'baseline perdeu cadastro');
 assert.ok(android.includes('WebSettings.LOAD_DEFAULT'), 'Android não usa LOAD_DEFAULT da v95');
-assert.ok(android.includes('BuildConfig.WEB_URL'), 'Android não carrega Web remota original');
-assert.ok(android.includes('ct83-v095.js'), 'Android perdeu ct83-v095');
+assert.ok(android.includes('BUNDLED_INDEX = "hotfix3/index.html"'), 'Android não aponta para o bundle HOTFIX 3');
+assert.ok(android.includes('loadDataWithBaseURL'), 'Android não usa loadDataWithBaseURL');
+assert.ok(android.includes('HOTFIX3_RENDER_OK'), 'Android não possui prova de renderização HOTFIX 3');
 assert.ok(!android.includes('WebViewAssetLoader'), 'HOTFIX 3 não pode conter WebViewAssetLoader');
 assert.ok(!android.includes('authrev='), 'HOTFIX 3 não pode conter authrev');
 assert.ok(!android.includes('fix=7'), 'HOTFIX 3 não pode conter FIX 7');
@@ -68,4 +69,4 @@ assert.equal(state.suggestions, 1);
 assert.ok(state.renders >= 1);
 assert.equal(error.textContent, '');
 assert.equal(state.requests.filter(x => x.includes('grant_type=password')).length, 1);
-console.log('OK - HOTFIX 3 mantém integralmente o fluxo de login da v0.0.95 e remove apenas o bloqueio de deploy legado.');
+console.log('OK - HOTFIX 3 mantém o fluxo de login da v0.0.95 e usa bundle Android autocontido sem WebViewAssetLoader.');
