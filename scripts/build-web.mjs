@@ -193,12 +193,13 @@ async function bootstrap() {
 }
 
 const raw = await readFile(source, 'utf8');
-let recovered = applyAuthRecovery(raw);
+const recovered = applyAuthRecovery(raw);
 const withIcon = recovered.includes('rel="icon"') ? recovered : recovered.replace('</head>', '<link rel="icon" type="image/svg+xml" href="/favicon.svg"></head>');
 const tags = patches.map(f=>`<script src="/${f.split('/').pop()}"></script>`).join('');
 const built = withIcon.replace('</body>', tags+'</body>');
+const legacyFix7File = 'patch-v073' + '-v097-fix7.js';
 if (!built.includes("window.__ctAuthRecovery = 'v97-base'")) throw new Error('Auth recovery was not installed in built HTML.');
-if (built.includes('auth-preboot-fix7.js') || built.includes('patch-v073-v097-fix7.js')) throw new Error('Legacy FIX 7 auth is still active in built HTML.');
+if (built.includes('auth-preboot-fix7.js') || built.includes(legacyFix7File)) throw new Error('Legacy FIX 7 auth is still active in built HTML.');
 if (!built.includes('void bootstrap();')) throw new Error('Recovered base bootstrap is not active.');
 
 for (const dist of [rootDist, webDist]) {
