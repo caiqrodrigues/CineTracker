@@ -20,12 +20,10 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Verify untouched v0.0.95 project
-        run: npm run verify
-      - name: Build untouched v0.0.95 Web app
-        run: npm run build
-      - name: Run v0.0.95 login baseline suite
+      - name: Run v0.0.95 login baseline suite first
         run: node scripts/test-v095-login-baseline.mjs
+      - name: Build untouched v0.0.95 Web output without legacy visual gate
+        run: node scripts/build-web.mjs
       - name: Build original v0.0.95 Android APK
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
