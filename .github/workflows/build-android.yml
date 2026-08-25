@@ -115,3 +115,5 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" \
             -d '{"state":"failure","context":"Android Build","description":"0.0.87 build failed"}'
+
+# release-ready-trigger: android-0.0.87-final
