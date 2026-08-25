@@ -9,7 +9,7 @@ android {
         minSdk 26
         targetSdk 34
         versionCode 97
-        versionName '0.0.97 FIX 2'
+        versionName '0.0.97 FIX 3'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -39,4 +39,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-0.0.97-fix2-auth-root
+// release: android-0.0.97-fix3-auth-root
