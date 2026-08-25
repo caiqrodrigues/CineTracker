@@ -1,0 +1,65 @@
+name: Verify HOTFIX 3
+
+on:
+  push:
+    branches: [release-v0.0.97-hotfix3]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web-v95-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Prove HOTFIX 3 preserves v95 login
+        run: node scripts/test-hotfix3-v95-baseline.mjs
+      - name: Build deployable Web without legacy profile gate
+        run: npm run build
+      - name: Verify v95 production patch chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f dist/index.html
+          grep -q 'patch-v067-v095.js' dist/index.html
+          ! grep -q 'fix7' dist/index.html
+          ! grep -q 'authrev' dist/index.html
+
+  android-v95-shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build HOTFIX 3 APK from v95 shell
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Verify package, version and v95 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          CODE="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
+          test "$PACKAGE" = 'com.cinetracker.app'
+          test "$VERSION" = '0.0.97 HOTFIX 3'
+          test "$CODE" = '981'
+          grep -q 'WebSettings.LOAD_DEFAULT' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'ct83-v095.js' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          ! grep -q 'authrev=' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+      - name: Prepare HOTFIX 3 candidate
+        run: cp apps/android/app/build/outputs/apk/debug/app-debug.apk cinetracker-android-0.0.97-HOTFIX3-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.0.97-HOTFIX3-debug
+          path: cinetracker-android-0.0.97-HOTFIX3-debug.apk
