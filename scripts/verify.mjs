@@ -13,6 +13,7 @@ const android = await readFile('apps/android/app/src/main/java/com/cinetracker/a
 const gradle = await readFile('apps/android/app/build.gradle', 'utf8');
 const layout = await readFile('apps/android/app/src/main/res/layout/activity_main.xml', 'utf8');
 const buildWeb = await readFile('scripts/build-web.mjs', 'utf8');
+const patchArrayLine = buildWeb.split('\n').find(line => line.startsWith('const patches =')) || '';
 const p29 = src['patch-v029.js'];
 const p54 = src['patch-v054.js'];
 const p59 = src['patch-v059-v089.js'];
@@ -42,7 +43,7 @@ const checks = [
   ['Recovery Home antes da hidratação', buildWeb.includes('function enterAuthenticatedHome()') && buildWeb.includes("view = 'home';") && buildWeb.includes('void runPostAuthHydration();')],
   ['Recovery storage isolado', buildWeb.includes('sessão válida em memória')],
   ['Recovery mantém bootstrap base', buildWeb.includes("if (!built.includes('void bootstrap();'))")],
-  ['FIX7 fora do build web', !buildWeb.includes("'patch-v073-v097-fix7.js'") && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
+  ['FIX7 fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
   ['Android v97 base modules', android.includes('ct84-v097.js') && !android.includes('ct89-v097-fix7.js')],
   ['Android cache original', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
   ['Android sem authrev/fix', !android.includes('authrev=') && !android.includes('&fix=7')],
