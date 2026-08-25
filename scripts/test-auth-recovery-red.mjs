@@ -3,10 +3,11 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 
 const built = await readFile('dist/index.html', 'utf8');
-assert.ok(built.includes("window.__ctAuthRecovery = 'v97-base'"), 'Build não contém a recuperação da autenticação base');
+assert.ok(built.includes("window.__ctAuthRecovery = 'v97-hotfix5'"), 'Build não contém a recuperação HOTFIX 5');
 assert.ok(!built.includes('auth-preboot-fix7.js'), 'FIX 7 preboot ainda está ativo no build');
 assert.ok(!built.includes('patch-v073-v097-fix7.js'), 'FIX 7 ainda está ativo no build');
 assert.ok(built.includes('void bootstrap();'), 'Bootstrap base recuperado não está ativo');
+assert.ok(built.includes('ctLooksLikeJwt'), 'Validação JWT do HOTFIX 5 ausente');
 
 function slice(startMarker, endMarker) {
   const start = built.indexOf(startMarker);
@@ -15,10 +16,14 @@ function slice(startMarker, endMarker) {
   return built.slice(start, end);
 }
 
-const authNetworkSource = slice('async function ctFetchWithTimeout', 'function saveSession(session) {');
+const authNetworkSource = slice('function ctLooksLikeJwt(token) {', 'function saveSession(session) {');
 const saveSessionSource = slice('function saveSession(session) {', 'async function restoreSession() {');
-const recoverySource = slice("window.__ctAuthRecovery = 'v97-base';", 'const watchlistMedia');
+const recoverySource = slice("window.__ctAuthRecovery = 'v97-hotfix5';", 'const watchlistMedia');
 const bootstrapSource = slice('async function bootstrap() {', 'function stats()');
+
+assert.ok(authNetworkSource.includes("const headers = { apikey: SUPABASE_KEY"), 'Auth não usa cabeçalho isolado');
+assert.ok(!authNetworkSource.includes('...authHeaders()'), 'Login/refresh ainda herdam Authorization antigo');
+assert.ok(authNetworkSource.includes("path === 'logout'"), 'Logout perdeu autorização de sessão válida');
 
 function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', suggestionsMode = 'hang' } = {}) {
   const state = { renderCalls: 0, signInCalls: 0, cloudCalls: 0, suggestionCalls: 0 };
@@ -52,6 +57,7 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
   const ctx = { document, console: { ...console, warn() {} }, setTimeout: fastTimer, clearTimeout: globalThis.clearTimeout, AbortController };
   ctx.window = ctx;
   vm.createContext(ctx);
+  vm.runInContext(authNetworkSource, ctx);
   ctx.__state = state;
   ctx.__signInError = signInError;
   ctx.__signInDelay = signInDelay;
@@ -69,7 +75,7 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
       if (__signInDelay) await new Promise(resolve => setTimeout(resolve, __signInDelay));
       if (__signInError) throw new Error(__signInError);
       currentUser = { id: 'user-recovery', email: 'recovery@example.com' };
-      ctSession = { access_token: 'token-recovery' };
+      ctSession = { access_token: 'aaa.bbb.ccc' };
     }
     async function signUp() { return signIn(); }
     async function loadCloudState() {
@@ -132,6 +138,13 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
 }
 
 {
+  const r = makeRuntime({ cloudMode: 'ok', suggestionsMode: 'ok' });
+  vm.runInContext("ctSession={access_token:'malformed-token'}", r.ctx);
+  await r.submitHandler({ preventDefault() {} });
+  assert.ok(r.state.renderCalls >= 1, 'Login válido não substituiu a sessão anterior no mock');
+}
+
+{
   const ctx = {
     console: { ...console, warn() {} },
     localStorage: { setItem() { throw new Error('quota'); } },
@@ -139,12 +152,15 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
     Math,
     JSON
   };
+  ctx.window = ctx;
   vm.createContext(ctx);
+  vm.runInContext(authNetworkSource, ctx);
   vm.runInContext('let ctSession=null;let currentUser=null;', ctx);
   vm.runInContext(saveSessionSource, ctx);
-  assert.doesNotThrow(() => vm.runInContext("saveSession({access_token:'ok',expires_in:3600,user:{id:'u1'}})", ctx));
+  assert.doesNotThrow(() => vm.runInContext("saveSession({access_token:'aaa.bbb.ccc',expires_in:3600,user:{id:'u1'}})", ctx));
   assert.equal(vm.runInContext('currentUser.id', ctx), 'u1');
-  assert.equal(vm.runInContext('ctSession.access_token', ctx), 'ok');
+  assert.equal(vm.runInContext('ctSession.access_token', ctx), 'aaa.bbb.ccc');
+  assert.throws(() => vm.runInContext("saveSession({access_token:'broken',expires_in:3600,user:{id:'u1'}})", ctx), /sessão inválida/i);
 }
 
 {
@@ -163,7 +179,7 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
   };
   ctx.window = ctx;
   vm.createContext(ctx);
-  vm.runInContext("const SUPABASE_URL='https://example.supabase.co'; function authHeaders(){return {}};", ctx);
+  vm.runInContext("const SUPABASE_URL='https://example.supabase.co'; const SUPABASE_KEY='anon'; let ctSession=null;", ctx);
   vm.runInContext(authNetworkSource, ctx);
   await assert.rejects(() => vm.runInContext("ctFetchWithTimeout('https://example.invalid',{},10)", ctx), /Tempo limite de autenticação excedido/);
 }
@@ -181,7 +197,7 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
   ctx.__state = state;
   vm.createContext(ctx);
   vm.runInContext(`
-    let ctSession={access_token:'restored'};let currentUser={id:'restored-user'};let view='auth';let cloudConnected=false;let cloudStatus='';
+    let ctSession={access_token:'aaa.bbb.ccc'};let currentUser={id:'restored-user'};let view='auth';let cloudConnected=false;let cloudStatus='';
     async function restoreSession(){return true}
     async function loadCloudState(){__state.cloud+=1;return await new Promise(()=>{})}
     async function primeOfficialSuggestions(){}
@@ -198,11 +214,17 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
 const build = await readFile('scripts/build-web.mjs', 'utf8');
 assert.ok(!build.includes("'patch-v073-v097-fix7.js'"), 'Recovery ainda inclui FIX 7 no array de patches');
 assert.ok(!build.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')"), 'Recovery ainda instala preboot FIX 7');
+assert.ok(build.includes("window.__ctAuthRecovery = 'v97-hotfix5'"), 'Build script não marca HOTFIX 5');
 
 const android = await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java', 'utf8');
 assert.ok(!android.includes('ct89-v097-fix7.js'), 'Android ainda injeta FIX 7');
 assert.ok(!android.includes('authrev='), 'Android ainda usa authrev artificial');
 assert.ok(!android.includes('LOAD_NO_CACHE'), 'Android ainda força LOAD_NO_CACHE');
 assert.ok(android.includes('WebSettings.LOAD_DEFAULT'), 'Android não voltou ao cache original da v97');
+assert.ok(android.includes('hotfix5/index.html'), 'Android não aponta para o bundle HOTFIX 5');
+assert.ok(!android.includes('loadRemoteFallback'), 'Android ainda possui fallback automático para Vercel');
+assert.ok(!android.includes('fallback=remote'), 'Android ainda pode iniciar runtime remoto');
+assert.ok(!android.includes('verifyStartupOrFallback'), 'Watchdog remoto antigo ainda existe');
+assert.ok(android.includes('showEmbeddedRuntimeFailure'), 'Falha local não tem diagnóstico embutido');
 
-console.log('OK - RECOVERY: login abre Home antes de banco/TMDB; timeout, erro, storage, duplo toque, restore e Android aprovados.');
+console.log('OK - HOTFIX 5: login abre Home antes de banco/TMDB; JWT isolado; storage, duplo toque, restore e Android sem fallback Vercel aprovados.');
