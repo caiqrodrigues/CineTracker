@@ -130,6 +130,7 @@ jobs:
         run: |
           set -euo pipefail
           gh release view android-v0.0.97-hotfix1 >/dev/null 2>&1 || gh release create android-v0.0.97-hotfix1 --title "CineTracker Android 0.0.97 HOTFIX 1" --notes-file docs/releases/0.0.97-HOTFIX1.md
+          gh release edit android-v0.0.97-hotfix1 --title "CineTracker Android 0.0.97 HOTFIX 1" --notes-file docs/releases/0.0.97-HOTFIX1.md
           gh release upload android-v0.0.97-hotfix1 cinetracker-android-0.0.97-HOTFIX1-debug.apk --clobber
       - name: Mark Android build success
         if: success()
