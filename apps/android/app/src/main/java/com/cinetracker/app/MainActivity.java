@@ -16,7 +16,6 @@ import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -40,13 +39,12 @@ public class MainActivity extends Activity {
     private static final int NOTIFICATION_PERMISSION_REQUEST = 1002;
     private static final int EXPORT_FILE_REQUEST = 1003;
     private static final String APP_VERSION = BuildConfig.VERSION_NAME;
-    private static final String LOCAL_WEB_ASSET = "hotfix2/index.html";
+    private static final String LOCAL_WEB_ASSET = "hotfix5/index.html";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
     private byte[] pendingExportBytes;
     private String pendingExportName;
     private String pendingExportMime;
-    private boolean fallbackUsed = false;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +105,14 @@ public class MainActivity extends Activity {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
                 String host = uri.getHost() == null ? "" : uri.getHost();
-                if (host.equals("mycinetracker.vercel.app") || host.endsWith("supabase.co")) return false;
+                if (host.equals("mycinetracker.vercel.app")) {
+                    if (request.isForMainFrame()) {
+                        loadBundledWeb();
+                        return true;
+                    }
+                    return false;
+                }
+                if (host.endsWith("supabase.co")) return false;
                 startActivity(new Intent(Intent.ACTION_VIEW, uri));
                 return true;
             }
@@ -116,28 +121,22 @@ public class MainActivity extends Activity {
                 super.onPageFinished(view, url);
                 applyAndroidBase();
                 CookieManager.getInstance().flush();
-                verifyStartupOrFallback();
-            }
-
-            @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
-                if (request != null && request.isForMainFrame() && !fallbackUsed) loadRemoteFallback();
             }
         });
 
         bindNativeNavigation();
         requestNotificationPermission();
 
-        // HOTFIX 2 intentionally does not restore the previous WebView navigation state.
-        // HOTFIX 1 used a different appassets origin and restoring that state can reopen the
-        // broken blank document after an in-place APK update. Session data remains on the
-        // normal CineTracker HTTPS origin through loadDataWithBaseURL.
+        // HOTFIX 5 never restores a previous WebView document and never falls back
+        // to the remote Vercel page. The validated runtime inside the APK is the
+        // authoritative Android application. The HTTPS base URL is only retained
+        // to preserve the established localStorage/cookie origin.
         loadBundledWeb();
     }
 
     private String runtimeUrl() {
         String separator = BuildConfig.WEB_URL.contains("?") ? "&" : "?";
-        return BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=" + BuildConfig.VERSION_CODE + "&release=hotfix2";
+        return BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=" + BuildConfig.VERSION_CODE + "&release=hotfix5&runtime=embedded";
     }
 
     private void loadBundledWeb() {
@@ -149,24 +148,15 @@ public class MainActivity extends Activity {
             String baseUrl = runtimeUrl();
             webView.loadDataWithBaseURL(baseUrl, html, "text/html", "UTF-8", baseUrl);
         } catch (Exception error) {
-            loadRemoteFallback();
+            showEmbeddedRuntimeFailure();
         }
     }
 
-    private void verifyStartupOrFallback() {
-        if (fallbackUsed || webView == null) return;
-        webView.postDelayed(() -> webView.evaluateJavascript(
-            "(function(){try{var a=document.getElementById('app');return !!(a&&a.children&&a.children.length&&(document.querySelector('#auth-form')||document.querySelector('.auth-page')||document.querySelector('.content')));}catch(e){return false;}})();",
-            value -> {
-                if (!"true".equals(value) && !fallbackUsed) loadRemoteFallback();
-            }
-        ), 1800);
-    }
-
-    private void loadRemoteFallback() {
-        if (fallbackUsed || webView == null) return;
-        fallbackUsed = true;
-        webView.loadUrl(runtimeUrl() + "&fallback=remote");
+    private void showEmbeddedRuntimeFailure() {
+        if (webView == null) return;
+        String baseUrl = runtimeUrl();
+        String html = "<!doctype html><html lang='pt-BR'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>CineTracker HOTFIX 5</title></head><body style='margin:0;background:#090909;color:#f4f4f5;font-family:system-ui;padding:24px'><h2>CineTracker HOTFIX 5</h2><p>O runtime interno do APK não pôde ser aberto.</p><p>Reinstale esta mesma versão. O aplicativo não carregará uma versão remota diferente como fallback.</p></body></html>";
+        webView.loadDataWithBaseURL(baseUrl, html, "text/html", "UTF-8", baseUrl);
     }
 
     private void requestNotificationPermission() {
@@ -217,7 +207,7 @@ public class MainActivity extends Activity {
                 byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                 runOnUiThread(() -> {
                     pendingExportBytes = bytes;
-                    pendingExportName = (name == null || name.isEmpty()) ? "cinetracker-backup-v97-hotfix2.json" : name;
+                    pendingExportName = (name == null || name.isEmpty()) ? "cinetracker-backup-v97-hotfix5.json" : name;
                     pendingExportMime = (mime == null || mime.isEmpty()) ? "application/octet-stream" : mime;
                     Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
