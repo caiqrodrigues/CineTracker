@@ -3,11 +3,12 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 
 const built = await readFile('dist/index.html', 'utf8');
-assert.ok(built.includes("window.__ctAuthRecovery = 'v97-hotfix5'"), 'Build não contém a recuperação HOTFIX 5');
+assert.ok(built.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'"), 'Build não contém a recuperação HOTFIX 6 de startup');
 assert.ok(!built.includes('auth-preboot-fix7.js'), 'FIX 7 preboot ainda está ativo no build');
 assert.ok(!built.includes('patch-v073-v097-fix7.js'), 'FIX 7 ainda está ativo no build');
 assert.ok(built.includes('void bootstrap();'), 'Bootstrap base recuperado não está ativo');
-assert.ok(built.includes('ctLooksLikeJwt'), 'Validação JWT do HOTFIX 5 ausente');
+assert.ok(built.includes('ctLooksLikeJwt'), 'Validação JWT da recuperação ausente');
+assert.ok(built.includes('const media = ['), 'Bloco crítico const media foi removido do build');
 
 function slice(startMarker, endMarker) {
   const start = built.indexOf(startMarker);
@@ -18,7 +19,7 @@ function slice(startMarker, endMarker) {
 
 const authNetworkSource = slice('function ctLooksLikeJwt(token) {', 'function saveSession(session) {');
 const saveSessionSource = slice('function saveSession(session) {', 'async function restoreSession() {');
-const recoverySource = slice("window.__ctAuthRecovery = 'v97-hotfix5';", 'const watchlistMedia');
+const recoverySource = slice("window.__ctAuthRecovery = 'v97-hotfix6-startup';", 'const media = [');
 const bootstrapSource = slice('async function bootstrap() {', 'function stats()');
 
 assert.ok(authNetworkSource.includes("const headers = { apikey: SUPABASE_KEY"), 'Auth não usa cabeçalho isolado');
@@ -214,17 +215,18 @@ function makeRuntime({ signInError = null, signInDelay = 0, cloudMode = 'hang', 
 const build = await readFile('scripts/build-web.mjs', 'utf8');
 assert.ok(!build.includes("'patch-v073-v097-fix7.js'"), 'Recovery ainda inclui FIX 7 no array de patches');
 assert.ok(!build.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')"), 'Recovery ainda instala preboot FIX 7');
-assert.ok(build.includes("window.__ctAuthRecovery = 'v97-hotfix5'"), 'Build script não marca HOTFIX 5');
+assert.ok(build.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'"), 'Build script não marca HOTFIX 6 startup');
+assert.ok(build.includes("'const media = ['"), 'Build script voltou a apagar o bloco media');
 
 const android = await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java', 'utf8');
 assert.ok(!android.includes('ct89-v097-fix7.js'), 'Android ainda injeta FIX 7');
 assert.ok(!android.includes('authrev='), 'Android ainda usa authrev artificial');
 assert.ok(!android.includes('LOAD_NO_CACHE'), 'Android ainda força LOAD_NO_CACHE');
 assert.ok(android.includes('WebSettings.LOAD_DEFAULT'), 'Android não voltou ao cache original da v97');
-assert.ok(android.includes('hotfix5/index.html'), 'Android não aponta para o bundle HOTFIX 5');
+assert.ok(android.includes('hotfix5/index.html'), 'Android não aponta para o bundle local atual');
 assert.ok(!android.includes('loadRemoteFallback'), 'Android ainda possui fallback automático para Vercel');
 assert.ok(!android.includes('fallback=remote'), 'Android ainda pode iniciar runtime remoto');
 assert.ok(!android.includes('verifyStartupOrFallback'), 'Watchdog remoto antigo ainda existe');
 assert.ok(android.includes('showEmbeddedRuntimeFailure'), 'Falha local não tem diagnóstico embutido');
 
-console.log('OK - HOTFIX 5: login abre Home antes de banco/TMDB; JWT isolado; storage, duplo toque, restore e Android sem fallback Vercel aprovados.');
+console.log('OK - HOTFIX 6 startup: login renderiza, auth/JWT preservados e Android permanece sem fallback Vercel.');
