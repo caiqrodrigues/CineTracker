@@ -70,6 +70,7 @@ jobs:
           npm run build
           node scripts/test-auth-recovery-red.mjs
           node scripts/prepare-android-hotfix2-web.mjs
+          node scripts/test-android-inline-hotfix6.mjs
           test -f apps/android/app/src/main/assets/hotfix5/index.html
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q "window.__ctAndroidBundle = 'hotfix6-startup-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
