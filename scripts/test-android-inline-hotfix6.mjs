@@ -22,10 +22,12 @@ if (!scripts.length) throw new Error('Android inline smoke: no inline scripts fo
 
 for (let i = 0; i < scripts.length; i += 1) {
   const source = scripts[i][1].replace(/<\\\/script/gi, '</script');
+  const label = scripts[i][0].match(/data-ct-inline="([^"]+)"/i)?.[1] || `base-inline-${i + 1}`;
   try {
-    new vm.Script(source, { filename: `android-inline-${i + 1}.js` });
+    new vm.Script(source, { filename: `android-inline-${i + 1}-${label}.js` });
   } catch (error) {
-    throw new Error(`Android inline smoke: script ${i + 1}/${scripts.length} has invalid JavaScript: ${error.message}`);
+    const preview = source.slice(0, 500).replace(/\s+/g, ' ');
+    throw new Error(`Android inline smoke: script ${i + 1}/${scripts.length} (${label}) has invalid JavaScript: ${error.message}\nSource preview: ${preview}`);
   }
 }
 
