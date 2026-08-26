@@ -1,141 +1,110 @@
 # 🎬 CineTracker
 
-CineTracker é um companion multiplataforma para filmes, séries e animes, pensado para substituir o acompanhamento central de serviços como Trakt, Showly, TV Time e Bingers, sem foco em rede social. A conta é única entre plataformas e concentra biblioteca, Watchlist, histórico, progresso de episódios, descoberta, recomendações, perfil, estatísticas, importação e backup.
+CineTracker é um companion multiplataforma para filmes, séries e animes. A conta é compartilhada entre Web e Android e concentra biblioteca, Watchlist, histórico, progresso de episódios, descoberta, recomendações, perfil, estatísticas, importação e backup.
 
-## Versões atuais
+## Versões atuais de código
 
-| Plataforma | Versão | Estado |
+| Sistema | Versão atual na `main` | Estado |
 |---|---:|---|
-| Web | **0.5.7** | Código final no GitHub; deploy de produção depende da Vercel |
-| Android | **0.0.83** (`versionCode 83`) | Código final + pipeline GitHub Actions; APK depende do build/release |
+| Web | **0.0.97 HOTFIX 18** | source target atual; deploy de produção deve ser confirmado separadamente |
+| Android | **0.0.97 HOTFIX 18** (`versionCode 995`) | source/build target atual; APK/Release dependem de CI e validação |
+| Backend lógico | **0.0.97 HOTFIX 18** | schema/RPCs alinhados; Edge Functions mantêm versão própria de deploy |
+| Windows | **—** | não lançado |
 
-## Produção
+Identificadores técnicos Web: pacote `0.0.97-hotfix18-documentation-governance`, cache `ct-web-0.0.97-hotfix18-documentation-governance`.
 
-Web: `https://mycinetracker.vercel.app`
+## Regra obrigatória de desenvolvimento
 
-Android: APK distribuído pelas Releases do GitHub após validação do workflow.
+A partir do HOTFIX 18, **toda nova atualização/mudança deve gerar registro no GitHub e deve estar associada a uma nova versão**. A mudança precisa sincronizar código, versionamento, `CHANGELOG.md`, `PROJECT_STATE.md`, `VERSIONS.md`, README(s), release note e registro de validação, além de arquitetura/segurança/migrations quando afetadas.
 
-## Objetivo de estabilidade
+Uma unidade lógica pode usar vários commits sob a mesma versão enquanto está sendo concluída; a próxima unidade de mudança exige novo incremento. Consulte `docs/DEVELOPMENT_RULES.md`.
 
-O ciclo principal do CineTracker deve ser:
+## Estado Bingers reconciliado
 
-`abre → dados aparecem → navega instantaneamente → marca episódio → tudo atualiza → fecha → abre → continua exatamente correto`
+A importação válida usa somente `library.csv` + `watches.csv`, preserva decisões manuais e não inventa datas. A importação direta verificada (import ID 6) consolidou:
 
-As versões Web 0.5.7 e Android 0.0.83 são uma etapa exclusivamente de arquitetura e performance. **Não alteram o layout nem as funcionalidades aprovadas nas versões anteriores.**
+- 3.078 itens de biblioteca: 2.318 filmes + 760 séries;
+- 12.696 registros de histórico: 949 filmes + 11.747 episódios;
+- 16.216 reproduções: 1.312 de filmes + 14.904 de episódios;
+- 1.309 filmes na Watchlist;
+- 533 séries não iniciadas;
+- 227 séries com histórico;
+- 0 eventos de histórico sem correspondência.
 
-## Web 0.5.7
+Repetições são preservadas em `external_ids.plays`. Ratings, avaliações, comentários e listas do Bingers não são importados.
 
-- preserva integralmente layout e comportamento da Web 0.5.6;
-- adiciona IndexedDB para snapshots locais de dados essenciais;
-- mantém em cache continuar assistindo, histórico, overrides e perfil;
-- adiciona Service Worker para cache persistente;
-- imagens TMDB usam estratégia cache-first;
-- metadados TMDB usam stale-while-revalidate;
-- capas conhecidas são pré-aquecidas silenciosamente;
-- Supabase continua sendo a fonte consolidada do estado do usuário;
-- sincronização ocorre em segundo plano sem bloquear a interface;
-- dados e imagens já conhecidos são reutilizados em vez de baixados novamente;
-- troca de abas deve reutilizar estado/cache já disponível.
+## Estados das séries
 
-## Android 0.0.83
+Após reconciliação do estado real das séries:
 
-- preserva integralmente layout e comportamento do Android 0.0.82;
-- `versionName 0.0.83` e `versionCode 83`;
-- mantém WebView nativa apontando para a experiência oficial;
-- adiciona `ct69-cache.js` como camada exclusiva de performance;
-- usa cache persistente via IndexedDB dentro do WebView;
-- mantém snapshots de continuar assistindo, histórico, overrides e perfil;
-- pré-carrega silenciosamente capas conhecidas;
-- reaproveita cache do WebView e metadados já resolvidos;
-- atualiza dados em segundo plano;
-- mantém Supabase como fonte consolidada do estado do usuário;
-- TMDB permanece como fonte externa de metadados, fora do caminho crítico sempre que houver informação válida em cache;
-- GitHub Actions valida módulos, pacote, assinatura e versão antes de publicar o APK.
+- **155 Concluídas** (`Completed`);
+- **47 Em dia** (`UpToDate`);
+- **25 Em andamento** (`InProgress`);
+- **533 Não iniciadas**;
+- **227 séries com histórico**.
 
-## Arquitetura de dados e cache
+Série importada com zero episódios vistos não pode permanecer `InProgress`. O banco possui guard/cleanup para o erro de origem do Bingers e a verificação posterior encontrou zero séries `InProgress` sem histórico.
 
-A regra desta geração é **local/cache primeiro, sincronização depois**.
+## Perfil e estatísticas
 
-```text
-                         TMDB
-                          │
-                  metadados / imagens
-                          │
-                     Supabase
-                 estado consolidado
-                    /           \
-                   /             \
-        Web 0.5.7                  Android 0.0.83
-        IndexedDB                  IndexedDB/WebView
-        Service Worker             cache WebView
-             │                           │
-             └────── UI imediata ────────┘
-```
+O Perfil usa agregações server-side para evitar contagens incorretas por paginação do cliente. As RPCs principais são `cinetracker_profile_stats`, `cinetracker_series_state_stats` e `cinetracker_consumption_daily`.
 
-### Níveis de responsabilidade
+Valores reconciliados atuais do conjunto importado incluem 14.904 episódios, 1.312 reproduções de filmes, **3 meses 20 dias 13 horas** em filmes e **16 meses 19 dias 5 horas** no total.
 
-1. **Interface:** deve renderizar usando o estado já disponível e não esperar uma nova chamada TMDB para desenhar um card conhecido.
-2. **Cache local:** guarda snapshots e recursos necessários para reabertura e navegação rápidas.
-3. **Supabase:** mantém o estado persistente e compartilhado da conta entre Web e Android.
-4. **TMDB:** fornece capas, nomes, notas e demais metadados; dados já resolvidos devem ser reutilizados e atualizados em segundo plano.
+O Perfil separa `Concluídas`, `Em andamento`, `Em dia` e `Não iniciadas`, e o gráfico diário soma reproduções (`plays`).
 
-## Capas e metadados TMDB
+## Importador resiliente
 
-Uma capa conhecida não deve ser procurada novamente a cada troca de aba. O sistema mantém `poster_path`/URLs já resolvidos e reutiliza o cache disponível. Falhas temporárias de rede ou TMDB não devem apagar uma informação válida já armazenada.
+A Edge Function `ct-import-bingers-user` está no deploy **v8** e preserva o stack HOTFIX16: autenticação no backend, erros tipados, `client_run_id`, cursor/replay idempotente, validação, dedupe, limpeza escopada ao Bingers, precedência manual e verificação exata antes de concluir.
 
-A mesma regra vale para nomes, notas e metadados: a interface usa a última informação válida e a atualização ocorre de forma assíncrona.
+A falha histórica PostgREST `All object keys must match` foi corrigida tornando o shape de `watch_history` homogêneo; filmes incluem `season_number: null` e `episode_number: null`.
 
-## Sincronização
+## Web
 
-Watchlist, histórico, progresso, favoritos e decisões manuais pertencem à conta e devem permanecer coerentes entre Web e Android. Alterações feitas pelo usuário devem refletir imediatamente na interface e ser persistidas no backend sem exigir reconstrução completa da tela.
+O runtime Web atual preserva o núcleo estável v95, recuperação de sessão, navegação global, importação Bingers HOTFIX15/16 e Perfil HOTFIX17, com identidade HOTFIX18. O Service Worker não cacheia o shell HTML e mantém cache de imagens/metadados TMDB.
 
-Estados manuais do usuário têm prioridade sobre inferências automáticas e não devem ser apagados por nova importação ou atualização de metadados.
+Produção conhecida: `https://mycinetracker.vercel.app`. A versão servida em produção só deve ser declarada após confirmação do deploy.
 
-## Perfil e histórico
+## Android
 
-O Perfil mantém números principais, gráfico diário, estatísticas extras e histórico. O gráfico apresenta episódios vistos por dia e permite consultar a atividade do dia. O Histórico utiliza capa da mídia e, para séries, também identifica o episódio correspondente.
+Android usa `Activity + WebView` com runtime Web embarcado/inline, sem depender de fallback remoto para o bundle principal. HOTFIX18 usa:
 
-## Descobrir
+- `applicationId`: `com.cinetracker.app`;
+- `versionName`: `0.0.97 HOTFIX 18`;
+- `versionCode`: `995`;
+- bundle: `hotfix18-documentation-governance-v95-core-inline-authoritative`.
 
-Conteúdo apresentado como novidade deve excluir títulos já vistos, acompanhados ou presentes na Watchlist/estados incompatíveis. Recomendações e sugestões devem respeitar o histórico para reduzir repetição.
+Build, assinatura, artifact, GitHub Release e teste em aparelho são etapas independentes; não são consideradas concluídas apenas porque o source está na `main`.
 
-## Build e validação
+## Backend e migrations recentes
 
-### Web
+Migrations relevantes desta linha:
 
-`npm run verify`
+- `20260826130000_hotfix13_profile_stats_plays.sql`;
+- `20260826211500_bingers_authoritative_profile_stats.sql`;
+- `20260826212500_profile_consumption_daily_rpc.sql`;
+- `20260826213500_bingers_series_state_hardening.sql`;
+- `20260826214500_profile_active_series_metric.sql`;
+- `20260826215500_bingers_completion_requires_metadata.sql`.
 
-`npm run build`
+## Débitos conhecidos
 
-O build executa validações antes de gerar `dist` e inclui os módulos de cache e Service Worker da 0.5.7.
+- IDs TMDB substitutos negativos ainda podem gerar 404 se forem enviados ao `tmdb-proxy`; o cliente deve impedir consultas para surrogate IDs ou o modelo de IDs deve ser separado.
+- Advisories de segurança Supabase permanecem abertos para algumas funções `SECURITY DEFINER` e para proteção de senha vazada desativada.
+- RLS/policies de estruturas históricas de staging precisam ser tratados com política correta, sem ativação cega que quebre o fluxo.
 
-### Android
+## Documentação canônica
 
-O workflow `.github/workflows/build-android.yml`:
-
-1. valida os módulos JavaScript usados pelo aplicativo;
-2. configura Java/Gradle e a chave de assinatura dedicada;
-3. compila o APK;
-4. verifica assinatura, package `com.cinetracker.app` e versão `0.0.83`;
-5. envia o artifact;
-6. publica/atualiza a Release `android-v0.0.83`;
-7. marca `Android Build` como sucesso ou falha.
+- `PROJECT_STATE.md` — estado técnico atual e continuidade.
+- `VERSIONS.md` — matriz de versões e regras de incremento.
+- `CHANGELOG.md` — histórico de mudanças.
+- `docs/DEVELOPMENT_RULES.md` — regra obrigatória de registro/versionamento.
+- `docs/ARCHITECTURE.md` — arquitetura atual.
+- `docs/SECURITY.md` — segurança e débitos abertos.
+- `docs/releases/0.0.97-HOTFIX18.md` — release atual.
+- `docs/validation/0.0.97-HOTFIX18.md` — matriz de validação.
+- `docs/notes/2026-08-26-bingers-import-reconciliation.md` — cronologia técnica da reconciliação Bingers.
 
 ## Regra de publicação
 
-Uma versão não é considerada concluída apenas porque o código chegou à `main`.
-
-Para Web: código + validação + build + deploy de produção confirmado.
-
-Para Android: código + validação + build + APK válido + Release publicada.
-
-Código-fonte, documentação, versionamento e pipeline devem permanecer sincronizados.
-
-## Documentação
-
-- `docs/ARCHITECTURE.md` — arquitetura e responsabilidades das camadas.
-- `docs/SECURITY.md` — princípios de segurança.
-- `docs/releases/0.5.7.md` — release Web atual.
-- `docs/releases/0.0.83.md` — release Android atual.
-- `docs/validation/` — registros e materiais de validação.
-- `docs/notes/` — notas técnicas e históricas.
+Código em `main` não equivale automaticamente a produção. Para Web, publicação exige build e deploy confirmados. Para Android, exige build, APK válido, assinatura, artifact/Release e, quando declarado como testado, instalação real em dispositivo.
