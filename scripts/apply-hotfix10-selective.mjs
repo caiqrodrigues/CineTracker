@@ -26,7 +26,7 @@ for(const target of targets){
   html=html.replace(/<script src="\/patch-v081-hotfix12-nav-pre\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v084-hotfix14-real-device\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v086-hotfix15-import-retry\.js"><\/script>/g,'');
-  // HOTFIX17 must be the final runtime layer. Remove the build-web copy before reinjecting it last.
+  // HOTFIX18 must be the final runtime layer. Remove the build-web copy before reinjecting it last.
   const profileTag=`<script src="/${profileName}"></script>`;
   html=html.split(profileTag).join('');
   for(const name of names){
@@ -41,9 +41,9 @@ for(const target of targets){
   const semanticsIndex=html.indexOf('patch-v083-hotfix13-bingers-semantics.js');
   const resilienceIndex=html.indexOf('patch-v087-hotfix16-import-resilience.js');
   const profileIndex=html.indexOf(profileName);
-  if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||resilienceIndex<0||profileIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex||resilienceIndex<semanticsIndex||profileIndex<resilienceIndex)throw new Error(`HOTFIX17: runtime patch order invalid: ${indexPath}`);
+  if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||resilienceIndex<0||profileIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex||resilienceIndex<semanticsIndex||profileIndex<resilienceIndex)throw new Error(`HOTFIX18: runtime patch order invalid: ${indexPath}`);
   if(html.includes('patch-v086-'+'hotfix15-import-retry.js'))throw new Error(`HOTFIX16: legacy retry layer still active: ${indexPath}`);
   await writeFile(indexPath,html,'utf8');
 }
 
-console.log('HOTFIX17 series status: HOTFIX16 resilient import stack retained; profile classification layer emitted last.');
+console.log('HOTFIX18 governance: HOTFIX16 resilient import stack and HOTFIX17 series-state profile retained; current version layer emitted last.');
