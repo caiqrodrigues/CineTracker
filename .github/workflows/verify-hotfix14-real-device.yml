@@ -1,4 +1,4 @@
-name: Verify HOTFIX14 Real Device
+name: Verify HOTFIX15 Import Transport
 
 on:
   push:
@@ -9,11 +9,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: hotfix14-real-device-${{ github.ref }}
+  group: hotfix15-import-transport-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  real_device_recovery:
+  import_transport_recovery:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,9 +34,11 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Prove reported physical-device regressions are structurally fixed
-        run: node scripts/test-hotfix14-real-device.mjs
-      - name: Build HOTFIX14 Web runtime
+      - name: Lock HOTFIX15 transport fixes
+        run: node scripts/test-hotfix15-import-transport.mjs
+      - name: Prove deployed import CORS preflight
+        run: node scripts/test-hotfix15-live-cors.mjs
+      - name: Build HOTFIX15 Web runtime
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
@@ -53,50 +55,55 @@ jobs:
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Web five-tab real click navigation
         run: node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Web desktop tabs mobile picker import and sync
+      - name: Web dual CSV import confirm and cloud sync
         run: node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+      - name: Web mocked Android bridge picker
+        run: node scripts/test-real-browser-hotfix15-native-picker.mjs
       - name: Prepare exact embedded Android runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
       - name: Embedded Android five-tab navigation
         run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Embedded Android tabs picker import and sync
+      - name: Embedded Android dual CSV import confirm and sync
         run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
-      - name: Assert HOTFIX14 runtime identity
+      - name: Embedded Android mocked native picker
+        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix15-native-picker.mjs
+      - name: Assert HOTFIX15 runtime identity
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'patch-v084-hotfix14-real-device.js' dist/index.html
+          grep -q 'patch-v085-hotfix15-import-transport.js' dist/index.html
+          ! grep -q 'patch-v084-hotfix14-real-device.js' dist/index.html
           ! grep -q 'patch-v081-hotfix12-nav-pre.js' dist/index.html
-          grep -q '__ctHotfix14RealDevice' dist/patch-v084-hotfix14-real-device.js
-          grep -q 'ct-web-0.0.97-hotfix14-real-device' dist/service-worker.js
-          grep -q "window.__ctAndroidBundle = 'hotfix14-real-device-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'data-ct-inline="patch-v084-hotfix14-real-device.js"' apps/android/app/src/main/assets/hotfix5/index.html
-          ! grep -q 'data-ct-inline="patch-v081-hotfix12-nav-pre.js"' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix15ImportTransport' dist/patch-v085-hotfix15-import-transport.js
+          grep -q 'ct-web-0.0.97-hotfix15-import-transport' dist/service-worker.js
+          grep -q "window.__ctAndroidBundle = 'hotfix15-import-transport-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'data-ct-inline="patch-v085-hotfix15-import-transport.js"' apps/android/app/src/main/assets/hotfix5/index.html
+          ! grep -q 'data-ct-inline="patch-v084-hotfix14-real-device.js"' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'versionCode 992' apps/android/app/build.gradle
-          grep -q "versionName '0.0.97 HOTFIX 14'" apps/android/app/build.gradle
+          grep -q 'versionCode 993' apps/android/app/build.gradle
+          grep -q "versionName '0.0.97 HOTFIX 15'" apps/android/app/build.gradle
       - name: Build signed Android validation APK
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
-      - name: Verify APK identity signature and embedded HOTFIX14
+      - name: Verify APK identity signature and embedded HOTFIX15
         shell: bash
         run: |
           set -euo pipefail
           APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ctHotfix14RealDevice'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'ct14RestoreNativeFiles'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ctHotfix15ImportTransport'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'ct15RestoreNativeFiles'
           "$APKSIGNER" verify --print-certs "$APK"
           BADGING="$($AAPT dump badging "$APK" | head -1)"
           echo "$BADGING" | grep -q "package: name='com.cinetracker.app'"
-          echo "$BADGING" | grep -q "versionCode='992'"
-          echo "$BADGING" | grep -q "versionName='0.0.97 HOTFIX 14'"
+          echo "$BADGING" | grep -q "versionCode='993'"
+          echo "$BADGING" | grep -q "versionName='0.0.97 HOTFIX 15'"
           sha256sum "$APK"
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-hotfix14-real-device-validation
+          name: cinetracker-hotfix15-import-transport-validation
           path: apps/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
