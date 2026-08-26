@@ -1,0 +1,118 @@
+name: Build Android HOTFIX 17
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci-status/android-hotfix17-trigger.txt'
+
+permissions:
+  contents: write
+  statuses: write
+
+concurrency:
+  group: cinetracker-android-hotfix17-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android_hotfix17:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mark HOTFIX 17 build pending
+        env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
+        shell: bash
+        run: |
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"pending","context":"Android HOTFIX 17","description":"Building CineTracker Android 0.0.97 HOTFIX 17"}'
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore dedicated CineTracker signing key
+        uses: actions/cache@v4
+        with: { path: ~/.cinetracker/cinetracker.keystore, key: cinetracker-signing-v2 }
+      - name: Initialize dedicated signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build and verify Web runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
+          node scripts/test-hotfix13-bingers-semantics.mjs
+          node scripts/test-auth-recovery-red.mjs
+          node scripts/test-hotfix10-native-bridge.mjs
+          grep -q '__ctProfileStatsHotfix17' dist/patch-v074-hotfix1-version.js
+          grep -q 'cinetracker_series_state_stats' dist/patch-v074-hotfix1-version.js
+          grep -q 'UpToDate' dist/patch-v074-hotfix1-version.js
+          grep -q 'Não iniciadas' dist/patch-v074-hotfix1-version.js
+      - name: Prepare exact embedded Android runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/prepare-android-hotfix2-web.mjs
+          grep -q "window.__ctAndroidBundle = 'hotfix17-series-status-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctProfileStatsHotfix17' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'cinetracker_series_state_stats' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'UpToDate' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'Não iniciadas' apps/android/app/src/main/assets/hotfix5/index.html
+      - name: Build debug HOTFIX 17 APK
+        working-directory: apps/android
+        shell: bash
+        run: gradle assembleDebug --stacktrace
+      - name: Verify HOTFIX 17 APK identity and embedded runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="cinetracker-android-0.0.97-HOTFIX17-debug.apk"
+          cp "$APK" "$OUT"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          unzip -l "$OUT" | grep -q 'assets/hotfix5/index.html'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'hotfix17-series-status-v95-core-inline-authoritative'"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ctProfileStatsHotfix17'
+          PACKAGE="$($AAPT dump badging "$OUT" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION_CODE="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
+          test "$PACKAGE" = "com.cinetracker.app"
+          test "$VERSION" = "0.0.97 HOTFIX 17"
+          test "$VERSION_CODE" = "994"
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee hotfix17-sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.0.97-HOTFIX17-debug
+          path: |
+            cinetracker-android-0.0.97-HOTFIX17-debug.apk
+            hotfix17-sha256.txt
+          if-no-files-found: error
+      - name: Publish Android 0.0.97 HOTFIX 17 release
+        if: github.ref == 'refs/heads/main'
+        env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view android-v0.0.97-hotfix17 >/dev/null 2>&1 || gh release create android-v0.0.97-hotfix17 --title "CineTracker Android 0.0.97 HOTFIX 17" --notes-file docs/releases/0.0.97-HOTFIX17.md
+          gh release edit android-v0.0.97-hotfix17 --title "CineTracker Android 0.0.97 HOTFIX 17" --notes-file docs/releases/0.0.97-HOTFIX17.md
+          gh release upload android-v0.0.97-hotfix17 cinetracker-android-0.0.97-HOTFIX17-debug.apk hotfix17-sha256.txt --clobber
+      - name: Mark HOTFIX 17 build success
+        if: success()
+        env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
+        shell: bash
+        run: |
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android HOTFIX 17","description":"0.0.97 HOTFIX 17 series status build published"}'
+      - name: Mark HOTFIX 17 build failure
+        if: failure()
+        env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
+        shell: bash
+        run: |
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android HOTFIX 17","description":"0.0.97 HOTFIX 17 build failed"}'
