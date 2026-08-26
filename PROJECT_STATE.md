@@ -5,8 +5,8 @@
 **Última atualização:** 2026-08-26  
 **Branch principal:** `main`  
 **Release lógica atual:** `0.0.97 HOTFIX 18`  
-**Web source:** `0.0.97 HOTFIX 18`  
-**Android source:** `0.0.97 HOTFIX 18` (`versionCode 995`)  
+**Web atual:** `0.0.97 HOTFIX 18` — build/Verify concluídos e status Vercel `success`  
+**Android atual:** `0.0.97 HOTFIX 18` (`versionCode 995`) — Release/APK publicados; teste em aparelho real pendente  
 **Backend lógico:** `0.0.97 HOTFIX 18`  
 **Windows:** não lançado
 
@@ -92,7 +92,7 @@ O gráfico diário usa `cinetracker_consumption_daily` e soma `plays`.
 
 ## 6. Web HOTFIX18
 
-Identidade atual de source:
+Identidade atual:
 
 - display: `0.0.97 HOTFIX 18`;
 - package: `0.0.97-hotfix18-documentation-governance`;
@@ -107,7 +107,12 @@ Runtime preservado:
 - HOTFIX17 Perfil/classificação;
 - camada HOTFIX18 final para identidade/versionamento.
 
-Deploy Web de produção deve ser confirmado separadamente; código em `main` não significa deploy concluído.
+Validação/publicação comprovada:
+
+- workflow geral `Verify` atualizado para HOTFIX18 e concluído com sucesso no run `33016322725`;
+- build Web HOTFIX18 também passou no pipeline Android dedicado;
+- status Vercel do commit HOTFIX18 confirmado como `success`;
+- smoke autenticado manual em produção permanece pendente.
 
 ## 7. Android HOTFIX18
 
@@ -118,9 +123,24 @@ Deploy Web de produção deve ser confirmado separadamente; código em `main` n�
 - arquitetura: Activity + WebView, bundle local inline;
 - mantém picker/importação nativa e stack Web validado antes do empacotamento.
 
-Estado de build/publicação deve ser consultado no workflow HOTFIX18; não presumir APK/Release até confirmação.
+Publicação comprovada no run `33016118908`:
 
-## 8. Migrations recentes
+- build APK: sucesso;
+- identidade via `aapt`: sucesso;
+- assinatura via `apksigner`: sucesso;
+- artifact `cinetracker-android-0.0.97-HOTFIX18-debug`, id `9624582547`;
+- GitHub Release `android-v0.0.97-hotfix18` publicada;
+- asset `cinetracker-android-0.0.97-HOTFIX18-debug.apk` publicado;
+- SHA-256: `9a9801c69be9f66142c98a43ba084c262dc19a3b00cc15db5e379b6f8f05035f`;
+- teste em dispositivo real: pendente.
+
+## 8. CI geral
+
+O antigo workflow geral ainda estava travado em invariantes HOTFIX15 e esperava a camada `patch-v086-hotfix15-import-retry.js`, que foi removida pelo HOTFIX16. O workflow `Verify` foi atualizado para validar o stack real HOTFIX15 transport + HOTFIX16 resilience + HOTFIX17 profile + HOTFIX18 identity.
+
+O smoke de scripts inline Android também foi atualizado do marker HOTFIX15 para HOTFIX18. O run geral `33016322725` concluiu todos os passos com sucesso.
+
+## 9. Migrations recentes
 
 - `20260826130000_hotfix13_profile_stats_plays.sql`;
 - `20260826211500_bingers_authoritative_profile_stats.sql`;
@@ -129,7 +149,7 @@ Estado de build/publicação deve ser consultado no workflow HOTFIX18; não pres
 - `20260826214500_profile_active_series_metric.sql`;
 - `20260826215500_bingers_completion_requires_metadata.sql`.
 
-## 9. Edge Functions relevantes
+## 10. Edge Functions relevantes
 
 - `ct-import-bingers-user`: v8;
 - `tmdb-proxy`: v3;
@@ -138,7 +158,7 @@ Estado de build/publicação deve ser consultado no workflow HOTFIX18; não pres
 
 Esses números são versões de deploy das funções e não substituem a release lógica `0.0.97 HOTFIX 18`.
 
-## 10. Débitos conhecidos
+## 11. Débitos conhecidos
 
 ### Identificação TMDB
 
@@ -148,7 +168,12 @@ Mídias sem TMDB real podem possuir surrogate IDs negativos. O `tmdb-proxy` não
 
 Há advisories abertos para algumas funções `SECURITY DEFINER` executáveis por papéis amplos, além de leaked-password protection desativada. Estruturas de staging históricas devem ser revisadas quanto a RLS/policies sem habilitação cega.
 
-## 11. Documentos canônicos
+### Testes manuais pendentes
+
+- smoke autenticado Web em produção;
+- instalação e teste funcional do APK HOTFIX18 em aparelho Android real.
+
+## 12. Documentos canônicos
 
 - `README.md`;
 - `VERSIONS.md`;
@@ -161,8 +186,8 @@ Há advisories abertos para algumas funções `SECURITY DEFINER` executáveis po
 - `docs/validation/0.0.97-HOTFIX18.md`;
 - `docs/notes/2026-08-26-bingers-import-reconciliation.md`.
 
-## 12. Critério de conclusão
+## 13. Critério de conclusão
 
-Web: source + verify/build + deploy confirmado.  
-Android: source + verify/build + identidade do APK + assinatura + artifact/Release; teste em aparelho somente quando realmente executado.  
+Web: source + verify/build + deploy confirmado; smoke autenticado é validação adicional e está pendente.  
+Android: source + verify/build + identidade do APK + assinatura + artifact/Release estão concluídos; teste em aparelho real somente quando realmente executado.  
 Backend: migration/function source versionados + aplicação/estado ativo verificados.
