@@ -1,61 +1,59 @@
-# CineTracker Android — 0.0.98
+# CineTracker Android — 0.0.99
 
 App Android nativo leve baseado em `Activity + WebView`, com runtime CineTracker Web embarcado e inlined no APK.
 
 ## Identidade
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.0.98`;
-- `versionCode`: `996`;
-- bundle: `v0.0.98-profile-history-backup-discover-v95-core-inline-authoritative`.
+- `versionName`: `0.0.99`;
+- `versionCode`: `997`;
+- bundle alvo: `v0.0.99-profile-lru-v95-core-inline-authoritative`.
 
-## Navegação
+## Perfil
 
-A barra inferior nativa apresenta **Home, Descobrir, Perfil e Configurações**. A aba Histórico deixou de ser destino visível e seu conteúdo foi integrado ao Perfil. O runtime 0.0.98 também redireciona chamadas legadas de `history` para Perfil.
+Android usa a mesma implementação Web 0.0.99 embarcada no APK. Abaixo das estatísticas do Perfil são exibidos quatro carrosséis:
 
-O bridge nativo ainda chama a entrada legada `ct15Navigate`; `patch-v090-v098-compat.js` substitui essa entrada no runtime final e encaminha para `ct98Navigate`, mantendo compatibilidade sem reintroduzir a navegação antiga.
+1. Séries;
+2. Séries favoritas;
+3. Filmes;
+4. Filmes favoritos.
 
-## Perfil e Histórico
+Cards usam pôster 2:3, título, progresso, badge de favorito e última atividade. A ordenação segue `last_watched_at DESC`.
 
-Perfil segue a mesma ordem da Web:
+Cabeçalhos abrem as visões completas:
 
-1. estatísticas compactas;
-2. gráfico moderno de atividade;
-3. estatísticas extras;
-4. Histórico com carrossel de séries acima e filmes abaixo.
+- Séries: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia e Concluídas;
+- Filmes: Assistir a seguir / Watchlist e Já vistos;
+- Favoritos: grids completos responsivos de 2/3 colunas.
 
-## Descobrir
+O estado é reconsultado após alterações de histórico/progresso/favoritos e ao retornar ao app.
 
-A ordem e filtros são idênticos à Web: Pra você, Em alta, Mais aguardados, Mais bem avaliados e Calendário; as quatro últimas seções possuem Todos/Filmes/Séries e Mais bem avaliados é decrescente por nota.
+## Navegação e recursos preservados
 
-## Backup e manutenção
-
-Configurações mostra somente **Exportar** e **Importar** para Backup & Restauração. O ZIP contém CSVs completos da conta sincronizada. O Android usa a interface nativa `exportBackup` para salvar o arquivo via seletor do sistema e o WebView/FileChooser para selecionar o ZIP de restauração.
-
-Limpar Cache e Atualizar Metadados usam a mesma implementação 0.0.98 da Web. Metadados externos são consultados somente para `tmdb_id > 0`.
+A barra nativa continua com Home, Descobrir, Perfil e Configurações; Histórico não é aba independente. Descobrir, backup ZIP/CSV, picker nativo, Limpar Cache, Atualizar Metadados e importação Bingers permanecem preservados da 0.0.98.
 
 ## Runtime local
 
-`scripts/prepare-android-hotfix2-web.mjs` gera o runtime embarcado em `apps/android/app/src/main/assets/hotfix5`, transforma scripts em inline e valida a ordem autoritativa da pilha. O app não depende de fallback remoto para iniciar o bundle principal.
+`scripts/prepare-android-hotfix2-web.mjs` copia o build Web para os assets Android, transforma scripts em inline e exige a presença final de `patch-v091-v099-profile-lru.js` e `CineTracker • v0.0.99`.
 
 ## Build e publicação
 
-Pipeline dedicado: `.github/workflows/build-android-v098.yml`.
+Pipeline dedicado: `.github/workflows/build-android-v099.yml`.
 
-Saídas previstas e verificadas pelo pipeline quando acionado:
+Saídas alvo:
 
-- APK `cinetracker-android-0.0.98-debug.apk`;
-- artifact `cinetracker-android-0.0.98-debug`;
-- tag/release `android-v0.0.98`;
-- validação de `applicationId`, `versionName` e `versionCode` por `aapt`;
-- validação de assinatura por `apksigner`;
-- SHA-256 publicado ao lado do APK.
+- `cinetracker-android-0.0.99-debug.apk`;
+- artifact `cinetracker-android-0.0.99-debug`;
+- Release/tag `android-v0.0.99`;
+- validação `aapt` de package/versionName/versionCode;
+- `apksigner`;
+- SHA-256 ao lado do APK.
 
-O estado executado do pipeline e da publicação é registrado em `docs/validation/0.0.98.md` e não é presumido somente pelo source.
+Build/publicação e teste em aparelho real são estados distintos. O estado executado fica em `docs/validation/0.0.99.md`.
 
 ## Rodapé
 
-O runtime embarcado exibe **`CineTracker • v0.0.98`**.
+**`CineTracker • v0.0.99`**.
 
-Release: `docs/releases/0.0.98.md`.  
-Validação: `docs/validation/0.0.98.md`.
+Release: `docs/releases/0.0.99.md`.  
+Validação: `docs/validation/0.0.99.md`.
