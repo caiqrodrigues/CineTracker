@@ -1,40 +1,66 @@
-# CineTracker — Versionamento por plataforma
+# CineTracker — Versionamento por sistema
 
-As versões do CineTracker são independentes por plataforma.
+**Atualizado em:** 2026-08-26
 
-| Plataforma | Versão oficial atual |
-|---|---:|
-| Web | **0.5.3** |
-| Android | **0.0.81** |
-| Windows | **—** |
+## Matriz atual
 
-## Regra
+| Sistema | Versão de código / release lógica | Versão técnica adicional | Estado |
+|---|---:|---|---|
+| Web | **0.0.97 HOTFIX 18** | package `0.0.97-hotfix18-documentation-governance` | source atual na `main`; produção requer confirmação de deploy |
+| Android | **0.0.97 HOTFIX 18** | `versionCode 995` | source/build target atual; publicação exige APK/Release válidos |
+| Backend / Supabase | **0.0.97 HOTFIX 18** | `ct-import-bingers-user` deploy v8 | schema/RPCs ativos; Edge Functions têm numeração própria |
+| Windows | **—** | — | não lançado |
 
-- Mudança somente no Web → incrementa apenas Web.
-- Mudança somente no Android → incrementa apenas Android.
-- Mudança compartilhada que afete Web e Android → cada plataforma afetada recebe seu próprio incremento.
-- Uma versão Android só é considerada concluída quando código, documentação, workflow, Release e APK estiverem publicados.
-- Compilação bem-sucedida não equivale a validação visual/funcional; a validação exige instalação e teste real.
-- `applicationId` permanece `com.cinetracker.app` e `versionCode` é sempre crescente.
-- Toda nova versão Web e Android deve atualizar a versão exibida no rodapé de Configurações.
+## Edge Functions relevantes
 
-## Linha Web
+Os números abaixo são números de deploy do Supabase, não substituem a versão da release do CineTracker:
 
-- **0.1.x–0.4.8** — evolução da aplicação Web.
-- **0.4.9** — pré-carregamento, paridade de Descobrir/Perfil e progresso global de séries.
-- **0.5.0** — navegação e versão.
-- **0.5.1** — coordenador de lifecycle.
-- **0.5.2** — tentativa de consolidar navegação, episódios e capas.
-- **0.5.3** — remove os controladores 0.5.1/0.5.2 que mantinham observers concorrentes, torna o progresso idempotente, elimina Configurações duplicada, restaura navegação de todas as abas, insere sempre o rodapé oficial `CineTracker Web • versão 0.5.3` em Configurações e reinicia a resolução de capas sem loop.
+- `ct-import-bingers-user`: **v8**;
+- `tmdb-proxy`: **v3**;
+- `cinetracker-web`: **v3**;
+- `tmdb-image`: **v2**.
 
-## Linha Android
+## Regra obrigatória a partir do HOTFIX18
 
-- **0.0.1–0.0.71** — base e evolução funcional.
-- **0.0.72–0.0.73** — versões descartadas e não usadas como base oficial.
-- **0.0.74–0.0.79** — ciclo de estabilização e consolidação progressiva.
-- **0.0.80** — runtime reduzido aos módulos ativos e lifecycle consolidado.
-- **0.0.81** — corrige duplicação/loop de progresso, episódios com nota + Assistido + detalhe e reboot global de capas com fallback TMDB.
+Toda nova unidade lógica de mudança deve receber incremento de versão e registro completo no GitHub. A unidade pode possuir vários commits enquanto está sendo concluída, todos sob a mesma versão. Depois de encerrada, a próxima mudança exige nova versão.
 
-## Documentação por release
+Arquivos que devem acompanhar a mudança, conforme aplicável:
 
-Release Android atual: `docs/releases/0.0.81.md`.
+- `package.json` e versão exibida Web;
+- namespace de cache/Service Worker;
+- Android `versionName` + `versionCode`;
+- bundle Android e workflow/release;
+- `README.md` e README da plataforma;
+- `CHANGELOG.md`;
+- `PROJECT_STATE.md`;
+- `VERSIONS.md`;
+- `docs/releases/<versão>.md`;
+- `docs/validation/<versão>.md`;
+- arquitetura, segurança e migrations quando afetadas.
+
+Detalhes normativos: `docs/DEVELOPMENT_RULES.md`.
+
+## Regras permanentes
+
+- `applicationId` Android permanece `com.cinetracker.app`.
+- `versionCode` Android deve ser sempre crescente.
+- Mudança compartilhada Web/Android deve atualizar os dois targets.
+- Mudança somente de backend ainda deve ser associada à próxima release lógica e registrada em migration/código da função correspondente.
+- Uma versão Android não é considerada publicada sem build, APK válido, assinatura e Release.
+- Uma versão Web não é considerada em produção sem deploy confirmado.
+- Teste automatizado não equivale a teste visual/funcional em aparelho real.
+- Não marcar como validado o que não foi executado.
+
+## Linha recente
+
+- **0.0.97 HOTFIX 13** — semântica Bingers e estatísticas por `plays`.
+- **0.0.97 HOTFIX 14** — tentativas de compatibilidade em dispositivo real.
+- **0.0.97 HOTFIX 15** — transporte/picker de importação e shape homogêneo de `watch_history`.
+- **0.0.97 HOTFIX 16** — pipeline de importação resiliente, idempotente e verificável; Edge Function Bingers v8.
+- **0.0.97 HOTFIX 17** — Perfil server-side e classificação de séries em Concluídas / Em andamento / Em dia / Não iniciadas.
+- **0.0.97 HOTFIX 18** — consolidação documental, governança obrigatória, sincronização integral de versionamento e preservação das correções HOTFIX15–17.
+
+## Release atual
+
+- Release note: `docs/releases/0.0.97-HOTFIX18.md`.
+- Validação: `docs/validation/0.0.97-HOTFIX18.md`.
