@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 990
-        versionName '0.0.97 HOTFIX 12'
+        versionCode 991
+        versionName '0.0.97 HOTFIX 13'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-0.0.97-hotfix12-nav-mobile-import
+// release: android-0.0.97-hotfix13-bingers-semantics
