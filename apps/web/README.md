@@ -36,16 +36,25 @@ Estado reconciliado: 155 Concluídas, 47 Em dia, 25 Em andamento, 533 Não inici
 
 O Service Worker cacheia imagens/metadados TMDB e não cacheia o shell HTML. O namespace é rotacionado a cada release relevante para reduzir risco de runtime obsoleto.
 
-## Build
+## Build e CI
 
 Comando principal: `npm run build`. O verificador testa também presença das camadas HOTFIX15–18, semântica Bingers, identidade Android e documentação de governança.
 
+Evidência HOTFIX18:
+
+- workflow geral `Verify`, run `33016322725`: **success**;
+- build Web dentro do pipeline Android HOTFIX18: **success**;
+- status Vercel do commit HOTFIX18: **success**.
+
 ## Publicação
 
-Source em `main` não equivale automaticamente a produção. O deploy do endereço `https://mycinetracker.vercel.app` deve ser confirmado antes de declarar HOTFIX18 publicado.
+Produção conhecida: `https://mycinetracker.vercel.app`.
+
+O deploy HOTFIX18 foi confirmado pelo status Vercel como `success`. Ainda não foi marcado como concluído o smoke autenticado manual na aplicação em produção; esse teste permanece separado do build/deploy automatizado.
 
 ## Regra obrigatória
 
 Toda próxima mudança Web deve incrementar versão da unidade lógica e atualizar documentação/release/validação conforme `docs/DEVELOPMENT_RULES.md`.
 
-Release atual: `docs/releases/0.0.97-HOTFIX18.md`.
+Release atual: `docs/releases/0.0.97-HOTFIX18.md`.  
+Validação atual: `docs/validation/0.0.97-HOTFIX18.md`.
