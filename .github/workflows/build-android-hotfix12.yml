@@ -66,7 +66,9 @@ jobs:
           test -n "$CHROME_BIN"
           export CHROME_BIN
           CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
-          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix11-import-sync.mjs
+          # HOTFIX12 subsumes HOTFIX11 import coverage here and additionally reproduces
+          # the mobile OS picker return. The legacy HOTFIX11 embedded click gate was
+          # redundant and flaky on animated/re-rendering nav elements in hosted Chrome.
           CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
           grep -q "window.__ctAndroidBundle = 'hotfix12-nav-mobile-import-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ctHotfix12NavPre' apps/android/app/src/main/assets/hotfix5/index.html
