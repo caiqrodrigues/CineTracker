@@ -1,60 +1,61 @@
-# CineTracker Web — 0.0.97 HOTFIX 18
+# CineTracker Web — 0.0.98
 
-**Package:** `0.0.97-hotfix18-documentation-governance`  
-**Cache:** `ct-web-0.0.97-hotfix18-documentation-governance`
+**Package:** `0.0.98`  
+**Cache:** `ct-web-0.0.98`
 
-A Web compartilha conta, biblioteca, histórico, progresso, Watchlist, Perfil e importações com Android por meio do Supabase.
+A Web compartilha conta, biblioteca, progresso, Perfil, descoberta, configurações, backup e histórico persistente com o Android por meio do Supabase.
 
-## Runtime atual
+## Navegação
 
-O build preserva o núcleo estável v95, remove o overlay v97 instável e injeta em ordem controlada as camadas ativas de navegação, importação, picker, semântica Bingers, resiliência e Perfil.
+A navegação visível 0.0.98 possui quatro abas: **Home, Descobrir, Perfil e Configurações**. A aba dedicada Histórico foi removida; qualquer rota legada `history` é direcionada para Perfil.
 
-Camadas críticas:
+A pilha final usa:
 
-- HOTFIX15: transporte/navegação de importação;
-- HOTFIX16: importação resiliente com refresh de sessão, retry seguro, cursor e `client_run_id`;
-- HOTFIX17: Perfil server-side e estados Concluídas / Em andamento / Em dia / Não iniciadas;
-- HOTFIX18: identidade de versão, cache e governança documental.
-
-## Bingers
-
-O fluxo usa somente `library.csv` e `watches.csv`. Ratings, comentários, avaliações e listas são ignorados. Estados manuais têm precedência, plays repetidos são preservados e datas não são inventadas.
-
-Import reconciliado de referência: 3.078 itens de biblioteca, 12.696 watch records e 16.216 reproduções.
+- `patch-v088-v098-nav-pre.js` — gate de clique antes das camadas legadas;
+- stack estável v95 + HOTFIX15/16 para recursos preservados;
+- `patch-v089-v098.js` — UI/fluxos 0.0.98;
+- `patch-v090-v098-compat.js` — compatibilidade da navegação legada/Android com `ct98Navigate`.
 
 ## Perfil
 
-O Perfil usa RPCs server-side:
+Ordem obrigatória:
 
-- `cinetracker_profile_stats`;
-- `cinetracker_series_state_stats`;
-- `cinetracker_consumption_daily`.
+1. estatísticas principais compactas;
+2. gráfico tecnológico de atividade em SVG;
+3. estatísticas extras;
+4. Histórico integrado.
 
-Estado reconciliado: 155 Concluídas, 47 Em dia, 25 Em andamento, 533 Não iniciadas e 227 séries com histórico.
+O Histórico usa `cinetracker_profile_history_media` e apresenta dois carrosséis: Séries assistidas acima e Filmes assistidos abaixo.
 
-## Service Worker
+## Descobrir
 
-O Service Worker cacheia imagens/metadados TMDB e não cacheia o shell HTML. O namespace é rotacionado a cada release relevante para reduzir risco de runtime obsoleto.
+Ordem: **Pra você → Em alta → Mais aguardados → Mais bem avaliados → Calendário**.
 
-## Build e CI
+Em alta, Mais aguardados, Mais bem avaliados e Calendário possuem filtros **Todos / Filmes / Séries**. O filtro é aplicado por tipo de mídia, não apenas visualmente. Mais bem avaliados é sempre ordenado de maior para menor nota.
 
-Comando principal: `npm run build`. O verificador testa também presença das camadas HOTFIX15–18, semântica Bingers, identidade Android e documentação de governança.
+## Configurações
 
-Evidência HOTFIX18:
+Backup & Restauração foi reduzido a duas ações visíveis: **Exportar** e **Importar**.
 
-- workflow geral `Verify`, run `33016322725`: **success**;
-- build Web dentro do pipeline Android HOTFIX18: **success**;
-- status Vercel do commit HOTFIX18: **success**.
+Exportar gera ZIP com `manifest.csv`, `profile.csv`, `imports.csv`, `media.csv`, `media_overrides.csv`, `watch_history.csv` e `episode_progress.csv`. Importar restaura esses dados por meio da Edge Function autenticada `ct-backup-user`.
 
-## Publicação
+**Limpar Cache** remove caches locais/temporários e Cache Storage sem apagar o estado persistente. **Atualizar Metadados** atualiza as mídias do usuário via TMDB e ignora IDs substitutos não positivos.
 
-Produção conhecida: `https://mycinetracker.vercel.app`.
+## Backend relacionado
 
-O deploy HOTFIX18 foi confirmado pelo status Vercel como `success`. Ainda não foi marcado como concluído o smoke autenticado manual na aplicação em produção; esse teste permanece separado do build/deploy automatizado.
+- migration `20260826230500_v098_profile_history_media.sql`;
+- RPC `cinetracker_profile_history_media(integer)` com `SECURITY INVOKER` e `auth.uid()`;
+- Edge Function `ct-backup-user`, deploy inicial v1.
 
-## Regra obrigatória
+O importador Bingers resiliente permanece preservado.
 
-Toda próxima mudança Web deve incrementar versão da unidade lógica e atualizar documentação/release/validação conforme `docs/DEVELOPMENT_RULES.md`.
+## Build
 
-Release atual: `docs/releases/0.0.97-HOTFIX18.md`.  
-Validação atual: `docs/validation/0.0.97-HOTFIX18.md`.
+Comando principal: `npm run build`. O workflow geral `Verify` valida versão, navegação, Perfil, Descobrir, backup, cache, metadados e runtime Android embarcado.
+
+## Rodapé
+
+O rodapé autoritativo da versão é **`CineTracker • v0.0.98`**.
+
+Release: `docs/releases/0.0.98.md`.  
+Validação: `docs/validation/0.0.98.md`.
