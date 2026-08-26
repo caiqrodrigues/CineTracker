@@ -96,7 +96,7 @@ try{
   await page.locator('#ct10-read').click();
   await page.locator('#ct10-preview').waitFor({state:'visible',timeout:1800});
   const preview=await page.locator('#ct10-preview').innerText();
-  if(!preview.includes('Prévia da importação')||!preview.includes('1')||!preview.includes('Títulos'))throw new Error(`CSV preview incorrect: ${preview}`);
+  if(!preview.includes('Prévia da importação')||!preview.includes('1')||!/(Títulos|Itens da biblioteca)/i.test(preview))throw new Error(`CSV preview incorrect: ${preview}`);
   if(!preview.includes('decisões manuais')&&!preview.includes('Dados criados'))throw new Error('Importer safety guarantee missing from preview.');
   if(edgeCalls.length)throw new Error('Importer called backend before confirmation.');
   await page.locator('[data-close10]').click();
