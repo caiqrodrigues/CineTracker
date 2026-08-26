@@ -1,6 +1,80 @@
 # Changelog
 
-Todas as mudanças relevantes do CineTracker são registradas aqui.
+Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do HOTFIX18, toda nova unidade lógica de mudança exige versão e registro completo conforme `docs/DEVELOPMENT_RULES.md`.
+
+## 0.0.97 HOTFIX 18 — 2026-08-26
+
+### Governança e versionamento
+- Web e Android sincronizados em `0.0.97 HOTFIX 18`.
+- Web package: `0.0.97-hotfix18-documentation-governance`.
+- Web cache namespace: `ct-web-0.0.97-hotfix18-documentation-governance`.
+- Android: `versionName 0.0.97 HOTFIX 18`, `versionCode 995`.
+- Bundle Android alvo: `hotfix18-documentation-governance-v95-core-inline-authoritative`.
+- Criada a regra obrigatória: toda nova mudança deve possuir versão, registro GitHub, release note, validação e atualização dos documentos canônicos.
+- Criados `docs/DEVELOPMENT_RULES.md`, release/validation HOTFIX18 e nota técnica da reconciliação Bingers.
+
+### Consolidação Bingers
+- Importação direta verificada concluída como import ID 6.
+- 3.078 itens de biblioteca, sendo 2.318 filmes e 760 séries.
+- 12.696 registros de histórico, sendo 949 de filmes e 11.747 de episódios.
+- 16.216 reproduções: 1.312 de filmes + 14.904 de episódios.
+- 1.309 filmes na Watchlist, 533 séries não iniciadas, 227 séries com histórico e 0 eventos sem correspondência.
+- Ratings, avaliações, comentários e listas continuam fora da importação.
+- Plays repetidos são preservados em `external_ids.plays`; datas ausentes não são inventadas.
+
+### Perfil e estados das séries
+- Classificação reconciliada em 155 Concluídas, 47 Em dia, 25 Em andamento e 533 Não iniciadas.
+- Perfil separa `Concluídas`, `Em andamento`, `Em dia` e `Não iniciadas`.
+- Episódios exibem subtítulo baseado em séries com histórico, não em estado atual.
+- Corrigido erro do Bingers que marcava séries com zero episódios vistos como iniciadas.
+- Proteções `ct_guard_bingers_import_inprogress()` e `ct_cleanup_bingers_zero_history_inprogress()` evitam/regulam o estado importado incorreto.
+- Validação posterior: 0 séries `InProgress` sem histórico.
+
+### Estatísticas
+- Perfil usa RPCs server-side para evitar distorção por paginação do cliente.
+- `cinetracker_series_state_stats()` fornece estados agregados.
+- `cinetracker_consumption_daily()` fornece histórico diário e soma `plays`.
+- Valores reconciliados: 14.904 episódios, 1.312 reproduções de filmes, 3 meses 20 dias 13 horas em filmes e 16 meses 19 dias 5 horas no total.
+
+### Débitos explicitamente registrados
+- surrogate IDs TMDB negativos podem produzir 404 no `tmdb-proxy` se forem tratados como IDs TMDB reais.
+- advisories Supabase para funções `SECURITY DEFINER`, leaked-password protection e RLS/policies históricas permanecem abertos para tratamento seguro.
+- deploy Web e publicação APK são estados independentes do source e exigem confirmação.
+
+## 0.0.97 HOTFIX 17 — 2026-08-26
+
+### Perfil / séries
+- Adicionada classificação server-side de séries em `Completed`, `UpToDate`, `InProgress` e não iniciadas.
+- Criado/ativado `cinetracker_series_state_stats()`.
+- Criado/ativado `cinetracker_consumption_daily()` para gráfico diário server-side.
+- Perfil passou a usar 155 Concluídas, 47 Em dia, 25 Em andamento, 533 Não iniciadas e 227 séries com histórico após reconciliação.
+- Ajustado runtime Android para preservar a camada de perfil como camada final.
+
+### Build
+- Foram corrigidos verificadores antigos que ainda esperavam identidade HOTFIX15/HOTFIX16.
+- Foi corrigida a ordem de injeção do runtime para manter `patch-v074-hotfix1-version.js` por último.
+- Tentativas de build anteriores falharam durante o processo de convergência; não foram consideradas releases válidas.
+
+## 0.0.97 HOTFIX 16 — 2026-08-26
+
+### Importação resiliente
+- `ct-import-bingers-user` evoluiu para deploy v8.
+- Adicionados erros tipados de autenticação, transientes e permanentes.
+- Adicionado `client_run_id` para begin idempotente/retomável.
+- Adicionado contrato de cursor e replay seguro de lotes.
+- Adicionadas validação e deduplicação de library/watches.
+- Importador não inventa datas de watch.
+- Limpeza anterior é restrita ao Bingers/import-origin e preserva decisões manuais.
+- Finalização exige cursor/total/histórico exatos.
+- Erros permanentes passam a encerrar import como `failed` em vez de deixá-lo em `processing`.
+- Import ID 5 legado foi encerrado como `LEGACY_PIPELINE_STALLED`.
+
+## 0.0.97 HOTFIX 15 — 2026-08-26
+
+### Correção do transporte Bingers
+- Corrigido payload PostgREST de `watch_history` que misturava shapes diferentes.
+- Filmes passaram a incluir `season_number: null` e `episode_number: null`, eliminando `PGRST102: All object keys must match` para essa causa.
+- Preservado picker/transporte nativo no Android e fluxo dual CSV no Web.
 
 ## Web 0.3.0 — 2026-08-21
 
