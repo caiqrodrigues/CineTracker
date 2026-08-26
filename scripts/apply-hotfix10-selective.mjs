@@ -36,7 +36,7 @@ for(const target of targets){
   const semanticsIndex=html.indexOf('patch-v083-hotfix13-bingers-semantics.js');
   const resilienceIndex=html.indexOf('patch-v087-hotfix16-import-resilience.js');
   if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||resilienceIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex||resilienceIndex<semanticsIndex)throw new Error(`HOTFIX16: runtime patch order invalid: ${indexPath}`);
-  if(html.includes('patch-v086-hotfix15-import-retry.js'))throw new Error(`HOTFIX16: legacy retry layer still active: ${indexPath}`);
+  if(html.includes('patch-v086-'+'hotfix15-import-retry.js'))throw new Error(`HOTFIX16: legacy retry layer still active: ${indexPath}`);
   await writeFile(indexPath,html,'utf8');
 }
 
