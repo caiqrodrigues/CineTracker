@@ -1,0 +1,120 @@
+name: Verify HOTFIX12 Navigation Mobile Import
+
+on:
+  push:
+    branches: [recovery/v097-hotfix12-nav-mobile-import]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hotfix12-nav-mobile-import-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nav_mobile_import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Restore dedicated CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize dedicated signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build HOTFIX12 Web runtime
+        run: npm run build
+      - name: Prove authentication and native navigation bridge
+        run: |
+          node scripts/test-auth-recovery-red.mjs
+          node scripts/test-hotfix10-native-bridge.mjs
+      - name: Install real-browser harness
+        run: npm install --no-save --no-package-lock playwright-core@1.55.0
+      - name: Prove Web desktop navigation and mobile picker return
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          node scripts/test-real-browser-hotfix10-selective.mjs
+          node scripts/test-real-browser-hotfix11-import-sync.mjs
+          node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+      - name: Prepare exact embedded Android runtime
+        run: node scripts/prepare-android-hotfix2-web.mjs
+      - name: Compile every Android inline script
+        run: node scripts/test-android-inline-hotfix6.mjs
+      - name: Prove exact embedded Android runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix11-import-sync.mjs
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+      - name: Assert HOTFIX12 runtime order and stable architecture
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'patch-v081-hotfix12-nav-pre.js' dist/index.html
+          grep -q 'patch-v082-hotfix12-picker-guard.js' dist/index.html
+          ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
+          node - <<'NODE'
+          const fs=require('fs');
+          for(const p of ['dist/index.html','apps/android/app/src/main/assets/hotfix5/index.html']){
+            const s=fs.readFileSync(p,'utf8');
+            const a=s.indexOf('patch-v081-hotfix12-nav-pre.js');
+            const b=s.indexOf('patch-v075-hotfix10-selective.js');
+            const c=s.indexOf('patch-v082-hotfix12-picker-guard.js');
+            if(a<0||b<0||c<0||!(a<b&&b<c))throw new Error('HOTFIX12 runtime order invalid in '+p);
+          }
+          NODE
+          grep -q '__ctHotfix12NavPre' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix12PickerGuard' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix11ImportSync' apps/android/app/src/main/assets/hotfix5/index.html
+          ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
+      - name: Build signed Android validation APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Verify APK identity signature version and HOTFIX12 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          unzip -l "$APK" | grep -q 'assets/hotfix5/index.html'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ctHotfix12NavPre'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ctHotfix12PickerGuard'
+          if unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ct97Loaded'; then exit 1; fi
+          "$APKSIGNER" verify --print-certs "$APK"
+          BADGING="$($AAPT dump badging "$APK" | head -1)"
+          echo "$BADGING"
+          echo "$BADGING" | grep -q "package: name='com.cinetracker.app'"
+          echo "$BADGING" | grep -q "versionCode='990'"
+          echo "$BADGING" | grep -q "versionName='0.0.97 HOTFIX 12'"
+          sha256sum "$APK"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-hotfix12-nav-mobile-import-validation
+          path: apps/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
