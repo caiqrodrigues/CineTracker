@@ -5,7 +5,7 @@ const html = await read('apps/web/index.html');
 const keyFiles = [
   'patch-v024.js','patch-v029.js','patch-v054.js','patch-v059-v089.js','patch-v060-v090.js',
   'patch-v061-v091.js','patch-v063-v092.js','patch-v067-v095.js','patch-v068-v097.js',
-  'patch-v074-hotfix1-version.js','patch-v075-hotfix10-selective.js','service-worker.js'
+  'patch-v074-hotfix1-version.js','patch-v075-hotfix10-selective.js','patch-v076-hotfix10-actions.js','service-worker.js'
 ];
 const src = {};
 for (const f of keyFiles) {
@@ -20,11 +20,11 @@ const buildWeb = await read('scripts/build-web.mjs');
 const stability = await read('scripts/apply-hotfix9-stability.mjs');
 const selectiveBuild = await read('scripts/apply-hotfix10-selective.mjs');
 const prepareAndroid = await read('scripts/prepare-android-hotfix2-web.mjs');
-const browserStability = await read('scripts/test-real-browser-stability-hotfix9.mjs');
 const packageJson = await read('package.json');
 const importEdge = await read('supabase/functions/ct-import-bingers-user/index.ts');
 const hotfixVersion = src['patch-v074-hotfix1-version.js'];
 const selective = src['patch-v075-hotfix10-selective.js'];
+const actions = src['patch-v076-hotfix10-actions.js'];
 const sw = src['service-worker.js'];
 const p29 = src['patch-v029.js'];
 const p54 = src['patch-v054.js'];
@@ -44,7 +44,7 @@ const checks = [
   ['Histórico episódio preservado', p92.includes('openEpisode92')],
   ['Backup preservado', p92.includes('Exportar dados') && p92.includes('Restaurar dados')],
   ['Perfil v95 preservado', p95.includes('openDay95')],
-  ['Pra Você v95 mantém critérios', p95.includes('year(x)>1990') && p95.includes('score(x)>=7.8') && p95.includes("card95(daily,'daily')") && p95.includes("card95(fa,'fresh-anime')")],
+  ['Pra Você v95 mantém critérios e 7 slots', p95.includes('yearOf(x)>1990') && p95.includes('scoreOf(x)>=7.8') && p95.includes("card95(daily,'daily')") && p95.includes("card95(wm,'watch-movie')") && p95.includes("card95(wt,'watch-tv')") && p95.includes("card95(wa,'watch-anime')") && p95.includes("card95(fm,'fresh-movie')") && p95.includes("card95(ft,'fresh-tv')") && p95.includes("card95(fa,'fresh-anime')")],
 
   ['Auth timeout preservado', buildWeb.includes('ctFetchWithTimeout') && buildWeb.includes('8000')],
   ['Home entra antes da hidratação', buildWeb.includes('function enterAuthenticatedHome()') && buildWeb.includes("view = 'home';") && buildWeb.includes('void runPostAuthHydration();')],
@@ -55,9 +55,11 @@ const checks = [
 
   ['HOTFIX9 continua removendo v97', stability.includes('patch-v068-v097.js') && stability.includes('replaceAll') && stability.includes('stable v95 feature layer')],
   ['HOTFIX10 injetado somente depois da remoção v97', packageJson.includes('apply-hotfix9-stability.mjs') && packageJson.includes('apply-hotfix10-selective.mjs') && packageJson.indexOf('apply-hotfix9-stability.mjs') < packageJson.indexOf('apply-hotfix10-selective.mjs') && selectiveBuild.includes("if(html.includes('patch-v068-v097.js'))")],
-  ['HOTFIX10 sem observer/interval global', !selective.includes('new MutationObserver') && !selective.includes('setInterval(')],
+  ['HOTFIX10 sem observer/interval global', !selective.includes('new MutationObserver') && !selective.includes('setInterval(') && !actions.includes('new MutationObserver') && !actions.includes('setInterval(')],
   ['HOTFIX10 roteia cinco abas em window capture', selective.includes("window.addEventListener('click'") && selective.includes("['home','discover','history','profile','settings']") && selective.includes('window.ct10Navigate=route10')],
   ['HOTFIX10 Descobrir abre Pra Você e calendário por último', selective.includes('[data-ct95-tab="for-you"]') && selective.includes('[data-ct95-tab="calendar"]') && selective.includes('tabs.appendChild(b)')],
+  ['HOTFIX10 ações usam RPC de mídia e schema atual', actions.includes("sbRpc('cinetracker_upsert_media'") && actions.includes("p_media_kind:type==='movie'?'movie':'series'") && actions.includes("item_type:'movie'") && !actions.includes("item_type:'title'")],
+  ['HOTFIX10 ações manuais superam importadas', actions.includes("origin:'manual'") && actions.includes('source_import_id:null') && actions.includes("source:'manual'")],
   ['HOTFIX10 importador aceita CSV ZIP JSON', selective.includes('library.csv + watches.csv') && selective.includes('.zip,.json,.csv') && selective.includes('unzipCSV10') && selective.includes('JSON inválido')],
   ['HOTFIX10 importador exige prévia antes de confirmar', selective.includes('Prévia da importação') && selective.includes('Nenhum dado foi alterado') && selective.includes('data-confirm10')],
   ['Import backend só remove dados importados', importEdge.includes('episode_progress?profile_id=eq.${user}&origin=eq.import') && importEdge.includes('watch_history?profile_id=eq.${user}&source=eq.bingers') && importEdge.includes('media_overrides?profile_id=eq.${user}&origin=eq.import') && !importEdge.includes("['episode_progress','watch_history','media_overrides','recommendation_history','daily_menus']")],
