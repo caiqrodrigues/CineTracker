@@ -9,22 +9,22 @@ permissions:
   contents: read
 
 jobs:
-  hotfix10_stability:
+  hotfix12_stability:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Build HOTFIX10 selective Web runtime
+      - name: Build HOTFIX12 Web runtime
         run: npm run build
-      - name: Execute auth recovery runtime suite
-        run: node scripts/test-auth-recovery-red.mjs
-      - name: Prove native navigation compatibility bridge
-        run: node scripts/test-hotfix10-native-bridge.mjs
+      - name: Execute auth and native bridge suites
+        run: |
+          node scripts/test-auth-recovery-red.mjs
+          node scripts/test-hotfix10-native-bridge.mjs
       - name: Install real-browser harness
         run: npm install --no-save --no-package-lock playwright-core@1.55.0
-      - name: Prove Web navigation actions and CSV preview in real Chrome
+      - name: Prove Web navigation dual CSV sync and mobile picker return
         shell: bash
         run: |
           set -euo pipefail
@@ -32,11 +32,13 @@ jobs:
           test -n "$CHROME_BIN"
           export CHROME_BIN
           node scripts/test-real-browser-hotfix10-selective.mjs
+          node scripts/test-real-browser-hotfix11-import-sync.mjs
+          node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
       - name: Prepare exact Android embedded runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Prove embedded Android navigation actions and CSV preview
+      - name: Prove embedded Android navigation dual CSV sync and picker return
         shell: bash
         run: |
           set -euo pipefail
@@ -44,19 +46,34 @@ jobs:
           test -n "$CHROME_BIN"
           export CHROME_BIN
           CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Assert HOTFIX10 production invariants
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix11-import-sync.mjs
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+      - name: Assert HOTFIX12 production invariants
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
           grep -q 'patch-v067-v095.js' dist/index.html
+          grep -q 'patch-v081-hotfix12-nav-pre.js' dist/index.html
           grep -q 'patch-v075-hotfix10-selective.js' dist/index.html
-          grep -q 'patch-v076-hotfix10-actions.js' dist/index.html
-          grep -q 'patch-v077-hotfix10-native-bridge.js' dist/index.html
-          grep -q '0.0.97 HOTFIX 10' dist/patch-v074-hotfix1-version.js
-          grep -q 'ct-web-0.0.97-hotfix10-selective' dist/service-worker.js
+          grep -q 'patch-v078-hotfix11-import-sync.js' dist/index.html
+          grep -q 'patch-v082-hotfix12-picker-guard.js' dist/index.html
+          grep -q '0.0.97 HOTFIX 12' dist/patch-v074-hotfix1-version.js
+          grep -q 'ct-web-0.0.97-hotfix12-nav-mobile-import' dist/service-worker.js
           ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
           ! grep -q 'patch-v068-v097-observer-guard.js' dist/index.html
-          grep -q "window.__ctAndroidBundle = 'hotfix10-selective-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          node - <<'NODE'
+          const fs=require('fs');
+          for(const p of ['dist/index.html','apps/android/app/src/main/assets/hotfix5/index.html']){
+            const s=fs.readFileSync(p,'utf8');
+            const a=s.indexOf('patch-v081-hotfix12-nav-pre.js');
+            const b=s.indexOf('patch-v075-hotfix10-selective.js');
+            const c=s.indexOf('patch-v082-hotfix12-picker-guard.js');
+            if(a<0||b<0||c<0||!(a<b&&b<c))throw new Error('HOTFIX12 runtime order invalid in '+p);
+          }
+          NODE
+          grep -q "window.__ctAndroidBundle = 'hotfix12-nav-mobile-import-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix12NavPre' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix12PickerGuard' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
