@@ -111,7 +111,7 @@ async function refreshProfile17() {
     setStat(profile, /^Episódios$/i, Number(s.episodes_watched || 0).toLocaleString('pt-BR'));
     const epCard = statByLabel(profile, /^Episódios$/i);
     const sub = epCard && $('.s', epCard);
-    if (sub) sub.textContent = `de ${Number(s.series_watched || 0).toLocaleString('pt-BR')} séries com histórico`;
+    if (sub) sub.textContent = `de ${Number(s.series_watched || 0).toLocaleString('pt-BR')} séries acompanhadas`;
     setStat(profile, /^Filmes$/i, Number(s.movies_watched || 0).toLocaleString('pt-BR'));
     setStat(profile, /Tempo em séries/i, fmt17(s.series_minutes || 0));
     setStat(profile, /Tempo em filmes/i, fmt17(s.movie_minutes || 0));
