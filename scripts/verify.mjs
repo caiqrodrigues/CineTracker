@@ -32,15 +32,16 @@ const checks=[
 ['Frontend HOTFIX16 begin pode ser repetido com run id',h16.includes("body.action === 'begin'")&&h16.includes('client_run_id')&&h16.includes('newRunId16')],
 ['Frontend HOTFIX16 retry cobre rede/timeout/5xx',h16.includes('AbortController')&&h16.includes('retryableStatus16')&&h16.includes('500, 502, 503, 504')],
 ['RPC stats soma plays',migration.includes("external_ids->>'plays'")&&migration.includes('sum(plays)')],
-['Web/cache HOTFIX16',pkg.includes('0.0.97-hotfix16-import-resilience')&&version.includes('0.0.97 HOTFIX 16')&&version.includes('__ctHotfix16Version')&&sw.includes('ct-web-0.0.97-hotfix16-import-resilience')],
+['Perfil HOTFIX17 separa histórico e estados',version.includes('__ctProfileStatsHotfix17')&&version.includes('cinetracker_series_state_stats')&&version.includes('UpToDate')&&version.includes('Não iniciadas')&&version.includes('séries com histórico')],
+['Web/cache HOTFIX17',pkg.includes('0.0.97-hotfix17-series-status')&&version.includes('0.0.97 HOTFIX 17')&&version.includes('__ctHotfix17Version')&&sw.includes('ct-web-0.0.97-hotfix17-series-status')],
 ['Service worker não cacheia shell HTML',!sw.includes('index.html')&&!sw.includes('navigate')],
 ['Android segue inline e sem fallback remoto',android.includes('loadDataWithBaseURL')&&android.includes('hotfix5/index.html')&&!android.includes('WebViewAssetLoader')&&!android.includes('webView.loadUrl(runtimeUrl')],
 ['Android picker OEM-safe não filtra MIME',android.includes('intent.setType("*/*")')&&!android.includes('Intent.EXTRA_MIME_TYPES')],
 ['Android restaura Configurações após recriação',android.includes('hasPendingImportFlow()')&&android.includes("window.ct15Navigate&&window.ct15Navigate('settings')")&&android.includes('ct15RestoreNativeFiles')],
 ['Android não descarta resultado se callback WebView sumir',!android.includes('requestCode != FILE_CHOOSER_REQUEST || fileChooserCallback == null')&&android.includes('cacheImportFile(slot, uris.get(0))')&&android.includes('picker_slot')],
 ['Android persiste arquivos nativamente',android.includes('ct15-import-')&&android.includes('getImportFileBase64')&&android.includes('pickImportFile')&&android.includes('clearImportFiles')],
-['Android navegação prefere HOTFIX15',android.includes('if(window.ct15Navigate){window.ct15Navigate(t);return true;}')],
-['Android bundle atual ainda exige HOTFIX15 v085',prepareAndroid.includes('hotfix15-import-transport-v95-core-inline-authoritative')&&prepareAndroid.includes('patch-v085-hotfix15-import-transport.js')&&prepareAndroid.includes('patch-v084-hotfix14-real-device.js')&&prepareAndroid.includes('patch-v081-hotfix12-nav-pre.js')&&prepareAndroid.includes('patch-v068-v097.js')],
-['Android identidade atual permanece HOTFIX15',gradle.includes('versionCode 993')&&gradle.includes("versionName '0.0.97 HOTFIX 15'")]
+['Android navegação preserva transporte HOTFIX15',android.includes('if(window.ct15Navigate){window.ct15Navigate(t);return true;}')&&prepareAndroid.includes('patch-v085-hotfix15-import-transport.js')],
+['Android bundle HOTFIX17 preserva v085 e perfil novo',prepareAndroid.includes('hotfix17-series-status-v95-core-inline-authoritative')&&prepareAndroid.includes('patch-v085-hotfix15-import-transport.js')&&prepareAndroid.includes('__ctProfileStatsHotfix17')&&prepareAndroid.includes('cinetracker_series_state_stats')&&prepareAndroid.includes('patch-v084-hotfix14-real-device.js')&&prepareAndroid.includes('patch-v081-hotfix12-nav-pre.js')&&prepareAndroid.includes('patch-v068-v097.js')],
+['Android identidade atual é HOTFIX17',gradle.includes('versionCode 994')&&gradle.includes("versionName '0.0.97 HOTFIX 17'")]
 ];
 let failed=false;for(const [name,ok] of checks){console.log(`${ok?'OK':'ERRO'} - ${name}`);if(!ok)failed=true}if(failed)process.exit(1);
