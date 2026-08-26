@@ -24,7 +24,7 @@ const checks=[
 ['RPC LRU server-side',lruMigration.includes('cinetracker_profile_media_dashboard')&&lruMigration.includes('max(wh.watched_at)')&&lruMigration.includes('max(ep.watched_at)')&&lruMigration.includes("mo.state = 'Liked'")&&lruMigration.includes('security invoker')&&lruMigration.includes('auth.uid()')],
 ['Subtela Séries categorias completas',['Em andamento','Não iniciadas','Assistir mais tarde / Watchlist','Em dia','Concluídas'].every(x=>v99.includes(x))],
 ['Subtela Filmes categorias completas',v99.includes('Assistir a seguir / Watchlist')&&v99.includes('Já vistos')],
-['Favoritos grid completo',v99.includes("kind==='series-favorites'")&&v99.includes("kind==='movies-favorites'")&&v99.includes('ct99-grid ${favorites')],
+['Favoritos grid completo',v99.includes("kind==='series-favorites'")&&v99.includes("Filmes favoritos',mv.filter")&&v99.includes('ct99-grid ${favorites')],
 ['Sincronização reativa',v99.includes('cinetracker:data-changed')&&v99.includes('__ct99SbApiWrapped')&&v99.includes('visibilitychange')&&v99.includes('setInterval')],
 ['Rodapé 0.0.99',v99.includes('CineTracker • v0.0.99')&&v99.includes('window.__ctAndroidBuild=VERSION99')],
 ['Android bundle 0.0.99',prepare.includes('v0.0.99-profile-lru-v95-core-inline-authoritative')&&prepare.includes('patch-v091-v099-profile-lru.js')&&prepare.includes('__ct99ProfileLRU')],
