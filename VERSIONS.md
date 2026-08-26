@@ -4,10 +4,10 @@
 
 ## Matriz atual
 
-| Sistema | Versão atual | Versão técnica adicional | Estado de source |
+| Sistema | Versão atual | Versão técnica adicional | Estado comprovado |
 |---|---:|---|---|
-| Web | **0.0.99** | package `0.0.99`, cache `ct-web-0.0.99` | implementado em `main` |
-| Android | **0.0.99** | `versionCode 997` | source + pipeline dedicado em `main` |
+| Web | **0.0.99** | package `0.0.99`, cache `ct-web-0.0.99` | Verify/build concluídos; Vercel `success` no commit funcional |
+| Android | **0.0.99** | `versionCode 997` | build, identidade, assinatura, artifact e GitHub Release publicados |
 | Backend / Supabase | **0.0.99** | RPC `cinetracker_profile_media_dashboard`; `ct-backup-user` v1; Bingers v8 | migration/RPC ativos |
 | Windows | **—** | — | não lançado |
 
@@ -17,15 +17,21 @@
 - package: `0.0.99`;
 - Service Worker: `ct-web-0.0.99`;
 - camada final: `patch-v091-v099-profile-lru.js`;
-- rodapé: `CineTracker • v0.0.99`.
+- rodapé: `CineTracker • v0.0.99`;
+- Verify final: run `33021058624`, success;
+- Vercel: success para o commit funcional `f4261cb944b60c15c01b41989645e8c64468e4ef`.
 
 ### Android
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `0.0.99`;
 - `versionCode`: `997`;
-- bundle alvo: `v0.0.99-profile-lru-v95-core-inline-authoritative`;
+- bundle: `v0.0.99-profile-lru-v95-core-inline-authoritative`;
 - workflow: `.github/workflows/build-android-v099.yml`;
-- tag/release alvo: `android-v0.0.99`.
+- run publicado: `33021058734`, success;
+- tag/release: `android-v0.0.99`;
+- APK: `cinetracker-android-0.0.99-debug.apk`;
+- artifact: `cinetracker-android-0.0.99-debug`, ID `9626549788`;
+- SHA-256 do APK: `c39c08cd51470050f3eac2c444c4d468dcfcb4072230cf9e082def9ab176cf57`.
 
 ## Backend 0.0.99
 
@@ -49,6 +55,13 @@ Edge Functions mantêm numeração própria:
 - favoritos em grid completo responsivo de 2/3 colunas;
 - detalhe TMDB quando o ID é oficial e detalhe local seguro para surrogate negativo;
 - preservação integral da navegação, Descobrir, Backup, Cache, Metadados e importação Bingers da 0.0.98.
+
+## Validação manual ainda separada
+
+Ainda não é marcado como executado:
+- smoke autenticado visual Web em produção;
+- instalação/navegação do APK 0.0.99 em aparelho real;
+- teste manual do LRU e alternância de favoritos.
 
 ## Linha recente
 
