@@ -67,13 +67,12 @@ try{
     document.querySelector('.content')?.appendChild(card);
   });
   await page.locator('#ct10-action-fixture [data-seen95]').click();
-  await page.locator('#ct10-action-fixture [data-seen95]').filter({hasText:'Assistido'}).waitFor({state:'visible',timeout:1800});
-  await page.waitForTimeout(120);
+  await page.locator('#ct10-action-fixture [data-seen95]').filter({hasText:'✓ Assistido'}).waitFor({state:'visible',timeout:2200});
   if(!rpcBodies.some(b=>b?.p_tmdb_id===101&&b?.p_media_type==='movie'&&b?.p_media_kind==='movie'))throw new Error(`Assistido RPC schema incorrect: ${JSON.stringify(rpcBodies)}`);
   if(!dbWrites.some(w=>w.table==='media_overrides'&&w.method==='POST'&&w.body?.profile_id==='00000000-0000-4000-8000-000000000010'&&w.body?.media_id===999&&w.body?.state==='AlreadySeen'&&w.body?.origin==='manual'))throw new Error(`Assistido override write incorrect: ${JSON.stringify(dbWrites)}`);
   if(!dbWrites.some(w=>w.table==='watch_history'&&w.method==='POST'&&w.body?.profile_id==='00000000-0000-4000-8000-000000000010'&&w.body?.media_id===999&&w.body?.item_type==='movie'&&w.body?.source==='manual'))throw new Error(`Assistido history write incorrect: ${JSON.stringify(dbWrites)}`);
   await page.locator('#ct10-action-fixture [data-watch95]').click();
-  await page.waitForTimeout(180);
+  await page.locator('#ct10-action-fixture [data-watch95]').filter({hasText:'✓ Na Watchlist'}).waitFor({state:'visible',timeout:2200});
   if(!dbWrites.some(w=>w.table==='media_overrides'&&w.method==='POST'&&w.body?.state==='AddedToWatchlist'&&w.body?.origin==='manual'&&w.body?.media_id===999))throw new Error(`Watchlist override write incorrect: ${JSON.stringify(dbWrites)}`);
 
   await clickView('history');
