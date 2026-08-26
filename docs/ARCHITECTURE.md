@@ -1,188 +1,104 @@
 # CineTracker — Arquitetura atual
 
-**Release lógica:** `0.0.98`  
+**Release lógica:** `0.0.99`  
 **Atualizado em:** 2026-08-26
 
 ## 1. Visão geral
 
 CineTracker compartilha o mesmo domínio entre Web e Android:
 
-- **Web:** HTML/JavaScript construído a partir de `apps/web`;
-- **Android:** `Activity + WebView` nativos com runtime Web embarcado/inline;
-- **Supabase:** autenticação, PostgreSQL, RPCs e Edge Functions;
-- **TMDB:** metadados externos e imagens;
-- **GitHub:** fonte de verdade de código, migrations, documentação e CI/CD.
+- Web: runtime HTML/JavaScript construído a partir de `apps/web`;
+- Android: `Activity + WebView`, usando runtime Web embarcado e inline;
+- Supabase: autenticação, PostgreSQL, RPCs e Edge Functions;
+- TMDB: metadados externos;
+- GitHub: fonte de verdade do source, migrations, documentação e pipelines.
 
-## 2. Pipeline Web e ordem de runtime
+## 2. Runtime Web 0.0.99
 
-O núcleo estável continua sendo a linha v95. O build executa:
+A base estável v95 continua preservada. A pilha final relevante é:
 
-1. `scripts/verify.mjs`;
-2. `scripts/build-web.mjs`;
-3. `scripts/apply-hotfix9-stability.mjs`, removendo o overlay v97 instável;
-4. `scripts/apply-hotfix10-selective.mjs`, que injeta a pilha final;
-5. smoke de startup.
+1. `patch-v088-v098-nav-pre.js` — gate autoritativo de navegação;
+2. HOTFIX15/16 e demais camadas estáveis preservadas;
+3. `patch-v089-v098.js` — Descobrir, Configurações, backup e UI 0.0.98;
+4. `patch-v090-v098-compat.js` — compatibilidade do bridge/navegação;
+5. `patch-v091-v099-profile-lru.js` — Perfil 0.0.99 e versão final.
 
-Ordem relevante 0.0.98:
+`service-worker.js` usa namespace `ct-web-0.0.99` e não cacheia o shell HTML.
 
-1. `patch-v088-v098-nav-pre.js` — gate autoritativo de navegação em captura;
-2. `patch-v085-hotfix15-import-transport.js` e camadas HOTFIX10/11/12 preservadas;
-3. `patch-v083-hotfix13-bingers-semantics.js`;
-4. `patch-v087-hotfix16-import-resilience.js`;
-5. camada legada de Perfil/versão preservada para compatibilidade;
-6. `patch-v089-v098.js` — UI/fluxos 0.0.98;
-7. `patch-v090-v098-compat.js` — bridge final para `ct98Navigate`.
-
-Camadas obsoletas `patch-v081-hotfix12-nav-pre.js`, `patch-v084-hotfix14-real-device.js`, `patch-v086-hotfix15-import-retry.js` e o overlay `patch-v068-v097.js` não fazem parte do runtime final.
-
-Service Worker: `ct-web-0.0.98`; não cacheia o shell HTML.
-
-## 3. Navegação
-
-Destinos oficiais: Home, Descobrir, Perfil e Configurações.
-
-`patch-v088-v098-nav-pre.js` roda antes dos handlers legados e intercepta cliques de navegação. `history` é normalizado para `profile`. A camada final `ct98Navigate` possui renderizadores explícitos para Descobrir/Perfil e delega Home/Configurações às bases estáveis quando apropriado, reaplicando a normalização 0.0.98.
-
-No Android, a barra nativa também tem quatro destinos visíveis. Chamadas existentes a `ct15Navigate` são encaminhadas por `patch-v090-v098-compat.js` para `ct98Navigate`.
-
-## 4. Perfil e Histórico
-
-Histórico deixa de ser tela/aba independente e passa a fazer parte do Perfil.
-
-Ordem do Perfil:
-
-1. estatísticas principais compactas;
-2. gráfico de atividade SVG;
-3. estatísticas extras;
-4. Histórico integrado.
-
-Histórico integrado:
-
-- séries no carrossel superior;
-- filmes no carrossel inferior.
-
-RPCs:
-
-- `cinetracker_profile_stats()`;
-- `cinetracker_series_state_stats()`;
-- `cinetracker_consumption_daily(p_limit_days)`;
-- `cinetracker_profile_history_media(p_limit_per_type)`.
-
-A RPC nova agrega por mídia, calcula `max(watched_at)` e soma `external_ids.plays`; usa `SECURITY INVOKER` + `auth.uid()` e rankeia separadamente filmes/séries.
-
-## 5. Descobrir
-
-A UI 0.0.98 controla diretamente a sequência:
-
-`Pra você → Em alta → Mais aguardados → Mais bem avaliados → Calendário`.
-
-`Pra você` usa o histórico recente como sementes para recomendações; se necessário, complementa com tendências. Itens já conhecidos são excluídos a partir de histórico/estados persistentes.
-
-Nas outras quatro seções, `Todos`, `Filmes` e `Séries` alteram as fontes consultadas ou filtram estritamente o resultado. Mais bem avaliados aplica sort final descendente por nota.
-
-## 6. Backup CSV/ZIP
-
-### Cliente
-
-`patch-v089-v098.js` gera/lê ZIP e CSVs. O pacote contém:
-
-- `manifest.csv`;
-- `profile.csv`;
-- `imports.csv`;
-- `media.csv`;
-- `media_overrides.csv`;
-- `watch_history.csv`;
-- `episode_progress.csv`.
-
-O ZIP de exportação usa entries armazenadas; a importação aceita entries armazenadas e, quando `DecompressionStream` está disponível, `deflate-raw`.
-
-### Servidor
-
-A Edge Function `ct-backup-user` autentica o bearer token via `/auth/v1/user` antes de usar service role. As ações são:
-
-- `snapshot`: pagina tabelas por `profile_id`, identifica IDs de mídia referenciados e retorna um snapshot normalizado;
-- `restore`: valida formato/limites, upserta/remapeia mídia, remove apenas o estado restaurável do perfil autenticado e recria imports/overrides/histórico/progresso.
-
-`source_import_id` é remapeado após recriação dos registros em `imports`.
-
-## 7. Manutenção
-
-### Limpar Cache
-
-Limpa:
-
-- `sessionStorage`;
-- chaves locais específicas de cache/metadados;
-- Cache Storage CineTracker;
-- caches em memória 0.0.98;
-- solicita atualização de Service Worker.
-
-Não apaga o banco nem a sessão autenticada.
-
-### Atualizar Metadados
-
-As mídias relacionadas a histórico/overrides/progresso são coletadas, enriquecidas em lotes via TMDB e persistidas em `media`. O caminho 0.0.98 só consulta TMDB para `tmdb_id > 0`.
-
-## 8. Android
-
-Identidade:
+## 3. Android 0.0.99
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.0.98`;
-- `versionCode`: `996`;
-- bundle: `v0.0.98-profile-history-backup-discover-v95-core-inline-authoritative`.
+- `versionName`: `0.0.99`;
+- `versionCode`: `997`;
+- bundle alvo: `v0.0.99-profile-lru-v95-core-inline-authoritative`.
 
-`scripts/prepare-android-hotfix2-web.mjs` copia o build para `assets/hotfix5`, inline os scripts e valida markers/ordem. O bridge nativo existente fornece:
+`scripts/prepare-android-hotfix2-web.mjs` copia o build Web para assets locais, converte scripts para inline e valida presença/ordem da camada 0.0.99. O runtime principal não depende de fallback remoto.
 
-- navegação;
-- FileChooser para importação;
-- `exportBackup` + `ACTION_CREATE_DOCUMENT` para salvar o ZIP;
-- persistência temporária dos arquivos Bingers onde necessária.
+## 4. Modelo persistente principal
 
-## 9. Modelo persistente
+- `profiles` — conta/configurações;
+- `media` — filmes/séries e metadados;
+- `media_overrides` — estados/decisões do usuário;
+- `episode_progress` — progresso por episódio;
+- `watch_history` — histórico normalizado e plays;
+- `imports` — auditoria de importações.
 
-Entidades centrais:
+Estados relevantes incluem `AlreadySeen`, `Completed`, `UpToDate`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater` e `AddedToWatchlist`. Origem manual tem precedência sobre inferência/importação.
 
-- `profiles`;
-- `media`;
-- `media_overrides`;
-- `episode_progress`;
-- `watch_history`;
-- `imports`.
+## 5. Perfil 0.0.99
 
-Estados manuais continuam prioritários em relação a importação/inferência.
+A UI do Perfil lê dados agregados do servidor e não tenta reconstruir todo o estado por paginação REST no cliente.
 
-## 10. Bingers preservado
+Quatro carrosséis principais:
 
-O pipeline Bingers usa somente `library.csv` e `watches.csv`, preserva plays, não inventa datas e mantém precedência manual. `ct-import-bingers-user` v8 continua com begin idempotente, cursor/replay, validação, dedupe e finalização verificável.
+- Séries;
+- Séries favoritas;
+- Filmes;
+- Filmes favoritos.
 
-A falha histórica `PGRST102 / All object keys must match` permanece corrigida pelo shape homogêneo de `watch_history`.
+Todos usam cards 2:3 e ordenação LRU por `last_watched_at DESC`.
 
-## 11. TMDB e surrogate IDs
+### Subtelas
 
-IDs substitutos negativos não são IDs TMDB. Os caminhos novos de Descobrir/Atualizar Metadados bloqueiam requests externos quando o ID é `<= 0`.
+Séries: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia, Concluídas.  
+Filmes: Assistir a seguir / Watchlist, Já vistos.  
+Favoritos: grid completo 2/3 colunas.
 
-O débito estrutural de separar definitivamente surrogate ID do campo `tmdb_id` permanece registrado porque código legado fora da camada 0.0.98 ainda pode conhecer esses IDs.
+## 6. RPC `cinetracker_profile_media_dashboard`
 
-## 12. Migrations e funções da release
+Migration: `20260826234500_v099_profile_media_lru_dashboard.sql`.
 
-- `20260826230500_v098_profile_history_media.sql`;
-- `supabase/functions/ct-backup-user/index.ts` — deploy v1.
+A função é `SECURITY INVOKER`, escopada por `auth.uid()` e consolida três fontes:
 
-Migrations da linha Bingers/HOTFIX17 permanecem parte do histórico e não foram removidas.
+1. `watch_history` — `last_watched_at`, plays e histórico;
+2. `episode_progress` — episódios assistidos e timestamp de progresso;
+3. `media_overrides` — favorito (`Liked`), watchlist, WatchLater, InProgress, UpToDate, Completed e `AlreadySeen`.
 
-## 13. Segurança
+`last_watched_at` é o maior timestamp aplicável entre histórico, progresso e `AlreadySeen` de filmes. `watched_episodes` usa o maior valor coerente entre histórico e progresso para evitar regressão visual durante reconciliações.
 
-- RPC nova: `SECURITY INVOKER` e `auth.uid()`;
-- backup server-side: bearer obrigatório e validação explícita antes da service role;
-- operações pessoais escopadas ao usuário autenticado;
-- segredos permanecem fora do cliente/repositório.
+## 7. Atualização reativa
 
-Débitos legados são acompanhados em `docs/SECURITY.md`.
+`patch-v091-v099-profile-lru.js` escuta `cinetracker:data-changed` e refaz a leitura server-side. A camada também observa escritas feitas por `sbApi` em `watch_history`, `episode_progress` e `media_overrides`, e revalida ao recuperar foco/visibilidade. Existe reconciliação periódica somente enquanto o Perfil/subtela está visível para refletir mudanças externas.
 
-## 14. CI/CD
+Esse desenho faz a ordenação depender do timestamp persistente no banco, e não de ordem local de clique.
 
-- `Verify`: build/semântica/runtime 0.0.98;
-- `build-android-v098.yml`: APK, identidade, assinatura, artifact, SHA e Release.
+## 8. Detalhes e IDs TMDB substitutos
 
-Resultados executados são fonteados em `docs/validation/0.0.98.md`.
+TMDB IDs positivos abrem a tela global de detalhes. Surrogate IDs negativos não são enviados à TMDB; o Perfil oferece detalhe local para esses cards. A separação definitiva entre surrogate interno e campo `tmdb_id` continua como débito arquitetural legado.
+
+## 9. Recursos preservados da 0.0.98
+
+- Home / Descobrir / Perfil / Configurações;
+- Histórico integrado ao Perfil, sem aba principal;
+- Descobrir com filtros por tipo e ranking decrescente;
+- backup CSV/ZIP por `ct-backup-user`;
+- Limpar Cache e Atualizar Metadados;
+- importação Bingers resiliente v8.
+
+## 10. Segurança
+
+RPCs voltadas ao cliente devem operar com `SECURITY INVOKER` quando possível e filtrar por `auth.uid()`. Edge Functions privilegiadas mantêm service role somente no ambiente server-side. Detalhes e débitos ficam em `docs/SECURITY.md`.
+
+## 11. Versionamento
+
+Toda nova unidade lógica deve receber nova versão e atualizar source, migrations, documentação, CI e artefatos aplicáveis conforme `docs/DEVELOPMENT_RULES.md`.
