@@ -12,30 +12,32 @@ const names=[
   'patch-v080-hotfix11-settings-bridge.js',
   'patch-v082-hotfix12-picker-guard.js',
   'patch-v083-hotfix13-bingers-semantics.js',
-  'patch-v086-hotfix15-import-retry.js'
+  'patch-v087-hotfix16-import-resilience.js'
 ];
 const targets=[resolve(root,'dist'),resolve(root,'apps/web/dist')];
 
 for(const target of targets){
   const indexPath=resolve(target,'index.html');
   let html=await readFile(indexPath,'utf8');
-  if(html.includes('patch-v068-v097.js'))throw new Error(`HOTFIX15: v97 overlay must be absent before selective layer: ${indexPath}`);
-  if(!html.includes('patch-v067-v095.js'))throw new Error(`HOTFIX15: stable v95 core missing: ${indexPath}`);
+  if(html.includes('patch-v068-v097.js'))throw new Error(`HOTFIX16: v97 overlay must be absent before selective layer: ${indexPath}`);
+  if(!html.includes('patch-v067-v095.js'))throw new Error(`HOTFIX16: stable v95 core missing: ${indexPath}`);
   html=html.replace(/<script src="\/patch-v081-hotfix12-nav-pre\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v084-hotfix14-real-device\.js"><\/script>/g,'');
+  html=html.replace(/<script src="\/patch-v086-hotfix15-import-retry\.js"><\/script>/g,'');
   for(const name of names){
     const tag=`<script src="/${name}"></script>`;
     if(!html.includes(tag))html=html.replace('</body>',tag+'</body>');
-    if(!html.includes(tag))throw new Error(`HOTFIX15: ${name} was not injected: ${indexPath}`);
+    if(!html.includes(tag))throw new Error(`HOTFIX16: ${name} was not injected: ${indexPath}`);
     await copyFile(resolve(root,'apps/web',name),resolve(target,name));
   }
   const navIndex=html.indexOf('patch-v085-hotfix15-import-transport.js');
   const selectiveIndex=html.indexOf('patch-v075-hotfix10-selective.js');
   const pickerIndex=html.indexOf('patch-v082-hotfix12-picker-guard.js');
   const semanticsIndex=html.indexOf('patch-v083-hotfix13-bingers-semantics.js');
-  const retryIndex=html.indexOf('patch-v086-hotfix15-import-retry.js');
-  if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||retryIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex||retryIndex<semanticsIndex)throw new Error(`HOTFIX15: runtime patch order invalid: ${indexPath}`);
+  const resilienceIndex=html.indexOf('patch-v087-hotfix16-import-resilience.js');
+  if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||resilienceIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex||resilienceIndex<semanticsIndex)throw new Error(`HOTFIX16: runtime patch order invalid: ${indexPath}`);
+  if(html.includes('patch-v086-hotfix15-import-retry.js'))throw new Error(`HOTFIX16: legacy retry layer still active: ${indexPath}`);
   await writeFile(indexPath,html,'utf8');
 }
 
-console.log('HOTFIX15 import transport: verified navigation + browser CORS + explicit Android picker + Bingers semantics + retry-safe import batches emitted.');
+console.log('HOTFIX16 import resilience: navigation + picker + Bingers semantics + auth-refreshing retry-safe import batches emitted.');
