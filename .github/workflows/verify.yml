@@ -15,8 +15,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Lock HOTFIX15 import transport
-        run: node scripts/test-hotfix15-import-transport.mjs
+      - name: Lock HOTFIX15 import transport and retries
+        run: |
+          node scripts/test-hotfix15-import-transport.mjs
+          node scripts/test-hotfix15-retry-transport.mjs
       - name: Prove deployed Edge Function CORS
         run: node scripts/test-hotfix15-live-cors.mjs
       - name: Build HOTFIX15 Web runtime
@@ -58,9 +60,13 @@ jobs:
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
           grep -q 'patch-v067-v095.js' dist/index.html
           grep -q 'patch-v085-hotfix15-import-transport.js' dist/index.html
+          grep -q 'patch-v086-hotfix15-import-retry.js' dist/index.html
           ! grep -q 'patch-v084-hotfix14-real-device.js' dist/index.html
           ! grep -q 'patch-v081-hotfix12-nav-pre.js' dist/index.html
           grep -q '__ctHotfix15ImportTransport' dist/patch-v085-hotfix15-import-transport.js
+          grep -q '__ctHotfix15ImportRetry' dist/patch-v086-hotfix15-import-retry.js
+          grep -q "action === 'begin'" dist/patch-v086-hotfix15-import-retry.js
+          grep -q 'requestTimeout15' dist/patch-v086-hotfix15-import-retry.js
           grep -q 'ct15EnhanceNativePicker' dist/patch-v085-hotfix15-import-transport.js
           grep -q '__ctHotfix13BingersSemantics' dist/patch-v083-hotfix13-bingers-semantics.js
           grep -q '0.0.97 HOTFIX 15' dist/patch-v074-hotfix1-version.js
@@ -75,12 +81,14 @@ jobs:
             const b=s.indexOf('patch-v075-hotfix10-selective.js');
             const c=s.indexOf('patch-v082-hotfix12-picker-guard.js');
             const d=s.indexOf('patch-v083-hotfix13-bingers-semantics.js');
-            if(a<0||b<0||c<0||d<0||!(a<b&&b<c&&c<d))throw new Error('HOTFIX15 runtime order invalid in '+p);
+            const e=s.indexOf('patch-v086-hotfix15-import-retry.js');
+            if(a<0||b<0||c<0||d<0||e<0||!(a<b&&b<c&&c<d&&d<e))throw new Error('HOTFIX15 runtime order invalid in '+p);
             if(s.includes('patch-v084-hotfix14-real-device.js')||s.includes('patch-v081-hotfix12-nav-pre.js'))throw new Error('obsolete import/navigation layer found in '+p);
           }
           NODE
           grep -q "window.__ctAndroidBundle = 'hotfix15-import-transport-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ctHotfix15ImportTransport' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix15ImportRetry' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'ct15RestoreNativeFiles' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ctHotfix13BingersSemantics' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
