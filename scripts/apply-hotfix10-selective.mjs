@@ -2,7 +2,7 @@ import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root=resolve(process.cwd());
-const names=['patch-v075-hotfix10-selective.js','patch-v076-hotfix10-actions.js','patch-v077-hotfix10-native-bridge.js'];
+const names=['patch-v075-hotfix10-selective.js','patch-v076-hotfix10-actions.js','patch-v077-hotfix10-native-bridge.js','patch-v078-hotfix11-import-sync.js'];
 const targets=[resolve(root,'dist'),resolve(root,'apps/web/dist')];
 
 for(const target of targets){
@@ -19,4 +19,4 @@ for(const target of targets){
   await writeFile(indexPath,html,'utf8');
 }
 
-console.log('HOTFIX10 selective: stable v95 core + isolated navigation/discover/import/actions/native-bridge emitted.');
+console.log('HOTFIX11 import sync: stable v95 core + HOTFIX10 selective layers + reliable dual CSV sync emitted.');
