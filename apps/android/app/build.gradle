@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 986
-        versionName '0.0.97 HOTFIX 8'
+        versionCode 987
+        versionName '0.0.97 HOTFIX 9'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-0.0.97-hotfix8-post-login-observer-loop
+// release: android-0.0.97-hotfix9-v95-core-stability
