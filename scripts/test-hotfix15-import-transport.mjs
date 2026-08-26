@@ -29,5 +29,7 @@ if(!android.includes("window.ct15Navigate&&window.ct15Navigate('settings')"))fai
 if(!android.includes('hasPendingImportFlow()'))fail('Android does not detect interrupted picker flow');
 if(!android.includes('ct15RestoreNativeFiles'))fail('Android does not restore cached native files');
 if(!android.includes('if (fileChooserCallback != null)'))fail('legacy WebChrome chooser compatibility lost');
+if(!android.includes('String slot = currentPickerSlot;')||!android.includes('slot = importPrefs().getString("picker_slot", "")'))fail('Activity recreation can still lose the native picker slot');
+if(!android.includes('cacheImportFile(slot, uris.get(0))'))fail('Android result is not cached before returning to WebView');
 if(!gradle.includes('versionCode 993')||!gradle.includes("versionName '0.0.97 HOTFIX 15'"))fail('Android identity is not HOTFIX15');
-console.log('HOTFIX15_IMPORT_TRANSPORT_OK: CORS preflight before JWT; explicit Android native buttons; OEM MIME filtering removed; picker survives Activity recreation; versionCode=993.');
+console.log('HOTFIX15_IMPORT_TRANSPORT_OK: CORS preflight before auth; explicit native buttons; picker slot restored from SharedPreferences; selected bytes cached before WebView handoff; versionCode=993.');
