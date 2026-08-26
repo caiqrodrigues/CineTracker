@@ -1,0 +1,108 @@
+name: Verify HOTFIX14 Real Device
+
+on:
+  push:
+    branches: [recovery/v097-hotfix14-real-device]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hotfix14-real-device-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  real_device_recovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore dedicated CineTracker signing key
+        uses: actions/cache@v4
+        with: { path: ~/.cinetracker/cinetracker.keystore, key: cinetracker-signing-v2 }
+      - name: Initialize dedicated signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Prove reported physical-device regressions are structurally fixed
+        run: node scripts/test-hotfix14-real-device.mjs
+      - name: Build HOTFIX14 Web runtime
+        run: npm run build
+      - name: Preserve Bingers semantics and authentication
+        run: |
+          node scripts/test-hotfix13-bingers-semantics.mjs
+          node scripts/test-auth-recovery-red.mjs
+          node scripts/test-hotfix10-native-bridge.mjs
+      - name: Install real-browser harness
+        run: npm install --no-save --no-package-lock playwright-core@1.55.0
+      - name: Prove Web desktop navigation and mobile dual CSV flow
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          node scripts/test-real-browser-hotfix10-selective.mjs
+          node scripts/test-real-browser-hotfix11-import-sync.mjs
+          node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+      - name: Prepare exact embedded Android runtime
+        run: node scripts/prepare-android-hotfix2-web.mjs
+      - name: Compile every Android inline script
+        run: node scripts/test-android-inline-hotfix6.mjs
+      - name: Prove exact embedded Android UI runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix11-import-sync.mjs
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+      - name: Assert HOTFIX14 runtime identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'patch-v084-hotfix14-real-device.js' dist/index.html
+          ! grep -q 'patch-v081-hotfix12-nav-pre.js' dist/index.html
+          grep -q '__ctHotfix14RealDevice' dist/patch-v084-hotfix14-real-device.js
+          grep -q 'ct-web-0.0.97-hotfix14-real-device' dist/service-worker.js
+          grep -q "window.__ctAndroidBundle = 'hotfix14-real-device-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'data-ct-inline="patch-v084-hotfix14-real-device.js"' apps/android/app/src/main/assets/hotfix5/index.html
+          ! grep -q 'data-ct-inline="patch-v081-hotfix12-nav-pre.js"' apps/android/app/src/main/assets/hotfix5/index.html
+          ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'versionCode 992' apps/android/app/build.gradle
+          grep -q "versionName '0.0.97 HOTFIX 14'" apps/android/app/build.gradle
+      - name: Build signed Android validation APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Verify APK identity signature and embedded HOTFIX14
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ctHotfix14RealDevice'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'ct14RestoreNativeFiles'
+          "$APKSIGNER" verify --print-certs "$APK"
+          BADGING="$($AAPT dump badging "$APK" | head -1)"
+          echo "$BADGING" | grep -q "package: name='com.cinetracker.app'"
+          echo "$BADGING" | grep -q "versionCode='992'"
+          echo "$BADGING" | grep -q "versionName='0.0.97 HOTFIX 14'"
+          sha256sum "$APK"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-hotfix14-real-device-validation
+          path: apps/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
