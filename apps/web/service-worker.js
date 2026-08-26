@@ -1,4 +1,4 @@
-const VERSION='ct-web-0.0.97-hotfix12-nav-mobile-import';
+const VERSION='ct-web-0.0.97-hotfix13-bingers-semantics';
 const MEDIA_CACHE=`${VERSION}-media`;
 const META_CACHE=`${VERSION}-meta`;
 
