@@ -43,13 +43,16 @@ try{
   const runtime=await page.evaluate(()=>({h14:window.__ctHotfix14PhysicalNavPicker===true,nav:typeof window.ct14Navigate==='function',v97:window.__ct97Loaded===true}));
   if(!runtime.h14||!runtime.nav||runtime.v97)throw new Error(`HOTFIX14 runtime invalid ${JSON.stringify(runtime)}`);
 
-  await page.evaluate(()=>{const cover=document.createElement('div');cover.id='ct14-test-cover';cover.style.cssText='position:fixed;left:0;top:0;width:220px;height:100vh;z-index:11000;pointer-events:auto;background:transparent';document.body.appendChild(cover)});
-  const sidebarZ=await page.locator('.sidebar').evaluate(el=>Number.parseInt(getComputedStyle(el).zIndex||'0',10));
-  if(sidebarZ<=11000)throw new Error(`Sidebar did not outrank physical cover: z=${sidebarZ}`);
+  const sidebar=page.locator('.sidebar').first();
+  await sidebar.waitFor({state:'visible',timeout:1800});
+  const sidebarStyle=await sidebar.evaluate(el=>({z:getComputedStyle(el).zIndex,pointer:getComputedStyle(el).pointerEvents}));
+  if(sidebarStyle.pointer==='none'||Number.parseInt(sidebarStyle.z||'0',10)<12000)throw new Error(`Sidebar physical layer invalid: ${JSON.stringify(sidebarStyle)}`);
 
   for(const target of ['discover','history','profile','settings','home','history','settings']){
     const button=page.locator(`.nav button[data-view="${target}"]`).first();
     await button.waitFor({state:'visible',timeout:1800});
+    const hit=await button.evaluate((el)=>{const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,node=document.elementFromPoint(x,y);return node?.closest?.('[data-view]')?.dataset?.view||''});
+    if(hit!==target)throw new Error(`physical hit target ${target}: elementFromPoint resolved ${hit||'nothing'}`);
     await button.click({timeout:2500});
     await page.locator(marker(target)).first().waitFor({state:target==='settings'?'visible':'attached',timeout:3000});
     await page.waitForTimeout(180);
@@ -70,5 +73,5 @@ try{
   const beat=await Promise.race([page.evaluate(()=>new Promise(r=>setTimeout(()=>r('alive'),900))),new Promise(r=>setTimeout(()=>r('starved'),1900))]);
   if(beat!=='alive')throw new Error('HOTFIX14 UI thread starved');
   if(errors.length)throw new Error(`Browser errors:\n${errors.join('\n')}`);
-  console.log(`HOTFIX14_PHYSICAL_BROWSER_OK root=${process.env.CINETRACKER_TEST_ROOT||'dist'}; desktop-tabs=discover>history>profile>settings>home>history>settings; stacking=OK; focus-return=OK; importer=visible; browser-errors=0`);
+  console.log(`HOTFIX14_PHYSICAL_BROWSER_OK root=${process.env.CINETRACKER_TEST_ROOT||'dist'}; desktop-tabs=discover>history>profile>settings>home>history>settings; hit-testing=OK; focus-return=OK; importer=visible; browser-errors=0`);
 }finally{await browser.close().catch(()=>{});await new Promise(resolve=>server.close(resolve))}
