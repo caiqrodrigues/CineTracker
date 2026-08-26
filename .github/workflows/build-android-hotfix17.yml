@@ -52,7 +52,7 @@ jobs:
           node scripts/test-hotfix10-native-bridge.mjs
           grep -q '__ctProfileStatsHotfix17' dist/patch-v074-hotfix1-version.js
           grep -q 'cinetracker_series_state_stats' dist/patch-v074-hotfix1-version.js
-          grep -q 'UpToDate' dist/patch-v074-hotfix1-version.js
+          grep -q 'up_to_date_series' dist/patch-v074-hotfix1-version.js
           grep -q 'Não iniciadas' dist/patch-v074-hotfix1-version.js
       - name: Prepare exact embedded Android runtime
         shell: bash
@@ -62,7 +62,7 @@ jobs:
           grep -q "window.__ctAndroidBundle = 'hotfix17-series-status-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ctProfileStatsHotfix17' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'cinetracker_series_state_stats' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'UpToDate' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'up_to_date_series' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'Não iniciadas' apps/android/app/src/main/assets/hotfix5/index.html
       - name: Build debug HOTFIX 17 APK
         working-directory: apps/android
