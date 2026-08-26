@@ -42,8 +42,8 @@ async function buildContext(viewport,label){
   await page.locator('#auth-form button[type="submit"]').click();
   await page.locator('.content').waitFor({state:'visible',timeout:1800});
   await page.waitForTimeout(400);
-  const runtime=await page.evaluate(()=>({v97:window.__ct97Loaded===true,h12nav:window.__ctHotfix12NavPre===true,h12picker:window.__ctHotfix12PickerGuard===true,h13:window.__ctHotfix13BingersSemantics===true,navigate:typeof window.ct12Navigate==='function'}));
-  if(runtime.v97||!runtime.h12nav||!runtime.h12picker||!runtime.navigate)throw new Error(`${label}: HOTFIX12/HOTFIX13 runtime invalid ${JSON.stringify(runtime)}`);
+  const runtime=await page.evaluate(()=>({v97:window.__ct97Loaded===true,h14nav:window.__ctHotfix14RealDevice===true,h12picker:window.__ctHotfix12PickerGuard===true,h13:window.__ctHotfix13BingersSemantics===true,navigate:typeof window.ct12Navigate==='function'}));
+  if(runtime.v97||!runtime.h14nav||!runtime.h12picker||!runtime.h13||!runtime.navigate)throw new Error(`${label}: HOTFIX14/HOTFIX13 runtime invalid ${JSON.stringify(runtime)}`);
   return {context,page,errors};
 }
 
@@ -108,7 +108,7 @@ try{
   if(mobileBeat!=='alive')throw new Error('mobile picker: UI thread starved');
   await mobile.context.close();
 
-  console.log(`HOTFIX12_NAV_MOBILE_IMPORT_OK root=${process.env.CINETRACKER_TEST_ROOT||'dist'}; desktop-tabs=home>discover>history>profile>settings; mobile-first-file-panel=retained; second-selector=retained; preview-before-write=OK; backend=${edgeActions.join('>')}; cloud-refresh=${cloudReadsAfterImport}; browser-errors=0`);
+  console.log(`HOTFIX14_NAV_MOBILE_IMPORT_OK root=${process.env.CINETRACKER_TEST_ROOT||'dist'}; desktop-tabs=home>discover>history>profile>settings; mobile-first-file-panel=retained; second-selector=retained; preview-before-write=OK; backend=${edgeActions.join('>')}; cloud-refresh=${cloudReadsAfterImport}; browser-errors=0`);
 }finally{
   await browser.close().catch(()=>{});
   await new Promise(resolve=>server.close(resolve));
