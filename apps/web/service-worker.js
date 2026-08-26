@@ -1,4 +1,4 @@
-const VERSION='ct-web-0.0.97-hotfix11-import-sync';
+const VERSION='ct-web-0.0.97-hotfix12-nav-mobile-import';
 const MEDIA_CACHE=`${VERSION}-media`;
 const META_CACHE=`${VERSION}-meta`;
 
