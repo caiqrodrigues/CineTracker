@@ -10,7 +10,7 @@ function installCompat(){
   let selected=[];
   const input=document.createElement('input');
   input.id='ct10-files';input.type='file';input.multiple=true;input.accept='.zip,.json,.csv,text/csv,application/json,application/zip';input.hidden=true;
-  const button=document.createElement('button');button.id='ct10-read';button.type='button';button.hidden=true;
+  const button=document.createElement('button');button.id='ct10-read';button.type='button';button.setAttribute('aria-hidden','true');button.tabIndex=-1;button.style.cssText='position:fixed;left:1px;top:1px;width:1px;height:1px;min-width:1px;min-height:1px;padding:0;border:0;overflow:hidden;opacity:.001;z-index:2147483647';
   input.onchange=e=>{selected=[...(e.target.files||[])]};
   button.onclick=async()=>{if(typeof window.ct10ReadImportFiles==='function')await window.ct10ReadImportFiles(selected)};
   panel.append(input,button);
