@@ -14,6 +14,7 @@ function applyHotfixVersion() {
     }
   }
 }
+window.__ctApplyHotfixVersion17 = applyHotfixVersion;
 const oldRender = window.render;
 if (typeof oldRender === 'function' && !window.__ctHotfix17Render) {
   window.__ctHotfix17Render = oldRender;
@@ -122,7 +123,7 @@ async function refreshProfile17() {
 
     await replaceGraph17(profile);
     profile.dataset.sync17 = '1';
-    applyHotfixVersion();
+    window.__ctApplyHotfixVersion17?.();
   } catch (error) {
     delete profile.dataset.sync17;
     console.warn('CineTracker HOTFIX17: falha ao sincronizar Perfil.', error);
