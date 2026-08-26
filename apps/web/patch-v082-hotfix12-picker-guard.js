@@ -8,11 +8,12 @@ let pickerUntil = 0;
 const isPickerInput = el => !!el && ['ct11-library','ct11-watches','ct11-package'].includes(el.id);
 function currentView12(){ try { return String(view || ''); } catch { return String(window.view || ''); } }
 function inSettings12(){ return ['settings','ct91-settings','ct92-settings'].includes(currentView12()) || /Configurações|Importar dados do Bingers/i.test(document.querySelector('.content')?.textContent || ''); }
-function guardFor12(ms=12000){ pickerUntil = Math.max(pickerUntil, Date.now() + ms); }
+function armPicker12(ms=300000){ pickerUntil = Date.now() + ms; }
 function guarded12(){ return Date.now() < pickerUntil && inSettings12(); }
+function settlePicker12(){ if (guarded12()) setTimeout(()=>{ pickerUntil = 0; },1500); }
 
 // Mobile browsers emit focus/visibilitychange when the OS document picker closes.
-// HOTFIX11 listened to those events and rebuilt Settings. Suppress only that tiny window.
+// HOTFIX11 listened to those events and rebuilt Settings. Suppress only the picker-return window.
 const baseLoadCloudState12 = window.loadCloudState;
 if (typeof baseLoadCloudState12 === 'function' && !window.__ctHotfix12LoadCloudStateBase) {
   window.__ctHotfix12LoadCloudStateBase = baseLoadCloudState12;
@@ -54,7 +55,7 @@ function parseDelimited12(text){
     else cur+=ch;
   }
   if(cur||row.length){row.push(cur.replace(/\r$/,''));rows.push(row)}
-  const head=(rows.shift()||[]).map((x,i)=>String(x||'').trim().replace(i===0?/^\uFEFF/:/$^/,''));
+  const head=(rows.shift()||[]).map(x=>String(x||'').trim().replace(/^\uFEFF/,''));
   const data=rows.filter(r=>r.some(v=>String(v||'').trim())).map(r=>Object.fromEntries(head.map((h,i)=>[h,r[i]??''])));
   return {head,data};
 }
@@ -112,19 +113,24 @@ window.ct12BindImporter = bindImporter12;
 
 for (const eventName of ['pointerdown','mousedown','touchstart','click']) {
   document.addEventListener(eventName, event => {
-    if (isPickerInput(event.target)) guardFor12();
+    if (isPickerInput(event.target)) armPicker12();
   }, true);
 }
 document.addEventListener('change', event => {
   const input=event.target;
   if(!isPickerInput(input))return;
-  guardFor12(1800);
+  pickerUntil=Date.now()+1500;
   const file=input.files?.[0]||null;
   if(input.id==='ct11-library')state.library=file;
   if(input.id==='ct11-watches')state.watches=file;
   if(input.id==='ct11-package')state.package=file;
   setTimeout(bindImporter12,0);
 }, true);
+window.addEventListener('focus',settlePicker12);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)settlePicker12()});
+window.addEventListener('cinetracker:data-changed',event=>{
+  if(String(event.detail?.source||'').includes('import'))pickerUntil=0;
+});
 
 const previous92=window.ct92Navigate;
 if(typeof previous92==='function')window.ct92Navigate=function(target){
