@@ -23,14 +23,30 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Restore dedicated CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize dedicated signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
       - name: Build stable Web plus selective HOTFIX10
         run: npm run build
       - name: Prove auth regression suite
         run: node scripts/test-auth-recovery-red.mjs
+      - name: Prove native navigation compatibility bridge
+        run: node scripts/test-hotfix10-native-bridge.mjs
       - name: Install real-browser harness
         run: npm install --no-save --no-package-lock playwright-core@1.55.0
-      - name: Prove exact target navigation and CSV preview in real Chrome
+      - name: Prove exact target navigation, actions and CSV preview in real Chrome
         shell: bash
         run: |
           set -euo pipefail
@@ -42,7 +58,7 @@ jobs:
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Prove embedded Android target navigation and CSV preview
+      - name: Prove embedded Android target navigation, actions and CSV preview
         shell: bash
         run: |
           set -euo pipefail
@@ -50,11 +66,45 @@ jobs:
           test -n "$CHROME_BIN"
           export CHROME_BIN
           CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Assert v97 stayed disabled and selective layer is embedded
+      - name: Assert v97 stayed disabled and selective layers are embedded
         shell: bash
         run: |
           set -euo pipefail
           grep -q 'patch-v075-hotfix10-selective.js' dist/index.html
+          grep -q 'patch-v076-hotfix10-actions.js' dist/index.html
+          grep -q 'patch-v077-hotfix10-native-bridge.js' dist/index.html
           ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
           grep -q 'window.__ctHotfix10Selective = true' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'window.__ctHotfix10Actions=true' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'window.__ctHotfix10NativeBridge=true' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'hotfix10-selective-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
+      - name: Build signed debug HOTFIX10 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Verify HOTFIX10 APK identity signature and embedded runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          unzip -l "$APK" | grep -q 'assets/hotfix5/index.html'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'hotfix10-selective-v95-core-inline-authoritative'"
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ctHotfix10Selective'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ctHotfix10Actions'
+          unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ctHotfix10NativeBridge'
+          if unzip -p "$APK" assets/hotfix5/index.html | grep -q '__ct97Loaded'; then exit 1; fi
+          "$APKSIGNER" verify --print-certs "$APK"
+          PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION_CODE="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
+          test "$PACKAGE" = "com.cinetracker.app"
+          test "$VERSION" = "0.0.97 HOTFIX 10"
+          test "$VERSION_CODE" = "988"
+          sha256sum "$APK"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-0.0.97-hotfix10-validation
+          path: apps/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
