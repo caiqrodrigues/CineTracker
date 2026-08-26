@@ -1,8 +1,8 @@
 (() => {
 'use strict';
-if (window.__ctHotfix17Version) return;
-window.__ctHotfix17Version = true;
-const VERSION = '0.0.97 HOTFIX 17';
+if (window.__ctHotfix18Version) return;
+window.__ctHotfix18Version = true;
+const VERSION = '0.0.97 HOTFIX 18';
 function applyHotfixVersion() {
   window.__ctAndroidBuild = VERSION;
   const host = document.querySelector('.content') || document.querySelector('#app');
@@ -14,12 +14,12 @@ function applyHotfixVersion() {
     }
   }
 }
-window.__ctApplyHotfixVersion17 = applyHotfixVersion;
+window.__ctApplyHotfixVersion18 = applyHotfixVersion;
 const oldRender = window.render;
-if (typeof oldRender === 'function' && !window.__ctHotfix17Render) {
-  window.__ctHotfix17Render = oldRender;
+if (typeof oldRender === 'function' && !window.__ctHotfix18Render) {
+  window.__ctHotfix18Render = oldRender;
   window.render = function(...args) {
-    const out = window.__ctHotfix17Render.apply(this, args);
+    const out = window.__ctHotfix18Render.apply(this, args);
     setTimeout(applyHotfixVersion, 0);
     return out;
   };
@@ -134,10 +134,10 @@ async function refreshProfile17() {
 
     await replaceGraph17(profile);
     profile.dataset.sync17 = '1';
-    window.__ctApplyHotfixVersion17?.();
+    window.__ctApplyHotfixVersion18?.();
   } catch (error) {
     delete profile.dataset.sync17;
-    console.warn('CineTracker HOTFIX17: falha ao sincronizar Perfil.', error);
+    console.warn('CineTracker HOTFIX18: falha ao sincronizar Perfil.', error);
   }
 }
 
