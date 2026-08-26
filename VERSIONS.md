@@ -4,12 +4,24 @@
 
 ## Matriz atual
 
-| Sistema | Versão de código / release lógica | Versão técnica adicional | Estado |
+| Sistema | Versão atual | Versão técnica adicional | Estado comprovado |
 |---|---:|---|---|
-| Web | **0.0.97 HOTFIX 18** | package `0.0.97-hotfix18-documentation-governance` | source atual na `main`; produção requer confirmação de deploy |
-| Android | **0.0.97 HOTFIX 18** | `versionCode 995` | source/build target atual; publicação exige APK/Release válidos |
+| Web | **0.0.97 HOTFIX 18** | package `0.0.97-hotfix18-documentation-governance` | build/Verify concluídos; Vercel `success` |
+| Android | **0.0.97 HOTFIX 18** | `versionCode 995` | build, assinatura, artifact e Release publicados; teste em aparelho real pendente |
 | Backend / Supabase | **0.0.97 HOTFIX 18** | `ct-import-bingers-user` deploy v8 | schema/RPCs ativos; Edge Functions têm numeração própria |
 | Windows | **—** | — | não lançado |
+
+## Evidência HOTFIX18
+
+- workflow geral `Verify`: run `33016322725`, sucesso;
+- pipeline Android: run `33016118908`, build e release com sucesso;
+- artifact Android: `cinetracker-android-0.0.97-HOTFIX18-debug`, id `9624582547`;
+- GitHub Release: `android-v0.0.97-hotfix18`;
+- APK: `cinetracker-android-0.0.97-HOTFIX18-debug.apk`;
+- SHA-256 do APK: `9a9801c69be9f66142c98a43ba084c262dc19a3b00cc15db5e379b6f8f05035f`;
+- status Vercel do commit HOTFIX18 verificado como `success`.
+
+Smoke autenticado manual Web e instalação/teste Android em aparelho real permanecem pendentes.
 
 ## Edge Functions relevantes
 
@@ -58,7 +70,7 @@ Detalhes normativos: `docs/DEVELOPMENT_RULES.md`.
 - **0.0.97 HOTFIX 15** — transporte/picker de importação e shape homogêneo de `watch_history`.
 - **0.0.97 HOTFIX 16** — pipeline de importação resiliente, idempotente e verificável; Edge Function Bingers v8.
 - **0.0.97 HOTFIX 17** — Perfil server-side e classificação de séries em Concluídas / Em andamento / Em dia / Não iniciadas.
-- **0.0.97 HOTFIX 18** — consolidação documental, governança obrigatória, sincronização integral de versionamento e preservação das correções HOTFIX15–17.
+- **0.0.97 HOTFIX 18** — consolidação documental, governança obrigatória, sincronização integral de versionamento, atualização do CI geral e publicação Android, preservando HOTFIX15–17.
 
 ## Release atual
 
