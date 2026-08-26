@@ -9,63 +9,54 @@ permissions:
   contents: read
 
 jobs:
-  hotfix18_stability:
+  v098_stability:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build and verify HOTFIX18 Web runtime
+      - name: Build and verify CineTracker 0.0.98 Web runtime
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Prepare exact Android embedded runtime
+      - name: Prepare exact Android 0.0.98 embedded runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
-      - name: Compile every Android inline script
+      - name: Compile and validate every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Assert HOTFIX18 production invariants
+      - name: Assert CineTracker 0.0.98 invariants
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
-          grep -q 'patch-v067-v095.js' dist/index.html
-          grep -q 'patch-v085-hotfix15-import-transport.js' dist/index.html
-          grep -q 'patch-v087-hotfix16-import-resilience.js' dist/index.html
-          grep -q 'patch-v074-hotfix1-version.js' dist/index.html
-          ! grep -q 'patch-v086-hotfix15-import-retry.js' dist/index.html
+          grep -q 'patch-v088-v098-nav-pre.js' dist/index.html
+          grep -q 'patch-v089-v098.js' dist/index.html
+          grep -q 'patch-v090-v098-compat.js' dist/index.html
           ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
           ! grep -q '<script src="/patch-v084-hotfix14-real-device.js"' dist/index.html
           ! grep -q '<script src="/patch-v081-hotfix12-nav-pre.js"' dist/index.html
-          grep -q '__ctHotfix15ImportTransport' dist/patch-v085-hotfix15-import-transport.js
-          grep -q '__ctProfileStatsHotfix17' dist/patch-v074-hotfix1-version.js
-          grep -q '__ctHotfix18Version' dist/patch-v074-hotfix1-version.js
-          grep -q 'cinetracker_series_state_stats' dist/patch-v074-hotfix1-version.js
-          grep -q 'up_to_date_series' dist/patch-v074-hotfix1-version.js
-          grep -q '0.0.97 HOTFIX 18' dist/patch-v074-hotfix1-version.js
-          grep -q 'ct-web-0.0.97-hotfix18-documentation-governance' dist/service-worker.js
-          grep -q '0.0.97 HOTFIX 18' README.md
-          grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
-          node - <<'NODE'
-          const fs=require('fs');
-          for(const p of ['dist/index.html','apps/android/app/src/main/assets/hotfix5/index.html']){
-            const s=fs.readFileSync(p,'utf8');
-            const a=s.indexOf('patch-v085-hotfix15-import-transport.js');
-            const b=s.indexOf('patch-v075-hotfix10-selective.js');
-            const c=s.indexOf('patch-v082-hotfix12-picker-guard.js');
-            const d=s.indexOf('patch-v083-hotfix13-bingers-semantics.js');
-            const e=s.indexOf('patch-v087-hotfix16-import-resilience.js');
-            const f=s.indexOf('patch-v074-hotfix1-version.js');
-            if(a<0||b<0||c<0||d<0||e<0||f<0||!(a<b&&b<c&&c<d&&d<e&&e<f))throw new Error('HOTFIX18 runtime order invalid in '+p);
-            if(s.includes('patch-v086-hotfix15-import-retry.js')||s.includes('patch-v084-hotfix14-real-device.js')||s.includes('patch-v081-hotfix12-nav-pre.js'))throw new Error('obsolete import/navigation layer found in '+p);
-          }
-          NODE
-          grep -q "window.__ctAndroidBundle = 'hotfix18-documentation-governance-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ctHotfix18Version' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ctProfileStatsHotfix17' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'ct15RestoreNativeFiles' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ctHotfix13BingersSemantics' apps/android/app/src/main/assets/hotfix5/index.html
+          ! grep -q '<script src="/patch-v086-hotfix15-import-retry.js"' dist/index.html
+          grep -q '__ct98NavPre' dist/patch-v088-v098-nav-pre.js
+          grep -q '__ct98Loaded' dist/patch-v089-v098.js
+          grep -q '__ct98Compat' dist/patch-v090-v098-compat.js
+          grep -q 'CineTracker • v0.0.98' dist/patch-v089-v098.js
+          grep -q 'Séries assistidas' dist/patch-v089-v098.js
+          grep -q 'Filmes assistidos' dist/patch-v089-v098.js
+          grep -q 'data-filter98="all"' dist/patch-v089-v098.js
+          grep -q 'data-filter98="movie"' dist/patch-v089-v098.js
+          grep -q 'data-filter98="tv"' dist/patch-v089-v098.js
+          grep -q 'ct-backup-user' dist/patch-v089-v098.js
+          grep -q 'manifest.csv' dist/patch-v089-v098.js
+          grep -q 'watch_history.csv' dist/patch-v089-v098.js
+          grep -q 'ct-web-0.0.98' dist/service-worker.js
+          grep -q '"version": "0.0.98"' package.json
+          grep -q "versionName '0.0.98'" apps/android/app/build.gradle
+          grep -q 'versionCode 996' apps/android/app/build.gradle
+          grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
+          grep -q "window.__ctAndroidBundle = 'v0.0.98-profile-history-backup-discover-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ct98Loaded' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
