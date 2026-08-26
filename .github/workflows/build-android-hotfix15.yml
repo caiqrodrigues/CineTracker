@@ -42,11 +42,12 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build and prove HOTFIX15 Web runtime and live CORS
+      - name: Build and prove HOTFIX15 Web runtime live CORS and retries
         shell: bash
         run: |
           set -euo pipefail
           node scripts/test-hotfix15-import-transport.mjs
+          node scripts/test-hotfix15-retry-transport.mjs
           node scripts/test-hotfix15-live-cors.mjs
           npm run build
           node scripts/test-hotfix13-bingers-semantics.mjs
@@ -73,6 +74,7 @@ jobs:
           CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix15-native-picker.mjs
           grep -q "window.__ctAndroidBundle = 'hotfix15-import-transport-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ctHotfix15ImportTransport' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix15ImportRetry' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'ct15RestoreNativeFiles' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'ct15EnhanceNativePicker' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ctHotfix13BingersSemantics' apps/android/app/src/main/assets/hotfix5/index.html
@@ -95,6 +97,7 @@ jobs:
           unzip -l "$OUT" | grep -q 'assets/hotfix5/index.html'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'hotfix15-import-transport-v95-core-inline-authoritative'"
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ctHotfix15ImportTransport'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ctHotfix15ImportRetry'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct15RestoreNativeFiles'
           if unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct97Loaded'; then exit 1; fi
           "$APKSIGNER" verify --print-certs "$OUT"
@@ -126,7 +129,7 @@ jobs:
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
         shell: bash
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android HOTFIX 15","description":"0.0.97 HOTFIX 15 import transport published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android HOTFIX 15","description":"0.0.97 HOTFIX 15 resilient import transport published"}'
       - name: Mark HOTFIX 15 build failure
         if: failure()
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
