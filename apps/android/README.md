@@ -7,7 +7,7 @@ App Android nativo leve baseado em `Activity + WebView`, com runtime CineTracker
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `0.0.99`;
 - `versionCode`: `997`;
-- bundle alvo: `v0.0.99-profile-lru-v95-core-inline-authoritative`.
+- bundle: `v0.0.99-profile-lru-v95-core-inline-authoritative`.
 
 ## Perfil
 
@@ -36,20 +36,29 @@ A barra nativa continua com Home, Descobrir, Perfil e Configurações; Históric
 
 `scripts/prepare-android-hotfix2-web.mjs` copia o build Web para os assets Android, transforma scripts em inline e exige a presença final de `patch-v091-v099-profile-lru.js` e `CineTracker • v0.0.99`.
 
-## Build e publicação
+## Build e publicação — concluídos
 
-Pipeline dedicado: `.github/workflows/build-android-v099.yml`.
+Pipeline dedicado: `.github/workflows/build-android-v099.yml`.  
+Run: `33021058734` — **success**.
 
-Saídas alvo:
+Comprovado no pipeline:
 
-- `cinetracker-android-0.0.99-debug.apk`;
-- artifact `cinetracker-android-0.0.99-debug`;
-- Release/tag `android-v0.0.99`;
-- validação `aapt` de package/versionName/versionCode;
-- `apksigner`;
-- SHA-256 ao lado do APK.
+- build Web 0.0.99: success;
+- runtime Android preparado e smoke inline aprovado;
+- `gradle assembleDebug`: BUILD SUCCESSFUL;
+- `aapt`: `com.cinetracker.app`, `0.0.99`, `versionCode 997`;
+- assinatura verificada via `apksigner`;
+- APK: `cinetracker-android-0.0.99-debug.apk`;
+- artifact: `cinetracker-android-0.0.99-debug`, ID `9626549788`;
+- GitHub Release: `android-v0.0.99`, ID `377463898`;
+- checksum: `v099-sha256.txt`;
+- SHA-256 do APK: `c39c08cd51470050f3eac2c444c4d468dcfcb4072230cf9e082def9ab176cf57`.
 
-Build/publicação e teste em aparelho real são estados distintos. O estado executado fica em `docs/validation/0.0.99.md`.
+O status GitHub `Android 0.0.99` ficou `success — 0.0.99 build and release published`.
+
+## Validação real ainda pendente
+
+O APK foi compilado, assinado e publicado, mas ainda não está marcado como instalado/testado em aparelho real. Também permanecem pendentes os testes manuais visuais dos carrosséis, LRU e favoritos.
 
 ## Rodapé
 
