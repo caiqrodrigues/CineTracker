@@ -1,4 +1,4 @@
-const VERSION='ct-web-0.0.97-hotfix17-series-status';
+const VERSION='ct-web-0.0.97-hotfix18-documentation-governance';
 const MEDIA_CACHE=`${VERSION}-media`;
 const META_CACHE=`${VERSION}-meta`;
 
