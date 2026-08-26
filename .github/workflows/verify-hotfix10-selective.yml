@@ -1,0 +1,60 @@
+name: Verify HOTFIX10 Selective
+
+on:
+  push:
+    branches: [recovery/v095-core-hotfix10-selective-features]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hotfix10-selective-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  selective_runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build stable Web plus selective HOTFIX10
+        run: npm run build
+      - name: Prove auth regression suite
+        run: node scripts/test-auth-recovery-red.mjs
+      - name: Install real-browser harness
+        run: npm install --no-save --no-package-lock playwright-core@1.55.0
+      - name: Prove exact target navigation and CSV preview in real Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          node scripts/test-real-browser-hotfix10-selective.mjs
+      - name: Prepare exact embedded Android runtime
+        run: node scripts/prepare-android-hotfix2-web.mjs
+      - name: Compile every Android inline script
+        run: node scripts/test-android-inline-hotfix6.mjs
+      - name: Prove embedded Android target navigation and CSV preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
+      - name: Assert v97 stayed disabled and selective layer is embedded
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'patch-v075-hotfix10-selective.js' dist/index.html
+          ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
+          grep -q 'window.__ctHotfix10Selective = true' apps/android/app/src/main/assets/hotfix5/index.html
+          ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
