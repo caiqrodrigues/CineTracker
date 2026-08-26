@@ -9,15 +9,17 @@ permissions:
   contents: read
 
 jobs:
-  hotfix14_stability:
+  hotfix15_stability:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Prove reported real-device regressions are structurally fixed
-        run: node scripts/test-hotfix14-real-device.mjs
-      - name: Build HOTFIX14 Web runtime
+      - name: Lock HOTFIX15 import transport
+        run: node scripts/test-hotfix15-import-transport.mjs
+      - name: Prove deployed Edge Function CORS
+        run: node scripts/test-hotfix15-live-cors.mjs
+      - name: Build HOTFIX15 Web runtime
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
@@ -34,49 +36,51 @@ jobs:
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
       - name: Prove Web five-tab navigation
         run: node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Prove Web mobile picker import and sync
+      - name: Prove Web dual CSV import confirm and sync
         run: node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+      - name: Prove Web mocked Android picker bridge
+        run: node scripts/test-real-browser-hotfix15-native-picker.mjs
       - name: Prepare exact Android embedded runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
       - name: Prove embedded Android five-tab navigation
         run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Prove embedded Android picker import and sync
+      - name: Prove embedded Android dual CSV import confirm and sync
         run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
-      - name: Assert HOTFIX14 production invariants
+      - name: Prove embedded Android mocked native picker
+        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix15-native-picker.mjs
+      - name: Assert HOTFIX15 production invariants
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
           grep -q 'patch-v067-v095.js' dist/index.html
-          grep -q 'patch-v084-hotfix14-real-device.js' dist/index.html
+          grep -q 'patch-v085-hotfix15-import-transport.js' dist/index.html
+          ! grep -q 'patch-v084-hotfix14-real-device.js' dist/index.html
           ! grep -q 'patch-v081-hotfix12-nav-pre.js' dist/index.html
-          grep -q 'patch-v078-hotfix11-import-sync.js' dist/index.html
-          grep -q 'patch-v082-hotfix12-picker-guard.js' dist/index.html
-          grep -q 'patch-v083-hotfix13-bingers-semantics.js' dist/index.html
-          grep -q '__ctHotfix14RealDevice' dist/patch-v084-hotfix14-real-device.js
-          grep -q 'ct14RestoreNativeFiles' dist/patch-v084-hotfix14-real-device.js
+          grep -q '__ctHotfix15ImportTransport' dist/patch-v085-hotfix15-import-transport.js
+          grep -q 'ct15EnhanceNativePicker' dist/patch-v085-hotfix15-import-transport.js
           grep -q '__ctHotfix13BingersSemantics' dist/patch-v083-hotfix13-bingers-semantics.js
-          grep -q '0.0.97 HOTFIX 14' dist/patch-v074-hotfix1-version.js
-          grep -q 'ct-web-0.0.97-hotfix14-real-device' dist/service-worker.js
+          grep -q '0.0.97 HOTFIX 15' dist/patch-v074-hotfix1-version.js
+          grep -q 'ct-web-0.0.97-hotfix15-import-transport' dist/service-worker.js
           ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
           ! grep -q 'patch-v068-v097-observer-guard.js' dist/index.html
           node - <<'NODE'
           const fs=require('fs');
           for(const p of ['dist/index.html','apps/android/app/src/main/assets/hotfix5/index.html']){
             const s=fs.readFileSync(p,'utf8');
-            const a=s.indexOf('patch-v084-hotfix14-real-device.js');
+            const a=s.indexOf('patch-v085-hotfix15-import-transport.js');
             const b=s.indexOf('patch-v075-hotfix10-selective.js');
             const c=s.indexOf('patch-v082-hotfix12-picker-guard.js');
             const d=s.indexOf('patch-v083-hotfix13-bingers-semantics.js');
-            if(a<0||b<0||c<0||d<0||!(a<b&&b<c&&c<d))throw new Error('HOTFIX14 runtime order invalid in '+p);
-            if(s.includes('patch-v081-hotfix12-nav-pre.js'))throw new Error('obsolete HOTFIX12 capture navigation found in '+p);
+            if(a<0||b<0||c<0||d<0||!(a<b&&b<c&&c<d))throw new Error('HOTFIX15 runtime order invalid in '+p);
+            if(s.includes('patch-v084-hotfix14-real-device.js')||s.includes('patch-v081-hotfix12-nav-pre.js'))throw new Error('obsolete import/navigation layer found in '+p);
           }
           NODE
-          grep -q "window.__ctAndroidBundle = 'hotfix14-real-device-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ctHotfix14RealDevice' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'ct14RestoreNativeFiles' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'hotfix15-import-transport-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix15ImportTransport' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'ct15RestoreNativeFiles' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ctHotfix13BingersSemantics' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
