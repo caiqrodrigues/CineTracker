@@ -9,15 +9,17 @@ permissions:
   contents: read
 
 jobs:
-  hotfix12_stability:
+  hotfix13_stability:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Build HOTFIX12 Web runtime
+      - name: Build HOTFIX13 Web runtime
         run: npm run build
+      - name: Lock Bingers aggregate semantics
+        run: node scripts/test-hotfix13-bingers-semantics.mjs
       - name: Execute auth and native bridge suites
         run: |
           node scripts/test-auth-recovery-red.mjs
@@ -48,7 +50,7 @@ jobs:
           CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
           CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix11-import-sync.mjs
           CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
-      - name: Assert HOTFIX12 production invariants
+      - name: Assert HOTFIX13 production invariants
         shell: bash
         run: |
           set -euo pipefail
@@ -56,11 +58,14 @@ jobs:
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
           grep -q 'patch-v067-v095.js' dist/index.html
           grep -q 'patch-v081-hotfix12-nav-pre.js' dist/index.html
-          grep -q 'patch-v075-hotfix10-selective.js' dist/index.html
           grep -q 'patch-v078-hotfix11-import-sync.js' dist/index.html
           grep -q 'patch-v082-hotfix12-picker-guard.js' dist/index.html
-          grep -q '0.0.97 HOTFIX 12' dist/patch-v074-hotfix1-version.js
-          grep -q 'ct-web-0.0.97-hotfix12-nav-mobile-import' dist/service-worker.js
+          grep -q 'patch-v083-hotfix13-bingers-semantics.js' dist/index.html
+          grep -q '__ctHotfix13BingersSemantics' dist/patch-v083-hotfix13-bingers-semantics.js
+          grep -q 'movie_plays' dist/patch-v083-hotfix13-bingers-semantics.js
+          grep -q 'watch_later_total' dist/patch-v083-hotfix13-bingers-semantics.js
+          grep -q '0.0.97 HOTFIX 13' dist/patch-v074-hotfix1-version.js
+          grep -q 'ct-web-0.0.97-hotfix13-bingers-semantics' dist/service-worker.js
           ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
           ! grep -q 'patch-v068-v097-observer-guard.js' dist/index.html
           node - <<'NODE'
@@ -70,10 +75,10 @@ jobs:
             const a=s.indexOf('patch-v081-hotfix12-nav-pre.js');
             const b=s.indexOf('patch-v075-hotfix10-selective.js');
             const c=s.indexOf('patch-v082-hotfix12-picker-guard.js');
-            if(a<0||b<0||c<0||!(a<b&&b<c))throw new Error('HOTFIX12 runtime order invalid in '+p);
+            const d=s.indexOf('patch-v083-hotfix13-bingers-semantics.js');
+            if(a<0||b<0||c<0||d<0||!(a<b&&b<c&&c<d))throw new Error('HOTFIX13 runtime order invalid in '+p);
           }
           NODE
-          grep -q "window.__ctAndroidBundle = 'hotfix12-nav-mobile-import-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ctHotfix12NavPre' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ctHotfix12PickerGuard' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'hotfix13-bingers-semantics-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix13BingersSemantics' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
