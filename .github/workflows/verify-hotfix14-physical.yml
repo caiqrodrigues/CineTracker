@@ -44,32 +44,32 @@ jobs:
           node scripts/test-hotfix10-native-bridge.mjs
       - name: Install real-browser harness
         run: npm install --no-save --no-package-lock playwright-core@1.55.0
-      - name: Prove real Web desktop and mobile flows
+      - name: Resolve Chrome
         shell: bash
         run: |
-          set -euo pipefail
           CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
           test -n "$CHROME_BIN"
-          export CHROME_BIN
-          node scripts/test-real-browser-hotfix14-physical.mjs
-          node scripts/test-real-browser-hotfix10-selective.mjs
-          node scripts/test-real-browser-hotfix11-import-sync.mjs
-          node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+      - name: Prove HOTFIX14 physical desktop navigation
+        run: node scripts/test-real-browser-hotfix14-physical.mjs
+      - name: Prove legacy selective navigation still works
+        run: node scripts/test-real-browser-hotfix10-selective.mjs
+      - name: Prove dual CSV sync still works
+        run: node scripts/test-real-browser-hotfix11-import-sync.mjs
+      - name: Prove mobile picker return still works
+        run: node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
       - name: Prepare exact embedded Android runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile every embedded Android script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Prove exact embedded Android HTML runtime
-        shell: bash
-        run: |
-          set -euo pipefail
-          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          test -n "$CHROME_BIN"
-          export CHROME_BIN
-          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix14-physical.mjs
-          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
-          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix11-import-sync.mjs
-          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+      - name: Prove HOTFIX14 in exact Android HTML runtime
+        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix14-physical.mjs
+      - name: Prove legacy navigation in exact Android HTML runtime
+        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
+      - name: Prove dual CSV sync in exact Android HTML runtime
+        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix11-import-sync.mjs
+      - name: Prove mobile picker return in exact Android HTML runtime
+        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
       - name: Assert HOTFIX14 shipped runtime
         shell: bash
         run: |
