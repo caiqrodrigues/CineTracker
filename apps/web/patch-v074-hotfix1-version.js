@@ -110,36 +110,27 @@ async function refreshProfile17() {
   if (!profile || profile.dataset.sync17 === 'loading') return;
   profile.dataset.sync17 = 'loading';
   try {
-    const [st0, ov, media] = await Promise.all([
+    const [st0, ss0] = await Promise.all([
       sbRpc('cinetracker_profile_stats', {}).catch(() => ({})),
-      sbApi('media_overrides?select=media_id,state').catch(() => []),
-      sbApi('media?select=id,media_type').catch(() => [])
+      sbRpc('cinetracker_series_state_stats', {}).catch(() => ({}))
     ]);
     const s = Array.isArray(st0) ? st0[0] || {} : st0 || {};
-    const states = {};
-    (ov || []).forEach(x => { states[x.state] = (states[x.state] || 0) + 1; });
-    const mm = new Map((media || []).map(x => [String(x.id), x]));
-    let watchMovies = 0, watchTv = 0;
-    (ov || []).filter(x => x.state === 'AddedToWatchlist').forEach(x => {
-      const m = mm.get(String(x.media_id));
-      if (m?.media_type === 'movie') watchMovies++;
-      else if (m?.media_type === 'tv') watchTv++;
-    });
+    const ss = Array.isArray(ss0) ? ss0[0] || {} : ss0 || {};
 
     ensureSeriesStatusCards17(profile);
     setStat(profile, /^Episódios$/i, Number(s.episodes_watched || 0).toLocaleString('pt-BR'));
     const epCard = statByLabel(profile, /^Episódios$/i);
     const sub = epCard && $('.s', epCard);
-    if (sub) sub.textContent = `de ${Number(s.series_watched || 0).toLocaleString('pt-BR')} séries com histórico`;
+    if (sub) sub.textContent = `de ${Number(ss.history_series ?? s.series_watched ?? 0).toLocaleString('pt-BR')} séries com histórico`;
     setStat(profile, /^Filmes$/i, Number(s.movies_watched || 0).toLocaleString('pt-BR'));
     setStat(profile, /Tempo em séries/i, fmt17(s.series_minutes || 0));
     setStat(profile, /Tempo em filmes/i, fmt17(s.movie_minutes || 0));
     setStat(profile, /Tempo total/i, fmt17(s.total_minutes || 0));
-    setStat(profile, /Séries concluídas/i, Number(states.Completed || 0).toLocaleString('pt-BR'));
-    setStat(profile, /^Em andamento$/i, Number(states.InProgress || 0).toLocaleString('pt-BR'));
-    setStat(profile, /^Em dia$/i, Number(states.UpToDate || 0).toLocaleString('pt-BR'));
-    setStat(profile, /^(Não iniciadas|Séries na Watchlist)$/i, watchTv.toLocaleString('pt-BR'));
-    setStat(profile, /Filmes na Watchlist/i, watchMovies.toLocaleString('pt-BR'));
+    setStat(profile, /Séries concluídas/i, Number(ss.completed_series || 0).toLocaleString('pt-BR'));
+    setStat(profile, /^Em andamento$/i, Number(ss.in_progress_series || 0).toLocaleString('pt-BR'));
+    setStat(profile, /^Em dia$/i, Number(ss.up_to_date_series || 0).toLocaleString('pt-BR'));
+    setStat(profile, /^(Não iniciadas|Séries na Watchlist)$/i, Number(ss.not_started_series || 0).toLocaleString('pt-BR'));
+    setStat(profile, /Filmes na Watchlist/i, Number(ss.watchlist_movies || 0).toLocaleString('pt-BR'));
 
     await replaceGraph17(profile);
     profile.dataset.sync17 = '1';
