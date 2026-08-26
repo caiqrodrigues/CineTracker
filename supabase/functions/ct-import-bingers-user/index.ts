@@ -106,7 +106,7 @@ Deno.serve(async(req)=>{
         const type=x.media_type==='movie'?'movie':'tv',m=map.get(`${type}:${Number(x.media_tmdb_id)}`);if(!m)continue;
         const first=x.first_watched_at||x.last_watched_at||new Date().toISOString(),last=x.last_watched_at||first,p=plays(x);
         if(x.type==='movie'){
-          hist.push({profile_id:user,source:'bingers',source_history_id:Number(x.source_history_id),media_id:m.id,item_type:'movie',watched_at:last,external_ids:{plays:p,first_watched_at:first,last_watched_at:last,tvdb_id:Number(x.tvdb_id)||null,tmdb_id:Number(x.tmdb_id)||null},title:x.title||m.title});
+          hist.push({profile_id:user,source:'bingers',source_history_id:Number(x.source_history_id),media_id:m.id,item_type:'movie',season_number:null,episode_number:null,watched_at:last,external_ids:{plays:p,first_watched_at:first,last_watched_at:last,tvdb_id:Number(x.tvdb_id)||null,tmdb_id:Number(x.tmdb_id)||null},title:x.title||m.title});
           const k=`${m.id}:AlreadySeen`;if(!states.has(k)){states.add(k);ovs.push({profile_id:user,media_id:m.id,state:'AlreadySeen',origin:'import',source_import_id:importId,watched_at:last})}
         }else{
           const s=Number(x.season_number),e=Number(x.episode_number);
