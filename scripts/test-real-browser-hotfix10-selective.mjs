@@ -99,7 +99,7 @@ try{
   if(!preview.includes('Prévia da importação')||!preview.includes('1')||!/(Títulos|Itens da biblioteca)/i.test(preview))throw new Error(`CSV preview incorrect: ${preview}`);
   if(!preview.includes('decisões manuais')&&!preview.includes('Dados criados'))throw new Error('Importer safety guarantee missing from preview.');
   if(edgeCalls.length)throw new Error('Importer called backend before confirmation.');
-  await page.locator('[data-close10]').click();
+  await page.locator('[data-close13],[data-close10]').first().click();
 
   const heartbeat=await Promise.race([page.evaluate(()=>new Promise(r=>setTimeout(()=>r('alive'),1000))),new Promise(r=>setTimeout(()=>r('starved'),2200))]);
   if(heartbeat!=='alive')throw new Error('HOTFIX10 UI thread starved.');
