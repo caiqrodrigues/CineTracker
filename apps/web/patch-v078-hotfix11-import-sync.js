@@ -58,12 +58,15 @@ async function canonicalCsv11(file,expected){
 async function syncCloud11(force=false){
   const now=Date.now();
   if(syncing11||(!force&&now-lastSync11<8000))return false;
-  if(typeof loadCloudState!=='function')return false;
+  let authenticated=false;try{authenticated=!!ctSession?.access_token}catch{}
+  if(!authenticated||typeof loadCloudState!=='function')return false;
   syncing11=true;lastSync11=now;
   try{
+    const before=currentView11();
     await loadCloudState();
-    if(typeof render==='function')render();
-    if(isSettings11())setTimeout(upgradeImporter11,80);
+    const overlayOpen=!!document.querySelector('.ct91-overlay,#ct92-episode-overlay,#ct92-person-overlay,#ct10-preview');
+    if(!overlayOpen&&typeof render==='function')render();
+    if(['settings','ct91-settings','ct92-settings'].includes(before))setTimeout(upgradeImporter11,80);
     return true;
   }catch(e){console.warn('CineTracker HOTFIX11: sincronização do Supabase não concluída.',e);return false}
   finally{syncing11=false}
@@ -101,8 +104,8 @@ function upgradeImporter11(){
   };
   $11('#ct11-sync',panel).onclick=async e=>{
     const b=e.currentTarget,old=b.textContent;b.disabled=true;b.textContent='Sincronizando…';status.textContent='Buscando os dados mais recentes da sua conta…';
-    const ok=await syncCloud11(true);status.textContent=ok?'Sincronização concluída.':'Não foi possível sincronizar agora.';
-    setTimeout(()=>{const nb=$11('#ct11-sync');if(nb){nb.disabled=false;nb.textContent=old}},100);
+    const ok=await syncCloud11(true);
+    setTimeout(()=>{const s=$11('#ct11-status'),nb=$11('#ct11-sync');if(s)s.textContent=ok?'Sincronização concluída.':'Não foi possível sincronizar agora.';if(nb){nb.disabled=false;nb.textContent=old}},140);
   };
 }
 
@@ -112,7 +115,7 @@ const old95=window.ct95Navigate;
 if(typeof old95==='function')window.ct95Navigate=function(target){const out=old95.apply(this,arguments);if(String(target)==='settings')setTimeout(upgradeImporter11,140);return out};
 
 document.addEventListener('click',e=>{const b=e.target?.closest?.('[data-view="settings"]');if(b)setTimeout(upgradeImporter11,140)},true);
-window.addEventListener('cinetracker:data-changed',()=>setTimeout(()=>void syncCloud11(true),80));
+window.addEventListener('cinetracker:data-changed',e=>{const source=String(e?.detail?.source||'');if(source==='hotfix10-import'||source==='hotfix11-import')setTimeout(()=>void syncCloud11(true),80)});
 window.addEventListener('focus',()=>void syncCloud11(false));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void syncCloud11(false)});
 window.addEventListener('online',()=>void syncCloud11(false));
