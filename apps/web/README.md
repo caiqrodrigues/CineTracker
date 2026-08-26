@@ -56,6 +56,14 @@ A RPC expõe progresso, `last_watched_at`, plays, favorito, AddedToWatchlist, Wa
 - Limpar Cache e Atualizar Metadados;
 - importação Bingers HOTFIX16.
 
+## Build e deploy
+
+- Verify final da 0.0.99: run `33021058624`, **success**;
+- build Web também foi reexecutado com sucesso dentro do pipeline Android `33021058734`;
+- status Vercel do commit funcional `f4261cb944b60c15c01b41989645e8c64468e4ef`: **success — Deployment has completed**.
+
+Smoke autenticado/visual da produção continua separado e não foi marcado como executado.
+
 ## Rodapé
 
 **`CineTracker • v0.0.99`**.
