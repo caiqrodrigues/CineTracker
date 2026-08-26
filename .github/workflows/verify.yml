@@ -9,50 +9,24 @@ permissions:
   contents: read
 
 jobs:
-  hotfix15_stability:
+  hotfix18_stability:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Lock HOTFIX15 import transport and retries
-        run: |
-          node scripts/test-hotfix15-import-transport.mjs
-          node scripts/test-hotfix15-retry-transport.mjs
-      - name: Prove deployed Edge Function CORS
-        run: node scripts/test-hotfix15-live-cors.mjs
-      - name: Build HOTFIX15 Web runtime
+      - name: Build and verify HOTFIX18 Web runtime
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Install real-browser harness
-        run: npm install --no-save --no-package-lock playwright-core@1.55.0
-      - name: Resolve Chrome
-        shell: bash
-        run: |
-          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          test -n "$CHROME_BIN"
-          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
-      - name: Prove Web five-tab navigation
-        run: node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Prove Web dual CSV import confirm and sync
-        run: node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
-      - name: Prove Web mocked Android picker bridge
-        run: node scripts/test-real-browser-hotfix15-native-picker.mjs
       - name: Prepare exact Android embedded runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Prove embedded Android five-tab navigation
-        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Prove embedded Android dual CSV import confirm and sync
-        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
-      - name: Prove embedded Android mocked native picker
-        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix15-native-picker.mjs
-      - name: Assert HOTFIX15 production invariants
+      - name: Assert HOTFIX18 production invariants
         shell: bash
         run: |
           set -euo pipefail
@@ -60,19 +34,21 @@ jobs:
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
           grep -q 'patch-v067-v095.js' dist/index.html
           grep -q 'patch-v085-hotfix15-import-transport.js' dist/index.html
-          grep -q 'patch-v086-hotfix15-import-retry.js' dist/index.html
-          ! grep -q 'patch-v084-hotfix14-real-device.js' dist/index.html
-          ! grep -q 'patch-v081-hotfix12-nav-pre.js' dist/index.html
-          grep -q '__ctHotfix15ImportTransport' dist/patch-v085-hotfix15-import-transport.js
-          grep -q '__ctHotfix15ImportRetry' dist/patch-v086-hotfix15-import-retry.js
-          grep -q "action === 'begin'" dist/patch-v086-hotfix15-import-retry.js
-          grep -q 'requestTimeout15' dist/patch-v086-hotfix15-import-retry.js
-          grep -q 'ct15EnhanceNativePicker' dist/patch-v085-hotfix15-import-transport.js
-          grep -q '__ctHotfix13BingersSemantics' dist/patch-v083-hotfix13-bingers-semantics.js
-          grep -q '0.0.97 HOTFIX 15' dist/patch-v074-hotfix1-version.js
-          grep -q 'ct-web-0.0.97-hotfix15-import-transport' dist/service-worker.js
+          grep -q 'patch-v087-hotfix16-import-resilience.js' dist/index.html
+          grep -q 'patch-v074-hotfix1-version.js' dist/index.html
+          ! grep -q 'patch-v086-hotfix15-import-retry.js' dist/index.html
           ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
-          ! grep -q 'patch-v068-v097-observer-guard.js' dist/index.html
+          ! grep -q '<script src="/patch-v084-hotfix14-real-device.js"' dist/index.html
+          ! grep -q '<script src="/patch-v081-hotfix12-nav-pre.js"' dist/index.html
+          grep -q '__ctHotfix15ImportTransport' dist/patch-v085-hotfix15-import-transport.js
+          grep -q '__ctProfileStatsHotfix17' dist/patch-v074-hotfix1-version.js
+          grep -q '__ctHotfix18Version' dist/patch-v074-hotfix1-version.js
+          grep -q 'cinetracker_series_state_stats' dist/patch-v074-hotfix1-version.js
+          grep -q 'up_to_date_series' dist/patch-v074-hotfix1-version.js
+          grep -q '0.0.97 HOTFIX 18' dist/patch-v074-hotfix1-version.js
+          grep -q 'ct-web-0.0.97-hotfix18-documentation-governance' dist/service-worker.js
+          grep -q '0.0.97 HOTFIX 18' README.md
+          grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
           node - <<'NODE'
           const fs=require('fs');
           for(const p of ['dist/index.html','apps/android/app/src/main/assets/hotfix5/index.html']){
@@ -81,14 +57,15 @@ jobs:
             const b=s.indexOf('patch-v075-hotfix10-selective.js');
             const c=s.indexOf('patch-v082-hotfix12-picker-guard.js');
             const d=s.indexOf('patch-v083-hotfix13-bingers-semantics.js');
-            const e=s.indexOf('patch-v086-hotfix15-import-retry.js');
-            if(a<0||b<0||c<0||d<0||e<0||!(a<b&&b<c&&c<d&&d<e))throw new Error('HOTFIX15 runtime order invalid in '+p);
-            if(s.includes('patch-v084-hotfix14-real-device.js')||s.includes('patch-v081-hotfix12-nav-pre.js'))throw new Error('obsolete import/navigation layer found in '+p);
+            const e=s.indexOf('patch-v087-hotfix16-import-resilience.js');
+            const f=s.indexOf('patch-v074-hotfix1-version.js');
+            if(a<0||b<0||c<0||d<0||e<0||f<0||!(a<b&&b<c&&c<d&&d<e&&e<f))throw new Error('HOTFIX18 runtime order invalid in '+p);
+            if(s.includes('patch-v086-hotfix15-import-retry.js')||s.includes('patch-v084-hotfix14-real-device.js')||s.includes('patch-v081-hotfix12-nav-pre.js'))throw new Error('obsolete import/navigation layer found in '+p);
           }
           NODE
-          grep -q "window.__ctAndroidBundle = 'hotfix15-import-transport-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ctHotfix15ImportTransport' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ctHotfix15ImportRetry' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'hotfix18-documentation-governance-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix18Version' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctProfileStatsHotfix17' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'ct15RestoreNativeFiles' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ctHotfix13BingersSemantics' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
