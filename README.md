@@ -6,143 +6,70 @@ CineTracker é um companion multiplataforma para filmes, séries e animes. Web e
 
 | Sistema | Versão | Identidade técnica |
 |---|---:|---|
-| Web | **0.0.98** | package `0.0.98`, cache `ct-web-0.0.98` |
-| Android | **0.0.98** | `versionName 0.0.98`, `versionCode 996` |
-| Backend lógico | **0.0.98** | Supabase + RPCs + Edge Functions versionadas separadamente |
+| Web | **0.0.99** | package `0.0.99`, cache `ct-web-0.0.99` |
+| Android | **0.0.99** | `versionName 0.0.99`, `versionCode 997` |
+| Backend lógico | **0.0.99** | Supabase/RPCs; Edge Functions possuem versões próprias |
 | Windows | — | não lançado |
 
-A release 0.0.98 substitui a linha `0.0.97 HOTFIX 18` como versão lógica atual.
+A 0.0.99 preserva a navegação, Descobrir, backup CSV/ZIP e manutenção da 0.0.98 e reformula a biblioteca pessoal do Perfil.
 
-## Navegação 0.0.98
+## Perfil 0.0.99
 
-A navegação principal passa a ter quatro destinos visíveis e autoritativos:
+Logo abaixo das estatísticas principais existem quatro carrosséis horizontais de cards 2:3:
 
-1. Home;
-2. Descobrir;
-3. Perfil;
-4. Configurações.
+1. **Séries** — séries em andamento ou já iniciadas/recentes;
+2. **Séries favoritas** — séries com estado `Liked`;
+3. **Filmes** — filmes vistos/recentes;
+4. **Filmes favoritos** — filmes com estado `Liked`.
 
-A aba dedicada **Histórico foi removida**. Links/rotas legadas que ainda tentarem abrir `history` são redirecionados para Perfil. A camada `patch-v088-v098-nav-pre.js` captura a navegação antes dos handlers legados; `patch-v089-v098.js` fornece a UI 0.0.98; `patch-v090-v098-compat.js` redireciona a ponte legada/Android para `ct98Navigate`.
+Cada card exibe pôster, título, progresso (`18/20`, contagem de episódios, `Visto ✓`, etc.), badge `♥` quando favoritado e a data da última atividade. Cards com TMDB oficial abrem a tela de detalhes existente. Mídias importadas com surrogate TMDB negativo continuam clicáveis por um detalhe local, sem enviar ID inválido à TMDB.
 
-## Perfil 0.0.98
+### LRU / sincronização
 
-O Perfil foi reorganizado na seguinte sequência:
+A ordenação principal é `last_watched_at DESC`. `cinetracker_profile_media_dashboard()` calcula `last_watched_at` usando histórico, progresso de episódios e timestamp de `AlreadySeen` de filmes. Ao gravar `watch_history`, `episode_progress` ou `media_overrides`, a camada 0.0.99 dispara atualização reativa do Perfil; foco/retorno à aba e uma reconciliação periódica funcionam como fallback para alterações externas.
 
-1. estatísticas principais compactas;
-2. gráfico de atividade moderno em SVG;
-3. estatísticas extras;
-4. Histórico integrado.
+### Cabeçalhos clicáveis
 
-O Histórico integrado contém dois carrosséis separados:
+- **Séries ›** abre uma visão completa com: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia e Concluídas.
+- **Filmes ›** abre: Assistir a seguir / Watchlist e Já vistos.
+- **Séries favoritas ›** e **Filmes favoritos ›** abrem grids completos responsivos de 2/3 colunas.
 
-- **Séries assistidas** na parte superior;
-- **Filmes assistidos** na parte inferior.
+## Backend do Perfil
 
-As estatísticas continuam server-side. Além de `cinetracker_profile_stats`, `cinetracker_series_state_stats` e `cinetracker_consumption_daily`, a 0.0.98 adiciona `cinetracker_profile_history_media(p_limit_per_type)`, que agrega mídias assistidas e `plays` por usuário sem depender da paginação do cliente.
+Migration: `supabase/migrations/20260826234500_v099_profile_media_lru_dashboard.sql`.
 
-## Descobrir 0.0.98
+RPC `cinetracker_profile_media_dashboard()` é `SECURITY INVOKER`, filtra por `auth.uid()` e consolida:
 
-Ordem oficial:
+- progresso assistido;
+- `last_watched_at`;
+- favoritos (`Liked`);
+- AddedToWatchlist / WatchLater;
+- InProgress / UpToDate / Completed;
+- não iniciadas e já vistas.
 
-1. **Pra você** — inicial;
-2. **Em alta**;
-3. **Mais aguardados**;
-4. **Mais bem avaliados**;
-5. **Calendário**.
+## Recursos preservados da 0.0.98
 
-`Em alta`, `Mais aguardados`, `Mais bem avaliados` e `Calendário` possuem filtros estritos **Todos / Filmes / Séries**. `Mais bem avaliados` é sempre reordenado por `vote_average` em ordem decrescente, usando `vote_count` como desempate.
+- navegação oficial: Home, Descobrir, Perfil e Configurações; Histórico não é aba separada;
+- Descobrir: Pra você → Em alta → Mais aguardados → Mais bem avaliados → Calendário, com filtros Todos/Filmes/Séries quando aplicável e ranking decrescente;
+- Backup & Restauração com apenas Exportar/Importar e ZIP contendo CSVs completos;
+- Edge Function autenticada `ct-backup-user` v1;
+- Limpar Cache e Atualizar Metadados funcionais;
+- importador Bingers resiliente preservado (`ct-import-bingers-user` v8).
 
-A nova camada evita requests diretos ao TMDB para IDs substitutos `<= 0` nos caminhos 0.0.98. A arquitetura ainda registra o débito de separar definitivamente surrogate ID de TMDB ID no modelo legado.
+## Android 0.0.99
 
-## Configurações e backup 0.0.98
+Android continua em `Activity + WebView`, usando o mesmo runtime Web embarcado/inline. Bundle alvo: `v0.0.99-profile-lru-v95-core-inline-authoritative`. O rodapé exibido no runtime é **`CineTracker • v0.0.99`**.
 
-A área de backup foi consolidada visualmente em somente duas ações:
-
-- **Exportar**;
-- **Importar**.
-
-### Exportar
-
-Gera `cinetracker-backup-0.0.98.zip`, contendo CSVs sincronizados:
-
-- `manifest.csv`;
-- `profile.csv`;
-- `imports.csv`;
-- `media.csv`;
-- `media_overrides.csv`;
-- `watch_history.csv`;
-- `episode_progress.csv`.
-
-### Importar
-
-Lê o ZIP/CSVs, valida o manifesto e restaura os dados do usuário autenticado. A restauração é feita pela Edge Function `ct-backup-user`, que autentica o bearer token no servidor, remapeia IDs de mídia/importação e restringe exclusões/restauração ao perfil autenticado.
-
-### Manutenção
-
-- **Limpar Cache**: limpa caches de sessão temporária/metadados, Cache Storage e caches em memória sem apagar a sessão autenticada nem o histórico persistente.
-- **Atualizar Metadados**: consulta TMDB somente para IDs oficiais positivos e persiste título, ano, capa, duração, temporadas/episódios, gêneros e `raw_tmdb` atualizados.
-
-## Android 0.0.98
-
-Android continua usando `Activity + WebView` com runtime Web embarcado/inline e sem fallback remoto para o bundle principal.
-
-Identidade:
-
-- `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.0.98`;
-- `versionCode`: `996`;
-- bundle: `v0.0.98-profile-history-backup-discover-v95-core-inline-authoritative`.
-
-A barra nativa mostra Home, Descobrir, Perfil e Configurações; Histórico não é uma aba visível. O bridge existente continua sendo usado para seleção de arquivo e gravação do ZIP exportado no Android.
-
-## Backend 0.0.98
-
-### Migration
-
-`supabase/migrations/20260826230500_v098_profile_history_media.sql` adiciona `cinetracker_profile_history_media(integer)` como `SECURITY INVOKER`, filtrando por `auth.uid()`.
-
-### Edge Function de backup
-
-`supabase/functions/ct-backup-user/index.ts` implementa snapshot/restauração autenticados. Deploy Supabase inicial da função: **v1**.
-
-A função usa `verify_jwt=false` no gateway porque o próprio corpo valida o bearer token contra `/auth/v1/user`. A service role permanece apenas no ambiente server-side.
-
-### Bingers preservado
-
-A 0.0.98 não remove o pipeline Bingers resiliente. `ct-import-bingers-user` continua preservando autenticação, `client_run_id`, cursor/replay, dedupe, precedência manual e verificação exata de conclusão.
-
-O conjunto reconciliado de referência permanece:
-
-- 3.078 itens de biblioteca;
-- 12.696 registros de histórico;
-- 16.216 reproduções;
-- 14.904 reproduções de episódios;
-- 1.312 reproduções de filmes;
-- 227 séries com histórico.
-
-## Build, CI e publicação
-
-- `npm run build` executa verificações estáticas, build Web, remoção do overlay v97 e injeção da pilha 0.0.98.
-- `.github/workflows/verify.yml` valida Web e runtime Android 0.0.98.
-- `.github/workflows/build-android-v098.yml` compila, verifica identidade/assinatura, gera artifact e publica `android-v0.0.98` quando acionado pelo trigger oficial.
-
-Build, deploy, APK e teste físico são estados de validação separados. Evidências executadas ficam em `docs/validation/0.0.98.md`.
-
-## Segurança e precedência de dados
-
-Estados manuais (`AlreadySeen`, `Completed`, `UpToDate`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater`, `AddedToWatchlist`) continuam tendo prioridade sobre inferência/importação.
-
-Débitos de segurança não relacionados diretamente à 0.0.98 continuam documentados em `docs/SECURITY.md`, incluindo revisão de RLS/staging, funções privilegiadas legadas e proteção de senha vazada.
+Pipeline dedicado: `.github/workflows/build-android-v099.yml`. Build, publicação do APK e teste em aparelho real são estados separados e só são marcados como concluídos quando houver evidência em `docs/validation/0.0.99.md`.
 
 ## Documentação canônica
 
-- `PROJECT_STATE.md` — estado técnico atual;
+- `PROJECT_STATE.md` — continuidade técnica atual;
 - `VERSIONS.md` — matriz de versões;
-- `CHANGELOG.md` — histórico de releases;
-- `docs/DEVELOPMENT_RULES.md` — regra obrigatória de versão/registro;
-- `docs/ARCHITECTURE.md` — arquitetura;
-- `docs/SECURITY.md` — controles e débitos de segurança;
-- `docs/releases/0.0.98.md` — release atual;
-- `docs/validation/0.0.98.md` — evidências da release.
+- `CHANGELOG.md` — histórico completo;
+- `docs/DEVELOPMENT_RULES.md` — regra obrigatória de versionamento/registro;
+- `docs/ARCHITECTURE.md` e `docs/SECURITY.md`;
+- `docs/releases/0.0.99.md` — release atual;
+- `docs/validation/0.0.99.md` — evidências executadas.
 
-Toda mudança futura deve receber nova versão e atualizar o GitHub conforme `docs/DEVELOPMENT_RULES.md`.
+**Regra permanente:** toda atualização/mudança recebe nova versão e registro integral no GitHub. Source, build, deploy, publicação e teste físico são estados distintos.
