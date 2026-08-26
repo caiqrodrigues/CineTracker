@@ -1,4 +1,4 @@
-const VERSION='ct-web-0.0.97-hotfix14-real-device';
+const VERSION='ct-web-0.0.97-hotfix15-import-transport';
 const MEDIA_CACHE=`${VERSION}-media`;
 const META_CACHE=`${VERSION}-meta`;
 
