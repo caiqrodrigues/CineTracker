@@ -2,6 +2,51 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do HOTFIX18, toda nova unidade lógica de mudança exige versão e registro completo conforme `docs/DEVELOPMENT_RULES.md`.
 
+## 0.0.98 — 2026-08-26
+
+### Navegação
+- Criada camada autoritativa `patch-v088-v098-nav-pre.js` para capturar navegação antes de handlers legados.
+- Criada UI final `patch-v089-v098.js` e bridge `patch-v090-v098-compat.js`.
+- Home, Descobrir, Perfil e Configurações passam a ser os quatro destinos visíveis oficiais.
+- A aba dedicada Histórico foi removida da navegação Web e Android; rotas legadas `history` redirecionam para Perfil.
+- Android mantém quatro botões visíveis na barra inferior: Home, Descobrir, Perfil e Configurações.
+
+### Perfil e Histórico
+- Perfil reorganizado em: estatísticas compactas → gráfico moderno → estatísticas extras → Histórico.
+- Histórico absorvido pelo Perfil.
+- Adicionado carrossel superior de séries assistidas e carrossel inferior de filmes assistidos.
+- Criada RPC `cinetracker_profile_history_media(integer)` para agregar mídias do histórico e `plays` server-side.
+- Migration `20260826230500_v098_profile_history_media.sql` aplicada em produção e versionada.
+- RPC criada como `SECURITY INVOKER`, escopada por `auth.uid()`.
+
+### Descobrir
+- Ordem oficial alterada para Pra você, Em alta, Mais aguardados, Mais bem avaliados e Calendário.
+- Pra você é a seção inicial.
+- Em alta, Mais aguardados, Mais bem avaliados e Calendário recebem filtros Todos/Filmes/Séries.
+- Filtros usam fontes/endpoints por tipo e exibem estritamente o tipo selecionado.
+- Mais bem avaliados recebe ordenação final decrescente por `vote_average`, com `vote_count` como desempate.
+- Caminhos novos impedem consulta TMDB direta para IDs substitutos `<= 0`.
+
+### Configurações / Backup
+- Backup & Restauração consolidado visualmente em somente dois botões: Exportar e Importar.
+- Exportação passa a gerar `cinetracker-backup-0.0.98.zip` com `manifest.csv`, `profile.csv`, `imports.csv`, `media.csv`, `media_overrides.csv`, `watch_history.csv` e `episode_progress.csv`.
+- Criada Edge Function `ct-backup-user`, deploy inicial v1, para snapshot e restauração autenticados.
+- Snapshot pagina dados do usuário e inclui somente mídias referenciadas pelo seu estado.
+- Restauração remapeia IDs de mídia e de importação, restaura overrides/histórico/progresso e limita limpeza ao perfil autenticado.
+- `verify_jwt=false` no gateway da função é acompanhado de autenticação bearer explícita contra `/auth/v1/user` no corpo da função.
+
+### Manutenção
+- Limpar Cache agora remove `sessionStorage`, caches CineTracker do Cache Storage e caches em memória/metadados, preservando sessão e dados persistentes.
+- Atualizar Metadados agora enumera mídias do usuário, consulta TMDB com concorrência controlada, ignora surrogate IDs não positivos e persiste os metadados atualizados.
+
+### Versionamento / Android / CI
+- Web atualizado para package `0.0.98`, cache `ct-web-0.0.98` e rodapé `CineTracker • v0.0.98`.
+- Android atualizado para `versionName 0.0.98` e `versionCode 996`.
+- Bundle Android: `v0.0.98-profile-history-backup-discover-v95-core-inline-authoritative`.
+- `scripts/apply-hotfix10-selective.mjs`, `scripts/prepare-android-hotfix2-web.mjs`, `scripts/verify.mjs` e o smoke de scripts inline foram atualizados para a pilha 0.0.98.
+- Workflow geral `Verify` atualizado para invariantes 0.0.98.
+- Criado pipeline `.github/workflows/build-android-v098.yml` para build, identidade, assinatura, artifact, SHA-256 e Release `android-v0.0.98`.
+
 ## 0.0.97 HOTFIX 18 — 2026-08-26
 
 ### Governança e versionamento
@@ -134,7 +179,7 @@ Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do 
 - Integração com o identificador/ficha oficial do IMDb quando disponível.
 - Elenco principal clicável, abrindo tela própria do ator/atriz.
 - Tela de ator/atriz com biografia e filmografia combinada de filmes e séries.
-- Onde assistir focado somente em streaming por assinatura no Brasil (`flatrate`) e cinema para filmes quando a TMDB informa lançamento teatral; compra e aluguel são ocultados.
+- Onde assistir focado somente em streaming por assinatura (`flatrate`) e cinema para filmes quando a TMDB informa lançamento teatral; compra e aluguel são ocultados.
 - Cards e telas novas usam `poster_path` da TMDB em proporção vertical 2:3, priorizando a capa original em vez do backdrop horizontal.
 
 ### Observação
