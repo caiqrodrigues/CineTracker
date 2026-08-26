@@ -1,0 +1,137 @@
+name: Release HOTFIX15 Recovery
+
+on:
+  push:
+    branches: [recovery/v097-hotfix15-final]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  statuses: write
+
+concurrency:
+  group: cinetracker-hotfix15-recovery-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  final_recovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore dedicated CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize dedicated signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Prove live Supabase CORS and HOTFIX15 transport
+        run: |
+          node scripts/test-hotfix15-import-transport.mjs
+          node scripts/test-hotfix15-live-cors.mjs
+
+      - name: Build HOTFIX15 Web runtime
+        run: npm run build
+
+      - name: Preserve auth and Bingers semantics
+        run: |
+          node scripts/test-hotfix13-bingers-semantics.mjs
+          node scripts/test-auth-recovery-red.mjs
+          node scripts/test-hotfix10-native-bridge.mjs
+
+      - name: Install real-browser harness
+        run: npm install --no-save --no-package-lock playwright-core@1.55.0
+
+      - name: Resolve Chrome
+        shell: bash
+        run: |
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
+
+      - name: Prove Web navigation import and native-picker contract
+        run: |
+          node scripts/test-real-browser-hotfix10-selective.mjs
+          node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+          node scripts/test-real-browser-hotfix15-native-picker.mjs
+
+      - name: Prepare exact embedded Android runtime
+        run: node scripts/prepare-android-hotfix2-web.mjs
+
+      - name: Compile every Android inline script
+        run: node scripts/test-android-inline-hotfix6.mjs
+
+      - name: Prove exact embedded Android navigation import and picker
+        run: |
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix15-native-picker.mjs
+
+      - name: Assert HOTFIX15 Android source persistence contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'cinetracker_hotfix15_import' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'prefs.getString("picker_slot", "")' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'cacheImportFile(slot, uris.get(0))' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'intent.setType("*/*")' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'pickImportFile(String slot)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'ct15RestoreNativeFiles' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q "window.__ctAndroidBundle = 'hotfix15-import-transport-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'versionCode 993' apps/android/app/build.gradle
+          grep -q "versionName '0.0.97 HOTFIX 15'" apps/android/app/build.gradle
+
+      - name: Build signed HOTFIX15 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Verify APK identity signature and embedded runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="cinetracker-android-0.0.97-HOTFIX15-debug.apk"
+          cp "$APK" "$OUT"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ctHotfix15ImportTransport'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct15RestoreNativeFiles'
+          if unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct97Loaded'; then exit 1; fi
+          "$APKSIGNER" verify --print-certs "$OUT"
+          BADGING="$($AAPT dump badging "$OUT" | head -1)"
+          echo "$BADGING" | grep -q "package: name='com.cinetracker.app'"
+          echo "$BADGING" | grep -q "versionCode='993'"
+          echo "$BADGING" | grep -q "versionName='0.0.97 HOTFIX 15'"
+          sha256sum "$OUT" | tee hotfix15-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.0.97-HOTFIX15-final
+          path: |
+            cinetracker-android-0.0.97-HOTFIX15-debug.apk
+            hotfix15-sha256.txt
+          if-no-files-found: error
+
+      - name: Publish official HOTFIX15 release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view android-v0.0.97-hotfix15 >/dev/null 2>&1 || gh release create android-v0.0.97-hotfix15 --target "${{ github.sha }}" --title "CineTracker Android 0.0.97 HOTFIX 15" --notes-file docs/releases/0.0.97-HOTFIX15.md
+          gh release edit android-v0.0.97-hotfix15 --target "${{ github.sha }}" --title "CineTracker Android 0.0.97 HOTFIX 15" --notes-file docs/releases/0.0.97-HOTFIX15.md
+          gh release upload android-v0.0.97-hotfix15 cinetracker-android-0.0.97-HOTFIX15-debug.apk hotfix15-sha256.txt --clobber
