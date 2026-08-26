@@ -42,8 +42,8 @@ async function buildContext(viewport,label){
   await page.locator('#auth-form button[type="submit"]').click();
   await page.locator('.content').waitFor({state:'visible',timeout:1800});
   await page.waitForTimeout(400);
-  const runtime=await page.evaluate(()=>({v97:window.__ct97Loaded===true,h12nav:window.__ctHotfix12NavPre===true,h12picker:window.__ctHotfix12PickerGuard===true,navigate:typeof window.ct12Navigate==='function'}));
-  if(runtime.v97||!runtime.h12nav||!runtime.h12picker||!runtime.navigate)throw new Error(`${label}: HOTFIX12 runtime invalid ${JSON.stringify(runtime)}`);
+  const runtime=await page.evaluate(()=>({v97:window.__ct97Loaded===true,h12nav:window.__ctHotfix12NavPre===true,h12picker:window.__ctHotfix12PickerGuard===true,h13:window.__ctHotfix13BingersSemantics===true,navigate:typeof window.ct12Navigate==='function'}));
+  if(runtime.v97||!runtime.h12nav||!runtime.h12picker||!runtime.navigate)throw new Error(`${label}: HOTFIX12/HOTFIX13 runtime invalid ${JSON.stringify(runtime)}`);
   return {context,page,errors};
 }
 
@@ -63,7 +63,6 @@ async function clickDesktop(page,target,errors){
 }
 
 try{
-  // Regression 1: actual desktop top-nav buttons must all remain interactive.
   const desktop=await buildContext({width:1280,height:900},'desktop');
   for(const target of ['home','discover','history','profile','settings','home','profile','history'])await clickDesktop(desktop.page,target,desktop.errors);
   const navPointer=await desktop.page.locator('.nav button[data-view="profile"]').first().evaluate(el=>getComputedStyle(el).pointerEvents);
@@ -72,7 +71,6 @@ try{
   if(desktopBeat!=='alive')throw new Error('desktop nav: UI thread starved');
   await desktop.context.close();
 
-  // Regression 2: returning from the mobile OS file picker must NOT rebuild Settings.
   const mobile=await buildContext({width:390,height:844},'mobile');
   await mobile.page.evaluate(()=>window.ct12Navigate('settings'));
   await mobile.page.locator('#ct10-import-panel[data-ct11="1"]').waitFor({state:'visible',timeout:2500});
@@ -97,10 +95,10 @@ try{
   await mobile.page.locator('#ct11-read-csv').click();
   await mobile.page.locator('#ct10-preview').waitFor({state:'visible',timeout:2400});
   const preview=await mobile.page.locator('#ct10-preview').innerText();
-  if(!/Prévia da importação/.test(preview)||!/2\s*Títulos/.test(preview.replace(/\n/g,' ')))throw new Error(`mobile picker preview wrong: ${preview}`);
+  if(!/Prévia da importação/.test(preview)||!/(2\s*Títulos|2\s*Itens da biblioteca)/i.test(preview.replace(/\n/g,' ')))throw new Error(`mobile picker preview wrong: ${preview}`);
   if(edgeActions.length)throw new Error(`mobile picker: backend called before confirmation: ${edgeActions.join(',')}`);
 
-  await mobile.page.locator('[data-confirm10]').click();
+  await mobile.page.locator('[data-confirm13],[data-confirm10]').first().click();
   await mobile.page.waitForFunction(()=>document.querySelector('.ct10-progress-label')?.textContent?.includes('Importação concluída'),null,{timeout:4500});
   await mobile.page.waitForTimeout(1100);
   for(const action of ['begin','library_batch','watches_batch','finish'])if(!edgeActions.includes(action))throw new Error(`mobile import missing ${action}: ${edgeActions.join(',')}`);
