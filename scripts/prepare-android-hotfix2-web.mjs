@@ -22,34 +22,37 @@ for (const match of scripts) {
   html = html.replace(match[0], () => `<script data-ct-inline="${fileName}">\n${script}\n</script>`);
 }
 
-// Android executes the same stable Web bootstrap. Do not rewrite auth/session here.
+// Android executes the same validated selective Web bootstrap. Do not rewrite auth/session here.
 html = html.replace(
   "if (!('serviceWorker' in navigator)) return;",
   "if (window.__ctAndroidBundle || !('serviceWorker' in navigator)) return;"
 );
 
 const hotfixMarker = `<script>
-window.__ctAndroidBundle = 'hotfix9-v95-core-inline-authoritative';
-window.__ctHotfix9Startup = true;
-window.__ctAndroidBuild = '0.0.97 HOTFIX 9';
+window.__ctAndroidBundle = 'hotfix10-selective-v95-core-inline-authoritative';
+window.__ctHotfix10Startup = true;
+window.__ctAndroidBuild = '0.0.97 HOTFIX 10';
 </script>`;
 html = html.replace('</body>', hotfixMarker + '</body>');
 html = html.replace(/<link rel="icon"[^>]*>/g, '');
 
 await writeFile(indexPath, html, 'utf8');
 
-if (!html.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'")) throw new Error('Android HOTFIX9 missing startup auth recovery.');
-if (!html.includes("window.__ctP0SessionReset = 'hotfix7-once'")) throw new Error('Android HOTFIX9 missing one-time poisoned-session reset.');
-if (!html.includes('patch-v067-v095.js') && !html.includes('data-ct-inline="patch-v067-v095.js"')) throw new Error('Android HOTFIX9 missing stable v95 feature layer.');
-if (html.includes('patch-v068-v097.js') || html.includes('__ct97Loaded')) throw new Error('Android HOTFIX9 still contains unstable v97 overlay.');
-if (html.includes('patch-v068-v097-observer-guard.js') || html.includes('__ct97ObserverGuard')) throw new Error('Android HOTFIX9 still contains obsolete v97 observer guard.');
-if (!html.includes("window.__ctAndroidBundle = 'hotfix9-v95-core-inline-authoritative'")) throw new Error('Android HOTFIX9 bundle marker missing.');
-if (!html.includes('const media = [')) throw new Error('Android HOTFIX9 lost critical media startup block.');
-if (!html.includes('0.0.97 HOTFIX 9')) throw new Error('Android HOTFIX9 version missing.');
-if (!html.includes('ctLooksLikeJwt')) throw new Error('Android HOTFIX9 JWT guard missing.');
-if (html.includes('<script src="/')) throw new Error('Android HOTFIX9 still has root script dependencies.');
-if (html.includes('patch-v073-v097-fix7.js') || html.includes('auth-preboot-fix7.js')) throw new Error('Legacy FIX7 found in Android HOTFIX9 bundle.');
-if (!html.includes("restored = await authRecoveryWithTimeout(restoreSession(), 6500, 'Restauração de sessão');")) throw new Error('Android HOTFIX9 hard session-restore timeout missing.');
-if (!html.includes("localStorage.removeItem('cinetracker_session');")) throw new Error('Android HOTFIX9 poisoned-session cleanup missing.');
+if (!html.includes("window.__ctAuthRecovery = 'v97-hotfix6-startup'")) throw new Error('Android HOTFIX10 missing startup auth recovery.');
+if (!html.includes("window.__ctP0SessionReset = 'hotfix7-once'")) throw new Error('Android HOTFIX10 missing one-time poisoned-session reset.');
+if (!html.includes('data-ct-inline="patch-v067-v095.js"')) throw new Error('Android HOTFIX10 missing stable v95 feature layer.');
+if (!html.includes('data-ct-inline="patch-v075-hotfix10-selective.js"') || !html.includes('__ctHotfix10Selective')) throw new Error('Android HOTFIX10 missing selective navigation/import layer.');
+if (!html.includes('data-ct-inline="patch-v076-hotfix10-actions.js"') || !html.includes('__ctHotfix10Actions')) throw new Error('Android HOTFIX10 missing schema-correct action layer.');
+if (!html.includes('data-ct-inline="patch-v077-hotfix10-native-bridge.js"') || !html.includes('__ctHotfix10NativeBridge')) throw new Error('Android HOTFIX10 missing native navigation compatibility bridge.');
+if (html.includes('patch-v068-v097.js') || html.includes('__ct97Loaded')) throw new Error('Android HOTFIX10 still contains unstable v97 overlay.');
+if (html.includes('patch-v068-v097-observer-guard.js') || html.includes('__ct97ObserverGuard')) throw new Error('Android HOTFIX10 still contains obsolete v97 observer guard.');
+if (!html.includes("window.__ctAndroidBundle = 'hotfix10-selective-v95-core-inline-authoritative'")) throw new Error('Android HOTFIX10 bundle marker missing.');
+if (!html.includes('const media = [')) throw new Error('Android HOTFIX10 lost critical media startup block.');
+if (!html.includes('0.0.97 HOTFIX 10')) throw new Error('Android HOTFIX10 version missing.');
+if (!html.includes('ctLooksLikeJwt')) throw new Error('Android HOTFIX10 JWT guard missing.');
+if (html.includes('<script src="/')) throw new Error('Android HOTFIX10 still has root script dependencies.');
+if (html.includes('patch-v073-v097-fix7.js') || html.includes('auth-preboot-fix7.js')) throw new Error('Legacy FIX7 found in Android HOTFIX10 bundle.');
+if (!html.includes("restored = await authRecoveryWithTimeout(restoreSession(), 6500, 'Restauração de sessão');")) throw new Error('Android HOTFIX10 hard session-restore timeout missing.');
+if (!html.includes("localStorage.removeItem('cinetracker_session');")) throw new Error('Android HOTFIX10 poisoned-session cleanup missing.');
 
-console.log(`Android HOTFIX9 stability bundle prepared with ${scripts.length} inlined scripts; v97 overlay absent.`);
+console.log(`Android HOTFIX10 selective bundle prepared with ${scripts.length} inlined scripts; v97 overlay absent.`);
