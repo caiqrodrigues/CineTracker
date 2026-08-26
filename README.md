@@ -2,16 +2,18 @@
 
 CineTracker é um companion multiplataforma para filmes, séries e animes. A conta é compartilhada entre Web e Android e concentra biblioteca, Watchlist, histórico, progresso de episódios, descoberta, recomendações, perfil, estatísticas, importação e backup.
 
-## Versões atuais de código
+## Versões atuais
 
-| Sistema | Versão atual na `main` | Estado |
+| Sistema | Versão atual | Estado comprovado |
 |---|---:|---|
-| Web | **0.0.97 HOTFIX 18** | source target atual; deploy de produção deve ser confirmado separadamente |
-| Android | **0.0.97 HOTFIX 18** (`versionCode 995`) | source/build target atual; APK/Release dependem de CI e validação |
+| Web | **0.0.97 HOTFIX 18** | build/Verify concluídos; status Vercel `success` |
+| Android | **0.0.97 HOTFIX 18** (`versionCode 995`) | build, identidade, assinatura, artifact e GitHub Release publicados; teste em aparelho real ainda pendente |
 | Backend lógico | **0.0.97 HOTFIX 18** | schema/RPCs alinhados; Edge Functions mantêm versão própria de deploy |
 | Windows | **—** | não lançado |
 
 Identificadores técnicos Web: pacote `0.0.97-hotfix18-documentation-governance`, cache `ct-web-0.0.97-hotfix18-documentation-governance`.
+
+Android Release publicada: `android-v0.0.97-hotfix18`, contendo `cinetracker-android-0.0.97-HOTFIX18-debug.apk`. SHA-256 do APK: `9a9801c69be9f66142c98a43ba084c262dc19a3b00cc15db5e379b6f8f05035f`.
 
 ## Regra obrigatória de desenvolvimento
 
@@ -63,7 +65,7 @@ A falha histórica PostgREST `All object keys must match` foi corrigida tornando
 
 O runtime Web atual preserva o núcleo estável v95, recuperação de sessão, navegação global, importação Bingers HOTFIX15/16 e Perfil HOTFIX17, com identidade HOTFIX18. O Service Worker não cacheia o shell HTML e mantém cache de imagens/metadados TMDB.
 
-Produção conhecida: `https://mycinetracker.vercel.app`. A versão servida em produção só deve ser declarada após confirmação do deploy.
+Produção conhecida: `https://mycinetracker.vercel.app`. O status Vercel do HOTFIX18 foi confirmado como `success`. Smoke autenticado manual em produção continua pendente e não deve ser considerado validado até execução real.
 
 ## Android
 
@@ -74,7 +76,7 @@ Android usa `Activity + WebView` com runtime Web embarcado/inline, sem depender 
 - `versionCode`: `995`;
 - bundle: `hotfix18-documentation-governance-v95-core-inline-authoritative`.
 
-Build, assinatura, artifact, GitHub Release e teste em aparelho são etapas independentes; não são consideradas concluídas apenas porque o source está na `main`.
+O pipeline dedicado HOTFIX18 concluiu build, preparação do runtime, validação da identidade via `aapt`, verificação da assinatura via `apksigner`, artifact e GitHub Release. O APK ainda não foi marcado como validado em dispositivo real.
 
 ## Backend e migrations recentes
 
@@ -87,11 +89,18 @@ Migrations relevantes desta linha:
 - `20260826214500_profile_active_series_metric.sql`;
 - `20260826215500_bingers_completion_requires_metadata.sql`.
 
+## CI atual
+
+O workflow geral `Verify` foi atualizado para remover expectativas obsoletas do retry HOTFIX15 e agora valida a pilha efetivamente ativa: HOTFIX15 transport + HOTFIX16 resilience + HOTFIX17 profile + HOTFIX18 identity. O run `33016322725` concluiu com sucesso.
+
+O pipeline Android HOTFIX18 foi executado no run `33016118908` e publicou a Release oficial correspondente.
+
 ## Débitos conhecidos
 
 - IDs TMDB substitutos negativos ainda podem gerar 404 se forem enviados ao `tmdb-proxy`; o cliente deve impedir consultas para surrogate IDs ou o modelo de IDs deve ser separado.
 - Advisories de segurança Supabase permanecem abertos para algumas funções `SECURITY DEFINER` e para proteção de senha vazada desativada.
 - RLS/policies de estruturas históricas de staging precisam ser tratados com política correta, sem ativação cega que quebre o fluxo.
+- Smoke autenticado manual Web e teste Android em aparelho real ainda estão pendentes.
 
 ## Documentação canônica
 
