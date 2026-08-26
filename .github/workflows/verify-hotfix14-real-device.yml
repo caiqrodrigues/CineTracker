@@ -51,21 +51,17 @@ jobs:
           CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
           test -n "$CHROME_BIN"
           echo "CHROME_BIN=$CHROME_BIN" >> "$GITHUB_ENV"
-      - name: Web selective navigation
+      - name: Web five-tab real click navigation
         run: node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Web dual CSV import and sync
-        run: node scripts/test-real-browser-hotfix11-import-sync.mjs
-      - name: Web desktop tabs and mobile picker return
+      - name: Web desktop tabs mobile picker import and sync
         run: node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
       - name: Prepare exact embedded Android runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Embedded Android selective navigation
+      - name: Embedded Android five-tab navigation
         run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
-      - name: Embedded Android dual CSV import and sync
-        run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix11-import-sync.mjs
-      - name: Embedded Android tabs and picker return
+      - name: Embedded Android tabs picker import and sync
         run: CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix12-nav-mobile-import.mjs
       - name: Assert HOTFIX14 runtime identity
         shell: bash
