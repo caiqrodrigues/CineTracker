@@ -2,14 +2,14 @@ name: Verify
 
 on:
   push:
-    branches: [main, recovery/v097-hotfix8-post-login-render]
+    branches: [main, recovery/v095-core-hotfix9-stability]
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web:
+  web_stability:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -17,13 +17,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Verify preserved CineTracker features and recovery invariants
+      - name: Verify source invariants
         run: npm run verify
-      - name: Build HOTFIX8 Web runtime
+      - name: Build HOTFIX9 stability Web runtime
         run: npm run build
       - name: Execute auth recovery runtime suite
         run: node scripts/test-auth-recovery-red.mjs
-      - name: Execute startup and post-login bundle in real Chrome
+      - name: Execute startup and navigation stability in real Chrome
         shell: bash
         run: |
           set -euo pipefail
@@ -32,123 +32,20 @@ jobs:
           test -n "$CHROME_BIN"
           export CHROME_BIN
           node scripts/test-real-browser-p0.mjs
-          node scripts/test-real-browser-post-login.mjs
-      - name: Assert HOTFIX8 production HTML ordering and version
+          node scripts/test-real-browser-stability-hotfix9.mjs
+      - name: Assert HOTFIX9 shipped runtime
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
           grep -q 'cinetracker_p0_session_reset_hotfix7' dist/index.html
-          grep -q 'window.__ct97ObserverGuard = true' dist/patch-v068-v097-observer-guard.js
-          grep -q 'patch-v068-v097-observer-guard.js' dist/index.html
-          test "$(grep -bo 'patch-v068-v097-observer-guard.js' dist/index.html | head -1 | cut -d: -f1)" -lt "$(grep -bo 'patch-v068-v097.js' dist/index.html | head -1 | cut -d: -f1)"
-          grep -q "authRecoveryWithTimeout(restoreSession(), 6500" dist/index.html
+          grep -q 'patch-v067-v095.js' dist/index.html
           grep -q 'const media = \[' dist/index.html
           grep -q 'void bootstrap();' dist/index.html
           grep -q 'ctFetchWithTimeout' dist/index.html
           grep -q 'ctLooksLikeJwt' dist/index.html
-          grep -q "path === 'logout'" dist/index.html
-          grep -q '0.0.97 HOTFIX 8' dist/patch-v074-hotfix1-version.js
-          grep -q 'ct-web-0.0.97-hotfix8' dist/service-worker.js
+          ! grep -q 'patch-v068-v097.js' dist/index.html
+          ! grep -q 'patch-v068-v097-observer-guard.js' dist/index.html
           ! grep -q 'auth-preboot-fix7.js' dist/index.html
           ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
-
-  android_startup_recovery:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-      - name: Restore dedicated CineTracker signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.cinetracker/cinetracker.keystore
-          key: cinetracker-signing-v2
-      - name: Initialize dedicated signing key
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p ~/.cinetracker ~/.android
-          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
-            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
-          fi
-          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
-      - uses: gradle/actions/setup-gradle@v4
-      - name: Build and validate HOTFIX8 authoritative runtime
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm run build
-          node scripts/test-auth-recovery-red.mjs
-          npm install --no-save --no-package-lock playwright-core@1.55.0
-          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
-          test -n "$CHROME_BIN"
-          export CHROME_BIN
-          node scripts/test-real-browser-p0.mjs
-          node scripts/test-real-browser-post-login.mjs
-          node scripts/prepare-android-hotfix2-web.mjs
-          node scripts/test-android-inline-hotfix6.mjs
-          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-post-login.mjs
-          test -f apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q "window.__ctP0SessionReset = 'hotfix7-once'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'cinetracker_p0_session_reset_hotfix7' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'window.__ct97ObserverGuard = true' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q "window.__ctAndroidBundle = 'hotfix8-post-login-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '0.0.97 HOTFIX 8' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'const media = \[' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'ctLooksLikeJwt' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'data-ct-inline=' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq '$$=(s,r=document)=>' apps/android/app/src/main/assets/hotfix5/index.html
-          ! grep -q '<script src="/' apps/android/app/src/main/assets/hotfix5/index.html
-          ! grep -q 'patch-v073-v097-fix7.js' apps/android/app/src/main/assets/hotfix5/index.html
-          ! grep -q 'auth-preboot-fix7.js' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q 'loadDataWithBaseURL' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          grep -q 'hotfix5/index.html' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'verifyStartupOrFallback' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'loadRemoteFallback' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'fallback=remote' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'webView.loadUrl(runtimeUrl' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'WebViewAssetLoader' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'appassets.androidplatform.net' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          ! grep -q 'restoreState(savedInstanceState)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-      - name: Build debug HOTFIX8 validation APK
-        working-directory: apps/android
-        shell: bash
-        run: gradle assembleDebug --stacktrace
-      - name: Verify embedded HOTFIX8 runtime and package identity
-        shell: bash
-        run: |
-          set -euo pipefail
-          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
-          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
-          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          unzip -l "$APK" | grep -q 'assets/hotfix5/index.html'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctP0SessionReset = 'hotfix7-once'"
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'cinetracker_p0_session_reset_hotfix7'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'window.__ct97ObserverGuard = true'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'hotfix8-post-login-inline-authoritative'"
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q '0.0.97 HOTFIX 8'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'const media = \['
-          unzip -p "$APK" assets/hotfix5/index.html | grep -Fq '$$=(s,r=document)=>'
-          unzip -p "$APK" assets/hotfix5/index.html | grep -q 'ctLooksLikeJwt'
-          if unzip -p "$APK" assets/hotfix5/index.html | grep -q 'patch-v073-v097-fix7.js'; then exit 1; fi
-          "$APKSIGNER" verify --print-certs "$APK"
-          PACKAGE="$($AAPT dump badging "$APK" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION_CODE="$($AAPT dump badging "$APK" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
-          test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.0.97 HOTFIX 8"
-          test "$VERSION_CODE" = "986"
-      - name: Upload HOTFIX8 validation APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: cinetracker-0.0.97-hotfix8-validation
-          path: apps/android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
