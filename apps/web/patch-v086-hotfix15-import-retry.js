@@ -6,8 +6,8 @@ window.__ctHotfix15ImportRetry = true;
 const nativeFetch15 = window.fetch.bind(window);
 const endpoint15 = '/functions/v1/ct-import-bingers-user';
 const retryableStatus15 = new Set([408, 425, 429, 500, 502, 503, 504]);
-const retryDelay15 = [350, 900, 1800, 3500, 6500];
-const requestTimeout15 = 20000;
+const retryDelay15 = Array.isArray(window.__ctHotfix15RetryDelays) ? window.__ctHotfix15RetryDelays : [350, 900, 1800, 3500, 6500];
+const requestTimeout15 = Number(window.__ctHotfix15RetryTimeoutMs || 20000);
 const sleep15r = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function requestUrl15(input) {
@@ -25,7 +25,7 @@ function showRetry15(action, attempt, reason) {
     const label = document.querySelector('.ct10-progress-label');
     if (!label) return;
     const phase = action === 'finish' ? 'finalização' : action === 'library_batch' ? 'biblioteca' : 'histórico';
-    label.textContent = `Conexão instável na ${phase}. Tentativa automática ${attempt}/6…`;
+    label.textContent = `Conexão instável na ${phase}. Tentativa automática ${attempt}/${retryDelay15.length + 1}…`;
     label.dataset.ct15Retry = `${action}:${attempt}:${reason || 'network'}`;
   } catch {}
 }
