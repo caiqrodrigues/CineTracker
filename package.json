@@ -1,7 +1,7 @@
 {
   "name": "cinetracker",
   "private": true,
-  "version": "0.0.97-hotfix12",
+  "version": "0.0.97-hotfix13",
   "scripts": {
     "build": "node scripts/verify.mjs && node scripts/build-web.mjs && node scripts/apply-hotfix9-stability.mjs && node scripts/apply-hotfix10-selective.mjs && node scripts/test-startup-hotfix6.mjs",
     "verify": "node scripts/verify.mjs"
