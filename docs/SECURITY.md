@@ -1,90 +1,111 @@
-# Segurança
+# CineTracker — Segurança
 
-## Versões de referência
+**Release lógica:** `0.0.97 HOTFIX 18`  
+**Atualizado em:** 2026-08-26
 
-- Web: **0.5.7**
-- Android: **0.0.83** (`versionCode 83`)
+Este documento registra controles existentes e débitos abertos. Aviso de linter não é tratado como corrigido sem alteração segura e validação correspondente.
 
-Esta documentação acompanha a geração cache-first do CineTracker. A mudança de arquitetura não altera permissões de acesso aos dados nem transforma cache local em fonte de autoridade.
+## 1. Autenticação
 
-## Credenciais
+CineTracker usa Supabase Auth. Web e Android compartilham a mesma conta.
 
-- Nunca versionar `service_role` do Supabase.
-- Nunca versionar token secreto da TMDB.
-- O frontend pode usar somente chave Supabase publicável/anon destinada a clientes públicos.
-- Secrets backend ficam em variáveis do ambiente ou secrets de Edge Functions.
-- Service Worker, IndexedDB e cache do WebView não devem armazenar credenciais privilegiadas.
+A importação Bingers server-side (`ct-import-bingers-user`) exige bearer token do usuário. A Edge Function está configurada com `verify_jwt=false` no gateway porque o próprio corpo da função valida o token consultando `/auth/v1/user`; isso não significa operação anônima.
 
-## Banco e autorização
+HOTFIX16 diferencia erros de autenticação expirados/ausentes, falhas transientes e rejeições permanentes.
 
-- RLS deve permanecer habilitado nas tabelas com dados de usuário.
-- Políticas usam `auth.uid()` para restringir leitura e escrita ao dono dos dados.
-- Supabase continua sendo a fonte consolidada do estado persistente da conta.
-- Cache local é apenas uma cópia operacional para abertura, navegação e funcionamento mais fluido.
-- Decisões manuais do usuário têm precedência sobre importações automáticas e recomposição de metadados.
+## 2. Isolamento por usuário
 
-## Cache local — Web 0.5.7
+Toda leitura/escrita de estado pessoal deve ser escopada por `profile_id = auth.uid()` ou equivalente validado no backend.
 
-A Web utiliza IndexedDB para snapshots operacionais e Service Worker para recursos/metadados compatíveis.
+A importação Bingers:
 
-Regras de segurança e consistência:
+- limpa somente dados Bingers/import-origin do próprio perfil;
+- preserva overrides manuais;
+- não deve apagar estado manual por nova importação;
+- só conclui depois de validar contagens/cursor.
 
-- cache nunca deve contornar RLS ou autorização do backend;
-- dados retornados pelo cache pertencem à sessão/conta que os originou;
-- logout/troca de identidade deve impedir reutilização indevida de dados privados de outra conta;
-- respostas de autenticação e segredos não devem ser tratadas como recursos públicos pelo Service Worker;
-- falha ou expiração do cache não pode promover dado local a autoridade sobre o backend;
-- atualizações silenciosas continuam sujeitas às mesmas regras de autenticação das chamadas normais.
+## 3. Dados manuais têm precedência
 
-## Cache local — Android 0.0.83
+Estados manuais são decisões do usuário e não podem ser sobrescritos por importação/inferência. Incluem `AlreadySeen`, `Completed`, `UpToDate`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater` e `AddedToWatchlist`.
 
-O Android utiliza cache HTTP/WebView e IndexedDB dentro da WebView para snapshots de performance.
+## 4. Importação de arquivos
 
-- o aplicativo mantém `setAllowFileAccess(false)`;
-- conteúdo misto permanece bloqueado (`MIXED_CONTENT_NEVER_ALLOW`);
-- URLs externas não autorizadas são abertas fora da WebView;
-- Supabase e o domínio oficial permanecem como destinos internos esperados;
-- cache local não contém chave `service_role` nem token secreto TMDB;
-- a ponte nativa deve expor somente operações necessárias ao aplicativo.
+O importador Bingers aceita somente a semântica de `library.csv` + `watches.csv`. Dados são validados, normalizados e enviados em batches.
 
-## TMDB e imagens
+Regras de integridade:
 
-TMDB é acessado por proxy/backend quando aplicável. Capas e metadados podem ser armazenados em cache para reduzir chamadas repetidas, mas:
+- nenhuma data ausente é inventada;
+- source history IDs devem ser únicos por lote;
+- TMDB/surrogate e tipo de mídia são validados;
+- payload bulk de `watch_history` deve usar shape homogêneo;
+- finalização é condicionada a total/cursor/histórico exatos.
 
-- nenhuma credencial secreta TMDB deve ser exposta no cliente;
-- uma resposta de imagem/metadado em cache não concede acesso adicional a dados de usuário;
-- falhas de rede não devem apagar metadados válidos já conhecidos;
-- refresh de metadados não deve sobrescrever decisões manuais do usuário.
+## 5. RLS e staging
 
-## Sincronização
+Estruturas históricas de staging de importação precisam ser avaliadas individualmente antes de qualquer alteração de RLS. Em auditoria anterior, `public.ct_import_staging` foi identificado com RLS desabilitado. O fluxo HOTFIX16 principal não deve depender de exposição insegura dessa tabela.
 
-A arquitetura 0.5.7/0.0.83 prioriza renderização local e sincronização posterior. Isso não muda a autoridade do backend.
+**Regra:** não executar `ALTER TABLE ... ENABLE ROW LEVEL SECURITY` apenas para silenciar advisory sem definir e testar policies compatíveis; isso pode interromper o aplicativo. Se a tabela não for mais necessária, preferir deprecação/remoção controlada; se for necessária, definir policies mínimas por usuário/serviço.
 
-Em conflitos:
+`ct_import_staging_chunks` já foi observado com RLS habilitado; continuar verificando policies efetivas antes de declarar seguro.
 
-1. estados manuais persistidos do usuário têm prioridade sobre inferências;
-2. backend autenticado é a referência persistente compartilhada entre dispositivos;
-3. cache local deve ser reconciliado/atualizado, não usado para contornar regras do banco;
-4. metadados TMDB não devem alterar estados pessoais de acompanhamento por conta própria.
+## 6. Advisories Supabase ainda abertos
 
-## Importação
+Última revisão registrou advisories que precisam de tratamento explícito:
 
-Arquivos importados são tratados como dados não confiáveis. O parser deve validar tipo, tamanho, estrutura e campos antes de persistir.
+- `_cinetracker_build_payload`: RLS habilitado sem policy (INFO); revisar se a tabela precisa ser acessível por cliente;
+- `ct_import_trakt_chunk_v2(...)`: função `SECURITY DEFINER` executável por `anon` e `authenticated` (WARN);
+- `ct_import_trakt_v1(...)`: função `SECURITY DEFINER` executável por `anon` e `authenticated` (WARN);
+- `ct_replace_bingers_temp(...)`: função `SECURITY DEFINER` executável por `anon` e `authenticated` (WARN);
+- `cinetracker_due_notifications()`: `SECURITY DEFINER` executável por `authenticated` (WARN);
+- RPCs de episódios `cinetracker_episode_state`, `cinetracker_mark_episode_through` e `cinetracker_set_episode_watched`: `SECURITY DEFINER` executáveis por `authenticated`; revisar se isso é intencional e se o corpo escopa por `auth.uid()`;
+- Supabase Auth leaked-password protection desativada (WARN).
 
-Uma importação não deve apagar decisões manuais existentes nem inserir conteúdo fora do escopo autorizado do usuário.
+A correção recomendada para funções privilegiadas deve ser escolhida caso a caso: revogar `EXECUTE` de papéis que não precisam, usar `SECURITY INVOKER` quando possível ou mover função para schema não exposto. Não fazer alteração massiva sem teste de regressão.
 
-## Build e distribuição
+## 7. Edge Functions ativas relevantes
 
-### Web
+Versões de deploy observadas:
 
-O build executa `scripts/verify.mjs` antes da geração de `dist`. A versão só é considerada publicada após validação e deploy de produção confirmado.
+- `ct-import-bingers-user`: v8;
+- `tmdb-proxy`: v3;
+- `cinetracker-web`: v3;
+- `tmdb-image`: v2.
 
-### Android
+Existem funções antigas/testes ainda ativas no projeto Supabase. Elas devem ser inventariadas e desativadas/removidas quando comprovadamente sem uso para reduzir superfície de ataque. Não remover função sem mapear consumidores.
 
-O GitHub Actions valida módulos JavaScript, compila o APK, verifica assinatura, package `com.cinetracker.app` e `versionName 0.0.83` antes da publicação da Release `android-v0.0.83`.
+## 8. Segredos
 
-O APK não deve ser considerado oficial apenas por existir um commit na `main`; o pipeline precisa concluir com sucesso.
+- Chaves privadas/service role não devem ser commitadas.
+- Cliente Web/Android pode possuir somente identificadores/chaves públicas apropriadas ao Supabase.
+- Funções server-side usam secrets do ambiente Supabase.
+- GitHub Actions usa secrets/tokens do runner; logs não devem imprimir secrets.
+- Keystore Android é restaurado por mecanismo protegido do CI e não deve ser versionado no repositório.
 
-## Status
+## 9. TMDB e surrogate IDs
 
-A aplicação está em desenvolvimento ativo e não deve ser apresentada como formalmente auditada em segurança. Web 0.5.7 e Android 0.0.83 introduzem uma camada de cache/performance, não uma auditoria ou certificação de segurança.
+HOTFIX16 pode gerar surrogate IDs negativos para mídias sem TMDB real. O risco principal aqui é integridade/abuso de endpoint, não autenticação: IDs negativos não devem ser encaminhados ao TMDB como se fossem IDs oficiais.
+
+Já foram observados 404 em `tmdb-proxy` para IDs negativos. Débito: adicionar guard `tmdb_id > 0` antes de chamadas externas ou separar surrogate ID do campo TMDB.
+
+## 10. Web / Service Worker
+
+O Service Worker não cacheia shell HTML de navegação; cache é limitado a imagens/metadados TMDB. Isso reduz risco de shell antigo persistir após hotfix e ajuda a evitar execução involuntária de uma versão obsoleta.
+
+HOTFIX18 usa namespace `ct-web-0.0.97-hotfix18-documentation-governance`.
+
+## 11. Android
+
+Android usa WebView local com scripts inline e sem fallback remoto para o runtime principal. Navegação externa deve abrir no navegador/sistema conforme regras do app. Arquivos de importação nativos ficam em área privada/cache do app e devem ser limpos depois do fluxo.
+
+## 12. Processo obrigatório
+
+Toda mudança de autenticação, autorização, RLS, policy, função `SECURITY DEFINER`, segredo, upload/importação ou superfície pública deve:
+
+1. receber nova versão da unidade lógica;
+2. possuir alteração versionada no GitHub;
+3. atualizar este documento;
+4. usar migration quando houver mudança de banco;
+5. registrar validação em `docs/validation/`;
+6. não ser declarada corrigida sem evidência.
+
+Consulte `docs/DEVELOPMENT_RULES.md`.
