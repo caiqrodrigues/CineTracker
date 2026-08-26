@@ -1,56 +1,168 @@
-# CineTracker / Showly Companion — Project State
+# CineTracker — Project State
 
-> Documento persistente de continuidade do projeto. Deve ser atualizado a cada mudança relevante para que o desenvolvimento possa ser retomado sem depender do histórico do ChatGPT.
+> Documento persistente de continuidade. Deve refletir o estado real do projeto sem depender de histórico de conversa.
 
-**Última atualização:** 2026-08-24  
+**Última atualização:** 2026-08-26  
 **Branch principal:** `main`  
-**Web atual:** `0.4.8`  
-**Android atual:** `0.0.75`
+**Release lógica atual:** `0.0.97 HOTFIX 18`  
+**Web source:** `0.0.97 HOTFIX 18`  
+**Android source:** `0.0.97 HOTFIX 18` (`versionCode 995`)  
+**Backend lógico:** `0.0.97 HOTFIX 18`  
+**Windows:** não lançado
 
-## 1. Objetivo
+## 1. Regra de governança
 
-Companion multiplataforma para acompanhar filmes, séries e animes, com experiência sincronizada Web/Android, histórico real, progresso por episódio, Watchlist, favoritos, estatísticas, descoberta de conteúdo e notificações nativas no Android.
+Toda nova unidade lógica de atualização/mudança deve possuir versão nova e registro no GitHub. Código, documentação, versionamento, migrations, release note e validação devem permanecer sincronizados. Regra completa em `docs/DEVELOPMENT_RULES.md`.
 
-## 2. Regras de domínio
+## 2. Objetivo e arquitetura
 
-Estados manuais (`AlreadySeen`, `Completed`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater`, `AddedToWatchlist`) têm prioridade e não podem ser apagados por nova importação.
+CineTracker é um companion multiplataforma para filmes, séries e animes, com conta compartilhada Web/Android. Supabase armazena estado persistente, histórico, progresso, overrides e imports. TMDB fornece metadados externos. Android executa uma Activity/WebView com runtime Web embarcado; Web usa o mesmo domínio funcional.
 
-Descobrir deve mostrar apenas conteúdo realmente fora do universo do usuário. Qualquer título já visto, concluído, em progresso, acompanhado, em Watchlist/Watch Later ou com outro estado persistente deve ser excluído de todos os filtros e destaques.
+Estados manuais (`AlreadySeen`, `Completed`, `UpToDate`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater`, `AddedToWatchlist`) têm prioridade sobre inferências/importações e não podem ser apagados por nova importação.
 
-## 3. Estado Android 0.0.75
+## 3. Importação Bingers — estado consolidado
 
-Esta etapa trata somente do carregamento inicial antecipado das abas.
+### Semântica
 
-### Runtime
+- fonte válida: `library.csv` + `watches.csv`;
+- ratings, avaliações, comentários e listas: ignorados;
+- plays repetidos preservados em `external_ids.plays`;
+- datas ausentes não são inventadas;
+- dados manuais prevalecem.
 
-A Activity carrega `ct41`, `ct47`, `ct48`, `ct49`, `ct50`, `ct51`, `ct58`, `ct59`, `ct60` e o novo `ct61`.
+### Import reconciliado
 
-### Alteração desta versão
+Import ID 6 concluído e verificado:
 
-- o WebView começa invisível para evitar mostrar estados incompletos da Home;
-- `ct61` instala cache temporário apenas para leituras seguras do Supabase/TMDB;
-- durante a abertura, o runtime visita internamente Home, Assistir, Descobrir, Histórico, Perfil e Configurações para aquecer dados e requisições;
-- ao final do aquecimento, retorna para Home e chama a ponte nativa `appReady()`;
-- a Activity então libera o WebView já preparado;
-- fallback nativo em 10 segundos impede bloqueio permanente se o pré-carregamento falhar.
+- biblioteca: 3.078;
+- filmes: 2.318;
+- séries: 760;
+- watch records: 12.696;
+- movie watch records: 949;
+- episode watch records: 11.747;
+- movie plays: 1.312;
+- episode plays: 14.904;
+- total plays: 16.216;
+- filmes na Watchlist: 1.309;
+- séries não iniciadas: 533;
+- séries com histórico: 227;
+- eventos sem correspondência: 0.
 
-Nenhuma outra correção funcional foi incluída nesta etapa.
+Import ID 5 é histórico legado encerrado como `failed` / `LEGACY_PIPELINE_STALLED` e não deve ser interpretado como import em andamento.
 
-## 4. Build e publicação
+### Backend HOTFIX16
+
+`ct-import-bingers-user` está ativo em deploy Supabase v8 e possui autenticação server-side, erros tipados, begin idempotente por `client_run_id`, cursor/replay seguro, validação, dedupe, limpeza escopada, precedência manual e verificação exata antes de concluir.
+
+A falha PostgREST `All object keys must match` foi corrigida mantendo shape uniforme de `watch_history`: filmes incluem `season_number=null` e `episode_number=null`.
+
+## 4. Perfil e classificação de séries
+
+Agregados do Perfil são calculados no servidor para evitar limite/paginação do cliente. RPCs principais:
+
+- `cinetracker_profile_stats()`;
+- `cinetracker_series_state_stats()`;
+- `cinetracker_consumption_daily(p_limit_days)`.
+
+Estado reconciliado das séries:
+
+- 155 `Completed` / Concluídas;
+- 47 `UpToDate` / Em dia;
+- 25 `InProgress` / Em andamento;
+- 533 Não iniciadas;
+- 227 séries com histórico.
+
+O usuário confirmou a regra: séries do conjunto revisado que estão encerradas/canceladas e em dia são Concluídas; as demais que aguardam episódio/temporada permanecem Em dia.
+
+Erro Bingers de séries iniciadas com zero episódios vistos foi corrigido. `InProgress` importado exige histórico real, salvo decisão manual. A última verificação encontrou 0 séries `InProgress` sem histórico.
+
+Proteções de banco:
+
+- `ct_guard_bingers_import_inprogress()`;
+- `ct_cleanup_bingers_zero_history_inprogress()`.
+
+## 5. Estatísticas reconciliadas
+
+- episódios assistidos: 14.904;
+- reproduções de filmes: 1.312;
+- tempo em filmes: 3 meses 20 dias 13 horas;
+- tempo total: 16 meses 19 dias 5 horas.
+
+O gráfico diário usa `cinetracker_consumption_daily` e soma `plays`.
+
+## 6. Web HOTFIX18
+
+Identidade atual de source:
+
+- display: `0.0.97 HOTFIX 18`;
+- package: `0.0.97-hotfix18-documentation-governance`;
+- cache: `ct-web-0.0.97-hotfix18-documentation-governance`.
+
+Runtime preservado:
+
+- núcleo estável v95;
+- recuperação de auth/sessão;
+- HOTFIX15 transporte/picker;
+- HOTFIX16 import resilience;
+- HOTFIX17 Perfil/classificação;
+- camada HOTFIX18 final para identidade/versionamento.
+
+Deploy Web de produção deve ser confirmado separadamente; código em `main` não significa deploy concluído.
+
+## 7. Android HOTFIX18
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionCode`: `75`;
-- `versionName`: `0.0.75`;
-- artefato: `cinetracker-android-0.0.75-debug.apk`;
-- tag/release: `android-v0.0.75`;
-- workflow `Verify` valida também `ct61.js`, compila, verifica pacote/versão e publica a Release.
+- `versionName`: `0.0.97 HOTFIX 18`;
+- `versionCode`: `995`;
+- runtime bundle: `hotfix18-documentation-governance-v95-core-inline-authoritative`;
+- arquitetura: Activity + WebView, bundle local inline;
+- mantém picker/importação nativa e stack Web validado antes do empacotamento.
 
-## 5. Validação
+Estado de build/publicação deve ser consultado no workflow HOTFIX18; não presumir APK/Release até confirmação.
 
-A 0.0.75 deve ser validada especificamente quanto ao seguinte comportamento: abrir o aplicativo, aguardar a preparação inicial e então navegar pelas abas sem estados visíveis de carregamento tardio.
+## 8. Migrations recentes
 
-As demais correções de Home, Assistir, Descobrir e Perfil serão tratadas separadamente, uma por vez.
+- `20260826130000_hotfix13_profile_stats_plays.sql`;
+- `20260826211500_bingers_authoritative_profile_stats.sql`;
+- `20260826212500_profile_consumption_daily_rpc.sql`;
+- `20260826213500_bingers_series_state_hardening.sql`;
+- `20260826214500_profile_active_series_metric.sql`;
+- `20260826215500_bingers_completion_requires_metadata.sql`.
 
-## 6. Publicação
+## 9. Edge Functions relevantes
 
-Toda versão relevante deve atualizar código-fonte, versionamento, `README.md`, `VERSIONS.md`, `PROJECT_STATE.md`, documentação de release e pipeline correspondente. Android também exige Release + APK.
+- `ct-import-bingers-user`: v8;
+- `tmdb-proxy`: v3;
+- `cinetracker-web`: v3;
+- `tmdb-image`: v2.
+
+Esses números são versões de deploy das funções e não substituem a release lógica `0.0.97 HOTFIX 18`.
+
+## 10. Débitos conhecidos
+
+### Identificação TMDB
+
+Mídias sem TMDB real podem possuir surrogate IDs negativos. O `tmdb-proxy` não deve receber esses IDs; já foram observados 404 em requests negativos. Corrigir guard no cliente ou separar surrogate ID do campo TMDB.
+
+### Segurança Supabase
+
+Há advisories abertos para algumas funções `SECURITY DEFINER` executáveis por papéis amplos, além de leaked-password protection desativada. Estruturas de staging históricas devem ser revisadas quanto a RLS/policies sem habilitação cega.
+
+## 11. Documentos canônicos
+
+- `README.md`;
+- `VERSIONS.md`;
+- `CHANGELOG.md`;
+- `PROJECT_STATE.md`;
+- `docs/DEVELOPMENT_RULES.md`;
+- `docs/ARCHITECTURE.md`;
+- `docs/SECURITY.md`;
+- `docs/releases/0.0.97-HOTFIX18.md`;
+- `docs/validation/0.0.97-HOTFIX18.md`;
+- `docs/notes/2026-08-26-bingers-import-reconciliation.md`.
+
+## 12. Critério de conclusão
+
+Web: source + verify/build + deploy confirmado.  
+Android: source + verify/build + identidade do APK + assinatura + artifact/Release; teste em aparelho somente quando realmente executado.  
+Backend: migration/function source versionados + aplicação/estado ativo verificados.
