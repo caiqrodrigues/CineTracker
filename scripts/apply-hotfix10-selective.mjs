@@ -2,6 +2,7 @@ import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root=resolve(process.cwd());
+const profileName='patch-v074-hotfix1-version.js';
 const names=[
   'patch-v085-hotfix15-import-transport.js',
   'patch-v075-hotfix10-selective.js',
@@ -12,7 +13,8 @@ const names=[
   'patch-v080-hotfix11-settings-bridge.js',
   'patch-v082-hotfix12-picker-guard.js',
   'patch-v083-hotfix13-bingers-semantics.js',
-  'patch-v087-hotfix16-import-resilience.js'
+  'patch-v087-hotfix16-import-resilience.js',
+  profileName
 ];
 const targets=[resolve(root,'dist'),resolve(root,'apps/web/dist')];
 
@@ -24,6 +26,8 @@ for(const target of targets){
   html=html.replace(/<script src="\/patch-v081-hotfix12-nav-pre\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v084-hotfix14-real-device\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v086-hotfix15-import-retry\.js"><\/script>/g,'');
+  // HOTFIX17 must be the final runtime layer. Remove the build-web copy before reinjecting it last.
+  html=html.replace(new RegExp(`<script src="/${profileName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}"></script>`,'g'),'');
   for(const name of names){
     const tag=`<script src="/${name}"></script>`;
     if(!html.includes(tag))html=html.replace('</body>',tag+'</body>');
@@ -35,9 +39,10 @@ for(const target of targets){
   const pickerIndex=html.indexOf('patch-v082-hotfix12-picker-guard.js');
   const semanticsIndex=html.indexOf('patch-v083-hotfix13-bingers-semantics.js');
   const resilienceIndex=html.indexOf('patch-v087-hotfix16-import-resilience.js');
-  if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||resilienceIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex||resilienceIndex<semanticsIndex)throw new Error(`HOTFIX16: runtime patch order invalid: ${indexPath}`);
+  const profileIndex=html.indexOf(profileName);
+  if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||resilienceIndex<0||profileIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex||resilienceIndex<semanticsIndex||profileIndex<resilienceIndex)throw new Error(`HOTFIX17: runtime patch order invalid: ${indexPath}`);
   if(html.includes('patch-v086-'+'hotfix15-import-retry.js'))throw new Error(`HOTFIX16: legacy retry layer still active: ${indexPath}`);
   await writeFile(indexPath,html,'utf8');
 }
 
-console.log('HOTFIX16 import resilience: navigation + picker + Bingers semantics + auth-refreshing retry-safe import batches emitted.');
+console.log('HOTFIX17 series status: HOTFIX16 resilient import stack retained; profile classification layer emitted last.');
