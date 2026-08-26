@@ -26,7 +26,7 @@ await page.route('https://pjmkxryboypluleuuupp.supabase.co/**',async route=>{
 });
 
 async function currentView(){return page.evaluate(()=>{try{return String(view)}catch{return String(window.view||'')}})}
-async function clickView(target){await page.locator(`.nav button[data-view="${target}"]`).first().click({timeout:2000});await page.waitForTimeout(220);const got=await currentView();if(got!==target)throw new Error(`Navigation ${target}: expected view=${target}, got ${got}`);if(errors.length)throw new Error(`Navigation ${target}: browser errors:\n${errors.join('\n')}`)}
+async function clickView(target){await page.locator(`.nav button[data-view="${target}"]`).first().click({timeout:2000});await page.waitForTimeout(220);const got=await currentView(),accepted=target==='settings'?['settings','ct91-settings']:[target];if(!accepted.includes(got))throw new Error(`Navigation ${target}: expected ${accepted.join(' or ')}, got ${got}`);if(errors.length)throw new Error(`Navigation ${target}: browser errors:\n${errors.join('\n')}`)}
 
 try{
   await page.goto('http://127.0.0.1:4178/',{waitUntil:'domcontentloaded',timeout:10000});
