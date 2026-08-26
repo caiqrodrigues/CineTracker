@@ -35,7 +35,7 @@ if (navIndex < 0 || selectiveIndex < 0 || pickerIndex < 0 || semanticsIndex < 0 
 if (!html.includes('__ctHotfix15ImportTransport') || !html.includes('ct15RestoreNativeFiles') || !html.includes('ct15EnhanceNativePicker')) throw new Error('Android HOTFIX17 import transport markers missing.');
 if (!html.includes('__ctHotfix12PickerGuard') || !html.includes('__ctHotfix11ImportSync') || !html.includes('__ctHotfix11SettingsBridge')) throw new Error('Android HOTFIX17 import/sync markers missing.');
 if (!html.includes('__ctHotfix13BingersSemantics') || !html.includes('movie_plays') || !html.includes('watch_later_total')) throw new Error('Android HOTFIX17 Bingers semantics missing.');
-if (!html.includes('__ctProfileStatsHotfix17') || !html.includes('cinetracker_series_state_stats') || !html.includes('UpToDate') || !html.includes('Não iniciadas')) throw new Error('Android HOTFIX17 profile series-state semantics missing.');
+if (!html.includes('__ctProfileStatsHotfix17') || !html.includes('cinetracker_series_state_stats') || !html.includes('up_to_date_series') || !html.includes('Não iniciadas')) throw new Error('Android HOTFIX17 profile series-state semantics missing.');
 if (html.includes('patch-v068-v097.js') || html.includes('__ct97Loaded')) throw new Error('Android HOTFIX17 still contains unstable v97 overlay.');
 if (!html.includes("window.__ctAndroidBundle = 'hotfix17-series-status-v95-core-inline-authoritative'")) throw new Error('Android HOTFIX17 bundle marker missing.');
 if (!html.includes('const media = [')) throw new Error('Android HOTFIX17 lost critical media startup block.');
