@@ -38,9 +38,10 @@ jobs:
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Prove live Supabase CORS and HOTFIX15 transport
+      - name: Prove live Supabase CORS and resilient HOTFIX15 transport
         run: |
           node scripts/test-hotfix15-import-transport.mjs
+          node scripts/test-hotfix15-retry-transport.mjs
           node scripts/test-hotfix15-live-cors.mjs
 
       - name: Build HOTFIX15 Web runtime
@@ -85,12 +86,13 @@ jobs:
         run: |
           set -euo pipefail
           grep -q 'cinetracker_hotfix15_import' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
-          grep -q 'prefs.getString("picker_slot", "")' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -q 'importPrefs().getString("picker_slot", "")' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q 'cacheImportFile(slot, uris.get(0))' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q 'intent.setType("*/*")' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q 'pickImportFile(String slot)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q 'ct15RestoreNativeFiles' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
           grep -q "window.__ctAndroidBundle = 'hotfix15-import-transport-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ctHotfix15ImportRetry' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'versionCode 993' apps/android/app/build.gradle
           grep -q "versionName '0.0.97 HOTFIX 15'" apps/android/app/build.gradle
@@ -109,6 +111,7 @@ jobs:
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ctHotfix15ImportTransport'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ctHotfix15ImportRetry'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct15RestoreNativeFiles'
           if unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct97Loaded'; then exit 1; fi
           "$APKSIGNER" verify --print-certs "$OUT"
