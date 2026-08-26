@@ -1,0 +1,1 @@
+HOTFIX15 retry transport validated: 503, Failed to fetch, stalled request timeout; begin single-shot.
