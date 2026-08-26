@@ -11,7 +11,8 @@ const names=[
   'patch-v079-hotfix11-compat.js',
   'patch-v080-hotfix11-settings-bridge.js',
   'patch-v082-hotfix12-picker-guard.js',
-  'patch-v083-hotfix13-bingers-semantics.js'
+  'patch-v083-hotfix13-bingers-semantics.js',
+  'patch-v086-hotfix15-import-retry.js'
 ];
 const targets=[resolve(root,'dist'),resolve(root,'apps/web/dist')];
 
@@ -32,8 +33,9 @@ for(const target of targets){
   const selectiveIndex=html.indexOf('patch-v075-hotfix10-selective.js');
   const pickerIndex=html.indexOf('patch-v082-hotfix12-picker-guard.js');
   const semanticsIndex=html.indexOf('patch-v083-hotfix13-bingers-semantics.js');
-  if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex)throw new Error(`HOTFIX15: runtime patch order invalid: ${indexPath}`);
+  const retryIndex=html.indexOf('patch-v086-hotfix15-import-retry.js');
+  if(navIndex<0||selectiveIndex<0||pickerIndex<0||semanticsIndex<0||retryIndex<0||navIndex>selectiveIndex||pickerIndex<selectiveIndex||semanticsIndex<pickerIndex||retryIndex<semanticsIndex)throw new Error(`HOTFIX15: runtime patch order invalid: ${indexPath}`);
   await writeFile(indexPath,html,'utf8');
 }
 
-console.log('HOTFIX15 import transport: unique nav layer + browser CORS backend compatibility + explicit Android native picker + HOTFIX13 semantics emitted.');
+console.log('HOTFIX15 import transport: verified navigation + browser CORS + explicit Android picker + Bingers semantics + retry-safe import batches emitted.');
