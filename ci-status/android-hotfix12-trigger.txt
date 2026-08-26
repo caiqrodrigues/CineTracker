@@ -1,2 +1,3 @@
 CineTracker Android 0.0.97 HOTFIX 12 official release trigger
 source=59ebdf975c447275ad47b1924d7801725ddfb5bb
+pipeline_fix=a063452356c9695887148bfebd7ac15dd99eab1b
