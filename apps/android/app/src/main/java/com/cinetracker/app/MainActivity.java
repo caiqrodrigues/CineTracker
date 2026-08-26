@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
     private static final int EXPORT_FILE_REQUEST = 1003;
     private static final String APP_VERSION = BuildConfig.VERSION_NAME;
     private static final String LOCAL_WEB_ASSET = "hotfix5/index.html";
-    private static final String IMPORT_PREFS = "cinetracker_hotfix14_import";
+    private static final String IMPORT_PREFS = "cinetracker_hotfix15_import";
     private WebView webView;
     private ValueCallback<Uri[]> fileChooserCallback;
     private String currentPickerSlot;
@@ -125,7 +125,12 @@ public class MainActivity extends Activity {
                 super.onPageFinished(view, url);
                 applyAndroidBase();
                 CookieManager.getInstance().flush();
-                view.postDelayed(() -> view.evaluateJavascript("window.ct14RestoreNativeFiles&&window.ct14RestoreNativeFiles()", null), 350);
+                if (hasPendingImportFlow()) {
+                    view.postDelayed(() -> view.evaluateJavascript("window.ct15Navigate&&window.ct15Navigate('settings')", null), 250);
+                    view.postDelayed(() -> view.evaluateJavascript("window.ct15EnhanceNativePicker&&window.ct15EnhanceNativePicker();window.ct15RestoreNativeFiles&&window.ct15RestoreNativeFiles()", null), 850);
+                } else {
+                    view.postDelayed(() -> view.evaluateJavascript("window.ct15RestoreNativeFiles&&window.ct15RestoreNativeFiles()", null), 350);
+                }
             }
         });
 
@@ -138,9 +143,20 @@ public class MainActivity extends Activity {
         return getSharedPreferences(IMPORT_PREFS, MODE_PRIVATE);
     }
 
+    private boolean hasPendingImportFlow() {
+        SharedPreferences prefs = importPrefs();
+        String slot = prefs.getString("picker_slot", "");
+        if (slot != null && !slot.isEmpty()) return true;
+        for (String key : new String[]{"library_path", "watches_path", "package_path"}) {
+            String path = prefs.getString(key, "");
+            if (path != null && !path.isEmpty() && new File(path).isFile()) return true;
+        }
+        return false;
+    }
+
     private String runtimeUrl() {
         String separator = BuildConfig.WEB_URL.contains("?") ? "&" : "?";
-        return BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=" + BuildConfig.VERSION_CODE + "&release=hotfix14&runtime=embedded";
+        return BuildConfig.WEB_URL + separator + "android=1&ui=phone&apk=" + BuildConfig.VERSION_CODE + "&release=hotfix15&runtime=embedded";
     }
 
     private void loadBundledWeb() {
@@ -159,7 +175,7 @@ public class MainActivity extends Activity {
     private void showEmbeddedRuntimeFailure() {
         if (webView == null) return;
         String baseUrl = runtimeUrl();
-        String html = "<!doctype html><html lang='pt-BR'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>CineTracker HOTFIX 14</title></head><body style='margin:0;background:#090909;color:#f4f4f5;font-family:system-ui;padding:24px'><h2>CineTracker HOTFIX 14</h2><p>O runtime interno do APK não pôde ser aberto.</p><p>Reinstale esta mesma versão. O aplicativo não carregará uma versão remota diferente como fallback.</p></body></html>";
+        String html = "<!doctype html><html lang='pt-BR'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>CineTracker HOTFIX 15</title></head><body style='margin:0;background:#090909;color:#f4f4f5;font-family:system-ui;padding:24px'><h2>CineTracker HOTFIX 15</h2><p>O runtime interno do APK não pôde ser aberto.</p><p>Reinstale esta mesma versão. O aplicativo não carregará uma versão remota diferente como fallback.</p></body></html>";
         webView.loadDataWithBaseURL(baseUrl, html, "text/html", "UTF-8", baseUrl);
     }
 
@@ -177,7 +193,7 @@ public class MainActivity extends Activity {
     }
 
     private void navigate(String target) {
-        String js = "(function(){try{var t='" + target + "';if(window.ct14Navigate){window.ct14Navigate(t);return true;}if(window.ct95Navigate&&window.ct95Navigate(t))return true;if(window.ct94Navigate&&window.ct94Navigate(t))return true;if(window.ct93Navigate&&window.ct93Navigate(t))return true;if(window.ct92Navigate&&window.ct92Navigate(t))return true;if(window.ct91Navigate&&window.ct91Navigate(t))return true;if(window.ct90Navigate&&window.ct90Navigate(t))return true;if(window.ct89Navigate&&window.ct89Navigate(t))return true;if(window.ct88Navigate&&window.ct88Navigate(t))return true;view=t;if(typeof render==='function'){render();window.scrollTo(0,0);return true;}if(window.ct66Navigate)return !!window.ct66Navigate(t);return false;}catch(e){return false;}})();";
+        String js = "(function(){try{var t='" + target + "';if(window.ct15Navigate){window.ct15Navigate(t);return true;}if(window.ct14Navigate){window.ct14Navigate(t);return true;}if(window.ct95Navigate&&window.ct95Navigate(t))return true;if(window.ct94Navigate&&window.ct94Navigate(t))return true;if(window.ct93Navigate&&window.ct93Navigate(t))return true;if(window.ct92Navigate&&window.ct92Navigate(t))return true;if(window.ct91Navigate&&window.ct91Navigate(t))return true;if(window.ct90Navigate&&window.ct90Navigate(t))return true;if(window.ct89Navigate&&window.ct89Navigate(t))return true;if(window.ct88Navigate&&window.ct88Navigate(t))return true;view=t;if(typeof render==='function'){render();window.scrollTo(0,0);return true;}if(window.ct66Navigate)return !!window.ct66Navigate(t);return false;}catch(e){return false;}})();";
         webView.evaluateJavascript(js, null);
     }
 
@@ -193,16 +209,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        if ("library".equals(currentPickerSlot) || "watches".equals(currentPickerSlot)) {
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"text/csv", "application/csv", "text/plain", "application/octet-stream"});
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
-        } else if ("package".equals(currentPickerSlot)) {
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"application/zip", "application/x-zip-compressed", "application/json", "application/octet-stream"});
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
-        } else {
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"text/csv", "application/csv", "application/zip", "application/x-zip-compressed", "application/json", "application/octet-stream"});
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, "legacy".equals(currentPickerSlot));
         startActivityForResult(intent, FILE_CHOOSER_REQUEST);
     }
 
@@ -220,7 +227,7 @@ public class MainActivity extends Activity {
 
     private boolean cacheImportFile(String slot, Uri uri) {
         if (!("library".equals(slot) || "watches".equals(slot) || "package".equals(slot)) || uri == null) return false;
-        File file = new File(getFilesDir(), "ct14-import-" + slot + ".bin");
+        File file = new File(getFilesDir(), "ct15-import-" + slot + ".bin");
         try (InputStream in = getContentResolver().openInputStream(uri); FileOutputStream out = new FileOutputStream(file, false)) {
             if (in == null) return false;
             byte[] buf = new byte[8192]; int read;
@@ -251,7 +258,8 @@ public class MainActivity extends Activity {
 
     private void notifyNativeImportReady() {
         if (webView == null) return;
-        webView.postDelayed(() -> webView.evaluateJavascript("window.ct14RestoreNativeFiles&&window.ct14RestoreNativeFiles()", null), 180);
+        webView.postDelayed(() -> webView.evaluateJavascript("window.ct15Navigate&&window.ct15Navigate('settings')", null), 80);
+        webView.postDelayed(() -> webView.evaluateJavascript("window.ct15EnhanceNativePicker&&window.ct15EnhanceNativePicker();window.ct15RestoreNativeFiles&&window.ct15RestoreNativeFiles()", null), 420);
     }
 
     private void clearCachedImportFiles() {
@@ -291,7 +299,7 @@ public class MainActivity extends Activity {
                 byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                 runOnUiThread(() -> {
                     pendingExportBytes = bytes;
-                    pendingExportName = (name == null || name.isEmpty()) ? "cinetracker-backup-v97-hotfix14.json" : name;
+                    pendingExportName = (name == null || name.isEmpty()) ? "cinetracker-backup-v97-hotfix15.json" : name;
                     pendingExportMime = (mime == null || mime.isEmpty()) ? "application/octet-stream" : mime;
                     Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
