@@ -8,11 +8,11 @@ const gradle=await read('apps/android/app/build.gradle');
 const fail=m=>{throw new Error('HOTFIX15_IMPORT_TRANSPORT: '+m)};
 
 for(const h of ['Access-Control-Allow-Origin','Access-Control-Allow-Headers','Access-Control-Allow-Methods'])if(!edge.includes(h))fail('CORS header missing: '+h);
-const options=edge.indexOf("if(req.method==='OPTIONS')");
-const auth=edge.indexOf('const user=await uid(req)');
+const options=Math.max(edge.indexOf("if(req.method==='OPTIONS')"),edge.indexOf("if (req.method === 'OPTIONS')"));
+const auth=Math.max(edge.indexOf('const user=await uid(req)'),edge.indexOf('user = await uid(req)'));
 if(options<0||auth<0||options>auth)fail('OPTIONS preflight must execute before JWT user lookup');
 if(!edge.includes("'authorization, x-client-info, apikey, content-type'"))fail('browser Authorization/apikey/content-type preflight not allowed');
-if(!edge.includes("strategy:'hotfix15_cors_plays_semantics'"))fail('deployed source strategy not HOTFIX15');
+if(!edge.includes('hotfix17_resilient_import')&&!edge.includes("strategy:'hotfix15_cors_plays_semantics'"))fail('deployed Bingers import strategy marker missing');
 
 if(!nav.includes('__ctHotfix15ImportTransport')||!nav.includes('ct15EnhanceNativePicker')||!nav.includes('ct15RestoreNativeFiles'))fail('HOTFIX15 web/native transport layer missing');
 for(const slot of ['library','watches','package'])if(!nav.includes(`['${slot}'`)&&!nav.includes(`'${slot}'`))fail('native slot missing '+slot);
