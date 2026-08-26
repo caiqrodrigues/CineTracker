@@ -4,75 +4,83 @@
 
 ## Matriz atual
 
-| Sistema | Versão atual | Versão técnica adicional | Estado comprovado |
+| Sistema | Versão atual | Versão técnica adicional | Estado de source |
 |---|---:|---|---|
-| Web | **0.0.97 HOTFIX 18** | package `0.0.97-hotfix18-documentation-governance` | build/Verify concluídos; Vercel `success` |
-| Android | **0.0.97 HOTFIX 18** | `versionCode 995` | build, assinatura, artifact e Release publicados; teste em aparelho real pendente |
-| Backend / Supabase | **0.0.97 HOTFIX 18** | `ct-import-bingers-user` deploy v8 | schema/RPCs ativos; Edge Functions têm numeração própria |
+| Web | **0.0.98** | package `0.0.98`, cache `ct-web-0.0.98` | implementado em `main` |
+| Android | **0.0.98** | `versionCode 996` | source e pipeline dedicado em `main` |
+| Backend / Supabase | **0.0.98** | `ct-backup-user` v1; `ct-import-bingers-user` v8 | migration/RPC e função de backup ativos |
 | Windows | **—** | — | não lançado |
 
-## Evidência HOTFIX18
+O estado de build/deploy/publicação é registrado separadamente em `docs/validation/0.0.98.md` para não confundir source com evidência executada.
 
-- workflow geral `Verify`: run `33016322725`, sucesso;
-- pipeline Android: run `33016118908`, build e release com sucesso;
-- artifact Android: `cinetracker-android-0.0.97-HOTFIX18-debug`, id `9624582547`;
-- GitHub Release: `android-v0.0.97-hotfix18`;
-- APK: `cinetracker-android-0.0.97-HOTFIX18-debug.apk`;
-- SHA-256 do APK: `9a9801c69be9f66142c98a43ba084c262dc19a3b00cc15db5e379b6f8f05035f`;
-- status Vercel do commit HOTFIX18 verificado como `success`.
+## Identidade 0.0.98
 
-Smoke autenticado manual Web e instalação/teste Android em aparelho real permanecem pendentes.
+### Web
 
-## Edge Functions relevantes
+- versão exibida: `0.0.98`;
+- package: `0.0.98`;
+- Service Worker: `ct-web-0.0.98`;
+- rodapé: `CineTracker • v0.0.98`.
 
-Os números abaixo são números de deploy do Supabase, não substituem a versão da release do CineTracker:
+### Android
 
-- `ct-import-bingers-user`: **v8**;
-- `tmdb-proxy`: **v3**;
-- `cinetracker-web`: **v3**;
-- `tmdb-image`: **v2**.
+- `applicationId`: `com.cinetracker.app`;
+- `versionName`: `0.0.98`;
+- `versionCode`: `996`;
+- bundle: `v0.0.98-profile-history-backup-discover-v95-core-inline-authoritative`;
+- tag/release definida: `android-v0.0.98`.
 
-## Regra obrigatória a partir do HOTFIX18
+## Backend 0.0.98
 
-Toda nova unidade lógica de mudança deve receber incremento de versão e registro completo no GitHub. A unidade pode possuir vários commits enquanto está sendo concluída, todos sob a mesma versão. Depois de encerrada, a próxima mudança exige nova versão.
+Os números de Edge Function são independentes da versão do aplicativo:
 
-Arquivos que devem acompanhar a mudança, conforme aplicável:
+- `ct-backup-user`: **v1** — snapshot/restauração autenticados do backup CSV/ZIP;
+- `ct-import-bingers-user`: **v8** — importador Bingers resiliente preservado;
+- `tmdb-proxy`: versão de deploy própria;
+- `tmdb-image`: versão de deploy própria.
 
-- `package.json` e versão exibida Web;
-- namespace de cache/Service Worker;
-- Android `versionName` + `versionCode`;
-- bundle Android e workflow/release;
+Migration 0.0.98: `20260826230500_v098_profile_history_media.sql`.
+
+## Conteúdo funcional da 0.0.98
+
+- navegação autoritativa e correção das abas;
+- remoção da aba Histórico e integração do conteúdo ao Perfil;
+- Perfil reordenado em estatísticas → gráfico → extras → histórico;
+- carrosséis separados de séries e filmes;
+- Backup & Restauração reduzido a Exportar/Importar;
+- exportação ZIP com CSVs e restauração autenticada;
+- Limpar Cache funcional;
+- Atualizar Metadados funcional com guard para IDs substitutos;
+- Descobrir na ordem Pra você → Em alta → Mais aguardados → Mais bem avaliados → Calendário;
+- filtros Todos/Filmes/Séries nas quatro seções aplicáveis;
+- ranking de Mais bem avaliados sempre decrescente.
+
+## Regra obrigatória
+
+Toda nova unidade lógica de mudança deve receber incremento de versão e registro completo no GitHub. A unidade pode possuir vários commits enquanto está sendo concluída; a próxima unidade posterior exige novo incremento.
+
+Arquivos/áreas que devem acompanhar a mudança conforme aplicável:
+
+- `package.json`, versão exibida e Service Worker Web;
+- Android `versionName`, `versionCode`, bundle e workflow/release;
 - `README.md` e README da plataforma;
 - `CHANGELOG.md`;
 - `PROJECT_STATE.md`;
 - `VERSIONS.md`;
 - `docs/releases/<versão>.md`;
 - `docs/validation/<versão>.md`;
-- arquitetura, segurança e migrations quando afetadas.
-
-Detalhes normativos: `docs/DEVELOPMENT_RULES.md`.
-
-## Regras permanentes
-
-- `applicationId` Android permanece `com.cinetracker.app`.
-- `versionCode` Android deve ser sempre crescente.
-- Mudança compartilhada Web/Android deve atualizar os dois targets.
-- Mudança somente de backend ainda deve ser associada à próxima release lógica e registrada em migration/código da função correspondente.
-- Uma versão Android não é considerada publicada sem build, APK válido, assinatura e Release.
-- Uma versão Web não é considerada em produção sem deploy confirmado.
-- Teste automatizado não equivale a teste visual/funcional em aparelho real.
-- Não marcar como validado o que não foi executado.
+- `docs/ARCHITECTURE.md` e `docs/SECURITY.md` quando afetados;
+- migrations e Edge Function source para mudanças de backend.
 
 ## Linha recente
 
-- **0.0.97 HOTFIX 13** — semântica Bingers e estatísticas por `plays`.
-- **0.0.97 HOTFIX 14** — tentativas de compatibilidade em dispositivo real.
-- **0.0.97 HOTFIX 15** — transporte/picker de importação e shape homogêneo de `watch_history`.
-- **0.0.97 HOTFIX 16** — pipeline de importação resiliente, idempotente e verificável; Edge Function Bingers v8.
-- **0.0.97 HOTFIX 17** — Perfil server-side e classificação de séries em Concluídas / Em andamento / Em dia / Não iniciadas.
-- **0.0.97 HOTFIX 18** — consolidação documental, governança obrigatória, sincronização integral de versionamento, atualização do CI geral e publicação Android, preservando HOTFIX15–17.
+- **0.0.97 HOTFIX 15** — transporte/picker de importação e shape homogêneo de `watch_history`;
+- **0.0.97 HOTFIX 16** — importação Bingers resiliente/idempotente;
+- **0.0.97 HOTFIX 17** — Perfil server-side e classificação de séries;
+- **0.0.97 HOTFIX 18** — governança/versionamento e consolidação documental;
+- **0.0.98** — navegação, Perfil com Histórico integrado, backup CSV/ZIP, manutenção funcional e Descobrir reformulado.
 
 ## Release atual
 
-- Release note: `docs/releases/0.0.97-HOTFIX18.md`.
-- Validação: `docs/validation/0.0.97-HOTFIX18.md`.
+- release note: `docs/releases/0.0.98.md`;
+- validação: `docs/validation/0.0.98.md`.
