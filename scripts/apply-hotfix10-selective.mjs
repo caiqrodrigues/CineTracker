@@ -27,7 +27,8 @@ for(const target of targets){
   html=html.replace(/<script src="\/patch-v084-hotfix14-real-device\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v086-hotfix15-import-retry\.js"><\/script>/g,'');
   // HOTFIX17 must be the final runtime layer. Remove the build-web copy before reinjecting it last.
-  html=html.replace(new RegExp(`<script src="/${profileName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}"></script>`,'g'),'');
+  const profileTag=`<script src="/${profileName}"></script>`;
+  html=html.split(profileTag).join('');
   for(const name of names){
     const tag=`<script src="/${name}"></script>`;
     if(!html.includes(tag))html=html.replace('</body>',tag+'</body>');
