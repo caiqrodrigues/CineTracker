@@ -4,14 +4,17 @@ import vm from 'node:vm';
 const path = 'apps/android/app/src/main/assets/hotfix5/index.html';
 const html = await readFile(path, 'utf8');
 
-if (!html.includes("window.__ctAndroidBundle = 'hotfix9-v95-core-inline-authoritative'")) {
-  throw new Error('Android inline smoke: HOTFIX9 stability bundle marker missing');
+if (!html.includes("window.__ctAndroidBundle = 'hotfix10-selective-v95-core-inline-authoritative'")) {
+  throw new Error('Android inline smoke: HOTFIX10 selective bundle marker missing');
 }
 if (!html.includes("window.__ctP0SessionReset = 'hotfix7-once'")) {
   throw new Error('Android inline smoke: P0 session reset marker missing');
 }
-if (!html.includes('data-ct-inline="patch-v067-v095.js"')) {
-  throw new Error('Android inline smoke: stable v95 layer missing');
+for (const name of ['patch-v067-v095.js','patch-v075-hotfix10-selective.js','patch-v076-hotfix10-actions.js','patch-v077-hotfix10-native-bridge.js']) {
+  if (!html.includes(`data-ct-inline="${name}"`)) throw new Error(`Android inline smoke: ${name} missing`);
+}
+if (!html.includes('__ctHotfix10Selective') || !html.includes('__ctHotfix10Actions') || !html.includes('__ctHotfix10NativeBridge')) {
+  throw new Error('Android inline smoke: HOTFIX10 selective markers missing');
 }
 if (html.includes('patch-v068-v097.js') || html.includes('__ct97Loaded')) {
   throw new Error('Android inline smoke: unstable v97 overlay is still embedded');
@@ -21,6 +24,9 @@ if (html.includes('patch-v068-v097-observer-guard.js') || html.includes('__ct97O
 }
 if (!html.includes('const media = [')) {
   throw new Error('Android inline smoke: const media block missing');
+}
+if (!html.includes('0.0.97 HOTFIX 10')) {
+  throw new Error('Android inline smoke: HOTFIX10 version missing');
 }
 if (html.includes('<script src="/')) {
   throw new Error('Android inline smoke: external root script remains');
@@ -40,4 +46,4 @@ for (let i = 0; i < scripts.length; i += 1) {
   }
 }
 
-console.log(`Android HOTFIX9 inline smoke OK: ${scripts.length} scripts preserved, v97 absent, syntax valid.`);
+console.log(`Android HOTFIX10 inline smoke OK: ${scripts.length} scripts preserved, selective layers embedded, v97 absent, syntax valid.`);
