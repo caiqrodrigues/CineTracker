@@ -32,7 +32,7 @@ const checks=[
 ['Frontend HOTFIX16 begin pode ser repetido com run id',h16.includes("body.action === 'begin'")&&h16.includes('client_run_id')&&h16.includes('newRunId16')],
 ['Frontend HOTFIX16 retry cobre rede/timeout/5xx',h16.includes('AbortController')&&h16.includes('retryableStatus16')&&h16.includes('500, 502, 503, 504')],
 ['RPC stats soma plays',migration.includes("external_ids->>'plays'")&&migration.includes('sum(plays)')],
-['Perfil HOTFIX17 separa histórico e estados',version.includes('__ctProfileStatsHotfix17')&&version.includes('cinetracker_series_state_stats')&&version.includes('UpToDate')&&version.includes('Não iniciadas')&&version.includes('séries com histórico')],
+['Perfil HOTFIX17 separa histórico e estados',version.includes('__ctProfileStatsHotfix17')&&version.includes('cinetracker_series_state_stats')&&version.includes('up_to_date_series')&&version.includes('Não iniciadas')&&version.includes('séries com histórico')],
 ['Web/cache HOTFIX17',pkg.includes('0.0.97-hotfix17-series-status')&&version.includes('0.0.97 HOTFIX 17')&&version.includes('__ctHotfix17Version')&&sw.includes('ct-web-0.0.97-hotfix17-series-status')],
 ['Service worker não cacheia shell HTML',!sw.includes('index.html')&&!sw.includes('navigate')],
 ['Android segue inline e sem fallback remoto',android.includes('loadDataWithBaseURL')&&android.includes('hotfix5/index.html')&&!android.includes('WebViewAssetLoader')&&!android.includes('webView.loadUrl(runtimeUrl')],
