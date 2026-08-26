@@ -66,7 +66,7 @@ async function syncCloud11(force=false){
     await loadCloudState();
     const overlayOpen=!!document.querySelector('.ct91-overlay,#ct92-episode-overlay,#ct92-person-overlay,#ct10-preview');
     if(!overlayOpen&&typeof render==='function')render();
-    if(['settings','ct91-settings','ct92-settings'].includes(before))setTimeout(upgradeImporter11,80);
+    if(['settings','ct91-settings','ct92-settings'].includes(before))scheduleUpgrade11();
     return true;
   }catch(e){console.warn('CineTracker HOTFIX11: sincronização do Supabase não concluída.',e);return false}
   finally{syncing11=false}
@@ -75,7 +75,7 @@ window.ct11SyncCloud=()=>syncCloud11(true);
 
 function upgradeImporter11(){
   const panel=$11('#ct10-import-panel');
-  if(!panel||panel.dataset.ct11==='1')return;
+  if(!panel||panel.dataset.ct11==='1')return false;
   panel.dataset.ct11='1';
   panel.innerHTML=`<h2>Importar dados do Bingers</h2><p class="ct10-muted">No celular, escolha os arquivos <b>um de cada vez</b>. Na Web funciona da mesma forma. Depois selecione <b>library.csv</b> e <b>watches.csv</b> e abra a prévia.</p><div class="ct10-safe">Os arquivos são enviados para sua conta no Supabase. Web e Android usam os mesmos dados. Estados e decisões manuais do CineTracker continuam tendo prioridade.</div><div class="ct11-files"><label class="ct11-file"><b>1. library.csv</b><span class="ct10-muted">Biblioteca, Watchlist e séries acompanhadas.</span><input id="ct11-library" type="file" accept=".csv,text/csv,text/plain,application/vnd.ms-excel"><span id="ct11-library-name" class="ct10-muted">Nenhum arquivo selecionado.</span></label><label class="ct11-file"><b>2. watches.csv</b><span class="ct10-muted">Filmes e episódios assistidos.</span><input id="ct11-watches" type="file" accept=".csv,text/csv,text/plain,application/vnd.ms-excel"><span id="ct11-watches-name" class="ct10-muted">Nenhum arquivo selecionado.</span></label></div><div class="ct10-actions"><button class="ct10-btn" id="ct11-read-csv">Analisar os 2 CSVs e ver prévia</button><button class="ct10-btn ct11-sync" id="ct11-sync">Sincronizar agora</button></div><div class="ct11-package"><div class="ct10-muted"><b>Alternativa:</b> você também pode usar um ZIP ou JSON único.</div><input id="ct11-package" type="file" accept=".zip,.json,application/zip,application/x-zip-compressed,application/json"><button class="ct10-btn" id="ct11-read-package" style="margin-top:8px">Analisar ZIP/JSON</button></div><div id="ct11-status" class="ct10-muted ct11-status"></div>`;
   let libraryFile=null,watchesFile=null,packageFile=null;
@@ -107,17 +107,21 @@ function upgradeImporter11(){
     const ok=await syncCloud11(true);
     setTimeout(()=>{const s=$11('#ct11-status'),nb=$11('#ct11-sync');if(s)s.textContent=ok?'Sincronização concluída.':'Não foi possível sincronizar agora.';if(nb){nb.disabled=false;nb.textContent=old}},140);
   };
+  return true;
 }
 
-const old10=window.ct10Navigate;
-if(typeof old10==='function')window.ct10Navigate=function(target){const out=old10.apply(this,arguments);if(String(target)==='settings')setTimeout(upgradeImporter11,120);return out};
-const old95=window.ct95Navigate;
-if(typeof old95==='function')window.ct95Navigate=function(target){const out=old95.apply(this,arguments);if(String(target)==='settings')setTimeout(upgradeImporter11,140);return out};
+function scheduleUpgrade11(){for(const delay of [90,180,340,560])setTimeout(upgradeImporter11,delay)}
+window.ct11UpgradeImporter=upgradeImporter11;
 
-document.addEventListener('click',e=>{const b=e.target?.closest?.('[data-view="settings"]');if(b)setTimeout(upgradeImporter11,140)},true);
+const old10=window.ct10Navigate;
+if(typeof old10==='function')window.ct10Navigate=function(target){const out=old10.apply(this,arguments);if(String(target)==='settings')scheduleUpgrade11();return out};
+const old95=window.ct95Navigate;
+if(typeof old95==='function')window.ct95Navigate=function(target){const out=old95.apply(this,arguments);if(String(target)==='settings')scheduleUpgrade11();return out};
+
+document.addEventListener('click',e=>{const b=e.target?.closest?.('[data-view="settings"]');if(b)scheduleUpgrade11()},true);
 window.addEventListener('cinetracker:data-changed',e=>{const source=String(e?.detail?.source||'');if(source==='hotfix10-import'||source==='hotfix11-import')setTimeout(()=>void syncCloud11(true),80)});
 window.addEventListener('focus',()=>void syncCloud11(false));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)void syncCloud11(false)});
 window.addEventListener('online',()=>void syncCloud11(false));
-setTimeout(()=>{if(isSettings11())upgradeImporter11()},180);
+setTimeout(()=>{if(isSettings11())scheduleUpgrade11()},180);
 })();
