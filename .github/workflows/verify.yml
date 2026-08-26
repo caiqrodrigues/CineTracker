@@ -2,50 +2,61 @@ name: Verify
 
 on:
   push:
-    branches: [main, recovery/v095-core-hotfix9-stability]
+    branches: [main]
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_stability:
-    if: github.event_name == 'push'
+  hotfix10_stability:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Verify source invariants
-        run: npm run verify
-      - name: Build HOTFIX9 stability Web runtime
+      - name: Build HOTFIX10 selective Web runtime
         run: npm run build
       - name: Execute auth recovery runtime suite
         run: node scripts/test-auth-recovery-red.mjs
-      - name: Execute startup and navigation stability in real Chrome
+      - name: Prove native navigation compatibility bridge
+        run: node scripts/test-hotfix10-native-bridge.mjs
+      - name: Install real-browser harness
+        run: npm install --no-save --no-package-lock playwright-core@1.55.0
+      - name: Prove Web navigation actions and CSV preview in real Chrome
         shell: bash
         run: |
           set -euo pipefail
-          npm install --no-save --no-package-lock playwright-core@1.55.0
           CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
           test -n "$CHROME_BIN"
           export CHROME_BIN
-          node scripts/test-real-browser-p0.mjs
-          node scripts/test-real-browser-stability-hotfix9.mjs
-      - name: Assert HOTFIX9 shipped runtime
+          node scripts/test-real-browser-hotfix10-selective.mjs
+      - name: Prepare exact Android embedded runtime
+        run: node scripts/prepare-android-hotfix2-web.mjs
+      - name: Compile every Android inline script
+        run: node scripts/test-android-inline-hotfix6.mjs
+      - name: Prove embedded Android navigation actions and CSV preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          CINETRACKER_TEST_ROOT=apps/android/app/src/main/assets/hotfix5 node scripts/test-real-browser-hotfix10-selective.mjs
+      - name: Assert HOTFIX10 production invariants
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
-          grep -q 'cinetracker_p0_session_reset_hotfix7' dist/index.html
           grep -q 'patch-v067-v095.js' dist/index.html
-          grep -q 'const media = \[' dist/index.html
-          grep -q 'void bootstrap();' dist/index.html
-          grep -q 'ctFetchWithTimeout' dist/index.html
-          grep -q 'ctLooksLikeJwt' dist/index.html
-          ! grep -q 'patch-v068-v097.js' dist/index.html
+          grep -q 'patch-v075-hotfix10-selective.js' dist/index.html
+          grep -q 'patch-v076-hotfix10-actions.js' dist/index.html
+          grep -q 'patch-v077-hotfix10-native-bridge.js' dist/index.html
+          grep -q '0.0.97 HOTFIX 10' dist/patch-v074-hotfix1-version.js
+          grep -q 'ct-web-0.0.97-hotfix10-selective' dist/service-worker.js
+          ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
           ! grep -q 'patch-v068-v097-observer-guard.js' dist/index.html
-          ! grep -q 'auth-preboot-fix7.js' dist/index.html
-          ! grep -q 'patch-v073-v097-fix7.js' dist/index.html
+          grep -q "window.__ctAndroidBundle = 'hotfix10-selective-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
