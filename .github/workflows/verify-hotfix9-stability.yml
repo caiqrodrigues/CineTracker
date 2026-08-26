@@ -1,0 +1,39 @@
+name: Verify HOTFIX9 Stability
+
+on:
+  push:
+    branches: [recovery/v095-core-hotfix9-stability]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web_stability:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build v95-core stability runtime with auth recovery
+        run: npm run build
+      - name: Assert v97 overlay is absent from shipped HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'patch-v067-v095.js' dist/index.html
+          grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
+          grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
+          ! grep -q 'patch-v068-v097.js' dist/index.html
+          ! grep -q 'patch-v068-v097-observer-guard.js' dist/index.html
+      - name: Run real Chrome navigation stability soak
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock playwright-core@1.55.0
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          node scripts/test-real-browser-p0.mjs
+          node scripts/test-real-browser-stability-hotfix9.mjs
