@@ -4,11 +4,11 @@ CineTracker é um companion multiplataforma para filmes, séries e animes. Web e
 
 ## Versão atual
 
-| Sistema | Versão | Identidade técnica |
+| Sistema | Versão | Estado comprovado |
 |---|---:|---|
-| Web | **0.0.99** | package `0.0.99`, cache `ct-web-0.0.99` |
-| Android | **0.0.99** | `versionName 0.0.99`, `versionCode 997` |
-| Backend lógico | **0.0.99** | Supabase/RPCs; Edge Functions possuem versões próprias |
+| Web | **0.0.99** | package `0.0.99`, cache `ct-web-0.0.99`; Verify/build e Vercel concluídos |
+| Android | **0.0.99** | `versionName 0.0.99`, `versionCode 997`; APK/artifact/Release publicados |
+| Backend lógico | **0.0.99** | RPC LRU aplicada; Edge Functions possuem versões próprias |
 | Windows | — | não lançado |
 
 A 0.0.99 preserva a navegação, Descobrir, backup CSV/ZIP e manutenção da 0.0.98 e reformula a biblioteca pessoal do Perfil.
@@ -38,14 +38,7 @@ A ordenação principal é `last_watched_at DESC`. `cinetracker_profile_media_da
 
 Migration: `supabase/migrations/20260826234500_v099_profile_media_lru_dashboard.sql`.
 
-RPC `cinetracker_profile_media_dashboard()` é `SECURITY INVOKER`, filtra por `auth.uid()` e consolida:
-
-- progresso assistido;
-- `last_watched_at`;
-- favoritos (`Liked`);
-- AddedToWatchlist / WatchLater;
-- InProgress / UpToDate / Completed;
-- não iniciadas e já vistas.
+RPC `cinetracker_profile_media_dashboard()` é `SECURITY INVOKER`, filtra por `auth.uid()` e consolida progresso, `last_watched_at`, favoritos (`Liked`), AddedToWatchlist / WatchLater, InProgress / UpToDate / Completed, não iniciadas e já vistas.
 
 ## Recursos preservados da 0.0.98
 
@@ -56,11 +49,21 @@ RPC `cinetracker_profile_media_dashboard()` é `SECURITY INVOKER`, filtra por `a
 - Limpar Cache e Atualizar Metadados funcionais;
 - importador Bingers resiliente preservado (`ct-import-bingers-user` v8).
 
-## Android 0.0.99
+## Publicação 0.0.99
 
-Android continua em `Activity + WebView`, usando o mesmo runtime Web embarcado/inline. Bundle alvo: `v0.0.99-profile-lru-v95-core-inline-authoritative`. O rodapé exibido no runtime é **`CineTracker • v0.0.99`**.
+### Web
+- Verify final: run `33021058624` — success;
+- status Vercel do commit funcional `f4261cb944b60c15c01b41989645e8c64468e4ef`: success / Deployment has completed.
 
-Pipeline dedicado: `.github/workflows/build-android-v099.yml`. Build, publicação do APK e teste em aparelho real são estados separados e só são marcados como concluídos quando houver evidência em `docs/validation/0.0.99.md`.
+### Android
+- pipeline: run `33021058734` — success;
+- bundle: `v0.0.99-profile-lru-v95-core-inline-authoritative`;
+- APK: `cinetracker-android-0.0.99-debug.apk`;
+- artifact `cinetracker-android-0.0.99-debug`, ID `9626549788`;
+- GitHub Release `android-v0.0.99`, ID `377463898`;
+- SHA-256: `c39c08cd51470050f3eac2c444c4d468dcfcb4072230cf9e082def9ab176cf57`.
+
+Build, `aapt`, assinatura, runtime embarcado, artifact e Release foram aprovados. Instalação em aparelho real e smoke visual autenticado continuam explicitamente separados como testes manuais pendentes.
 
 ## Documentação canônica
 
