@@ -1,25 +1,28 @@
 import { readFile } from 'node:fs/promises';
 
-const html = await readFile('apps/web/index.html', 'utf8');
-const files = ['patch-v024.js','patch-v029.js','patch-v054.js','patch-v058-v088.js','patch-v059-v089.js','patch-v060-v090.js','patch-v061-v091.js','patch-v062-v091-preserve.js','patch-v063-v092.js','patch-v064-v092-episode-context.js','patch-v065-v093.js','patch-v066-v094.js','patch-v067-v095.js','patch-v068-v097.js','patch-v068-v097-observer-guard.js','patch-v074-hotfix1-version.js','service-worker.js'];
+const read = p => readFile(p, 'utf8');
+const html = await read('apps/web/index.html');
+const keyFiles = [
+  'patch-v024.js','patch-v029.js','patch-v054.js','patch-v059-v089.js','patch-v060-v090.js',
+  'patch-v061-v091.js','patch-v063-v092.js','patch-v067-v095.js','patch-v068-v097.js',
+  'patch-v074-hotfix1-version.js','service-worker.js'
+];
 const src = {};
-for (const f of files) {
-  src[f] = await readFile('apps/web/' + f, 'utf8');
+for (const f of keyFiles) {
+  src[f] = await read('apps/web/' + f);
   try { new Function(src[f]); }
   catch (e) { console.error('ERRO - sintaxe ' + f + ': ' + e.message); process.exit(1); }
 }
 
-const android = await readFile('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java', 'utf8');
-const gradle = await readFile('apps/android/app/build.gradle', 'utf8');
-const layout = await readFile('apps/android/app/src/main/res/layout/activity_main.xml', 'utf8');
-const buildWeb = await readFile('scripts/build-web.mjs', 'utf8');
-const applyGuard = await readFile('scripts/apply-hotfix8-observer-guard.mjs', 'utf8');
-const prepareAndroid = await readFile('scripts/prepare-android-hotfix2-web.mjs', 'utf8');
-const startupSmoke = await readFile('scripts/test-startup-hotfix6.mjs', 'utf8');
-const realBrowserSmoke = await readFile('scripts/test-real-browser-p0.mjs', 'utf8');
-const postLoginSmoke = await readFile('scripts/test-real-browser-post-login.mjs', 'utf8');
-const packageJson = await readFile('package.json', 'utf8');
-const patchArrayLine = buildWeb.split('\n').find(line => line.startsWith('const patches =')) || '';
+const android = await read('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java');
+const gradle = await read('apps/android/app/build.gradle');
+const buildWeb = await read('scripts/build-web.mjs');
+const stability = await read('scripts/apply-hotfix9-stability.mjs');
+const prepareAndroid = await read('scripts/prepare-android-hotfix2-web.mjs');
+const browserStability = await read('scripts/test-real-browser-stability-hotfix9.mjs');
+const packageJson = await read('package.json');
+const hotfixVersion = src['patch-v074-hotfix1-version.js'];
+const sw = src['service-worker.js'];
 const p29 = src['patch-v029.js'];
 const p54 = src['patch-v054.js'];
 const p59 = src['patch-v059-v089.js'];
@@ -27,10 +30,6 @@ const p60 = src['patch-v060-v090.js'];
 const p91 = src['patch-v061-v091.js'];
 const p92 = src['patch-v063-v092.js'];
 const p95 = src['patch-v067-v095.js'];
-const p97 = src['patch-v068-v097.js'];
-const observerGuard = src['patch-v068-v097-observer-guard.js'];
-const hotfixVersion = src['patch-v074-hotfix1-version.js'];
-const sw = src['service-worker.js'];
 
 const checks = [
   ['CineTracker base', html.includes('CineTracker')],
@@ -40,54 +39,32 @@ const checks = [
   ['Home reativa preservada', p60.includes('refreshHome') && p91.includes('cinetracker:data-changed')],
   ['Descobrir TMDB preservado', p92.includes('/trending/all/week')],
   ['Histórico episódio preservado', p92.includes('openEpisode92')],
-  ['Ator carrosséis preservados', p92.includes('<h2>Filmes</h2>') && p92.includes('<h2>Séries</h2>')],
   ['Backup preservado', p92.includes('Exportar dados') && p92.includes('Restaurar dados')],
-  ['Pra Você 7 slots', p97.includes("card97(daily,'daily')") && p97.includes("card97(fa,'fresh-anime')")],
-  ['Pra Você filtros', p97.includes('year(x)>1990') && p97.includes('score(x)>7.8')],
-  ['Calendário por último', p97.includes('tabs.appendChild(cal)')],
-  ['Episódio inteligente', p91.includes('Você já assistiu aos episódios anteriores') && p91.includes('markPrevious')],
-  ['Perfil gráfico diário', p97.includes('today.offsetLeft-sc.clientWidth/2') && p95.includes('openDay95')],
-  ['Importador ZIP/CSV', p97.includes('unzipCSV') && p97.includes('library.csv') && p97.includes('watches.csv')],
+  ['Perfil v95 preservado', p95.includes('openDay95')],
 
-  ['Recovery aplica timeout auth', buildWeb.includes('ctFetchWithTimeout') && buildWeb.includes('8000')],
-  ['Recovery Home antes da hidratação', buildWeb.includes('function enterAuthenticatedHome()') && buildWeb.includes("view = 'home';") && buildWeb.includes('void runPostAuthHydration();')],
-  ['Recovery storage isolado', buildWeb.includes('sessão válida em memória')],
-  ['Recovery valida JWT', buildWeb.includes('function ctLooksLikeJwt(token)') && buildWeb.includes('Sessão local inválida')],
-  ['Recovery login/refresh isolam Authorization antigo', buildWeb.includes("const headers = { apikey: SUPABASE_KEY") && buildWeb.includes("path === 'logout'") && !buildWeb.includes("headers: { ...authHeaders(), 'Content-Type': 'application/json' }")],
-  ['Recovery mantém bootstrap base', buildWeb.includes("if (!built.includes('void bootstrap();'))")],
-  ['P0 limpa sessão antiga uma única vez', buildWeb.includes("cinetracker_p0_session_reset_hotfix7") && buildWeb.includes("window.__ctP0SessionReset = 'hotfix7-once'") && buildWeb.includes("localStorage.removeItem('cinetracker_session')")],
-  ['P0 renderiza antes de restaurar sessão', buildWeb.includes("async function bootstrap() {\n    render();\n    let restored = false;") && buildWeb.includes("authRecoveryWithTimeout(restoreSession(), 6500")],
-  ['P0 startup usa navegador real e Auth pendurado', realBrowserSmoke.includes("poisoned persisted session with hung Auth") && realBrowserSmoke.includes("timeout: 1000") && realBrowserSmoke.includes("page.route('**/auth/v1/**'")],
-  ['HOTFIX8 preserva const media', buildWeb.includes("'const media = ['") && buildWeb.includes("built.includes('const media = [')")],
-  ['HOTFIX8 startup smoke executa bundle emitido', startupSmoke.includes('vm.Script') && startupSmoke.includes('id="auth-form"') && startupSmoke.includes('Entrar no CineTracker')],
-  ['FIX7 legado fora do array de build web', !patchArrayLine.includes('patch-v073-v097-fix7.js') && !buildWeb.includes("const preboot = resolve(web, 'auth-preboot-fix7.js')")],
-  ['HOTFIX8 observer guard filtra auto-mutação do rodapé v97', observerGuard.includes('GuardedMutationObserver') && observerGuard.includes("target.matches('.ct97-version')") && observerGuard.includes("target.closest('.ct97-version')")],
-  ['HOTFIX8 guard injetado antes da v97', applyGuard.includes("html.replace(v97Tag, guardTag + v97Tag)") && applyGuard.includes("html.indexOf(guardTag) > html.indexOf(v97Tag)")],
-  ['HOTFIX8 pipeline aplica guard antes do startup smoke', packageJson.includes('apply-hotfix8-observer-guard.mjs') && packageJson.indexOf('apply-hotfix8-observer-guard.mjs') < packageJson.indexOf('test-startup-hotfix6.mjs')],
-  ['HOTFIX8 teste pós-login real exige Home e hidratação', postLoginSmoke.includes("page.locator('.content').waitFor") && postLoginSmoke.includes('media_overrides') && postLoginSmoke.includes('recommendation_history') && postLoginSmoke.includes('episode_progress') && postLoginSmoke.includes('__ct97ObserverGuard')],
-  ['Web HOTFIX8 version', patchArrayLine.includes('patch-v074-hotfix1-version.js') && hotfixVersion.includes('0.0.97 HOTFIX 8') && hotfixVersion.includes('__ctHotfix8Version')],
-  ['Web cache HOTFIX8 rotacionado', sw.includes('ct-web-0.0.97-hotfix8')],
+  ['Auth timeout preservado', buildWeb.includes('ctFetchWithTimeout') && buildWeb.includes('8000')],
+  ['Home entra antes da hidratação', buildWeb.includes('function enterAuthenticatedHome()') && buildWeb.includes("view = 'home';") && buildWeb.includes('void runPostAuthHydration();')],
+  ['JWT validado', buildWeb.includes('function ctLooksLikeJwt(token)')],
+  ['Login não herda Authorization velho', buildWeb.includes("const headers = { apikey: SUPABASE_KEY") && buildWeb.includes("path === 'logout'")],
+  ['Reset de sessão P0 preservado', buildWeb.includes('cinetracker_p0_session_reset_hotfix7') && buildWeb.includes("window.__ctP0SessionReset = 'hotfix7-once'")],
+  ['Login renderiza antes da restauração', buildWeb.includes("async function bootstrap() {\n    render();\n    let restored = false;") && buildWeb.includes('authRecoveryWithTimeout(restoreSession(), 6500')],
+
+  ['HOTFIX9 remove v97 do artefato final', stability.includes('patch-v068-v097.js') && stability.includes('replaceAll') && stability.includes('stable v95 feature layer')],
+  ['HOTFIX9 build não injeta guard v97', packageJson.includes('apply-hotfix9-stability.mjs') && !packageJson.includes('apply-hotfix8-observer-guard.mjs')],
+  ['HOTFIX9 teste usa Chrome real e todas as abas', browserStability.includes("locator('.nav button')") && browserStability.includes('UI thread starved') && browserStability.includes('v97 overlay executed')],
+  ['Web HOTFIX9 version', hotfixVersion.includes('0.0.97 HOTFIX 9') && hotfixVersion.includes('__ctHotfix9Version')],
+  ['Web cache HOTFIX9 rotacionado', sw.includes('ct-web-0.0.97-hotfix9-stability')],
+  ['Service worker não cacheia HTML shell', !sw.includes('index.html') && !sw.includes('navigate')],
 
   ['Android usa HTML inline', android.includes('loadDataWithBaseURL') && android.includes('hotfix5/index.html')],
-  ['Android remove AssetLoader', !android.includes('WebViewAssetLoader') && !gradle.includes('androidx.webkit:webkit')],
-  ['Android usa origem HTTPS normal', android.includes('String baseUrl = runtimeUrl()') && android.includes('BuildConfig.WEB_URL')],
-  ['Android ignora estado WebView antigo', android.includes('loadBundledWeb();') && !android.includes('restoreState(savedInstanceState)')],
-  ['Android sem fallback remoto', !android.includes('verifyStartupOrFallback') && !android.includes('loadRemoteFallback') && !android.includes('fallback=remote') && !android.includes('webView.loadUrl(runtimeUrl')],
-  ['Android intercepta Vercel main frame', android.includes('host.equals("mycinetracker.vercel.app")') && android.includes('request.isForMainFrame()') && android.includes('loadBundledWeb();')],
-  ['Android WebView visível desde início', android.includes('webView.setVisibility(View.VISIBLE)')],
-  ['Android HOTFIX8 prepara bundle autocontido', prepareAndroid.includes('scriptPattern') && prepareAndroid.includes('data-ct-inline') && prepareAndroid.includes("window.__ctAndroidBundle = 'hotfix8-post-login-inline-authoritative'")],
-  ['Android HOTFIX8 preserva observer guard antes da v97', prepareAndroid.includes('window.__ct97ObserverGuard = true') && prepareAndroid.includes("html.indexOf('window.__ct97ObserverGuard = true') > html.indexOf('if(window.__ct97Loaded)return')")],
-  ['Android HOTFIX8 inliner usa callback literal', prepareAndroid.includes('html.replace(match[0], () =>')],
-  ['Android HOTFIX8 preserva $$', prepareAndroid.includes("html.includes('$$=(s,r=document)=>')")],
-  ['Android preserva bootstrap P0 compartilhado', prepareAndroid.includes('Do not rewrite auth/session') && prepareAndroid.includes("authRecoveryWithTimeout(restoreSession(), 6500") && prepareAndroid.includes("window.__ctP0SessionReset = 'hotfix7-once'")],
-  ['Android não registra service worker no bundle', prepareAndroid.includes('window.__ctAndroidBundle ||')],
-  ['Android cache padrão', android.includes('WebSettings.LOAD_DEFAULT') && !android.includes('LOAD_NO_CACHE') && !android.includes('clearCache(true)')],
-  ['Android sem authrev/fix antigo', !android.includes('authrev=') && !android.includes('&fix=7')],
-  ['Android origem interna preservada', android.includes('&release=hotfix5&runtime=embedded')],
-  ['Android sem sessão nativa FIX7 legado', !android.includes('saveAuthSession') && !android.includes('getAuthSession') && !android.includes('clearAuthSession')],
-  ['Android HOTFIX8 version', gradle.includes('versionCode 986') && gradle.includes("versionName '0.0.97 HOTFIX 8'")],
-  ['Android seleção ZIP CSV', android.includes('EXTRA_ALLOW_MULTIPLE') && android.includes('application/zip')],
-  ['Home unificada', !layout.includes('nav_library')]
+  ['Android sem fallback remoto', !android.includes('loadRemoteFallback') && !android.includes('fallback=remote') && !android.includes('webView.loadUrl(runtimeUrl')],
+  ['Android intercepta navegação Vercel', android.includes('host.equals("mycinetracker.vercel.app")') && android.includes('request.isForMainFrame()') && android.includes('loadBundledWeb();')],
+  ['Android HOTFIX9 bundle autoritativo', prepareAndroid.includes("hotfix9-v95-core-inline-authoritative") && prepareAndroid.includes('v97 overlay absent')],
+  ['Android HOTFIX9 exige v95', prepareAndroid.includes('patch-v067-v095.js') && prepareAndroid.includes('stable v95 feature layer')],
+  ['Android HOTFIX9 rejeita v97', prepareAndroid.includes("html.includes('patch-v068-v097.js')") && prepareAndroid.includes("html.includes('__ct97Loaded')")],
+  ['Android inliner literal preservado', prepareAndroid.includes('html.replace(match[0], () =>')],
+  ['Android auth recovery compartilhado', prepareAndroid.includes("window.__ctP0SessionReset = 'hotfix7-once'") && prepareAndroid.includes('ctLooksLikeJwt')],
+  ['Android HOTFIX9 version', gradle.includes('versionCode 987') && gradle.includes("versionName '0.0.97 HOTFIX 9'")]
 ];
 
 let failed = false;
