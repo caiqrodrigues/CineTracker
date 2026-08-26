@@ -9,24 +9,24 @@ permissions:
   contents: read
 
 jobs:
-  v098_stability:
+  v099_stability:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build and verify CineTracker 0.0.98 Web runtime
+      - name: Build and verify CineTracker 0.0.99 Web runtime
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Prepare exact Android 0.0.98 embedded runtime
+      - name: Prepare exact Android 0.0.99 embedded runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile and validate every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Assert CineTracker 0.0.98 invariants
+      - name: Assert CineTracker 0.0.99 invariants
         shell: bash
         run: |
           set -euo pipefail
@@ -35,28 +35,30 @@ jobs:
           grep -q 'patch-v088-v098-nav-pre.js' dist/index.html
           grep -q 'patch-v089-v098.js' dist/index.html
           grep -q 'patch-v090-v098-compat.js' dist/index.html
+          grep -q 'patch-v091-v099-profile-lru.js' dist/index.html
           ! grep -q '<script src="/patch-v068-v097.js"' dist/index.html
           ! grep -q '<script src="/patch-v084-hotfix14-real-device.js"' dist/index.html
           ! grep -q '<script src="/patch-v081-hotfix12-nav-pre.js"' dist/index.html
           ! grep -q '<script src="/patch-v086-hotfix15-import-retry.js"' dist/index.html
-          grep -q '__ct98NavPre' dist/patch-v088-v098-nav-pre.js
-          grep -q '__ct98Loaded' dist/patch-v089-v098.js
-          grep -q '__ct98Compat' dist/patch-v090-v098-compat.js
-          grep -q 'CineTracker • v0.0.98' dist/patch-v089-v098.js
-          grep -q 'Séries assistidas' dist/patch-v089-v098.js
-          grep -q 'Filmes assistidos' dist/patch-v089-v098.js
+          grep -q '__ct99ProfileLRU' dist/patch-v091-v099-profile-lru.js
+          grep -q 'cinetracker_profile_media_dashboard' dist/patch-v091-v099-profile-lru.js
+          grep -q 'Séries favoritas' dist/patch-v091-v099-profile-lru.js
+          grep -q 'Filmes favoritos' dist/patch-v091-v099-profile-lru.js
+          grep -q 'Assistir mais tarde / Watchlist' dist/patch-v091-v099-profile-lru.js
+          grep -q 'Assistir a seguir / Watchlist' dist/patch-v091-v099-profile-lru.js
+          grep -q 'last_watched_at' dist/patch-v091-v099-profile-lru.js
+          grep -q 'CineTracker • v0.0.99' dist/patch-v091-v099-profile-lru.js
           grep -q 'data-filter98="all"' dist/patch-v089-v098.js
           grep -q 'data-filter98="movie"' dist/patch-v089-v098.js
           grep -q 'data-filter98="tv"' dist/patch-v089-v098.js
           grep -q 'ct-backup-user' dist/patch-v089-v098.js
-          grep -q 'manifest.csv' dist/patch-v089-v098.js
-          grep -q 'watch_history.csv' dist/patch-v089-v098.js
-          grep -q 'ct-web-0.0.98' dist/service-worker.js
-          grep -q '"version": "0.0.98"' package.json
-          grep -q "versionName '0.0.98'" apps/android/app/build.gradle
-          grep -q 'versionCode 996' apps/android/app/build.gradle
+          grep -q 'ct-web-0.0.99' dist/service-worker.js
+          grep -q '"version": "0.0.99"' package.json
+          grep -q "versionName '0.0.99'" apps/android/app/build.gradle
+          grep -q 'versionCode 997' apps/android/app/build.gradle
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
-          grep -q "window.__ctAndroidBundle = 'v0.0.98-profile-history-backup-discover-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ct98Loaded' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'v0.0.99-profile-lru-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ct99ProfileLRU' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q 'cinetracker_profile_media_dashboard' supabase/migrations/20260826234500_v099_profile_media_lru_dashboard.sql
           grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
