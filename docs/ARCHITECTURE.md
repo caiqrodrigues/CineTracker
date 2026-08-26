@@ -1,175 +1,158 @@
-# Arquitetura do CineTracker
+# CineTracker — Arquitetura atual
 
-## Versões de referência
+**Release lógica:** `0.0.97 HOTFIX 18`  
+**Atualizado em:** 2026-08-26
 
-- Web: **0.5.7**
-- Android: **0.0.83** (`versionCode 83`)
+## 1. Visão geral
 
-Esta geração altera a arquitetura de carregamento/cache sem alterar layout ou funcionalidades aprovadas.
+CineTracker compartilha o mesmo domínio entre Web e Android:
 
-## Princípio central
+- **Web:** runtime HTML/JavaScript construído a partir de `apps/web`;
+- **Android:** `Activity + WebView` nativos, usando runtime Web embarcado e inlined no APK;
+- **Supabase:** autenticação, PostgreSQL, RPCs e Edge Functions;
+- **TMDB:** metadados externos, imagens e status de mídia;
+- **GitHub:** fonte de verdade do source, migrations, documentação e pipelines.
 
-O CineTracker usa uma conta única e um backend único para Web e Android.
+A release lógica atual é HOTFIX18. Edge Functions mantêm números de deploy próprios e independentes.
 
-```text
-Web / Android
-      │
-      ├── Supabase Auth
-      ├── PostgreSQL + RLS
-      ├── Edge Functions
-      └── TMDB via proxy/backend
-```
+## 2. Web runtime
 
-A interface não deve depender de uma nova chamada de rede para reconstruir dados já conhecidos. O princípio operacional é:
+A base estável preservada é a linha v95. O pipeline atual executa:
 
-`cache/estado local → renderização → sincronização silenciosa → atualização somente do que mudou`
+1. `scripts/verify.mjs`;
+2. `scripts/build-web.mjs`;
+3. `scripts/apply-hotfix9-stability.mjs` para remover o overlay v97 instável;
+4. `scripts/apply-hotfix10-selective.mjs` para injetar a pilha ativa em ordem controlada;
+5. smoke test de startup.
 
-## Fonte de verdade e responsabilidades
+Camadas relevantes preservadas:
 
-### Supabase
+- `patch-v085-hotfix15-import-transport.js` — navegação/transport de importação;
+- HOTFIX10/11/12 — bridges, ações, sync e picker guard ativos;
+- `patch-v083-hotfix13-bingers-semantics.js` — semântica Bingers;
+- `patch-v087-hotfix16-import-resilience.js` — retry/auth/cursor resiliente;
+- `patch-v074-hotfix1-version.js` — camada final de versão e Perfil, atualmente exibindo HOTFIX18 e preservando a funcionalidade de classificação criada no HOTFIX17.
 
-É a fonte consolidada do estado persistente do usuário e permite que Web e Android compartilhem a mesma conta e os mesmos dados.
+`service-worker.js` usa namespace `ct-web-0.0.97-hotfix18-documentation-governance` e cacheia mídia/metadados, não o shell HTML de navegação.
 
-Responsabilidades principais:
+## 3. Android runtime
 
-- autenticação;
-- Watchlist e estados manuais;
-- histórico;
-- progresso;
-- perfil e preferências;
-- importações;
-- dados persistentes compartilhados entre dispositivos.
+Android usa `com.cinetracker.app`, `minSdk 26`, `targetSdk 34` e `compileSdk 35`.
 
-### TMDB
+HOTFIX18:
 
-É fonte externa de metadados de catálogo, incluindo nomes, capas, backdrops, notas e informações estruturais. TMDB não deve permanecer no caminho crítico da renderização quando uma informação válida já foi resolvida anteriormente.
+- `versionName`: `0.0.97 HOTFIX 18`;
+- `versionCode`: `995`;
+- bundle: `hotfix18-documentation-governance-v95-core-inline-authoritative`.
 
-Regras:
+`scripts/prepare-android-hotfix2-web.mjs` copia o build Web para `apps/android/app/src/main/assets/hotfix5`, transforma scripts referenciados em scripts inline e grava o marcador do bundle. A Activity carrega esse runtime local; não deve depender de fallback Vercel para o bundle principal.
 
-- reutilizar `poster_path`, URLs e metadados conhecidos;
-- não repetir uma busca apenas porque o usuário trocou de aba;
-- atualização deve ocorrer em segundo plano;
-- falha temporária de rede não deve apagar dado válido em cache;
-- chamadas simultâneas equivalentes devem ser evitadas/deduplicadas sempre que possível.
+O bridge nativo mantém seleção/persistência temporária dos arquivos de importação, restauração após recriação da Activity, navegação e recursos de notificação Android.
 
-## Estratégia cache-first
+## 4. Modelo persistente principal
 
-```text
-               TMDB
-                │
-         atualização externa
-                │
-             Supabase
-          estado persistente
-            /         \
-           /           \
-     Web cache       Android cache
-     IndexedDB       IndexedDB/WebView
-     Service Worker  WebView HTTP cache
-          │               │
-          └────── UI ──────┘
-```
+Entidades centrais:
 
-### L1 — estado em memória
+- `profiles` — conta/configurações e resumo de importação;
+- `media` — filmes/séries conhecidos pelo perfil/sistema;
+- `media_overrides` — decisões persistentes do usuário e estados importados;
+- `episode_progress` — progresso por episódio;
+- `watch_history` — histórico normalizado e plays;
+- `imports` — auditoria/estado das importações;
+- estruturas de staging históricas — não devem ser tratadas como caminho principal sem revisão de RLS/policies.
 
-Usado durante a sessão para que troca de abas reutilize objetos e resultados já carregados.
+Estados de domínio relevantes incluem `AlreadySeen`, `Completed`, `UpToDate`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater` e `AddedToWatchlist`.
 
-### L2 — cache persistente do dispositivo/navegador
+**Precedência:** estado `origin='manual'` tem prioridade sobre inferência/importação. Importações futuras não podem apagar decisões manuais.
 
-Web usa IndexedDB e Service Worker. Android utiliza IndexedDB dentro do WebView, além do cache HTTP/WebView. Esse nível permite reaproveitar snapshots e recursos entre sessões.
+## 5. Importação Bingers
 
-### L3 — Supabase
+### Entrada
 
-Mantém o estado consolidado da conta. A sincronização deve atualizar o cache local sem bloquear a interface quando houver estado utilizável disponível.
+Somente `library.csv` e `watches.csv` são fontes de domínio. Ratings, avaliações, comentários e listas são ignorados.
 
-## Web 0.5.7
+### Normalização
 
-A camada `patch-v057-cache.js` adiciona cache persistente sem criar ou modificar layout.
+- biblioteca é normalizada em filmes/séries;
+- histórico é normalizado em filme/episódio;
+- plays repetidos ficam em `external_ids.plays`;
+- nenhuma data de watch é inventada;
+- bulk payloads devem usar objetos com o mesmo conjunto de chaves.
 
-Snapshots locais incluem:
+A correção HOTFIX15 tornou linhas de filme de `watch_history` homogêneas adicionando `season_number=null` e `episode_number=null`.
 
-- continuar assistindo;
-- histórico recente;
-- `media_overrides`;
-- estatísticas/perfil.
+### Edge Function HOTFIX16
 
-O Service Worker mantém cache de recursos e aplica cache-first para imagens TMDB e stale-while-revalidate para requisições de metadados compatíveis.
+`ct-import-bingers-user` deploy v8 implementa:
 
-Capas conhecidas são pré-aquecidas silenciosamente após a inicialização.
+1. autenticação bearer server-side;
+2. begin idempotente por `client_run_id`;
+3. limpeza de importações Bingers anteriores, escopada ao perfil/origem;
+4. batches de library/watches com validação e dedupe;
+5. contrato de `processing_cursor` e replay seguro;
+6. precedência de overrides manuais;
+7. finalização somente após validação de cursor, total e contagem exata de histórico;
+8. erro permanente encerra o import como `failed`.
 
-## Android 0.0.83
+A importação direta reconciliada foi registrada como import ID 6 e contém 3.078 itens de biblioteca + 12.696 watch records.
 
-Android continua sendo um aplicativo nativo com WebView apontando para a experiência Web oficial, compartilhando identidade Supabase.
+## 6. Classificação de séries
 
-A camada `ct69-cache.js` é exclusivamente de performance e não introduz DOM/layout próprio.
+Histórico e estado atual são conceitos separados.
 
-Ela:
+- `history_series`: séries com pelo menos um episódio realmente registrado no histórico;
+- `Completed`: usuário em dia e série encerrada/cancelada;
+- `UpToDate`: usuário em dia e série ainda ativa/aguardando conteúdo futuro;
+- `InProgress`: usuário iniciou e ainda possui conteúdo pendente;
+- `AddedToWatchlist` sem histórico: Não iniciadas.
 
-- cria cache persistente via IndexedDB;
-- salva snapshots de dados essenciais;
-- pré-aquece capas conhecidas;
-- reutiliza o cache do WebView;
-- executa refresh/sincronização em segundo plano.
+Estado reconciliado atual do conjunto Bingers:
 
-O runtime mantém os módulos funcionais aprovados e acrescenta `ct69-cache.js` ao final da cadeia estável.
+- 155 Completed;
+- 47 UpToDate;
+- 25 InProgress;
+- 533 não iniciadas;
+- 227 com histórico.
 
-## Dados persistidos
+O erro Bingers de série `InProgress` com zero episódios é combatido por `ct_guard_bingers_import_inprogress()` e `ct_cleanup_bingers_zero_history_inprogress()`.
 
-Principais estruturas atuais:
+## 7. Estatísticas do Perfil
 
-- `profiles`: preferências e configurações do usuário;
-- `media`: catálogo normalizado dos títulos já utilizados;
-- `media_overrides`: estados e decisões manuais do usuário;
-- `episode_progress`: progresso por episódio;
-- `watch_history`: histórico de consumo;
-- `recommendation_history`: histórico de recomendação/exibição/troca para reduzir repetição;
-- `daily_menus`: menus diários persistidos;
-- `imports`: controle de importações;
-- `import_items`: itens individuais importados e status de conciliação.
+Contagens críticas são feitas no PostgreSQL, não carregando toda a tabela no cliente.
 
-## Prioridade de estado
+RPCs principais:
 
-Decisões manuais do usuário têm prioridade sobre inferências automáticas. Uma importação, refresh TMDB ou recomposição automática não deve apagar um estado manual válido.
+- `cinetracker_profile_stats()` — filmes, episódios, tempo etc.;
+- `cinetracker_series_state_stats()` — completed/up-to-date/in-progress/not-started/history;
+- `cinetracker_consumption_daily(p_limit_days)` — agregação diária por `watched_at`, somando `external_ids.plays`.
 
-## Escrita e atualização otimista
+Isso evita erro causado por limites de paginação do REST e mantém Web/Android consistentes.
 
-A experiência desejada ao marcar um episódio/filme é:
+## 8. Identidade externa TMDB
 
-1. atualizar imediatamente o estado exibido;
-2. refletir progresso, próximo episódio, histórico e estatísticas dependentes;
-3. persistir/sincronizar o estado;
-4. atualizar apenas componentes afetados;
-5. evitar reload completo da aplicação.
+Quando a origem não contém TMDB real, o importador pode gerar surrogate negativo para manter unicidade interna. **Surrogate negativo não é um TMDB válido.**
 
-## Abertura e pré-carregamento
+Débito arquitetural aberto: impedir requests `tmdb-proxy` para `tmdb_id <= 0` ou separar explicitamente surrogate ID do campo `tmdb_id`. Já foram observados 404 em requests com IDs negativos.
 
-A abertura deve priorizar dados suficientes para compor imediatamente as telas principais. Pré-carregamento não significa buscar todo o catálogo ou todas as temporadas.
+## 9. Segurança e autorização
 
-Prioridade:
+- cliente opera com sessão Supabase do usuário;
+- Edge Function Bingers valida bearer token no backend;
+- serviço nunca deve permitir que importação de um usuário altere dados de outro;
+- funções privilegiadas e RLS/policies são detalhadas em `docs/SECURITY.md`;
+- não ativar RLS sem políticas compatíveis apenas para satisfazer linter.
 
-- Home/continuar assistindo;
-- Watchlist necessária para a interface;
-- histórico recente;
-- perfil/estatísticas;
-- capas já conhecidas e imediatamente visíveis;
-- dados necessários para Descobrir inicial.
+## 10. Migrations da linha atual
 
-Operações de rede adicionais devem ocorrer silenciosamente sempre que possível.
+- `20260826130000_hotfix13_profile_stats_plays.sql`;
+- `20260826211500_bingers_authoritative_profile_stats.sql`;
+- `20260826212500_profile_consumption_daily_rpc.sql`;
+- `20260826213500_bingers_series_state_hardening.sql`;
+- `20260826214500_profile_active_series_metric.sql`;
+- `20260826215500_bingers_completion_requires_metadata.sql`.
 
-## Navegação
+## 11. Versionamento e continuidade
 
-Troca de abas deve ser mudança de visualização sobre estado já carregado, não um gatilho para reconstrução completa do catálogo. A navegação deve reutilizar L1/L2 e solicitar atualização somente quando o dado estiver ausente ou precisar de revalidação.
+Toda nova unidade lógica de mudança deve receber versão nova e atualizar GitHub, documentação, source markers, migrations/workflows e validação aplicáveis. A regra normativa está em `docs/DEVELOPMENT_RULES.md`.
 
-## Regra anti-repetição em Descobrir
-
-Um título não entra como novidade quando já estiver visto, acompanhado, na Watchlist ou em outro estado incompatível. O histórico de recomendações também deve ser considerado para reduzir repetição dentro da janela configurada.
-
-## Perfil e Histórico
-
-Perfil reúne números principais, gráfico diário, estatísticas extras e Histórico. O gráfico trabalha com atividade diária e os dias são consultáveis. Histórico deve reutilizar metadados/capas já conhecidos; séries também exibem o nome do episódio quando disponível.
-
-## Build e validação
-
-A Web passa por `scripts/verify.mjs` antes do build. O Android passa por validação JavaScript, Gradle, assinatura, package/version e publicação via GitHub Actions.
-
-Uma versão somente é considerada pronta após confirmação do pipeline correspondente; commit na `main` sozinho não comprova deploy Web ou APK publicado.
+Source, build validado, deploy publicado e teste em dispositivo real são estados diferentes e devem ser reportados separadamente.
