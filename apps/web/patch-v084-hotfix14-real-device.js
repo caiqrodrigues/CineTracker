@@ -59,6 +59,7 @@ function restoreNative14(){
   const n=window.CineTrackerNative;if(!n||typeof n.getImportFileBase64!=='function')return;
   for(const slot of ['library','watches','package']){try{const b64=n.getImportFileBase64(slot);if(!b64)continue;acceptNative14(slot,n.getImportFileName(slot),n.getImportFileMime(slot),b64)}catch(e){console.error('HOTFIX14 native restore',slot,e)}}
 }
+window.ct14RestoreNativeFiles=restoreNative14;
 for(const ev of ['pointerdown','click'])document.addEventListener(ev,e=>{
   const input=e.target?.closest?.('#ct11-library,#ct11-watches,#ct11-package'),slot=nativeSlot14(input);if(!slot||!window.CineTrackerNative||typeof window.CineTrackerNative.pickImportFile!=='function')return;
   if(ev==='click'){e.preventDefault();e.stopImmediatePropagation();try{window.CineTrackerNative.pickImportFile(slot)}catch(err){console.error('HOTFIX14 native picker',err)}}
