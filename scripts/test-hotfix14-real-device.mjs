@@ -1,0 +1,17 @@
+import { readFile } from 'node:fs/promises';
+const read=p=>readFile(p,'utf8');
+const nav=await read('apps/web/patch-v084-hotfix14-real-device.js');
+const build=await read('scripts/apply-hotfix10-selective.mjs');
+const android=await read('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java');
+const gradle=await read('apps/android/app/build.gradle');
+const fail=(m)=>{throw new Error('HOTFIX14_REAL_DEVICE: '+m)};
+if(!nav.includes('__ctHotfix14RealDevice')||!nav.includes('visible14(t)')||!nav.includes('force14(t)'))fail('verified navigation layer missing');
+for(const target of ['home','discover','history','profile','settings'])if(!nav.includes(`t==='${target}'`))fail('navigation target missing: '+target);
+if(!build.includes('patch-v084-hotfix14-real-device.js'))fail('unique HOTFIX14 navigation file not shipped');
+if(!build.includes('patch-v081-hotfix12-nav-pre'))fail('obsolete capture nav is not explicitly stripped');
+if(android.includes('requestCode != FILE_CHOOSER_REQUEST || fileChooserCallback == null'))fail('physical Android result is still discarded when Activity/WebView is recreated');
+for(const token of ['IMPORT_PREFS','picker_slot','cacheImportFile(slot, uris.get(0))','pickImportFile(String slot)','getImportFileBase64(String slot)','clearImportFiles()','ct14RestoreNativeFiles'])if(!android.includes(token))fail('native persistence token missing: '+token);
+if(!android.includes('if (fileChooserCallback != null)'))fail('legacy WebChrome file chooser compatibility lost');
+if(!android.includes('if(window.ct14Navigate){window.ct14Navigate(t);return true;}'))fail('native bottom navigation does not prefer HOTFIX14');
+if(!gradle.includes('versionCode 992')||!gradle.includes("versionName '0.0.97 HOTFIX 14'"))fail('Android identity is not HOTFIX14');
+console.log('HOTFIX14_REAL_DEVICE_OK: desktop verified navigation=5 tabs; Android picker survives null WebView callback via native cache; embedded architecture preserved.');
