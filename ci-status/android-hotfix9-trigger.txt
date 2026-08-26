@@ -1,0 +1,3 @@
+HOTFIX 9 stability release trigger.
+Production Web validated on Vercel before Android publication.
+Active shipped runtime: v95 core + auth/session recovery; v97 overlay excluded.
