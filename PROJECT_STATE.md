@@ -5,8 +5,8 @@
 **Última atualização:** 2026-08-26  
 **Branch principal:** `main`  
 **Release lógica atual:** `0.0.99`  
-**Web atual:** `0.0.99` — package/cache/source em `main`  
-**Android atual:** `0.0.99` (`versionCode 997`) — source e pipeline dedicado em `main`  
+**Web atual:** `0.0.99` — Verify/build concluídos e Vercel `success` no commit funcional  
+**Android atual:** `0.0.99` (`versionCode 997`) — APK/artifact/GitHub Release publicados  
 **Backend lógico:** `0.0.99` — RPC LRU aplicada no Supabase  
 **Windows:** não lançado
 
@@ -102,31 +102,44 @@ Estado reconciliado do conjunto Bingers:
 
 Séries com zero episódios não podem permanecer `InProgress` por importação.
 
-## 8. Versionamento 0.0.99
+## 8. Versionamento e publicação 0.0.99
 
 Web:
 - package `0.0.99`;
 - cache `ct-web-0.0.99`;
-- rodapé `CineTracker • v0.0.99`.
+- rodapé `CineTracker • v0.0.99`;
+- Verify final run `33021058624`: success;
+- Vercel para commit funcional `f4261cb944b60c15c01b41989645e8c64468e4ef`: success / Deployment has completed.
 
 Android:
 - `applicationId com.cinetracker.app`;
 - `versionName 0.0.99`;
 - `versionCode 997`;
-- bundle alvo `v0.0.99-profile-lru-v95-core-inline-authoritative`;
-- release alvo `android-v0.0.99`.
+- bundle `v0.0.99-profile-lru-v95-core-inline-authoritative`;
+- pipeline run `33021058734`: success;
+- artifact `cinetracker-android-0.0.99-debug`, ID `9626549788`;
+- release `android-v0.0.99`, ID `377463898`;
+- APK `cinetracker-android-0.0.99-debug.apk`;
+- SHA-256 `c39c08cd51470050f3eac2c444c4d468dcfcb4072230cf9e082def9ab176cf57`.
 
-## 9. Validação/publicação
+O pipeline confirmou build Web, preparação do runtime, smoke inline, Gradle build, identidade via `aapt`, bundle interno, assinatura via `apksigner`, artifact e Release.
 
-O workflow geral `Verify` está configurado para a pilha 0.0.99. O pipeline dedicado Android é `.github/workflows/build-android-v099.yml`.
+## 9. Validação manual ainda pendente
 
-Nunca considerar Web publicada apenas por existir em `main`, nem Android publicado apenas por existir o source. Evidências executadas ficam em `docs/validation/0.0.99.md`.
+Apesar da publicação automatizada concluída, ainda não marcar como executados:
+- smoke autenticado visual da Web em produção;
+- instalação/navegação do APK 0.0.99 em aparelho Android real;
+- teste visual dos quatro carrosséis;
+- teste manual da movimentação LRU após watch/progress;
+- teste manual da alternância de favorito.
+
+Evidências detalhadas em `docs/validation/0.0.99.md`.
 
 ## 10. Débitos conhecidos
 
 - modelo legado ainda pode armazenar surrogate negativo em `media.tmdb_id`; caminhos 0.0.98/0.0.99 evitam enviar esses IDs à TMDB, mas a separação arquitetural definitiva continua desejável;
 - advisories Supabase históricos de RLS/`SECURITY DEFINER` e leaked-password protection continuam documentados;
-- smoke autenticado Web e teste Android em dispositivo real devem ser registrados somente após execução real.
+- o build Android emite warning de que AGP 8.5.2 foi testado até compileSdk 34 enquanto o projeto usa compileSdk 35; o build 0.0.99 concluiu com sucesso, mas atualizar o Android Gradle Plugin continua recomendável.
 
 ## 11. Documentos canônicos
 
