@@ -4,23 +4,23 @@ import vm from 'node:vm';
 const path = 'apps/android/app/src/main/assets/hotfix5/index.html';
 const html = await readFile(path, 'utf8');
 
-if (!html.includes("window.__ctAndroidBundle = 'hotfix8-post-login-inline-authoritative'")) {
-  throw new Error('Android inline smoke: HOTFIX 8 bundle marker missing');
+if (!html.includes("window.__ctAndroidBundle = 'hotfix9-v95-core-inline-authoritative'")) {
+  throw new Error('Android inline smoke: HOTFIX9 stability bundle marker missing');
 }
 if (!html.includes("window.__ctP0SessionReset = 'hotfix7-once'")) {
   throw new Error('Android inline smoke: P0 session reset marker missing');
 }
-if (!html.includes('window.__ct97ObserverGuard = true')) {
-  throw new Error('Android inline smoke: HOTFIX8 observer guard missing');
+if (!html.includes('data-ct-inline="patch-v067-v095.js"')) {
+  throw new Error('Android inline smoke: stable v95 layer missing');
 }
-if (html.indexOf('window.__ct97ObserverGuard = true') > html.indexOf('if(window.__ct97Loaded)return')) {
-  throw new Error('Android inline smoke: HOTFIX8 observer guard is loaded after v97');
+if (html.includes('patch-v068-v097.js') || html.includes('__ct97Loaded')) {
+  throw new Error('Android inline smoke: unstable v97 overlay is still embedded');
+}
+if (html.includes('patch-v068-v097-observer-guard.js') || html.includes('__ct97ObserverGuard')) {
+  throw new Error('Android inline smoke: obsolete v97 observer guard is still embedded');
 }
 if (!html.includes('const media = [')) {
   throw new Error('Android inline smoke: const media block missing');
-}
-if (!html.includes('$$=(s,r=document)=>')) {
-  throw new Error('Android inline smoke: $$ selector helper was corrupted');
 }
 if (html.includes('<script src="/')) {
   throw new Error('Android inline smoke: external root script remains');
@@ -40,4 +40,4 @@ for (let i = 0; i < scripts.length; i += 1) {
   }
 }
 
-console.log(`Android HOTFIX 8 inline smoke OK: ${scripts.length} scripts preserved and syntactically valid.`);
+console.log(`Android HOTFIX9 inline smoke OK: ${scripts.length} scripts preserved, v97 absent, syntax valid.`);
