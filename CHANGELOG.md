@@ -2,6 +2,39 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do HOTFIX18, toda nova unidade lógica de mudança exige versão e registro completo conforme `docs/DEVELOPMENT_RULES.md`.
 
+## 0.0.99 — 2026-08-26
+
+### Perfil / biblioteca pessoal
+- Adicionada camada final `patch-v091-v099-profile-lru.js` para Web e runtime Android embarcado.
+- Perfil passa a exibir, imediatamente abaixo das estatísticas, quatro carrosséis horizontais: Séries, Séries favoritas, Filmes e Filmes favoritos.
+- Cards usam proporção 2:3, título, progresso, badge de favorito e última atividade.
+- Cards com TMDB oficial abrem a tela global de detalhes; surrogate IDs negativos abrem detalhe local sem enviar ID inválido à TMDB.
+
+### LRU e sincronização
+- Nova RPC `cinetracker_profile_media_dashboard()` consolida histórico, progresso e overrides do usuário.
+- Ordenação dos carrosséis e grids usa `last_watched_at DESC` com desempate por `media_id DESC`.
+- `last_watched_at` considera `watch_history.watched_at`, `episode_progress.watched_at` e `media_overrides.watched_at` para `AlreadySeen` de filmes.
+- Escritas em `watch_history`, `episode_progress` e `media_overrides` disparam atualização reativa do Perfil.
+- Foco/visibilidade e reconciliação periódica enquanto a tela está visível funcionam como fallback para alterações externas.
+
+### Subtelas
+- `Séries ›`: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia e Concluídas.
+- `Filmes ›`: Assistir a seguir / Watchlist e Já vistos.
+- `Séries favoritas ›` e `Filmes favoritos ›`: grids completos responsivos de 2/3 colunas.
+
+### Banco
+- Migration `20260826234500_v099_profile_media_lru_dashboard.sql` aplicada e versionada.
+- RPC criada como `SECURITY INVOKER`, filtrada por `auth.uid()` e liberada somente para `authenticated`.
+- Flags consolidadas: favorito/Liked, AddedToWatchlist, WatchLater, InProgress, UpToDate, Completed, não iniciada e já vista.
+
+### Versionamento / build / documentação
+- Web: package `0.0.99`, cache `ct-web-0.0.99`, rodapé `CineTracker • v0.0.99`.
+- Android: `versionName 0.0.99`, `versionCode 997`, bundle alvo `v0.0.99-profile-lru-v95-core-inline-authoritative`.
+- Atualizados scripts de build, preparação Android, smoke inline e workflow geral `Verify`.
+- Criados release note e matriz de validação 0.0.99.
+- Criados retroativamente `docs/releases/0.0.98.md` e `docs/validation/0.0.98.md` para fechar a pendência documental anterior sem inventar evidência de publicação.
+- Navegação, Descobrir, Backup/Importação, Cache, Metadados e Bingers 0.0.98 foram preservados.
+
 ## 0.0.98 — 2026-08-26
 
 ### Navegação
