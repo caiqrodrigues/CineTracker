@@ -1,56 +1,61 @@
-# CineTracker Android — 0.0.97 HOTFIX 18
+# CineTracker Android — 0.0.98
 
-App Android leve baseado em `Activity + WebView`, com runtime CineTracker Web embarcado no APK.
+App Android nativo leve baseado em `Activity + WebView`, com runtime CineTracker Web embarcado e inlined no APK.
 
-## Identidade atual
+## Identidade
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.0.97 HOTFIX 18`;
-- `versionCode`: `995`;
-- bundle: `hotfix18-documentation-governance-v95-core-inline-authoritative`.
+- `versionName`: `0.0.98`;
+- `versionCode`: `996`;
+- bundle: `v0.0.98-profile-history-backup-discover-v95-core-inline-authoritative`.
 
-## Runtime
+## Navegação
 
-`scripts/prepare-android-hotfix2-web.mjs` prepara o build Web, copia para `apps/android/app/src/main/assets/hotfix5`, transforma os scripts ativos em inline e adiciona o marcador do bundle. O runtime principal é local; o app não depende de fallback remoto para iniciar a aplicação.
+A barra inferior nativa apresenta **Home, Descobrir, Perfil e Configurações**. A aba Histórico deixou de ser destino visível e seu conteúdo foi integrado ao Perfil. O runtime 0.0.98 também redireciona chamadas legadas de `history` para Perfil.
 
-HOTFIX18 preserva:
+O bridge nativo ainda chama a entrada legada `ct15Navigate`; `patch-v090-v098-compat.js` substitui essa entrada no runtime final e encaminha para `ct98Navigate`, mantendo compatibilidade sem reintroduzir a navegação antiga.
 
-- núcleo Web v95 estável;
-- recuperação de autenticação/sessão;
-- navegação global;
-- picker/transporte nativo do HOTFIX15;
-- resiliência de importação HOTFIX16;
-- Perfil e classificação de séries HOTFIX17;
-- identidade/versionamento HOTFIX18.
+## Perfil e Histórico
 
-## Importação Bingers
+Perfil segue a mesma ordem da Web:
 
-No Android, o bridge nativo seleciona/persiste temporariamente os arquivos da importação e os devolve ao runtime Web. O fluxo funcional usa `library.csv` + `watches.csv` e compartilha o mesmo backend do Web.
+1. estatísticas compactas;
+2. gráfico moderno de atividade;
+3. estatísticas extras;
+4. Histórico com carrossel de séries acima e filmes abaixo.
 
-## Build e publicação — concluídos
+## Descobrir
 
-Pipeline dedicado HOTFIX18: run `33016118908`.
+A ordem e filtros são idênticos à Web: Pra você, Em alta, Mais aguardados, Mais bem avaliados e Calendário; as quatro últimas seções possuem Todos/Filmes/Séries e Mais bem avaliados é decrescente por nota.
 
-Concluído e comprovado:
+## Backup e manutenção
 
-- build debug HOTFIX18: sucesso;
-- preparação do runtime embarcado: sucesso;
-- identidade do APK por `aapt`: `com.cinetracker.app`, `0.0.97 HOTFIX 18`, `versionCode 995`;
-- assinatura validada por `apksigner`;
-- artifact: `cinetracker-android-0.0.97-HOTFIX18-debug`, id `9624582547`;
-- GitHub Release: `android-v0.0.97-hotfix18`;
-- APK publicado: `cinetracker-android-0.0.97-HOTFIX18-debug.apk`;
-- SHA-256 do APK: `9a9801c69be9f66142c98a43ba084c262dc19a3b00cc15db5e379b6f8f05035f`.
+Configurações mostra somente **Exportar** e **Importar** para Backup & Restauração. O ZIP contém CSVs completos da conta sincronizada. O Android usa a interface nativa `exportBackup` para salvar o arquivo via seletor do sistema e o WebView/FileChooser para selecionar o ZIP de restauração.
 
-O workflow geral `Verify` também foi atualizado para a pilha HOTFIX18 e concluiu com sucesso no run `33016322725`.
+Limpar Cache e Atualizar Metadados usam a mesma implementação 0.0.98 da Web. Metadados externos são consultados somente para `tmdb_id > 0`.
 
-## Validação real pendente
+## Runtime local
 
-Compilação, assinatura e Release não equivalem a teste físico. A instalação/navegação/importação no APK HOTFIX18 em aparelho Android real permanece pendente e não deve ser marcada como validada até execução real.
+`scripts/prepare-android-hotfix2-web.mjs` gera o runtime embarcado em `apps/android/app/src/main/assets/hotfix5`, transforma scripts em inline e valida a ordem autoritativa da pilha. O app não depende de fallback remoto para iniciar o bundle principal.
 
-## Regra obrigatória
+## Build e publicação
 
-Toda próxima mudança Android deve incrementar versão da unidade lógica, aumentar `versionCode` e atualizar documentação, workflow/release e validação conforme `docs/DEVELOPMENT_RULES.md`.
+Pipeline dedicado: `.github/workflows/build-android-v098.yml`.
 
-Release atual: `docs/releases/0.0.97-HOTFIX18.md`.  
-Validação atual: `docs/validation/0.0.97-HOTFIX18.md`.
+Saídas previstas e verificadas pelo pipeline quando acionado:
+
+- APK `cinetracker-android-0.0.98-debug.apk`;
+- artifact `cinetracker-android-0.0.98-debug`;
+- tag/release `android-v0.0.98`;
+- validação de `applicationId`, `versionName` e `versionCode` por `aapt`;
+- validação de assinatura por `apksigner`;
+- SHA-256 publicado ao lado do APK.
+
+O estado executado do pipeline e da publicação é registrado em `docs/validation/0.0.98.md` e não é presumido somente pelo source.
+
+## Rodapé
+
+O runtime embarcado exibe **`CineTracker • v0.0.98`**.
+
+Release: `docs/releases/0.0.98.md`.  
+Validação: `docs/validation/0.0.98.md`.
