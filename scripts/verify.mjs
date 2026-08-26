@@ -4,7 +4,7 @@ const files=['patch-v067-v095.js','patch-v074-hotfix1-version.js','patch-v075-ho
 const src={};for(const f of files){src[f]=await read('apps/web/'+f);try{new Function(src[f])}catch(e){console.error(`ERRO - sintaxe ${f}: ${e.message}`);process.exit(1)}}
 const pkg=await read('package.json'),gradle=await read('apps/android/app/build.gradle'),layout=await read('apps/android/app/src/main/res/layout/activity_main.xml'),selective=await read('scripts/apply-hotfix10-selective.mjs'),prepare=await read('scripts/prepare-android-hotfix2-web.mjs'),android=await read('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java'),backupEdge=await read('supabase/functions/ct-backup-user/index.ts'),bingersEdge=await read('supabase/functions/ct-import-bingers-user/index.ts'),historyMigration=await read('supabase/migrations/20260826230500_v098_profile_history_media.sql'),devRules=await read('docs/DEVELOPMENT_RULES.md');
 const v98=src['patch-v089-v098.js'],pre=src['patch-v088-v098-nav-pre.js'],compat=src['patch-v090-v098-compat.js'],sem=src['patch-v083-hotfix13-bingers-semantics.js'],h16=src['patch-v087-hotfix16-import-resilience.js'],sw=src['service-worker.js'];
-const order=['patch-v088-v098-nav-pre.js','patch-v085-hotfix15-import-transport.js','patch-v075-hotfix10-selective.js','patch-v082-hotfix12-picker-guard.js','patch-v083-hotfix13-bingers-semantics.js','patch-v087-hotfix16-import-resilience.js','patch-v074-hotfix1-version.js','patch-v089-v098.js','patch-v090-v098-compat.js'];const pos=order.map(x=>selective.indexOf(`'${x}'`)>=0?selective.indexOf(`'${x}'`):selective.indexOf(x));
+const namesStart=selective.indexOf('const names=['),orderTokens=['pre98',"'patch-v085-hotfix15-import-transport.js'","'patch-v075-hotfix10-selective.js'","'patch-v082-hotfix12-picker-guard.js'","'patch-v083-hotfix13-bingers-semantics.js'","'patch-v087-hotfix16-import-resilience.js'",'profileName','ui98','compat98'];let cursor=namesStart,ordered=namesStart>=0;for(const token of orderTokens){const next=selective.indexOf(token,cursor+1);if(next<0){ordered=false;break}cursor=next}
 const checks=[
 ['package Web 0.0.98',pkg.includes('"version": "0.0.98"')],
 ['cache Web 0.0.98',sw.includes("ct-web-0.0.98")&&!sw.includes('index.html')],
@@ -12,7 +12,7 @@ const checks=[
 ['Android History removido visualmente',layout.includes('nav_history')&&layout.includes('android:visibility="gone"')&&layout.includes('⌂\\nHome')],
 ['gate de navegação 0.0.98',pre.includes('__ct98NavPre')&&pre.includes("target === 'history' ? 'profile'")],
 ['compat Android aponta ct15 para ct98',compat.includes('__ct98Compat')&&compat.includes('window.ct98Navigate')&&compat.includes("window.__ctAndroidBuild = '0.0.98'")],
-['ordem runtime 0.0.98',pos.every((x,i)=>x>=0&&(i===0||x>pos[i-1]))],
+['ordem runtime 0.0.98',ordered],
 ['retry legado removido',!selective.includes("'patch-v086-hotfix15-import-retry.js'")],
 ['Perfil absorve Histórico',v98.includes('id="ct98-history-section"')&&v98.includes('Séries assistidas')&&v98.includes('Filmes assistidos')&&!v98.includes("navButton98('history'")],
 ['Perfil sequência stats gráfico extras histórico',v98.indexOf('ct98-mainstats')<v98.indexOf('ct98-tech-chart')&&v98.indexOf('ct98-tech-chart')<v98.indexOf('ct98-extra')&&v98.indexOf('ct98-extra')<v98.indexOf('ct98-history-section')],
