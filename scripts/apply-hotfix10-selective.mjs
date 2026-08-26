@@ -2,7 +2,7 @@ import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root=resolve(process.cwd());
-const names=['patch-v075-hotfix10-selective.js','patch-v076-hotfix10-actions.js','patch-v077-hotfix10-native-bridge.js','patch-v078-hotfix11-import-sync.js'];
+const names=['patch-v075-hotfix10-selective.js','patch-v076-hotfix10-actions.js','patch-v077-hotfix10-native-bridge.js','patch-v078-hotfix11-import-sync.js','patch-v079-hotfix11-compat.js'];
 const targets=[resolve(root,'dist'),resolve(root,'apps/web/dist')];
 
 for(const target of targets){
