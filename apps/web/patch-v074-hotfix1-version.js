@@ -55,6 +55,24 @@ function setStat(profile, pattern, value) {
   if (node) node.textContent = value;
 }
 
+function ensureSeriesStatusCards17(profile) {
+  const grid = $('.ct94-extra', profile);
+  if (!grid) return;
+  let upToDate = statByLabel(profile, /^Em dia$/i);
+  if (!upToDate) {
+    upToDate = document.createElement('div');
+    upToDate.className = 'ct94-stat';
+    upToDate.dataset.ct17Status = 'up-to-date';
+    upToDate.innerHTML = '<div class="l">Em dia</div><div class="v">0</div>';
+    const inProgress = statByLabel(profile, /^Em andamento$/i);
+    if (inProgress?.nextSibling) grid.insertBefore(upToDate, inProgress.nextSibling);
+    else grid.appendChild(upToDate);
+  }
+  const notStarted = statByLabel(profile, /^(Séries na Watchlist|Não iniciadas)$/i);
+  const label = notStarted && $('.l', notStarted);
+  if (label) label.textContent = 'Não iniciadas';
+}
+
 function localDay17(value) {
   const d = new Date(`${value}T12:00:00`);
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
@@ -108,17 +126,19 @@ async function refreshProfile17() {
       else if (m?.media_type === 'tv') watchTv++;
     });
 
+    ensureSeriesStatusCards17(profile);
     setStat(profile, /^Episódios$/i, Number(s.episodes_watched || 0).toLocaleString('pt-BR'));
     const epCard = statByLabel(profile, /^Episódios$/i);
     const sub = epCard && $('.s', epCard);
-    if (sub) sub.textContent = `de ${Number(s.series_watched || 0).toLocaleString('pt-BR')} séries acompanhadas`;
+    if (sub) sub.textContent = `de ${Number(s.series_watched || 0).toLocaleString('pt-BR')} séries com histórico`;
     setStat(profile, /^Filmes$/i, Number(s.movies_watched || 0).toLocaleString('pt-BR'));
     setStat(profile, /Tempo em séries/i, fmt17(s.series_minutes || 0));
     setStat(profile, /Tempo em filmes/i, fmt17(s.movie_minutes || 0));
     setStat(profile, /Tempo total/i, fmt17(s.total_minutes || 0));
     setStat(profile, /Séries concluídas/i, Number(states.Completed || 0).toLocaleString('pt-BR'));
-    setStat(profile, /Em andamento/i, Number(states.InProgress || 0).toLocaleString('pt-BR'));
-    setStat(profile, /Séries na Watchlist/i, watchTv.toLocaleString('pt-BR'));
+    setStat(profile, /^Em andamento$/i, Number(states.InProgress || 0).toLocaleString('pt-BR'));
+    setStat(profile, /^Em dia$/i, Number(states.UpToDate || 0).toLocaleString('pt-BR'));
+    setStat(profile, /^(Não iniciadas|Séries na Watchlist)$/i, watchTv.toLocaleString('pt-BR'));
     setStat(profile, /Filmes na Watchlist/i, watchMovies.toLocaleString('pt-BR'));
 
     await replaceGraph17(profile);
