@@ -42,8 +42,8 @@ try{
   await page.locator('#auth-form button[type="submit"]').click();
   await page.locator('.content').waitFor({state:'visible',timeout:1800});
   await page.waitForTimeout(350);
-  const runtime=await page.evaluate(()=>({v97:window.__ct97Loaded===true,h11:window.__ctHotfix11ImportSync===true,sync:typeof window.ct11SyncCloud==='function'}));
-  if(runtime.v97||!runtime.h11||!runtime.sync)throw new Error(`HOTFIX11 runtime invalid: ${JSON.stringify(runtime)}`);
+  const runtime=await page.evaluate(()=>({v97:window.__ct97Loaded===true,h11:window.__ctHotfix11ImportSync===true,h13:window.__ctHotfix13BingersSemantics===true,sync:typeof window.ct11SyncCloud==='function'}));
+  if(runtime.v97||!runtime.h11||!runtime.sync)throw new Error(`HOTFIX11/HOTFIX13 runtime invalid: ${JSON.stringify(runtime)}`);
 
   await page.locator('.nav button[data-view="settings"]').first().click();
   await page.locator('#ct10-import-panel[data-ct11="1"]').waitFor({state:'visible',timeout:2200});
@@ -60,10 +60,10 @@ try{
   await page.locator('#ct11-read-csv').click();
   await page.locator('#ct10-preview').waitFor({state:'visible',timeout:2200});
   const preview=await page.locator('#ct10-preview').innerText();
-  if(!/Prévia da importação/.test(preview)||!/2\s*Títulos/.test(preview.replace(/\n/g,' ')))throw new Error(`HOTFIX11 preview wrong: ${preview}`);
+  if(!/Prévia da importação/.test(preview)||!/(2\s*Títulos|2\s*Itens da biblioteca)/i.test(preview.replace(/\n/g,' ')))throw new Error(`HOTFIX11/HOTFIX13 preview wrong: ${preview}`);
   if(edgeActions.length)throw new Error(`Backend called before confirmation: ${edgeActions.join(',')}`);
 
-  await page.locator('[data-confirm10]').click();
+  await page.locator('[data-confirm13],[data-confirm10]').first().click();
   await page.waitForFunction(()=>document.querySelector('.ct10-progress-label')?.textContent?.includes('Importação concluída'),null,{timeout:4000});
   await page.waitForTimeout(900);
   for(const action of ['begin','library_batch','watches_batch','finish'])if(!edgeActions.includes(action))throw new Error(`Missing import action ${action}: ${edgeActions.join(',')}`);
