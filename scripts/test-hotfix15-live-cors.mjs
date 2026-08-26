@@ -1,0 +1,10 @@
+const url='https://pjmkxryboypluleuuupp.supabase.co/functions/v1/ct-import-bingers-user';
+const response=await fetch(url,{method:'OPTIONS',headers:{Origin:'https://mycinetracker.vercel.app','Access-Control-Request-Method':'POST','Access-Control-Request-Headers':'authorization,apikey,content-type,x-client-info'}});
+const allowOrigin=response.headers.get('access-control-allow-origin')||'';
+const allowHeaders=(response.headers.get('access-control-allow-headers')||'').toLowerCase();
+const allowMethods=(response.headers.get('access-control-allow-methods')||'').toUpperCase();
+if(response.status!==204)throw new Error(`HOTFIX15 live CORS: expected 204 OPTIONS, got ${response.status}`);
+if(allowOrigin!=='*'&&!allowOrigin.includes('mycinetracker.vercel.app'))throw new Error(`HOTFIX15 live CORS: bad allow-origin ${allowOrigin}`);
+for(const h of ['authorization','apikey','content-type'])if(!allowHeaders.includes(h))throw new Error(`HOTFIX15 live CORS: missing ${h} in ${allowHeaders}`);
+if(!allowMethods.includes('POST')||!allowMethods.includes('OPTIONS'))throw new Error(`HOTFIX15 live CORS: bad methods ${allowMethods}`);
+console.log(`HOTFIX15_LIVE_CORS_OK status=${response.status}; origin=${allowOrigin}; headers=${allowHeaders}; methods=${allowMethods}`);
