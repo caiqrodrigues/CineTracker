@@ -14,41 +14,46 @@ Uma unidade lógica de mudança pode exigir vários commits; esses commits perte
 ## Checklist obrigatório para cada mudança
 
 1. Definir a nova versão antes ou junto da implementação.
-2. Alterar todos os identificadores de versão afetados: pacote Web, versão exibida, namespace de cache, Android `versionName` e `versionCode`, bundle/runtime e workflow de release quando aplicável.
+2. Alterar todos os identificadores afetados: pacote Web, versão exibida, namespace de cache, Android `versionName`/`versionCode`, bundle/runtime e workflow/release.
 3. Registrar a mudança no `CHANGELOG.md`.
-4. Atualizar `PROJECT_STATE.md` com o estado real do projeto.
-5. Atualizar `VERSIONS.md` com a matriz de versão por sistema.
-6. Atualizar `README.md` e o README da plataforma afetada.
-7. Criar ou atualizar a nota da release em `docs/releases/`.
-8. Criar ou atualizar o registro de validação em `docs/validation/`.
-9. Atualizar `docs/ARCHITECTURE.md` se a mudança alterar fluxo, responsabilidade, armazenamento, integração ou runtime.
-10. Atualizar `docs/SECURITY.md` se houver impacto de autenticação, autorização, RLS, funções privilegiadas, segredos, upload/importação ou superfície pública.
-11. Alterações de banco devem possuir migration versionada em `supabase/migrations/`; mudanças de Edge Function devem manter o código-fonte correspondente em `supabase/functions/`.
-12. Não marcar build, APK, deploy, produção, Android real ou comportamento visual como validado sem evidência real.
+4. Atualizar `PROJECT_STATE.md`.
+5. Atualizar `VERSIONS.md`.
+6. Atualizar `README.md` e README(s) das plataformas afetadas.
+7. Criar/atualizar `docs/releases/<versão>.md`.
+8. Criar/atualizar `docs/validation/<versão>.md`.
+9. Atualizar `docs/ARCHITECTURE.md` se fluxo, responsabilidade, armazenamento, integração ou runtime forem afetados.
+10. Atualizar `docs/SECURITY.md` se houver impacto de autenticação, autorização, RLS, função privilegiada, upload/importação ou superfície pública.
+11. Toda alteração de banco deve possuir migration em `supabase/migrations/`; mudança de Edge Function deve manter source em `supabase/functions/`.
+12. Não marcar build, deploy, APK, produção, Android real ou comportamento visual como validado sem evidência real.
+13. Mudanças Web/Android compartilhadas devem manter a mesma release lógica, salvo decisão arquitetural documentada.
+14. Uma versão Android deve aumentar `versionCode`; nunca reutilizar código de versão publicado.
+15. Toda função/RPC nova usada pelo cliente deve documentar escopo/autorização e preferir `SECURITY INVOKER` quando não houver necessidade comprovada de privilégio elevado.
 
 ## Fonte de verdade e precedência
 
-- GitHub `main`: fonte de verdade do código, documentação, migrations e pipelines.
-- Supabase: fonte de verdade do estado persistente da conta e backend ativo.
-- TMDB: fonte externa de metadados; não é fonte de verdade para decisões manuais do usuário.
-- Decisões manuais do usuário têm prioridade sobre inferências e importações automáticas.
+- GitHub `main`: source, documentação, migrations e pipelines.
+- Supabase: estado persistente e backend ativo.
+- TMDB: metadados externos, não decisões do usuário.
+- Decisões manuais do usuário têm prioridade sobre inferências/importações.
 
 ## Versionamento atual
 
-A regra passa a valer formalmente a partir de **CineTracker 0.0.97 HOTFIX 18**.
+A governança foi formalizada no `0.0.97 HOTFIX 18` e continua obrigatória.
 
-- Web: `0.0.97 HOTFIX 18` / pacote `0.0.97-hotfix18-documentation-governance`.
-- Android: `0.0.97 HOTFIX 18`, `versionCode 995`.
-- Backend lógico do projeto: alinhado à release `0.0.97 HOTFIX 18`; Edge Functions preservam seus próprios números de deploy.
-- Windows: ainda não possui release.
+Release lógica corrente:
+
+- Web: **0.0.99**, package `0.0.99`, cache `ct-web-0.0.99`;
+- Android: **0.0.99**, `versionCode 997`;
+- Backend lógico: **0.0.99**; Edge Functions mantêm versões de deploy independentes;
+- Windows: ainda não lançado.
 
 ## Publicação x versão de código
 
-A versão de código pode existir antes de estar publicada. O estado deve ser informado separadamente:
+Estados obrigatoriamente separados:
 
-- **source/current target**: versão já gravada na `main`;
-- **validated**: verificações automatizadas concluídas;
-- **published**: artefato/deploy efetivamente publicado;
-- **device-validated**: instalado e testado em dispositivo real quando aplicável.
+- **source/current target**: código/documentação em `main`;
+- **validated**: verificações executadas e aprovadas;
+- **published**: deploy/artifact/Release efetivamente publicados;
+- **device-validated**: instalação/teste em dispositivo real quando aplicável.
 
-Nunca usar "publicado" ou "validado" como sinônimo de "o código foi commitado".
+Nunca usar “publicado” ou “validado” como sinônimo de “commitado”.
