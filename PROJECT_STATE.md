@@ -85,12 +85,14 @@ Migration aplicada: `supabase/migrations/20260827004500_v0992_home_series_movies
 - RPC `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, `auth.uid()`;
 - `daily_movie_recommendations_v0992` — RLS, PK perfil/data, unique perfil/TMDB.
 
-## 10. Identidade
+## 10. Identidade e publicação
 ### Web
 - package `0.99.2`;
 - cache `ct-web-0.99.2-fix2`;
 - patch final `patch-v096-v0992-unfreeze.js`;
-- rodapé `CineTracker • v0.99.2`.
+- rodapé `CineTracker • v0.99.2`;
+- Verify FIX2 em `main`: success;
+- Vercel do source FIX2: success.
 
 ### Android
 - `applicationId com.cinetracker.app`;
@@ -98,29 +100,38 @@ Migration aplicada: `supabase/migrations/20260827004500_v0992_home_series_movies
 - `versionCode 9913`;
 - bundle `v0.99.2-fix2-unfreeze-991-992-authoritative`;
 - workflow `.github/workflows/build-android-v0992-fix2.yml`;
-- release `android-v0.99.2` com asset substituído pelo FIX2 quando pipeline concluir.
+- run `33032044592`: success;
+- Release `android-v0.99.2` atualizada para `CineTracker Android 0.99.2 FIX2`;
+- APK `cinetracker-android-0.99.2-debug.apk`;
+- SHA-256 `8564bacca16bf153ebdb05f64a89337b998d23c02c8edb9a137e2a104725f9d2`.
 
-O APK `versionCode 9912` já publicado foi invalidado por travamento e não deve ser tratado como release funcional.
+O APK `versionCode 9912` anterior foi invalidado por travamento e não deve ser tratado como release funcional.
 
 ## 11. Validação
-Já confirmado no source/CI após o FIX2:
-- build Web e verificador estático reconhecem o anti-freeze;
-- preparo do runtime Android inline contém o FIX2;
-- smoke inline foi atualizado para o novo marker.
+Confirmado por CI/publicação após o FIX2:
+- build Web/verificador reconhecem o anti-freeze;
+- preparo Android inline contém v096 e markers FIX2;
+- smoke inline do bundle passou;
+- Vercel está `success` para o source FIX2;
+- build Android 9913 passou;
+- identidade/runtime/assinatura do APK passaram;
+- artifact e substituição da Release passaram.
 
-Ainda exige evidência real antes de encerrar:
-- Vercel do commit final em success;
-- Android FIX2 9913 build/aapt/apksigner/artifact/release;
-- Web desktop/Android responsiva por 60 s sem CPU runaway;
+**Ainda exige evidência real antes de encerrar a versão:**
+- Web desktop responsiva por pelo menos 60 s sem congelamento/CPU runaway;
+- Web Android responsiva por pelo menos 60 s;
 - múltiplas alternâncias Home/Descobrir/Perfil/Configurações;
-- instalação/upgrade do APK 9913 e smoke físico.
+- Perfil/Descobrir/Home funcionando com dados reais;
+- instalação/upgrade do APK 9913 em aparelho real;
+- APK responsivo por pelo menos 60 s e navegação real funcionando.
 
 Ver `docs/validation/0.99.2.md`.
 
 ## 12. Débitos conhecidos
 - surrogate negativo em `media.tmdb_id` permanece como débito legado, com chamadas externas bloqueadas para IDs <=0;
 - advisories históricos Supabase continuam documentados;
-- AGP 8.5.2 vs compileSdk 35 ainda pode emitir warning.
+- AGP 8.5.2 vs compileSdk 35 ainda pode emitir warning;
+- o monkey-patch idempotente de `Node.textContent` é correção transitória de compatibilidade; refatoração futura deve tornar os observers legados localmente idempotentes e permitir removê-lo.
 
 ## 13. Documentos canônicos
-`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.2.md`, `docs/validation/0.99.2.md`.
+`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `apps/web/README.md`, `apps/android/README.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.2.md`, `docs/validation/0.99.2.md`.
