@@ -33,10 +33,9 @@ css.textContent=`
 .ct109-data-box{border:1px solid #21485e;background:#081720;border-radius:13px;padding:13px;min-width:0}
 .ct109-data-box h3{font-size:13px;margin:0 0 4px;color:#f0f8ff}.ct109-data-box p{font-size:10px;color:#8da4b3;line-height:1.45;margin:0 0 10px}
 .ct109-data-box .ct90-setting-actions{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px}
-.ct109-import-card{margin-top:12px!important;padding-top:12px!important;border-top:1px solid #21465d!important;min-width:0!important}
-.ct109-import-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.ct109-import-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;margin-bottom:10px;border-top:1px solid #21465d}
 .ct109-import-head h3{font-size:13px;margin:0 0 4px}.ct109-import-head p{font-size:10px;color:#8da4b3;margin:0;line-height:1.45}
-.ct109-settings #ct10-import-panel{min-width:0!important;max-width:100%!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.ct109-settings #ct10-import-panel{min-width:0!important;max-width:100%!important;margin:0!important;padding:12px!important;border:1px solid #1e4155!important;border-radius:13px!important;background:#081720!important;box-shadow:none!important}
 .ct109-settings #ct10-import-panel>h2:first-child,.ct109-settings #ct10-import-panel>p.ct10-muted:first-of-type{display:none!important}
 .ct109-settings .ct11-files{min-width:0!important}
 .ct109-settings .ct11-file{min-width:0!important}
@@ -102,7 +101,7 @@ function maintenance109(card){
 function data109(card){
   card.classList.add('ct109-data-management','ct106-data-management');
   head109(card,'Gerenciamento de Dados','Backup, restauração e importação reunidos em uma única área.','BACKUP + IMPORTAÇÃO');
-  let intro=$109(':scope > .ct109-data-intro',card);if(!intro){intro=document.createElement('div');intro.className='ct109-data-intro';intro.innerHTML='<span>↕</span><div><strong>Seus dados principais ficam no Supabase.</strong><br>Exportações criam uma cópia. Restaurações só devem alterar dados depois da prévia e confirmação.</div>';const h=$109(':scope > .ct109-card-head',card);h.insertAdjacentElement('afterend',intro)}
+  let intro=$109(':scope > .ct109-data-intro',card);if(!intro){intro=document.createElement('div');intro.className='ct109-data-intro';intro.innerHTML='<span>↕</span><div><strong>Seus dados principais ficam no Supabase.</strong><br>Exportações criam uma cópia. Restaurações só alteram dados depois da prévia e confirmação.</div>';const h=$109(':scope > .ct109-card-head',card);h.insertAdjacentElement('afterend',intro)}
   let columns=$109(':scope > .ct109-data-columns',card);if(!columns){columns=document.createElement('div');columns.className='ct109-data-columns';intro.insertAdjacentElement('afterend',columns)}
   let exp=$109('.ct109-export',columns);if(!exp){exp=document.createElement('section');exp.className='ct109-data-box ct109-export';exp.innerHTML='<h3>Exportar dados</h3><p>Baixe uma cópia da conta para armazenamento ou transferência.</p><div class="ct90-setting-actions"></div>';columns.appendChild(exp)}
   let res=$109('.ct109-restore',columns);if(!res){res=document.createElement('section');res.className='ct109-data-box ct109-restore';res.innerHTML='<h3>Restaurar backup</h3><p>JSON ou ZIP passam pela prévia antes de qualquer restauração.</p><div class="ct90-setting-actions"></div>';columns.appendChild(res)}
@@ -111,10 +110,10 @@ function data109(card){
   ['ct91-imp-json','ct91-imp-zip'].forEach(id=>{const b=$109(`#${id}`,card);if(b&&b.parentElement!==resActions)resActions.appendChild(b)});
   const loose=$109(':scope > .ct90-setting-actions',card);if(loose&&!loose.children.length)loose.remove();
   const importPanel=$109('#ct10-import-panel',card)||$109('#ct10-import-panel');
-  let importWrap=$109(':scope > .ct109-import-card',card);
-  if(!importWrap){importWrap=document.createElement('section');importWrap.className='ct109-import-card';importWrap.innerHTML='<div class="ct109-import-head"><div><h3>Importar dados externos</h3><p>Bingers: library.csv + watches.csv, ou pacote ZIP/JSON. A análise abre uma prévia antes da sincronização.</p></div></div>';card.appendChild(importWrap)}
-  if(importPanel&&importPanel.parentElement!==importWrap)importWrap.appendChild(importPanel);
-  const oldGrid=$109(':scope > .ct106-data-grid',card);if(oldGrid&&oldGrid!==importWrap){if(importPanel&&oldGrid.contains(importPanel))importWrap.appendChild(importPanel);oldGrid.remove()}
+  let importHead=$109(':scope > .ct109-import-head',card);if(!importHead){importHead=document.createElement('div');importHead.className='ct109-import-head';importHead.innerHTML='<div><h3>Importar dados externos</h3><p>Bingers: library.csv + watches.csv, ou pacote ZIP/JSON. A análise abre uma prévia antes da sincronização.</p></div>';card.appendChild(importHead)}
+  if(importPanel&&importPanel.parentElement!==card)card.appendChild(importPanel);
+  if(importPanel&&importHead.nextElementSibling!==importPanel)importHead.insertAdjacentElement('afterend',importPanel);
+  const oldGrid=$109(':scope > .ct106-data-grid',card);if(oldGrid){if(importPanel&&oldGrid.contains(importPanel))importHead.insertAdjacentElement('afterend',importPanel);oldGrid.remove()}
   const file=$109('#ct91-file',card);if(file&&!file.parentElement?.classList?.contains('ct109-hidden-file')){let holder=$109(':scope > .ct109-hidden-file',card);if(!holder){holder=document.createElement('div');holder.className='ct109-hidden-file';holder.style.display='none';card.appendChild(holder)}holder.appendChild(file)}
 }
 function enhance109(){
@@ -130,7 +129,7 @@ function enhance109(){
   const menu=$109('#ct991-import-menu');if(menu)menu.style.display='none';
   return Boolean(account&&maintenance&&data);
 }
-function schedule109(){for(const d of [30,120,320,700,1200])setTimeout(enhance109,d)}
+function schedule109(){for(const d of [30,120,320,700,1200,1900])setTimeout(enhance109,d)}
 const rawNav109=window.__ct0994Navigate;
 if(typeof rawNav109==='function'&&!rawNav109.__ct109Wrapped){const fn=async function(target){const r=await rawNav109(target);if(String(target)==='settings')schedule109();return r};fn.__ct109Wrapped=true;window.__ct0994Navigate=fn;window.ct0994Navigate=fn;window.ct0992Navigate=fn;window.ct991Navigate=fn;window.ct98Navigate=fn}
 document.addEventListener('click',e=>{if(e.target?.closest?.('[data-view="settings"]'))schedule109()},true);
