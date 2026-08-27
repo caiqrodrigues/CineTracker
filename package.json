@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.99.4",
   "scripts": {
-    "build": "node scripts/build-web.mjs && node scripts/apply-hotfix9-stability.mjs && node scripts/apply-hotfix10-selective.mjs && node scripts/apply-web-v0994.mjs && node scripts/apply-web-v0994-preload.mjs && node scripts/apply-web-v0994-refactor.mjs && node --check apps/web/patch-v105-v0994-preload-layout.js && node --check apps/web/patch-v106-v0994-refactor.js && node scripts/test-web-v0994.mjs && node scripts/test-web-v0994-refactor.mjs && node scripts/test-startup-hotfix6.mjs",
-    "verify": "node --check apps/web/patch-v105-v0994-preload-layout.js && node --check apps/web/patch-v106-v0994-refactor.js && node scripts/test-web-v0994.mjs && node scripts/test-web-v0994-refactor.mjs"
+    "build": "node scripts/build-web.mjs && node scripts/apply-hotfix9-stability.mjs && node scripts/apply-hotfix10-selective.mjs && node scripts/apply-web-v0994.mjs && node scripts/apply-web-v0994-preload.mjs && node scripts/apply-web-v0994-refactor.mjs && node scripts/apply-web-v0994-fix-history-discover.mjs && node --check apps/web/patch-v105-v0994-preload-layout.js && node --check apps/web/patch-v106-v0994-refactor.js && node --check apps/web/patch-v107-v0994-data-ui-fix.js && node scripts/test-web-v0994.mjs && node scripts/test-web-v0994-refactor.mjs && node scripts/test-web-v0994-data-ui.mjs && node scripts/test-startup-hotfix6.mjs",
+    "verify": "node --check apps/web/patch-v105-v0994-preload-layout.js && node --check apps/web/patch-v106-v0994-refactor.js && node --check apps/web/patch-v107-v0994-data-ui-fix.js && node scripts/test-web-v0994.mjs && node scripts/test-web-v0994-refactor.mjs && node scripts/test-web-v0994-data-ui.mjs"
   },
   "engines": {
     "node": ">=20"
