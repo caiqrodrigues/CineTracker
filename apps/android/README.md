@@ -1,40 +1,56 @@
-# CineTracker Android — 0.99.2 FIX2
+# CineTracker Android — 0.99.2.3
 
-App Android nativo leve em `Activity + WebView`, usando o runtime Web embarcado e inline.
+App Android nativo leve baseado em `Activity + WebView`, com o mesmo runtime CineTracker Web embarcado e inlined no APK.
 
-## Identidade atual
+## Identidade
+
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.2`;
-- `versionCode`: **9913**;
-- bundle: `v0.99.2-fix2-unfreeze-991-992-authoritative`;
-- patch final: `patch-v096-v0992-unfreeze.js`;
-- workflow: `.github/workflows/build-android-v0992-fix2.yml`;
-- Release: `android-v0.99.2`.
+- `versionName`: `0.99.2.3`;
+- `versionCode`: `9923`;
+- bundle obrigatório: `v0.99.2.3-fix2-unfreeze-authoritative`;
+- runtime Web embarcado: CineTracker `0.99.2 FIX2`;
+- patch anti-freeze obrigatório: `patch-v096-v0992-unfreeze.js`;
+- release: `android-v0.99.2.3`;
+- APK: `cinetracker-android-0.99.2.3-debug.apk`.
 
-O APK anterior `versionCode 9912` foi publicado com o runtime congelado e está invalidado. Como um `versionCode` publicado não deve ser reutilizado para upgrade, o FIX2 usa 9913 mantendo a release lógica/visível 0.99.2.
+A identidade Android `0.99.2.3` republica a correção FIX2 sob um número explícito de APK. O runtime compartilhado permanece 0.99.2 FIX2; a Web não é renumerada por esta publicação Android.
 
-## Travamento corrigido
-A primeira publicação do FIX entrou em ciclo recursivo de `MutationObserver`: helpers reatribuíam o mesmo `textContent`, a escrita gerava outro `childList MutationRecord` e o observer rodava novamente. Isso saturava a main thread da WebView.
+## Correção de congelamento
 
-`patch-v096-v0992-unfreeze.js` entra por último e torna escrita idêntica em `Node.textContent` um no-op antes dos observers atrasados iniciarem. Markers: `__ct0992UnfreezeLoaded` e `fix2-idempotent-dom-mutation-guard`.
+A primeira publicação 0.99.2 apresentou travamento completo devido a churn recursivo entre `MutationObserver` e reatribuições idênticas de `textContent`. A camada final `patch-v096-v0992-unfreeze.js` torna essas atribuições idempotentes e interrompe o ciclo que saturava a thread principal da WebView.
 
-## Conteúdo preservado
-O runtime 9913 contém a consolidação 0.99.1 + 0.99.2: Perfil/timeline/favoritos/filtros, Pra Você, Calendário, episódios ricos, marcação inteligente, cinegrafia, Bingers, Home Séries vertical/Pull-to-Reveal/LRU/quick mark/sync de lançamentos e Home Filmes com recomendação diária/Watchlist.
+## Consolidação preservada
 
-## Pipeline FIX2
-O run `33032044592` concluiu com sucesso:
-- build e verificação da Web FIX2;
-- preparação do runtime inline;
-- build Gradle;
-- validação do package, `versionName 0.99.2`, `versionCode 9913`, marker FIX2 e assinatura;
-- artifact;
-- substituição do asset na Release `android-v0.99.2`.
+O APK mantém:
+- navegação Home / Descobrir / Perfil / Configurações;
+- Histórico integrado ao Perfil;
+- Perfil/timeline/favoritos/Pra Você da 0.99.1;
+- Home vertical Séries/Filmes da 0.99.2;
+- Pull-to-Reveal, quick mark, LRU e sincronização de lançamentos;
+- Bingers em Importar Dados;
+- hardening de `profile_id` e `media_kind`;
+- proteção contra chamadas TMDB com IDs substitutos `<= 0` nos caminhos recentes.
 
-APK atual: `cinetracker-android-0.99.2-debug.apk`.  
-SHA-256: `8564bacca16bf153ebdb05f64a89337b998d23c02c8edb9a137e2a104725f9d2`.
+## Runtime local e pipeline
 
-O pipeline aprovado não substitui teste físico. Instalação/upgrade e responsividade por pelo menos 60 s permanecem pendentes até evidência real.
+`scripts/prepare-android-hotfix2-web.mjs` gera o runtime inline e injeta:
+- `window.__ctAndroidBundle = 'v0.99.2.3-fix2-unfreeze-authoritative'`;
+- `window.__ctAndroidBuild = '0.99.2.3'`.
 
-Rodapé: **`CineTracker • v0.99.2`**.  
-Release: `docs/releases/0.99.2.md`.  
-Validação: `docs/validation/0.99.2.md`.
+`scripts/test-android-inline-hotfix6.mjs` compila todos os scripts inline e valida o marker FIX2.
+
+Workflow: `.github/workflows/build-android-v09923.yml`.
+
+O pipeline valida:
+- build Web compartilhado 0.99.2 FIX2;
+- runtime Android inline 0.99.2.3;
+- `gradle assembleDebug`;
+- `aapt`: package `com.cinetracker.app`, versionName `0.99.2.3`, versionCode `9923`;
+- `apksigner`;
+- artifact `cinetracker-android-0.99.2.3-debug`;
+- Release `android-v0.99.2.3` + APK + `v09923-sha256.txt`.
+
+Publicação técnica e teste funcional real continuam sendo estados separados.
+
+Release: `docs/releases/0.99.2.3.md`.  
+Validação: `docs/validation/0.99.2.3.md`.
