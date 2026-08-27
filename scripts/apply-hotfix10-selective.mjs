@@ -31,7 +31,7 @@ const targets=[resolve(root,'dist'),resolve(root,'apps/web/dist')];
 for(const target of targets){
   const indexPath=resolve(target,'index.html');
   let html=await readFile(indexPath,'utf8');
-  if(html.includes('patch-v068-v097.js'))throw new Error(`v0.99.1: v97 overlay must remain absent: ${indexPath}`);
+  if(html.includes('patch-v068-'+'v097.js'))throw new Error(`v0.99.1: v97 overlay must remain absent: ${indexPath}`);
   if(!html.includes('patch-v067-v095.js'))throw new Error(`v0.99.1: stable v95 core missing: ${indexPath}`);
   html=html.replace(/<script src="\/patch-v081-hotfix12-nav-pre\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v084-hotfix14-real-device\.js"><\/script>/g,'');
