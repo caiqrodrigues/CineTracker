@@ -5,20 +5,29 @@ import vm from 'node:vm';
 const html = await readFile('dist/index.html','utf8');
 const pre = await readFile('dist/patch-v101-v0994-nav-pre.js','utf8');
 const runtime = await readFile('dist/patch-v099-v0994-web.js','utf8');
+const auth = await readFile('dist/patch-v103-v0994-session-gate.js','utf8');
 const pkg = await readFile('package.json','utf8');
 const sw = await readFile('apps/web/service-worker.js','utf8');
+const runtimeTag = '<script src="/patch-v099-v0994-web.js"></script>';
+const authTag = '<script src="/patch-v103-v0994-session-gate.js"></script>';
 
 assert.match(pkg,/"version": "0\.99\.4"/,'package must stay 0.99.4');
 assert.ok(!pkg.includes('apply-web-v0993.mjs'),'0.99.3 build layer must not run');
 assert.match(sw,/ct-web-0\.99\.4/,'service worker cache must be 0.99.4');
 assert.equal((html.match(/patch-v101-v0994-nav-pre\.js/g)||[]).length,1,'0.99.4 pre-gate duplicated');
 assert.equal((html.match(/patch-v099-v0994-web\.js/g)||[]).length,1,'0.99.4 runtime duplicated');
+assert.equal((html.match(/patch-v103-v0994-session-gate\.js/g)||[]).length,1,'0.99.4 session gate duplicated');
 assert.ok(html.includes('patch-v095-v0992-fix.js'),'required 0.99.2 stable renderer layer missing');
 assert.ok(!html.includes('patch-v097-v0993-nav-pre.js'),'0.99.3 pre-gate must not be emitted');
 assert.ok(!html.includes('patch-v098-v0993-web.js'),'0.99.3 final layer must not be emitted');
 assert.ok(!html.includes('patch-v102-v0994-mobile-nav-fix.js'),'broken mobile canonicalizer must not be emitted');
+assert.ok(html.indexOf(authTag)>html.indexOf(runtimeTag),'session gate must load after 0.99.4 runtime');
+assert.ok(html.includes("if (false && localStorage.getItem(resetKey) !== '1') {"),'legacy destructive session reset must be disabled');
+assert.ok(!html.includes("if (localStorage.getItem(resetKey) !== '1') {"),'active legacy destructive session reset must not remain');
 assert.doesNotThrow(()=>new vm.Script(pre),'0.99.4 pre-gate syntax invalid');
 assert.doesNotThrow(()=>new vm.Script(runtime),'0.99.4 runtime syntax invalid');
+assert.doesNotThrow(()=>new vm.Script(auth),'0.99.4 session gate syntax invalid');
+
 assert.match(pre,/grid-template-columns:180px minmax\(0,1fr\)!important/,'desktop original grid geometry must be preserved');
 assert.match(pre,/position:sticky!important/,'desktop Sidebar must remain in normal layout flow');
 assert.ok(!pre.includes('position:fixed!important'),'desktop Sidebar must not be removed from layout flow');
@@ -30,8 +39,19 @@ assert.match(pre,/target!=='profile'&&target!=='settings'/,'pointerdown must tar
 assert.match(pre,/stopImmediatePropagation/,'legacy click interception guard missing');
 assert.match(pre,/elementsFromPoint/,'desktop hit-test diagnostic missing');
 assert.match(pre,/topIsButton/,'desktop hit-test must verify physical button ownership');
+
 assert.match(runtime,/cinetracker_profile_home_payload_v0994/,'authoritative Home RPC missing');
 assert.match(runtime,/cinetracker_profile_remaining_v0994/,'remaining-time profile RPC missing');
 assert.ok(!runtime.includes('new MutationObserver('),'0.99.4 runtime must not create DOM observer loops');
 assert.ok(!runtime.includes('setInterval('),'0.99.4 runtime must not create permanent polling loops');
-console.log('WEB_0994_OK desktop-layout=preserved pointerdown=profile-settings hit-test=ready');
+
+assert.match(auth,/ctSession\?\.access_token/,'session gate must inspect the real authenticated session');
+assert.match(auth,/restoreSession/,'session gate must try to restore the browser session');
+assert.match(auth,/renderAuth/,'session gate must return unauthenticated users to login');
+assert.match(auth,/sbRpc = async function/,'session gate must protect data RPC calls');
+assert.match(auth,/window\.__ct0994Navigate = guardedNavigate994/,'session gate must protect 0.99.4 navigation');
+assert.match(auth,/rawSignIn994/,'session gate must preserve login flow');
+assert.match(auth,/guardedNavigate994\('home'\)/,'successful login must return to the 0.99.4 Home');
+assert.ok(!auth.includes('localStorage.removeItem(\'cinetracker_session\')'),'session gate must never erase the persisted session');
+
+console.log('WEB_0994_OK desktop-layout=preserved pointerdown=profile-settings session=guarded legacy-reset=disabled');
