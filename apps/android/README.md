@@ -1,64 +1,40 @@
-# CineTracker Android — 0.99.2 FIX
+# CineTracker Android — 0.99.2 FIX2
 
-App Android nativo leve baseado em `Activity + WebView`, com o mesmo runtime CineTracker Web embarcado e inlined no APK.
+App Android nativo leve em `Activity + WebView`, usando o runtime Web embarcado e inline.
 
-## Identidade
-
+## Identidade atual
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `0.99.2`;
-- `versionCode`: `9912`;
-- bundle obrigatório: `v0.99.2-fix-991-992-authoritative`;
-- patch final obrigatório: `patch-v095-v0992-fix.js`;
-- release alvo: `android-v0.99.2`.
+- `versionCode`: **9913**;
+- bundle: `v0.99.2-fix2-unfreeze-991-992-authoritative`;
+- patch final: `patch-v096-v0992-unfreeze.js`;
+- workflow: `.github/workflows/build-android-v0992-fix2.yml`;
+- Release: `android-v0.99.2`.
 
-A primeira tentativa da 0.99.2 não é tratada como release válida. O APK só pode ser publicado se o runtime interno contiver `__ct0992FixLoaded` e o marker autoritativo acima.
+O APK anterior `versionCode 9912` foi publicado com o runtime congelado e está invalidado. Como um `versionCode` publicado não deve ser reutilizado para upgrade, o FIX2 usa 9913 mantendo a release lógica/visível 0.99.2.
 
-## Consolidação 0.99.1 + 0.99.2
+## Travamento corrigido
+A primeira publicação do FIX entrou em ciclo recursivo de `MutationObserver`: helpers reatribuíam o mesmo `textContent`, a escrita gerava outro `childList MutationRecord` e o observer rodava novamente. Isso saturava a main thread da WebView.
 
-O runtime embarcado preserva Perfil/Pra Você/filtros/favoritos da 0.99.1 e a Home vertical da 0.99.2. A camada final corrige conflitos de navegação legados, `days is not defined`, inserts pessoais sem `profile_id`, inserts de mídia sem `media_kind`, menu duplicado/Histórico legado e expansão das seções do Perfil.
+`patch-v096-v0992-unfreeze.js` entra por último e torna escrita idêntica em `Node.textContent` um no-op antes dos observers atrasados iniciarem. Markers: `__ct0992UnfreezeLoaded` e `fix2-idempotent-dom-mutation-guard`.
 
-## Home — Séries
+## Conteúdo preservado
+O runtime 9913 contém a consolidação 0.99.1 + 0.99.2: Perfil/timeline/favoritos/filtros, Pra Você, Calendário, episódios ricos, marcação inteligente, cinegrafia, Bingers, Home Séries vertical/Pull-to-Reveal/LRU/quick mark/sync de lançamentos e Home Filmes com recomendação diária/Watchlist.
 
-- histórico de episódios oculto acima do ponto inicial e revelado por Pull-to-Reveal;
-- Assistir a seguir: pendências com atividade em até 30 dias ou novo episódio recém-lançado;
-- Juntando poeira: pendências com mais de 30 dias;
-- Em dia;
-- Não Iniciadas / Watchlist;
-- Concluídas;
-- cards em linha com pôster 2:3, próximo S/E, progresso, faltantes, nome/nota do episódio e ✓;
-- quick mark grava histórico + `episode_progress`, atualiza LRU e migra para Em dia quando necessário.
+## Pipeline FIX2
+O run `33032044592` concluiu com sucesso:
+- build e verificação da Web FIX2;
+- preparação do runtime inline;
+- build Gradle;
+- validação do package, `versionName 0.99.2`, `versionCode 9913`, marker FIX2 e assinatura;
+- artifact;
+- substituição do asset na Release `android-v0.99.2`.
 
-## Home — Filmes
+APK atual: `cinetracker-android-0.99.2-debug.apk`.  
+SHA-256: `8564bacca16bf153ebdb05f64a89337b998d23c02c8edb9a137e2a104725f9d2`.
 
-- Vistos oculto por Pull-to-Reveal;
-- Escolha para Hoje com nota >=8,0, nunca visto, uma seleção por perfil/data e sem repetição;
-- Assistir a seguir / Watchlist;
-- quick mark grava histórico + `AlreadySeen`.
+O pipeline aprovado não substitui teste físico. Instalação/upgrade e responsividade por pelo menos 60 s permanecem pendentes até evidência real.
 
-## Sincronização / reatividade
-
-Abertura, retorno de visibilidade, atualização do Calendário e `cinetracker:data-changed` reconciliam a Home. Novo episódio já lançado move Em dia -> Assistir a seguir. A conclusão de importação invalida os dados locais da Home para refletir o Supabase sem refresh manual.
-
-## Runtime local e pipeline
-
-`scripts/prepare-android-hotfix2-web.mjs` copia o build Web, converte scripts em inline e exige `patch-v095-v0992-fix.js` por último. `scripts/test-android-inline-hotfix6.mjs` compila todos os scripts inline e valida o marker FIX.
-
-Workflow: `.github/workflows/build-android-v0992.yml`.
-
-Na `main`, o pipeline deve validar:
-- Web 0.99.2 FIX;
-- bundle `v0.99.2-fix-991-992-authoritative`;
-- `gradle assembleDebug`;
-- `aapt`: package `com.cinetracker.app`, versionName `0.99.2`, versionCode `9912`;
-- `apksigner`;
-- artifact `cinetracker-android-0.99.2-debug`;
-- Release `android-v0.99.2` + APK + `v0992-sha256.txt`.
-
-Nenhuma dessas etapas é declarada concluída antes da evidência no workflow.
-
-## Rodapé
-
-**`CineTracker • v0.99.2`**.
-
+Rodapé: **`CineTracker • v0.99.2`**.  
 Release: `docs/releases/0.99.2.md`.  
 Validação: `docs/validation/0.99.2.md`.
