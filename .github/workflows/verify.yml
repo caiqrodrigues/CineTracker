@@ -51,7 +51,7 @@ jobs:
           grep -q 'v104-single-renderer' dist/patch-v104-v0994-authority.js
           grep -q 'v105-preload-desktop-frame' dist/patch-v105-v0994-preload-layout.js
           grep -q 'v106-visual-rules' dist/patch-v106-v0994-refactor.js
-          grep -q 'v107-data-ui-fix' dist/patch-v107-v0994-data-ui-fix.js
+          grep -q 'v107-history-settings-cache' dist/patch-v107-v0994-data-ui-fix.js
           grep -q 'cinetracker_discovery_exclusions_v0994' dist/patch-v092-v0991.js
           grep -q 'order=watched_at.desc&limit=5000' dist/patch-v092-v0991.js
           grep -q 'next_episode_to_air' dist/patch-v092-v0991.js
