@@ -4,134 +4,99 @@
 
 **Última atualização:** 2026-08-27  
 **Branch principal:** `main`  
-**Release lógica em correção:** `0.99.2 FIX2`  
-**Web:** `0.99.2`, cache `ct-web-0.99.2-fix2`, anti-freeze final `patch-v096-v0992-unfreeze.js`  
-**Android:** `0.99.2`, `versionCode 9913`, bundle `v0.99.2-fix2-unfreeze-991-992-authoritative`  
-**Backend lógico:** `0.99.2`, migration Home aplicada no Supabase  
+**Web:** `0.99.2 FIX2`, cache `ct-web-0.99.2-fix2`, anti-freeze final `patch-v096-v0992-unfreeze.js`  
+**Android alvo atual:** `0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative`  
+**Backend lógico:** `0.99.2`  
 **Windows:** não lançado
 
-## 1. Governança
-Toda atualização/mudança deve possuir versão, registro no GitHub, documentação e validação real. A 0.99.2 ainda não foi funcionalmente encerrada; por isso as correções continuam como **0.99.2 FIX2**, sem criar 0.99.3 artificialmente. Android pode aumentar `versionCode` dentro da mesma release lógica quando um APK defeituoso já foi publicado.
+## 1. Falha que originou o FIX2
 
-## 2. Histórico da falha real
-A validação visual anterior mostrou produção incompleta/legada. Depois do primeiro 0.99.2 FIX, o usuário enviou novo vídeo e confirmou que **Web e APK estavam completamente travados**.
+Web e APK 0.99.2 chegaram a ficar completamente travados. A causa raiz foi um ciclo recursivo de DOM: observers históricos reatribuíam `textContent` mesmo sem alteração, a escrita criava novo `MutationRecord` e o observer era acionado novamente, saturando a thread principal.
 
-A revisão do runtime encontrou a causa raiz:
-- `patch-v093-v0992.js` possui `MutationObserver` e chamava `footer()` a cada mutação;
-- `footer()` reatribuía `textContent` mesmo com o mesmo valor;
-- `patch-v095-v0992-fix.js` adicionou outro observer com comportamento semelhante em rodapé/cabeçalhos;
-- atribuição de `textContent` substitui o text node e cria novo `childList MutationRecord`;
-- o ciclo observer -> DOM -> observer saturava a main thread na Web e WebView Android.
+A correção final é `patch-v096-v0992-unfreeze.js`, que transforma atribuições idênticas de `Node.textContent` em no-op antes dos observers atrasados iniciarem.
 
-Checks antigos não detectavam esse churn porque validavam presença/sintaxe/markers, não comportamento de MutationObserver em runtime.
+Markers obrigatórios:
+- `__ct0992UnfreezeLoaded`;
+- `fix2-idempotent-dom-mutation-guard`.
 
-## 3. Runtime final obrigatório
-A pilha compartilhada termina em:
+## 2. Runtime compartilhado
+
+A pilha termina em:
 1. base v95 + recuperações estáveis;
-2. 0.98 navegação/config/backup;
-3. 0.99 Perfil LRU;
-4. `patch-v092-v0991.js` — recursos 0.99.1;
-5. `patch-v093-v0992.js` — Home Séries/Filmes 0.99.2;
-6. `patch-v094-v0992-compat.js` — compatibilidade;
-7. `patch-v095-v0992-fix.js` — navegação/escritas/perfil;
-8. **`patch-v096-v0992-unfreeze.js` — anti-freeze final FIX2.**
+2. navegação/config/backup 0.98;
+3. Perfil LRU 0.99;
+4. `patch-v092-v0991.js`;
+5. `patch-v093-v0992.js`;
+6. `patch-v094-v0992-compat.js`;
+7. `patch-v095-v0992-fix.js`;
+8. `patch-v096-v0992-unfreeze.js`.
 
-A overlay global `patch-v068-v097.js` continua desativada.
+A Web permanece em `0.99.2 FIX2`. A publicação Android solicitada usa nova identidade de pacote `0.99.2.3`, mas embarca esse mesmo runtime corrigido.
 
-## 4. O que o FIX2 resolve
-- instala guarda idempotente para `Node.prototype.textContent`;
-- atribuição de texto idêntico vira no-op, evitando MutationRecord redundante;
-- guard entra antes dos observers atrasados de 250/500 ms começarem a observar `#app`;
-- refresh inicial é coalescido por `requestAnimationFrame`;
-- cache Web rotacionado para `ct-web-0.99.2-fix2`;
-- Android sobe de `versionCode 9912` defeituoso para `9913`.
+## 3. Recursos preservados
 
-Marker obrigatório: `__ct0992UnfreezeLoaded` / `fix2-idempotent-dom-mutation-guard`.
+- Home / Descobrir / Perfil / Configurações;
+- Histórico integrado ao Perfil;
+- Perfil 0.99.1, timeline, favoritos, filtros e Pra Você;
+- Home Séries/Filmes 0.99.2;
+- Pull-to-Reveal, quick mark, LRU e sincronização de lançamentos;
+- Bingers em Importar Dados;
+- hardening de `profile_id` e `media_kind`;
+- bloqueio de TMDB externo para surrogate IDs `<= 0` nos caminhos recentes.
 
-## 5. Recursos preservados 0.99.1
-- navegação final Home / Descobrir / Perfil / Configurações;
-- Histórico integrado ao Perfil e fora do menu;
-- Perfil com estatísticas compactas, Tempo Total duplo, timeline, detalhe por data e quatro métricas extras;
-- Séries, Séries favoritas, Filmes e Filmes favoritos com filtros/layouts e expansões completas;
-- favoritos no detalhe;
-- Pra Você com 7 slots, ano >1990 e nota >=7,8;
-- Calendário por último com Geral/Séries/Filmes;
-- cards ricos de episódios e marcação inteligente;
-- cinegrafia separada Filmes/Séries;
-- Bingers dentro de Importar Dados;
-- hardening de `profile_id` e `media_kind` do FIX anterior.
+## 4. Backend
 
-## 6. Home 0.99.2 — Séries
-Viewport vertical com histórico Pull-to-Reveal. Ordem:
-1. Assistir a seguir — pendências lançadas e atividade <=30 dias, ou novo episódio;
-2. Juntando poeira — pendência e atividade >30 dias;
-3. Em dia — sem pendência lançada;
-4. Não Iniciadas / Watchlist — 0 episódios vistos;
-5. Concluídas — `Completed`.
-
-Cards: pôster 2:3, próximo `Sxx Exx`, assistidos/lançados, faltantes, nome/nota do episódio e ação ✓. Quick mark grava `watch_history` + `episode_progress`, atualiza `last_watched_at`, avança episódio, reordena LRU e move para Em dia quando não restam pendências.
-
-## 7. Home 0.99.2 — Filmes
-- Vistos ocultos por Pull-to-Reveal;
-- Escolha para Hoje com rating >=8,0, nunca visto e sem repetição;
-- Watchlist abaixo da recomendação;
-- quick mark grava histórico + `AlreadySeen`.
-
-## 8. Sincronização de lançamentos
-`syncReleaseStates()` roda no primeiro uso do dia, retorno de visibilidade e Calendário. Séries UpToDate/InProgress com TMDB oficial são conciliadas com episódios lançados; novo episódio move para Assistir a seguir. Surrogates `tmdb_id <= 0` não são consultados externamente.
-
-## 9. Backend 0.99.2
 Migration aplicada: `supabase/migrations/20260827004500_v0992_home_series_movies.sql`.
-- RPC `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, `auth.uid()`;
-- `daily_movie_recommendations_v0992` — RLS, PK perfil/data, unique perfil/TMDB.
 
-## 10. Identidade e publicação
-### Web
+- `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, `auth.uid()`;
+- `daily_movie_recommendations_v0992` — RLS, PK perfil/data e unique perfil/TMDB.
+
+## 5. Identidade Web
+
 - package `0.99.2`;
 - cache `ct-web-0.99.2-fix2`;
-- patch final `patch-v096-v0992-unfreeze.js`;
 - rodapé `CineTracker • v0.99.2`;
-- Verify FIX2 em `main`: success;
-- Vercel do source FIX2: success.
+- Vercel/Verify FIX2 já tiveram evidência de success;
+- smoke real continua separado.
 
-### Android
-- `applicationId com.cinetracker.app`;
-- `versionName 0.99.2`;
-- `versionCode 9913`;
-- bundle `v0.99.2-fix2-unfreeze-991-992-authoritative`;
-- workflow `.github/workflows/build-android-v0992-fix2.yml`;
-- run `33032044592`: success;
-- Release `android-v0.99.2` atualizada para `CineTracker Android 0.99.2 FIX2`;
-- APK `cinetracker-android-0.99.2-debug.apk`;
-- SHA-256 `8564bacca16bf153ebdb05f64a89337b998d23c02c8edb9a137e2a104725f9d2`.
+## 6. Identidade Android 0.99.2.3
 
-O APK `versionCode 9912` anterior foi invalidado por travamento e não deve ser tratado como release funcional.
+- `applicationId`: `com.cinetracker.app`;
+- `versionName`: `0.99.2.3`;
+- `versionCode`: `9923`;
+- bundle: `v0.99.2.3-fix2-unfreeze-authoritative`;
+- workflow: `.github/workflows/build-android-v09923.yml`;
+- release: `android-v0.99.2.3`;
+- APK: `cinetracker-android-0.99.2.3-debug.apk`;
+- checksum: `v09923-sha256.txt`.
 
-## 11. Validação
-Confirmado por CI/publicação após o FIX2:
-- build Web/verificador reconhecem o anti-freeze;
-- preparo Android inline contém v096 e markers FIX2;
-- smoke inline do bundle passou;
-- Vercel está `success` para o source FIX2;
-- build Android 9913 passou;
-- identidade/runtime/assinatura do APK passaram;
-- artifact e substituição da Release passaram.
+Histórico imediato:
+- `9912`: defeituoso e invalidado por congelamento;
+- `9913`: FIX2 publicado tecnicamente;
+- `9923`: nova identidade `0.99.2.3` solicitada para a correção.
 
-**Ainda exige evidência real antes de encerrar a versão:**
-- Web desktop responsiva por pelo menos 60 s sem congelamento/CPU runaway;
-- Web Android responsiva por pelo menos 60 s;
-- múltiplas alternâncias Home/Descobrir/Perfil/Configurações;
-- Perfil/Descobrir/Home funcionando com dados reais;
-- instalação/upgrade do APK 9913 em aparelho real;
-- APK responsivo por pelo menos 60 s e navegação real funcionando.
+## 7. Validação
 
-Ver `docs/validation/0.99.2.md`.
+Antes de encerrar Android 0.99.2.3, confirmar separadamente:
+- Verify/build compartilhado;
+- preparo do runtime inline;
+- smoke JavaScript;
+- Gradle;
+- `aapt` com versionName/versionCode corretos;
+- `apksigner`;
+- artifact;
+- GitHub Release + APK + SHA-256;
+- instalação e responsividade em aparelho real.
 
-## 12. Débitos conhecidos
-- surrogate negativo em `media.tmdb_id` permanece como débito legado, com chamadas externas bloqueadas para IDs <=0;
-- advisories históricos Supabase continuam documentados;
-- AGP 8.5.2 vs compileSdk 35 ainda pode emitir warning;
-- o monkey-patch idempotente de `Node.textContent` é correção transitória de compatibilidade; refatoração futura deve tornar os observers legados localmente idempotentes e permitir removê-lo.
+Ver `docs/validation/0.99.2.3.md`.
 
-## 13. Documentos canônicos
-`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `apps/web/README.md`, `apps/android/README.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.2.md`, `docs/validation/0.99.2.md`.
+## 8. Débitos conhecidos
+
+- surrogate negativo em `media.tmdb_id` permanece como débito legado;
+- advisories Supabase históricos continuam documentados;
+- AGP 8.5.2 vs compileSdk 35 pode emitir warning;
+- o monkey-patch idempotente de `Node.textContent` é correção transitória de compatibilidade.
+
+## 9. Documentos canônicos
+
+`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `apps/web/README.md`, `apps/android/README.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.2.3.md`, `docs/validation/0.99.2.3.md`.
