@@ -7,6 +7,7 @@ const pre = await readFile('dist/patch-v101-v0994-nav-pre.js','utf8');
 const runtime = await readFile('dist/patch-v099-v0994-web.js','utf8');
 const auth = await readFile('dist/patch-v103-v0994-session-gate.js','utf8');
 const authority = await readFile('dist/patch-v104-v0994-authority.js','utf8');
+const legacyDiscover = await readFile('dist/patch-v092-v0991.js','utf8');
 const pkg = await readFile('package.json','utf8');
 const sw = await readFile('apps/web/service-worker.js','utf8');
 const runtimeTag = '<script src="/patch-v099-v0994-web.js"></script>';
@@ -67,4 +68,7 @@ assert.match(authority,/\[90,380,820,980,1400,2200\]/,'finite startup authority 
 assert.ok(!authority.includes('new MutationObserver('),'authority must not add another DOM observer loop');
 assert.ok(!authority.includes('setInterval('),'authority must not poll forever');
 
-console.log('WEB_0994_OK auth=guarded renderer=single legacy-startup-race=fenced desktop-navigation=preserved');
+assert.match(legacyDiscover,/movieSeed=watch\.filter\(x=>x\.media_type==='movie'&&Number\(x\.tmdb_id\)>0&&validRec991\(x\)\)\.slice\(0,48\)/,'Discover must consider the full eligible official watchlist pool before hydration');
+assert.ok(!legacyDiscover.includes("movieSeed=watch.filter(x=>x.media_type==='movie').slice(0,16)"),'legacy 16-item movie seed must not remain in emitted 0.99.4');
+
+console.log('WEB_0994_OK auth=guarded renderer=single discover=expanded legacy-startup-race=fenced desktop-navigation=preserved');
