@@ -6,8 +6,8 @@
 
 | Sistema | Versão | Identidade técnica | Estado atual |
 |---|---:|---|---|
-| Web | **0.99.2 FIX2** | package `0.99.2`, cache `ct-web-0.99.2-fix2`, camada final `patch-v096-v0992-unfreeze.js` | FIX2 em `main`; Vercel/Verify devem ser confirmados no commit final |
-| Android | **0.99.2 FIX2** | `versionName 0.99.2`, `versionCode 9913`, bundle `v0.99.2-fix2-unfreeze-991-992-authoritative` | rebuild FIX2 em pipeline; APK 9912 anterior invalidado por travamento |
+| Web | **0.99.2 FIX2** | package `0.99.2`, cache `ct-web-0.99.2-fix2`, camada final `patch-v096-v0992-unfreeze.js` | em `main`; Verify e Vercel `success`; smoke real ainda pendente |
+| Android | **0.99.2 FIX2** | `versionName 0.99.2`, `versionCode 9913`, bundle `v0.99.2-fix2-unfreeze-991-992-authoritative` | build/identidade/assinatura/artifact/Release concluídos; smoke físico pendente |
 | Backend / Supabase | **0.99.2** | RPC `cinetracker_profile_home_dashboard_v0992`, tabela `daily_movie_recommendations_v0992` | migration aplicada em produção |
 | Windows | — | — | não lançado |
 
@@ -27,16 +27,22 @@ A 0.99.2 ainda não foi funcionalmente encerrada. A primeira tentativa e o prime
 ### Causa do travamento corrigida no FIX2
 `MutationObserver` de 0.99.2 e do FIX anterior chamava helpers que reatribuíam `textContent` mesmo sem mudança. A própria atribuição criava novo `childList MutationRecord`, gerando ciclo observer → DOM → observer e saturando a main thread na Web e WebView. O FIX2 transforma atribuições de `textContent` idênticas em no-op antes de os observers atrasados começarem a observar `#app`.
 
+### Evidência Web
+- Verify FIX2 da `main`: success.
+- Vercel do source FIX2: success.
+- Smoke autenticado desktop/mobile continua separado e pendente até teste real.
+
 ## Identidade Android 0.99.2 FIX2
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `0.99.2`;
 - `versionCode`: `9913`;
 - bundle: `v0.99.2-fix2-unfreeze-991-992-authoritative`;
 - workflow: `.github/workflows/build-android-v0992-fix2.yml`;
-- release alvo: `android-v0.99.2`;
-- APK alvo: `cinetracker-android-0.99.2-debug.apk`.
+- release: `android-v0.99.2`;
+- APK: `cinetracker-android-0.99.2-debug.apk`;
+- SHA-256: `8564bacca16bf153ebdb05f64a89337b998d23c02c8edb9a137e2a104725f9d2`.
 
-O `versionCode 9912` foi publicado antes da descoberta do loop de MutationObserver e fica registrado como **defeituoso/invalidado**.
+Run `33032044592` concluiu build, validação de identidade/runtime/assinatura, artifact e substituição da Release. O `versionCode 9912` anterior permanece registrado como **defeituoso/invalidado**.
 
 ## Backend 0.99.2
 Migration: `20260827004500_v0992_home_series_movies.sql`.
