@@ -10,6 +10,7 @@ const profile99='patch-v091-v099-profile-lru.js';
 const release991='patch-v092-v0991.js';
 const release992='patch-v093-v0992.js';
 const compat992='patch-v094-v0992-compat.js';
+const fix992='patch-v095-v0992-fix.js';
 const names=[
   pre98,
   'patch-v085-hotfix15-import-transport.js',
@@ -28,7 +29,8 @@ const names=[
   profile99,
   release991,
   release992,
-  compat992
+  compat992,
+  fix992
 ];
 const targets=[resolve(root,'dist'),resolve(root,'apps/web/dist')];
 
@@ -40,7 +42,7 @@ for(const target of targets){
   html=html.replace(/<script src="\/patch-v081-hotfix12-nav-pre\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v084-hotfix14-real-device\.js"><\/script>/g,'');
   html=html.replace(/<script src="\/patch-v086-hotfix15-import-retry\.js"><\/script>/g,'');
-  for(const name of [pre98,profileName,ui98,compat98,profile99,release991,release992,compat992]){
+  for(const name of [pre98,profileName,ui98,compat98,profile99,release991,release992,compat992,fix992]){
     const tag=`<script src="/${name}"></script>`;
     html=html.split(tag).join('');
   }
@@ -50,11 +52,11 @@ for(const target of targets){
     if(!html.includes(tag))throw new Error(`v0.99.2: ${name} was not injected: ${indexPath}`);
     await copyFile(resolve(root,'apps/web',name),resolve(target,name));
   }
-  const order=['patch-v088-v098-nav-pre.js','patch-v085-hotfix15-import-transport.js','patch-v075-hotfix10-selective.js','patch-v082-hotfix12-picker-guard.js','patch-v083-hotfix13-bingers-semantics.js','patch-v087-hotfix16-import-resilience.js',profileName,ui98,compat98,profile99,release991,release992,compat992];
+  const order=['patch-v088-v098-nav-pre.js','patch-v085-hotfix15-import-transport.js','patch-v075-hotfix10-selective.js','patch-v082-hotfix12-picker-guard.js','patch-v083-hotfix13-bingers-semantics.js','patch-v087-hotfix16-import-resilience.js',profileName,ui98,compat98,profile99,release991,release992,compat992,fix992];
   const pos=order.map(x=>html.indexOf(x));
   if(!pos.every((x,i)=>x>=0&&(i===0||x>pos[i-1])))throw new Error(`v0.99.2: runtime patch order invalid: ${indexPath}`);
   if(html.includes('patch-v086-'+'hotfix15-import-retry.js'))throw new Error(`v0.99.2: legacy retry layer still active: ${indexPath}`);
   await writeFile(indexPath,html,'utf8');
 }
 
-console.log('CineTracker 0.99.2: stable v95/v98 core retained; v0.99.2 Home + compatibility layer emitted last.');
+console.log('CineTracker 0.99.2 FIX: v95/v98 + 0.99.1 + 0.99.2 preserved; authoritative navigation/write/profile compatibility emitted last.');
