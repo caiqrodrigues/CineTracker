@@ -19,7 +19,7 @@ const checks=[
 ['Perfil timeline strict-mode corrigida por binding global',fix.includes("if (!('days' in window)) window.days=[]")&&v991.includes('days=[]')],
 ['escritas pessoais recebem profile_id',fix.includes("['watch_history','episode_progress','media_overrides'].includes(table)")&&fix.includes('v.profile_id=pid')],
 ['media inserts recebem media_kind',fix.includes("table==='media'&&!v.media_kind")&&fix.includes("v.media_kind='movie'")&&fix.includes("v.media_kind=ids.includes(16)")],
-['cabeçalhos Perfil expansíveis recuperados',fix.includes('data.expand992fix')&&fix.includes("['series','Séries']")&&fix.includes("['series-fav','Séries favoritas']")&&fix.includes("['movies','Filmes']")&&fix.includes("['movies-fav','Filmes favoritos']")],
+['cabeçalhos Perfil expansíveis recuperados',fix.includes('dataset.expand992fix')&&fix.includes("['series','Séries']")&&fix.includes("['series-fav','Séries favoritas']")&&fix.includes("['movies','Filmes']")&&fix.includes("['movies-fav','Filmes favoritos']")],
 ['subtela Séries completa no fix',['Em andamento','Não iniciadas / Watchlist','Assistir mais tarde / Watchlist','Em dia','Concluídas'].every(x=>fix.includes(x))],
 ['subtela Filmes e favoritos completa',fix.includes('Assistir a seguir / Watchlist')&&fix.includes('Já vistos')&&fix.includes('Séries favoritas')&&fix.includes('Filmes favoritos')],
 ['Home Séries vertical completo',['Assistir a seguir','Juntando poeira','Em dia','Não Iniciadas / Watchlist','Concluídas'].every(x=>v992.includes(x))],
