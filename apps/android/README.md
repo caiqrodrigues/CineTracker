@@ -1,68 +1,69 @@
-# CineTracker Android — 0.0.99
+# CineTracker Android — 0.99.2
 
 App Android nativo leve baseado em `Activity + WebView`, com runtime CineTracker Web embarcado e inlined no APK.
 
 ## Identidade
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.0.99`;
-- `versionCode`: `997`;
-- bundle: `v0.0.99-profile-lru-v95-core-inline-authoritative`.
+- `versionName`: `0.99.2`;
+- `versionCode`: `9912`;
+- bundle: `v0.99.2-home-series-movies-v95-core-inline-authoritative`;
+- release alvo: `android-v0.99.2`.
 
-## Perfil
+## Home 0.99.2
 
-Android usa a mesma implementação Web 0.0.99 embarcada no APK. Abaixo das estatísticas do Perfil são exibidos quatro carrosséis:
+Android embarca a mesma Home Web 0.99.2:
 
-1. Séries;
-2. Séries favoritas;
-3. Filmes;
-4. Filmes favoritos.
+### Séries
+- histórico recente de episódios oculto acima do ponto inicial, revelado por Pull-to-Reveal/scroll;
+- Assistir a seguir: pendências lançadas com última reprodução em até 30 dias ou novo episódio recém-lançado;
+- Juntando poeira: pendências com mais de 30 dias;
+- Em dia;
+- Não Iniciadas / Watchlist;
+- Concluídas.
 
-Cards usam pôster 2:3, título, progresso, badge de favorito e última atividade. A ordenação segue `last_watched_at DESC`.
+Cards usam layout de linha com pôster 2:3, título, próximo Sxx Exx, progresso assistidos/lançados, faltantes, nome/nota do próximo episódio e botão circular ✓. O quick mark grava histórico e `episode_progress`, atualiza LRU e move a série para Em dia quando não restam episódios lançados.
 
-Cabeçalhos abrem as visões completas:
+### Filmes
+- histórico Vistos oculto acima do ponto inicial;
+- Escolha para Hoje com nota >=8.0, nunca visto, persistência por dia e sem repetição de títulos já recomendados;
+- Assistir a seguir / Watchlist em cards de linha;
+- quick mark grava histórico e `AlreadySeen`.
 
-- Séries: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia e Concluídas;
-- Filmes: Assistir a seguir / Watchlist e Já vistos;
-- Favoritos: grids completos responsivos de 2/3 colunas.
+## Sincronização de lançamentos
 
-O estado é reconsultado após alterações de histórico/progresso/favoritos e ao retornar ao app.
+No primeiro uso do dia, no retorno do app e na atualização do Calendário, séries Em dia/Em andamento com TMDB oficial são reconciliadas. Um novo episódio com `air_date <= hoje` move a série para Assistir a seguir e exibe badge Novo Episódio. IDs TMDB substitutos negativos não são enviados à TMDB.
 
-## Navegação e recursos preservados
+## Reatividade pós-importação
 
-A barra nativa continua com Home, Descobrir, Perfil e Configurações; Histórico não é aba independente. Descobrir, backup ZIP/CSV, picker nativo, Limpar Cache, Atualizar Metadados e importação Bingers permanecem preservados da 0.0.98.
+Abrir Home, alternar Séries/Filmes, retornar ao app ou receber `cinetracker:data-changed` força reconciliação. A conclusão de importação também invalida o cache da Home para refletir os dados Bingers sem refresh manual.
 
 ## Runtime local
 
-`scripts/prepare-android-hotfix2-web.mjs` copia o build Web para os assets Android, transforma scripts em inline e exige a presença final de `patch-v091-v099-profile-lru.js` e `CineTracker • v0.0.99`.
+`scripts/prepare-android-hotfix2-web.mjs` copia o build Web para assets locais, transforma scripts em inline e exige a ordem até `patch-v093-v0992.js`. O runtime principal continua independente de fallback remoto.
 
-## Build e publicação — concluídos
+## Pipeline 0.99.2
 
-Pipeline dedicado: `.github/workflows/build-android-v099.yml`.  
-Run: `33021058734` — **success**.
+Workflow dedicado: `.github/workflows/build-android-v0992.yml`.
 
-Comprovado no pipeline:
+Quando executado na `main`, ele deve:
+- construir e verificar a Web 0.99.2;
+- preparar e validar o runtime inline;
+- executar `gradle assembleDebug`;
+- validar `com.cinetracker.app`, `versionName 0.99.2` e `versionCode 9912` com `aapt`;
+- verificar assinatura com `apksigner`;
+- publicar artifact `cinetracker-android-0.99.2-debug`;
+- publicar Release `android-v0.99.2` com `cinetracker-android-0.99.2-debug.apk` e `v0992-sha256.txt`.
 
-- build Web 0.0.99: success;
-- runtime Android preparado e smoke inline aprovado;
-- `gradle assembleDebug`: BUILD SUCCESSFUL;
-- `aapt`: `com.cinetracker.app`, `0.0.99`, `versionCode 997`;
-- assinatura verificada via `apksigner`;
-- APK: `cinetracker-android-0.0.99-debug.apk`;
-- artifact: `cinetracker-android-0.0.99-debug`, ID `9626549788`;
-- GitHub Release: `android-v0.0.99`, ID `377463898`;
-- checksum: `v099-sha256.txt`;
-- SHA-256 do APK: `c39c08cd51470050f3eac2c444c4d468dcfcb4072230cf9e082def9ab176cf57`.
+Enquanto o pipeline não concluir, build/publicação permanecem explicitamente pendentes em `docs/validation/0.99.2.md`.
 
-O status GitHub `Android 0.0.99` ficou `success — 0.0.99 build and release published`.
+## Recursos preservados
 
-## Validação real ainda pendente
-
-O APK foi compilado, assinado e publicado, mas ainda não está marcado como instalado/testado em aparelho real. Também permanecem pendentes os testes manuais visuais dos carrosséis, LRU e favoritos.
+Perfil 0.99.1, Pra Você, Calendário, episódios ricos, marcação inteligente, cinegrafia do ator, Backup/Importar Dados, Cache, Metadados e Bingers permanecem no runtime. Histórico continua fora da navegação principal.
 
 ## Rodapé
 
-**`CineTracker • v0.0.99`**.
+**`CineTracker • v0.99.2`**.
 
-Release: `docs/releases/0.0.99.md`.  
-Validação: `docs/validation/0.0.99.md`.
+Release: `docs/releases/0.99.2.md`.  
+Validação: `docs/validation/0.99.2.md`.
