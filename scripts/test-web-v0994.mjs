@@ -65,10 +65,14 @@ assert.match(authority,/window\.render=guardedRender/,'legacy global render must
 assert.match(authority,/window\.ct991Navigate=navigateAuthoritative/,'0.99.1 global router must yield to 0.99.4');
 assert.match(authority,/window\.ct0992Navigate=navigateAuthoritative/,'0.99.2 global router must yield to 0.99.4');
 assert.match(authority,/\[90,380,820,980,1400,2200\]/,'finite startup authority repairs missing');
+assert.match(authority,/canonicalReady/,'startup repairs must be conditional on canonical view loss');
 assert.ok(!authority.includes('new MutationObserver('),'authority must not add another DOM observer loop');
 assert.ok(!authority.includes('setInterval('),'authority must not poll forever');
 
-assert.match(legacyDiscover,/movieSeed=watch\.filter\(x=>x\.media_type==='movie'&&Number\(x\.tmdb_id\)>0&&validRec991\(x\)\)\.slice\(0,48\)/,'Discover must consider the full eligible official watchlist pool before hydration');
+assert.match(legacyDiscover,/cinetracker_discovery_exclusions_v0994/,'Discover must use authenticated strict exclusion data');
+assert.match(legacyDiscover,/v107-strict-discovery-exclusion/,'personal recommendation strict exclusion missing');
+assert.match(legacyDiscover,/v107-strict-global-discovery/,'global Discover strict exclusion missing');
+assert.match(legacyDiscover,/original_title/,'Discover must compare original/localized aliases');
 assert.ok(!legacyDiscover.includes("movieSeed=watch.filter(x=>x.media_type==='movie').slice(0,16)"),'legacy 16-item movie seed must not remain in emitted 0.99.4');
 
-console.log('WEB_0994_OK auth=guarded renderer=single discover=expanded legacy-startup-race=fenced desktop-navigation=preserved');
+console.log('WEB_0994_OK auth=guarded renderer=single discover=strict-alias legacy-startup-race=conditional desktop-navigation=preserved');
