@@ -40,18 +40,25 @@ jobs:
           grep -q 'patch-v105-v0994-preload-layout.js' dist/index.html
           grep -q 'patch-v106-v0994-refactor.js' dist/index.html
           grep -q 'patch-v107-v0994-data-ui-fix.js' dist/index.html
+          grep -q 'patch-v108-v0994-pwa-resilience.js' dist/index.html
           test "$(grep -o 'patch-v099-v0994-web.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v103-v0994-session-gate.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v104-v0994-authority.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v107-v0994-data-ui-fix.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v108-v0994-pwa-resilience.js' dist/index.html | wc -l)" -eq 1
           ! grep -q 'patch-v097-v0993-nav-pre.js' dist/index.html
           ! grep -q 'patch-v098-v0993-web.js' dist/index.html
           grep -q 'cinetracker_profile_home_payload_v0994' dist/patch-v099-v0994-web.js
-          grep -q 'web-0.99.4-auth-required-preloaded' dist/patch-v103-v0994-session-gate.js
+          grep -q 'web-0.99.4-auth-required-nonblocking-preload' dist/patch-v103-v0994-session-gate.js
+          grep -q 'void preloadRoute994(target);' dist/patch-v103-v0994-session-gate.js
+          ! grep -q '  await preloadRoute994(target);' dist/patch-v103-v0994-session-gate.js
           grep -q 'v104-single-renderer' dist/patch-v104-v0994-authority.js
           grep -q 'v105-preload-desktop-frame' dist/patch-v105-v0994-preload-layout.js
           grep -q 'v106-visual-rules' dist/patch-v106-v0994-refactor.js
           grep -q 'v107-history-settings-cache' dist/patch-v107-v0994-data-ui-fix.js
+          grep -q 'v108-web-pwa-home-resilience' dist/patch-v108-v0994-pwa-resilience.js
+          grep -q 'Tempo limite ao sincronizar Home' dist/patch-v108-v0994-pwa-resilience.js
+          grep -q 'readStaleHome108' dist/patch-v108-v0994-pwa-resilience.js
           grep -q 'cinetracker_discovery_exclusions_v0994' dist/patch-v092-v0991.js
           grep -q 'order=watched_at.desc&limit=5000' dist/patch-v092-v0991.js
           grep -q 'next_episode_to_air' dist/patch-v092-v0991.js
@@ -59,23 +66,19 @@ jobs:
           grep -q 'fix2-idempotent-dom-mutation-guard' dist/patch-v096-v0992-unfreeze.js
           grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
 
-  android_0994_identity:
+  android_identity_unchanged:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - name: Assert Android 0.99.4 publication identity and bundle builder
+      - name: Assert Android stayed outside Web 0.99.4 correction
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.4'" apps/android/app/build.gradle
-          grep -q 'versionCode 9940' apps/android/app/build.gradle
-          grep -q 'android-v0.99.4-startup-resilient' scripts/prepare-android-v0994.mjs
-          grep -q "const version = '0.99.4'" scripts/prepare-android-v0994.mjs
-          grep -q 'void preloadRoute994(target);' scripts/prepare-android-v0994.mjs
-          grep -q 'window.ct15Navigate = navigate994' scripts/prepare-android-v0994.mjs
-          grep -q 'android:id="@+id/nav_history"' apps/android/app/src/main/res/layout/activity_main.xml
-          grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
-          node --check scripts/prepare-android-v0994.mjs
-          node --check scripts/test-android-v0994.mjs
+          grep -q "versionName '0.99.2.3'" apps/android/app/build.gradle
+          grep -q 'versionCode 9923' apps/android/app/build.gradle
+          grep -q "v0.99.2.3-fix2-unfreeze-authoritative" scripts/prepare-android-hotfix2-web.mjs
+          grep -q "window.__ctAndroidBuild = '0.99.2.3'" scripts/prepare-android-hotfix2-web.mjs
+          test ! -e .github/workflows/build-android-v0994.yml
+          test ! -e scripts/prepare-android-v0994.mjs
+          test ! -e scripts/test-android-v0994.mjs
+          test ! -e ci-status/android-v0994-trigger.txt
