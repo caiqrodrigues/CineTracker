@@ -9,59 +9,73 @@ permissions:
   contents: read
 
 jobs:
-  web_0993:
+  web_0994:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build and verify CineTracker Web 0.99.3
+      - name: Build and verify CineTracker Web 0.99.4
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Assert Web 0.99.3 runtime invariants
+      - name: Assert Web 0.99.4 runtime invariants
         shell: bash
         run: |
           set -euo pipefail
-          grep -q '"version": "0.99.3"' package.json
-          grep -q 'ct-web-0.99.3' dist/service-worker.js
+          grep -q '"version": "0.99.4"' package.json
+          grep -q 'ct-web-0.99.4' dist/service-worker.js
           grep -q 'patch-v092-v0991.js' dist/index.html
           grep -q 'patch-v093-v0992.js' dist/index.html
           grep -q 'patch-v094-v0992-compat.js' dist/index.html
-          grep -q 'patch-v097-v0993-nav-pre.js' dist/index.html
           grep -q 'patch-v095-v0992-fix.js' dist/index.html
           grep -q 'patch-v096-v0992-unfreeze.js' dist/index.html
-          grep -q 'patch-v098-v0993-web.js' dist/index.html
-          test "$(grep -o 'patch-v097-v0993-nav-pre.js' dist/index.html | wc -l)" -eq 1
-          test "$(grep -o 'patch-v098-v0993-web.js' dist/index.html | wc -l)" -eq 1
-          grep -q 'web-0.99.3-navigation-discover-pre' dist/patch-v097-v0993-nav-pre.js
-          grep -q 'web-0.99.3-sidebar-discover-footer' dist/patch-v098-v0993-web.js
-          grep -q 'data-dtab991' dist/patch-v097-v0993-nav-pre.js
-          grep -q 'data-dfilter991' dist/patch-v097-v0993-nav-pre.js
-          grep -q 'purgeHistory993' dist/patch-v098-v0993-web.js
-          grep -q 'pointer-events:auto' dist/patch-v098-v0993-web.js
-          grep -q 'Atualizar recomendações' dist/patch-v098-v0993-web.js
-          grep -q 'Importar / sincronizar dados' dist/patch-v098-v0993-web.js
-          grep -q 'CineTracker • v0.99.3' dist/patch-v098-v0993-web.js
+          grep -q 'patch-v099-v0994-web.js' dist/index.html
+          grep -q 'patch-v101-v0994-nav-pre.js' dist/index.html
+          grep -q 'patch-v103-v0994-session-gate.js' dist/index.html
+          grep -q 'patch-v104-v0994-authority.js' dist/index.html
+          grep -q 'patch-v105-v0994-preload-layout.js' dist/index.html
+          grep -q 'patch-v106-v0994-refactor.js' dist/index.html
+          grep -q 'patch-v107-v0994-data-ui-fix.js' dist/index.html
+          test "$(grep -o 'patch-v099-v0994-web.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v103-v0994-session-gate.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v104-v0994-authority.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v107-v0994-data-ui-fix.js' dist/index.html | wc -l)" -eq 1
+          ! grep -q 'patch-v097-v0993-nav-pre.js' dist/index.html
+          ! grep -q 'patch-v098-v0993-web.js' dist/index.html
+          grep -q 'cinetracker_profile_home_payload_v0994' dist/patch-v099-v0994-web.js
+          grep -q 'web-0.99.4-auth-required-preloaded' dist/patch-v103-v0994-session-gate.js
+          grep -q 'v104-single-renderer' dist/patch-v104-v0994-authority.js
+          grep -q 'v105-preload-desktop-frame' dist/patch-v105-v0994-preload-layout.js
+          grep -q 'v106-visual-rules' dist/patch-v106-v0994-refactor.js
+          grep -q 'v107-data-ui-fix' dist/patch-v107-v0994-data-ui-fix.js
+          grep -q 'cinetracker_discovery_exclusions_v0994' dist/patch-v092-v0991.js
+          grep -q 'order=watched_at.desc&limit=5000' dist/patch-v092-v0991.js
+          grep -q 'next_episode_to_air' dist/patch-v092-v0991.js
+          grep -q 'Gerenciamento de Dados' dist/patch-v106-v0994-refactor.js
           grep -q 'fix2-idempotent-dom-mutation-guard' dist/patch-v096-v0992-unfreeze.js
-          grep -q 'v.profile_id=pid' dist/patch-v095-v0992-fix.js
-          grep -q "table==='media'&&!v.media_kind" dist/patch-v095-v0992-fix.js
-          grep -q 'Histórico oculto · puxe para baixo para revelar' dist/patch-v093-v0992.js
-          grep -q 'Vistos ocultos · puxe para baixo para revelar' dist/patch-v093-v0992.js
           grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
 
-  android_identity_unchanged:
+  android_0994_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Assert Android publication identity was not changed by Web 0.99.3
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Assert Android 0.99.4 publication identity and bundle builder
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.2.3'" apps/android/app/build.gradle
-          grep -q 'versionCode 9923' apps/android/app/build.gradle
-          grep -q "v0.99.2.3-fix2-unfreeze-authoritative" scripts/prepare-android-hotfix2-web.mjs
-          grep -q "window.__ctAndroidBuild = '0.99.2.3'" scripts/prepare-android-hotfix2-web.mjs
+          grep -q "versionName '0.99.4'" apps/android/app/build.gradle
+          grep -q 'versionCode 9940' apps/android/app/build.gradle
+          grep -q 'android-v0.99.4-startup-resilient' scripts/prepare-android-v0994.mjs
+          grep -q "const version = '0.99.4'" scripts/prepare-android-v0994.mjs
+          grep -q 'void preloadRoute994(target);' scripts/prepare-android-v0994.mjs
+          grep -q 'window.ct15Navigate = navigate994' scripts/prepare-android-v0994.mjs
+          grep -q 'android:id="@+id/nav_history"' apps/android/app/src/main/res/layout/activity_main.xml
+          grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
+          node --check scripts/prepare-android-v0994.mjs
+          node --check scripts/test-android-v0994.mjs
