@@ -6,34 +6,37 @@
 
 | Sistema | Versão | Identidade técnica | Estado atual |
 |---|---:|---|---|
-| Web | **0.99.2** | package `0.99.2`, cache `ct-web-0.99.2`, patch final `patch-v095-v0992-fix.js` | FIX no PR #21; aguardando merge/deploy final |
-| Android | **0.99.2** | `versionName 0.99.2`, `versionCode 9912`, bundle `v0.99.2-fix-991-992-authoritative` | FIX no PR #21; aguardando build/release final |
+| Web | **0.99.2 FIX2** | package `0.99.2`, cache `ct-web-0.99.2-fix2`, camada final `patch-v096-v0992-unfreeze.js` | FIX2 em `main`; Vercel/Verify devem ser confirmados no commit final |
+| Android | **0.99.2 FIX2** | `versionName 0.99.2`, `versionCode 9913`, bundle `v0.99.2-fix2-unfreeze-991-992-authoritative` | rebuild FIX2 em pipeline; APK 9912 anterior invalidado por travamento |
 | Backend / Supabase | **0.99.2** | RPC `cinetracker_profile_home_dashboard_v0992`, tabela `daily_movie_recommendations_v0992` | migration aplicada em produção |
 | Windows | — | — | não lançado |
 
-## Por que existe “0.99.2 FIX” sem nova versão
+## Por que continua 0.99.2
+A 0.99.2 ainda não foi funcionalmente encerrada. A primeira tentativa e o primeiro FIX foram invalidados por evidência real de interface quebrada/travada. Portanto a mesma unidade lógica permanece em 0.99.2 até passar smoke funcional. O Android precisou aumentar o `versionCode` porque o APK defeituoso 9912 chegou a ser publicado e não pode ser reutilizado como atualização.
 
-A 0.99.2 anterior ainda não havia sido mergeada/publicada. Evidência visual mostrou que a produção continuava em 0.99.1 e que recursos 0.99.1/0.99.2 estavam quebrados ou não autoritativos. Portanto o trabalho permanece dentro da mesma unidade de release 0.99.2 até o lançamento real.
-
-## Identidade Web 0.99.2
+## Identidade Web 0.99.2 FIX2
 - package: `0.99.2`;
-- Service Worker: `ct-web-0.99.2`;
+- Service Worker: `ct-web-0.99.2-fix2`;
 - camada 0.99.1: `patch-v092-v0991.js`;
 - Home 0.99.2: `patch-v093-v0992.js`;
-- compatibilidade 0.99.2: `patch-v094-v0992-compat.js`;
-- **camada final obrigatória:** `patch-v095-v0992-fix.js`;
-- rodapé: `CineTracker • v0.99.2`.
+- compatibilidade: `patch-v094-v0992-compat.js`;
+- navegação/escritas: `patch-v095-v0992-fix.js`;
+- **anti-freeze final:** `patch-v096-v0992-unfreeze.js`;
+- rodapé visível: `CineTracker • v0.99.2`.
 
-A camada final corrige navegação desktop/mobile, remove duplicações/Histórico legado, corrige o crash `days is not defined`, endurece escritas pessoais com `profile_id`, corrige `media_kind` e recupera expansão completa das seções do Perfil.
+### Causa do travamento corrigida no FIX2
+`MutationObserver` de 0.99.2 e do FIX anterior chamava helpers que reatribuíam `textContent` mesmo sem mudança. A própria atribuição criava novo `childList MutationRecord`, gerando ciclo observer → DOM → observer e saturando a main thread na Web e WebView. O FIX2 transforma atribuições de `textContent` idênticas em no-op antes de os observers atrasados começarem a observar `#app`.
 
-## Identidade Android 0.99.2
+## Identidade Android 0.99.2 FIX2
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `0.99.2`;
-- `versionCode`: `9912`;
-- bundle: `v0.99.2-fix-991-992-authoritative`;
-- workflow: `.github/workflows/build-android-v0992.yml`;
+- `versionCode`: `9913`;
+- bundle: `v0.99.2-fix2-unfreeze-991-992-authoritative`;
+- workflow: `.github/workflows/build-android-v0992-fix2.yml`;
 - release alvo: `android-v0.99.2`;
 - APK alvo: `cinetracker-android-0.99.2-debug.apk`.
+
+O `versionCode 9912` foi publicado antes da descoberta do loop de MutationObserver e fica registrado como **defeituoso/invalidado**.
 
 ## Backend 0.99.2
 Migration: `20260827004500_v0992_home_series_movies.sql`.
@@ -44,7 +47,7 @@ Migration: `20260827004500_v0992_home_series_movies.sql`.
 
 ## Conteúdo consolidado 0.99.1 + 0.99.2
 
-### Perfil / 0.99.1 recuperado
+### Perfil / 0.99.1
 - estatísticas compactas e Tempo Total duplo;
 - timeline temporal com Hoje centralizado e detalhe por data;
 - Séries, Séries favoritas, Filmes e Filmes favoritos;
@@ -75,10 +78,11 @@ Migration: `20260827004500_v0992_home_series_movies.sql`.
 - **0.0.98** — navegação, Histórico absorvido pelo Perfil, backup CSV/ZIP e Descobrir reformulado;
 - **0.0.99** — biblioteca pessoal do Perfil com favoritos e LRU;
 - **0.99.1** — Perfil/timeline/Pra Você/favoritos/filtros e recuperação de recursos v95;
-- **0.99.2 FIX** — consolidação real de 0.99.1 + Home 0.99.2 + correção dos conflitos de runtime observados em vídeo/prints.
+- **0.99.2 FIX** — consolidação 0.99.1 + Home 0.99.2;
+- **0.99.2 FIX2** — correção do congelamento completo por ciclo recursivo de MutationObserver, mantendo a mesma versão lógica e elevando Android para `versionCode 9913`.
 
 ## Regra obrigatória
-Source, CI, deploy Web, publicação APK e teste em aparelho real são estados separados. A versão só é chamada de publicada após evidência correspondente.
+Source, CI, deploy Web, publicação APK e teste em aparelho real são estados separados. A versão só é chamada de funcionalmente concluída após evidência de smoke real.
 
 Release: `docs/releases/0.99.2.md`.  
 Validação: `docs/validation/0.99.2.md`.
