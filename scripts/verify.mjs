@@ -1,19 +1,27 @@
 import { readFile } from 'node:fs/promises';
 const read=p=>readFile(p,'utf8');
-const files=['patch-v061-v091.js','patch-v063-v092.js','patch-v067-v095.js','patch-v074-hotfix1-version.js','patch-v075-hotfix10-selective.js','patch-v078-hotfix11-import-sync.js','patch-v082-hotfix12-picker-guard.js','patch-v083-hotfix13-bingers-semantics.js','patch-v085-hotfix15-import-transport.js','patch-v087-hotfix16-import-resilience.js','patch-v088-v098-nav-pre.js','patch-v089-v098.js','patch-v090-v098-compat.js','patch-v091-v099-profile-lru.js','patch-v092-v0991.js','patch-v093-v0992.js','patch-v094-v0992-compat.js','service-worker.js'];
+const files=['patch-v061-v091.js','patch-v063-v092.js','patch-v067-v095.js','patch-v074-hotfix1-version.js','patch-v075-hotfix10-selective.js','patch-v078-hotfix11-import-sync.js','patch-v082-hotfix12-picker-guard.js','patch-v083-hotfix13-bingers-semantics.js','patch-v085-hotfix15-import-transport.js','patch-v087-hotfix16-import-resilience.js','patch-v088-v098-nav-pre.js','patch-v089-v098.js','patch-v090-v098-compat.js','patch-v091-v099-profile-lru.js','patch-v092-v0991.js','patch-v093-v0992.js','patch-v094-v0992-compat.js','patch-v095-v0992-fix.js','service-worker.js'];
 const src={};for(const f of files){src[f]=await read('apps/web/'+f);try{new Function(src[f])}catch(e){console.error(`ERRO - sintaxe ${f}: ${e.message}`);process.exit(1)}}
 const pkg=await read('package.json'),gradle=await read('apps/android/app/build.gradle'),layout=await read('apps/android/app/src/main/res/layout/activity_main.xml'),selective=await read('scripts/apply-hotfix10-selective.mjs'),prepare=await read('scripts/prepare-android-hotfix2-web.mjs'),android=await read('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java'),backupEdge=await read('supabase/functions/ct-backup-user/index.ts'),bingersEdge=await read('supabase/functions/ct-import-bingers-user/index.ts'),v992Migration=await read('supabase/migrations/20260827004500_v0992_home_series_movies.sql'),devRules=await read('docs/DEVELOPMENT_RULES.md');
-const p91=src['patch-v061-v091.js'],p92=src['patch-v063-v092.js'],v98=src['patch-v089-v098.js'],pre=src['patch-v088-v098-nav-pre.js'],v99=src['patch-v091-v099-profile-lru.js'],v991=src['patch-v092-v0991.js'],v992=src['patch-v093-v0992.js'],v992c=src['patch-v094-v0992-compat.js'],sem=src['patch-v083-hotfix13-bingers-semantics.js'],h16=src['patch-v087-hotfix16-import-resilience.js'],sw=src['service-worker.js'];
-const namesStart=selective.indexOf('const names=['),orderTokens=['pre98',"'patch-v085-hotfix15-import-transport.js'","'patch-v075-hotfix10-selective.js'","'patch-v082-hotfix12-picker-guard.js'","'patch-v083-hotfix13-bingers-semantics.js'","'patch-v087-hotfix16-import-resilience.js'",'profileName','ui98','compat98','profile99','release991','release992','compat992'];let cursor=namesStart,ordered=namesStart>=0;for(const token of orderTokens){const next=selective.indexOf(token,cursor+1);if(next<0){ordered=false;break}cursor=next}
+const p91=src['patch-v061-v091.js'],p92=src['patch-v063-v092.js'],v98=src['patch-v089-v098.js'],pre=src['patch-v088-v098-nav-pre.js'],v99=src['patch-v091-v099-profile-lru.js'],v991=src['patch-v092-v0991.js'],v992=src['patch-v093-v0992.js'],v992c=src['patch-v094-v0992-compat.js'],fix=src['patch-v095-v0992-fix.js'],sem=src['patch-v083-hotfix13-bingers-semantics.js'],h16=src['patch-v087-hotfix16-import-resilience.js'],sw=src['service-worker.js'];
+const namesStart=selective.indexOf('const names=['),orderTokens=['pre98',"'patch-v085-hotfix15-import-transport.js'","'patch-v075-hotfix10-selective.js'","'patch-v082-hotfix12-picker-guard.js'","'patch-v083-hotfix13-bingers-semantics.js'","'patch-v087-hotfix16-import-resilience.js'",'profileName','ui98','compat98','profile99','release991','release992','compat992','fix992'];let cursor=namesStart,ordered=namesStart>=0;for(const token of orderTokens){const next=selective.indexOf(token,cursor+1);if(next<0){ordered=false;break}cursor=next}
 const checks=[
 ['package Web 0.99.2',pkg.includes('"version": "0.99.2"')],
 ['cache Web 0.99.2',sw.includes("ct-web-0.99.2")&&!sw.includes('index.html')],
 ['Android 0.99.2 / code 9912',gradle.includes('versionCode 9912')&&gradle.includes("versionName '0.99.2'")],
 ['Histórico continua fora da navegação Android',layout.includes('nav_history')&&layout.includes('android:visibility="gone"')],
-['Home roteia para camada 0.99.2',pre.includes('ct0992Navigate')&&pre.includes("target === 'home'")],
-['ordem runtime final 0.99.2',ordered&&selective.includes("const compat992='patch-v094-v0992-compat.js'")],
+['pre-nav conhece Home 0.99.2',pre.includes('ct0992Navigate')&&pre.includes("target === 'home'")],
+['fix final carregado por último',ordered&&selective.includes("const fix992='patch-v095-v0992-fix.js'")],
 ['v97 overlay continua removida',!selective.includes("'patch-v068-v097.js'")],
 ['retry legado removido',!selective.includes("'patch-v086-hotfix15-import-retry.js'")],
+['navegação autoritativa Window capture',fix.includes("window.addEventListener('click'")&&fix.includes('e.stopImmediatePropagation()')&&fix.includes('window.ct0992Navigate=navigate;window.ct991Navigate=navigate;window.ct98Navigate=navigate')],
+['nav final somente Home Descobrir Perfil Configurações',fix.includes("['home','⌂ Home','Home']")&&fix.includes("['discover','✦ Descobrir','Descobrir']")&&fix.includes("['profile','◉ Perfil','Perfil']")&&fix.includes("['settings','⚙ Configurações','Config.']")&&!fix.includes("['history'" )],
+['Perfil timeline strict-mode corrigida por binding global',fix.includes("if (!('days' in window)) window.days=[]")&&v991.includes('days=[]')],
+['escritas pessoais recebem profile_id',fix.includes("['watch_history','episode_progress','media_overrides'].includes(table)")&&fix.includes('v.profile_id=pid')],
+['media inserts recebem media_kind',fix.includes("table==='media'&&!v.media_kind")&&fix.includes("v.media_kind='movie'")&&fix.includes("v.media_kind=ids.includes(16)")],
+['cabeçalhos Perfil expansíveis recuperados',fix.includes('data.expand992fix')&&fix.includes("['series','Séries']")&&fix.includes("['series-fav','Séries favoritas']")&&fix.includes("['movies','Filmes']")&&fix.includes("['movies-fav','Filmes favoritos']")],
+['subtela Séries completa no fix',['Em andamento','Não iniciadas / Watchlist','Assistir mais tarde / Watchlist','Em dia','Concluídas'].every(x=>fix.includes(x))],
+['subtela Filmes e favoritos completa',fix.includes('Assistir a seguir / Watchlist')&&fix.includes('Já vistos')&&fix.includes('Séries favoritas')&&fix.includes('Filmes favoritos')],
 ['Home Séries vertical completo',['Assistir a seguir','Juntando poeira','Em dia','Não Iniciadas / Watchlist','Concluídas'].every(x=>v992.includes(x))],
 ['Pull-to-Reveal Séries e Filmes',v992.includes('Histórico oculto · puxe para baixo para revelar')&&v992.includes('Vistos ocultos · puxe para baixo para revelar')&&v992.includes('scrollTop=hist.offsetHeight')],
 ['Filtro 30 dias',v992.includes('daysAgo(x.last_watched_at)<=30')&&v992.includes('daysAgo(x.last_watched_at)>30')],
@@ -29,18 +37,18 @@ const checks=[
 ['Recomendação não repete',v992Migration.includes('unique (profile_id, tmdb_id)')&&v992.includes('used.has(Number(x.id))')],
 ['Daily movie cria media_kind válido',v992c.includes("media_kind:'movie'")&&v992c.includes('markDailyMovie')],
 ['Movie quick mark histórico + AlreadySeen',v992.includes("state:'AlreadySeen'")&&v992.includes('quick-movie-v0.99.2')&&v992c.includes("state:'AlreadySeen'")],
-['Surrogate negativo abre detalhe local',v992c.includes('async function openLocal')&&v992c.includes('Number(m.tmdb_id)>0')&&v992c.includes('Mídia importada sem TMDB oficial')],
+['Surrogate negativo abre detalhe local',v992c.includes('async function openLocal')&&v992c.includes('Mídia importada sem TMDB oficial')&&fix.includes('function openLocal(row)')],
 ['Reatividade pós-import e troca de aba',v992.includes('MutationObserver')&&v992.includes('fetchHome(true)')&&v992.includes('data-home-tab992')],
 ['RPC Home 0.99.2 segura',v992Migration.includes('cinetracker_profile_home_dashboard_v0992')&&v992Migration.includes('security invoker')&&v992Migration.includes('auth.uid()')&&v992Migration.includes('last_season_number')],
 ['RLS recomendação diária',v992Migration.includes('enable row level security')&&v992Migration.includes('profile_id = auth.uid()')],
-['Perfil 0.99.1 preservado',v991.includes('profileBusy991')&&v991.includes('Consumo temporal')&&v99.includes('last_watched_at')],
+['Perfil 0.99.1 preservado',v991.includes('profileBusy991')&&v991.includes('Consumo temporal')&&v991.includes('Tempo p/ séries em dia')&&v99.includes('last_watched_at')],
 ['Pra Você 0.99.1 preservado',v991.includes('Indicação geral da Watchlist')&&v991.includes('100% Novos')&&v991.includes("'vote_average.gte':7.8")],
 ['Episódios ricos e marcação inteligente preservados',p91.includes('ep.still_path')&&p91.includes('ep.overview')&&p91.includes('Você já assistiu aos episódios anteriores')],
 ['Cinegrafia ator preservada',p92.includes('<h2>Filmes</h2>')&&p92.includes('<h2>Séries</h2>')&&p92.includes('ct92-person-carousel')],
 ['Backup preservado',v98.includes('id="ct98-export">Exportar</button>')&&backupEdge.includes("action==='snapshot'")&&backupEdge.includes("action==='restore'")],
 ['Bingers preservado',sem.includes('movie_plays')&&h16.includes('client_run_id')&&bingersEdge.includes('CURSOR_MISMATCH')],
-['Rodapé 0.99.2',v992.includes('CineTracker • v0.99.2')&&v992.includes('window.__ctAndroidBuild=VERSION992')],
-['Android bundle 0.99.2',prepare.includes('v0.99.2-home-series-movies-v95-core-inline-authoritative')&&prepare.includes('patch-v094-v0992-compat.js')&&prepare.includes('__ct0992Compat')],
+['Rodapé 0.99.2 autoritativo',fix.includes('CineTracker • v0.99.2')&&fix.includes('window.__ctAndroidBuild=VERSION')],
+['Android FIX bundle 0.99.2',prepare.includes('v0.99.2-fix-991-992-authoritative')&&prepare.includes('patch-v095-v0992-fix.js')&&prepare.includes('__ct0992FixLoaded')],
 ['Android continua runtime local',android.includes('loadDataWithBaseURL')&&!android.includes('webView.loadUrl(runtimeUrl')],
 ['Regra documental vigente',devRules.includes('Toda atualização ou mudança do CineTracker deve gerar registro no GitHub')&&devRules.includes('Toda tabela nova com dados por usuário')]
 ];
