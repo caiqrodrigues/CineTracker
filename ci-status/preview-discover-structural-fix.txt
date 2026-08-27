@@ -1,0 +1,3 @@
+Preview-only structural repair checkpoint.
+No product version bump. No production release.
+Sidebar History removal + Discover click/filter reactivity + fallback diagnostics.
