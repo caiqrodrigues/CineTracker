@@ -1,7 +1,7 @@
 (() => {
 'use strict';
 if (window.__ctPreviewNavigationButtons) return;
-window.__ctPreviewNavigationButtons = 'web-0.99.2-fix2-buttons-v1';
+window.__ctPreviewNavigationButtons = 'web-0.99.2-fix2-buttons-discover-v2';
 
 const definitions = [
   {
@@ -61,8 +61,46 @@ style.textContent = `
 }
 .mobile-nav button[data-view] .ct-nav-icon{width:19px!important;height:19px!important}
 .mobile-nav button[data-view].active{background:#0d2638!important;border-color:#2f8bc8!important;color:#69bdff!important}
+
+/* Descobrir: mantém pílulas acima de camadas históricas e com hit-area real. */
+.ct991-discover-tabs,#ct991-discover-controls,.ct991-discover-filters{
+  position:relative!important;z-index:240!important;pointer-events:auto!important;isolation:isolate!important;
+}
+.ct991-tab,.ct991-filter{
+  position:relative!important;z-index:241!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important;
+}
+.ct-preview-discover-empty{
+  border:1px dashed #2d5269;border-radius:14px;padding:18px;background:#08131b;color:#b9cedb;
+}
+.ct-preview-discover-empty strong{display:block;color:#edf7fd;margin-bottom:6px}
+.ct-preview-discover-empty p{margin:0 0 12px;line-height:1.5;font-size:12px}
+.ct-preview-discover-empty .actions{display:flex;gap:8px;flex-wrap:wrap}
+.ct-preview-discover-empty button{
+  border:1px solid #315b75;background:#0d2230;color:#eaf7ff;border-radius:10px;padding:8px 11px;cursor:pointer;pointer-events:auto!important;
+}
 `;
 document.head.appendChild(style);
+
+function normalizedText(value) {
+  return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function isHistoryNavigation(element) {
+  const target = String(element?.dataset?.view || element?.dataset?.view99 || element?.dataset?.view991 || '').toLowerCase();
+  if (target === 'history') return true;
+  const href = normalizedText(element?.getAttribute?.('href'));
+  if (href.includes('historico') || href.includes('history')) return true;
+  const text = normalizedText(element?.textContent);
+  return text === 'historico' || text.endsWith(' historico') || text === 'history' || text.endsWith(' history');
+}
+
+function purgeHistory() {
+  document.querySelectorAll('.sidebar .nav,.mobile-nav').forEach(nav => {
+    nav.querySelectorAll('button,a,[data-view],[data-view99],[data-view991]').forEach(element => {
+      if (isHistoryNavigation(element)) element.remove();
+    });
+  });
+}
 
 function currentView() {
   let value = '';
@@ -83,6 +121,7 @@ function expectedText(definition, mobile) {
 
 function enhance(nav, mobile) {
   if (!nav) return;
+  purgeHistory();
   const active = currentView();
   const existing = [...nav.querySelectorAll(':scope > button')];
   const valid = existing.length === definitions.length && existing.every((item, index) => {
@@ -103,9 +142,33 @@ function enhance(nav, mobile) {
   });
 }
 
+function repairDiscoverFallback() {
+  const host = document.querySelector('#ct991-discover-results');
+  if (!host || host.querySelector('.ct-preview-discover-empty')) return;
+  const recommendationRoot = host.querySelector('.ct991-rec');
+  if (!recommendationRoot) return;
+  if (host.querySelector('.ct991-media-card')) return;
+
+  const empties = [...host.querySelectorAll('.ct991-empty')];
+  if (!empties.length) return;
+  const eligibleOnly = empties.every(item => /Nenhum título elegível/i.test(item.textContent || ''));
+  if (!eligibleOnly) return;
+
+  host.innerHTML = `<div class="ct-preview-discover-empty">
+    <strong>Ainda não há dados suficientes para montar o Pra Você.</strong>
+    <p>Atualize as recomendações ou importe/sincronize seu histórico para liberar sugestões personalizadas. As outras abas do Descobrir continuam disponíveis normalmente.</p>
+    <div class="actions">
+      <button type="button" data-preview-refresh-for-you>Atualizar recomendações</button>
+      <button type="button" data-preview-go-settings>Importar / sincronizar dados</button>
+    </div>
+  </div>`;
+}
+
 function enhanceAll() {
+  purgeHistory();
   enhance(document.querySelector('.sidebar .nav'), false);
   enhance(document.querySelector('.mobile-nav'), true);
+  repairDiscoverFallback();
 }
 
 let pending = 0;
