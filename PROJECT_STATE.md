@@ -5,7 +5,7 @@
 **Última atualização:** 2026-08-27  
 **Branch principal:** `main`  
 **Web:** `0.99.2 FIX2`, cache `ct-web-0.99.2-fix2`, anti-freeze final `patch-v096-v0992-unfreeze.js`  
-**Android alvo atual:** `0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative`  
+**Android publicado:** `0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative`  
 **Backend lógico:** `0.99.2`  
 **Windows:** não lançado
 
@@ -31,7 +31,7 @@ A pilha termina em:
 7. `patch-v095-v0992-fix.js`;
 8. `patch-v096-v0992-unfreeze.js`.
 
-A Web permanece em `0.99.2 FIX2`. A publicação Android solicitada usa nova identidade de pacote `0.99.2.3`, mas embarca esse mesmo runtime corrigido.
+A Web permanece em `0.99.2 FIX2`. O APK Android publicado usa identidade `0.99.2.3` e embarca esse mesmo runtime corrigido.
 
 ## 3. Recursos preservados
 
@@ -59,34 +59,35 @@ Migration aplicada: `supabase/migrations/20260827004500_v0992_home_series_movies
 - Vercel/Verify FIX2 já tiveram evidência de success;
 - smoke real continua separado.
 
-## 6. Identidade Android 0.99.2.3
+## 6. Android 0.99.2.3 publicado
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `0.99.2.3`;
 - `versionCode`: `9923`;
 - bundle: `v0.99.2.3-fix2-unfreeze-authoritative`;
 - workflow: `.github/workflows/build-android-v09923.yml`;
+- Verify run `33063626171`: `success`;
+- Build/Release run `33063626179`: `success`;
 - release: `android-v0.99.2.3`;
 - APK: `cinetracker-android-0.99.2.3-debug.apk`;
-- checksum: `v09923-sha256.txt`.
+- SHA-256: `a7fe3bdc069ff418197305bdf3a3d5fd0f06a7928963f62dea5dc20faa4a2853`;
+- checksum file: `v09923-sha256.txt`.
+
+O pipeline confirmou build Web compartilhado, runtime Android inline, smoke JavaScript, Gradle, identidade via `aapt`, assinatura via `apksigner`, artifact e publicação da GitHub Release.
 
 Histórico imediato:
 - `9912`: defeituoso e invalidado por congelamento;
 - `9913`: FIX2 publicado tecnicamente;
-- `9923`: nova identidade `0.99.2.3` solicitada para a correção.
+- `9923`: versão Android `0.99.2.3` publicada com a correção solicitada.
 
-## 7. Validação
+## 7. Validação restante
 
-Antes de encerrar Android 0.99.2.3, confirmar separadamente:
-- Verify/build compartilhado;
-- preparo do runtime inline;
-- smoke JavaScript;
-- Gradle;
-- `aapt` com versionName/versionCode corretos;
-- `apksigner`;
-- artifact;
-- GitHub Release + APK + SHA-256;
-- instalação e responsividade em aparelho real.
+A publicação técnica de Android 0.99.2.3 está concluída. Ainda faltam evidências de aparelho real:
+- instalação/upgrade;
+- responsividade por pelo menos 60 segundos;
+- Home / Descobrir / Perfil / Configurações em múltiplas alternâncias;
+- Perfil sem congelamento;
+- Home Séries/Filmes respondendo com dados reais.
 
 Ver `docs/validation/0.99.2.3.md`.
 
