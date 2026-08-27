@@ -1,65 +1,60 @@
-# CineTracker Android — 0.99.2
+# CineTracker Android — 0.99.2 FIX
 
-App Android nativo leve baseado em `Activity + WebView`, com runtime CineTracker Web embarcado e inlined no APK.
+App Android nativo leve baseado em `Activity + WebView`, com o mesmo runtime CineTracker Web embarcado e inlined no APK.
 
 ## Identidade
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `0.99.2`;
 - `versionCode`: `9912`;
-- bundle: `v0.99.2-home-series-movies-v95-core-inline-authoritative`;
+- bundle obrigatório: `v0.99.2-fix-991-992-authoritative`;
+- patch final obrigatório: `patch-v095-v0992-fix.js`;
 - release alvo: `android-v0.99.2`.
 
-## Home 0.99.2
+A primeira tentativa da 0.99.2 não é tratada como release válida. O APK só pode ser publicado se o runtime interno contiver `__ct0992FixLoaded` e o marker autoritativo acima.
 
-Android embarca a mesma Home Web 0.99.2:
+## Consolidação 0.99.1 + 0.99.2
 
-### Séries
-- histórico recente de episódios oculto acima do ponto inicial, revelado por Pull-to-Reveal/scroll;
-- Assistir a seguir: pendências lançadas com última reprodução em até 30 dias ou novo episódio recém-lançado;
+O runtime embarcado preserva Perfil/Pra Você/filtros/favoritos da 0.99.1 e a Home vertical da 0.99.2. A camada final corrige conflitos de navegação legados, `days is not defined`, inserts pessoais sem `profile_id`, inserts de mídia sem `media_kind`, menu duplicado/Histórico legado e expansão das seções do Perfil.
+
+## Home — Séries
+
+- histórico de episódios oculto acima do ponto inicial e revelado por Pull-to-Reveal;
+- Assistir a seguir: pendências com atividade em até 30 dias ou novo episódio recém-lançado;
 - Juntando poeira: pendências com mais de 30 dias;
 - Em dia;
 - Não Iniciadas / Watchlist;
-- Concluídas.
+- Concluídas;
+- cards em linha com pôster 2:3, próximo S/E, progresso, faltantes, nome/nota do episódio e ✓;
+- quick mark grava histórico + `episode_progress`, atualiza LRU e migra para Em dia quando necessário.
 
-Cards usam layout de linha com pôster 2:3, título, próximo Sxx Exx, progresso assistidos/lançados, faltantes, nome/nota do próximo episódio e botão circular ✓. O quick mark grava histórico e `episode_progress`, atualiza LRU e move a série para Em dia quando não restam episódios lançados.
+## Home — Filmes
 
-### Filmes
-- histórico Vistos oculto acima do ponto inicial;
-- Escolha para Hoje com nota >=8.0, nunca visto, persistência por dia e sem repetição de títulos já recomendados;
-- Assistir a seguir / Watchlist em cards de linha;
-- quick mark grava histórico e `AlreadySeen`.
+- Vistos oculto por Pull-to-Reveal;
+- Escolha para Hoje com nota >=8,0, nunca visto, uma seleção por perfil/data e sem repetição;
+- Assistir a seguir / Watchlist;
+- quick mark grava histórico + `AlreadySeen`.
 
-## Sincronização de lançamentos
+## Sincronização / reatividade
 
-No primeiro uso do dia, no retorno do app e na atualização do Calendário, séries Em dia/Em andamento com TMDB oficial são reconciliadas. Um novo episódio com `air_date <= hoje` move a série para Assistir a seguir e exibe badge Novo Episódio. IDs TMDB substitutos negativos não são enviados à TMDB.
+Abertura, retorno de visibilidade, atualização do Calendário e `cinetracker:data-changed` reconciliam a Home. Novo episódio já lançado move Em dia -> Assistir a seguir. A conclusão de importação invalida os dados locais da Home para refletir o Supabase sem refresh manual.
 
-## Reatividade pós-importação
+## Runtime local e pipeline
 
-Abrir Home, alternar Séries/Filmes, retornar ao app ou receber `cinetracker:data-changed` força reconciliação. A conclusão de importação também invalida o cache da Home para refletir os dados Bingers sem refresh manual.
+`scripts/prepare-android-hotfix2-web.mjs` copia o build Web, converte scripts em inline e exige `patch-v095-v0992-fix.js` por último. `scripts/test-android-inline-hotfix6.mjs` compila todos os scripts inline e valida o marker FIX.
 
-## Runtime local
+Workflow: `.github/workflows/build-android-v0992.yml`.
 
-`scripts/prepare-android-hotfix2-web.mjs` copia o build Web para assets locais, transforma scripts em inline e exige a ordem até `patch-v093-v0992.js`. O runtime principal continua independente de fallback remoto.
+Na `main`, o pipeline deve validar:
+- Web 0.99.2 FIX;
+- bundle `v0.99.2-fix-991-992-authoritative`;
+- `gradle assembleDebug`;
+- `aapt`: package `com.cinetracker.app`, versionName `0.99.2`, versionCode `9912`;
+- `apksigner`;
+- artifact `cinetracker-android-0.99.2-debug`;
+- Release `android-v0.99.2` + APK + `v0992-sha256.txt`.
 
-## Pipeline 0.99.2
-
-Workflow dedicado: `.github/workflows/build-android-v0992.yml`.
-
-Quando executado na `main`, ele deve:
-- construir e verificar a Web 0.99.2;
-- preparar e validar o runtime inline;
-- executar `gradle assembleDebug`;
-- validar `com.cinetracker.app`, `versionName 0.99.2` e `versionCode 9912` com `aapt`;
-- verificar assinatura com `apksigner`;
-- publicar artifact `cinetracker-android-0.99.2-debug`;
-- publicar Release `android-v0.99.2` com `cinetracker-android-0.99.2-debug.apk` e `v0992-sha256.txt`.
-
-Enquanto o pipeline não concluir, build/publicação permanecem explicitamente pendentes em `docs/validation/0.99.2.md`.
-
-## Recursos preservados
-
-Perfil 0.99.1, Pra Você, Calendário, episódios ricos, marcação inteligente, cinegrafia do ator, Backup/Importar Dados, Cache, Metadados e Bingers permanecem no runtime. Histórico continua fora da navegação principal.
+Nenhuma dessas etapas é declarada concluída antes da evidência no workflow.
 
 ## Rodapé
 
