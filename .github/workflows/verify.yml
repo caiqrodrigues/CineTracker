@@ -63,5 +63,5 @@ jobs:
           set -euo pipefail
           grep -q "versionName '0.99.2.3'" apps/android/app/build.gradle
           grep -q 'versionCode 9923' apps/android/app/build.gradle
-          grep -q "window.__ctAndroidBundle = 'v0.99.2.3-fix2-unfreeze-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q "window.__ctAndroidBuild = '0.99.2.3'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "v0.99.2.3-fix2-unfreeze-authoritative" scripts/prepare-android-hotfix2-web.mjs
+          grep -q "window.__ctAndroidBuild = '0.99.2.3'" scripts/prepare-android-hotfix2-web.mjs
