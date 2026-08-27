@@ -28,6 +28,9 @@ Uma unidade lógica de mudança pode exigir vários commits; esses commits perte
 13. Mudanças Web/Android compartilhadas devem manter a mesma release lógica, salvo decisão arquitetural documentada.
 14. Uma versão Android deve aumentar `versionCode`; nunca reutilizar código de versão publicado.
 15. Toda função/RPC nova usada pelo cliente deve documentar escopo/autorização e preferir `SECURITY INVOKER` quando não houver necessidade comprovada de privilégio elevado.
+16. Toda tabela nova com dados por usuário deve possuir estratégia explícita de RLS/policies antes de ser consumida pelo cliente.
+17. Toda automação que altere estados do usuário deve preservar decisões manuais; estados inferidos/automáticos devem usar origem explícita e não apagar `origin='manual'` sem ação intencional do usuário.
+18. Recursos dependentes de data/calendário devem registrar se a execução é client-side, server-side ou agendada; não chamar uma checagem em abertura de aplicativo de cron/background server-side.
 
 ## Fonte de verdade e precedência
 
@@ -40,20 +43,24 @@ Uma unidade lógica de mudança pode exigir vários commits; esses commits perte
 
 A governança foi formalizada no `0.0.97 HOTFIX 18` e continua obrigatória.
 
-Release lógica corrente:
+Release em preparação nesta unidade lógica:
 
-- Web: **0.0.99**, package `0.0.99`, cache `ct-web-0.0.99`;
-- Android: **0.0.99**, `versionCode 997`;
-- Backend lógico: **0.0.99**; Edge Functions mantêm versões de deploy independentes;
+- Web: **0.99.2**, package `0.99.2`, cache `ct-web-0.99.2`;
+- Android: **0.99.2**, `versionCode 9912`;
+- Backend lógico: **0.99.2** com RPC/tabela Home; Edge Functions mantêm versões de deploy independentes;
 - Windows: ainda não lançado.
 
 ## Publicação x versão de código
 
 Estados obrigatoriamente separados:
 
-- **source/current target**: código/documentação em `main`;
+- **source/current target**: código/documentação preparado na branch ou em `main`;
 - **validated**: verificações executadas e aprovadas;
 - **published**: deploy/artifact/Release efetivamente publicados;
 - **device-validated**: instalação/teste em dispositivo real quando aplicável.
 
 Nunca usar “publicado” ou “validado” como sinônimo de “commitado”.
+
+## Fechamento de release
+
+Antes de declarar uma versão concluída, a documentação de validação deve registrar evidência do que realmente ocorreu. Para Web/Android, quando aplicável, conferir separadamente: merge em `main`, Verify, deploy Web, build Android, identidade `aapt`, assinatura, artifact, GitHub Release e checksum. Smoke visual e aparelho real permanecem desmarcados até execução real.
