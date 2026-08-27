@@ -4,7 +4,7 @@
 
 **Última atualização:** 2026-08-27  
 **Branch principal:** `main`  
-**Web alvo:** `0.99.3`, cache `ct-web-0.99.3`, pre-gate `patch-v097-v0993-nav-pre.js`, final `patch-v098-v0993-web.js`  
+**Web publicada tecnicamente:** `0.99.3`, cache `ct-web-0.99.3`, pre-gate `patch-v097-v0993-nav-pre.js`, final `patch-v098-v0993-web.js`  
 **Android publicado:** `0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative`  
 **Backend lógico:** `0.99.2`  
 **Windows:** não lançado
@@ -13,7 +13,7 @@
 
 A 0.99.3 é uma correção exclusiva do navegador Web desktop. O objetivo é recuperar navegação e Descobrir sem desmontar Perfil, Configurações e Home acumulados nas camadas 0.99.1/0.99.2.
 
-A evidência visual mostrou que previews simplificadas não representavam a aplicação real; essas mocks não são fonte de verdade. A release passa a usar apenas o runtime real versionado em `apps/web`.
+A evidência visual mostrou que previews simplificadas não representavam a aplicação real; essas mocks não são fonte de verdade. A release usa apenas o runtime real versionado em `apps/web`.
 
 ## 2. Causa técnica de navegação
 
@@ -77,15 +77,18 @@ Migration atual: `supabase/migrations/20260827004500_v0992_home_series_movies.sq
 - `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, `auth.uid()`;
 - `daily_movie_recommendations_v0992` — RLS, PK perfil/data e unique perfil/TMDB.
 
-## 7. Identidade Web 0.99.3
+## 7. Publicação técnica Web 0.99.3
 
 - package `0.99.3`;
 - cache `ct-web-0.99.3`;
 - rodapé `CineTracker • v0.99.3`;
-- build aplica `scripts/apply-web-v0993.mjs`;
-- smoke automatizado: `scripts/test-web-v0993.mjs`;
-- release: `docs/releases/0.99.3.md`;
-- validação: `docs/validation/0.99.3.md`.
+- commit de publicação validado: `192da4a72c64abe3e8d92df8cd23ebc93b0b675b`;
+- Verify run `33080026311` / #1252: `success`;
+- job Web build/test: `success`;
+- Vercel do commit: `success`;
+- smoke real desktop: pendente.
+
+O run anterior `33079874238` falhou por um check estático que apontava para um asset Android gerado e inexistente no source. O check foi corrigido sem alterar Android; o run sucessor ficou verde.
 
 ## 8. Android permanece 0.99.2.3
 
@@ -99,7 +102,7 @@ A unidade Web 0.99.3 não altera Android.
 
 ## 9. Validação restante
 
-Mesmo após build/Verify/Vercel, ainda é necessário smoke real no navegador PC:
+Ainda é necessário smoke real no navegador PC:
 
 - Home;
 - quatro itens da Sidebar;

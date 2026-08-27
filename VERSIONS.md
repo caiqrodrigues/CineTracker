@@ -6,7 +6,7 @@
 
 | Sistema | Versão | Identidade técnica | Estado atual |
 |---|---:|---|---|
-| Web | **0.99.3** | package `0.99.3`, cache `ct-web-0.99.3`, pre-gate `patch-v097-v0993-nav-pre.js`, final `patch-v098-v0993-web.js` | release Web desktop em publicação; smoke real separado |
+| Web | **0.99.3** | package `0.99.3`, cache `ct-web-0.99.3`, pre-gate `patch-v097-v0993-nav-pre.js`, final `patch-v098-v0993-web.js` | `main`; Verify `33080026311` success; Vercel success; smoke real pendente |
 | Android | **0.99.2.3** | `versionName 0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative` | publicado; não alterado pela Web 0.99.3 |
 | Backend / Supabase | **0.99.2** | RPC `cinetracker_profile_home_dashboard_v0992`, tabela `daily_movie_recommendations_v0992` | migration aplicada; sem mudança na 0.99.3 |
 | Windows | — | — | não lançado |
@@ -24,6 +24,14 @@ Release exclusiva do navegador Web desktop para recuperar navegação e reativid
 - diagnóstico disponível em `window.__ct0993Diagnostics`.
 
 A 0.99.3 preserva `patch-v096-v0992-unfreeze.js` e todos os recursos 0.99.1/0.99.2 necessários.
+
+### Publicação técnica
+
+- commit de publicação validado: `192da4a72c64abe3e8d92df8cd23ebc93b0b675b`;
+- Verify run `33080026311` / #1252: `success`;
+- build/test Web 0.99.3: `success`;
+- Vercel: `success`;
+- smoke real no navegador PC: pendente.
 
 ## Divergência Web / Android
 
