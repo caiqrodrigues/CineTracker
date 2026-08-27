@@ -12,6 +12,9 @@ const authTag = `<script src="/${authName}"></script>`;
 const authorityTag = `<script src="/${authorityName}"></script>`;
 const legacyAnchor = '<script src="/patch-v088-v098-nav-pre.js"></script>';
 const fallbackAnchor = '<script src="/patch-v095-v0992-fix.js"></script>';
+const legacyDiscoverName = 'patch-v092-v0991.js';
+const legacyMovieSeed = "movieSeed=watch.filter(x=>x.media_type==='movie').slice(0,16)";
+const authoritativeMovieSeed = "movieSeed=watch.filter(x=>x.media_type==='movie'&&Number(x.tmdb_id)>0&&validRec991(x)).slice(0,48)";
 const removeTags = [
   preTag,
   finalTag,
@@ -43,6 +46,13 @@ for (const target of targets) {
   if (html.indexOf(authTag) <= html.indexOf(finalTag)) throw new Error(`Web 0.99.4: session gate order invalid: ${indexPath}`);
   if (html.indexOf(authorityTag) <= html.indexOf(authTag)) throw new Error(`Web 0.99.4: authority order invalid: ${indexPath}`);
   await writeFile(indexPath, html, 'utf8');
+
+  const legacyDiscoverPath = resolve(target, legacyDiscoverName);
+  let legacyDiscover = await readFile(legacyDiscoverPath, 'utf8');
+  if (legacyDiscover.includes(legacyMovieSeed)) legacyDiscover = legacyDiscover.replace(legacyMovieSeed, authoritativeMovieSeed);
+  if (!legacyDiscover.includes(authoritativeMovieSeed)) throw new Error(`Web 0.99.4: Discover watchlist seed patch missing: ${legacyDiscoverPath}`);
+  await writeFile(legacyDiscoverPath, legacyDiscover, 'utf8');
+
   for (const name of [preName, finalName, authName, authorityName]) await copyFile(resolve(root, 'apps/web', name), resolve(target, name));
 }
-console.log('CineTracker Web 0.99.4: navigation + session gate + single renderer authority emitted.');
+console.log('CineTracker Web 0.99.4: navigation + auth + single authority + expanded eligible Discover pool emitted.');
