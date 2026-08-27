@@ -22,20 +22,30 @@ jobs:
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Prepare exact Android 0.99.2 embedded runtime
+      - name: Prepare exact Android 0.99.2 FIX embedded runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile and validate every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Assert CineTracker 0.99.2 invariants
+      - name: Assert CineTracker 0.99.2 FIX invariants
         shell: bash
         run: |
           set -euo pipefail
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
+          grep -q 'patch-v092-v0991.js' dist/index.html
           grep -q 'patch-v093-v0992.js' dist/index.html
           grep -q 'patch-v094-v0992-compat.js' dist/index.html
+          grep -q 'patch-v095-v0992-fix.js' dist/index.html
           grep -q '__ct0992Loaded' dist/patch-v093-v0992.js
           grep -q '__ct0992Compat' dist/patch-v094-v0992-compat.js
+          grep -q '__ct0992FixLoaded' dist/patch-v095-v0992-fix.js
+          grep -q 'authoritative-runtime-navigation-profile-writes' dist/patch-v095-v0992-fix.js
+          grep -q "window.ct0992Navigate=navigate;window.ct991Navigate=navigate;window.ct98Navigate=navigate" dist/patch-v095-v0992-fix.js
+          grep -q "window.addEventListener('click'" dist/patch-v095-v0992-fix.js
+          grep -q "if (!('days' in window)) window.days=\[\]" dist/patch-v095-v0992-fix.js
+          grep -q 'v.profile_id=pid' dist/patch-v095-v0992-fix.js
+          grep -q "table==='media'&&!v.media_kind" dist/patch-v095-v0992-fix.js
+          grep -q 'data.expand992fix' dist/patch-v095-v0992-fix.js
           grep -q 'cinetracker_profile_home_dashboard_v0992' dist/patch-v093-v0992.js
           grep -q 'Histórico oculto · puxe para baixo para revelar' dist/patch-v093-v0992.js
           grep -q 'Vistos ocultos · puxe para baixo para revelar' dist/patch-v093-v0992.js
@@ -44,15 +54,14 @@ jobs:
           grep -q 'daily_movie_recommendations_v0992' dist/patch-v093-v0992.js
           grep -q "media_kind:'movie'" dist/patch-v094-v0992-compat.js
           grep -q 'Mídia importada sem TMDB oficial' dist/patch-v094-v0992-compat.js
-          grep -q 'CineTracker • v0.99.2' dist/patch-v093-v0992.js
+          grep -q 'CineTracker • v0.99.2' dist/patch-v095-v0992-fix.js
           grep -q 'ct-web-0.99.2' dist/service-worker.js
           grep -q '"version": "0.99.2"' package.json
           grep -q "versionName '0.99.2'" apps/android/app/build.gradle
           grep -q 'versionCode 9912' apps/android/app/build.gradle
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
-          grep -q "window.__ctAndroidBundle = 'v0.99.2-home-series-movies-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ct0992Loaded' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ct0992Compat' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'v0.99.2-fix-991-992-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ct0992FixLoaded' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'cinetracker_profile_home_dashboard_v0992' supabase/migrations/20260827004500_v0992_home_series_movies.sql
           grep -q 'enable row level security' supabase/migrations/20260827004500_v0992_home_series_movies.sql
