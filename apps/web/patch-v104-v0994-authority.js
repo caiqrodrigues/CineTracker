@@ -2,7 +2,7 @@
 'use strict';
 if (window.__ct0994AuthorityLoaded) return;
 window.__ct0994AuthorityLoaded = true;
-window.__ct0994Authority = 'v104-single-renderer';
+window.__ct0994Authority = 'v104-single-renderer-canonical-aware';
 
 const rawNavigate = window.__ct0994Navigate;
 const rawRender = window.render;
@@ -18,6 +18,13 @@ function currentTarget(){
 }
 function authenticated(){
   try{return Boolean(ctSession?.access_token)}catch{return false}
+}
+function canonicalReady(target=currentTarget()){
+  if(target==='home')return Boolean(document.querySelector('#ct994-home-root'));
+  if(target==='discover')return Boolean(document.querySelector('#ct991-discover-results'));
+  if(target==='profile')return Boolean(document.querySelector('#ct991-profile'));
+  if(target==='settings')return Boolean(document.querySelector('.ct91-settings'));
+  return false;
 }
 function syncVersion(){
   document.querySelectorAll('.ct993-version,.ct992-version,.ct991-version,.ct99-version,.ct98-version,.ct95-version,.ct94-version,.ct93-version,.ct92-version,.ct91-version,.ct90-version,.ct89-version,.ct-version-footer,#ct56-version').forEach(el=>{el.style.display='none'});
@@ -38,6 +45,7 @@ function queueAuthority(target=currentTarget(),delay=0){
 async function navigateAuthoritative(target,options={}){
   target=target==='history'?'profile':target;
   if(!['home','discover','profile','settings'].includes(target))return false;
+  if(options.repair&&canonicalReady(target)){syncVersion();return true}
   if(navigating){queueAuthority(target,30);return true}
   navigating=true;
   try{
@@ -65,7 +73,9 @@ window.ct98Navigate=navigateAuthoritative;
 if(typeof rawRender==='function'&&!rawRender.__ct0994AuthorityWrapped){
   const guardedRender=function(...args){
     if(!authenticated())return rawRender.apply(this,args);
-    queueAuthority(currentTarget(),0);
+    const target=currentTarget();
+    if(canonicalReady(target)){syncVersion();return true}
+    queueAuthority(target,0);
     return true;
   };
   guardedRender.__ct0994AuthorityWrapped=true;
@@ -73,10 +83,10 @@ if(typeof rawRender==='function'&&!rawRender.__ct0994AuthorityWrapped){
   window.render=guardedRender;
 }
 
-/* v0.99.1 and v0.99.2 each contain one delayed startup navigation (320 ms and 760 ms).
-   Reassert the 0.99.4 owner after those finite legacy timers, without MutationObserver/polling. */
+/* Os timers legados de 0.99.1/0.99.2 ainda podem disparar no boot. Só reparamos quando
+   a tela autoritativa realmente deixou de existir; nunca reconstruímos uma tela válida. */
 for(const delay of [90,380,820,980,1400,2200]){
-  setTimeout(()=>{if(authenticated())void navigateAuthoritative(currentTarget(),{repair:true})},delay);
+  setTimeout(()=>{if(authenticated()&&!canonicalReady(currentTarget()))void navigateAuthoritative(currentTarget(),{repair:true})},delay);
 }
 window.addEventListener('cinetracker:auth-state-change',event=>{
   if(event?.detail?.event==='SIGNED_IN')queueAuthority('home',0);
@@ -84,5 +94,6 @@ window.addEventListener('cinetracker:auth-state-change',event=>{
 window.addEventListener('cinetracker:data-changed',()=>{
   if(authenticated())queueAuthority(currentTarget(),80);
 });
+window.__ct0994CanonicalReady=canonicalReady;
 setTimeout(syncVersion,0);
 })();
