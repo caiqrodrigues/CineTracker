@@ -1,72 +1,73 @@
-# CineTracker Web — 0.0.99
+# CineTracker Web — 0.99.2
 
-**Package:** `0.0.99`  
-**Cache:** `ct-web-0.0.99`
+**Package:** `0.99.2`  
+**Cache:** `ct-web-0.99.2`  
+**Patch final:** `patch-v093-v0992.js`
 
-A Web compartilha conta, biblioteca, progresso, Perfil, descoberta, configurações, backup e histórico persistente com Android por meio do Supabase.
+A Web compartilha conta, biblioteca, progresso, Perfil, Descobrir, configurações, backup e histórico persistente com Android por meio do Supabase.
 
-## Runtime
+## Runtime final
 
-A 0.0.99 preserva a pilha 0.0.98 de navegação/Descobrir/Configurações e adiciona `patch-v091-v099-profile-lru.js` como camada final do Perfil.
-
-Ordem final relevante:
-
+Ordem relevante:
 - `patch-v088-v098-nav-pre.js`;
 - stack estável v95 + HOTFIX15/16;
 - `patch-v089-v098.js`;
 - `patch-v090-v098-compat.js`;
-- `patch-v091-v099-profile-lru.js`.
+- `patch-v091-v099-profile-lru.js`;
+- `patch-v092-v0991.js`;
+- `patch-v093-v0992.js`.
 
-## Perfil 0.0.99
+A camada 0.99.2 assume a Home; Perfil, Descobrir e Configurações continuam preservados pelas camadas 0.99.1/0.98.
 
-Logo abaixo das estatísticas principais existem quatro carrosséis horizontais:
+## Home — Séries
 
-- Séries;
-- Séries favoritas;
-- Filmes;
-- Filmes favoritos.
+- viewport vertical contínuo;
+- histórico de episódios oculto acima do ponto inicial e revelado por Pull-to-Reveal/scroll;
+- Assistir a seguir (pendência + <=30 dias);
+- Juntando poeira (>30 dias);
+- Em dia;
+- Não Iniciadas / Watchlist;
+- Concluídas.
 
-Cards usam proporção 2:3, cantos arredondados, pôster, título, progresso, badge `♥` e última atividade. O clique abre detalhes TMDB quando existe ID oficial positivo; surrogate negativo abre detalhe local seguro.
+Cards usam layout em linha, pôster 2:3, título, próximo S/E, progresso assistidos/lançados, faltantes, nome/nota do próximo episódio e ação ✓.
 
-## LRU e atualização reativa
+Quick mark grava `watch_history`, sincroniza `episode_progress`, atualiza detalhes, LRU e estatísticas por meio de `cinetracker:data-changed`.
 
-A ordenação usa `last_watched_at DESC`. A RPC `cinetracker_profile_media_dashboard()` consolida timestamps de `watch_history`, `episode_progress` e `AlreadySeen` de filmes.
+## Release sync
 
-Depois de alterações em histórico, progresso ou overrides, o Perfil refaz a leitura do Supabase. Eventos `cinetracker:data-changed`, retorno de foco/visibilidade e reconciliação periódica mantêm a tela alinhada ao estado central.
+Uma checagem diária atualiza metadados TMDB de séries Em dia/Em andamento. Se um novo episódio já lançou (`air_date <= hoje`) e ainda está pendente, a série vai para Assistir a seguir, recebe InProgress system e badge Novo Episódio. O Calendário força nova checagem.
 
-## Subtelas
+## Home — Filmes
 
-**Séries ›**: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia e Concluídas.  
-**Filmes ›**: Assistir a seguir / Watchlist e Já vistos.  
-**Séries favoritas › / Filmes favoritos ›**: grids completos, 3 colunas em telas maiores e 2 em telas pequenas.
+- histórico Vistos oculto acima do topo;
+- Escolha para Hoje: nota >=8.0, nunca visto, 1 por dia, sem repetição;
+- Assistir a seguir / Watchlist em cards de linha;
+- quick mark grava histórico e `AlreadySeen`.
 
-## Backend relacionado
+A escolha diária é persistida em `daily_movie_recommendations_v0992`.
 
-- migration `20260826234500_v099_profile_media_lru_dashboard.sql`;
-- RPC `cinetracker_profile_media_dashboard()` com `SECURITY INVOKER` e `auth.uid()`.
+## Backend
 
-A RPC expõe progresso, `last_watched_at`, plays, favorito, AddedToWatchlist, WatchLater, InProgress, UpToDate, Completed, não iniciada e já vista.
+- migration `20260827004500_v0992_home_series_movies.sql`;
+- RPC `cinetracker_profile_home_dashboard_v0992()`;
+- tabela RLS `daily_movie_recommendations_v0992`.
+
+## Reatividade pós-importação
+
+Abrir Home, alternar Séries/Filmes, receber `cinetracker:data-changed`, voltar à aba/janela ou concluir uma importação invalida o cache e refaz a leitura central.
 
 ## Recursos preservados
 
-- navegação Home / Descobrir / Perfil / Configurações;
-- Histórico sem aba própria;
-- Descobrir com ordem e filtros 0.0.98;
-- Backup ZIP/CSV com Exportar/Importar;
-- Limpar Cache e Atualizar Metadados;
-- importação Bingers HOTFIX16.
-
-## Build e deploy
-
-- Verify final da 0.0.99: run `33021058624`, **success**;
-- build Web também foi reexecutado com sucesso dentro do pipeline Android `33021058734`;
-- status Vercel do commit funcional `f4261cb944b60c15c01b41989645e8c64468e4ef`: **success — Deployment has completed**.
-
-Smoke autenticado/visual da produção continua separado e não foi marcado como executado.
+- Perfil 0.99.1 com timeline, filtros/layouts, favoritos e métricas extras;
+- Pra Você com 7 posições e Calendário por último;
+- episódios ricos e marcação inteligente;
+- cinegrafia do ator;
+- Backup Exportar/Importar, Cache, Metadados e Bingers resiliente;
+- overlay global v97 continua desativada.
 
 ## Rodapé
 
-**`CineTracker • v0.0.99`**.
+**`CineTracker • v0.99.2`**.
 
-Release: `docs/releases/0.0.99.md`.  
-Validação: `docs/validation/0.0.99.md`.
+Release: `docs/releases/0.99.2.md`.  
+Validação: `docs/validation/0.99.2.md`.
