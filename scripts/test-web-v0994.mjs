@@ -19,12 +19,12 @@ assert.ok(!html.includes('patch-v098-v0993-web.js'),'0.99.3 final layer must not
 assert.ok(!html.includes('patch-v102-v0994-mobile-nav-fix.js'),'broken mobile canonicalizer must not be emitted');
 assert.doesNotThrow(()=>new vm.Script(pre),'0.99.4 pre-gate syntax invalid');
 assert.doesNotThrow(()=>new vm.Script(runtime),'0.99.4 runtime syntax invalid');
-assert.match(pre,/position:fixed!important/,'desktop Sidebar must be physically isolated from content grid');
-assert.match(pre,/left:0!important;top:0!important;bottom:0!important/,'desktop Sidebar fixed bounds missing');
-assert.match(pre,/z-index:2147483000!important/,'desktop Sidebar top stacking guard missing');
+assert.match(pre,/grid-template-columns:180px minmax\(0,1fr\)!important/,'desktop original grid geometry must be preserved');
+assert.match(pre,/position:sticky!important/,'desktop Sidebar must remain in normal layout flow');
+assert.ok(!pre.includes('position:fixed!important'),'desktop Sidebar must not be removed from layout flow');
+assert.match(pre,/z-index:9999!important/,'desktop Sidebar stacking guard missing');
 assert.match(pre,/pointer-events:auto!important/,'desktop pointer-events guard missing');
-assert.match(pre,/margin-left:\$\{SIDEBAR_WIDTH\}px!important/,'desktop content must start after Sidebar');
-assert.match(pre,/width:calc\(100% - \$\{SIDEBAR_WIDTH\}px\)!important/,'desktop content width must exclude Sidebar');
+assert.match(pre,/\.content\{position:relative!important;z-index:1!important/,'desktop content stacking guard missing');
 assert.match(pre,/addEventListener\('pointerdown'/,'Profile/Settings pointerdown capture missing');
 assert.match(pre,/target!=='profile'&&target!=='settings'/,'pointerdown must target Profile and Settings only');
 assert.match(pre,/stopImmediatePropagation/,'legacy click interception guard missing');
@@ -34,4 +34,4 @@ assert.match(runtime,/cinetracker_profile_home_payload_v0994/,'authoritative Hom
 assert.match(runtime,/cinetracker_profile_remaining_v0994/,'remaining-time profile RPC missing');
 assert.ok(!runtime.includes('new MutationObserver('),'0.99.4 runtime must not create DOM observer loops');
 assert.ok(!runtime.includes('setInterval('),'0.99.4 runtime must not create permanent polling loops');
-console.log('WEB_0994_OK desktop-sidebar=fixed pointerdown=profile-settings hit-test=ready');
+console.log('WEB_0994_OK desktop-layout=preserved pointerdown=profile-settings hit-test=ready');
