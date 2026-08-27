@@ -45,7 +45,7 @@ jobs:
           grep -q "if (!('days' in window)) window.days=\[\]" dist/patch-v095-v0992-fix.js
           grep -q 'v.profile_id=pid' dist/patch-v095-v0992-fix.js
           grep -q "table==='media'&&!v.media_kind" dist/patch-v095-v0992-fix.js
-          grep -q 'data.expand992fix' dist/patch-v095-v0992-fix.js
+          grep -q 'dataset.expand992fix' dist/patch-v095-v0992-fix.js
           grep -q 'cinetracker_profile_home_dashboard_v0992' dist/patch-v093-v0992.js
           grep -q 'Histórico oculto · puxe para baixo para revelar' dist/patch-v093-v0992.js
           grep -q 'Vistos ocultos · puxe para baixo para revelar' dist/patch-v093-v0992.js
