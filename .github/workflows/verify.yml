@@ -33,13 +33,17 @@ jobs:
           grep -q "window.__ctAuthRecovery = 'v97-hotfix6-startup'" dist/index.html
           grep -q "window.__ctP0SessionReset = 'hotfix7-once'" dist/index.html
           grep -q 'patch-v093-v0992.js' dist/index.html
+          grep -q 'patch-v094-v0992-compat.js' dist/index.html
           grep -q '__ct0992Loaded' dist/patch-v093-v0992.js
+          grep -q '__ct0992Compat' dist/patch-v094-v0992-compat.js
           grep -q 'cinetracker_profile_home_dashboard_v0992' dist/patch-v093-v0992.js
           grep -q 'Histórico oculto · puxe para baixo para revelar' dist/patch-v093-v0992.js
           grep -q 'Vistos ocultos · puxe para baixo para revelar' dist/patch-v093-v0992.js
           grep -q 'Juntando poeira' dist/patch-v093-v0992.js
           grep -q 'Escolha para Hoje' dist/patch-v093-v0992.js
           grep -q 'daily_movie_recommendations_v0992' dist/patch-v093-v0992.js
+          grep -q "media_kind:'movie'" dist/patch-v094-v0992-compat.js
+          grep -q 'Mídia importada sem TMDB oficial' dist/patch-v094-v0992-compat.js
           grep -q 'CineTracker • v0.99.2' dist/patch-v093-v0992.js
           grep -q 'ct-web-0.99.2' dist/service-worker.js
           grep -q '"version": "0.99.2"' package.json
@@ -48,6 +52,7 @@ jobs:
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
           grep -q "window.__ctAndroidBundle = 'v0.99.2-home-series-movies-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ct0992Loaded' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ct0992Compat' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'cinetracker_profile_home_dashboard_v0992' supabase/migrations/20260827004500_v0992_home_series_movies.sql
           grep -q 'enable row level security' supabase/migrations/20260827004500_v0992_home_series_movies.sql
