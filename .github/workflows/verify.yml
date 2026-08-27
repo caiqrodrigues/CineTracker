@@ -22,11 +22,11 @@ jobs:
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Prepare exact Android 0.99.2 FIX2 embedded runtime
+      - name: Prepare exact Android 0.99.2.3 embedded runtime
         run: node scripts/prepare-android-hotfix2-web.mjs
       - name: Compile and validate every Android inline script
         run: node scripts/test-android-inline-hotfix6.mjs
-      - name: Assert CineTracker 0.99.2 FIX2 invariants
+      - name: Assert Web FIX2 and Android 0.99.2.3 invariants
         shell: bash
         run: |
           set -euo pipefail
@@ -61,10 +61,11 @@ jobs:
           grep -q 'CineTracker • v0.99.2' dist/patch-v095-v0992-fix.js
           grep -q 'ct-web-0.99.2-fix2' dist/service-worker.js
           grep -q '"version": "0.99.2"' package.json
-          grep -q "versionName '0.99.2'" apps/android/app/build.gradle
-          grep -q 'versionCode 9913' apps/android/app/build.gradle
+          grep -q "versionName '0.99.2.3'" apps/android/app/build.gradle
+          grep -q 'versionCode 9923' apps/android/app/build.gradle
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
-          grep -q "window.__ctAndroidBundle = 'v0.99.2-fix2-unfreeze-991-992-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'v0.99.2.3-fix2-unfreeze-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBuild = '0.99.2.3'" apps/android/app/src/main/assets/hotfix5/index.html
           grep -q '__ct0992UnfreezeLoaded' apps/android/app/src/main/assets/hotfix5/index.html
           ! grep -q '__ct97Loaded' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'cinetracker_profile_home_dashboard_v0992' supabase/migrations/20260827004500_v0992_home_series_movies.sql
