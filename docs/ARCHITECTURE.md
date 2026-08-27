@@ -1,131 +1,152 @@
 # CineTracker — Arquitetura atual
 
-**Release lógica em correção:** `0.99.2 FIX2`  
+**Release Web atual:** `0.99.3`  
+**Android publicado:** `0.99.2.3`  
+**Backend lógico:** `0.99.2`  
 **Atualizado em:** 2026-08-27
 
 ## 1. Visão geral
 
-CineTracker compartilha o mesmo domínio entre Web e Android:
+CineTracker possui:
+
 - Web: runtime HTML/JavaScript em `apps/web`;
-- Android: `Activity + WebView` com runtime Web embarcado e inline;
+- Android: `Activity + WebView` com runtime Web embarcado próprio;
 - Supabase: Auth, PostgreSQL, RPCs e Edge Functions;
 - TMDB: metadados/calendário externos;
-- GitHub: fonte de verdade do source, migrations, documentação e CI/CD.
+- GitHub: fonte de verdade de source, migrations, documentação e CI/CD.
 
-## 2. Histórico do FIX e causa do FIX2
+A Web 0.99.3 é uma unidade exclusiva do navegador desktop. O Android permanece publicado em 0.99.2.3 e não é reconstruído por esta release.
 
-Vídeo/prints reais provaram que presença de patches no build não garantia a interface final: produção antiga, handlers legados, sidebar duplicada, Home antiga e Perfil com `days is not defined` já haviam motivado `patch-v095-v0992-fix.js`.
+## 2. Histórico do runtime
 
-Depois da primeira publicação desse FIX, nova evidência real mostrou **Web e APK completamente travados**. A revisão encontrou churn recursivo de DOM:
-- `patch-v093-v0992.js` possui `MutationObserver` que chama `footer()`;
-- `patch-v095-v0992-fix.js` possui outro observer que chama `canonicalFooter()`/`decorateProfileHeaders()`;
-- esses helpers podiam reatribuir o mesmo `textContent`;
-- a escrita substituía o text node e produzia novo `childList MutationRecord`;
-- o observer era acionado novamente, saturando a main thread no browser e na WebView.
+A pilha atual preserva as correções 0.99.1/0.99.2, inclusive:
 
-O FIX2 mantém a release lógica 0.99.2 e adiciona uma camada final idempotente para interromper esse ciclo.
+- Perfil completo e Pra Você;
+- Home Séries/Filmes;
+- hardening de escritas `profile_id`/`media_kind`;
+- anti-freeze `patch-v096-v0992-unfreeze.js`.
 
-## 3. Ordem autoritativa do runtime
+A causa do travamento 0.99.2 foi churn recursivo de `MutationObserver`; o FIX2 transforma escrita idêntica de `Node.textContent` em no-op. Essa compatibilidade permanece ativa na Web 0.99.3.
 
-A base v95 e recuperações estáveis continuam presentes. O final da pilha é:
-1. `patch-v088-v098-nav-pre.js` — gate inicial;
-2. HOTFIX15/16 e core v95 preservado;
+## 3. Causa da falha de navegação Web desktop
+
+`patch-v095-v0992-fix.js` possui listener de clique registrado em `window` no capture phase e usa `stopImmediatePropagation`. Como listeners capture do mesmo alvo respeitam ordem de registro, uma correção carregada depois dessa camada pode nunca receber o evento.
+
+A 0.99.3 resolve a precedência pela ordem de carregamento, sem remover imediatamente o legado:
+
+- `patch-v097-v0993-nav-pre.js` é inserido **antes** de `patch-v095-v0992-fix.js`;
+- `patch-v098-v0993-web.js` é inserido **depois** de `patch-v096-v0992-unfreeze.js`.
+
+## 4. Ordem autoritativa relevante — Web 0.99.3
+
+1. `patch-v088-v098-nav-pre.js`;
+2. core v95 / HOTFIX15/16;
 3. `patch-v089-v098.js` / `patch-v090-v098-compat.js`;
 4. `patch-v091-v099-profile-lru.js`;
-5. `patch-v092-v0991.js` — Perfil/Pra Você/filtros/favoritos;
-6. `patch-v093-v0992.js` — Home vertical Séries/Filmes;
-7. `patch-v094-v0992-compat.js` — detalhe local/recomendação;
-8. `patch-v095-v0992-fix.js` — navegação/escritas/perfil;
-9. **`patch-v096-v0992-unfreeze.js` — camada final anti-freeze FIX2.**
+5. `patch-v092-v0991.js`;
+6. `patch-v093-v0992.js`;
+7. `patch-v094-v0992-compat.js`;
+8. **`patch-v097-v0993-nav-pre.js`**;
+9. `patch-v095-v0992-fix.js`;
+10. `patch-v096-v0992-unfreeze.js`;
+11. **`patch-v098-v0993-web.js`**.
 
-`patch-v068-v097.js` permanece desativado.
-
-## 4. Anti-freeze FIX2
-
-`patch-v096-v0992-unfreeze.js` é carregado antes dos observers atrasados de 250/500 ms começarem a observar `#app`. Ele obtém o descriptor original de `Node.prototype.textContent` e transforma apenas atribuições cujo valor já é exatamente igual ao conteúdo atual em no-op. Escritas que realmente alteram conteúdo continuam delegando ao setter nativo.
-
-Markers: `__ct0992UnfreezeLoaded`, `__ctTextContentIdempotent992` e `fix2-idempotent-dom-mutation-guard`.
-
-O refresh inicial é coalescido por `requestAnimationFrame`. O cache Web foi rotacionado para `ct-web-0.99.2-fix2`.
+O script `scripts/apply-web-v0993.mjs` impõe essa ordem no `dist` e falha o build se o pre-gate ficar depois do FIX ou se a camada final ficar antes do anti-freeze.
 
 ## 5. Navegação final
 
-A camada FIX registra o gate em `window` no capture phase, antes dos listeners antigos de `document`, inclusive os que usam `stopImmediatePropagation`. Ela rebindeia `ct0992Navigate`, `ct991Navigate` e `ct98Navigate` para uma única rota.
+A camada pré-gate 0.99.3 recebe primeiro os cliques e normaliza a rota `history` para `profile`.
 
-Sidebar/mobile-nav devem conter somente:
+Destinos canônicos:
+
 - Home;
 - Descobrir;
 - Perfil;
 - Configurações.
 
-Histórico redireciona ao Perfil e não volta como destino visual.
+`patch-v098-v0993-web.js` remove defensivamente qualquer item Histórico/History recriado por camada antiga e reconcilia desktop/mobile-nav de forma idempotente.
 
-## 6. Hardening das escritas do cliente
+## 6. Descobrir
 
-O wrapper final de `sbApi` corrige contratos legados antes da chamada REST:
-- POST em `watch_history`, `episode_progress` e `media_overrides` recebe `profile_id` do usuário autenticado quando ausente;
-- POST em `media` recebe `media_kind` quando ausente: `movie`, `series` ou `anime` inferido.
+`patch-v092-v0991.js` continua sendo a implementação funcional de Descobrir. A 0.99.3 não cria uma tela paralela; ela corrige a entrega de eventos para os controles reais.
 
-Valores explícitos são preservados e nenhuma credencial privilegiada é introduzida.
+Tabs:
 
-## 7. Perfil consolidado 0.99.1
+- Pra Você;
+- Em Alta;
+- Mais Aguardados;
+- Mais bem avaliados;
+- Calendário.
 
-A camada 0.99.1 continua responsável por estatísticas compactas, Tempo Total duplo, timeline com Hoje centralizado e detalhe por dia, Séries/Séries favoritas/Filmes/Filmes favoritos, filtros de status/layout, favoritos, quatro métricas extras, Pra Você com 7 slots, Calendário por último, episódios ricos, marcação inteligente, ator e Importar Dados.
+Filtros aplicáveis:
 
-O FIX preserva o binding global que elimina `days is not defined` e recupera cabeçalhos expansíveis.
+- Geral;
+- Séries;
+- Filmes.
 
-## 8. Home 0.99.2 — Séries
+O pre-gate executa explicitamente o `onclick` já vinculado pela camada 0.99.1. Caso o DOM tenha acabado de ser reconstruído, há retries curtos em 0/60/180 ms.
 
-Viewport vertical com histórico recente acima do ponto inicial para Pull-to-Reveal. Classificação:
-- Assistir a seguir: pendência lançada + atividade <=30 dias, ou novo episódio;
-- Juntando poeira: pendência + atividade >30 dias;
-- Em dia: zero pendências lançadas, iniciada e não concluída;
-- Não Iniciadas / Watchlist: zero episódios vistos;
-- Concluídas: `Completed`.
+A camada final protege hit-area com `pointer-events:auto`/z-index local. Quando Pra Você retorna somente o estado rígido “Nenhum título elegível”, a UI mostra fallback para atualizar recomendações ou importar/sincronizar dados.
 
-Cards em linha usam pôster 2:3, próximo S/E, assistidos/lançados, faltantes, nome/nota e ✓. Quick mark grava histórico/progresso, atualiza `last_watched_at`, avança episódio e reordena LRU.
+## 7. Diagnóstico Web
 
-## 9. Sincronização de lançamentos
+A 0.99.3 registra:
 
-`syncReleaseStates()` executa no primeiro uso do dia, retorno de visibilidade e Calendário. Para séries com TMDB oficial positivo, calcula episódios lançados. Novo episódio move UpToDate -> InProgress/Assistir a seguir; zerar pendências retorna UpToDate.
+- cliques de navegação;
+- cliques de tabs/filtros;
+- `window.error`;
+- `unhandledrejection`.
 
-Não há cron server-side nesta versão. IDs TMDB <=0 não são enviados ao proxy.
+Os últimos eventos ficam em `window.__ct0993Diagnostics`. O diagnóstico não envia telemetria externa e serve apenas para inspeção local do navegador.
 
-## 10. Home 0.99.2 — Filmes
+## 8. Anti-freeze e observers
 
-- Vistos oculto por Pull-to-Reveal;
-- Escolha para Hoje com nota >=8,0, nunca visto e sem repetição;
-- Assistir a seguir / Watchlist;
-- quick mark grava `watch_history` + `AlreadySeen`.
+`patch-v096-v0992-unfreeze.js` continua ativo. A nova reconciliação 0.99.3 também evita escritas quando o estado desejado já está presente:
 
-A seleção diária usa `daily_movie_recommendations_v0992`.
+- nav só é reconstruída quando assinatura/estrutura diverge;
+- rodapé só recebe `textContent` se o valor for diferente;
+- fallback só substitui a área quando todos os slots estão realmente no estado vazio elegível;
+- observer usa debounce.
+
+## 9. Perfil e Home preservados
+
+Perfil 0.99.1 continua responsável por estatísticas, timeline, seções de séries/filmes e expansões. Home 0.99.2 continua responsável por Pull-to-Reveal, Assistir a seguir, Juntando poeira, Em dia, Não Iniciadas/Watchlist, Concluídas, Escolha para Hoje, quick mark, LRU e sincronização de lançamentos.
+
+## 10. Escritas do cliente
+
+`patch-v095-v0992-fix.js` continua fazendo hardening de POSTs legados:
+
+- `watch_history`, `episode_progress`, `media_overrides`: injeta `profile_id` autenticado quando ausente;
+- `media`: injeta `media_kind` quando ausente.
+
+Nenhuma alteração de Auth/RLS/schema foi introduzida na 0.99.3.
 
 ## 11. Backend
 
-Migration: `20260827004500_v0992_home_series_movies.sql`.
+Sem mudança na 0.99.3.
 
-`cinetracker_profile_home_dashboard_v0992()` é `SECURITY INVOKER`, usa `auth.uid()` e consolida mídia, histórico, progresso, estados, LRU e último S/E.
+Migration atual: `20260827004500_v0992_home_series_movies.sql`.
 
-`daily_movie_recommendations_v0992` tem RLS, escopo `profile_id = auth.uid()`, PK perfil/data e unique perfil/TMDB.
+- `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, `auth.uid()`;
+- `daily_movie_recommendations_v0992` — RLS por `profile_id = auth.uid()`.
 
-## 12. Android FIX2
+## 12. Android
 
-- `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.2`;
-- `versionCode`: **9913**;
-- bundle: `v0.99.2-fix2-unfreeze-991-992-authoritative`;
-- workflow: `.github/workflows/build-android-v0992-fix2.yml`.
+Android permanece exatamente na publicação:
 
-O APK 9912 anterior foi invalidado pelo travamento. O preparo Android exige v096 por último e o smoke inline compila todos os scripts embutidos. O run `33032044592` validou build, identidade, marker FIX2, assinatura, artifact e substituição da Release.
+- `versionName 0.99.2.3`;
+- `versionCode 9923`;
+- bundle `v0.99.2.3-fix2-unfreeze-authoritative`.
 
-## 13. Reatividade
+A workflow geral da Web 0.99.3 apenas verifica estaticamente que essa identidade não mudou; não prepara nem republica APK.
 
-Home revalida ao abrir, alternar Séries/Filmes, receber `cinetracker:data-changed`, voltar à visibilidade e detectar importação concluída. Reconciliações que escrevem DOM devem ser idempotentes para não produzir MutationRecords sem mudança semântica.
+## 13. Reatividade e validação
 
-## 14. Débito legado
+Source, build, Verify, deploy e smoke real são estados separados. `scripts/test-web-v0993.mjs` testa ordem das camadas e execução dos handlers em ambiente JavaScript simulado. O fechamento funcional exige navegação real no browser desktop e responsividade por pelo menos 60 segundos.
 
-Surrogate negativo ainda existe em `media.tmdb_id` para parte da importação. Caminhos recentes evitam chamadas TMDB com IDs <=0; separar ID interno de TMDB oficial continua recomendado.
+## 14. Débitos
 
-## 15. Versionamento e validação
-
-Toda alteração segue `docs/DEVELOPMENT_RULES.md`. Source, CI, deploy, APK publicado e smoke real são estados independentes. A 0.99.2 FIX2 só será funcionalmente encerrada depois de smoke real provar responsividade da Web e do APK 9913.
+- arquitetura em patches permanece complexa e deve ser consolidada futuramente;
+- monkey-patch global de `Node.textContent` continua transitório;
+- surrogate TMDB negativo permanece débito legado;
+- advisories Supabase históricos permanecem documentados em `docs/SECURITY.md`.
