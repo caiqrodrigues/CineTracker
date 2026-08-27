@@ -24,7 +24,7 @@ jobs:
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
         shell: bash
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"pending","context":"Android 0.99.2","description":"Building CineTracker Android 0.99.2"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"pending","context":"Android 0.99.2","description":"Building CineTracker Android 0.99.2 FIX"}'
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
       - uses: actions/setup-java@v5
@@ -42,7 +42,7 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build and verify Web 0.99.2 runtime
+      - name: Build and verify Web 0.99.2 FIX runtime
         shell: bash
         run: |
           set -euo pipefail
@@ -52,18 +52,18 @@ jobs:
           node scripts/test-hotfix10-native-bridge.mjs
           grep -q '__ct0992Loaded' dist/patch-v093-v0992.js
           grep -q '__ct0992Compat' dist/patch-v094-v0992-compat.js
-          grep -q "media_kind:'movie'" dist/patch-v094-v0992-compat.js
+          grep -q '__ct0992FixLoaded' dist/patch-v095-v0992-fix.js
+          grep -q 'authoritative-runtime-navigation-profile-writes' dist/patch-v095-v0992-fix.js
           grep -q 'cinetracker_profile_home_dashboard_v0992' dist/patch-v093-v0992.js
-          grep -q 'CineTracker • v0.99.2' dist/patch-v093-v0992.js
-      - name: Prepare exact embedded Android 0.99.2 runtime
+          grep -q 'CineTracker • v0.99.2' dist/patch-v095-v0992-fix.js
+      - name: Prepare exact embedded Android 0.99.2 FIX runtime
         shell: bash
         run: |
           set -euo pipefail
           node scripts/prepare-android-hotfix2-web.mjs
           node scripts/test-android-inline-hotfix6.mjs
-          grep -q "window.__ctAndroidBundle = 'v0.99.2-home-series-movies-v95-core-inline-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ct0992Loaded' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -q '__ct0992Compat' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBundle = 'v0.99.2-fix-991-992-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ct0992FixLoaded' apps/android/app/src/main/assets/hotfix5/index.html
           grep -q 'CineTracker • v0.99.2' apps/android/app/src/main/assets/hotfix5/index.html
       - name: Build debug Android 0.99.2 APK
         working-directory: apps/android
@@ -79,9 +79,9 @@ jobs:
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           unzip -l "$OUT" | grep -q 'assets/hotfix5/index.html'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'v0.99.2-home-series-movies-v95-core-inline-authoritative'"
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct0992Loaded'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct0992Compat'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'v0.99.2-fix-991-992-authoritative'"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct0992FixLoaded'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'authoritative-runtime-navigation-profile-writes'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'CineTracker • v0.99.2'
           PACKAGE="$($AAPT dump badging "$OUT" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
           VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
@@ -112,10 +112,10 @@ jobs:
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
         shell: bash
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android 0.99.2","description":"0.99.2 build and release published"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"success","context":"Android 0.99.2","description":"0.99.2 FIX build and release published"}'
       - name: Mark Android 0.99.2 build failure
         if: failure()
         env: { GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
         shell: bash
         run: |
-          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android 0.99.2","description":"0.99.2 build failed"}'
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }}" -d '{"state":"failure","context":"Android 0.99.2","description":"0.99.2 FIX build failed"}'
