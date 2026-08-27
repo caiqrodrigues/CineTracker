@@ -13,12 +13,12 @@ function replaceRange(source,startMarker,endMarker,replacement,label){
   return source.slice(0,start)+replacement+'\n'+source.slice(end);
 }
 
-const recommendation=`function normBlocked991(x){return String(x||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
+function normBlocked991(x){return String(x||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
 async function discoveryBlocker991(){
   let ex={};try{ex=await sbRpc('cinetracker_discovery_exclusions_v0994',{})||{}}catch{}
-  const ids=new Set();for(const id of ex.movie_ids||[])ids.add(\`movie:\${Number(id)}\`);for(const id of ex.tv_ids||[])ids.add(\`tv:\${Number(id)}\`);
-  const aliases=new Set();for(const a of ex.aliases||[]){const type=a.media_type==='movie'?'movie':'tv',year=Number(a.release_year||0);for(const value of [a.title,a.localized_title,a.localized_name,a.original_title,a.original_name]){const n=normBlocked991(value);if(n)aliases.add(\`\${type}:\${year}:\${n}\`)}}
-  const isBlocked=x=>{const type=x.media_type==='movie'?'movie':'tv',id=Number(x.id||x.tmdb_id||0);if(id>0&&ids.has(\`\${type}:\${id}\`))return true;const year=year991(x);for(const value of [x.title,x.name,x.original_title,x.original_name,x.raw_tmdb?.title,x.raw_tmdb?.name,x.raw_tmdb?.original_title,x.raw_tmdb?.original_name]){const n=normBlocked991(value);if(n&&aliases.has(\`\${type}:\${year}:\${n}\`))return true}return false};
+  const ids=new Set();for(const id of ex.movie_ids||[])ids.add(`movie:${Number(id)}`);for(const id of ex.tv_ids||[])ids.add(`tv:${Number(id)}`);
+  const aliases=new Set();for(const a of ex.aliases||[]){const type=a.media_type==='movie'?'movie':'tv',year=Number(a.release_year||0);for(const value of [a.title,a.localized_title,a.localized_name,a.original_title,a.original_name]){const n=normBlocked991(value);if(n)aliases.add(`${type}:${year}:${n}`)}}
+  const isBlocked=x=>{const type=x.media_type==='movie'?'movie':'tv',id=Number(x.id||x.tmdb_id||0);if(id>0&&ids.has(`${type}:${id}`))return true;const year=year991(x);for(const value of [x.title,x.name,x.original_title,x.original_name,x.raw_tmdb?.title,x.raw_tmdb?.name,x.raw_tmdb?.original_title,x.raw_tmdb?.original_name]){const n=normBlocked991(value);if(n&&aliases.has(`${type}:${year}:${n}`))return true}return false};
   return{isBlocked,ids,aliases};
 }
 async function recommendationData991(){
@@ -31,8 +31,8 @@ async function recommendationData991(){
   const seriesSeed=personal.filter(x=>x.media_type==='tv'&&!isAnime991(x)).slice(0,64);
   const animeSeed=personal.filter(x=>x.media_type==='tv'&&isAnime991(x)).slice(0,64);
   const hydrated={movie:await hydrateWatch991(movieSeed,8),tv:await hydrateWatch991(seriesSeed,8),anime:await hydrateWatch991(animeSeed,8)};
-  const used=new Set(),take=rows=>{const x=(rows||[]).find(y=>Number(y.id)>0&&!used.has(\`\${y.media_type}:\${Number(y.id)}\`)&&!blocker.isBlocked(y));if(x)used.add(\`\${x.media_type}:\${Number(x.id)}\`);return x||null};
-  const takePersonal=rows=>{const x=(rows||[]).find(y=>Number(y.id)>0&&!used.has(\`\${y.media_type}:\${Number(y.id)}\`));if(x)used.add(\`\${x.media_type}:\${Number(x.id)}\`);return x||null};
+  const used=new Set(),take=rows=>{const x=(rows||[]).find(y=>Number(y.id)>0&&!used.has(`${y.media_type}:${Number(y.id)}`)&&!blocker.isBlocked(y));if(x)used.add(`${x.media_type}:${Number(x.id)}`);return x||null};
+  const takePersonal=rows=>{const x=(rows||[]).find(y=>Number(y.id)>0&&!used.has(`${y.media_type}:${Number(y.id)}`));if(x)used.add(`${x.media_type}:${Number(x.id)}`);return x||null};
   const fresh={movie:[],tv:[],anime:[]};
   const [mp1,mp2,tp1,tp2,ap1,ap2]=await Promise.all([
     api991('/discover/movie',{sort_by:'popularity.desc',include_adult:false,page:1}),
@@ -54,9 +54,8 @@ async function recommendationData991(){
   if(!daily)daily=take([...fresh.movie,...fresh.tv,...fresh.anime]);
   if(!fm)fm=take(fresh.movie);if(!ft)ft=take(fresh.tv);if(!fa)fa=take(fresh.anime);
   return{daily,wm,wt,wa,fm,ft,fa};
-}`;
-
-const mixed=`async function mixedRows991(kind){
+}
+async function mixedRows991(kind){
   /* v107-strict-global-discovery */
   if(!dashboard991.length)await fetchDashboard991();
   const blocker=await discoveryBlocker991(),f=discover991.filter,j=[];
@@ -74,9 +73,8 @@ const mixed=`async function mixedRows991(kind){
   if(kind==='trending')return clean.sort((a,b)=>Number(b.popularity||0)-Number(a.popularity||0));
   if(kind==='anticipated')return clean.sort((a,b)=>String(a.release_date||a.first_air_date||'9999').localeCompare(String(b.release_date||b.first_air_date||'9999')));
   return clean.sort((a,b)=>score991(b)-score991(a));
-}`;
-
-const calendar=`async function loadCalendar991(){
+}
+async function loadCalendar991(){
   /* v107-calendar-fast-stable */
   const host=$991('#ct991-discover-results'),controls=$991('#ct991-discover-controls');if(!host||!controls)return;
   controls.innerHTML=discoverFilters991(true);bindDiscoverFilters991();host.innerHTML='<div class="ct991-empty">Sincronizando calendário oficial…</div>';
@@ -94,9 +92,8 @@ const calendar=`async function loadCalendar991(){
     if(discover991.tab!=='calendar')return;
     host.innerHTML=`<div class="ct991-calendar">${Object.entries(groups).sort(([da],[db])=>da.localeCompare(db)).map(([day,list])=>`<section class="ct991-calday"><h3>${new Date(day+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})}</h3><div class="ct991-calrow">${list.map(mediaCard991).join('')}</div></section>`).join('')||'<div class="ct991-empty">Nenhum lançamento ou próximo episódio encontrado nos próximos 45 dias.</div>'}</div>`;bindMedia991(host);
   }catch(e){if(discover991.tab==='calendar')host.innerHTML=`<div class="ct991-empty">Falha ao carregar calendário: ${esc991(e?.message||e)}</div>`}
-}`;
-
-const renderDiscover=`function renderDiscover991(){
+}
+function renderDiscover991(){
   /* v107-preserve-discover-state */
   setView991('discover');
   if(!['foryou','trending','anticipated','top','calendar'].includes(discover991.tab))discover991.tab='foryou';
@@ -105,7 +102,12 @@ const renderDiscover=`function renderDiscover991(){
   app.innerHTML=shell991('Descobrir','Recomendações e lançamentos com Pra Você como entrada padrão.',`<div class="ct991-discover-tabs">${discoverTabs991.map(([k,l])=>`<button class="ct991-tab ${k===discover991.tab?'active':''}" data-dtab991="${k}">${l}</button>`).join('')}</div><div id="ct991-discover-controls"></div><div id="ct991-discover-results"></div>`,'discover');
   $$991('[data-dtab991]',app).forEach(b=>b.onclick=()=>{discover991.tab=b.dataset.dtab991;discover991.filter='all';void loadDiscover991()});
   footer991();void fetchDashboard991().then(()=>loadDiscover991());return true;
-}`;
+}
+
+const recommendation=[normBlocked991,discoveryBlocker991,recommendationData991].map(fn=>fn.toString()).join('\n');
+const mixed=mixedRows991.toString();
+const calendar=loadCalendar991.toString();
+const renderDiscover=renderDiscover991.toString();
 
 for(const target of targets){
   const indexPath=resolve(target,'index.html');let html=await readFile(indexPath,'utf8');html=html.split(layerTag).join('');
