@@ -2,6 +2,60 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do HOTFIX18, toda nova unidade lógica de mudança exige versão e registro completo conforme `docs/DEVELOPMENT_RULES.md`.
 
+## 0.99.2 — 2026-08-26
+
+### Home / Séries
+- Criada camada autoritativa `patch-v093-v0992.js` para Web e runtime Android embarcado.
+- Home de Séries passa a usar lista vertical contínua com histórico de episódios oculto acima do ponto inicial e revelado por Pull-to-Reveal/scroll superior.
+- Ordem oficial: Assistir a seguir, Juntando poeira, Em dia, Não Iniciadas / Watchlist e Concluídas.
+- Assistir a seguir usa séries iniciadas com pendências lançadas e última atividade em até 30 dias; Juntando poeira usa mais de 30 dias.
+- Cards em linha usam pôster 2:3, título, próximo Sxx Exx, progresso assistidos/lançados, faltantes, nome e nota do próximo episódio e ação circular ✓.
+- Quick mark grava `watch_history`, sincroniza `episode_progress`, atualiza o marcador de detalhe quando presente, avança o próximo episódio e reordena por `last_watched_at DESC`.
+- Ao zerar pendências lançadas, a série migra para Em dia.
+
+### Sincronização de lançamentos
+- Adicionada checagem diária de metadados TMDB para séries Em dia/Em andamento.
+- A checagem roda no primeiro uso do dia, retorno de visibilidade e atualização do Calendário.
+- Quando um novo episódio com `air_date <= hoje` aparece, a série sai de UpToDate, recebe InProgress system, vai para Assistir a seguir e recebe badge Novo Episódio.
+- IDs TMDB substitutos negativos continuam bloqueados para chamadas externas.
+
+### Home / Filmes
+- Histórico Vistos passa a ficar oculto acima do ponto inicial e é revelado por Pull-to-Reveal.
+- Adicionada Escolha para Hoje com 1 filme por data, nota >=8.0, nunca visto e sem repetição por perfil/TMDB.
+- Criada persistência `daily_movie_recommendations_v0992` com RLS e unicidade por perfil/TMDB.
+- Assistir a seguir / Watchlist exibe pôster, ano, duração, sinopse curta e ação ✓.
+- Quick mark grava histórico e `AlreadySeen` com timestamp atual.
+
+### Backend
+- Migration `20260827004500_v0992_home_series_movies.sql` aplicada ao Supabase.
+- Criada RPC `cinetracker_profile_home_dashboard_v0992()` como `SECURITY INVOKER` e escopo `auth.uid()`.
+- RPC expõe último S/E assistido, `last_watched_at`, plays, estados, metadados e progresso necessários à Home.
+- Nova tabela de recomendação diária possui RLS select/insert por `profile_id = auth.uid()`.
+
+### Reatividade / importação
+- Home força nova leitura ao abrir e ao alternar Séries/Filmes.
+- `cinetracker:data-changed`, retorno de visibilidade e conclusão visual de importação invalidam o cache da Home.
+- Dados Bingers recém-importados passam a aparecer na Home sem refresh manual ao retornar/alternar a aba.
+
+### Versionamento / CI
+- Web: package `0.99.2`, cache `ct-web-0.99.2`, rodapé `CineTracker • v0.99.2`.
+- Android: `versionName 0.99.2`, `versionCode 9912`, bundle `v0.99.2-home-series-movies-v95-core-inline-authoritative`.
+- Criado workflow `build-android-v0992.yml`, release alvo `android-v0.99.2` e novos invariantes de Verify/inline smoke.
+- Criados `docs/releases/0.99.2.md` e `docs/validation/0.99.2.md`.
+
+## 0.99.1 — 2026-08-26
+
+### Estabilidade / Perfil / Descobrir
+- Perfil estabilizado com carregamento single-flight e sem polling periódico na camada final.
+- Descobrir passa sempre a abrir em Pra Você.
+- Perfil recebe Tempo Total em largura dupla, timeline de 7 dias com Hoje centralizado, detalhe por dia, filtros de status/layout, favoritos e quatro métricas extras.
+- Pra Você restaurado com exatamente 7 posições, ano >1990 e nota >=7.8.
+- Calendário permanece por último com filtros Geral/Séries/Filmes.
+- Cards ricos de episódios, confirmação inteligente de episódios anteriores e cinegrafia do ator em dois carrosséis permanecem preservados.
+- Bingers é organizado dentro de Importar Dados.
+- Criada RPC `cinetracker_profile_media_dashboard_v0991()` e versionamento Web/Android `0.99.1` / `versionCode 9911`.
+- Release Android `android-v0.99.1` publicada após CI e build aprovados.
+
 ## 0.0.99 — 2026-08-26
 
 ### Perfil / biblioteca pessoal
