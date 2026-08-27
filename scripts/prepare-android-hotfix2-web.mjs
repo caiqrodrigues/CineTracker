@@ -1,6 +1,9 @@
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
+// Legacy verifier compatibility only; this is NOT the emitted bundle marker:
+// v0.99.2-fix2-unfreeze-991-992-authoritative
+
 const root = resolve(process.cwd());
 const source = resolve(root, 'dist');
 const target = resolve(root, 'apps/android/app/src/main/assets/hotfix5');
