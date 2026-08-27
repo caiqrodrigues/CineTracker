@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.99.4",
   "scripts": {
-    "build": "node scripts/build-web.mjs && node scripts/apply-hotfix9-stability.mjs && node scripts/apply-hotfix10-selective.mjs && node scripts/apply-web-v0994.mjs && node scripts/apply-web-v0994-preload.mjs && node scripts/test-web-v0994.mjs && node scripts/test-startup-hotfix6.mjs",
-    "verify": "node scripts/test-web-v0994.mjs"
+    "build": "node scripts/build-web.mjs && node scripts/apply-hotfix9-stability.mjs && node scripts/apply-hotfix10-selective.mjs && node scripts/apply-web-v0994.mjs && node scripts/apply-web-v0994-preload.mjs && node scripts/test-web-v0994-preload.mjs && node scripts/test-web-v0994.mjs && node scripts/test-startup-hotfix6.mjs",
+    "verify": "node scripts/test-web-v0994-preload.mjs && node scripts/test-web-v0994.mjs"
   },
   "engines": {
     "node": ">=20"
