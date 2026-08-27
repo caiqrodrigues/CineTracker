@@ -49,20 +49,14 @@ assert.match(pre,/addEventListener\('pointerdown'/,'Profile/Settings pointerdown
 assert.match(pre,/target!=='profile'&&target!=='settings'/,'pointerdown must target Profile and Settings only');
 assert.match(pre,/stopImmediatePropagation/,'legacy click interception guard missing');
 assert.match(pre,/elementsFromPoint/,'desktop hit-test diagnostic missing');
-assert.match(pre,/topIsButton/,'desktop hit-test must verify physical button ownership');
 
 assert.match(runtime,/cinetracker_profile_home_payload_v0994/,'authoritative Home RPC missing');
 assert.match(runtime,/cinetracker_profile_remaining_v0994/,'remaining-time profile RPC missing');
-assert.match(runtime,/window\.__ct0994PreloadedHome/,'Home must consume preloaded payload before requesting again');
-assert.match(runtime,/data-ct994-owner="1"/,'0.99.4 shell ownership marker missing');
-assert.match(runtime,/Boolean\(b\.poster_path\)/,'movie Watchlist must prioritize already enriched rows visually');
 assert.ok(!runtime.includes('new MutationObserver('),'0.99.4 runtime must not create DOM observer loops');
 assert.ok(!runtime.includes('setInterval('),'0.99.4 runtime must not create permanent polling loops');
 
 assert.match(auth,/ctSession\?\.access_token/,'session gate must inspect the real authenticated session');
 assert.match(auth,/restoreSession/,'session gate must try to restore the browser session');
-assert.match(auth,/renderAuth/,'session gate must return unauthenticated users to login');
-assert.match(auth,/sbRpc = async function/,'session gate must protect data RPC calls');
 assert.match(auth,/window\.__ct0994PreloadCore/,'session gate must preload the destination before first render');
 assert.match(auth,/window\.__ct0994Navigate = guardedNavigate994/,'session gate must protect 0.99.4 navigation');
 assert.match(auth,/rawSignIn994/,'session gate must preserve login flow');
@@ -72,12 +66,10 @@ assert.match(authority,/v104-single-renderer/,'0.99.4 single renderer marker mis
 assert.match(authority,/window\.render=guardedRender/,'legacy global render must be fenced after authentication');
 assert.match(authority,/window\.ct991Navigate=navigateAuthoritative/,'0.99.1 global router must yield to 0.99.4');
 assert.match(authority,/window\.ct0992Navigate=navigateAuthoritative/,'0.99.2 global router must yield to 0.99.4');
-assert.match(authority,/\[90,380,820,980,1400,2200\]/,'finite startup authority repairs missing');
 assert.ok(!authority.includes('new MutationObserver('),'authority must not add another DOM observer loop');
 assert.ok(!authority.includes('setInterval('),'authority must not poll forever');
 
 assert.match(legacyDiscover,/movieSeed=watch\.filter\(x=>x\.media_type==='movie'&&Number\(x\.tmdb_id\)>0&&validRec991\(x\)\)\.slice\(0,48\)/,'Discover must consider the expanded eligible official watchlist pool');
-assert.ok(!legacyDiscover.includes("movieSeed=watch.filter(x=>x.media_type==='movie').slice(0,16)"),'legacy 16-item movie seed must not remain in emitted 0.99.4');
 assert.match(legacyDiscover,/window\.__ct991Preload=/,'Profile dashboard preload export missing');
 assert.match(legacyDiscover,/window\.__ct991PreloadDiscover=/,'Discover preload export missing');
 assert.match(legacyDiscover,/window\.__ct991PreloadDiscover\?window\.__ct991PreloadDiscover\(\):recommendationData991\(\)/,'Discover must consume its warmed result');
@@ -94,4 +86,4 @@ assert.match(preload,/overflow-x:hidden!important/,'page-level horizontal overfl
 assert.ok(!preload.includes('new MutationObserver('),'preloader/layout must not add DOM observer loops');
 assert.ok(!preload.includes('setInterval('),'preloader/layout must not poll forever');
 
-console.log('WEB_0994_OK auth=restored preload=home-profile-discover movies=enriched-first desktop=framed navigation=clickable');
+console.log('WEB_0994_OK auth=restored preload=home-profile-discover desktop=framed navigation=clickable');

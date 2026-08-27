@@ -2,7 +2,7 @@
 'use strict';
 if (window.__ct0994SessionGateLoaded) return;
 window.__ct0994SessionGateLoaded = true;
-window.__ct0994SessionGate = 'web-0.99.4-auth-required';
+window.__ct0994SessionGate = 'web-0.99.4-auth-required-preloaded';
 
 let restoring994 = null;
 const rawRpc994 = typeof sbRpc === 'function' ? sbRpc : null;
@@ -46,6 +46,15 @@ async function ensureSession994() {
   })().finally(() => { restoring994 = null; });
   return restoring994;
 }
+async function preloadRoute994(target) {
+  try {
+    if (typeof window.__ct0994PreloadCore === 'function') {
+      await window.__ct0994PreloadCore({ target });
+    }
+  } catch (error) {
+    console.warn('[CineTracker 0.99.4] preload da rota não bloqueou a navegação', target, error);
+  }
+}
 
 if (rawRpc994) {
   sbRpc = async function(name, body = {}) {
@@ -60,6 +69,7 @@ if (rawRpc994) {
 
 async function guardedNavigate994(target) {
   if (!(await ensureSession994())) return showAuth994();
+  await preloadRoute994(target);
   if (typeof rawNavigate994 !== 'function') return false;
   return rawNavigate994(target);
 }
@@ -72,7 +82,7 @@ window.ct98Navigate = guardedNavigate994;
 if (rawSignIn994) {
   signIn = async function(...args) {
     const result = await rawSignIn994(...args);
-    if (hasSession994()) setTimeout(() => void guardedNavigate994('home'), 0);
+    if (hasSession994()) await guardedNavigate994('home');
     return result;
   };
   window.signIn = signIn;
@@ -80,7 +90,7 @@ if (rawSignIn994) {
 if (rawSignUp994) {
   signUp = async function(...args) {
     const result = await rawSignUp994(...args);
-    if (hasSession994()) setTimeout(() => void guardedNavigate994('home'), 0);
+    if (hasSession994()) await guardedNavigate994('home');
     return result;
   };
   window.signUp = signUp;
