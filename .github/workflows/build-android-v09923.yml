@@ -1,0 +1,94 @@
+name: Build Android 0.99.2.3
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'ci-status/android-v09923-trigger.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cinetracker-android-v09923-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android_v09923:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore dedicated CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize dedicated signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build and verify shared Web FIX2 runtime
+        run: |
+          set -euo pipefail
+          npm run build
+          grep -q '__ct0992UnfreezeLoaded' dist/patch-v096-v0992-unfreeze.js
+          grep -q 'fix2-idempotent-dom-mutation-guard' dist/patch-v096-v0992-unfreeze.js
+          grep -q 'ct-web-0.99.2-fix2' dist/service-worker.js
+      - name: Prepare exact embedded Android 0.99.2.3 runtime
+        run: |
+          set -euo pipefail
+          node scripts/prepare-android-hotfix2-web.mjs
+          node scripts/test-android-inline-hotfix6.mjs
+          grep -q "window.__ctAndroidBundle = 'v0.99.2.3-fix2-unfreeze-authoritative'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q "window.__ctAndroidBuild = '0.99.2.3'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -q '__ct0992UnfreezeLoaded' apps/android/app/src/main/assets/hotfix5/index.html
+      - name: Build Android 0.99.2.3 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Validate APK identity, embedded FIX2 and signature
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="cinetracker-android-0.99.2.3-debug.apk"
+          cp "$APK" "$OUT"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "window.__ctAndroidBundle = 'v0.99.2.3-fix2-unfreeze-authoritative'"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct0992UnfreezeLoaded'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'fix2-idempotent-dom-mutation-guard'
+          PACKAGE="$($AAPT dump badging "$OUT" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION_CODE="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
+          test "$PACKAGE" = "com.cinetracker.app"
+          test "$VERSION" = "0.99.2.3"
+          test "$VERSION_CODE" = "9923"
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee v09923-sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.2.3-debug
+          path: |
+            cinetracker-android-0.99.2.3-debug.apk
+            v09923-sha256.txt
+          if-no-files-found: error
+      - name: Publish Android 0.99.2.3 release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release view android-v0.99.2.3 >/dev/null 2>&1 || gh release create android-v0.99.2.3 --title "CineTracker Android 0.99.2.3" --notes-file docs/releases/0.99.2.3.md
+          gh release edit android-v0.99.2.3 --title "CineTracker Android 0.99.2.3" --notes-file docs/releases/0.99.2.3.md
+          gh release upload android-v0.99.2.3 cinetracker-android-0.99.2.3-debug.apk v09923-sha256.txt --clobber
