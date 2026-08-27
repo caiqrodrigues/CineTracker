@@ -27,7 +27,7 @@ Nenhuma alteração pode existir apenas em conversa, console, Supabase ou ambien
 13. Web/Android compartilhados mantêm a mesma release lógica, salvo decisão documentada.
 14. Android sempre incrementa `versionCode` em uma nova versão publicada.
 15. RPC cliente deve documentar autorização e preferir `SECURITY INVOKER`.
-16. Tabela com dados de usuário exige RLS/policies antes do consumo pelo cliente.
+16. **Toda tabela nova com dados por usuário deve possuir estratégia explícita de RLS/policies antes de ser consumida pelo cliente.**
 17. Automação de estados deve preservar `origin='manual'`.
 18. Recurso de calendário deve declarar se é client-side, server-side ou agendado.
 19. **Em runtime composto por patches, validar a ordem e também o comportamento do DOM final. Presença de arquivo/marker não prova que a camada venceu handlers/mutações legadas.**
