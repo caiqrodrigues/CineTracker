@@ -1,104 +1,131 @@
 # CineTracker — Arquitetura atual
 
-**Release lógica:** `0.0.99`  
-**Atualizado em:** 2026-08-26
+**Release lógica em preparação:** `0.99.2 FIX`  
+**Atualizado em:** 2026-08-27
 
 ## 1. Visão geral
 
 CineTracker compartilha o mesmo domínio entre Web e Android:
+- Web: runtime HTML/JavaScript em `apps/web`;
+- Android: `Activity + WebView` com runtime Web embarcado e inline;
+- Supabase: Auth, PostgreSQL, RPCs e Edge Functions;
+- TMDB: metadados/calendário externos;
+- GitHub: fonte de verdade do source, migrations, documentação e CI/CD.
 
-- Web: runtime HTML/JavaScript construído a partir de `apps/web`;
-- Android: `Activity + WebView`, usando runtime Web embarcado e inline;
-- Supabase: autenticação, PostgreSQL, RPCs e Edge Functions;
-- TMDB: metadados externos;
-- GitHub: fonte de verdade do source, migrations, documentação e pipelines.
+## 2. Motivo do FIX
 
-## 2. Runtime Web 0.0.99
+Vídeo/prints reais provaram que presença de patches no build não garantia a interface final: a produção permanecia em 0.99.1, handlers legados bloqueavam cliques no desktop, sidebar recebia itens duplicados/Histórico, Home antiga podia reaparecer e o Perfil quebrava com `days is not defined`.
 
-A base estável v95 continua preservada. A pilha final relevante é:
+A 0.99.2 ainda não havia sido publicada, portanto essas correções pertencem à mesma release 0.99.2.
 
-1. `patch-v088-v098-nav-pre.js` — gate autoritativo de navegação;
-2. HOTFIX15/16 e demais camadas estáveis preservadas;
-3. `patch-v089-v098.js` — Descobrir, Configurações, backup e UI 0.0.98;
-4. `patch-v090-v098-compat.js` — compatibilidade do bridge/navegação;
-5. `patch-v091-v099-profile-lru.js` — Perfil 0.0.99 e versão final.
+## 3. Ordem autoritativa do runtime
 
-`service-worker.js` usa namespace `ct-web-0.0.99` e não cacheia o shell HTML.
+A base v95 e recuperações estáveis continuam presentes. O final da pilha é:
+1. `patch-v088-v098-nav-pre.js` — gate inicial;
+2. HOTFIX15/16 e core v95 preservado;
+3. `patch-v089-v098.js` / `patch-v090-v098-compat.js`;
+4. `patch-v091-v099-profile-lru.js`;
+5. `patch-v092-v0991.js` — Perfil/Pra Você/filtros/favoritos;
+6. `patch-v093-v0992.js` — Home vertical Séries/Filmes;
+7. `patch-v094-v0992-compat.js` — detalhe local/recomendação;
+8. **`patch-v095-v0992-fix.js` — camada final autoritativa.**
 
-## 3. Android 0.0.99
+`patch-v068-v097.js` permanece desativado.
+
+## 4. Navegação final
+
+A camada FIX registra o gate em `window` no capture phase. Isso a faz executar antes dos listeners antigos instalados em `document`, inclusive os que usam `stopImmediatePropagation`.
+
+Ela rebindeia `ct0992Navigate`, `ct991Navigate` e `ct98Navigate` para uma única rota. Sidebar e mobile-nav são reconciliadas para exatamente:
+- Home;
+- Descobrir;
+- Perfil;
+- Configurações.
+
+A rota legada Histórico redireciona ao Perfil e nunca volta como destino visual.
+
+## 5. Hardening das escritas do cliente
+
+O wrapper final de `sbApi` corrige contratos legados antes da chamada REST:
+- POST em `watch_history`, `episode_progress` e `media_overrides` recebe `profile_id` do usuário autenticado quando o campo estiver ausente;
+- POST em `media` recebe `media_kind` quando ausente: `movie`, `series` ou `anime` inferido pelos metadados.
+
+Valores explicitamente fornecidos pelo chamador são preservados. Nenhuma credencial privilegiada é introduzida.
+
+## 6. Perfil consolidado 0.99.1
+
+A camada 0.99.1 continua responsável por:
+- estatísticas compactas e Tempo Total duplo;
+- timeline temporal com Hoje centralizado e detalhe por dia;
+- Séries / Séries favoritas / Filmes / Filmes favoritos;
+- filtros de status e layouts Carrossel/Grade/Lista;
+- favoritos e quatro métricas extras;
+- Pra Você com 7 slots;
+- Calendário por último;
+- recursos de episódios, ator e Importar Dados.
+
+O FIX fornece o binding global compatível necessário ao legado `days=[]`, eliminando `days is not defined`, e recupera os cabeçalhos expansíveis das quatro seções.
+
+## 7. Home 0.99.2 — Séries
+
+A Home possui viewport vertical. O histórico recente fica renderizado acima do ponto inicial; após o render o scroll é posicionado em **Assistir a seguir**, permitindo Pull-to-Reveal.
+
+Classificação:
+- Assistir a seguir: pendência lançada + atividade <=30 dias, ou novo episódio detectado;
+- Juntando poeira: pendência + atividade >30 dias;
+- Em dia: zero pendências lançadas, iniciada e não concluída;
+- Não Iniciadas / Watchlist: zero episódios vistos;
+- Concluídas: `Completed`.
+
+Cards em linha usam pôster 2:3 e exibem próximo S/E, assistidos/lançados, faltantes, nome/nota e ação ✓. Quick mark grava histórico/progresso, atualiza `last_watched_at`, avança episódio e reordena LRU.
+
+## 8. Sincronização de lançamentos
+
+`syncReleaseStates()` executa no primeiro uso do dia, retorno de visibilidade e atualização do Calendário. Para séries com TMDB oficial positivo, calcula episódios efetivamente lançados. Novo episódio disponível move UpToDate -> InProgress/Assistir a seguir; zerar pendências retorna para UpToDate.
+
+Não há cron server-side nesta versão; a checagem é disparada pelo cliente. IDs TMDB <=0 não são enviados ao proxy.
+
+## 9. Home 0.99.2 — Filmes
+
+- Vistos oculto por Pull-to-Reveal;
+- Escolha para Hoje com nota >=8,0, nunca visto e sem repetição;
+- Assistir a seguir / Watchlist;
+- quick mark grava `watch_history` + `AlreadySeen`.
+
+A seleção diária é persistida em `daily_movie_recommendations_v0992`.
+
+## 10. Backend
+
+Migration: `20260827004500_v0992_home_series_movies.sql`.
+
+`cinetracker_profile_home_dashboard_v0992()`:
+- `SECURITY INVOKER`;
+- `auth.uid()`;
+- consolida mídia, histórico, progresso, estados, LRU e último S/E.
+
+`daily_movie_recommendations_v0992`:
+- RLS habilitado;
+- escopo `profile_id = auth.uid()`;
+- PK perfil/data;
+- unique perfil/TMDB.
+
+## 11. Android
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.0.99`;
-- `versionCode`: `997`;
-- bundle alvo: `v0.0.99-profile-lru-v95-core-inline-authoritative`.
+- `versionName`: `0.99.2`;
+- `versionCode`: `9912`;
+- bundle: `v0.99.2-fix-991-992-authoritative`.
 
-`scripts/prepare-android-hotfix2-web.mjs` copia o build Web para assets locais, converte scripts para inline e valida presença/ordem da camada 0.0.99. O runtime principal não depende de fallback remoto.
+O preparo Android exige `patch-v095-v0992-fix.js` por último e o smoke inline compila todos os scripts embutidos.
 
-## 4. Modelo persistente principal
+## 12. Reatividade
 
-- `profiles` — conta/configurações;
-- `media` — filmes/séries e metadados;
-- `media_overrides` — estados/decisões do usuário;
-- `episode_progress` — progresso por episódio;
-- `watch_history` — histórico normalizado e plays;
-- `imports` — auditoria de importações.
+Home revalida ao abrir, alternar Séries/Filmes, receber `cinetracker:data-changed`, voltar à visibilidade e detectar conclusão de importação. O Perfil também reage ao estado central; ordem visual deriva do timestamp persistente, não apenas do DOM.
 
-Estados relevantes incluem `AlreadySeen`, `Completed`, `UpToDate`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater` e `AddedToWatchlist`. Origem manual tem precedência sobre inferência/importação.
+## 13. Débito legado
 
-## 5. Perfil 0.0.99
+Surrogate negativo ainda existe em `media.tmdb_id` para parte da importação. Caminhos recentes evitam chamadas TMDB com IDs <=0; separar definitivamente ID interno de TMDB oficial continua recomendado.
 
-A UI do Perfil lê dados agregados do servidor e não tenta reconstruir todo o estado por paginação REST no cliente.
+## 14. Versionamento
 
-Quatro carrosséis principais:
-
-- Séries;
-- Séries favoritas;
-- Filmes;
-- Filmes favoritos.
-
-Todos usam cards 2:3 e ordenação LRU por `last_watched_at DESC`.
-
-### Subtelas
-
-Séries: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia, Concluídas.  
-Filmes: Assistir a seguir / Watchlist, Já vistos.  
-Favoritos: grid completo 2/3 colunas.
-
-## 6. RPC `cinetracker_profile_media_dashboard`
-
-Migration: `20260826234500_v099_profile_media_lru_dashboard.sql`.
-
-A função é `SECURITY INVOKER`, escopada por `auth.uid()` e consolida três fontes:
-
-1. `watch_history` — `last_watched_at`, plays e histórico;
-2. `episode_progress` — episódios assistidos e timestamp de progresso;
-3. `media_overrides` — favorito (`Liked`), watchlist, WatchLater, InProgress, UpToDate, Completed e `AlreadySeen`.
-
-`last_watched_at` é o maior timestamp aplicável entre histórico, progresso e `AlreadySeen` de filmes. `watched_episodes` usa o maior valor coerente entre histórico e progresso para evitar regressão visual durante reconciliações.
-
-## 7. Atualização reativa
-
-`patch-v091-v099-profile-lru.js` escuta `cinetracker:data-changed` e refaz a leitura server-side. A camada também observa escritas feitas por `sbApi` em `watch_history`, `episode_progress` e `media_overrides`, e revalida ao recuperar foco/visibilidade. Existe reconciliação periódica somente enquanto o Perfil/subtela está visível para refletir mudanças externas.
-
-Esse desenho faz a ordenação depender do timestamp persistente no banco, e não de ordem local de clique.
-
-## 8. Detalhes e IDs TMDB substitutos
-
-TMDB IDs positivos abrem a tela global de detalhes. Surrogate IDs negativos não são enviados à TMDB; o Perfil oferece detalhe local para esses cards. A separação definitiva entre surrogate interno e campo `tmdb_id` continua como débito arquitetural legado.
-
-## 9. Recursos preservados da 0.0.98
-
-- Home / Descobrir / Perfil / Configurações;
-- Histórico integrado ao Perfil, sem aba principal;
-- Descobrir com filtros por tipo e ranking decrescente;
-- backup CSV/ZIP por `ct-backup-user`;
-- Limpar Cache e Atualizar Metadados;
-- importação Bingers resiliente v8.
-
-## 10. Segurança
-
-RPCs voltadas ao cliente devem operar com `SECURITY INVOKER` quando possível e filtrar por `auth.uid()`. Edge Functions privilegiadas mantêm service role somente no ambiente server-side. Detalhes e débitos ficam em `docs/SECURITY.md`.
-
-## 11. Versionamento
-
-Toda nova unidade lógica deve receber nova versão e atualizar source, migrations, documentação, CI e artefatos aplicáveis conforme `docs/DEVELOPMENT_RULES.md`.
+Toda alteração deve seguir `docs/DEVELOPMENT_RULES.md`. Source, CI, deploy, APK publicado e smoke real são estados independentes.

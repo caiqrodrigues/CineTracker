@@ -1,80 +1,84 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-08-26
+**Atualizado em:** 2026-08-27
 
 ## Matriz atual
 
-| Sistema | Versão atual | Versão técnica adicional | Estado comprovado |
+| Sistema | Versão | Identidade técnica | Estado atual |
 |---|---:|---|---|
-| Web | **0.0.99** | package `0.0.99`, cache `ct-web-0.0.99` | Verify/build concluídos; Vercel `success` no commit funcional |
-| Android | **0.0.99** | `versionCode 997` | build, identidade, assinatura, artifact e GitHub Release publicados |
-| Backend / Supabase | **0.0.99** | RPC `cinetracker_profile_media_dashboard`; `ct-backup-user` v1; Bingers v8 | migration/RPC ativos |
-| Windows | **—** | — | não lançado |
+| Web | **0.99.2** | package `0.99.2`, cache `ct-web-0.99.2`, patch final `patch-v095-v0992-fix.js` | FIX no PR #21; aguardando merge/deploy final |
+| Android | **0.99.2** | `versionName 0.99.2`, `versionCode 9912`, bundle `v0.99.2-fix-991-992-authoritative` | FIX no PR #21; aguardando build/release final |
+| Backend / Supabase | **0.99.2** | RPC `cinetracker_profile_home_dashboard_v0992`, tabela `daily_movie_recommendations_v0992` | migration aplicada em produção |
+| Windows | — | — | não lançado |
 
-## Identidade 0.0.99
+## Por que existe “0.99.2 FIX” sem nova versão
 
-### Web
-- package: `0.0.99`;
-- Service Worker: `ct-web-0.0.99`;
-- camada final: `patch-v091-v099-profile-lru.js`;
-- rodapé: `CineTracker • v0.0.99`;
-- Verify final: run `33021058624`, success;
-- Vercel: success para o commit funcional `f4261cb944b60c15c01b41989645e8c64468e4ef`.
+A 0.99.2 anterior ainda não havia sido mergeada/publicada. Evidência visual mostrou que a produção continuava em 0.99.1 e que recursos 0.99.1/0.99.2 estavam quebrados ou não autoritativos. Portanto o trabalho permanece dentro da mesma unidade de release 0.99.2 até o lançamento real.
 
-### Android
+## Identidade Web 0.99.2
+- package: `0.99.2`;
+- Service Worker: `ct-web-0.99.2`;
+- camada 0.99.1: `patch-v092-v0991.js`;
+- Home 0.99.2: `patch-v093-v0992.js`;
+- compatibilidade 0.99.2: `patch-v094-v0992-compat.js`;
+- **camada final obrigatória:** `patch-v095-v0992-fix.js`;
+- rodapé: `CineTracker • v0.99.2`.
+
+A camada final corrige navegação desktop/mobile, remove duplicações/Histórico legado, corrige o crash `days is not defined`, endurece escritas pessoais com `profile_id`, corrige `media_kind` e recupera expansão completa das seções do Perfil.
+
+## Identidade Android 0.99.2
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.0.99`;
-- `versionCode`: `997`;
-- bundle: `v0.0.99-profile-lru-v95-core-inline-authoritative`;
-- workflow: `.github/workflows/build-android-v099.yml`;
-- run publicado: `33021058734`, success;
-- tag/release: `android-v0.0.99`;
-- APK: `cinetracker-android-0.0.99-debug.apk`;
-- artifact: `cinetracker-android-0.0.99-debug`, ID `9626549788`;
-- SHA-256 do APK: `c39c08cd51470050f3eac2c444c4d468dcfcb4072230cf9e082def9ab176cf57`.
+- `versionName`: `0.99.2`;
+- `versionCode`: `9912`;
+- bundle: `v0.99.2-fix-991-992-authoritative`;
+- workflow: `.github/workflows/build-android-v0992.yml`;
+- release alvo: `android-v0.99.2`;
+- APK alvo: `cinetracker-android-0.99.2-debug.apk`.
 
-## Backend 0.0.99
+## Backend 0.99.2
+Migration: `20260827004500_v0992_home_series_movies.sql`.
 
-Migration: `20260826234500_v099_profile_media_lru_dashboard.sql`.
+`cinetracker_profile_home_dashboard_v0992()` é `SECURITY INVOKER`, usa `auth.uid()` e entrega dados da Home incluindo último S/E assistido, LRU, plays, estados e `raw_tmdb`.
 
-A RPC `cinetracker_profile_media_dashboard()` é `SECURITY INVOKER`, usa `auth.uid()` e produz a visão central do Perfil com progresso, favoritos, estados e `last_watched_at`.
+`daily_movie_recommendations_v0992` possui RLS, uma escolha por perfil/data e `unique(profile_id, tmdb_id)` para evitar repetição por usuário.
 
-Edge Functions mantêm numeração própria:
-- `ct-backup-user`: v1;
-- `ct-import-bingers-user`: v8;
-- `tmdb-proxy` e `tmdb-image`: versões de deploy independentes.
+## Conteúdo consolidado 0.99.1 + 0.99.2
 
-## Conteúdo funcional da 0.0.99
+### Perfil / 0.99.1 recuperado
+- estatísticas compactas e Tempo Total duplo;
+- timeline temporal com Hoje centralizado e detalhe por data;
+- Séries, Séries favoritas, Filmes e Filmes favoritos;
+- filtros de status/layout;
+- cabeçalhos expansíveis e grids completos;
+- somente quatro estatísticas extras solicitadas;
+- favoritos em detalhes;
+- Pra Você com 7 slots, ano > 1990 e nota >=7,8;
+- Calendário por último;
+- episódios ricos + marcação inteligente;
+- cinegrafia de ator separada Filmes/Séries;
+- Bingers dentro de Importar Dados.
 
-- quatro carrosséis no Perfil: Séries, Séries favoritas, Filmes, Filmes favoritos;
-- cards 2:3 com título, progresso, favorito e última atividade;
-- LRU por `last_watched_at DESC`;
-- atualização reativa após gravações de histórico/progresso/overrides;
-- subtela Séries com Em andamento, Não iniciadas, Assistir mais tarde/Watchlist, Em dia e Concluídas;
-- subtela Filmes com Assistir a seguir/Watchlist e Já vistos;
-- favoritos em grid completo responsivo de 2/3 colunas;
-- detalhe TMDB quando o ID é oficial e detalhe local seguro para surrogate negativo;
-- preservação integral da navegação, Descobrir, Backup, Cache, Metadados e importação Bingers da 0.0.98.
-
-## Validação manual ainda separada
-
-Ainda não é marcado como executado:
-- smoke autenticado visual Web em produção;
-- instalação/navegação do APK 0.0.99 em aparelho real;
-- teste manual do LRU e alternância de favoritos.
+### Home / 0.99.2
+- Séries em lista vertical com Pull-to-Reveal;
+- Assistir a seguir <=30 dias;
+- Juntando poeira >30 dias;
+- Em dia;
+- Não Iniciadas / Watchlist;
+- Concluídas;
+- cards em linha 2:3 com próximo episódio, nota, progresso e faltantes;
+- quick mark com histórico/progresso/LRU;
+- sincronização de lançamentos e badge Novo Episódio;
+- Filmes com Vistos Pull-to-Reveal, Escolha para Hoje >=8,0 e Watchlist;
+- reatividade pós-importação.
 
 ## Linha recente
-
-- **0.0.97 HOTFIX 15** — transporte/picker e shape homogêneo do histórico;
-- **0.0.97 HOTFIX 16** — Bingers resiliente/idempotente;
-- **0.0.97 HOTFIX 17** — Perfil server-side e estados das séries;
-- **0.0.97 HOTFIX 18** — governança/versionamento;
 - **0.0.98** — navegação, Histórico absorvido pelo Perfil, backup CSV/ZIP e Descobrir reformulado;
-- **0.0.99** — biblioteca pessoal do Perfil com favoritos, grids e ordenação LRU reativa.
+- **0.0.99** — biblioteca pessoal do Perfil com favoritos e LRU;
+- **0.99.1** — Perfil/timeline/Pra Você/favoritos/filtros e recuperação de recursos v95;
+- **0.99.2 FIX** — consolidação real de 0.99.1 + Home 0.99.2 + correção dos conflitos de runtime observados em vídeo/prints.
 
 ## Regra obrigatória
+Source, CI, deploy Web, publicação APK e teste em aparelho real são estados separados. A versão só é chamada de publicada após evidência correspondente.
 
-Toda nova unidade lógica de mudança recebe nova versão e registro no GitHub. Source, validação automatizada, deploy Web, publicação APK e teste em aparelho real são estados separados.
-
-Release atual: `docs/releases/0.0.99.md`.  
-Validação atual: `docs/validation/0.0.99.md`.
+Release: `docs/releases/0.99.2.md`.  
+Validação: `docs/validation/0.99.2.md`.

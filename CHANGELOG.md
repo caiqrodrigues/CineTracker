@@ -2,6 +2,93 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do HOTFIX18, toda nova unidade lógica de mudança exige versão e registro completo conforme `docs/DEVELOPMENT_RULES.md`.
 
+## 0.99.2 FIX — 2026-08-27
+
+### Evidência real / bloqueio da primeira tentativa
+- Vídeo e prints reais mostraram que a produção continuava em `CineTracker • v0.99.1`, portanto a primeira implementação 0.99.2 não foi considerada publicada.
+- Sidebar Web podia exibir Histórico legado e duplicar Perfil/Configurações.
+- Home antiga ainda podia permanecer visível apesar dos patches 0.99.2 existirem no source.
+- Perfil falhava com `days is not defined`.
+- Navegação funcionava no navegador Android, mas handlers capture legados com `stopImmediatePropagation` podiam bloquear os botões no navegador desktop.
+- A governança foi reforçada: marker/arquivo/CI verde não substitui validação do DOM e do comportamento final.
+
+### Runtime autoritativo
+- Criado `patch-v095-v0992-fix.js` como última camada obrigatória de Web e Android.
+- Gate de navegação movido para `window` no capture phase, executando antes dos listeners antigos em `document`.
+- `ct0992Navigate`, `ct991Navigate` e `ct98Navigate` passam a apontar para uma rota única.
+- Sidebar/mobile-nav são reconciliadas para exatamente Home, Descobrir, Perfil e Configurações; Histórico continua integrado ao Perfil.
+- A rota corrente é re-renderizada após a inicialização das camadas legadas para impedir que uma tela antiga vença a camada final.
+- Rodapé final permanece `CineTracker • v0.99.2`.
+
+### Recuperação integral da 0.99.1
+- Corrigido o crash de timeline `days is not defined` por binding global compatível, sem reativar a overlay v97.
+- Preservados estatísticas compactas, Tempo Total duplo, timeline com Hoje centralizado e detalhe por dia, filtros de status/layout, quatro métricas extras, favoritos, Pra Você com 7 slots, Calendário por último, episódios ricos, marcação inteligente, cinegrafia de ator e Bingers em Importar Dados.
+- Recuperados os cabeçalhos clicáveis `Séries ›`, `Séries favoritas ›`, `Filmes ›` e `Filmes favoritos ›` e suas visões completas.
+
+### Contrato de banco no cliente
+- Wrapper final de `sbApi` adiciona o `profile_id` autenticado em POSTs de `watch_history`, `episode_progress` e `media_overrides` quando patches legados omitem o campo exigido pelo schema/RLS.
+- Inserts legados de `media` recebem `media_kind` quando ausente (`movie`, `series` ou `anime`).
+- Valores explicitamente fornecidos continuam preservados; nenhuma credencial privilegiada foi adicionada ao cliente.
+
+### Android / CI
+- Bundle alvo alterado para `v0.99.2-fix-991-992-authoritative`.
+- `prepare-android-hotfix2-web.mjs`, smoke inline, Verify e pipeline Android agora exigem `patch-v095-v0992-fix.js` por último e o marker `__ct0992FixLoaded`.
+- Android continua `versionName 0.99.2`, `versionCode 9912`; a release só é publicada após merge/CI/build/assinatura reais.
+
+## 0.99.2 — 2026-08-26
+
+### Home / Séries
+- Criada camada autoritativa `patch-v093-v0992.js` para Web e runtime Android embarcado.
+- Home de Séries passa a usar lista vertical contínua com histórico de episódios oculto acima do ponto inicial e revelado por Pull-to-Reveal/scroll superior.
+- Ordem oficial: Assistir a seguir, Juntando poeira, Em dia, Não Iniciadas / Watchlist e Concluídas.
+- Assistir a seguir usa séries iniciadas com pendências lançadas e última atividade em até 30 dias; Juntando poeira usa mais de 30 dias.
+- Cards em linha usam pôster 2:3, título, próximo Sxx Exx, progresso assistidos/lançados, faltantes, nome e nota do próximo episódio e ação circular ✓.
+- Quick mark grava `watch_history`, sincroniza `episode_progress`, atualiza o marcador de detalhe quando presente, avança o próximo episódio e reordena por `last_watched_at DESC`.
+- Ao zerar pendências lançadas, a série migra para Em dia.
+
+### Sincronização de lançamentos
+- Adicionada checagem diária de metadados TMDB para séries Em dia/Em andamento.
+- A checagem roda no primeiro uso do dia, retorno de visibilidade e atualização do Calendário.
+- Quando um novo episódio com `air_date <= hoje` aparece, a série sai de UpToDate, recebe InProgress system, vai para Assistir a seguir e recebe badge Novo Episódio.
+- IDs TMDB substitutos negativos continuam bloqueados para chamadas externas.
+
+### Home / Filmes
+- Histórico Vistos passa a ficar oculto acima do ponto inicial e é revelado por Pull-to-Reveal.
+- Adicionada Escolha para Hoje com 1 filme por data, nota >=8.0, nunca visto e sem repetição por perfil/TMDB.
+- Criada persistência `daily_movie_recommendations_v0992` com RLS e unicidade por perfil/TMDB.
+- Assistir a seguir / Watchlist exibe pôster, ano, duração, sinopse curta e ação ✓.
+- Quick mark grava histórico e `AlreadySeen` com timestamp atual.
+
+### Backend
+- Migration `20260827004500_v0992_home_series_movies.sql` aplicada ao Supabase.
+- Criada RPC `cinetracker_profile_home_dashboard_v0992()` como `SECURITY INVOKER` e escopo `auth.uid()`.
+- RPC expõe último S/E assistido, `last_watched_at`, plays, estados, metadados e progresso necessários à Home.
+- Nova tabela de recomendação diária possui RLS select/insert por `profile_id = auth.uid()`.
+
+### Reatividade / importação
+- Home força nova leitura ao abrir e ao alternar Séries/Filmes.
+- `cinetracker:data-changed`, retorno de visibilidade e conclusão visual de importação invalidam o cache da Home.
+- Dados Bingers recém-importados passam a aparecer na Home sem refresh manual ao retornar/alternar a aba.
+
+### Versionamento / CI
+- Web: package `0.99.2`, cache `ct-web-0.99.2`, rodapé `CineTracker • v0.99.2`.
+- Android: `versionName 0.99.2`, `versionCode 9912`, bundle `v0.99.2-home-series-movies-v95-core-inline-authoritative`.
+- Criado workflow `build-android-v0992.yml`, release alvo `android-v0.99.2` e novos invariantes de Verify/inline smoke.
+- Criados `docs/releases/0.99.2.md` e `docs/validation/0.99.2.md`.
+
+## 0.99.1 — 2026-08-26
+
+### Estabilidade / Perfil / Descobrir
+- Perfil estabilizado com carregamento single-flight e sem polling periódico na camada final.
+- Descobrir passa sempre a abrir em Pra Você.
+- Perfil recebe Tempo Total em largura dupla, timeline de 7 dias com Hoje centralizado, detalhe por dia, filtros de status/layout, favoritos e quatro métricas extras.
+- Pra Você restaurado com exatamente 7 posições, ano >1990 e nota >=7.8.
+- Calendário permanece por último com filtros Geral/Séries/Filmes.
+- Cards ricos de episódios, confirmação inteligente de episódios anteriores e cinegrafia do ator em dois carrosséis permanecem preservados.
+- Bingers é organizado dentro de Importar Dados.
+- Criada RPC `cinetracker_profile_media_dashboard_v0991()` e versionamento Web/Android `0.99.1` / `versionCode 9911`.
+- Release Android `android-v0.99.1` publicada após CI e build aprovados.
+
 ## 0.0.99 — 2026-08-26
 
 ### Perfil / biblioteca pessoal
@@ -15,7 +102,7 @@ Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do 
 - Ordenação dos carrosséis e grids usa `last_watched_at DESC` com desempate por `media_id DESC`.
 - `last_watched_at` considera `watch_history.watched_at`, `episode_progress.watched_at` e `media_overrides.watched_at` para `AlreadySeen` de filmes.
 - Escritas em `watch_history`, `episode_progress` e `media_overrides` disparam atualização reativa do Perfil.
-- Foco/visibilidade e reconciliação periódica enquanto a tela está visível funcionam como fallback para alterações externas.
+- Foco/visibilidade e reconciliação periódica enquanto o Perfil está visível funcionam como fallback para alterações externas.
 
 ### Subtelas
 - `Séries ›`: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia e Concluídas.
@@ -69,8 +156,8 @@ Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do 
 - `verify_jwt=false` no gateway da função é acompanhado de autenticação bearer explícita contra `/auth/v1/user` no corpo da função.
 
 ### Manutenção
-- Limpar Cache agora remove `sessionStorage`, caches CineTracker do Cache Storage e caches em memória/metadados, preservando sessão e dados persistentes.
-- Atualizar Metadados agora enumera mídias do usuário, consulta TMDB com concorrência controlada, ignora surrogate IDs não positivos e persiste os metadados atualizados.
+- Limpar Cache remove `sessionStorage`, caches CineTracker do Cache Storage e caches em memória/metadados, preservando sessão e dados persistentes.
+- Atualizar Metadados enumera mídias do usuário, consulta TMDB com concorrência controlada, ignora surrogate IDs não positivos e persiste metadados atualizados.
 
 ### Versionamento / Android / CI
 - Web atualizado para package `0.0.98`, cache `ct-web-0.0.98` e rodapé `CineTracker • v0.0.98`.
@@ -170,8 +257,8 @@ Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do 
 
 ### Banco
 - Migration `media_watch_history_timestamp_v030` adiciona `watched_at` a `media_overrides` e índice por perfil/data.
-- Filmes marcados como vistos a partir desta versão passam a registrar a data real de visualização.
-- Registros antigos importados sem timestamp original de filme continuam sem data até a retomada/reconciliação do histórico Trakt.
+- Filmes marcados a partir desta versão passam a registrar a data real de visualização.
+- Registros antigos importados sem timestamp original de filme continuam sem data até reconciliação.
 
 ## Android 0.0.6 — 2026-08-21
 
@@ -184,145 +271,79 @@ Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do 
 
 ### Ajustado
 - Filmes e séries passam a ser clicáveis também em Home, Biblioteca e cards principais do sistema, não somente em Descobrir.
-- Capas originais verticais da TMDB passam a substituir os placeholders também nas áreas legadas sempre que o título pode ser conciliado.
+- Capas originais verticais da TMDB substituem placeholders quando o título pode ser conciliado.
 - Filmografia de atores/atrizes é ordenada do trabalho mais recente para o mais antigo.
 
 ### Adicionado
-- Tela unificada de filme/série para todo o sistema, com sinopse, ano, gêneros, nota TMDB e acesso à ficha IMDb.
-- Para filmes: duração total e data/estado de lançamento.
-- Para séries: status traduzido (`Cancelada`, `Finalizada`, `Em andamento / renovada`, `Em produção`, `Planejada`) e duração média por episódio.
-- Temporadas e episódios clicáveis por temporada, com imagem, número, nome, duração e data de exibição quando disponíveis.
-- Seção de filmes/séries relacionados usando recomendações + similares da TMDB.
-- Relacionados removem títulos já presentes na Watchlist do usuário.
-- Onde assistir continua restrito a streaming por assinatura (`flatrate`) no Brasil; compra e aluguel permanecem ocultados.
-- Elenco clicável e tela de pessoa com biografia e filmografia cronológica.
+- Tela unificada de filme/série com sinopse, ano, gêneros, nota TMDB e acesso à ficha IMDb.
+- Filmes: duração total e data/estado de lançamento.
+- Séries: status traduzido e duração média por episódio.
+- Temporadas/episódios clicáveis, relacionados, streaming por assinatura, elenco clicável e tela de pessoa.
 
 ## Android 0.0.5 — 2026-08-21
 
 ### Ajustado
 - Shell Android sincronizado com a Web 0.2.9.
-- Home, Biblioteca e Descobrir usam a mesma experiência de detalhes, temporadas/episódios, relacionados e capas originais.
-- `versionCode` incrementado para 5 e `versionName` para `0.0.5`.
+- Home, Biblioteca e Descobrir usam a mesma experiência de detalhes/temporadas/relacionados/capas.
+- `versionCode` 5, `versionName` `0.0.5`.
 
 ## Web 0.2.8 — 2026-08-21
 
 ### Adicionado
-- Todos os cards de Descobrir, Calendário, busca e rankings passam a ser clicáveis.
-- Nova tela de detalhes para filmes e séries com sinopse, ano, gêneros e nota TMDB.
-- Integração com o identificador/ficha oficial do IMDb quando disponível.
-- Elenco principal clicável, abrindo tela própria do ator/atriz.
-- Tela de ator/atriz com biografia e filmografia combinada de filmes e séries.
-- Onde assistir focado somente em streaming por assinatura (`flatrate`) e cinema para filmes quando a TMDB informa lançamento teatral; compra e aluguel são ocultados.
-- Cards e telas novas usam `poster_path` da TMDB em proporção vertical 2:3, priorizando a capa original em vez do backdrop horizontal.
+- Cards de Descobrir, Calendário, busca e rankings clicáveis.
+- Detalhes de filmes/séries, ficha IMDb, elenco/pessoa, streaming/cinema e pôster 2:3.
 
 ### Observação
-- A API TMDB não fornece a nota numérica do IMDb. Para não exibir dado incorreto, a tela mostra a nota TMDB e oferece acesso à ficha oficial IMDb pelo `imdb_id`. Uma nota IMDb numérica exigirá uma fonte/API adicional.
+- TMDB não fornece nota numérica IMDb; a UI usa nota TMDB e link IMDb.
 
 ## Android 0.0.4 — 2026-08-21
 
-### Ajustado
-- Shell Android sincronizado com a Web 0.2.8.
-- Telas de detalhes, elenco, filmografia, streaming/cinema e capas verticais ficam disponíveis na mesma WebView leve.
-- `versionCode` incrementado para 4 e `versionName` para `0.0.4`.
+- Shell sincronizado com Web 0.2.8; `versionCode` 4, `versionName` `0.0.4`.
 
 ## Web 0.2.7 — 2026-08-21
 
-### Ajustado
-- `Lançamentos` passa a se chamar `Calendário`.
-- `Calendário` foi movido para a última posição das opções de Descobrir.
-
-### Adicionado
-- Filtro `Somente meus` no Calendário.
-- Para Séries, o filtro mostra somente títulos da Watchlist ou em acompanhamento.
-- Para Filmes, o filtro mostra somente títulos da Watchlist com lançamento na data selecionada.
-- Nova aba `Mais bem avaliados`.
-- `Mais bem avaliados` possui abas separadas de `Filmes` e `Séries` usando os rankings da TMDB.
-- A aba `Séries` inclui animes porque a TMDB cataloga anime televisivo dentro do tipo TV.
+- Lançamentos renomeado Calendário e movido para última posição.
+- Filtro Somente meus e nova aba Mais bem avaliados.
 
 ## Android 0.0.3 — 2026-08-21
 
-### Ajustado
-- Shell Android sincronizado com a Web 0.2.7.
-- Calendário pessoal e ranking Mais bem avaliados disponíveis dentro da mesma experiência WebView leve.
-- `versionCode` incrementado para 3 e `versionName` para `0.0.3`.
+- Shell sincronizado com Web 0.2.7; `versionCode` 3, `versionName` `0.0.3`.
 
 ## Web 0.2.6 — 2026-08-21
 
-### Adicionado
-- Cabeçalho `CINETRACKER / Seu universo de mídia` passa a ser clicável e retorna para a Home.
-- Aba Descobrir reorganizada em `Em Alta`, `Lançamentos`, `Mais Aguardados` e `Populares`.
-- Calendário de lançamentos com navegação por dia/semana e atalho `Hoje`.
-- Alternância entre calendário de `Séries` e `Filmes`.
-- Séries exibem temporada/episódio quando a TMDB informa o próximo episódio para a data selecionada.
-- Busca direta de filmes, séries e animes permanece disponível dentro de Descobrir.
-
-### Desempenho
-- Cache de respostas de descoberta/TMDB em memória e `sessionStorage` por 10 minutos para reduzir chamadas repetidas e travamentos na WebView e no navegador.
-- Limite de enriquecimento de detalhes no calendário para evitar dezenas de chamadas simultâneas.
+- Cabeçalho retorna à Home; Descobrir reorganizado; Calendário com dia/semana/Hoje; Séries/Filmes; cache TMDB e limite de enriquecimento.
 
 ## Android 0.0.2 — 2026-08-21
 
-### Ajustado
-- Shell Android continua leve em WebView, mas passa a consumir automaticamente a experiência Descobrir/Calendário da Web 0.2.6.
-- `versionCode` incrementado para 2 e `versionName` para `0.0.2`.
+- WebView consome Descobrir/Calendário Web 0.2.6; `versionCode` 2, `versionName` `0.0.2`.
 
 ## Web 0.2.5 — 2026-08-21
 
-### Ajustado
-- Sidebar ampliada e reenquadrada para comportar `Configurações` sem corte.
-- `Importar` removido da navegação principal e movido para o hub de Configurações.
-- Configurações passa a concentrar conta, preferências, importação e backup.
-
-### Adicionado
-- Exportação completa da conta em JSON.
-- Exportação ZIP contendo o backup JSON do CineTracker.
-- Preferência `notifications_enabled` persistida em `profiles.settings` e sincronizada entre plataformas.
-- Botão único para ativar/desativar notificações. A preferência existe agora; o serviço automático de push/agenda será implementado na camada de notificações.
-
-### Banco
-- Migration `profile_notification_preference_v025` adiciona o default de notificações aos perfis existentes e novos.
+- Configurações concentra conta/importação/backup; exportação JSON/ZIP; preferência de notificações.
 
 ## Android 0.0.1 — 2026-08-21
 
-### Implementado
-- Shell Android leve em WebView apontando por padrão para `https://mycinetracker.vercel.app`.
-- JavaScript e DOM Storage habilitados para sessão e experiência sincronizada com o Web.
-- Seletor nativo de arquivos para importação JSON/ZIP.
-- Links externos abrem no navegador; CineTracker e Supabase permanecem no app.
-- Estado do WebView preservado em recriação da Activity e navegação Voltar integrada ao histórico.
-- Sem framework híbrido pesado: Activity + WebView nativos para manter APK e consumo reduzidos.
+- Activity + WebView, picker nativo, links externos, estado preservado e navegação Voltar.
 
 ## Web 0.2.4 — 2026-08-21
 
-### Corrigido
-- Corrigida a tela em branco causada por patches anteriores que usavam `MutationObserver` de forma recursiva e podiam gerar um ciclo contínuo de mutações/renderizações no navegador.
-- Removido o carregamento conjunto dos patches 0.2.1/0.2.2/0.2.3; a produção passa a usar a linha de patches estáveis sem observadores recursivos.
-- Tema Black/Blue, favicon, configurações e fluxo de login foram consolidados no patch 0.2.4.
-- O login exibe a área autenticada imediatamente após o Supabase aceitar as credenciais; banco, TMDB e recomendações carregam em segundo plano.
+- Corrigida tela em branco por MutationObserver recursivo; patches antigos removidos; login desacoplado de dados opcionais.
 
 ## Web 0.2.3 — 2026-08-21
 
-### Corrigido
-- O login não fica mais condicionado ao carregamento de recomendações, TMDB ou consultas opcionais do banco.
-- Assim que o Supabase autentica com sucesso, a interface autenticada é exibida imediatamente.
-- Carregamento de estado persistente e sugestões passa a ocorrer em segundo plano após a entrada.
+- Login exibe UI imediatamente após autenticação; dados opcionais carregam em segundo plano.
 
 ## Web 0.2.2 — 2026-08-21
 
-### Corrigido / adicionado
-- Aplicação principal servida diretamente pelo build oficial.
-- Estado persistente tolera falha de consultas opcionais.
-- Watchlist/histórico locais são limpos antes da leitura autenticada.
-- Tema Black/Blue, favicon, configurações de conta e perfil sem overflow.
-- Domínio oficial `https://mycinetracker.vercel.app`.
+- Build oficial, tolerância a falhas opcionais, tema Black/Blue, domínio oficial.
 
 ## Web 0.2.1 — 2026-08-21
 
-- Identidade Black/Blue, favicon CineTracker, configurações e correção da área de perfil.
+- Identidade Black/Blue, favicon, configurações e correção de Perfil.
 
 ## Web 0.2.0 — 2026-08-21
 
-- Autenticação Supabase, persistência por usuário, Watchlist, progresso, anti-repetição, importação JSON/ZIP, TMDB, elenco, streaming e recomendações por tipo.
+- Auth Supabase, persistência, Watchlist/progresso, importação, TMDB, elenco, streaming e recomendações.
 
 ## Histórico 0.1.x
 

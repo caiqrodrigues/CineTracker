@@ -7,9 +7,13 @@ window.addEventListener('click', event => {
   const button = event.target?.closest?.('.nav button[data-view],.mobile-nav button[data-view],[data-view]');
   if (!button) return;
   const target = String(button.dataset.view || '');
-  if (!targets.has(target) || typeof window.ct98Navigate !== 'function') return;
+  if (!targets.has(target)) return;
+  const navigator = target === 'home' && typeof window.ct0992Navigate === 'function'
+    ? window.ct0992Navigate
+    : window.ct98Navigate;
+  if (typeof navigator !== 'function') return;
   event.preventDefault();
   event.stopImmediatePropagation();
-  window.ct98Navigate(target === 'history' ? 'profile' : target);
+  navigator(target === 'history' ? 'profile' : target);
 }, true);
 })();
