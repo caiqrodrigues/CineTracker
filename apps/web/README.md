@@ -1,39 +1,79 @@
-# CineTracker Web — 0.99.2 FIX2
+# CineTracker Web — 0.99.3
 
-**Package:** `0.99.2`  
-**Cache:** `ct-web-0.99.2-fix2`  
-**Patch final:** `patch-v096-v0992-unfreeze.js`
+**Package:** `0.99.3`  
+**Cache:** `ct-web-0.99.3`  
+**Pre-gate:** `patch-v097-v0993-nav-pre.js`  
+**Patch final:** `patch-v098-v0993-web.js`
 
 ## Runtime final
-A pilha preserva core v95, 0.98, 0.99, 0.99.1 e Home 0.99.2. O final é:
-- `patch-v092-v0991.js` — Perfil, Pra Você, filtros e favoritos;
-- `patch-v093-v0992.js` — Home vertical Séries/Filmes;
-- `patch-v094-v0992-compat.js` — compatibilidade;
-- `patch-v095-v0992-fix.js` — navegação/escritas/perfil;
-- `patch-v096-v0992-unfreeze.js` — anti-freeze final FIX2.
 
-## Travamento corrigido no FIX2
-A primeira publicação do FIX congelava Web e WebView Android. `MutationObserver` das camadas 0.99.2/FIX chamava helpers que reatribuíam o mesmo `textContent`. Essa reatribuição criava novo `childList MutationRecord`, acionando novamente o observer e formando um ciclo infinito que saturava a main thread.
+A pilha preserva core v95, 0.98, 0.99, 0.99.1, Home 0.99.2 e o anti-freeze FIX2. A ordem relevante termina em:
 
-O FIX2 instala uma guarda idempotente para `Node.prototype.textContent`: se o valor novo já é igual ao atual, a escrita vira no-op. A guarda carrega antes dos observers atrasados começarem a observar `#app`. Marker: `__ct0992UnfreezeLoaded` / `fix2-idempotent-dom-mutation-guard`.
+1. `patch-v092-v0991.js` — Perfil, Pra Você e filtros;
+2. `patch-v093-v0992.js` — Home Séries/Filmes;
+3. `patch-v094-v0992-compat.js` — compatibilidade;
+4. `patch-v097-v0993-nav-pre.js` — gate Web desktop anterior ao listener capture legado;
+5. `patch-v095-v0992-fix.js` — hardening legado de navegação/escritas/perfil;
+6. `patch-v096-v0992-unfreeze.js` — anti-freeze FIX2;
+7. `patch-v098-v0993-web.js` — Sidebar/Descobrir/rodapé Web 0.99.3.
 
-## Funcionalidades consolidadas
-- navegação Home / Descobrir / Perfil / Configurações; Histórico fora do menu;
-- Perfil 0.99.1 com timeline, filtros/layouts, favoritos, quatro métricas extras e expansões completas;
-- Pra Você 7 slots, Calendário, episódios ricos, marcação inteligente, cinegrafia e Bingers;
-- Home Séries 0.99.2 com Pull-to-Reveal, Assistir a seguir, Juntando poeira, Em dia, Não Iniciadas/Watchlist, Concluídas, cards 2:3, quick mark e LRU;
-- Home Filmes com Vistos Pull-to-Reveal, Escolha para Hoje >=8,0 e Watchlist;
+## Navegação 0.99.3
+
+A causa do clique quebrado no desktop era a precedência de listeners: `patch-v095-v0992-fix.js` registra `window.addEventListener('click', ..., true)` e usa `stopImmediatePropagation`. Uma camada posterior podia nunca receber o evento.
+
+`patch-v097-v0993-nav-pre.js` é injetado antes desse gate e controla explicitamente:
+
+- Home;
+- Descobrir;
+- Perfil;
+- Configurações;
+- tabs do Descobrir;
+- filtros Geral/Séries/Filmes.
+
+Pedidos legados de `history` redirecionam ao Perfil.
+
+## Sidebar e Descobrir
+
+`patch-v098-v0993-web.js` garante:
+
+- exatamente quatro destinos na Sidebar e mobile-nav;
+- remoção defensiva de Histórico/History;
+- `pointer-events:auto`, hit-area e z-index para pílulas do Descobrir;
+- fallback orientado do Pra Você quando não existem títulos elegíveis;
+- rodapé `CineTracker • v0.99.3`;
+- reconciliação idempotente para evitar novo churn de `MutationObserver`.
+
+Diagnóstico: `window.__ct0993Diagnostics`.
+
+## Funcionalidades preservadas
+
+- Perfil 0.99.1 com timeline e expansões;
+- Home Séries/Filmes 0.99.2;
+- Pull-to-Reveal;
+- quick mark e LRU;
 - sincronização de novos episódios;
-- `profile_id` autenticado e `media_kind` corrigidos em caminhos legados.
+- episódios ricos e confirmação inteligente;
+- cinegrafia;
+- Bingers;
+- backup;
+- hardening de `profile_id` e `media_kind`;
+- anti-freeze FIX2.
 
 ## Backend
+
+Sem alteração na 0.99.3:
+
 - `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, `auth.uid()`;
-- `daily_movie_recommendations_v0992` — RLS e não repetição;
+- `daily_movie_recommendations_v0992` — RLS;
 - migration `20260827004500_v0992_home_series_movies.sql`.
 
-## Publicação e validação
-A Web FIX2 está em `main` e houve deploy Vercel/Verify com sucesso. Isso não substitui smoke real: a release só será considerada funcionalmente encerrada após Web desktop e Web Android permanecerem responsivos e navegáveis no uso real.
+## Plataforma
 
-Rodapé: **`CineTracker • v0.99.2`**.  
-Release: `docs/releases/0.99.2.md`.  
-Validação: `docs/validation/0.99.2.md`.
+Esta release é Web-only. Android permanece `0.99.2.3`, `versionCode 9923` e não é reconstruído pela 0.99.3.
+
+## Validação
+
+`npm run build` executa `scripts/test-web-v0993.mjs` após montar o runtime. CI/Vercel não substituem smoke real no navegador PC.
+
+Release: `docs/releases/0.99.3.md`.  
+Validação: `docs/validation/0.99.3.md`.
