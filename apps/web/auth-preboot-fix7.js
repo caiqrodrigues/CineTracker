@@ -10,7 +10,8 @@ try {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object') window.__ctFix7Quarantine.canonical = parsed;
     } catch {}
-    try { localStorage.removeItem('cinetracker_session'); } catch {}
+    // 0.99.4: preserve the canonical CineTracker session. The base app's restoreSession()
+    // reads this exact key during boot; removing it here logged the Web runtime out before RPCs.
   }
   const keys = [];
   for (let i = 0; i < localStorage.length; i++) {
