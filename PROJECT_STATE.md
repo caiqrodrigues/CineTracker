@@ -2,158 +2,151 @@
 
 > Documento persistente de continuidade. Deve refletir o estado real do projeto sem depender de histórico de conversa.
 
-**Última atualização:** 2026-08-26  
+**Última atualização:** 2026-08-27  
 **Branch principal:** `main`  
 **Branch de trabalho:** `feat/v0.99.2`  
-**Release lógica em preparação:** `0.99.2`  
-**Web:** source `0.99.2`, aguardando CI/merge/deploy final  
+**Release lógica em preparação:** `0.99.2 FIX`  
+**Web:** source `0.99.2`, aguardando merge/deploy final  
 **Android:** source `0.99.2` (`versionCode 9912`), aguardando build/release final  
-**Backend lógico:** `0.99.2`, migration Home já aplicada no Supabase  
+**Backend lógico:** `0.99.2`, migration Home aplicada no Supabase  
 **Windows:** não lançado
 
 ## 1. Governança
 
-Toda nova unidade lógica de atualização/mudança deve possuir versão nova e registro no GitHub. Código, documentação, versionamento, migrations, release note e validação devem permanecer sincronizados. Source, CI, deploy, APK publicado e teste em aparelho real são estados diferentes.
+Toda nova unidade lógica de atualização/mudança deve possuir versão e registro no GitHub. Como a 0.99.2 ainda não havia sido publicada, as correções encontradas por vídeo/prints permanecem na mesma unidade **0.99.2 FIX** em vez de criar uma versão artificialmente nova. Source, CI, deploy, APK publicado e teste real são estados diferentes.
 
-## 2. Arquitetura atual
+## 2. Evidência que bloqueou a primeira tentativa da 0.99.2
 
-- Web: runtime HTML/JavaScript em `apps/web`.
-- Android: Activity + WebView com runtime Web local/inline.
-- Supabase: Auth, PostgreSQL, RPCs e Edge Functions.
-- TMDB: metadados/imagens externos via Edge proxy.
-- GitHub `main`: fonte de verdade do source, migrations, documentação e CI/CD.
+O vídeo e os prints reais mostraram:
+- produção ainda em `CineTracker • v0.99.1`;
+- sidebar com destinos duplicados e Histórico legado;
+- Home antiga em vez da Home 0.99.2;
+- Perfil falhando com `days is not defined`;
+- navegador Android conseguia clicar, mas no desktop handlers capture legados bloqueavam botões;
+- recursos existentes no source não estavam efetivamente autoritativos no DOM final.
 
-Estados manuais continuam tendo precedência sobre importação/inferência. A 0.99.2 usa estados `system` apenas para transições automáticas de acompanhamento quando detecta novos episódios ou quando o usuário fica em dia.
+A partir disso, a 0.99.2 anterior foi tratada como **não concluída**.
 
-## 3. Home 0.99.2 — Séries
+## 3. Runtime final obrigatório
 
-Camada final: `apps/web/patch-v093-v0992.js`, carregada depois de `patch-v092-v0991.js`.
+A pilha compartilhada termina em:
+1. base v95 + recuperações estáveis;
+2. 0.98 navegação/config/backup;
+3. 0.99 Perfil LRU;
+4. `patch-v092-v0991.js` — recursos 0.99.1;
+5. `patch-v093-v0992.js` — Home Séries/Filmes 0.99.2;
+6. `patch-v094-v0992-compat.js` — compatibilidade de detalhe/recomendação;
+7. **`patch-v095-v0992-fix.js` — camada final autoritativa.**
 
-A Home possui abas Séries/Filmes. Em Séries, o viewport começa visualmente em **Assistir a seguir** e mantém o histórico recente de episódios acima do ponto inicial para Pull-to-Reveal.
+A overlay global `patch-v068-v097.js` continua desativada.
 
-Ordem vertical:
-1. Assistir a seguir — iniciado, pendente, até 30 dias desde `last_watched_at`, ou recém-movido por novo episódio;
-2. Juntando poeira — iniciado, pendente, mais de 30 dias;
-3. Em dia — 0 episódios lançados pendentes e não concluída;
-4. Não Iniciadas / Watchlist — Watchlist com 0 episódios vistos;
+## 4. O que `patch-v095-v0992-fix.js` resolve
+
+- navegação em `window` capture para executar antes dos listeners antigos de `document`;
+- rebinding de `ct0992Navigate`, `ct991Navigate` e `ct98Navigate` para uma única rota;
+- sidebar/mobile-nav reconciliadas para exatamente Home, Descobrir, Perfil e Configurações;
+- Histórico permanece dentro do Perfil e não volta ao menu;
+- binding global compatível corrige o crash `days is not defined` da timeline 0.99.1;
+- wrapper de `sbApi` injeta `profile_id` autenticado em inserts pessoais que os patches legados omitiam;
+- inserts de `media` sem `media_kind` passam a receber `movie`, `series` ou `anime` inferido;
+- cabeçalhos Séries/Séries favoritas/Filmes/Filmes favoritos voltam a abrir visão completa;
+- rodapé final autoritativo: `CineTracker • v0.99.2`;
+- rota atual é re-renderizada depois que os patches antigos terminam de inicializar.
+
+## 5. Perfil consolidado da 0.99.1
+
+Mantidos/recuperados:
+- estatísticas principais compactas;
+- Tempo Total em largura dupla;
+- timeline temporal com Hoje centralizado e detalhe por data;
+- quatro seções: Séries, Séries favoritas, Filmes, Filmes favoritos;
+- filtros de status e Carrossel/Grade/Lista;
+- Não Iniciadas = Watchlist sem progresso;
+- expansão completa de Séries/Filmes/Favoritos;
+- favorito no detalhe;
+- quatro métricas extras solicitadas;
+- Pra Você com 7 slots, ano >1990 e nota >=7,8;
+- Calendário por último com Geral/Séries/Filmes;
+- cards ricos de episódios e marcação inteligente dos anteriores;
+- cinegrafia de ator separada em Filmes/Séries;
+- Bingers dentro de Importar Dados.
+
+## 6. Home 0.99.2 — Séries
+
+Viewport vertical com histórico acima do ponto inicial para Pull-to-Reveal.
+
+Ordem:
+1. Assistir a seguir — iniciada, com pendência e atividade <=30 dias, ou movida por novo episódio;
+2. Juntando poeira — pendência e atividade >30 dias;
+3. Em dia — sem episódio lançado pendente e não concluída;
+4. Não Iniciadas / Watchlist — 0 episódios vistos;
 5. Concluídas — estado `Completed`.
 
-Cards usam layout em linha, pôster 2:3, próximo `Sxx Exx`, assistidos/lançados, faltantes, título e nota do próximo episódio e ação ✓.
+Cards: pôster 2:3, título, próximo `Sxx Exx`, assistidos/lançados, faltantes, nome/nota do próximo episódio e ação ✓.
 
-### Quick mark
+Quick mark grava `watch_history` + `episode_progress`, atualiza `last_watched_at`, avança episódio, reordena LRU e move para Em dia quando zeram pendências.
 
-Ao marcar o próximo episódio:
-- grava `watch_history` com `watched_at = now()`;
-- cria/atualiza `episode_progress` como manual;
-- atualiza botões de detalhe `data-ep91` quando presentes;
-- avança o próximo episódio;
-- reordena por `last_watched_at DESC`;
-- se não houver pendência lançada, troca para `UpToDate` system;
-- dispara `cinetracker:data-changed` e refaz a Home.
+## 7. Sincronização de lançamentos
 
-## 4. Sincronização de lançamentos
+`syncReleaseStates()` roda no primeiro uso do dia, retorno de visibilidade e atualização do Calendário. Séries com TMDB oficial em UpToDate/InProgress são conciliadas com episódios já lançados. Se existe novo episódio lançado, UpToDate -> InProgress e o card recebe **Novo Episódio**. Surrogates TMDB <=0 não são consultados.
 
-`syncReleaseStates()` roda:
-- uma vez por dia no primeiro uso;
-- no retorno de visibilidade;
-- ao atualizar a sub-aba Calendário.
+## 8. Home 0.99.2 — Filmes
 
-Para séries positivas na TMDB em `UpToDate`/`InProgress`, atualiza metadados e calcula episódios efetivamente lançados. Se `aired > watched`, remove `UpToDate` system/import, garante `InProgress` system e o card passa para Assistir a seguir com badge **Novo Episódio**. IDs TMDB substitutos negativos não são enviados ao proxy.
+- histórico Vistos oculto por Pull-to-Reveal;
+- Escolha para Hoje com rating >=8,0, nunca visto e persistência por perfil/data;
+- sem repetição de TMDB já recomendado ao perfil;
+- Watchlist abaixo da recomendação;
+- quick mark grava histórico + `AlreadySeen`.
 
-## 5. Home 0.99.2 — Filmes
-
-O histórico **Vistos** fica oculto acima do ponto inicial. A área visível começa em **Escolha para Hoje** e segue para **Assistir a seguir / Watchlist**.
-
-Escolha para Hoje:
-- rating >=8.0;
-- filme nunca visto;
-- uma seleção por perfil/data;
-- não repete `tmdb_id` já recomendado ao mesmo perfil;
-- persistência em `daily_movie_recommendations_v0992`.
-
-Quick mark de filme grava `watch_history`, atualiza/cria `AlreadySeen` manual e dispara sincronização reativa.
-
-## 6. Backend 0.99.2
+## 9. Backend 0.99.2
 
 Migration aplicada: `supabase/migrations/20260827004500_v0992_home_series_movies.sql`.
 
-### RPC `cinetracker_profile_home_dashboard_v0992()`
-- `SECURITY INVOKER`;
-- escopo `auth.uid()`;
-- agrega watch history, episode progress e overrides;
-- expõe `last_watched_at`, último S/E assistido, plays, `raw_tmdb`, estados e contagens.
+- RPC `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, `auth.uid()`;
+- tabela `daily_movie_recommendations_v0992` — RLS, PK perfil/data, unique perfil/TMDB.
 
-### `daily_movie_recommendations_v0992`
-- RLS habilitado;
-- políticas select/insert limitadas a `profile_id = auth.uid()`;
-- PK `(profile_id, recommendation_date)`;
-- unique `(profile_id, tmdb_id)`.
+## 10. Reatividade pós-importação
 
-## 7. Reatividade pós-importação
+Home refaz leitura ao abrir, alternar Séries/Filmes, receber `cinetracker:data-changed`, recuperar visibilidade e detectar conclusão visual de importação. Atualizar Calendário também força a checagem de lançamentos.
 
-Home força leitura central ao abrir e ao alternar Séries/Filmes. Também reage a `cinetracker:data-changed`, retorno de visibilidade e observação de conclusão de importação para invalidar o cache. Assim os dados importados aparecem sem refresh manual quando o usuário retorna à Home.
-
-## 8. Recursos preservados da 0.99.1
-
-- Perfil estável com single-flight, Tempo Total duplo e timeline 7 dias;
-- filtros e layouts de Séries/Filmes no Perfil;
-- favoritos em detalhes;
-- quatro estatísticas extras;
-- Pra Você com exatamente 7 posições, ano >1990 e nota >=7.8;
-- Calendário por último com Geral/Séries/Filmes;
-- cards ricos de episódios e confirmação de episódios anteriores;
-- cinegrafia do ator em Filmes/Séries, recente -> antigo;
-- Bingers dentro de Importar Dados;
-- backup CSV/ZIP, Limpar Cache e Atualizar Metadados;
-- overlay global v97 continua desativada.
-
-## 9. Bingers consolidado
-
-Import ID 6 concluído/verificado permanece referência:
-- 3.078 itens de biblioteca;
-- 12.696 watch records;
-- 16.216 reproduções;
-- 1.312 reproduções de filmes;
-- 14.904 reproduções de episódios;
-- 227 séries com histórico;
-- 0 eventos sem correspondência.
-
-## 10. Identidade de versão
+## 11. Identidade
 
 Web:
 - package `0.99.2`;
 - cache `ct-web-0.99.2`;
-- rodapé `CineTracker • v0.99.2`;
-- patch final `patch-v093-v0992.js`.
+- patch final `patch-v095-v0992-fix.js`;
+- rodapé `CineTracker • v0.99.2`.
 
 Android:
 - `applicationId com.cinetracker.app`;
 - `versionName 0.99.2`;
 - `versionCode 9912`;
-- bundle `v0.99.2-home-series-movies-v95-core-inline-authoritative`;
+- bundle `v0.99.2-fix-991-992-authoritative`;
 - workflow `.github/workflows/build-android-v0992.yml`;
 - release alvo `android-v0.99.2`.
 
-## 11. Validação ainda não encerrada
+## 12. Validação ainda não encerrada
 
-Enquanto esta branch não for mergeada e os pipelines não concluírem, não marcar como executados:
-- Verify final da branch/PR e da main;
-- Vercel final;
-- build/assinatura/release Android 0.99.2;
-- smoke autenticado visual Web;
-- instalação em Android real;
-- Pull-to-Reveal e quick mark em dispositivos reais;
-- transição real por novo `air_date` e recomendação diária em dias consecutivos.
+Não marcar como concluído até haver evidência:
+- Verify do head final do PR;
+- merge PR #21;
+- Verify da main;
+- deploy Vercel main;
+- build/assinatura/artifact/release Android;
+- navegação desktop real;
+- Perfil real sem crash;
+- Pull-to-Reveal, quick mark, LRU e transições reais;
+- instalação do APK em Android real.
 
 Ver `docs/validation/0.99.2.md`.
 
-## 12. Débitos conhecidos
+## 13. Débitos conhecidos
 
-- surrogate negativo em `media.tmdb_id` ainda existe para parte da importação; caminhos recentes bloqueiam envio desses IDs à TMDB;
+- surrogate negativo em `media.tmdb_id` ainda existe para parte da importação; caminhos recentes bloqueiam chamadas externas inválidas;
 - advisories históricos Supabase continuam documentados;
 - AGP 8.5.2 vs compileSdk 35 continua emitindo warning apesar de builds anteriores concluírem.
 
-## 13. Documentos canônicos
+## 14. Documentos canônicos
 
 - `README.md`;
 - `VERSIONS.md`;
