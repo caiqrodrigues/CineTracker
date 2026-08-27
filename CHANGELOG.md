@@ -2,6 +2,28 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do HOTFIX18, toda nova unidade lógica de mudança exige versão e registro completo conforme `docs/DEVELOPMENT_RULES.md`.
 
+## Web 0.99.3 — 2026-08-27
+
+### Navegação desktop
+- Nova camada `patch-v097-v0993-nav-pre.js` é injetada antes de `patch-v095-v0992-fix.js` para vencer corretamente o listener `window`/capture legado que usa `stopImmediatePropagation`.
+- Home, Descobrir, Perfil e Configurações passam por gate Web 0.99.3; rota legada Histórico redireciona ao Perfil.
+- `patch-v098-v0993-web.js` reconcilia a Sidebar final para somente quatro destinos e remove defensivamente qualquer Histórico/History recriado por camada antiga.
+
+### Descobrir
+- Tabs Pra Você, Em Alta, Mais Aguardados, Mais bem avaliados e Calendário recebem captura explícita e executam o handler real já vinculado pela 0.99.1.
+- Filtros Geral/Séries/Filmes recebem o mesmo tratamento.
+- Containers e pílulas recebem proteção de hit-area com `pointer-events:auto` e z-index local.
+- Pra Você vazio deixa de ficar preso apenas em “Nenhum título elegível”: passa a orientar Atualizar recomendações ou Importar/sincronizar dados.
+- Cliques, `window.error` e `unhandledrejection` ficam disponíveis em `window.__ct0993Diagnostics`.
+
+### Build / versão
+- package Web `0.99.3`.
+- cache `ct-web-0.99.3`.
+- rodapé `CineTracker • v0.99.3`.
+- `scripts/apply-web-v0993.mjs` impõe a ordem pré-gate -> FIX -> FIX2 -> camada final.
+- `scripts/test-web-v0993.mjs` cobre quatro rotas, redirecionamento de Histórico, tab e filtro do Descobrir, markers e ordem do runtime.
+- Android permanece `0.99.2.3`, `versionCode 9923`; nenhum APK é reconstruído ou republicado nesta unidade Web-only.
+
 ## 0.99.2 FIX2 — 2026-08-27
 
 ### Evidência real e causa raiz
@@ -44,7 +66,7 @@ Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do 
 
 ### Runtime autoritativo
 - Criado `patch-v095-v0992-fix.js` como última camada obrigatória de Web e Android.
-- Gate de navegação movido para `window` no capture phase, executando antes dos listeners antigos em `document`.
+- Gate de navegação movido para `window` no capture phase, executando antes dos listeners antigos de `document`.
 - `ct0992Navigate`, `ct991Navigate` e `ct98Navigate` passam a apontar para uma rota única.
 - Sidebar/mobile-nav são reconciliadas para exatamente Home, Descobrir, Perfil e Configurações; Histórico continua integrado ao Perfil.
 - A rota corrente é re-renderizada após a inicialização das camadas legadas para impedir que uma tela antiga vença a camada final.
