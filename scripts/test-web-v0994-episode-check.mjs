@@ -18,7 +18,7 @@ assert.match(patch,/Série agora está Em dia/,'up-to-date feedback missing');
 assert.match(patch,/Série movida para Concluídas/,'completed feedback missing');
 assert.match(patch,/episode_progress\?select=episode_number/,'episode_progress synchronization missing');
 assert.match(apply,/patch-v109-v0994-settings-web\.js/,'v110 must load after v109');
-assert.match(index,/patch-v109-v0994-settings-web\.js<\/script><script src="\/patch-v110-v0994-episode-check\.js/,'v110 must be emitted immediately after v109');
+assert.match(index,/patch-v109-v0994-settings-web\.js"><\/script><script src="\/patch-v110-v0994-episode-check\.js"><\/script>/,'v110 must be emitted immediately after v109');
 assert.match(migration,/v_state:='Completed'/,'terminal series must become Completed');
 assert.match(migration,/v_state:='UpToDate'/,'fully caught-up active series must become UpToDate');
 assert.match(migration,/v_state:='InProgress'/,'series with released episodes remaining must become InProgress');
