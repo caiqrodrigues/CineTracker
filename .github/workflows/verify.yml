@@ -42,12 +42,14 @@ jobs:
           grep -q 'patch-v107-v0994-data-ui-fix.js' dist/index.html
           grep -q 'patch-v108-v0994-pwa-resilience.js' dist/index.html
           grep -q 'patch-v109-v0994-settings-web.js' dist/index.html
+          grep -q 'patch-v110-v0994-episode-check.js' dist/index.html
           test "$(grep -o 'patch-v099-v0994-web.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v103-v0994-session-gate.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v104-v0994-authority.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v107-v0994-data-ui-fix.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v108-v0994-pwa-resilience.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v109-v0994-settings-web.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v110-v0994-episode-check.js' dist/index.html | wc -l)" -eq 1
           ! grep -q 'patch-v097-v0993-nav-pre.js' dist/index.html
           ! grep -q 'patch-v098-v0993-web.js' dist/index.html
           grep -q 'cinetracker_profile_home_payload_v0994' dist/patch-v099-v0994-web.js
@@ -60,6 +62,8 @@ jobs:
           grep -q 'v107-history-settings-cache' dist/patch-v107-v0994-data-ui-fix.js
           grep -q 'v108-web-pwa-home-resilience' dist/patch-v108-v0994-pwa-resilience.js
           grep -q 'v109-browser-settings-complete' dist/patch-v109-v0994-settings-web.js
+          grep -q 'v110-canonical-episode-check' dist/patch-v110-v0994-episode-check.js
+          grep -q 'cinetracker_mark_episode_v0994' dist/patch-v110-v0994-episode-check.js
           grep -q 'ct109-data-columns' dist/patch-v109-v0994-settings-web.js
           grep -q 'Configurações da <b>Web/PWA</b>' dist/patch-v109-v0994-settings-web.js
           grep -q 'Tempo limite ao sincronizar Home' dist/patch-v108-v0994-pwa-resilience.js
@@ -69,6 +73,9 @@ jobs:
           grep -q 'next_episode_to_air' dist/patch-v092-v0991.js
           grep -q 'Gerenciamento de Dados' dist/patch-v106-v0994-refactor.js
           grep -q 'fix2-idempotent-dom-mutation-guard' dist/patch-v096-v0992-unfreeze.js
+          grep -q 'v_state:='"'"'Completed'"'"'' supabase/migrations/20260827222500_v0994_episode_check_state_sync.sql
+          grep -q 'v_state:='"'"'UpToDate'"'"'' supabase/migrations/20260827222500_v0994_episode_check_state_sync.sql
+          grep -q 'v_state:='"'"'InProgress'"'"'' supabase/migrations/20260827222500_v0994_episode_check_state_sync.sql
           grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
 
   android_0994_identity:
