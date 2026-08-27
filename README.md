@@ -1,78 +1,77 @@
 # 🎬 CineTracker
 
-CineTracker é um companion multiplataforma para filmes, séries e animes. Web e Android compartilham conta, biblioteca, Watchlist, histórico, progresso, Perfil, descoberta, configurações e backup por meio do Supabase.
+CineTracker é um companion multiplataforma para filmes, séries e animes. Web e Android compartilham conta, biblioteca, Watchlist, histórico, progresso, Perfil, Descobrir, configurações e backup por meio do Supabase.
 
 ## Versão atual
 
-| Sistema | Versão | Estado comprovado |
+| Sistema | Versão | Estado nesta branch |
 |---|---:|---|
-| Web | **0.0.99** | package `0.0.99`, cache `ct-web-0.0.99`; Verify/build e Vercel concluídos |
-| Android | **0.0.99** | `versionName 0.0.99`, `versionCode 997`; APK/artifact/Release publicados |
-| Backend lógico | **0.0.99** | RPC LRU aplicada; Edge Functions possuem versões próprias |
+| Web | **0.99.2** | package `0.99.2`, cache `ct-web-0.99.2`; aguardando CI/merge/deploy final |
+| Android | **0.99.2** | `versionName 0.99.2`, `versionCode 9912`; aguardando pipeline/release final |
+| Backend lógico | **0.99.2** | migration/RPC Home 0.99.2 aplicadas no Supabase |
 | Windows | — | não lançado |
 
-A 0.0.99 preserva a navegação, Descobrir, backup CSV/ZIP e manutenção da 0.0.98 e reformula a biblioteca pessoal do Perfil.
+## Home 0.99.2 — Séries
 
-## Perfil 0.0.99
+A Home agora possui uma aba **Séries** com lista vertical contínua. O ponto inicial visível é **Assistir a seguir**; acima dele existe um histórico oculto de episódios, revelado quando o usuário puxa/rola a lista para baixo no topo.
 
-Logo abaixo das estatísticas principais existem quatro carrosséis horizontais de cards 2:3:
+Ordem das seções:
+1. **Assistir a seguir** — séries iniciadas com episódios já lançados pendentes e última atividade em até 30 dias, mais séries recém-saídas de Em dia por novo episódio;
+2. **Juntando poeira** — pendências com mais de 30 dias sem reprodução;
+3. **Em dia** — todos os episódios já lançados foram vistos;
+4. **Não Iniciadas / Watchlist** — progresso zero;
+5. **Concluídas** — séries finalizadas pelo usuário.
 
-1. **Séries** — séries em andamento ou já iniciadas/recentes;
-2. **Séries favoritas** — séries com estado `Liked`;
-3. **Filmes** — filmes vistos/recentes;
-4. **Filmes favoritos** — filmes com estado `Liked`.
+Cards são em linha, com pôster 2:3 à esquerda, título, `Sxx Exx`, progresso assistidos/lançados, faltantes, nome/nota do próximo episódio e botão circular ✓. O quick mark grava `watch_history`, sincroniza `episode_progress`, move a série para o topo por `last_watched_at DESC` e, ao zerar pendências, move para **Em dia**.
 
-Cada card exibe pôster, título, progresso (`18/20`, contagem de episódios, `Visto ✓`, etc.), badge `♥` quando favoritado e a data da última atividade. Cards com TMDB oficial abrem a tela de detalhes existente. Mídias importadas com surrogate TMDB negativo continuam clicáveis por um detalhe local, sem enviar ID inválido à TMDB.
+### Sincronização de novos episódios
 
-### LRU / sincronização
+A camada `patch-v093-v0992.js` executa uma checagem diária de metadados para séries em andamento/em dia, além de forçar nova checagem quando o Calendário é atualizado. Se um episódio com `air_date <= hoje` estiver disponível e ainda não visto, a série sai de **Em dia**, entra em **Assistir a seguir**, recebe badge **Novo Episódio** e sobe na fila.
 
-A ordenação principal é `last_watched_at DESC`. `cinetracker_profile_media_dashboard()` calcula `last_watched_at` usando histórico, progresso de episódios e timestamp de `AlreadySeen` de filmes. Ao gravar `watch_history`, `episode_progress` ou `media_overrides`, a camada 0.0.99 dispara atualização reativa do Perfil; foco/retorno à aba e uma reconciliação periódica funcionam como fallback para alterações externas.
+## Home 0.99.2 — Filmes
 
-### Cabeçalhos clicáveis
+A aba **Filmes** começa em **Escolha para Hoje** e possui o histórico **Vistos** escondido acima do ponto inicial.
 
-- **Séries ›** abre uma visão completa com: Em andamento, Não iniciadas, Assistir mais tarde / Watchlist, Em dia e Concluídas.
-- **Filmes ›** abre: Assistir a seguir / Watchlist e Já vistos.
-- **Séries favoritas ›** e **Filmes favoritos ›** abrem grids completos responsivos de 2/3 colunas.
+- **Escolha para Hoje:** 1 filme por data, nota >= 8.0, nunca visto e sem repetição de títulos já recomendados ao perfil.
+- **Assistir a seguir / Watchlist:** filmes ainda não vistos com pôster, ano, duração, sinopse curta e ação ✓.
+- O quick mark de filme grava histórico e estado `AlreadySeen` com timestamp atual.
 
-## Backend do Perfil
+A recomendação diária é persistida em `daily_movie_recommendations_v0992`, protegida por RLS e com unicidade por perfil/TMDB.
 
-Migration: `supabase/migrations/20260826234500_v099_profile_media_lru_dashboard.sql`.
+## Reatividade pós-importação
 
-RPC `cinetracker_profile_media_dashboard()` é `SECURITY INVOKER`, filtra por `auth.uid()` e consolida progresso, `last_watched_at`, favoritos (`Liked`), AddedToWatchlist / WatchLater, InProgress / UpToDate / Completed, não iniciadas e já vistas.
+A Home sempre refaz a leitura central ao ser aberta e ao alternar Séries/Filmes. Eventos `cinetracker:data-changed`, retorno de visibilidade e detecção de importação concluída invalidam o cache da Home, evitando refresh manual após Bingers/importações.
 
-## Recursos preservados da 0.0.98
+## Backend 0.99.2
 
-- navegação oficial: Home, Descobrir, Perfil e Configurações; Histórico não é aba separada;
-- Descobrir: Pra você → Em alta → Mais aguardados → Mais bem avaliados → Calendário, com filtros Todos/Filmes/Séries quando aplicável e ranking decrescente;
-- Backup & Restauração com apenas Exportar/Importar e ZIP contendo CSVs completos;
-- Edge Function autenticada `ct-backup-user` v1;
-- Limpar Cache e Atualizar Metadados funcionais;
-- importador Bingers resiliente preservado (`ct-import-bingers-user` v8).
+Migration: `supabase/migrations/20260827004500_v0992_home_series_movies.sql`.
 
-## Publicação 0.0.99
+RPC: `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, escopo `auth.uid()`, consolida mídia, estados, último episódio assistido, `last_watched_at`, plays e metadados necessários à Home.
 
-### Web
-- Verify final: run `33021058624` — success;
-- status Vercel do commit funcional `f4261cb944b60c15c01b41989645e8c64468e4ef`: success / Deployment has completed.
+Tabela: `daily_movie_recommendations_v0992` — RLS por `profile_id = auth.uid()`, uma recomendação por dia e sem repetição de TMDB por perfil.
 
-### Android
-- pipeline: run `33021058734` — success;
-- bundle: `v0.0.99-profile-lru-v95-core-inline-authoritative`;
-- APK: `cinetracker-android-0.0.99-debug.apk`;
-- artifact `cinetracker-android-0.0.99-debug`, ID `9626549788`;
-- GitHub Release `android-v0.0.99`, ID `377463898`;
-- SHA-256: `c39c08cd51470050f3eac2c444c4d468dcfcb4072230cf9e082def9ab176cf57`.
+## Recursos preservados
 
-Build, `aapt`, assinatura, runtime embarcado, artifact e Release foram aprovados. Instalação em aparelho real e smoke visual autenticado continuam explicitamente separados como testes manuais pendentes.
+A 0.99.2 preserva o core estável v95/v98 e toda a camada 0.99.1: Perfil com timeline de 7 dias, filtros/layouts, favoritos, métricas extras, Pra Você com 7 posições, Calendário como última sub-aba, episódios ricos, marcação inteligente de episódios anteriores, cinegrafia do ator, Backup/Importar Dados e Bingers resiliente. A overlay global v97 continua desativada.
+
+## Versionamento
+
+- Web/package: `0.99.2`
+- Service Worker: `ct-web-0.99.2`
+- Android: `versionName 0.99.2`, `versionCode 9912`
+- Rodapé: `CineTracker • v0.99.2`
+- Runtime final: `patch-v093-v0992.js`
+- Android bundle marker: `v0.99.2-home-series-movies-v95-core-inline-authoritative`
 
 ## Documentação canônica
 
-- `PROJECT_STATE.md` — continuidade técnica atual;
-- `VERSIONS.md` — matriz de versões;
-- `CHANGELOG.md` — histórico completo;
-- `docs/DEVELOPMENT_RULES.md` — regra obrigatória de versionamento/registro;
-- `docs/ARCHITECTURE.md` e `docs/SECURITY.md`;
-- `docs/releases/0.0.99.md` — release atual;
-- `docs/validation/0.0.99.md` — evidências executadas.
+- `PROJECT_STATE.md`
+- `VERSIONS.md`
+- `CHANGELOG.md`
+- `docs/DEVELOPMENT_RULES.md`
+- `docs/ARCHITECTURE.md`
+- `docs/SECURITY.md`
+- `docs/releases/0.99.2.md`
+- `docs/validation/0.99.2.md`
 
 **Regra permanente:** toda atualização/mudança recebe nova versão e registro integral no GitHub. Source, build, deploy, publicação e teste físico são estados distintos.
