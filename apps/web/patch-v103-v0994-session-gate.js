@@ -2,7 +2,7 @@
 'use strict';
 if (window.__ct0994SessionGateLoaded) return;
 window.__ct0994SessionGateLoaded = true;
-window.__ct0994SessionGate = 'web-0.99.4-auth-required-preloaded';
+window.__ct0994SessionGate = 'web-0.99.4-auth-required-nonblocking-preload';
 
 let restoring994 = null;
 const rawRpc994 = typeof sbRpc === 'function' ? sbRpc : null;
@@ -69,7 +69,7 @@ if (rawRpc994) {
 
 async function guardedNavigate994(target) {
   if (!(await ensureSession994())) return showAuth994();
-  await preloadRoute994(target);
+  void preloadRoute994(target);
   if (typeof rawNavigate994 !== 'function') return false;
   return rawNavigate994(target);
 }
