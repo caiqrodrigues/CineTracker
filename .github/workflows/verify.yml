@@ -66,19 +66,23 @@ jobs:
           grep -q 'fix2-idempotent-dom-mutation-guard' dist/patch-v096-v0992-unfreeze.js
           grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
 
-  android_identity_unchanged:
+  android_0994_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Assert Android stayed outside Web 0.99.4 correction
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Assert Android 0.99.4 publication identity and bundle builder
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.2.3'" apps/android/app/build.gradle
-          grep -q 'versionCode 9923' apps/android/app/build.gradle
-          grep -q "v0.99.2.3-fix2-unfreeze-authoritative" scripts/prepare-android-hotfix2-web.mjs
-          grep -q "window.__ctAndroidBuild = '0.99.2.3'" scripts/prepare-android-hotfix2-web.mjs
-          test ! -e .github/workflows/build-android-v0994.yml
-          test ! -e scripts/prepare-android-v0994.mjs
-          test ! -e scripts/test-android-v0994.mjs
-          test ! -e ci-status/android-v0994-trigger.txt
+          grep -q "versionName '0.99.4'" apps/android/app/build.gradle
+          grep -q 'versionCode 9940' apps/android/app/build.gradle
+          grep -q 'android-v0.99.4-startup-resilient' scripts/prepare-android-v0994.mjs
+          grep -q "const version = '0.99.4'" scripts/prepare-android-v0994.mjs
+          grep -q 'void preloadRoute994(target);' scripts/prepare-android-v0994.mjs
+          grep -q 'window.ct15Navigate = navigate994' scripts/prepare-android-v0994.mjs
+          grep -q 'android:id="@+id/nav_history"' apps/android/app/src/main/res/layout/activity_main.xml
+          grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
+          node --check scripts/prepare-android-v0994.mjs
+          node --check scripts/test-android-v0994.mjs
