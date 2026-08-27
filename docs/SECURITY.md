@@ -1,6 +1,6 @@
 # CineTracker — Segurança
 
-**Release lógica:** `0.0.99`  
+**Release lógica em preparação:** `0.99.2`  
 **Atualizado em:** 2026-08-26
 
 Este documento registra controles existentes e débitos abertos. Aviso de linter não é tratado como corrigido sem alteração segura e validação correspondente.
@@ -11,40 +11,60 @@ CineTracker usa Supabase Auth. Web e Android compartilham a mesma conta. Toda le
 
 Estados manuais têm prioridade sobre importação/inferência: `AlreadySeen`, `Completed`, `UpToDate`, `InProgress`, `NotInterested`, `Liked`, `Disliked`, `WatchLater`, `AddedToWatchlist`.
 
-## 2. RPC do Perfil 0.0.99
+## 2. RPC Home 0.99.2
 
-`cinetracker_profile_media_dashboard()` foi criada por `20260826234500_v099_profile_media_lru_dashboard.sql` com:
+`cinetracker_profile_home_dashboard_v0992()` foi criada por `20260827004500_v0992_home_series_movies.sql` com:
 
 - `SECURITY INVOKER`;
 - `set search_path = public`;
 - filtros explícitos por `auth.uid()` em `watch_history`, `episode_progress` e `media_overrides`;
 - grant somente para `authenticated`.
 
-A RPC não recebe `profile_id` do cliente e, portanto, não permite ao chamador selecionar arbitrariamente outro perfil.
+A RPC não recebe `profile_id` fornecido pelo cliente e não permite consultar arbitrariamente outro perfil.
 
-## 3. Sincronização reativa
+## 3. Recomendação diária de filmes
 
-A camada 0.0.99 reage a escritas já autorizadas pelo cliente e volta a consultar a RPC. Ela não introduz credenciais privilegiadas no navegador/Android. A ordenação por `last_watched_at` é derivada de timestamps persistidos no banco.
+`daily_movie_recommendations_v0992` possui RLS habilitado. As policies de select/insert exigem `profile_id = auth.uid()`.
 
-## 4. IDs TMDB substitutos
+A chave primária `(profile_id, recommendation_date)` garante no máximo uma escolha persistida por dia e a restrição `unique(profile_id, tmdb_id)` impede repetir o mesmo filme para o mesmo perfil. A seleção TMDB ocorre no cliente autenticado, mas somente a linha do próprio perfil pode ser persistida/lida pelas policies.
 
-Surrogate IDs negativos continuam existindo no modelo legado. Os caminhos 0.0.98/0.0.99 não encaminham IDs `<= 0` à TMDB. No Perfil 0.0.99, esses cards abrem uma visualização local em vez de chamar `tmdb-proxy`.
+## 4. Transições automáticas de séries
+
+A reconciliação de novos episódios usa apenas IDs TMDB oficiais positivos. Ela pode criar estados `origin='system'` (`InProgress`/`UpToDate`) e remove somente estados automáticos/importados equivalentes. Decisões `origin='manual'` não são apagadas por essa rotina.
+
+A categoria visual da Home também considera pendências efetivamente lançadas, evitando depender exclusivamente de um override persistido possivelmente antigo.
+
+## 5. Quick mark
+
+Marcação rápida de episódios e filmes usa as mesmas APIs autenticadas do cliente:
+- episódios: `watch_history` + `episode_progress` com `origin='manual'`;
+- filmes: `watch_history` + `AlreadySeen` manual.
+
+Nenhuma credencial privilegiada é adicionada ao navegador ou WebView. Estatísticas são recalculadas por nova leitura das RPCs já autorizadas.
+
+## 6. IDs TMDB substitutos
+
+Surrogate IDs negativos continuam existindo no modelo legado. Caminhos 0.99.x não encaminham IDs `<=0` à TMDB. A Home 0.99.2 usa fallback local quando não há TMDB oficial.
 
 A separação definitiva entre surrogate interno e `tmdb_id` oficial continua recomendada.
 
-## 5. Backup
+## 7. Perfil 0.99.1 preservado
+
+`cinetracker_profile_media_dashboard_v0991()` continua `SECURITY INVOKER`, escopada por `auth.uid()` e sem `profile_id` arbitrário do cliente. A 0.99.2 não substitui nem amplia privilégios dessa RPC.
+
+## 8. Backup
 
 `ct-backup-user` usa `verify_jwt=false` no gateway, mas valida explicitamente o bearer token em `/auth/v1/user` dentro da função. Service role fica apenas no ambiente server-side. Snapshot/restauração são escopados ao usuário autenticado.
 
-## 6. Importação Bingers
+## 9. Importação Bingers
 
 `ct-import-bingers-user` v8 mantém autenticação server-side, `client_run_id`, cursor/replay seguro, validação/dedupe, limpeza escopada e precedência manual. Finalização depende de contagens exatas.
 
-## 7. RLS e staging
+## 10. RLS e staging
 
 Estruturas históricas de staging devem ser avaliadas antes de mudanças de RLS. `public.ct_import_staging` já foi identificado historicamente com RLS desabilitado. Não habilitar RLS cegamente sem policies compatíveis; se a estrutura estiver obsoleta, preferir deprecação/remoção controlada.
 
-## 8. Advisories ainda abertos
+## 11. Advisories ainda abertos
 
 Continuam pendentes de tratamento individual:
 
@@ -55,18 +75,18 @@ Continuam pendentes de tratamento individual:
 
 Não fazer revogações/alterações em massa sem mapear consumidores e regressão.
 
-## 9. Segredos
+## 12. Segredos
 
 - service role nunca deve ser commitada nem exposta ao cliente;
 - cliente usa apenas credenciais públicas apropriadas;
 - GitHub Actions usa tokens/secrets do runner;
 - keystore Android não é versionado no repositório.
 
-## 10. Web / Android
+## 13. Web / Android
 
-Service Worker não cacheia o shell HTML. Android usa runtime principal local/inline. Links/IDs externos devem ser validados antes de chamadas a serviços terceiros.
+Service Worker não cacheia o shell HTML. Android usa runtime principal local/inline. Links/IDs externos são validados antes de chamadas a serviços terceiros.
 
-## 11. Processo obrigatório
+## 14. Processo obrigatório
 
 Toda mudança de autenticação, autorização, RLS, policy, `SECURITY DEFINER`, upload/importação, RPC pública ou segredo deve:
 
