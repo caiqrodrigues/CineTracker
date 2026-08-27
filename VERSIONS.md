@@ -4,77 +4,78 @@
 
 ## Matriz atual
 
-| Sistema | Versão atual | Versão técnica adicional | Estado comprovado |
+| Sistema | Versão | Identidade técnica | Estado nesta branch |
 |---|---:|---|---|
-| Web | **0.0.99** | package `0.0.99`, cache `ct-web-0.0.99` | Verify/build concluídos; Vercel `success` no commit funcional |
-| Android | **0.0.99** | `versionCode 997` | build, identidade, assinatura, artifact e GitHub Release publicados |
-| Backend / Supabase | **0.0.99** | RPC `cinetracker_profile_media_dashboard`; `ct-backup-user` v1; Bingers v8 | migration/RPC ativos |
-| Windows | **—** | — | não lançado |
+| Web | **0.99.2** | package `0.99.2`, cache `ct-web-0.99.2`, patch final `patch-v093-v0992.js` | source pronto; aguardando CI/merge/deploy final |
+| Android | **0.99.2** | `versionName 0.99.2`, `versionCode 9912`, bundle `v0.99.2-home-series-movies-v95-core-inline-authoritative` | source/workflow prontos; aguardando build/release final |
+| Backend / Supabase | **0.99.2** | RPC `cinetracker_profile_home_dashboard_v0992`, tabela `daily_movie_recommendations_v0992` | migration aplicada em produção |
+| Windows | — | — | não lançado |
 
-## Identidade 0.0.99
+## Identidade 0.99.2
 
 ### Web
-- package: `0.0.99`;
-- Service Worker: `ct-web-0.0.99`;
-- camada final: `patch-v091-v099-profile-lru.js`;
-- rodapé: `CineTracker • v0.0.99`;
-- Verify final: run `33021058624`, success;
-- Vercel: success para o commit funcional `f4261cb944b60c15c01b41989645e8c64468e4ef`.
+- package: `0.99.2`;
+- Service Worker: `ct-web-0.99.2`;
+- camada autoritativa final: `apps/web/patch-v093-v0992.js`;
+- rodapé: `CineTracker • v0.99.2`;
+- Home de Séries/Filmes reativa e vertical;
+- Perfil/Descobrir/Configurações continuam providos pelas camadas 0.99.1/0.98 preservadas.
 
 ### Android
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.0.99`;
-- `versionCode`: `997`;
-- bundle: `v0.0.99-profile-lru-v95-core-inline-authoritative`;
-- workflow: `.github/workflows/build-android-v099.yml`;
-- run publicado: `33021058734`, success;
-- tag/release: `android-v0.0.99`;
-- APK: `cinetracker-android-0.0.99-debug.apk`;
-- artifact: `cinetracker-android-0.0.99-debug`, ID `9626549788`;
-- SHA-256 do APK: `c39c08cd51470050f3eac2c444c4d468dcfcb4072230cf9e082def9ab176cf57`.
+- `versionName`: `0.99.2`;
+- `versionCode`: `9912`;
+- bundle: `v0.99.2-home-series-movies-v95-core-inline-authoritative`;
+- workflow: `.github/workflows/build-android-v0992.yml`;
+- release planejada: `android-v0.99.2`;
+- APK planejado: `cinetracker-android-0.99.2-debug.apk`.
 
-## Backend 0.0.99
+## Backend 0.99.2
 
-Migration: `20260826234500_v099_profile_media_lru_dashboard.sql`.
+Migration: `20260827004500_v0992_home_series_movies.sql`.
 
-A RPC `cinetracker_profile_media_dashboard()` é `SECURITY INVOKER`, usa `auth.uid()` e produz a visão central do Perfil com progresso, favoritos, estados e `last_watched_at`.
+`cinetracker_profile_home_dashboard_v0992()` é `SECURITY INVOKER`, usa `auth.uid()` e entrega dados de Home incluindo último S/E assistido, LRU, plays, estados e `raw_tmdb`.
 
-Edge Functions mantêm numeração própria:
-- `ct-backup-user`: v1;
-- `ct-import-bingers-user`: v8;
-- `tmdb-proxy` e `tmdb-image`: versões de deploy independentes.
+`daily_movie_recommendations_v0992`:
+- RLS habilitado;
+- leitura/inserção apenas para `profile_id = auth.uid()`;
+- uma escolha por perfil/dia;
+- `unique(profile_id, tmdb_id)` para não repetir títulos já recomendados.
 
-## Conteúdo funcional da 0.0.99
+## Conteúdo funcional da 0.99.2
 
-- quatro carrosséis no Perfil: Séries, Séries favoritas, Filmes, Filmes favoritos;
-- cards 2:3 com título, progresso, favorito e última atividade;
-- LRU por `last_watched_at DESC`;
-- atualização reativa após gravações de histórico/progresso/overrides;
-- subtela Séries com Em andamento, Não iniciadas, Assistir mais tarde/Watchlist, Em dia e Concluídas;
-- subtela Filmes com Assistir a seguir/Watchlist e Já vistos;
-- favoritos em grid completo responsivo de 2/3 colunas;
-- detalhe TMDB quando o ID é oficial e detalhe local seguro para surrogate negativo;
-- preservação integral da navegação, Descobrir, Backup, Cache, Metadados e importação Bingers da 0.0.98.
+### Séries
+- histórico oculto Pull-to-Reveal no topo;
+- Assistir a seguir <=30 dias;
+- Juntando poeira >30 dias;
+- Em dia;
+- Não Iniciadas / Watchlist;
+- Concluídas;
+- cards em linha 2:3 com próximo episódio, nota, progresso e faltantes;
+- quick mark com histórico + `episode_progress` + LRU;
+- sincronização diária de novos episódios e badge Novo Episódio.
 
-## Validação manual ainda separada
+### Filmes
+- Vistos ocultos Pull-to-Reveal;
+- Escolha para Hoje com rating >=8.0, nunca visto e sem repetição;
+- Assistir a seguir / Watchlist;
+- quick mark com `watch_history` + `AlreadySeen`.
 
-Ainda não é marcado como executado:
-- smoke autenticado visual Web em produção;
-- instalação/navegação do APK 0.0.99 em aparelho real;
-- teste manual do LRU e alternância de favoritos.
+### Reatividade
+- Home recarrega ao abrir e alternar Séries/Filmes;
+- reage a `cinetracker:data-changed`, retorno de visibilidade e conclusão visual de importação;
+- atualizar Calendário força checagem de episódios lançados.
 
 ## Linha recente
 
-- **0.0.97 HOTFIX 15** — transporte/picker e shape homogêneo do histórico;
-- **0.0.97 HOTFIX 16** — Bingers resiliente/idempotente;
-- **0.0.97 HOTFIX 17** — Perfil server-side e estados das séries;
-- **0.0.97 HOTFIX 18** — governança/versionamento;
 - **0.0.98** — navegação, Histórico absorvido pelo Perfil, backup CSV/ZIP e Descobrir reformulado;
-- **0.0.99** — biblioteca pessoal do Perfil com favoritos, grids e ordenação LRU reativa.
+- **0.0.99** — biblioteca pessoal do Perfil com favoritos e LRU;
+- **0.99.1** — estabilização do Perfil, timeline de 7 dias, Pra Você 7 cards, favoritos/detalhes, filtros e Bingers em Importar Dados;
+- **0.99.2** — Home de Séries/Filmes vertical, Pull-to-Reveal, quick mark, release sync e Escolha para Hoje persistente.
 
 ## Regra obrigatória
 
 Toda nova unidade lógica de mudança recebe nova versão e registro no GitHub. Source, validação automatizada, deploy Web, publicação APK e teste em aparelho real são estados separados.
 
-Release atual: `docs/releases/0.0.99.md`.  
-Validação atual: `docs/validation/0.0.99.md`.
+Release atual: `docs/releases/0.99.2.md`.  
+Validação atual: `docs/validation/0.99.2.md`.
