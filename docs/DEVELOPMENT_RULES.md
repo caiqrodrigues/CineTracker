@@ -39,6 +39,7 @@ Nenhuma alteração pode existir apenas em conversa, console, Supabase ou ambien
 25. **Mudança envolvendo observers, polling, render reativo ou reconciliação deve possuir teste de estabilidade/responsividade; o critério inclui ausência de loop de mutações/CPU runaway por pelo menos 60 s em smoke real.**
 26. **Monkey-patch global de API DOM só pode ser usado como correção compatível/transitória, com semântica restrita, documentação de impacto e plano de remoção quando o legado for refatorado.**
 27. **Se Web e WebView reproduzem o mesmo congelamento, tratar primeiro a camada compartilhada do runtime; não duplicar correções divergentes por plataforma sem evidência.**
+28. **Quando o usuário solicitar explicitamente evolução de apenas uma plataforma, a divergência de versão Web/Android é permitida desde que seja declarada em `VERSIONS.md`, `PROJECT_STATE.md`, release notes e CI, e que a plataforma fora do escopo não seja republicada silenciosamente.**
 
 ## Fonte de verdade e precedência
 
@@ -47,14 +48,14 @@ Nenhuma alteração pode existir apenas em conversa, console, Supabase ou ambien
 - TMDB: metadados externos, não decisões do usuário;
 - decisões manuais do usuário têm prioridade.
 
-## Release em correção
+## Releases atuais
 
-- Web: **0.99.2 FIX2**, package `0.99.2`, cache `ct-web-0.99.2-fix2`, patch final `patch-v096-v0992-unfreeze.js`;
-- Android: **0.99.2 FIX2**, `versionName 0.99.2`, `versionCode 9913`, bundle `v0.99.2-fix2-unfreeze-991-992-authoritative`;
+- Web: **0.99.3**, package `0.99.3`, cache `ct-web-0.99.3`, pre-gate `patch-v097-v0993-nav-pre.js`, final `patch-v098-v0993-web.js`;
+- Android: **0.99.2.3**, `versionName 0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative`;
 - Backend lógico: **0.99.2**;
 - Windows: não lançado.
 
-O APK 9912 foi publicado e invalidado após evidência de travamento. O 9913 é o rebuild FIX2. A release lógica continua 0.99.2 porque a unidade ainda não foi funcionalmente encerrada.
+A divergência Web/Android acima é deliberada: a unidade 0.99.3 foi solicitada exclusivamente para navegador Web desktop. Nenhum APK é reconstruído ou republicado nessa unidade.
 
 ## Estados separados
 
@@ -67,4 +68,4 @@ Nunca usar “publicado” ou “validado” como sinônimo de “commitado” o
 
 ## Fechamento de release
 
-Registrar separadamente: merge em `main`, Verify, deploy Web, build Android, identidade `aapt`, assinatura, artifact, GitHub Release, checksum e smoke visual. Para runtimes em camadas, a validação deve provar que a **camada final realmente controla a UI**, que observers/reconciliações não entram em churn e que a interface permanece responsiva no ambiente real.
+Registrar separadamente: merge em `main`, Verify, deploy Web, build Android quando aplicável, identidade `aapt`, assinatura, artifact, GitHub Release, checksum e smoke visual. Para runtimes em camadas, a validação deve provar que a **camada final realmente controla a UI**, que observers/reconciliações não entram em churn e que a interface permanece responsiva no ambiente real.
