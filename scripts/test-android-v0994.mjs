@@ -17,10 +17,12 @@ for (const name of [
 assert.ok(!html.includes('<script src="/'),'embedded APK must not depend on root JS assets');
 assert.match(html,/void preloadRoute994\(target\);/,'Android startup preload must be non-blocking');
 assert.match(html,/v113-cache-first-fast-boot/,'cache-first startup missing');
-assert.match(html,/v113-persistent-hot-route-cache/,'persistent route snapshots missing');
-assert.match(html,/v113-cache-first-tabs-activity/,'fluidity/activity layer missing');
+assert.match(html,/v114-persistent-hot-route-cache/,'v4 persistent route snapshots missing');
+assert.match(html,/ct0994_profile_snapshot_v4/,'Profile v4 snapshot key missing');
+assert.match(html,/ct0994_discover_snapshot_v4/,'Discover v4 snapshot key missing');
+assert.match(html,/v114-cache-first-posters-catalog/,'poster/catalog preload layer missing');
 assert.match(html,/window\.ct15Navigate = navigate994/,'native navigation must target 0.99.4 router');
 assert.match(html,/cinetracker_profile_home_payload_v0994/,'0.99.4 Home RPC missing');
 assert.match(html,/cinetracker_discovery_exclusions_v0994/,'strict Discover exclusions missing');
 assert.match(layout,/android:id="@\+id\/nav_history"[\s\S]*?android:visibility="gone"/,'native Histórico item must remain hidden');
-console.log('ANDROID_0994_OK identity=9940 embedded=fluid-cache-first nav=v0994 history=hidden');
+console.log('ANDROID_0994_OK identity=9940 embedded=cache-v4-posters nav=v0994 history=hidden');
