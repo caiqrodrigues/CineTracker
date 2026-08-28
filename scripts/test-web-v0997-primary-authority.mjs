@@ -55,6 +55,9 @@ for(const dir of ['dist','apps/web/dist']){
   if(a<0||b<0||b<a)throw new Error(`Web r133: runtime tag missing or ordered before r132 in ${dir}.`);
   const emitted=await readFile(resolve(root,dir,'patch-v133-v0997-primary-authority.js'),'utf8');
   if(!emitted.includes('v133-primary-single-authority-home-discover-profile'))throw new Error(`Web r133: emitted marker missing in ${dir}.`);
+  if(!emitted.includes("r133-nonblocking-home"))throw new Error(`Web r133 hotfix: non-blocking marker missing in ${dir}.`);
+  if(!emitted.includes('warmHomeSeries')||!emitted.includes('homeResolvedCache'))throw new Error(`Web r133 hotfix: background enrichment missing in ${dir}.`);
+  if(emitted.includes('ranked.slice(0,60)'))throw new Error(`Web r133 hotfix: Home still blocks on 60 TMDB resolutions in ${dir}.`);
 }
 
-console.log('CineTracker Web 0.99.7 r133 primary authority + apps/web Vercel root contracts: OK');
+console.log('CineTracker Web 0.99.7 r133 primary authority + non-blocking Home + apps/web Vercel root contracts: OK');
