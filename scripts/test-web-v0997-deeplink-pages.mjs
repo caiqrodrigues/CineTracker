@@ -18,11 +18,11 @@ const must=[
 ];
 for(const token of must)if(!source.includes(token))throw new Error(`Web r132 source contract missing: ${token}`);
 if(source.includes('i>=4'))throw new Error('Web r132 must not reintroduce the 4-card Profile limit.');
-for(const token of ['v132-single-runtime-nav-integrity','ct132-router-nav','data-ct131-person','grid-auto-columns:142px','routeMismatch'])if(!tail.includes(token))throw new Error(`Web r132 integrity contract missing: ${token}`);
+for(const token of ['v132-single-runtime-nav-integrity','ct132-router-nav','data-ct131-person','grid-auto-columns:142px','routeMismatch',"location.pathname==='/'","history.replaceState({ct132:true,path:'/home'}"])if(!tail.includes(token))throw new Error(`Web r132 integrity contract missing: ${token}`);
 
 const vercel=JSON.parse(await readFile(resolve(root,'vercel.json'),'utf8'));
-if(!Array.isArray(vercel.redirects)||!vercel.redirects.some(x=>x.source==='/'&&x.destination==='/home'))throw new Error('Web r132: root redirect to /home missing.');
 if(!Array.isArray(vercel.rewrites)||!vercel.rewrites.some(x=>x.source==='/(.*)'&&x.destination==='/index.html'))throw new Error('Web r132: SPA catch-all rewrite missing.');
+if(vercel.cleanUrls===true)throw new Error('Web r132: cleanUrls must stay disabled with /index.html SPA fallback.');
 const sw=await readFile(resolve(root,'apps/web/service-worker.js'),'utf8');
 if(!sw.includes("ct-web-0.99.7-r132"))throw new Error('Web r132: service-worker cache marker missing.');
 
