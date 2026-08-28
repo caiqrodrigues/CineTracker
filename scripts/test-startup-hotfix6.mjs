@@ -15,6 +15,8 @@ await import('./apply-web-v0997-r1381-cache-key.mjs');
 await import('./test-web-r1381-cache-key.mjs');
 await import('./apply-web-v0997-r139-auth-gated-runtime.mjs');
 await import('./test-web-r139-auth-gated-runtime.mjs');
+await import('./apply-web-v0997-r140-rpc-dedupe.mjs');
+await import('./test-web-r140-rpc-dedupe.mjs');
 
 const html = await readFile(resolve(process.cwd(), 'dist/index.html'), 'utf8');
 const inline = html.match(/<script>([\s\S]*?)<\/script>/);
