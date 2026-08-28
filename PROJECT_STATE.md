@@ -2,123 +2,176 @@
 
 > Documento persistente de continuidade. Deve refletir o estado real do projeto sem depender de histórico de conversa.
 
-**Última atualização:** 2026-08-27  
-**Branch principal:** `main`  
-**Web publicada tecnicamente:** `0.99.3`, cache `ct-web-0.99.3`, pre-gate `patch-v097-v0993-nav-pre.js`, final `patch-v098-v0993-web.js`  
-**Android publicado:** `0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative`  
-**Backend lógico:** `0.99.2`  
+**Última atualização:** 2026-08-28  
+**Branch principal publicada:** `main`  
+**Branch de release atual:** `fix/web-android-0.99.6-authoritative`  
+**Web alvo:** `0.99.6`, package/cache `0.99.6`  
+**Android alvo:** `0.99.6`, `versionCode 9960`  
+**Backend lógico:** `0.99.6`  
 **Windows:** não lançado
 
-## 1. Unidade atual — Web 0.99.3
+## 1. Unidade atual — 0.99.6 Web + Android
 
-A 0.99.3 é uma correção exclusiva do navegador Web desktop. O objetivo é recuperar navegação e Descobrir sem desmontar Perfil, Configurações e Home acumulados nas camadas 0.99.1/0.99.2.
+A 0.99.6 é uma consolidação funcional de Web e Android. O objetivo principal é impedir que renderizadores legados sobrescrevam Perfil e Descobrir depois que a tela nova já foi exibida.
 
-A evidência visual mostrou que previews simplificadas não representavam a aplicação real; essas mocks não são fonte de verdade. A release usa apenas o runtime real versionado em `apps/web`.
+O vídeo real de 2026-08-28 mostrou produção Web 0.99.5 com problemas ainda visíveis: capas vazias, ausência de Atores Favoritos, gráfico de Perfil incorreto, gráfico de temporada no local errado e Descobrir exibindo conteúdo inadequado/vazio. Esses pontos são critérios de aceite explícitos da 0.99.6.
 
-## 2. Causa técnica de navegação
+## 2. Autoridade de runtime
 
-`patch-v095-v0992-fix.js` registra um listener em `window` no capture phase e chama `stopImmediatePropagation`. Qualquer correção de clique carregada depois dele pode nunca receber o evento.
+A pilha antiga continua presente apenas onde ainda é necessária por compatibilidade, porém a autoridade final é:
 
-A 0.99.3 resolve isso com duas posições deliberadas na pilha:
+- `patch-v116-v0996-authoritative.js`: renderer final de Perfil e Descobrir;
+- `patch-v117-v0996-final.js`: complemento final para capas sem metadados, favoritos de atores e gráficos de temporada independentes dos accordions;
+- Home continua usando o runtime canônico 0.99.4 já estabilizado;
+- Configurações continuam usando a camada Web canônica já estabilizada;
+- Histórico permanece integrado ao Perfil e não volta à Sidebar.
 
-1. `patch-v097-v0993-nav-pre.js` — carregado **antes** de `patch-v095-v0992-fix.js`;
-2. `patch-v098-v0993-web.js` — carregado **depois** de `patch-v096-v0992-unfreeze.js`.
+Não adicionar `MutationObserver` ou `setInterval` permanente a essas camadas. Reparos assíncronos devem ser finitos/event-driven.
 
-O pre-gate controla Home / Descobrir / Perfil / Configurações e executa explicitamente os handlers das tabs/filtros do Descobrir. A camada final reconcilia Sidebar, pointer-events, fallback e identidade Web 0.99.3.
+## 3. Perfil 0.99.6
 
-## 3. Navegação e Descobrir 0.99.3
+Renderer próprio com ordem canônica:
 
-- Sidebar canônica: Home / Descobrir / Perfil / Configurações;
-- Histórico removido defensivamente do menu e rota legada redirecionada ao Perfil;
-- tabs Descobrir: Pra Você, Em Alta, Mais Aguardados, Mais bem avaliados e Calendário;
-- filtros Geral / Séries / Filmes recebem captura explícita;
-- `Pra Você` vazio ganha fallback com Atualizar recomendações e Importar/sincronizar dados;
-- hit-area protegida contra overlays via `pointer-events:auto` e z-index local;
-- cliques/exceções ficam em `window.__ct0993Diagnostics` e no Console.
+1. Séries;
+2. Filmes;
+3. Séries Favoritas;
+4. Filmes Favoritos;
+5. Atores Favoritos;
+6. Episódios por dia;
+7. Estatísticas extras.
 
-## 4. Runtime preservado
+O payload é `cinetracker_profile_payload_v0996()`.
 
-A 0.99.3 não remove as camadas estáveis anteriores. Ordem relevante final:
+### Gráfico do Perfil
 
-1. base v95 + recuperações;
-2. 0.98;
-3. Perfil LRU 0.99;
-4. `patch-v092-v0991.js`;
-5. `patch-v093-v0992.js`;
-6. `patch-v094-v0992-compat.js`;
-7. `patch-v097-v0993-nav-pre.js`;
-8. `patch-v095-v0992-fix.js`;
-9. `patch-v096-v0992-unfreeze.js`;
-10. `patch-v098-v0993-web.js`.
+A implementação inicial da 0.99.6 estava errada porque contava apenas `watch_play_events_v0994` com `source='manual'`. Isso não representa o histórico importado/real.
 
-O anti-freeze FIX2 permanece ativo e o monkey-patch idempotente de `Node.textContent` continua transitório.
+Migration corretiva:
+`supabase/migrations/20260828062500_v0996_profile_activity_from_watch_history.sql`.
 
-## 5. Recursos preservados
+Regra atual:
+- fonte: `watch_history`;
+- apenas `item_type='episode'`;
+- contagem de episódios distintos `(media_id, season_number, episode_number)` por dia;
+- janela: D-10 até D+3;
+- Hoje centralizado visualmente.
 
-- Home Séries/Filmes 0.99.2;
-- Pull-to-Reveal;
-- Assistir a seguir / Juntando poeira / Em dia / Não Iniciadas / Concluídas;
-- quick mark e LRU;
-- sincronização de lançamentos;
-- Perfil 0.99.1 com timeline, filtros e expansões;
-- Descobrir/Pra Você/Calendário;
-- Bingers em Importar Dados;
-- backup;
-- cinegrafia;
-- hardening de `profile_id` e `media_kind`;
-- bloqueio de TMDB externo para surrogate `<= 0` nos caminhos recentes.
+## 4. Capas ausentes
 
-## 6. Backend
+O vídeo mostrou cards sem pôster. Inspeção no banco confirmou mídia importada com `tmdb_id` substituto/negativo, `poster_path` nulo e sem `source_tmdb_id` oficial.
 
-Sem mudança na 0.99.3.
+A Edge Function `ct-enrich-media-user` está na versão 5 e suporta:
+- `priority=visible-posters`;
+- body `requested_media_ids`;
+- interseção obrigatória dos IDs solicitados com o dashboard autenticado;
+- resolução por título/ano e segunda busca controlada quando necessário;
+- atualização de `source_tmdb_id`, `poster_path`, runtime e metadados oficiais.
 
-Migration atual: `supabase/migrations/20260827004500_v0992_home_series_movies.sql`.
+`patch-v117-v0996-final.js` detecta cards locais visíveis sem capa e dispara enriquecimento direcionado. Não deve ficar repetindo indefinidamente o mesmo ID durante a sessão.
 
-- `cinetracker_profile_home_dashboard_v0992()` — `SECURITY INVOKER`, `auth.uid()`;
-- `daily_movie_recommendations_v0992` — RLS, PK perfil/data e unique perfil/TMDB.
+## 5. Atores Favoritos
 
-## 7. Publicação técnica Web 0.99.3
+Tabela: `favorite_actors`, com RLS e `user_id default auth.uid()`.
 
-- package `0.99.3`;
-- cache `ct-web-0.99.3`;
-- rodapé `CineTracker • v0.99.3`;
-- commit de publicação validado: `192da4a72c64abe3e8d92df8cd23ebc93b0b675b`;
-- Verify run `33080026311` / #1252: `success`;
-- job Web build/test: `success`;
-- Vercel do commit: `success`;
-- smoke real desktop: pendente.
+Comportamento 0.99.6:
+- coração em cards de elenco;
+- botão de favoritar na página/detalhe da pessoa;
+- Perfil possui seção Atores Favoritos;
+- clique no coração não deve abrir o ator;
+- clique no ator abre a filmografia;
+- remover do Perfil atualiza Supabase e a UI.
 
-O run anterior `33079874238` falhou por um check estático que apontava para um asset Android gerado e inexistente no source. O check foi corrigido sem alterar Android; o run sucessor ficou verde.
+## 6. Gráficos de temporada
 
-## 8. Android permanece 0.99.2.3
+Regra obrigatória do produto:
+- o gráfico **não** fica dentro da temporada acima dos episódios;
+- o gráfico antigo dentro de `.ct114-season-body` fica oculto;
+- há uma seção independente **Avaliações dos episódios por temporada** após todo o bloco `Temporadas e episódios`;
+- a seção existe mesmo se todos os accordions estiverem fechados;
+- cada temporada tem seu gráfico próprio;
+- navegação entre temporadas do gráfico é horizontal;
+- os gráficos são carregados sob demanda/próximos ao viewport;
+- eixo Y 0–10;
+- eixo X SxxExx;
+- melhor episódio verde, pior vermelho, demais ciano;
+- tooltip: código, nota, título e votos.
 
-A unidade Web 0.99.3 não altera Android.
+## 7. Descobrir 0.99.6
 
-- `versionName`: `0.99.2.3`;
-- `versionCode`: `9923`;
-- bundle: `v0.99.2.3-fix2-unfreeze-authoritative`;
-- release: `android-v0.99.2.3`;
-- APK SHA-256: `a7fe3bdc069ff418197305bdf3a3d5fd0f06a7928963f62dea5dc20faa4a2853`.
+Renderer próprio e final.
 
-## 9. Validação restante
+Tabs:
+- Pra Você;
+- Em alta;
+- Mais aguardados;
+- Mais bem avaliados;
+- Calendário.
 
-Ainda é necessário smoke real no navegador PC:
+Filtros:
+- Geral;
+- Séries;
+- Filmes.
 
-- Home;
-- quatro itens da Sidebar;
-- todas as tabs/filtros de Descobrir;
-- Perfil completo;
-- Configurações completas;
-- ausência de Histórico no menu após múltiplas navegações;
-- responsividade por pelo menos 60 segundos.
+Regras:
+- `cinetracker_profile_media_dashboard_v0991()` e `cinetracker_discovery_exclusions_v0994()` são requisitos, não fallbacks opcionais;
+- se exclusões autenticadas falharem, Descobrir falha fechado;
+- Watchlist/histórico/vistos/em andamento/em dia/concluídos não entram em coleções 100% novas;
+- aliases localizados/originais também bloqueiam duplicatas;
+- Pra Você tenta resolver títulos importados sem ID TMDB oficial antes de deixar slots pessoais vazios;
+- fontes públicas são buscadas em mais de uma página para não esgotar o pool após exclusões;
+- Calendário usa `next_episode_to_air` para séries acompanhadas e lançamento oficial para filmes.
 
-## 10. Débitos conhecidos
+Caches rotacionados após as correções:
+- `ct0996_profile_snapshot_v2`;
+- `ct0996_discover_snapshot_v2`.
 
-- surrogate negativo em `media.tmdb_id` permanece legado;
-- advisories Supabase históricos permanecem;
-- monkey-patch de `Node.textContent` permanece compatibilidade transitória;
-- a arquitetura em patches ainda exige consolidação futura.
+## 8. Android 0.99.6
 
-## 11. Documentos canônicos
+- `applicationId`: `com.cinetracker.app`;
+- `versionName`: `0.99.6`;
+- `versionCode`: `9960`;
+- bundle: `android-v0.99.6-authoritative-preload`;
+- builder: `scripts/prepare-android-v0996.mjs`;
+- test: `scripts/test-android-v0996.mjs`;
+- workflow: `.github/workflows/build-android-v0996.yml`;
+- release alvo: `android-v0.99.6`.
 
-`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `apps/web/README.md`, `apps/android/README.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.3.md`, `docs/validation/0.99.3.md`.
+O Android incorpora o mesmo `dist` Web 0.99.6 e exige v116 + v117. Não criar uma implementação paralela das mesmas telas.
+
+## 9. Backend 0.99.6 aplicado
+
+- `cinetracker_profile_payload_v0996()` criado/atualizado;
+- atividade do Perfil corrigida para `watch_history`;
+- `ct-enrich-media-user` v5 ativo com JWT obrigatório;
+- `favorite_actors` com RLS;
+- exclusões do Descobrir continuam baseadas em `cinetracker_discovery_exclusions_v0994()`.
+
+## 10. Validação e publicação
+
+Estados independentes:
+
+- [x] source 0.99.6 criado;
+- [x] migrations necessárias aplicadas em produção;
+- [x] Edge Function v5 ativa;
+- [x] identidade Android 0.99.6 / 9960 definida;
+- [ ] Verify completo verde no commit final;
+- [ ] build APK completo no commit final;
+- [ ] merge em `main`;
+- [ ] Vercel Production sucesso no commit final;
+- [ ] GitHub Release `android-v0.99.6` publicada;
+- [ ] SHA-256 do APK registrado;
+- [ ] smoke real Web desktop após publicação;
+- [ ] smoke real APK em aparelho.
+
+Não marcar itens pendentes como concluídos por inferência.
+
+## 11. Débitos conhecidos
+
+- ainda existem registros importados com TMDB surrogate negativo que dependem de enriquecimento gradual;
+- metadados/runtime ainda podem estar incompletos em parte da biblioteca;
+- advisories Supabase históricos continuam separados desta release;
+- compatibilidade acumulada de patches continua grande e deve ser reduzida futuramente sem quebrar a autoridade atual.
+
+## 12. Documentos canônicos
+
+`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.6.md`, `docs/validation/0.99.6.md`.
