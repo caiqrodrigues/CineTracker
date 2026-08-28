@@ -41,6 +41,12 @@ const must=[
 for(const token of must)if(!source.includes(token))throw new Error(`Web r133 source contract missing: ${token}`);
 if(source.includes('Faltam ${Math.max(0,total-seen)}'))throw new Error('Web r133 must never calculate missing episodes from total catalog episodes.');
 
+const webPackage=JSON.parse(await readFile(resolve(root,'apps/web/package.json'),'utf8'));
+if(webPackage?.scripts?.build!=='cd ../.. && npm run build')throw new Error('Web r133: apps/web must delegate Vercel build to repository root.');
+const webVercel=JSON.parse(await readFile(resolve(root,'apps/web/vercel.json'),'utf8'));
+if(webVercel.buildCommand!=='npm run build'||webVercel.outputDirectory!=='dist')throw new Error('Web r133: apps/web Vercel build/output contract missing.');
+if(!Array.isArray(webVercel.rewrites)||!webVercel.rewrites.some(x=>x.source==='/(.*)'&&x.destination==='/index.html'))throw new Error('Web r133: apps/web deep-link SPA rewrite missing.');
+
 for(const dir of ['dist','apps/web/dist']){
   try{await access(resolve(root,dir,'index.html'),constants.F_OK)}catch{continue}
   const html=await readFile(resolve(root,dir,'index.html'),'utf8');
@@ -51,4 +57,4 @@ for(const dir of ['dist','apps/web/dist']){
   if(!emitted.includes('v133-primary-single-authority-home-discover-profile'))throw new Error(`Web r133: emitted marker missing in ${dir}.`);
 }
 
-console.log('CineTracker Web 0.99.7 r133 primary authority contracts: OK');
+console.log('CineTracker Web 0.99.7 r133 primary authority + apps/web Vercel root contracts: OK');
