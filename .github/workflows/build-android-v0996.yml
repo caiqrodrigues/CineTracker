@@ -48,8 +48,11 @@ jobs:
           set -euo pipefail
           npm run build
           grep -q 'patch-v116-v0996-authoritative.js' dist/index.html
+          grep -q 'patch-v117-v0996-final.js' dist/index.html
           grep -q 'ct-web-0.99.6' dist/service-worker.js
           grep -q 'v116-profile-discover-single-authority' dist/patch-v116-v0996-authoritative.js
+          grep -q 'v117-posters-actors-season-ratings' dist/patch-v117-v0996-final.js
+          grep -q 'strict_exclusions:true' dist/patch-v116-v0996-authoritative.js
       - name: Prepare exact embedded Android 0.99.6 runtime
         run: |
           set -euo pipefail
@@ -75,8 +78,13 @@ jobs:
           test "$VERSION_CODE" = "9960"
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'android-v0.99.6-authoritative-preload'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v116-profile-discover-single-authority'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v117-posters-actors-season-ratings'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'cinetracker_profile_payload_v0996'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct0996_discover_snapshot_v1'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct0996_profile_snapshot_v2'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct0996_discover_snapshot_v2'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'strict_exclusions:true'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'priority=visible-posters'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Avaliações dos episódios por temporada'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'data-ct114-rewatch'
           "$APKSIGNER" verify --print-certs "$OUT"
           sha256sum "$OUT" | tee android-v0996-sha256.txt
@@ -93,7 +101,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          NOTES='Android 0.99.6: mesma árvore funcional da Web 0.99.6 embutida; Perfil/Descobrir autoritativos, preload/cache compartilhado, favoritos de mídias e atores, detalhe universal, episódios/revistos, gráfico de temporada, busca e filtros.'
+          NOTES='Android 0.99.6: mesma árvore funcional da Web 0.99.6 embutida; Perfil/Descobrir autoritativos, capas ausentes com enriquecimento direcionado, favoritos de mídias e atores, gráfico de Perfil baseado no histórico real, gráficos de temporadas fora dos accordions com rolagem lateral, calendário oficial e exclusões rigorosas no Descobrir.'
           gh release view android-v0.99.6 >/dev/null 2>&1 || gh release create android-v0.99.6 --title "CineTracker Android 0.99.6" --notes "$NOTES"
           gh release edit android-v0.99.6 --title "CineTracker Android 0.99.6" --notes "$NOTES"
           gh release upload android-v0.99.6 cinetracker-android-0.99.6-debug.apk android-v0996-sha256.txt --clobber
