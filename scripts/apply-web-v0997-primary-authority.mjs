@@ -8,6 +8,12 @@ const marker='v133-primary-single-authority-home-discover-profile';
 const src=await readFile(source,'utf8');
 if(!src.includes(marker))throw new Error('Web r133: source marker missing.');
 
+const authGuardName='auth-runtime-guard-v134.js';
+const authGuardPath=resolve(root,'apps/web',authGuardName);
+const authGuard=await readFile(authGuardPath,'utf8');
+if(!authGuard.includes('r134-auth-main-thread-unfreeze'))throw new Error('Web r134: auth runtime guard marker missing.');
+try{new Function(authGuard)}catch(error){throw new Error(`Web r134: auth runtime guard syntax invalid: ${error.message}`)}
+
 function makeNonBlocking(input){
   let out=input;
   const buildNeedle="window.__ctWebBuild = '0.99.7';";
@@ -35,14 +41,20 @@ function makeNonBlocking(input){
 const emitted=makeNonBlocking(src);
 for(const dir of [resolve(root,'dist'),resolve(root,'apps/web/dist')]){
   await writeFile(resolve(dir,patch),emitted,'utf8');
+  await writeFile(resolve(dir,authGuardName),authGuard,'utf8');
   const indexPath=resolve(dir,'index.html');
   let html=await readFile(indexPath,'utf8');
   const tag=`<script src="/${patch}"></script>`;
   const anchor='<script src="/patch-v132-v0997-deeplink-pages.js"></script>';
-  html=html.replaceAll(tag,'');
+  const guardTag=`<script src="/${authGuardName}"></script>`;
+  html=html.replaceAll(tag,'').replaceAll(guardTag,'');
   if(!html.includes(anchor))throw new Error(`Web r133: r132 anchor missing in ${indexPath}`);
   html=html.replace(anchor,`${anchor}${tag}`);
+  const firstPatch=html.indexOf('<script src="/patch-');
+  if(firstPatch<0)throw new Error(`Web r134: no patch script anchor found in ${indexPath}`);
+  html=html.slice(0,firstPatch)+guardTag+html.slice(firstPatch);
+  if(html.indexOf(guardTag)<0||html.indexOf(guardTag)>html.indexOf('<script src="/patch-'))throw new Error(`Web r134: auth guard is not before legacy patches in ${indexPath}`);
   await writeFile(indexPath,html,'utf8');
 }
 
-console.log('CineTracker Web 0.99.7 r133 HOTFIX: Home renderiza sem aguardar enriquecimento TMDB; reparo ocorre em segundo plano.');
+console.log('CineTracker Web 0.99.7 r134: login protegido antes de observers/navegações legadas; Home permanece não bloqueante.');
