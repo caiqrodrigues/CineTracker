@@ -10,14 +10,17 @@ const SUPERSEDED=new Set([
   'patch-v115-v0995-favorites-profile-discover.js',
   'patch-v116-v0996-authoritative.js',
   'patch-v117-v0996-final.js',
+  // Old 0.2.x screen authorities fully replaced by current Settings/Discover.
+  'patch-v025.js', // Settings/export/Discover 0.2.x; v109 + Bingers + v120 are canonical
+  'patch-v027.js', // Discover/calendar/rankings 0.2.7; v120 is canonical
   // Verified legacy UI authorities that actively fight v118/v120.
-  'patch-v040.js', // old Assist/calendar authority + permanent DOM observer
-  'patch-v041.js', // old Profile compact/TMDB hydrator + render retry observer
-  'patch-v042.js', // old Settings authority
-  'patch-v043.js', // extra Tempo de Tela/Histórico
-  'patch-v044.js', // extra hourly activity chart + old Settings
-  'patch-v045.js', // permanent 3s metadata/poster scanner
-  'patch-v046.js'  // old full Web UI/navigation
+  'patch-v040.js',
+  'patch-v041.js',
+  'patch-v042.js',
+  'patch-v043.js',
+  'patch-v044.js',
+  'patch-v045.js',
+  'patch-v046.js'
 ]);
 
 for(const dir of dirs){
