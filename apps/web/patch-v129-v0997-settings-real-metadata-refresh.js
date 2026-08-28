@@ -33,6 +33,7 @@ function ensureProgress129(){
   $129('[data-ct129-close]',o).onclick=()=>{o.hidden=true};
   return o;
 }
+function resetProgress129(){const o=ensureProgress129();$129('[data-ct129-cancel]',o).hidden=false;$129('[data-ct129-close]',o).hidden=true;return o}
 function updateUi129(state,message){
   const o=ensureProgress129(),total=Math.max(0,state.total||0),done=Math.min(total,state.done||0),pct=total?Math.round(done*100/total):0;
   o.hidden=false;$129('[data-ct129-message]',o).textContent=message||'Atualizando…';$129('[data-ct129-fill]',o).style.width=`${pct}%`;$129('[data-ct129-count]',o).textContent=`${done} / ${total} · ${pct}%`;
@@ -46,7 +47,7 @@ function exact129(row,d){
   if(!d)return false;
   const local=norm129(cleanTitle129(row?.title||''));if(!local||/^tmdb \d+$/.test(local))return true;
   if(!aliases129(d).includes(local))return false;
-  const y=rowYear129(row),dy=detailYear129(d);return !y||!dy||y===dy;
+  const y=rowYear129(row),dy=detailYear129(d);return !y||(dy>0&&y===dy);
 }
 async function api129(path,params={}){
   let last;
@@ -66,13 +67,13 @@ async function resolve129(row){
   const q=cleanTitle129(row?.title||'');if(!q)return null;
   const y=rowYear129(row);let candidates=[];
   for(const page of [1,2]){const s=await api129(`/search/${type}`,{query:q,page});candidates.push(...(s?.results||[]));if((s?.results||[]).length===0)break}
-  const local=norm129(q);const c=candidates.find(x=>aliases129(x).includes(local)&&(!y||!detailYear129(x)||detailYear129(x)===y));if(!c?.id)return null;
+  const local=norm129(q);const c=candidates.find(x=>aliases129(x).includes(local)&&(!y||(detailYear129(x)>0&&detailYear129(x)===y)));if(!c?.id)return null;
   d=await api129(`/${type}/${Number(c.id)}`);if(!exact129(row,d))return null;
   return{detail:d,type,corrected:Number(c.id)!==id};
 }
 async function clearMetadataCaches129(){
   try{for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i)||'';if(k.startsWith('ct45w:')||k.startsWith('ct53w:'))localStorage.removeItem(k)}}catch{}
-  try{for(let i=sessionStorage.length-1;i>=0;i--){const k=sessionStorage.key(i)||'';if(k.startsWith('ct121safe:')||k.startsWith('ct120'))sessionStorage.removeItem(k)}}catch{}
+  try{for(let i=sessionStorage.length-1;i>=0;i--){const k=sessionStorage.key(i)||'';if(k.startsWith('ct121safe:'))sessionStorage.removeItem(k)}}catch{}
   try{const ks=await caches.keys();await Promise.all(ks.filter(k=>k.includes('-meta')||k.includes('tmdb-meta')).map(k=>caches.delete(k)))}catch{}
 }
 async function refreshOne129(row,state){
@@ -84,7 +85,7 @@ async function refreshOne129(row,state){
   }catch{state.failed++}
 }
 async function realRefresh129(){
-  if(busy129)return;busy129=true;cancel129=false;
+  if(busy129)return;busy129=true;cancel129=false;resetProgress129();
   const btn=$129('#ct91-refresh'),oldText=btn?.textContent||'Atualizar metadados';if(btn){btn.disabled=true;btn.textContent='Atualizando…'}
   const state={total:0,done:0,updated:0,corrected:0,skipped:0,failed:0};
   try{
