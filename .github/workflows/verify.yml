@@ -64,20 +64,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7 identity and exact Web bundle builder
+      - name: Assert Android 0.99.7.1 R2 identity and Web parity builder
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7'" apps/android/app/build.gradle
-          grep -q 'versionCode 9970' apps/android/app/build.gradle
-          grep -q 'android-v0.99.7-single-authority' scripts/prepare-android-v0997.mjs
-          grep -q "const version='0.99.7'" scripts/prepare-android-v0997.mjs
-          grep -q 'patch-v118-v0997-authoritative.js' scripts/prepare-android-v0997.mjs
-          grep -q 'v118-single-authority-profile-discover-detail' scripts/prepare-android-v0997.mjs
-          grep -q 'cinetracker_profile_payload_v0997' scripts/prepare-android-v0997.mjs
+          grep -q "versionName '0.99.7.1'" apps/android/app/build.gradle
+          grep -q 'versionCode 9971' apps/android/app/build.gradle
+          grep -q 'android-v0.99.7.1-web-parity-r2' scripts/prepare-android-v0997.mjs
+          grep -q "const version='0.99.7.1'" scripts/prepare-android-v0997.mjs
+          grep -q "const webVersion='0.99.7'" scripts/prepare-android-v0997.mjs
+          grep -q 'patch-v126-v0997-video3124-recovery.js' scripts/prepare-android-v0997.mjs
+          grep -q 'patch-v128-v0997-settings-minimal-transfer.js' scripts/prepare-android-v0997.mjs
+          grep -q 'patch-v129-v0997-settings-real-metadata-refresh.js' scripts/prepare-android-v0997.mjs
+          grep -q 'patch-v130-v0997-nav-footer-stability.js' scripts/prepare-android-v0997.mjs
+          grep -q 'window.ct99RenderProfile=()=>false' scripts/prepare-android-v0997.mjs
+          grep -q "cont:s.filter(x=>x.home_bucket==='continue'&&!caught(x))" scripts/prepare-android-v0997.mjs
           grep -q 'window.__ct0997WarmAll' scripts/prepare-android-v0997.mjs
           grep -q 'void preloadRoute994(target);' scripts/prepare-android-v0997.mjs
           grep -q 'window.ct15Navigate=navigate997' scripts/prepare-android-v0997.mjs
+          grep -q 'ct-android-09971-parity' scripts/prepare-android-v0997.mjs
           grep -q 'android:id="@+id/nav_history"' apps/android/app/src/main/res/layout/activity_main.xml
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
           node --check scripts/prepare-android-v0997.mjs
