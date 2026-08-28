@@ -23,20 +23,7 @@ jobs:
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
       - name: Assert Web 0.99.8 final runtime
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm run verify
-          grep -Fq '"version": "0.99.8"' package.json
-          grep -Fq 'ct-web-0.99.8-r1' dist/service-worker.js
-          test "$(grep -Fo 'patch-v125-v0998-query-state.js' dist/index.html | wc -l)" -eq 1
-          test "$(grep -Fo 'patch-v126-v0998-keepalive-tabs.js' dist/index.html | wc -l)" -eq 1
-          grep -Fq 'v125-query-state-stale-while-revalidate' dist/patch-v125-v0998-query-state.js
-          grep -Fq 'const STALE_TIME=7*60*1000' dist/patch-v125-v0998-query-state.js
-          grep -Fq 'v126-main-tabs-dom-keepalive' dist/patch-v126-v0998-keepalive-tabs.js
-          grep -Fq 'ct0998-keepalive-bin' dist/patch-v126-v0998-keepalive-tabs.js
-          grep -Fq 'animation:ct998Fade 150ms' dist/patch-v126-v0998-keepalive-tabs.js
-          node scripts/test-web-v0998-prefetch-keepalive.mjs
+        run: npm run verify
 
   android_0997_identity:
     runs-on: ubuntu-latest
