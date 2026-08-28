@@ -10,19 +10,19 @@ const SUPERSEDED=new Set([
   'patch-v115-v0995-favorites-profile-discover.js',
   'patch-v116-v0996-authoritative.js',
   'patch-v117-v0996-final.js',
-  // Old 0.2.x screen authorities fully replaced by current Settings/Discover/Profile/detail.
+  // Old screen authorities fully replaced by current Settings/Discover/Profile/detail.
   'patch-v025.js',
   'patch-v027.js',
-  'patch-v029.js', // fuzzy TMDB detail (`exact || rows[0]`) is unsafe and superseded
-  'patch-v030.js', // standalone Histórico + old Perfil/poster resolver are forbidden/superseded
-  // Verified legacy UI authorities that actively fight v118/v120.
+  'patch-v029.js',
+  'patch-v030.js',
   'patch-v040.js',
   'patch-v041.js',
   'patch-v042.js',
   'patch-v043.js',
   'patch-v044.js',
   'patch-v045.js',
-  'patch-v046.js'
+  'patch-v046.js',
+  'patch-v074-hotfix1-version.js' // rewrites v0.0.97 + injects legacy Histórico diário graph
 ]);
 
 for(const dir of dirs){
