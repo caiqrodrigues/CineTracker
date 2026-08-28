@@ -2,11 +2,11 @@
 'use strict';
 if(window.__ct0994FluidityLoaded)return;
 window.__ct0994FluidityLoaded=true;
-window.__ct0994Fluidity='v114-cache-first-posters-catalog';
+window.__ct0994Fluidity='v114-cache-first-posters-stable-enrichment';
 
-const ENRICH_KEY='ct0994_catalog_enrich_v2';
+const ENRICH_KEY='ct0994_catalog_enrich_v3';
 const ENRICH_TTL=6*60*60*1000;
-const POSTER_LIMIT=100;
+const POSTER_LIMIT=140;
 
 const css=document.createElement('style');
 css.id='ct0994-fluidity-v113-style';
@@ -40,17 +40,17 @@ async function enrichCatalog113(){
     if(token&&!headers.Authorization)headers.Authorization=`Bearer ${token}`;
     if(!headers.Authorization)return null;
     headers['content-type']='application/json';
-    const r=await fetch(`${SUPABASE_URL}/functions/v1/ct-enrich-media-user?limit=120&priority=home`,{method:'POST',headers,body:'{}'});
+    const r=await fetch(`${SUPABASE_URL}/functions/v1/ct-enrich-media-user?limit=80&priority=home`,{method:'POST',headers,body:'{}'});
     if(!r.ok)throw new Error(`enrichment ${r.status}`);
     const data=await r.json();
     localStorage.setItem(ENRICH_KEY,JSON.stringify({uid,at:Date.now(),processed:Number(data.processed||0),ok:Number(data.ok||0)}));
     if(Number(data.ok||0)>0){
-      for(const key of ['ct0994_home_preload_v1','ct0994_profile_snapshot_v4','ct0994_discover_snapshot_v4'])try{localStorage.removeItem(key)}catch{}
-      window.__ct991InvalidateWarm?.();
-      window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'catalog-enrichment-v114',processed:Number(data.processed||0),ok:Number(data.ok||0)}}));
-      await Promise.allSettled([window.__ct991Preload?.(true),window.__ct0994PreloadCore?.({target:current113()||'home',force:true})]);
-      preloadPosters113();
-      const route=current113();if(['home','discover','profile'].includes(route))setTimeout(()=>void window.__ct0994Navigate?.(route),60);
+      // Atualiza snapshots em segundo plano sem apagar a tela/cache que já está visível.
+      Promise.allSettled([
+        window.__ct991Preload?.(true),
+        window.__ct991PreloadDiscover?.(true),
+        window.__ct0994PreloadCore?.({target:current113()||'home',force:true})
+      ]).then(()=>preloadPosters113());
     }
     return data;
   }catch(e){console.warn('[CineTracker 0.99.4] enriquecimento de catálogo em segundo plano',e);return null}
@@ -64,6 +64,6 @@ if(typeof rawNav113==='function'&&!rawNav113.__ct113Wrapped){
 window.__ct113PreloadPosters=preloadPosters113;
 window.__ct113EnrichCatalog=enrichCatalog113;
 window.addEventListener('cinetracker:data-changed',()=>setTimeout(preloadPosters113,80));
-for(const d of [40,180,650,1600])setTimeout(preloadPosters113,d);
-setTimeout(()=>void enrichCatalog113(),700);
+for(const d of [20,90,260,700,1600])setTimeout(preloadPosters113,d);
+setTimeout(()=>void enrichCatalog113(),1200);
 })();
