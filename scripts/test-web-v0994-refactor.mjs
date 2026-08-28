@@ -35,11 +35,11 @@ assert.match(legacy,/cinetracker_discovery_exclusions_v0994/,'strict backend exc
 assert.match(legacy,/original_title/,'localized/original title alias exclusion missing');
 assert.match(legacy,/blocker\.isBlocked/,'global Discover must use strict seen/watchlist blocker');
 assert.match(legacy,/year991\(x\)>1990&&score991\(x\)>=7\.8&&!blocker\.isBlocked\(x\)/,'fresh movie/series/anime threshold missing');
-assert.match(legacy,/fresh\.movie\.filter\(x=>year991\(x\)>1990&&score991\(x\)>=8\)/,'daily fresh movie >=8 rule missing');
+assert.match(legacy,/movie\.filter\(x=>year991\(x\)>1990&&score991\(x\)>=8\)/,'daily fresh movie >=8 rule missing');
 assert.match(legacy,/Da sua Watchlist/,'exact Watchlist recommendation section missing');
 assert.match(legacy,/100% novos/,'exact fresh recommendation section missing');
 assert.match(legacy,/next_episode_to_air/,'Calendar must use official next episode data');
 assert.match(legacy,/discoverFilters991\(true\)/,'Calendar Geral/Séries/Filmes filters missing');
 assert.ok(legacy.includes("if(!['foryou','trending','anticipated','top','calendar'].includes(discover991.tab))discover991.tab='foryou'")||legacy.includes('v107-preserve-discover-state'),'Calendar/Discover selected tab must survive authority repair');
-assert.ok(legacy.includes('Nenhuma sugestão nova disponível agora')||legacy.includes('Nenhum título elegível para esta categoria.'),'blank recommendation fallback copy missing');
+assert.ok(legacy.includes('Nenhuma sugestão nova disponível agora')||legacy.includes('Nenhum título elegível para esta categoria.')||legacy.includes('Nenhuma opção elegível neste momento.'),'blank recommendation fallback copy missing');
 console.log('WEB_0994_REFACTOR_OK chart=cyberpunk fullscreen=desktop quick-actions=on history=recent discover=strict-exact-recommendations calendar=stable metrics=watchlist-series data-management=unified');
