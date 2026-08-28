@@ -49,7 +49,8 @@ jobs:
           grep -q 'Da sua Watchlist' dist/patch-v118-v0997-authoritative.js
           grep -q '100% novos' dist/patch-v118-v0997-authoritative.js
           grep -q 'next_episode_to_air' dist/patch-v118-v0997-authoritative.js
-          grep -q 'priority=visible-posters' dist/patch-v118-v0997-authoritative.js
+          grep -q 'media?select=id,tmdb_id,media_type,title,release_year,poster_path,raw_tmdb' dist/patch-v118-v0997-authoritative.js
+          ! grep -q 'priority=visible-posters' dist/patch-v118-v0997-authoritative.js
           grep -q 'ct111-global-search' dist/patch-v118-v0997-authoritative.js
           grep -q 'cinetracker_profile_payload_v0997' supabase/migrations/20260828112000_v0997_profile_payload_local_activity.sql
           grep -q 'timezone(tz.name,wh.watched_at)' supabase/migrations/20260828112000_v0997_profile_payload_local_activity.sql
