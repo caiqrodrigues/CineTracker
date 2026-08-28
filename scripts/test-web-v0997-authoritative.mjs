@@ -7,8 +7,8 @@ const js=await readFile('dist/patch-v118-v0997-authoritative.js','utf8');
 const pkg=await readFile('package.json','utf8');
 const sw=await readFile('apps/web/service-worker.js','utf8');
 
-assert.match(pkg,/"version": "0\.99\.7"/,'package must be 0.99.7');
-assert.match(sw,/ct-web-0\.99\.7/,'service worker cache must be 0.99.7');
+assert.match(pkg,/"version": "0\.99\.8"/,'package must be 0.99.8');
+assert.match(sw,/ct-web-0\.99\.8/,'service worker cache must be 0.99.8');
 assert.equal((html.match(/patch-v118-v0997-authoritative\.js/g)||[]).length,1,'v118 must load exactly once');
 for(const old of ['patch-v111-v0994-global-search.js','patch-v114-v0994-universal-detail.js','patch-v115-v0995-favorites-profile-discover.js','patch-v116-v0996-authoritative.js','patch-v117-v0996-final.js'])assert.ok(!html.includes(old),`${old} must not execute in 0.99.7`);
 assert.doesNotThrow(()=>new vm.Script(js),'v118 syntax invalid');

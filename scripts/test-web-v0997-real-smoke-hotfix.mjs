@@ -16,7 +16,7 @@ const must=[
   ['same release version','v119-real-device-smoke-hotfix']
 ];
 for(const [name,token] of must){if(!patch.includes(token))throw new Error(`0.99.7 smoke regression: missing ${name} (${token})`)}
-if(pkg.version!=='0.99.7')throw new Error(`0.99.7 smoke hotfix must not bump package version (got ${pkg.version})`);
+if(pkg.version!=='0.99.8')throw new Error(`v119 regression suite expected release 0.99.8 (got ${pkg.version})`);
 
 for(const dir of ['dist','apps/web/dist']){
   const html=await readFile(resolve(root,dir,'index.html'),'utf8');
@@ -25,4 +25,4 @@ for(const dir of ['dist','apps/web/dist']){
   if(v118<0||v119<0||v119<v118)throw new Error(`${dir}: v119 must load after v118`);
   if((html.match(/patch-v119-v0997-real-smoke-hotfix\.js/g)||[]).length!==1)throw new Error(`${dir}: v119 must be included exactly once`);
 }
-console.log('CineTracker Web 0.99.7 real smoke hotfix: OK');
+console.log('CineTracker Web v119 regression under 0.99.8: OK');
