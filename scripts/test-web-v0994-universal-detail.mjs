@@ -9,7 +9,7 @@ const home=await readFile('dist/patch-v099-v0994-web.js','utf8');
 const preload=await readFile('dist/patch-v113-v0994-fluidity.js','utf8');
 const pkg=await readFile('package.json','utf8');
 
-assert.match(pkg,/"version": "0\.99\.4"/,'version must remain 0.99.4');
+assert.match(pkg,/"version": "0\.99\.5"/,'version must be 0.99.5');
 assert.equal((html.match(/patch-v114-v0994-universal-detail\.js/g)||[]).length,1,'v114 detail must load exactly once');
 assert.ok(html.indexOf('patch-v114-v0994-universal-detail.js')>html.indexOf('patch-v113-v0994-fluidity.js'),'v114 must load after v113');
 assert.doesNotThrow(()=>new vm.Script(detail),'v114 syntax invalid');
@@ -32,7 +32,7 @@ assert.match(detail,/Filmes · mais novos primeiro/,'movie filmography split/ord
 assert.match(detail,/Séries · mais novas primeiro/,'TV filmography split/order missing');
 assert.match(detail,/creditSort114/,'filmography newest-first sort missing');
 
-assert.match(legacy,/Promise\.allSettled\(/,'Pra Você must survive partial TMDB failures');
+assert.match(legacy,/const safe=\(path,params\)=>timeout\(api991\(path,params\)\)\.catch/,'Pra Você must survive partial TMDB failures');
 assert.match(legacy,/source_tmdb_id/,'Pra Você must use effective TMDB IDs for imported Watchlist rows');
 assert.match(legacy,/score991\(x\)>=8/,'daily movie score >= 8 rule missing');
 assert.match(legacy,/year991\(x\)>1990/,'daily movie year > 1990 rule missing');
@@ -46,4 +46,4 @@ assert.match(preload,/centerTimeline113/,'profile timeline centering missing');
 assert.match(legacy,/for\(let i=-10;i<=3;i\+\+\)/,'profile timeline must be -10 through +3 days');
 assert.match(legacy,/item_type==='episode'/,'profile timeline must count episodes');
 
-console.log('WEB_0994_UNIVERSAL_OK media=all-entrypoints series=episodes+rewatch+chart person=split-filmography recommendations=resilient preload=stable timeline=centered');
+console.log('WEB_0995_UNIVERSAL_OK media=all-entrypoints series=episodes+rewatch+chart person=split-filmography recommendations=resilient preload=stable timeline=centered');
