@@ -3,39 +3,37 @@
 > Documento persistente de continuidade. Deve refletir o estado real do projeto sem depender de histórico de conversa.
 
 **Última atualização:** 2026-08-28  
-**Branch principal publicada:** `main`  
-**Web atual:** `0.99.6`, package/cache `0.99.6`  
-**Android atual:** `0.99.6`, `versionCode 9960`  
-**Backend lógico:** `0.99.6`  
+**Branch de trabalho:** `fix/web-android-0.99.7-ux`  
+**Web alvo:** `0.99.7`, package/cache `0.99.7`  
+**Android alvo:** `0.99.7`, `versionCode 9970`  
+**Backend lógico:** `0.99.7`  
 **Windows:** não lançado
 
-## 1. Release atual — 0.99.6 Web + Android
+## 1. Motivo da 0.99.7
 
-A 0.99.6 é uma consolidação funcional compartilhada por Web/PWA e Android. Ela foi criada depois que vídeos reais da 0.99.5 mostraram que renderizadores legados ainda conseguiam sobrescrever Perfil, Descobrir, gráfico e favoritos depois que as camadas novas carregavam.
+Smoke real em vídeo mostrou que a publicação técnica 0.99.6 ainda não entregava corretamente a UX combinada: capas vazias persistiam, favoritos de atores não apareciam de forma confiável, o gráfico do Perfil continuava divergente, o gráfico de avaliações da série permanecia dentro do accordion da temporada e o Descobrir estava sem os filtros/layout esperados e com cards grandes.
 
-Publicação técnica 0.99.6 concluída:
-- código funcional base em `main`: `781cc537ac9e408c574517855320caf260904a9e`;
-- Verify `33165215299` / #1398: success;
-- Vercel Production: success;
-- Android Production workflow `33165215281`: success;
-- Release `android-v0.99.6`: publicada;
-- smoke real Web/PWA e APK: **pendente**.
+A 0.99.7 não considera a existência de código ou CI como prova de UX. Ela consolida essas áreas em uma única autoridade final e só será marcada como funcionalmente validada após novo smoke real.
 
-## 2. Autoridade de runtime
+## 2. Autoridade final 0.99.7
 
-A pilha histórica permanece por compatibilidade onde ainda é necessária, mas a autoridade final das áreas problemáticas é:
+Arquivo: `apps/web/patch-v118-v0997-authoritative.js`  
+Marker: `v118-single-authority-profile-discover-detail`
 
-- `patch-v116-v0996-authoritative.js`: renderer final de Perfil e Descobrir;
-- `patch-v117-v0996-final.js`: capas visíveis, favoritos de atores, gráfico exato do Perfil e gráficos externos de temporada;
-- Home continua usando o runtime canônico 0.99.4 já estabilizado;
-- Configurações continua usando a camada Web canônica já estabilizada;
-- Histórico permanece integrado ao Perfil e não volta à Sidebar.
+O build final remove da execução os antigos:
+- `patch-v111-v0994-global-search.js`;
+- `patch-v114-v0994-universal-detail.js`;
+- `patch-v115-v0995-favorites-profile-discover.js`;
+- `patch-v116-v0996-authoritative.js`;
+- `patch-v117-v0996-final.js`.
 
-Não adicionar `MutationObserver` ou `setInterval` permanente a essas camadas. Reparos devem ser finitos ou orientados a eventos.
+Assim Perfil, Descobrir, busca, detalhes, favoritos de atores, gráficos de temporada e reparo de capas não dependem de reorganização posterior do DOM legado. Continuam preservadas as camadas base necessárias de Home, auth, navegação, Configurações, episódios e preload.
 
-## 3. Perfil 0.99.6
+Não adicionar `MutationObserver` ou `setInterval` permanente. Reparos devem ser orientados a evento ou finitos.
 
-Renderer próprio com ordem canônica:
+## 3. Perfil
+
+Ordem canônica:
 1. Séries;
 2. Filmes;
 3. Séries Favoritas;
@@ -44,169 +42,159 @@ Renderer próprio com ordem canônica:
 6. Episódios por dia;
 7. Estatísticas extras.
 
-Payload: `cinetracker_profile_payload_v0996()`.
+Payload: `cinetracker_profile_payload_v0997(p_tz text)`.
 
-### Gráfico do Perfil
+### Gráfico de atividade
 
-Regra atual:
 - fonte: `watch_history`;
-- apenas `item_type='episode'`;
-- episódios distintos por `(media_id, season_number, episode_number)` por dia;
-- intervalo backend: D-10..D+3;
-- exatamente sete dias visíveis no viewport;
-- Hoje centralizado, portanto posição inicial D-3..D+3;
-- rolagem horizontal permite retornar até D-10.
+- somente `item_type='episode'`;
+- conta episódios distintos por `(media_id, season_number, episode_number)`;
+- agrupamento pela data **local** de `watched_at`, usando timezone IANA enviado pelo navegador;
+- D-10..D+3 no backend;
+- exatamente sete dias visíveis por viewport;
+- abertura com Hoje centralizado: D-3..D+3;
+- scroll horizontal permite voltar até D-10.
 
-O gráfico antigo de 30 dias não é autoridade da tela 0.99.6.
+O uso anterior de `watched_at::date` em UTC não é autoridade da 0.99.7.
 
 ## 4. Capas ausentes
 
-Auditoria de produção da biblioteca pessoal:
-- 2.985 itens no dashboard;
-- 1.932 sem `poster_path`;
-- apenas 1 recuperável diretamente do `raw_tmdb.poster_path` existente;
-- 1.931 dependiam de resolução/enriquecimento TMDB.
-
-Estratégia 0.99.6:
-- card usa `poster_path || raw_tmdb.poster_path`;
-- card visível com TMDB oficial consulta detalhe diretamente e pinta o pôster imediatamente;
-- IDs locais visíveis ainda sem pôster são enviados a `ct-enrich-media-user` com `priority=visible-posters` e `requested_media_ids`;
-- Edge Function restringe os IDs ao dashboard autenticado;
-- surrogates são resolvidos por ID efetivo ou título/ano sem associação arbitrária;
-- cache do Perfil é invalidado quando metadados válidos retornam.
+A biblioteca importada possui muitos registros sem `poster_path`. A 0.99.7 usa uma estratégia progressiva e visível:
+- `poster_path || raw_tmdb.poster_path` primeiro;
+- cards sem imagem mais próximos do viewport têm prioridade;
+- IDs locais visíveis são enviados a `ct-enrich-media-user` com `priority=visible-posters` e `requested_media_ids`;
+- a checagem é reexecutada ao rolar a página, com debounce, sem polling;
+- surrogate TMDB continua sendo resolvido apenas por ID efetivo ou correspondência título/ano, nunca por associação arbitrária.
 
 ## 5. Atores Favoritos
 
-Tabela `favorite_actors` com RLS e `user_id default auth.uid()`.
+Persistência: `favorite_actors` com RLS.
 
-Comportamento:
-- coração no card de cada ator no elenco;
-- favoritar/desfavoritar também na página da pessoa;
+Comportamento obrigatório:
+- coração em cada card do elenco;
+- botão Favoritar ator / Ator favorito na página da pessoa;
 - Perfil possui seção Atores Favoritos;
-- clique no coração não abre o ator;
-- clique no ator abre biografia e filmografia;
-- remoção pelo Perfil sincroniza Supabase/UI.
+- remover pelo Perfil sincroniza Supabase e UI;
+- coração não deve abrir a pessoa;
+- card da pessoa abre biografia e filmografia;
+- filmografia separada em Filmes e Séries, mais novos primeiro.
 
-Consulta de produção do payload 0.99.6 confirmou favoritos persistidos, incluindo Nicole Kidman e Zoe Saldaña no momento da validação técnica.
+## 6. Detalhe de série
 
-## 6. Detalhe universal de mídia
+A autoridade v118 renderiza o detalhe diretamente.
 
-Todo card de filme/série nas rotas canônicas deve abrir o detalhe universal. Para séries:
-- temporadas expansíveis/minimizáveis;
-- episódio com capa, SxxExx, título, data, nota e sinopse;
+Temporada aberta:
+- contém somente a lista de episódios;
+- episódio mostra still/capa, SxxExx, título, data, nota, sinopse;
 - Marcar como visto;
-- Marcar como revisto e preservar plays;
-- elenco clicável;
-- ator abre biografia e filmografia separada entre Filmes e Séries, mais novos primeiro.
+- Marcar como revisto com preservação de plays.
 
-## 7. Gráficos de temporada
+### Avaliações dos episódios por temporada
 
-Regra obrigatória:
-- o gráfico **não** fica dentro do accordion da temporada acima dos episódios;
-- o gráfico antigo dentro de `.ct114-season-body` é ocultado;
-- existe uma seção independente **Avaliações dos episódios por temporada** depois de todo o bloco `Temporadas e episódios`;
-- a seção permanece visível com accordions abertos ou fechados;
-- temporadas dos gráficos ficam em carrossel/scroll horizontal;
-- carregamento sob demanda por temporada;
-- eixo Y 0–10;
-- eixo X SxxExx;
+Regra absoluta:
+- não fica dentro do accordion da temporada;
+- não fica acima nem abaixo dos episódios dentro da temporada;
+- fica em seção independente **depois de todo o bloco Temporadas e episódios**;
+- aparece com temporadas abertas ou fechadas;
+- possui scroll horizontal entre temporadas;
+- cada temporada carrega sob demanda;
+- eixo Y 0–10, eixo X SxxExx;
 - melhor episódio verde, pior vermelho, demais ciano;
-- tooltip com código, nota, título e votos.
+- tooltip: código, nota, título e quantidade de votos.
 
-## 8. Descobrir 0.99.6
+## 7. Descobrir
 
-Renderer próprio e final.
-
-Tabs:
+Tabs canônicas:
 - Pra Você;
 - Em alta;
 - Mais aguardados;
+- Populares;
 - Mais bem avaliados;
 - Calendário.
 
-Filtros:
-- Geral;
-- Séries;
-- Filmes.
+Filtro `☰ Filtros`:
+- Tipo: Todos / Séries / Filmes;
+- Visualização: Lista / Carrossel / Grade.
 
-Regras:
-- `cinetracker_profile_media_dashboard_v0991()` e `cinetracker_discovery_exclusions_v0994()` são requisitos;
-- exclusões falham fechado: sem lista pessoal confiável, não mostrar coleção potencialmente errada;
-- histórico/vistos/Watchlist/em andamento/em dia/concluídos ficam fora das coleções de conteúdo novo;
-- bloqueio usa ID e aliases original/localizado;
-- Pra Você mantém exatamente sete posições: filme diário, Filme/Série/Anime da Watchlist não vistos e Filme/Série/Anime novos;
-- filme diário exige ano > 1990 e nota TMDB >= 8;
-- pools públicos usam duas páginas por fonte principal;
-- resolução de imports pessoais sem ID oficial ocorre em paralelo;
-- Calendário reutiliza `raw_tmdb.next_episode_to_air` de séries acompanhadas para evitar dezenas de detalhes sequenciais, e combina estreias futuras oficiais.
+Tamanhos:
+- Grade: aproximadamente 128–152 px por card;
+- Carrossel: 142 px;
+- Lista: pôster 64×92 em linha compacta;
+- Pra Você/Watchlist/100% novos usam a mesma escala de card.
 
-Caches:
-- `ct0996_profile_snapshot_v2`;
-- `ct0996_discover_snapshot_v2`.
+Regras de conteúdo:
+- `cinetracker_profile_media_dashboard_v0991()` e `cinetracker_discovery_exclusions_v0994()` são obrigatórios;
+- falha fechada: sem exclusões válidas, não mostrar lista pública potencialmente errada;
+- vistos, histórico, Watchlist, InProgress, UpToDate e Completed ficam fora das coleções públicas;
+- bloqueio por TMDB ID e aliases original/localizado;
+- filme diário: após 1990, nota TMDB >= 8, nunca visto e fora da Watchlist;
+- Da sua Watchlist: Filme/Série/Anime ainda não vistos;
+- 100% novos: Filme/Série/Anime fora de histórico e Watchlist;
+- Calendário combina filmes futuros e `next_episode_to_air` das séries acompanhadas, até 45 dias.
 
-## 9. Preload / fluidez
+## 8. Busca
 
-Princípio atual: cache-first + atualização silenciosa. Não esperar todo o catálogo antes de liberar interface.
+A 0.99.7 possui uma única busca global de filmes, séries e atores na Home e no Descobrir. O v118 remove o `#ct111-global-search` antigo antes de montar a busca própria, evitando a duplicação observada no vídeo.
 
-- Perfil e Descobrir mantêm snapshots persistentes;
-- `window.__ct0996WarmAll` aquece as fontes compartilhadas;
-- pôsteres visíveis recebem prioridade;
-- enriquecimento de catálogo não bloqueia a navegação;
-- Android incorpora esse mesmo runtime.
-
-## 10. Android 0.99.6
+## 9. Android 0.99.7
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.6`;
-- `versionCode`: `9960`;
-- bundle: `android-v0.99.6-authoritative-preload`;
-- builder: `scripts/prepare-android-v0996.mjs`;
-- test: `scripts/test-android-v0996.mjs`;
-- workflow: `.github/workflows/build-android-v0996.yml`;
-- release: `android-v0.99.6`;
-- APK: `cinetracker-android-0.99.6-debug.apk`;
-- APK SHA-256: `777c55e9b2687d30de1aebf28d5b8e3db7ef6c53c7c0b68be47a66219ce5d7c9`;
-- certificado SHA-256: `dfff8a709378ba963d6270670c7b4daf1e72736a649a13488f8e61c2064f8686`.
+- `versionName`: `0.99.7`;
+- `versionCode`: `9970`;
+- bundle: `android-v0.99.7-single-authority`;
+- builder: `scripts/prepare-android-v0997.mjs`;
+- test: `scripts/test-android-v0997.mjs`;
+- workflow: `.github/workflows/build-android-v0997.yml`;
+- release alvo: `android-v0.99.7`;
+- APK alvo: `cinetracker-android-0.99.7-debug.apk`.
 
-O Android incorpora o mesmo `dist` Web 0.99.6 e exige v116 + v117. Não criar implementação paralela de Perfil/Descobrir.
+O builder incorpora o mesmo `dist` final da Web e falha se encontrar v111/v114/v115/v116/v117 como scripts executáveis.
 
-## 11. Backend 0.99.6
+## 10. Backend 0.99.7
 
-- `cinetracker_profile_payload_v0996()`;
-- atividade do Perfil baseada em `watch_history`;
-- `favorite_actors` com RLS;
-- `ct-enrich-media-user` com suporte a `visible-posters` / `requested_media_ids`;
-- exclusões de Descobrir continuam baseadas em `cinetracker_discovery_exclusions_v0994()`.
+Novo contrato aplicado em produção:
+- `cinetracker_profile_payload_v0997(text)`;
+- timezone validado em `pg_timezone_names`;
+- atividade calculada no fuso do usuário;
+- execute somente para `authenticated`.
 
-## 12. Estado de validação
+Contratos preservados:
+- `cinetracker_discovery_exclusions_v0994()`;
+- `cinetracker_profile_media_dashboard_v0991()`;
+- `favorite_actors`;
+- `ct-enrich-media-user` com `visible-posters` / `requested_media_ids`.
 
-Comprovado:
-- [x] source 0.99.6;
-- [x] migrations/contratos necessários em produção;
-- [x] package/cache Web 0.99.6;
-- [x] Verify final da `main` verde;
-- [x] Vercel Production verde;
-- [x] build Android 0.99.6 verde;
-- [x] package/versionCode/versionName APK validados;
-- [x] assinatura validada;
-- [x] SHA-256 registrado;
-- [x] GitHub Release Android publicada.
+## 11. Estado de validação
 
-Ainda não comprovado por automação:
-- [ ] smoke real Web/PWA do usuário;
+Comprovado nesta unidade:
+- [x] branch 0.99.7 criada;
+- [x] package Web 0.99.7 no source;
+- [x] service-worker source `ct-web-0.99.7`;
+- [x] Android source `versionName 0.99.7` / `versionCode 9970`;
+- [x] migration/RPC 0.99.7 aplicada em Supabase production;
+- [x] test gates Web/Android 0.99.7 adicionados;
+- [x] workflow Android 0.99.7 adicionado.
+
+Pendente:
+- [ ] Verify do PR;
+- [ ] promoção para `main`;
+- [ ] Vercel Production;
+- [ ] build APK 0.99.7;
+- [ ] identidade/assinatura/SHA do APK;
+- [ ] GitHub Release Android 0.99.7;
+- [ ] smoke real Web/PWA;
 - [ ] smoke real APK em aparelho;
-- [ ] confirmação visual de capas antes vazias;
-- [ ] confirmação visual do Perfil, Atores Favoritos, Descobrir e gráficos de temporada.
+- [ ] confirmação visual dos cinco defeitos reportados.
 
 Vídeo/print real prevalece sobre CI caso haja divergência.
 
-## 13. Débitos conhecidos
+## 12. Débitos conhecidos
 
-- grande volume de registros importados ainda possui TMDB surrogate e depende de enriquecimento gradual;
-- metadados/runtime podem permanecer incompletos em parte da biblioteca;
+- grande volume de itens importados ainda depende de enriquecimento TMDB gradual;
+- runtimes/metadados incompletos não devem ser inventados;
 - advisories históricos do Supabase permanecem separados desta release;
-- a pilha acumulada de compatibilidade ainda é grande e deve ser reduzida futuramente sem romper a autoridade v116/v117.
+- a pilha base ainda é acumulada, mas as áreas v118 não devem voltar a depender das autoridades removidas do HTML final.
 
-## 14. Documentos canônicos
+## 13. Documentos canônicos
 
-`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.6.md`, `docs/validation/0.99.6.md`.
+`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.7.md`, `docs/validation/0.99.7.md`.
