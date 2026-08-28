@@ -1,11 +1,11 @@
-name: Build Android 0.99.7
+name: Build Android 0.99.7.1 R2
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-      - fix/web-android-0.99.7-ux
+      - android/0997-web-parity-r2
     paths:
       - 'ci-status/android-v0997-trigger.txt'
 
@@ -13,11 +13,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: cinetracker-android-v0997-${{ github.ref }}
+  group: cinetracker-android-v09971-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  android_v0997:
+  android_v09971:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,22 +43,22 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build verified Web 0.99.7 runtime
+      - name: Build and verify current Web 0.99.7 runtime
         run: |
           set -euo pipefail
           npm run build
-          grep -q 'patch-v118-v0997-authoritative.js' dist/index.html
-          grep -q 'ct-web-0.99.7' dist/service-worker.js
-          grep -q 'v118-single-authority-profile-discover-detail' dist/patch-v118-v0997-authoritative.js
-          ! grep -q 'patch-v116-v0996-authoritative.js' dist/index.html
-          ! grep -q 'patch-v117-v0996-final.js' dist/index.html
-          node scripts/test-web-v0997-authoritative.mjs
-      - name: Prepare exact embedded Android 0.99.7 runtime
+          npm run verify
+          grep -q 'ct-web-0.99.7-r130' dist/service-worker.js
+          grep -q 'v126-video3124-surgical-recovery' dist/patch-v126-v0997-video3124-recovery.js
+          grep -q 'v128-settings-minimal-import-export-only' dist/patch-v128-v0997-settings-minimal-transfer.js
+          grep -q 'v129-settings-real-metadata-refresh-only' dist/patch-v129-v0997-settings-real-metadata-refresh.js
+          grep -q 'v130-nav-footer-stability-only' dist/patch-v130-v0997-nav-footer-stability.js
+      - name: Prepare exact embedded Android 0.99.7.1 parity runtime
         run: |
           set -euo pipefail
           node scripts/prepare-android-v0997.mjs
           node scripts/test-android-v0997.mjs
-      - name: Build Android 0.99.7 APK
+      - name: Build Android 0.99.7.1 APK
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
       - name: Validate APK identity, runtime and signature
@@ -66,7 +66,7 @@ jobs:
         run: |
           set -euo pipefail
           APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
-          OUT="cinetracker-android-0.99.7-debug.apk"
+          OUT="cinetracker-android-0.99.7.1-r2-debug.apk"
           cp "$APK" "$OUT"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
@@ -74,35 +74,35 @@ jobs:
           VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           VERSION_CODE="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.99.7"
-          test "$VERSION_CODE" = "9970"
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'android-v0.99.7-single-authority'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v118-single-authority-profile-discover-detail'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'cinetracker_profile_payload_v0997'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Populares'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Lista'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Carrossel'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Grade'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Avaliações dos episódios por temporada'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'favorite_actors'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'priority=visible-posters'
-          ! unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'data-ct-inline="patch-v117-v0996-final.js"'
+          test "$VERSION" = "0.99.7.1"
+          test "$VERSION_CODE" = "9971"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'android-v0.99.7.1-web-parity-r2'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v126-video3124-surgical-recovery'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v128-settings-minimal-import-export-only'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v129-settings-real-metadata-refresh-only'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v130-nav-footer-stability-only'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "applyFourMore('Séries Favoritas')"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'window.ct99RenderProfile=()=>false'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "cont:s.filter(x=>x.home_bucket==='continue'&&!caught(x))"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Ignorados com segurança'
+          ! unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'priority=visible-posters'
+          ! unzip -p "$OUT" assets/hotfix5/index.html | grep -q "if(t==='profile')return renderProfile99()"
           "$APKSIGNER" verify --print-certs "$OUT"
-          sha256sum "$OUT" | tee android-v0997-sha256.txt
+          sha256sum "$OUT" | tee android-v09971-sha256.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.99.7-debug
+          name: cinetracker-android-0.99.7.1-r2-debug
           path: |
-            cinetracker-android-0.99.7-debug.apk
-            android-v0997-sha256.txt
+            cinetracker-android-0.99.7.1-r2-debug.apk
+            android-v09971-sha256.txt
           if-no-files-found: error
-      - name: Publish Android 0.99.7 release
+      - name: Publish Android 0.99.7.1 R2 release
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          NOTES='Android 0.99.7: mesma autoridade única da Web; Perfil com atividade por fuso local, atores favoritos funcionais, gráficos de avaliação das temporadas fora dos accordions e com rolagem horizontal, Descobrir compacto com filtros Todos/Séries/Filmes e Lista/Carrossel/Grade, aba Populares, exclusões estritas e enriquecimento progressivo de capas visíveis.'
-          gh release view android-v0.99.7 >/dev/null 2>&1 || gh release create android-v0.99.7 --title "CineTracker Android 0.99.7" --notes "$NOTES"
-          gh release edit android-v0.99.7 --title "CineTracker Android 0.99.7" --notes "$NOTES"
-          gh release upload android-v0.99.7 cinetracker-android-0.99.7-debug.apk android-v0997-sha256.txt --clobber
+          NOTES='Android 0.99.7.1 R2: paridade com o Web oficial 0.99.7 após as correções aprovadas. Inclui preload persistente sem keep-alive agressivo, Perfil autoritativo e full-width sem gráfico Atividade/Histórico legados, 4 cards + Ver mais em todas as áreas de cards, Home sem Faltam 0, Configurações minimalistas com Exportar/Importar, atualização real de metadados, sidebar/rodapé estáveis, recuperação estrita de capas, Descobrir/Pra Você preservados e layout adaptado ao Android. Não altera Edge Function.'
+          gh release view android-v0.99.7.1 >/dev/null 2>&1 || gh release create android-v0.99.7.1 --title "CineTracker Android 0.99.7.1 R2" --notes "$NOTES"
+          gh release edit android-v0.99.7.1 --title "CineTracker Android 0.99.7.1 R2" --notes "$NOTES"
+          gh release upload android-v0.99.7.1 cinetracker-android-0.99.7.1-r2-debug.apk android-v09971-sha256.txt --clobber

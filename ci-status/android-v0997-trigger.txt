@@ -1,1 +1,4 @@
-CineTracker Android 0.99.7 release trigger. Source must use the exact Web 0.99.7 v118 authority.
+CineTracker Android 0.99.7.1 R2 test trigger.
+Source: current official Web 0.99.7 after PR #44, embedded offline with Android responsive guards.
+Expected: versionCode 9971, full current Web parity, no ct99 Profile takeover, no legacy Atividade/Histórico, 4+Ver mais, Home no Faltam 0, Settings minimal, real metadata refresh, strict poster repair.
+Retry: exact current runtime markers aligned with emitted Web bundle before APK generation.
