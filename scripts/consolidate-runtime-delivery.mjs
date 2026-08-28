@@ -1,4 +1,4 @@
-import { readFile, writeFile, unlink } from 'node:fs/promises';
+import { readFile, writeFile, unlink, readdir } from 'node:fs/promises';
 import { resolve, basename } from 'node:path';
 
 const root=resolve(process.cwd());
@@ -24,6 +24,8 @@ for(const dir of dirs){
   if(html.includes(`/${OUT}`)) html=html.replace(new RegExp(`<script\\s+src=["']/${OUT.replaceAll('.','\\.')}["']><\\/script>`,'g'),'');
   html=html.replace('</body>',`<script src="/${OUT}"></script></body>`);
   await writeFile(indexPath,html,'utf8');
-  for(const name of seen){try{await unlink(resolve(dir,name))}catch{}}
-  console.log(`CineTracker runtime delivery consolidated: ${seen.size} patch scripts -> 1 (${basename(dir)})`);
+  const emitted=await readdir(dir);
+  const patchFiles=emitted.filter(name=>/^patch-.*\.js$/i.test(name));
+  for(const name of patchFiles){try{await unlink(resolve(dir,name))}catch{}}
+  console.log(`CineTracker runtime delivery consolidated: ${seen.size} active patch scripts -> 1; ${patchFiles.length} individual/dead patch files removed (${basename(dir)})`);
 }
