@@ -20,6 +20,8 @@ if(!legacy.includes('Filme lançado após 1990 · nota TMDB 8,0 ou maior · nunc
 for(const label of ['Da sua Watchlist','100% novos','Filme','Série','Anime'])if(!legacy.includes(label))throw new Error(`Pra Voce structure missing ${label}`);
 if(!legacy.includes('score991(x)>=8'))throw new Error('daily movie score >=8 rule missing');
 if(!legacy.includes('x.is_watchlist&&!hasAnyHistory(x)'))throw new Error('personal Watchlist unseen-only rule missing');
+if(!legacy.includes('Promise.allSettled'))throw new Error('Pra Voce partial-failure resilience missing');
+if(!legacy.includes('source_tmdb_id'))throw new Error('effective TMDB ID support missing');
 if(!legacy.includes("aliases.has(`${type}:*:${n}`)"))throw new Error('local wildcard alias exclusion missing');
 if(!legacy.includes("filter(x=>Number(x.id)>0&&!blocker.isBlocked(x))"))throw new Error('global Discover seen/watchlist exclusion missing');
 if(!legacy.includes("__ct991MixedCache.clear()"))throw new Error('Discover cache must invalidate after data change');
@@ -30,9 +32,11 @@ if(!legacy.includes('for(let i=-10;i<=3;i++)'))throw new Error('Profile timeline
 if(!legacy.includes("x.item_type==='episode'"))throw new Error('Profile timeline must count episodes only');
 if(!legacy.includes('Hoje centralizado · 3 dias antes e 3 depois visíveis · role até 10 dias para trás'))throw new Error('Profile timeline guidance missing');
 if(legacy.includes('ct113-activity-host'))throw new Error('30/90-day replacement activity chart must not remain');
-if(!fluid.includes('v114-cache-first-posters-catalog'))throw new Error('poster/catalog preload marker missing');
-if(!fluid.includes('ct-enrich-media-user?limit=120&priority=home'))throw new Error('priority catalog enrichment missing');
+if(!fluid.includes('v114-cache-first-posters-stable-enrichment'))throw new Error('stable poster/catalog preload marker missing');
+if(!fluid.includes('ct-enrich-media-user?limit=80&priority=home'))throw new Error('priority catalog enrichment missing');
 if(!fluid.includes('ct0994_home_preload_v1')||!fluid.includes('ct0994_profile_snapshot_v4')||!fluid.includes('ct0994_discover_snapshot_v4'))throw new Error('poster snapshot preload sources missing');
+if(fluid.includes("localStorage.removeItem('ct0994_discover_snapshot_v4')"))throw new Error('background enrichment must not erase visible Discover cache');
+if(!fluid.includes('centerTimeline113'))throw new Error('today centering logic missing');
 if(fluid.includes('cinetracker_profile_activity_v0994'))throw new Error('old activity RPC must not override the requested profile timeline');
 if((html.match(/patch-v113-v0994-fluidity\.js/g)||[]).length!==1)throw new Error('v113 must load exactly once');
 if(html.indexOf('patch-v113-v0994-fluidity.js')<html.indexOf('patch-v112-v0994-warm-boot.js'))throw new Error('v113 must load after v112');
