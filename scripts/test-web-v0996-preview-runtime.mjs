@@ -5,6 +5,7 @@ import vm from 'node:vm';
 const patch=await readFile('dist/patch-v118-v0996-preview-runtime.js','utf8');
 const html=await readFile('dist/index.html','utf8');
 const pkg=await readFile('package.json','utf8');
+const enrich=await readFile('supabase/functions/ct-enrich-media-user/index.ts','utf8');
 
 assert.match(pkg,/"version": "0\.99\.6"/,'logical release must remain 0.99.6');
 assert.doesNotThrow(()=>new vm.Script(patch),'v118 preview runtime syntax invalid');
@@ -20,9 +21,13 @@ assert.match(patch,/\(inner-gap\*6\)\/7/,'profile timeline must calculate exactl
 assert.match(patch,/today\.offsetLeft-\(inner-today\.offsetWidth\)\/2/,'profile today centering missing');
 
 // Poster regression: imported English titles must match TMDB original_title/original_name even with pt-BR results.
-assert.match(patch,/original_title/,'poster resolver must compare TMDB original_title');
-assert.match(patch,/original_name/,'poster resolver must compare TMDB original_name');
-assert.match(patch,/tokenScore118/,'poster resolver similarity guard missing');
+assert.match(patch,/original_title/,'preview poster resolver must compare TMDB original_title');
+assert.match(patch,/original_name/,'preview poster resolver must compare TMDB original_name');
+assert.match(patch,/tokenScore118/,'preview poster resolver similarity guard missing');
+assert.match(enrich,/original_title/,'persistent enrichment must compare TMDB original_title');
+assert.match(enrich,/original_name/,'persistent enrichment must compare TMDB original_name');
+assert.match(enrich,/source_tmdb_id/,'persistent enrichment must honor already resolved surrogate IDs');
+assert.match(enrich,/no confident title\/year match/,'persistent enrichment must use confidence matching instead of localized exact-only matching');
 const normalize=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const aliases=x=>[x.title,x.name,x.original_title,x.original_name].map(normalize).filter(Boolean);
 const imported=normalize('Star Wars: Episode II - Attack of the Clones');
@@ -41,4 +46,4 @@ assert.match(patch,/data-ct118-next/,'season next control missing');
 for(const marker of ['pra voce','em alta','mais aguardados','mais bem avaliados','calendario','geral','series','filmes'])assert.ok(patch.includes(marker),`Discover authority marker missing ${marker}`);
 assert.match(patch,/ensureDiscover118\(rawNav118\)/,'Discover final authority check missing');
 
-console.log('WEB_0996_PREVIEW_RUNTIME_OK profile=7-days+actors posters=original-title season=standalone-carousel discover=authority version=0.99.6');
+console.log('WEB_0996_PREVIEW_RUNTIME_OK profile=7-days+actors posters=original-title+source season=standalone-carousel discover=authority version=0.99.6');
