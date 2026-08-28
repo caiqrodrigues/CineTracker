@@ -5,7 +5,7 @@ const root = resolve(process.cwd());
 const source = resolve(root, 'dist');
 const target = resolve(root, 'apps/android/app/src/main/assets/hotfix5');
 const version = '0.99.4';
-const bundle = 'android-v0.99.4-startup-resilient';
+const bundle = 'android-v0.99.4-fluid-preload';
 
 await rm(target, { recursive: true, force: true });
 await mkdir(target, { recursive: true });
@@ -26,14 +26,10 @@ for (const match of scripts) {
     const blockingNeedle = '  await preloadRoute994(target);';
     const nonBlockingNeedle = '  void preloadRoute994(target);';
     if (script.includes(blockingNeedle)) {
-      const replacement = `  if (new URLSearchParams(location.search).get('android') === '1' || /CineTrackerAndroid\\//i.test(navigator.userAgent || '')) {\n    void preloadRoute994(target);\n  } else {\n    await preloadRoute994(target);\n  }`;
-      script = script.replace(blockingNeedle, replacement);
+      script = script.replace(blockingNeedle, '  void preloadRoute994(target);');
       patchedSessionGate = true;
-    } else if (script.includes(nonBlockingNeedle)) {
-      patchedSessionGate = true;
-    } else {
-      throw new Error('Android 0.99.4: navigation preload marker not found.');
-    }
+    } else if (script.includes(nonBlockingNeedle)) patchedSessionGate = true;
+    else throw new Error('Android 0.99.4: navigation preload marker not found.');
   }
   script = script.replace(/<\/script/gi, '<\\/script');
   html = html.replace(match[0], () => `<script data-ct-inline="${fileName}">\n${script}\n</script>`);
@@ -53,22 +49,8 @@ const resilience = `<script>
       if (name !== 'cinetracker_profile_home_payload_v0994') return rawRpc(name, body);
       return new Promise((resolve, reject) => {
         let settled = false;
-        const timer = setTimeout(() => {
-          if (settled) return;
-          settled = true;
-          reject(new Error('Tempo limite ao sincronizar Home. Toque em Home para tentar novamente.'));
-        }, 15000);
-        Promise.resolve(rawRpc(name, body)).then(value => {
-          if (settled) return;
-          settled = true;
-          clearTimeout(timer);
-          resolve(value);
-        }, error => {
-          if (settled) return;
-          settled = true;
-          clearTimeout(timer);
-          reject(error);
-        });
+        const timer = setTimeout(() => { if (!settled) { settled = true; reject(new Error('Tempo limite ao sincronizar Home.')); } }, 10000);
+        Promise.resolve(rawRpc(name, body)).then(value => { if (!settled) { settled = true; clearTimeout(timer); resolve(value); } }, error => { if (!settled) { settled = true; clearTimeout(timer); reject(error); } });
       });
     };
     wrapped.__ctAndroid994Timeout = true;
@@ -91,20 +73,16 @@ await writeFile(indexPath, html, 'utf8');
 
 if (!patchedSessionGate) throw new Error('Android 0.99.4 session gate was not patched.');
 const required = [
-  'patch-v099-v0994-web.js',
-  'patch-v101-v0994-nav-pre.js',
-  'patch-v103-v0994-session-gate.js',
-  'patch-v104-v0994-authority.js',
-  'patch-v105-v0994-preload-layout.js',
-  'patch-v106-v0994-refactor.js',
-  'patch-v107-v0994-data-ui-fix.js'
+  'patch-v099-v0994-web.js','patch-v101-v0994-nav-pre.js','patch-v103-v0994-session-gate.js','patch-v104-v0994-authority.js',
+  'patch-v105-v0994-preload-layout.js','patch-v106-v0994-refactor.js','patch-v107-v0994-data-ui-fix.js','patch-v108-v0994-pwa-resilience.js',
+  'patch-v109-v0994-settings-web.js','patch-v110-v0994-episode-check.js','patch-v111-v0994-global-search.js','patch-v112-v0994-warm-boot.js','patch-v113-v0994-fluidity.js'
 ];
-for (const name of required) {
-  if (!html.includes(`data-ct-inline="${name}"`)) throw new Error(`Android 0.99.4 missing ${name}.`);
-}
-if (!html.includes("window.__ctAndroidBundle='android-v0.99.4-startup-resilient'")) throw new Error('Android 0.99.4 bundle marker missing.');
+for (const name of required) if (!html.includes(`data-ct-inline="${name}"`)) throw new Error(`Android 0.99.4 missing ${name}.`);
+if (!html.includes("window.__ctAndroidBundle='android-v0.99.4-fluid-preload'")) throw new Error('Android 0.99.4 fluid bundle marker missing.');
+if (!html.includes('v113-cache-first-fast-boot')) throw new Error('Android 0.99.4 missing cache-first boot.');
+if (!html.includes('v113-persistent-hot-route-cache')) throw new Error('Android 0.99.4 missing persistent Profile/Discover snapshots.');
+if (!html.includes('v113-cache-first-tabs-activity')) throw new Error('Android 0.99.4 missing fluidity/activity layer.');
 if (!html.includes('void preloadRoute994(target);')) throw new Error('Android 0.99.4 still blocks navigation on preload.');
-if (!html.includes('Tempo limite ao sincronizar Home')) throw new Error('Android 0.99.4 Home timeout guard missing.');
 if (!html.includes('window.ct15Navigate = navigate994')) throw new Error('Android native navigation is not routed to 0.99.4.');
 if (html.includes('<script src="/')) throw new Error('Android 0.99.4 still has root script dependencies.');
-console.log(`Android ${version} bundle prepared with ${scripts.length} inlined scripts; startup preload is non-blocking and native navigation targets 0.99.4.`);
+console.log(`Android ${version} bundle prepared with ${scripts.length} inlined scripts; cache-first Web preload and fluid tabs are embedded.`);
