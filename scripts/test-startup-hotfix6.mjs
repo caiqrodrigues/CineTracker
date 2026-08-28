@@ -6,6 +6,7 @@ import { resolve } from 'node:path';
 // bootstrap/authority layers that can still re-render Home after the 0.99.7 authority starts.
 await import('./apply-web-v0997-disable-v0994-takeover.mjs');
 await import('./test-web-v0997-no-legacy-takeover.mjs');
+await import('./test-web-r136-interaction-authority.mjs');
 
 const html = await readFile(resolve(process.cwd(), 'dist/index.html'), 'utf8');
 const inline = html.match(/<script>([\s\S]*?)<\/script>/);
