@@ -1,4 +1,3 @@
-CineTracker Android 0.99.7.1 R2 test trigger.
-Source: current official Web 0.99.7 after PR #44, embedded offline with Android responsive guards.
-Expected: versionCode 9971, full current Web parity, no ct99 Profile takeover, no legacy Atividade/Histórico, 4+Ver mais, Home no Faltam 0, Settings minimal, real metadata refresh, strict poster repair.
-Retry: exact current runtime markers aligned with emitted Web bundle before APK generation.
+CineTracker Android 0.99.7.2 R3 test trigger.
+Source: current official Web 0.99.7, unchanged, embedded offline with Android-only UI/activity polish.
+Expected: versionCode 9972; cast 3 visible, 5 + Ver mais horizontal; action buttons preserved and framed; daily chart rebuilt from real episode history; favorite actors carousel; last odd stat spans two columns; time stays on one line with H.
