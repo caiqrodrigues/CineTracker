@@ -27,8 +27,7 @@ assert.match(layer,/if\(target==='profile'\)return renderProfile116\(\)/,'Profil
 assert.match(layer,/if\(target==='discover'\)return renderDiscover116\(\)/,'Discover must bypass legacy renderer');
 assert.ok(layer.includes("window.__ct0994Navigate=navigate116")&&layer.includes('window.ct991Navigate=navigate116'),'canonical navigation aliases missing');
 
-const order=['Séries','Filmes','Séries Favoritas','Filmes Favoritos','Atores Favoritos'];
-let last=-1;for(const label of order){const p=layer.indexOf(label);assert.ok(p>last,`Profile section order invalid at ${label}`);last=p}
+assert.match(layer,/section116\('Séries',recentSeries\)[\s\S]*section116\('Filmes',recentMovies\)[\s\S]*section116\('Séries Favoritas',seriesFav\)[\s\S]*section116\('Filmes Favoritos',movieFav\)[\s\S]*actorSection116\(actors\)/,'Profile sections must be rendered in the required order');
 assert.match(layer,/favorite_actors/,'favorite actors persistence missing');
 assert.match(layer,/state:'Liked'/,'media favorites must use canonical Liked state');
 assert.match(layer,/data-ct116-actor-remove/,'actor removal missing');
@@ -39,6 +38,8 @@ assert.match(finalLayer,/ct117-person-fav/,'person favorite action missing');
 assert.match(layer,/Episódios por dia/,'requested profile graph missing');
 assert.match(layer,/ct116-day/,'profile timeline markers missing');
 assert.match(layer,/today\.offsetLeft-\(sc\.clientWidth-today\.clientWidth\)\/2/,'today must be centered');
+assert.match(finalLayer,/\.ct116-track\{display:flex!important;width:200%!important;min-width:200%!important/,'14-day strip must render exactly seven visible days');
+assert.match(finalLayer,/\.ct116-day\{flex:0 0 calc\(100% \/ 14\)!important/,'each profile day must occupy one seventh of the viewport');
 assert.ok(!layer.includes('Últimos 30 dias'),'legacy 30-day graph must not be rendered by v116');
 
 for(const label of ['Pra Você','Em alta','Mais aguardados','Mais bem avaliados','Calendário','Geral','Séries','Filmes'])assert.ok(layer.includes(label),`Discover label missing ${label}`);
@@ -52,6 +53,9 @@ assert.match(layer,/Buscar filmes, séries e atores/,'Discover global search mis
 assert.match(layer,/next_episode_to_air/,'calendar official next episode integration missing');
 
 assert.match(layer,/data-ct115-heart-bound="1" data-open-media991/,'TMDB cards must remain compatible with universal opener without duplicate legacy hearts');
+assert.match(layer,/x\.poster_path\|\|x\.raw_tmdb\?\.poster_path/,'local cards must use raw TMDB poster fallback');
+assert.match(finalLayer,/priority=visible-posters/,'visible poster enrichment missing');
+assert.match(finalLayer,/openRef117/,'missing poster must resolve directly from official TMDB id');
 for(const marker of ['data-ct114-rewatch','still_path','air_date','vote_average','overview','combined_credits','#48e39a','#ff5f59'])assert.ok(detail.includes(marker),`universal detail requirement missing ${marker}`);
 assert.match(finalLayer,/\.ct114-season-body>\.ct114-chart\{display:none!important\}/,'chart inside season accordion must be hidden');
 assert.match(finalLayer,/Avaliações dos episódios por temporada/,'standalone season rating section missing');
