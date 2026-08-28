@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
-const js=await readFile('apps/web/patch-v131-v0997-rich-movie-discover.js','utf8');
+const js=await readFile('dist/patch-v131-v0997-rich-movie-discover.js','utf8');
 const checks=[
   ['seis abas', "['new','Novidades']"],
   ['mais aguardados após novidades', "['anticipated','Mais Aguardados']"],
   ['janela 30 dias', 'const lo=shiftDays(-30),hi=todayKey();'],
   ['novidades inclusivas', 'd&&d>=lo&&d<=hi'],
   ['novidades desc', 'dateOf(b).localeCompare(dateOf(a))'],
-  ['futuro começa amanhã', 'const tomorrow=shiftDays(1),future=shiftDays(540);'],
+  ['futuro começa amanhã', 'const tomorrow=shiftDays(1);'],
   ['futuro estrito', 'dateOf(x)>today'],
   ['aguardados asc', 'dateOf(a).localeCompare(dateOf(b))'],
   ['data legível', 'Estreia: ${esc(formatRelease(date))}'],
@@ -19,6 +19,7 @@ const checks=[
   ['filmes relacionados', 'Filmes Relacionados']
 ];
 for(const [name,needle] of checks)if(!js.includes(needle))throw new Error(`v131 missing: ${name}`);
+if(js.includes('shiftDays(540)')||js.includes("release_date.lte':future"))throw new Error('v131 awaited query must have no upper date ceiling');
 const tabs=(js.match(/\['(?:foryou|trending|popular|top|new|anticipated)','[^']+'\]/g)||[]);
 if(tabs.length!==6)throw new Error(`v131 expected 6 discover tabs, got ${tabs.length}`);
 console.log('Web v131 checks OK');
