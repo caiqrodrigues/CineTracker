@@ -1,11 +1,11 @@
-name: Build Android 0.99.7.1 R2
+name: Build Android 0.99.7.2 R3
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-      - android/0997-web-parity-r2
+      - android/0997-ui-polish-r3
     paths:
       - 'ci-status/android-v0997-trigger.txt'
 
@@ -13,11 +13,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: cinetracker-android-v09971-${{ github.ref }}
+  group: cinetracker-android-v09972-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  android_v09971:
+  android_v09972:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,12 +53,12 @@ jobs:
           grep -q 'v128-settings-minimal-import-export-only' dist/patch-v128-v0997-settings-minimal-transfer.js
           grep -q 'v129-settings-real-metadata-refresh-only' dist/patch-v129-v0997-settings-real-metadata-refresh.js
           grep -q 'v130-nav-footer-stability-only' dist/patch-v130-v0997-nav-footer-stability.js
-      - name: Prepare exact embedded Android 0.99.7.1 parity runtime
+      - name: Prepare Android 0.99.7.2 R3 runtime
         run: |
           set -euo pipefail
           node scripts/prepare-android-v0997.mjs
           node scripts/test-android-v0997.mjs
-      - name: Build Android 0.99.7.1 APK
+      - name: Build Android 0.99.7.2 APK
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
       - name: Validate APK identity, runtime and signature
@@ -66,7 +66,7 @@ jobs:
         run: |
           set -euo pipefail
           APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
-          OUT="cinetracker-android-0.99.7.1-r2-debug.apk"
+          OUT="cinetracker-android-0.99.7.2-r3-debug.apk"
           cp "$APK" "$OUT"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
@@ -74,35 +74,39 @@ jobs:
           VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           VERSION_CODE="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.99.7.1"
-          test "$VERSION_CODE" = "9971"
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'android-v0.99.7.1-web-parity-r2'
+          test "$VERSION" = "0.99.7.2"
+          test "$VERSION_CODE" = "9972"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'android-v0.99.7.2-ui-polish-r3'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v09972-android-ui-polish-r3'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct-android-cast-more'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct-android-actors-more'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct-android-action-grid'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'watch_history?select=watched_at,item_type'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ctAndroid9972RepairDaily'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "w.onclick=()=>void toggleWatchlist118(ctx,w)"
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "m.onclick=()=>void markMovie118(ctx,m)"
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v126-video3124-surgical-recovery'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v128-settings-minimal-import-export-only'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v129-settings-real-metadata-refresh-only'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v130-nav-footer-stability-only'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "applyFourMore('Séries Favoritas')"
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'window.ct99RenderProfile=()=>false'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q "cont:s.filter(x=>x.home_bucket==='continue'&&!caught(x))"
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Ignorados com segurança'
           ! unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'priority=visible-posters'
           ! unzip -p "$OUT" assets/hotfix5/index.html | grep -q "if(t==='profile')return renderProfile99()"
           "$APKSIGNER" verify --print-certs "$OUT"
-          sha256sum "$OUT" | tee android-v09971-sha256.txt
+          sha256sum "$OUT" | tee android-v09972-sha256.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.99.7.1-r2-debug
+          name: cinetracker-android-0.99.7.2-r3-debug
           path: |
-            cinetracker-android-0.99.7.1-r2-debug.apk
-            android-v09971-sha256.txt
+            cinetracker-android-0.99.7.2-r3-debug.apk
+            android-v09972-sha256.txt
           if-no-files-found: error
-      - name: Publish Android 0.99.7.1 R2 release
+      - name: Publish Android 0.99.7.2 R3 release
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          NOTES='Android 0.99.7.1 R2: paridade com o Web oficial 0.99.7 após as correções aprovadas. Inclui preload persistente sem keep-alive agressivo, Perfil autoritativo e full-width sem gráfico Atividade/Histórico legados, 4 cards + Ver mais em todas as áreas de cards, Home sem Faltam 0, Configurações minimalistas com Exportar/Importar, atualização real de metadados, sidebar/rodapé estáveis, recuperação estrita de capas, Descobrir/Pra Você preservados e layout adaptado ao Android. Não altera Edge Function.'
-          gh release view android-v0.99.7.1 >/dev/null 2>&1 || gh release create android-v0.99.7.1 --title "CineTracker Android 0.99.7.1 R2" --notes "$NOTES"
-          gh release edit android-v0.99.7.1 --title "CineTracker Android 0.99.7.1 R2" --notes "$NOTES"
-          gh release upload android-v0.99.7.1 cinetracker-android-0.99.7.1-r2-debug.apk android-v09971-sha256.txt --clobber
+          NOTES='Android 0.99.7.2 R3 sobre o Web oficial 0.99.7. Ajustes Android: elenco principal com 3 atores visíveis, 5 + Ver mais em carrossel horizontal; ações Watchlist/Visto/Favorito preservadas e reenquadradas; gráfico Episódios por Dia reparado pelo histórico real com fallback em episode_progress; Atores Favoritos em carrossel com 4 + Ver mais; último card das estatísticas ocupa duas colunas; duração em uma linha usando H. Mantém as correções da R2 e não altera o Web nem Edge Function.'
+          gh release view android-v0.99.7.2 >/dev/null 2>&1 || gh release create android-v0.99.7.2 --title "CineTracker Android 0.99.7.2 R3" --notes "$NOTES"
+          gh release edit android-v0.99.7.2 --title "CineTracker Android 0.99.7.2 R3" --notes "$NOTES"
+          gh release upload android-v0.99.7.2 cinetracker-android-0.99.7.2-r3-debug.apk android-v09972-sha256.txt --clobber
