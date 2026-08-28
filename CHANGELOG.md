@@ -2,6 +2,46 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do HOTFIX18, toda nova unidade lógica de mudança exige versão e registro completo conforme `docs/DEVELOPMENT_RULES.md`.
 
+## Web + Android 0.99.7 — 2026-08-28
+
+### Evidência real e mudança de arquitetura
+- Vídeo real da release anterior mostrou capas ainda vazias, favoritos de atores sem controle confiável, gráfico do Perfil divergente, gráfico de avaliações dentro da temporada e Descobrir sem filtros/layout combinados.
+- Criado `patch-v118-v0997-authoritative.js` como autoridade única de Perfil, Descobrir, busca, detalhes, atores, gráficos de temporada e reparo de capas.
+- O build final remove da execução v111/v114/v115/v116/v117 para impedir que renderizadores antigos sobrescrevam a UX final.
+
+### Perfil / gráfico / atores
+- Novo RPC `cinetracker_profile_payload_v0997(p_tz)` agrupa `watch_history.watched_at` pela data local usando o timezone IANA do navegador.
+- Timeline D-10..D+3 mostra exatamente sete dias por viewport e abre com Hoje centralizado em D-3..D+3.
+- Ordem canônica: Séries → Filmes → Séries Favoritas → Filmes Favoritos → Atores Favoritos → Episódios por dia → Estatísticas extras.
+- Coração de ator passa a ser renderizado diretamente no elenco; página da pessoa recebe Favoritar ator / Ator favorito; Perfil lê e remove da mesma `favorite_actors`.
+
+### Série / episódios / avaliações
+- Accordion de temporada contém somente episódios.
+- `Avaliações dos episódios por temporada` passa a ser uma seção independente depois de todo o bloco Temporadas e episódios, visível com temporadas abertas ou fechadas.
+- Scroll horizontal entre temporadas, lazy-load de gráficos próximos, eixo Y 0–10, SxxExx no eixo X, melhor verde, pior vermelho, demais ciano e tooltip com votos.
+- Episódios preservam still, data, nota, sinopse, visto e revisto.
+
+### Descobrir
+- Tabs finais: Pra Você, Em alta, Mais aguardados, Populares, Mais bem avaliados e Calendário.
+- Filtros finais: Todos / Séries / Filmes e modos Lista / Carrossel / Grade.
+- Cards compactos: Grade 128–152 px, Carrossel 142 px, Lista com pôster 64×92.
+- Exclusões pessoais são fail-closed: sem `cinetracker_discovery_exclusions_v0994()` válido, coleções públicas potencialmente erradas não são exibidas.
+- Vistos, histórico, Watchlist, em andamento, em dia e concluídos ficam fora das listas públicas por ID e aliases.
+- Pra Você preserva indicação diária após 1990 e nota >=8, três slots não vistos da Watchlist e três slots 100% novos.
+- Calendário combina filmes futuros e `next_episode_to_air` das séries acompanhadas.
+
+### Capas / busca
+- Cards usam `poster_path || raw_tmdb.poster_path`.
+- Cards ainda vazios mais próximos do viewport recebem prioridade em `ct-enrich-media-user?priority=visible-posters` via `requested_media_ids`; nova checagem ocorre ao rolar, sem polling permanente.
+- Busca global antiga `#ct111-global-search` é removida antes da montagem da busca 0.99.7, evitando a duplicação observada no vídeo.
+
+### Android / versionamento
+- Web package/cache: `0.99.7` / `ct-web-0.99.7`.
+- Android: `versionName 0.99.7`, `versionCode 9970`, bundle `android-v0.99.7-single-authority`.
+- `prepare-android-v0997.mjs` incorpora o mesmo `dist` Web e falha se v111/v114/v115/v116/v117 ainda estiverem executáveis.
+- Workflow alvo: `.github/workflows/build-android-v0997.yml`; Release alvo: `android-v0.99.7`.
+- CI, Vercel, APK, assinatura, SHA e smoke real permanecem estados separados até sua comprovação.
+
 ## Web + Android 0.99.6 — 2026-08-28
 
 ### Autoridade final de Perfil e Descobrir
@@ -45,7 +85,7 @@ Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do 
 ## Web 0.99.3 — 2026-08-27
 
 ### Navegação desktop
-- Nova camada `patch-v097-v0993-nav-pre.js` é injetada antes de `patch-v095-v0992-fix.js` para vencer corretamente o listener `window`/capture legado que usa `stopImmediatePropagation`.
+- Nova camada `patch-v097-v0993-nav-pre.js` é injetada antes do `patch-v095-v0992-fix.js` para vencer corretamente o listener `window`/capture legado que usa `stopImmediatePropagation`.
 - Home, Descobrir, Perfil e Configurações passam por gate Web 0.99.3; rota legada Histórico redireciona ao Perfil.
 - `patch-v098-v0993-web.js` reconcilia a Sidebar final para somente quatro destinos e remove defensivamente qualquer Histórico/History recriado por camada antiga.
 
