@@ -9,10 +9,7 @@ const rows=[];
 const owners=new Map();
 const writesOf=text=>{
   const out=new Set();
-  for(const re of [
-    /window\.([A-Za-z_$][\w$]*)\s*=/g,
-    /window\[['"]([^'"]+)['"]\]\s*=/g
-  ]) for(const m of text.matchAll(re)) out.add(m[1]);
+  for(const re of [/window\.([A-Za-z_$][\w$]*)\s*=/g,/window\[['"]([^'"]+)['"]\]\s*=/g]) for(const m of text.matchAll(re)) out.add(m[1]);
   return [...out];
 };
 const readsOf=text=>{
@@ -27,9 +24,16 @@ for(let i=0;i<srcs.length;i++){
   rows.push({i,name,bytes:Buffer.byteLength(text),writes,reads,observer:(text.match(/new\s+MutationObserver/g)||[]).length,interval:(text.match(/setInterval\s*\(/g)||[]).length,timeout:(text.match(/setTimeout\s*\(/g)||[]).length,listener:(text.match(/addEventListener\s*\(/g)||[]).length,fetchWrap:(text.match(/window\.fetch\s*=/g)||[]).length,rpcWrap:(text.match(/window\.sbRpc\s*=/g)||[]).length});
 }
 for(const r of rows){
+  const later=rows.slice(r.i+1);
+  const laterReads=new Set(later.flatMap(x=>x.reads));
   r.uniqueWrites=r.writes.filter(s=>(owners.get(s)||[]).length===1);
   r.overwrittenWrites=r.writes.filter(s=>{const a=owners.get(s)||[];return a.some(x=>x.i>r.i)});
   r.finalWrites=r.writes.filter(s=>{const a=owners.get(s)||[];return a[a.length-1]?.i===r.i});
+  r.uniqueUsedLater=r.uniqueWrites.filter(s=>laterReads.has(s));
+  r.finalUsedLater=r.finalWrites.filter(s=>laterReads.has(s));
+  r.backgroundCost=r.observer*20+r.interval*20+r.listener*3+r.timeout;
+  r.lowRiskStaticCandidate=r.fetchWrap===0&&r.rpcWrap===0&&r.uniqueUsedLater.length===0&&r.finalUsedLater.length===0&&r.backgroundCost>0;
 }
 const duplicated=[...owners.entries()].filter(([,a])=>a.length>1).sort((a,b)=>b[1].length-a[1].length).slice(0,60).map(([symbol,a])=>({symbol,writers:a.map(x=>x.name)}));
-console.log('ACTIVE_PATCH_DEPENDENCIES '+JSON.stringify({count:rows.length,rows,duplicated_globals:duplicated}));
+const candidates=rows.filter(x=>x.lowRiskStaticCandidate).sort((a,b)=>b.backgroundCost-a.backgroundCost||b.bytes-a.bytes).map(x=>({name:x.name,bytes:x.bytes,backgroundCost:x.backgroundCost,observer:x.observer,interval:x.interval,timeout:x.timeout,listener:x.listener,writes:x.writes,uniqueWrites:x.uniqueWrites,overwrittenWrites:x.overwrittenWrites}));
+console.log('ACTIVE_PATCH_DEPENDENCIES '+JSON.stringify({count:rows.length,candidates,rows,duplicated_globals:duplicated}));
