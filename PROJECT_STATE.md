@@ -3,9 +3,9 @@
 > Documento persistente de continuidade. Deve refletir o estado real do projeto sem depender de histórico de conversa.
 
 **Última atualização:** 2026-08-28  
-**Branch de trabalho:** `fix/web-android-0.99.7-ux`  
-**Web alvo:** `0.99.7`, package/cache `0.99.7`  
-**Android alvo:** `0.99.7`, `versionCode 9970`  
+**Branch atual:** `main`  
+**Web atual:** `0.99.7`, package/cache `0.99.7`  
+**Android atual:** `0.99.7`, `versionCode 9970`  
 **Backend lógico:** `0.99.7`  
 **Windows:** não lançado
 
@@ -13,7 +13,7 @@
 
 Smoke real em vídeo mostrou que a publicação técnica 0.99.6 ainda não entregava corretamente a UX combinada: capas vazias persistiam, favoritos de atores não apareciam de forma confiável, o gráfico do Perfil continuava divergente, o gráfico de avaliações da série permanecia dentro do accordion da temporada e o Descobrir estava sem os filtros/layout esperados e com cards grandes.
 
-A 0.99.7 não considera a existência de código ou CI como prova de UX. Ela consolida essas áreas em uma única autoridade final e só será marcada como funcionalmente validada após novo smoke real.
+A 0.99.7 não considera a existência de código ou CI como prova de UX. Ela consolida essas áreas em uma única autoridade final. A publicação técnica está concluída; o encerramento funcional depende do novo smoke real.
 
 ## 2. Autoridade final 0.99.7
 
@@ -145,8 +145,9 @@ A 0.99.7 possui uma única busca global de filmes, séries e atores na Home e no
 - builder: `scripts/prepare-android-v0997.mjs`;
 - test: `scripts/test-android-v0997.mjs`;
 - workflow: `.github/workflows/build-android-v0997.yml`;
-- release alvo: `android-v0.99.7`;
-- APK alvo: `cinetracker-android-0.99.7-debug.apk`.
+- release publicada: `android-v0.99.7`;
+- APK: `cinetracker-android-0.99.7-debug.apk`;
+- SHA-256: `e8eb582d9a15801213bf28afe798671a365d8eb56c99b9bb18d82d798595e703`.
 
 O builder incorpora o mesmo `dist` final da Web e falha se encontrar v111/v114/v115/v116/v117 como scripts executáveis.
 
@@ -166,24 +167,22 @@ Contratos preservados:
 
 ## 11. Estado de validação
 
-Comprovado nesta unidade:
-- [x] branch 0.99.7 criada;
-- [x] package Web 0.99.7 no source;
-- [x] service-worker source `ct-web-0.99.7`;
-- [x] Android source `versionName 0.99.7` / `versionCode 9970`;
+Comprovado tecnicamente:
+- [x] package Web 0.99.7;
+- [x] service-worker `ct-web-0.99.7`;
+- [x] Android `versionName 0.99.7` / `versionCode 9970`;
 - [x] migration/RPC 0.99.7 aplicada em Supabase production;
-- [x] test gates Web/Android 0.99.7 adicionados;
-- [x] workflow Android 0.99.7 adicionado.
+- [x] PR #28 mergeado em `main` no commit `081e903010e49fc5bd4db037f87258706810df66`;
+- [x] Verify `33168068866` success;
+- [x] Vercel Production success;
+- [x] Android workflow `33168068870` success;
+- [x] identidade e assinatura APK validadas;
+- [x] GitHub Release `android-v0.99.7` publicada;
+- [x] SHA-256 do APK registrado.
 
-Pendente:
-- [ ] Verify do PR;
-- [ ] promoção para `main`;
-- [ ] Vercel Production;
-- [ ] build APK 0.99.7;
-- [ ] identidade/assinatura/SHA do APK;
-- [ ] GitHub Release Android 0.99.7;
-- [ ] smoke real Web/PWA;
-- [ ] smoke real APK em aparelho;
+Pendente apenas de validação real:
+- [ ] smoke Web/PWA;
+- [ ] smoke APK em aparelho;
 - [ ] confirmação visual dos cinco defeitos reportados.
 
 Vídeo/print real prevalece sobre CI caso haja divergência.
