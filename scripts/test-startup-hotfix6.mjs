@@ -7,6 +7,8 @@ import { resolve } from 'node:path';
 await import('./apply-web-v0997-disable-v0994-takeover.mjs');
 await import('./test-web-v0997-no-legacy-takeover.mjs');
 await import('./test-web-r136-interaction-authority.mjs');
+await import('./apply-web-v0997-r137-timeout-nav.mjs');
+await import('./test-web-r137-timeout-nav.mjs');
 
 const html = await readFile(resolve(process.cwd(), 'dist/index.html'), 'utf8');
 const inline = html.match(/<script>([\s\S]*?)<\/script>/);
