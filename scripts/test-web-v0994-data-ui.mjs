@@ -18,7 +18,7 @@ assert.match(legacy,/cinetracker_discovery_exclusions_v0994/,'backend discovery 
 assert.match(legacy,/original_title/,'title aliases must participate in discovery exclusions');
 assert.match(legacy,/v107-strict-global-discovery/,'global discovery exclusion missing');
 assert.match(legacy,/v107-calendar-fast-stable/,'calendar stable implementation missing');
-assert.match(legacy,/v107-preserve-discover-state/,'Discover selected tab must survive authority repairs');
+assert.ok(legacy.includes("if(!['foryou','trending','anticipated','top','calendar'].includes(discover991.tab))discover991.tab='foryou'")||legacy.includes('v107-preserve-discover-state'),'Discover selected tab must survive authority repairs');
 assert.ok(!legacy.includes("function renderDiscover991(){setView991('discover');discover991.tab='foryou';discover991.filter='all'"),'legacy Discover reset must not remain');
 assert.match(authority,/canonicalReady/,'authority must detect canonical views');
 assert.match(authority,/options\.repair&&canonicalReady\(target\)/,'repair must not rebuild a valid view');
