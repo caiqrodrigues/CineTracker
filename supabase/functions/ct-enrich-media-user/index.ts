@@ -10,6 +10,8 @@ const CORS={
 const norm=(v:string)=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const baseTitle=(v:string)=>norm(String(v||'').replace(/\s*\((?:19|20)\d{2}\)\s*$/,''));
 const yearOf=(d:any)=>Number(String(d?.release_date||d?.first_air_date||'').slice(0,4))||0;
+const titleKeys=(x:any)=>[x?.title,x?.name,x?.original_title,x?.original_name].filter(Boolean);
+const titleMatch=(x:any,want:string,baseWant:string)=>titleKeys(x).some((v:any)=>norm(v)===want||baseTitle(v)===baseWant);
 const json=(data:any,status=200)=>new Response(JSON.stringify(data),{status,headers:{...CORS,'content-type':'application/json','cache-control':'no-store'}});
 
 Deno.serve(async(req)=>{
@@ -67,13 +69,13 @@ Deno.serve(async(req)=>{
             if(!sr.ok) throw new Error(`search ${sr.status}`);
             const sd=await sr.json();
             const want=norm(m.title),baseWant=baseTitle(m.title),sourceYear=Number(m.release_year||0);
-            let candidates=(sd.results||[]).map((x:any)=>({x,n:norm(x.title||x.name),base:baseTitle(x.title||x.name),y:yearOf(x)})).filter((z:any)=>(z.n===want||z.base===baseWant)&&(!sourceYear||!z.y||Math.abs(z.y-sourceYear)<=1));
+            let candidates=(sd.results||[]).map((x:any)=>({x,y:yearOf(x)})).filter((z:any)=>titleMatch(z.x,want,baseWant)&&(!sourceYear||!z.y||Math.abs(z.y-sourceYear)<=1));
             if(!candidates.length&&sourceYear){
               const qp2=new URLSearchParams({query,language:'pt-BR',include_adult:'false'});
               const sr2=await fetch(`https://api.themoviedb.org/3/search/${m.media_type}?${qp2}`,{headers:{Authorization:`Bearer ${token}`,Accept:'application/json'}});
-              if(sr2.ok){const sd2=await sr2.json();candidates=(sd2.results||[]).map((x:any)=>({x,n:norm(x.title||x.name),base:baseTitle(x.title||x.name),y:yearOf(x)})).filter((z:any)=>(z.n===want||z.base===baseWant)&&(!z.y||Math.abs(z.y-sourceYear)<=2))}
+              if(sr2.ok){const sd2=await sr2.json();candidates=(sd2.results||[]).map((x:any)=>({x,y:yearOf(x)})).filter((z:any)=>titleMatch(z.x,want,baseWant)&&(!z.y||Math.abs(z.y-sourceYear)<=2))}
             }
-            if(!candidates.length) throw new Error('no exact title/year match');
+            if(!candidates.length) throw new Error('no exact localized/original title-year match');
             candidates.sort((a:any,b:any)=>{const ay=sourceYear&&a.y===sourceYear?1:0,by=sourceYear&&b.y===sourceYear?1:0;if(by!==ay)return by-ay;return Number(b.x.popularity||0)-Number(a.x.popularity||0)});
             tmdbId=Number(candidates[0].x.id||0);
             if(!tmdbId) throw new Error('invalid resolved id');
