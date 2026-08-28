@@ -41,9 +41,11 @@ for(const dir of targets){
   let html=await readFile(htmlPath,'utf8');
   if(!html.includes('/primary-authority-r139.js'))throw new Error(`r140: r139 runtime URL missing in ${htmlPath}`);
   html=html.replaceAll('/primary-authority-r139.js','/primary-authority-r140.js');
-  const startNeedle="await loadPrimaryRuntime139();window.dispatchEvent(new Event('cinetracker:auth-state-change'));await window.__ct132Go?.(p);";
-  if(!html.includes(startNeedle))throw new Error(`r140: duplicated startup route anchor missing in ${htmlPath}`);
-  html=html.replace(startNeedle,"const firstLoad=!window.__ct0997Primary133Loaded;await loadPrimaryRuntime139();if(!firstLoad)await window.__ct132Go?.(p);");
+
+  const startupNeedle="    await loadPrimaryRuntime139();\n    if(typeof window.__ct132Go!=='function')throw new Error('Roteador principal indisponível.');";
+  if(!html.includes(startupNeedle))throw new Error(`r140: real r139 startup anchor missing in ${htmlPath}`);
+  html=html.replace(startupNeedle,"    const firstLoad=!window.__ct0997Primary133Loaded;\n    await loadPrimaryRuntime139();\n    if(firstLoad)return true;\n    if(typeof window.__ct132Go!=='function')throw new Error('Roteador principal indisponível.');");
+
   html=html.replace("window.__ctPrimaryR139='r139-auth-gated-runtime';","window.__ctPrimaryR139='r139-auth-gated-runtime';window.__ctPrimaryR140='r140-rpc-dedupe-single-start';");
   await writeFile(htmlPath,html,'utf8');
 }
