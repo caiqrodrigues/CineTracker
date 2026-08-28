@@ -6,22 +6,29 @@
 
 | Sistema | Versão | Identidade técnica | Estado atual |
 |---|---:|---|---|
-| Web | **0.99.6** | package `0.99.6`, cache `ct-web-0.99.6`, autoridade `patch-v116-v0996-authoritative.js`, final `patch-v117-v0996-final.js` | publicada em `main`; Verify #1398 success; Vercel Production success; smoke real pendente |
-| Android | **0.99.6** | `versionName 0.99.6`, `versionCode 9960`, bundle `android-v0.99.6-authoritative-preload` | Release `android-v0.99.6` publicada; build/assinatura/SHA aprovados; smoke real pendente |
-| Backend / Supabase | **0.99.6** | RPC `cinetracker_profile_payload_v0996`, `favorite_actors`, `ct-enrich-media-user` | contratos 0.99.6 aplicados em produção |
+| Web | **0.99.7** | package `0.99.7`, cache `ct-web-0.99.7`, autoridade final `patch-v118-v0997-authoritative.js` | branch de correção; CI/publicação pendentes |
+| Android | **0.99.7** | `versionName 0.99.7`, `versionCode 9970`, bundle `android-v0.99.7-single-authority` | builder/workflow preparados; APK/publicação pendentes |
+| Backend / Supabase | **0.99.7** | RPC `cinetracker_profile_payload_v0997(text)` + contratos anteriores | migration de atividade local aplicada em produção |
 | Windows | — | — | não lançado |
 
-## Release unificada 0.99.6
+## Release corretiva unificada 0.99.7
 
-A 0.99.6 volta a alinhar Web e Android. O APK é montado a partir do mesmo `dist` validado da Web e incorpora os scripts do runtime em vez de manter uma segunda implementação visual.
+A 0.99.7 nasce do smoke real em vídeo da release anterior. A validação visual mostrou capas ainda vazias, ausência de controles de atores favoritos, gráfico de Perfil divergente, gráfico de temporada no lugar errado e Descobrir sem os filtros/layout combinados. Por isso a 0.99.7 substitui o encadeamento de reparos dessas áreas por uma única autoridade final.
 
-### Autoridade final
+### Autoridade de runtime
 
-- `patch-v116-v0996-authoritative.js`: renderer final de Perfil e Descobrir;
-- `patch-v117-v0996-final.js`: capas visíveis, favoritos de atores, ajuste exato do gráfico do Perfil e avaliações externas por temporada;
-- Perfil e Descobrir deixam de depender de reorganização posterior do DOM legado.
+`patch-v118-v0997-authoritative.js` passa a ser o único runtime emitido para:
+- Perfil;
+- Descobrir;
+- busca global de Home/Descobrir;
+- detalhe de filme/série;
+- detalhe e favoritos de atores;
+- gráficos de avaliação das temporadas;
+- reparo/enriquecimento progressivo de capas visíveis.
 
-### Perfil
+Na saída final 0.99.7 deixam de executar os antigos `v111`, `v114`, `v115`, `v116` e `v117`, evitando que uma camada antiga sobrescreva o DOM final.
+
+## Perfil 0.99.7
 
 Ordem canônica:
 1. Séries;
@@ -32,55 +39,87 @@ Ordem canônica:
 6. Episódios por dia;
 7. Estatísticas extras.
 
-O gráfico recebe D-10..D+3 do backend, exibe exatamente sete dias por viewport e centraliza Hoje, deixando D-3..D+3 visíveis na posição inicial.
+O gráfico de atividade usa `cinetracker_profile_payload_v0997(p_tz)`. O navegador envia o timezone IANA real; o backend agrupa `watched_at` pela data local, não pela data UTC. O intervalo é D-10..D+3, exatamente sete dias ficam visíveis por viewport e Hoje abre centralizado em D-3..D+3.
 
-### Detalhe de série
+## Atores Favoritos
 
-- episódios: capa, data, nota, sinopse, visto e revisto;
-- temporadas expansíveis;
-- gráfico de notas removido de dentro do accordion;
-- seção independente **Avaliações dos episódios por temporada** abaixo do bloco de temporadas/episódios;
-- seção visível independentemente de temporada aberta/fechada;
-- scroll horizontal entre temporadas;
-- melhor episódio verde, pior vermelho, demais ciano, tooltip com votos.
+- coração aparece diretamente em cada card de elenco;
+- página da pessoa possui `Favoritar ator` / `Ator favorito`;
+- persistência em `favorite_actors`;
+- Perfil lista Atores Favoritos e permite remoção;
+- clique no coração não abre a pessoa; clique no card abre biografia/filmografia.
 
-### Descobrir
+## Gráficos de temporadas
 
-- Pra Você / Em alta / Mais aguardados / Mais bem avaliados / Calendário;
-- Geral / Séries / Filmes;
-- busca de filmes, séries e atores;
-- exclusão obrigatória de vistos, histórico e Watchlist por ID e aliases;
-- falha fechada se exclusões pessoais não estiverem disponíveis;
-- Pra Você: filme diário (>1990 e nota >=8), Filme/Série/Anime da Watchlist não vistos e Filme/Série/Anime 100% novos;
-- resolução de imports pessoais sem TMDB oficial em paralelo;
-- Calendário usa dados de `next_episode_to_air` já sincronizados para reduzir chamadas e latência.
+Regra 0.99.7:
+- accordion da temporada contém **somente episódios**;
+- gráfico não fica acima, abaixo nem dentro dos episódios da temporada aberta;
+- existe uma seção independente **Avaliações dos episódios por temporada** após todo o bloco `Temporadas e episódios`;
+- a seção independe de qualquer temporada estar aberta;
+- temporadas do gráfico navegam por scroll horizontal;
+- melhor episódio verde, pior vermelho, demais ciano;
+- tooltip contém SxxExx, nota, título e quantidade de votos.
 
-### Capas
+## Descobrir 0.99.7
 
-A auditoria encontrou 1.932 itens do dashboard sem `poster_path`. A 0.99.6 utiliza fallback de `raw_tmdb.poster_path`, consulta direta quando existe TMDB oficial e enriquecimento direcionado de cards visíveis por `requested_media_ids`.
+Tabs:
+- Pra Você;
+- Em alta;
+- Mais aguardados;
+- Populares;
+- Mais bem avaliados;
+- Calendário.
 
-### Android 0.99.6
+Filtros:
+- Tipo: Todos / Séries / Filmes;
+- Visualização: Lista / Carrossel / Grade.
+
+Layout:
+- Grade compacta: cards de aproximadamente 128–152 px;
+- Carrossel: cards de 142 px;
+- Lista: linha compacta com pôster 64×92;
+- cards de Pra Você, Watchlist e 100% novos usam a mesma escala visual.
+
+Regras:
+- `cinetracker_discovery_exclusions_v0994()` é obrigatório; sem exclusões pessoais válidas o Descobrir falha fechado;
+- vistos, histórico, Watchlist, em andamento, em dia e concluídos não entram nas coleções públicas;
+- bloqueio por TMDB ID e aliases original/localizado;
+- indicação do dia: filme após 1990, nota TMDB >= 8, nunca visto e fora da Watchlist;
+- Da sua Watchlist: Filme/Série/Anime ainda não vistos;
+- 100% novos: Filme/Série/Anime fora de histórico e Watchlist;
+- Calendário combina filmes futuros e `next_episode_to_air` das séries acompanhadas, com filtro Todos/Séries/Filmes.
+
+## Capas
+
+Cards usam `poster_path || raw_tmdb.poster_path`. Cards visíveis ainda sem imagem são priorizados por proximidade do viewport e enviados para `ct-enrich-media-user` com `priority=visible-posters` e `requested_media_ids`. A correção é reavaliada ao rolar a página, sem polling permanente.
+
+## Android 0.99.7
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.6`;
-- `versionCode`: `9960`;
-- workflow: `.github/workflows/build-android-v0996.yml`;
-- Release: `android-v0.99.6`;
-- APK: `cinetracker-android-0.99.6-debug.apk`;
-- APK SHA-256: `777c55e9b2687d30de1aebf28d5b8e3db7ef6c53c7c0b68be47a66219ce5d7c9`;
-- certificado SHA-256: `dfff8a709378ba963d6270670c7b4daf1e72736a649a13488f8e61c2064f8686`.
+- `versionName`: `0.99.7`;
+- `versionCode`: `9970`;
+- builder: `scripts/prepare-android-v0997.mjs`;
+- test: `scripts/test-android-v0997.mjs`;
+- workflow: `.github/workflows/build-android-v0997.yml`;
+- release alvo: `android-v0.99.7`;
+- APK alvo: `cinetracker-android-0.99.7-debug.apk`.
 
-## Publicação 0.99.6
+O APK é gerado a partir do mesmo `dist` Web 0.99.7 e rejeita explicitamente a presença das autoridades obsoletas v111/v114/v115/v116/v117.
 
-- código funcional promovido a `main`: `781cc537ac9e408c574517855320caf260904a9e`;
-- Verify `33165215299` / #1398: success;
-- Vercel Production: success;
-- Android Production workflow `33165215281`: success;
-- GitHub Release `android-v0.99.6`: publicada.
+## Estado de publicação
+
+- Supabase RPC 0.99.7: **aplicado**;
+- source Web/Android 0.99.7: **em branch**;
+- Verify: **pendente**;
+- Vercel Production: **pendente**;
+- APK 0.99.7: **pendente**;
+- assinatura/SHA-256: **pendentes**;
+- GitHub Release Android: **pendente**;
+- smoke real Web/APK: **pendente**.
 
 ## Regra obrigatória
 
-Source, migration, Edge Function, CI, Vercel, APK, assinatura e smoke real são estados separados. A publicação técnica 0.99.6 está concluída, mas UX só será considerada validada após teste real da Web/PWA e do APK.
+Source, migration, CI, deploy Web, build APK, assinatura, release e smoke real são estados separados. Vídeo/print real prevalece sobre CI quando houver divergência.
 
-Release: `docs/releases/0.99.6.md`.  
-Validação: `docs/validation/0.99.6.md`.
+Release: `docs/releases/0.99.7.md`.  
+Validação: `docs/validation/0.99.7.md`.

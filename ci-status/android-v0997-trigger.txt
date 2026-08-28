@@ -1,0 +1,1 @@
+CineTracker Android 0.99.7 release trigger. Source must use the exact Web 0.99.7 v118 authority.
