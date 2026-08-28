@@ -7,6 +7,7 @@ window.__ct0997DeepLink132Tail='v132-single-runtime-nav-integrity';
 const $=(s,r=document)=>r?.querySelector?.(s)||null;
 const $$=(s,r=document)=>r?.querySelectorAll?[...r.querySelectorAll(s)]:[];
 const web=location.protocol==='http:'||location.protocol==='https:';
+if(web&&location.pathname==='/')history.replaceState({ct132:true,path:'/home'},'','/home');
 const href=p=>web?p:`#${p}`;
 const path=()=>web?(location.pathname||'/'):(String(location.hash||'').replace(/^#/,'')||'/home');
 const primary=()=>{const p=path();if(p.startsWith('/discover'))return'discover';if(p.startsWith('/profile'))return'profile';if(p.startsWith('/configs'))return'settings';return'home'};
