@@ -28,8 +28,9 @@ jobs:
           set -euo pipefail
           grep -q '"version": "0.99.6"' package.json
           grep -q 'ct-web-0.99.6' dist/service-worker.js
-          for f in patch-v092-v0991.js patch-v095-v0992-fix.js patch-v096-v0992-unfreeze.js patch-v099-v0994-web.js patch-v101-v0994-nav-pre.js patch-v103-v0994-session-gate.js patch-v104-v0994-authority.js patch-v105-v0994-preload-layout.js patch-v106-v0994-refactor.js patch-v107-v0994-data-ui-fix.js patch-v108-v0994-pwa-resilience.js patch-v109-v0994-settings-web.js patch-v110-v0994-episode-check.js patch-v111-v0994-global-search.js patch-v112-v0994-warm-boot.js patch-v113-v0994-fluidity.js patch-v114-v0994-universal-detail.js patch-v115-v0995-favorites-profile-discover.js patch-v116-v0996-authoritative.js; do grep -q "$f" dist/index.html; done
+          for f in patch-v092-v0991.js patch-v095-v0992-fix.js patch-v096-v0992-unfreeze.js patch-v099-v0994-web.js patch-v101-v0994-nav-pre.js patch-v103-v0994-session-gate.js patch-v104-v0994-authority.js patch-v105-v0994-preload-layout.js patch-v106-v0994-refactor.js patch-v107-v0994-data-ui-fix.js patch-v108-v0994-pwa-resilience.js patch-v109-v0994-settings-web.js patch-v110-v0994-episode-check.js patch-v111-v0994-global-search.js patch-v112-v0994-warm-boot.js patch-v113-v0994-fluidity.js patch-v114-v0994-universal-detail.js patch-v115-v0995-favorites-profile-discover.js patch-v116-v0996-authoritative.js patch-v117-v0996-final.js; do grep -q "$f" dist/index.html; done
           test "$(grep -o 'patch-v116-v0996-authoritative.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v117-v0996-final.js' dist/index.html | wc -l)" -eq 1
           ! grep -q 'patch-v097-v0993-nav-pre.js' dist/index.html
           ! grep -q 'patch-v098-v0993-web.js' dist/index.html
           grep -q 'cinetracker_profile_home_payload_v0994' dist/patch-v099-v0994-web.js
@@ -44,13 +45,15 @@ jobs:
           grep -q 'v114-universal-media-person-detail' dist/patch-v114-v0994-universal-detail.js
           grep -q 'data-ct114-rewatch' dist/patch-v114-v0994-universal-detail.js
           grep -q 'combined_credits' dist/patch-v114-v0994-universal-detail.js
-          grep -q 'body.dataset.loaded='"'"'1'"'"';body.innerHTML=`${chart114(seasonNo,eps)}' dist/patch-v114-v0994-universal-detail.js
           grep -q 'v116-profile-discover-single-authority' dist/patch-v116-v0996-authoritative.js
+          grep -q 'v117-posters-actors-season-ratings' dist/patch-v117-v0996-final.js
           grep -q 'cinetracker_profile_payload_v0996' dist/patch-v116-v0996-authoritative.js
-          grep -q 'ct0996_profile_snapshot_v1' dist/patch-v116-v0996-authoritative.js
-          grep -q 'ct0996_discover_snapshot_v1' dist/patch-v116-v0996-authoritative.js
+          grep -q 'ct0996_profile_snapshot_v2' dist/patch-v116-v0996-authoritative.js
+          grep -q 'ct0996_discover_snapshot_v2' dist/patch-v116-v0996-authoritative.js
           grep -q 'window.__ct0996WarmAll' dist/patch-v116-v0996-authoritative.js
           grep -q 'cinetracker_discovery_exclusions_v0994' dist/patch-v116-v0996-authoritative.js
+          grep -q 'strict_exclusions:true' dist/patch-v116-v0996-authoritative.js
+          ! grep -q "cinetracker_discovery_exclusions_v0994',{}).catch" dist/patch-v116-v0996-authoritative.js
           grep -q 'Séries Favoritas' dist/patch-v116-v0996-authoritative.js
           grep -q 'Filmes Favoritos' dist/patch-v116-v0996-authoritative.js
           grep -q 'Atores Favoritos' dist/patch-v116-v0996-authoritative.js
@@ -58,11 +61,21 @@ jobs:
           grep -q 'Da sua Watchlist' dist/patch-v116-v0996-authoritative.js
           grep -q '100% novos' dist/patch-v116-v0996-authoritative.js
           grep -q 'score116(x)>=8' dist/patch-v116-v0996-authoritative.js
-          grep -q 'data-ct116-local' dist/patch-v116-v0996-authoritative.js
-          ! grep -q "cinetracker_discovery_exclusions_v0994',{}).catch" dist/patch-v116-v0996-authoritative.js
+          grep -q 'next_episode_to_air' dist/patch-v116-v0996-authoritative.js
+          grep -q 'priority=visible-posters' dist/patch-v117-v0996-final.js
+          grep -q 'requested_media_ids' dist/patch-v117-v0996-final.js
+          grep -q 'ct117-cast-heart' dist/patch-v117-v0996-final.js
+          grep -q 'ct117-person-fav' dist/patch-v117-v0996-final.js
+          grep -q 'Avaliações dos episódios por temporada' dist/patch-v117-v0996-final.js
+          grep -q 'ct117-season-ratings-strip' dist/patch-v117-v0996-final.js
+          grep -q '.ct114-season-body>.ct114-chart{display:none!important}' dist/patch-v117-v0996-final.js
           grep -q 'create table if not exists public.favorite_actors' supabase/migrations/20260828022500_v0995_favorite_actors.sql
           grep -q 'cinetracker_profile_payload_v0996' supabase/migrations/20260828024500_v0996_profile_payload_authoritative.sql
-          grep -q 'source='"'"'manual'"'"'' supabase/migrations/20260828024500_v0996_profile_payload_authoritative.sql
+          grep -q 'from public.watch_history wh' supabase/migrations/20260828062500_v0996_profile_activity_from_watch_history.sql
+          grep -q 'count(distinct (wh.media_id,wh.season_number,wh.episode_number))' supabase/migrations/20260828062500_v0996_profile_activity_from_watch_history.sql
+          ! grep -q "source='manual'" supabase/migrations/20260828062500_v0996_profile_activity_from_watch_history.sql
+          grep -q "priority==='visible-posters'" supabase/functions/ct-enrich-media-user/index.ts
+          grep -q 'requested_media_ids' supabase/functions/ct-enrich-media-user/index.ts
           grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
 
   android_0996_identity:
@@ -80,9 +93,13 @@ jobs:
           grep -q 'android-v0.99.6-authoritative-preload' scripts/prepare-android-v0996.mjs
           grep -q "const version='0.99.6'" scripts/prepare-android-v0996.mjs
           grep -q 'patch-v116-v0996-authoritative.js' scripts/prepare-android-v0996.mjs
+          grep -q 'patch-v117-v0996-final.js' scripts/prepare-android-v0996.mjs
           grep -q 'v116-profile-discover-single-authority' scripts/prepare-android-v0996.mjs
-          grep -q 'ct0996_profile_snapshot_v1' scripts/prepare-android-v0996.mjs
-          grep -q 'ct0996_discover_snapshot_v1' scripts/prepare-android-v0996.mjs
+          grep -q 'v117-posters-actors-season-ratings' scripts/prepare-android-v0996.mjs
+          grep -q 'ct0996_profile_snapshot_v2' scripts/prepare-android-v0996.mjs
+          grep -q 'ct0996_discover_snapshot_v2' scripts/prepare-android-v0996.mjs
+          grep -q 'priority=visible-posters' scripts/prepare-android-v0996.mjs
+          grep -q 'Avaliações dos episódios por temporada' scripts/prepare-android-v0996.mjs
           grep -q 'window.__ct0996WarmAll' scripts/prepare-android-v0996.mjs
           grep -q 'void preloadRoute994(target);' scripts/prepare-android-v0996.mjs
           grep -q 'window.ct15Navigate=navigate996' scripts/prepare-android-v0996.mjs
