@@ -16,6 +16,9 @@ if(!warm.includes("cinetracker_profile_home_payload_v0994"))throw new Error('war
 if(!warm.includes("cinetracker_profile_remaining_v0994"))throw new Error('warm boot does not preload remaining metrics');
 if(!warm.includes('Pré-carregando capas e recomendações'))throw new Error('warm boot does not preload first-view images');
 if(!warm.includes("window.addEventListener('cinetracker:data-changed'"))throw new Error('warm boot does not rewarm after data changes');
+if(warm.includes("'Perfil demorou demais'),2).catch"))throw new Error('Profile may fail open instead of remaining in warm boot');
+if(warm.includes("'Descobrir demorou demais'),2).catch"))throw new Error('Discover may fail open instead of remaining in warm boot');
+if(warm.includes("'Métricas demoraram demais').catch"))throw new Error('Profile metrics may fail open instead of remaining in warm boot');
 if(!legacy.includes('v112-hot-route-preload-exports'))throw new Error('legacy data layer was not augmented for warm boot');
 if(!legacy.includes('window.__ct991Preload ='))throw new Error('Profile preload export missing');
 if(!legacy.includes('window.__ct991PreloadDiscover ='))throw new Error('Discover preload export missing');
