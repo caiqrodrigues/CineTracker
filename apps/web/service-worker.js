@@ -1,4 +1,4 @@
-const VERSION='ct-web-0.99.7-r122';
+const VERSION='ct-web-0.99.7-r123';
 const MEDIA_CACHE=`${VERSION}-media`;
 const META_CACHE=`${VERSION}-meta`;
 
