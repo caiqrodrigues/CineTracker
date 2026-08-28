@@ -18,20 +18,11 @@ document.getElementById(css.id)?.remove();document.head.appendChild(css);
 function current113(){let v='';try{v=String(typeof view!=='undefined'?view:(window.view||''))}catch{}return v==='history'?'profile':v}
 function uid113(){try{if(currentUser?.id)return String(currentUser.id)}catch{}try{if(ctSession?.user?.id)return String(ctSession.user.id)}catch{}return ''}
 function readJson113(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch{return null}}
-function collectPosters113(value,set,depth=0){
-  if(depth>6||value==null)return;
-  if(Array.isArray(value)){for(const x of value)collectPosters113(x,set,depth+1);return}
-  if(typeof value!=='object')return;
-  if(typeof value.poster_path==='string'&&value.poster_path.startsWith('/'))set.add(value.poster_path);
-  for(const [k,v] of Object.entries(value)){if(k==='raw_tmdb'&&depth>3)continue;if(v&&typeof v==='object')collectPosters113(v,set,depth+1)}
-}
+function collectPosters113(value,set,depth=0){if(depth>6||value==null)return;if(Array.isArray(value)){for(const x of value)collectPosters113(x,set,depth+1);return}if(typeof value!=='object')return;if(typeof value.poster_path==='string'&&value.poster_path.startsWith('/'))set.add(value.poster_path);for(const [k,v] of Object.entries(value)){if(k==='raw_tmdb'&&depth>3)continue;if(v&&typeof v==='object')collectPosters113(v,set,depth+1)}}
 function posterUrl113(path,size='w342'){try{return `${SUPABASE_URL}/functions/v1/tmdb-image?path=${encodeURIComponent(path)}&size=${size}`}catch{return ''}}
-function preloadPosters113(){
-  const paths=new Set();
-  for(const key of ['ct0994_home_preload_v1','ct0994_profile_snapshot_v4','ct0994_discover_snapshot_v4']){const saved=readJson113(key);collectPosters113(saved?.data||saved,paths)}
-  document.querySelectorAll('[style*="background-image"]').forEach(el=>{const m=String(el.style.backgroundImage||'').match(/url\(["']?([^"')]+)["']?\)/);if(m?.[1]){const img=new Image();img.decoding='async';img.src=m[1]}});
-  let n=0;for(const p of paths){if(n++>=POSTER_LIMIT)break;const img=new Image();img.decoding='async';img.src=posterUrl113(p)}
-}
+function preloadPosters113(){const paths=new Set();for(const key of ['ct0994_home_preload_v1','ct0994_profile_snapshot_v4','ct0994_discover_snapshot_v4']){const saved=readJson113(key);collectPosters113(saved?.data||saved,paths)}document.querySelectorAll('[style*="background-image"]').forEach(el=>{const m=String(el.style.backgroundImage||'').match(/url\(["']?([^"')]+)["']?\)/);if(m?.[1]){const img=new Image();img.decoding='async';img.src=m[1]}});let n=0;for(const p of paths){if(n++>=POSTER_LIMIT)break;const img=new Image();img.decoding='async';img.src=posterUrl113(p)}}
+function centerTimeline113(){const root=document.getElementById('ct991-timeline'),today=root?.querySelector('.ct991-day.today');if(!root||!today)return false;const left=today.offsetLeft-(root.clientWidth-today.offsetWidth)/2;root.scrollLeft=Math.max(0,left);root.dataset.ct114Centered='1';return true}
+function scheduleTimeline113(){for(const d of [40,160,420,850])setTimeout(centerTimeline113,d)}
 async function enrichCatalog113(){
   const uid=uid113();if(!uid)return null;
   try{const last=JSON.parse(localStorage.getItem(ENRICH_KEY)||'null');if(last?.uid===uid&&Date.now()-Number(last.at||0)<ENRICH_TTL)return null}catch{}
@@ -45,12 +36,7 @@ async function enrichCatalog113(){
     const data=await r.json();
     localStorage.setItem(ENRICH_KEY,JSON.stringify({uid,at:Date.now(),processed:Number(data.processed||0),ok:Number(data.ok||0)}));
     if(Number(data.ok||0)>0){
-      // Atualiza snapshots em segundo plano sem apagar a tela/cache que já está visível.
-      Promise.allSettled([
-        window.__ct991Preload?.(true),
-        window.__ct991PreloadDiscover?.(true),
-        window.__ct0994PreloadCore?.({target:current113()||'home',force:true})
-      ]).then(()=>preloadPosters113());
+      Promise.allSettled([window.__ct991Preload?.(true),window.__ct991PreloadDiscover?.(true),window.__ct0994PreloadCore?.({target:current113()||'home',force:true})]).then(()=>preloadPosters113());
     }
     return data;
   }catch(e){console.warn('[CineTracker 0.99.4] enriquecimento de catálogo em segundo plano',e);return null}
@@ -58,12 +44,14 @@ async function enrichCatalog113(){
 
 const rawNav113=window.__ct0994Navigate;
 if(typeof rawNav113==='function'&&!rawNav113.__ct113Wrapped){
-  const fn=async function(target){const result=await rawNav113.apply(this,arguments);queueMicrotask(preloadPosters113);return result};
+  const fn=async function(target){const result=await rawNav113.apply(this,arguments);queueMicrotask(preloadPosters113);if(String(target)==='profile'||String(target)==='history')scheduleTimeline113();return result};
   fn.__ct113Wrapped=true;window.__ct0994Navigate=fn;window.ct0994Navigate=fn;window.ct0992Navigate=fn;window.ct991Navigate=fn;window.ct98Navigate=fn;
 }
 window.__ct113PreloadPosters=preloadPosters113;
 window.__ct113EnrichCatalog=enrichCatalog113;
+window.__ct113CenterTimeline=centerTimeline113;
 window.addEventListener('cinetracker:data-changed',()=>setTimeout(preloadPosters113,80));
 for(const d of [20,90,260,700,1600])setTimeout(preloadPosters113,d);
+for(const d of [120,500,1100])setTimeout(()=>{if(current113()==='profile')centerTimeline113()},d);
 setTimeout(()=>void enrichCatalog113(),1200);
 })();
