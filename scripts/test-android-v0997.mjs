@@ -25,8 +25,8 @@ for(const name of [
 ]) assert.ok(html.includes(`data-ct-inline="${name}"`),`Android parity missing ${name}`);
 
 for(const marker of [
-  'v118-single-authority-profile-discover-detail','v1196-persistent-preload-indexeddb','v120-structural-profile-discover-media-authority',
-  'v121-functional-polish-no-refactor','v124-video-smoke-authority','v125-restore-foryou-contract-only','v126-video3124-surgical-recovery',
+  'v118-single-authority-profile-discover-detail','v119-real-device-smoke-hotfix','v1196-persistent-rpc-stale-while-revalidate','v120-structural-profile-discover-media-authority',
+  'v121-functional-polish-no-refactor','v124-video-smoke-production-authority','v125-restore-foryou-only-no-other-tabs','v126-video3124-surgical-recovery',
   'v128-settings-minimal-import-export-only','v129-settings-real-metadata-refresh-only','v130-nav-footer-stability-only',
   'cinetracker_profile_payload_v0997','Episódios por Dia','Atores Favoritos','Avaliações dos episódios por temporada',
   'Populares','Todos','Séries','Filmes','Lista','Carrossel','Grade','next_episode_to_air',
