@@ -1,0 +1,12 @@
+{
+  "name": "cinetracker-web-entry",
+  "private": true,
+  "version": "0.99.7",
+  "scripts": {
+    "build": "cd ../.. && npm run build",
+    "verify": "cd ../.. && npm run verify"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
