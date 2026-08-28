@@ -80,9 +80,10 @@ const required = [
 for (const name of required) if (!html.includes(`data-ct-inline="${name}"`)) throw new Error(`Android 0.99.4 missing ${name}.`);
 if (!html.includes("window.__ctAndroidBundle='android-v0.99.4-fluid-preload'")) throw new Error('Android 0.99.4 fluid bundle marker missing.');
 if (!html.includes('v113-cache-first-fast-boot')) throw new Error('Android 0.99.4 missing cache-first boot.');
-if (!html.includes('v113-persistent-hot-route-cache')) throw new Error('Android 0.99.4 missing persistent Profile/Discover snapshots.');
-if (!html.includes('v113-cache-first-tabs-activity')) throw new Error('Android 0.99.4 missing fluidity/activity layer.');
+if (!html.includes('v114-persistent-hot-route-cache')) throw new Error('Android 0.99.4 missing v4 persistent Profile/Discover snapshots.');
+if (!html.includes('v114-cache-first-posters-catalog')) throw new Error('Android 0.99.4 missing poster/catalog preload layer.');
+if (!html.includes('ct0994_profile_snapshot_v4') || !html.includes('ct0994_discover_snapshot_v4')) throw new Error('Android 0.99.4 missing v4 cache keys.');
 if (!html.includes('void preloadRoute994(target);')) throw new Error('Android 0.99.4 still blocks navigation on preload.');
 if (!html.includes('window.ct15Navigate = navigate994')) throw new Error('Android native navigation is not routed to 0.99.4.');
 if (html.includes('<script src="/')) throw new Error('Android 0.99.4 still has root script dependencies.');
-console.log(`Android ${version} bundle prepared with ${scripts.length} inlined scripts; cache-first Web preload and fluid tabs are embedded.`);
+console.log(`Android ${version} bundle prepared with ${scripts.length} inlined scripts; cache-first Web preload, v4 snapshots and poster/catalog warmup are embedded.`);
