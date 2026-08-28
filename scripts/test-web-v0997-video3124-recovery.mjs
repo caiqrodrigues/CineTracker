@@ -33,7 +33,7 @@ assert.ok(!legacy91.includes("if(v==='profile'||v==='history')renderProfile99()"
 assert.ok(profile120.includes("rpc120('cinetracker_profile_media_dashboard_v0991',{})"),'Profile timeout must fall back to lighter dashboard RPC');
 assert.ok(profile120.includes("rpc120('cinetracker_profile_stats',{})"),'Profile fallback must keep real stats');
 assert.ok(profile120.includes("sb120('favorite_actors?select=tmdb_person_id,actor_name,profile_path&order=created_at.desc')"),'Profile fallback must retain favorite actors');
-assert.ok(profile120.includes('#ct120-page[data-ct120-route="profile"] .content{width:auto!important;max-width:none!important'),'Profile must fill available viewport width');
+assert.ok(profile120.includes('padding-left:clamp(16px,2vw,30px)!important')&&profile120.includes('#ct120-profile,#ct120-profile>.ct120-page{width:100%!important'),'Profile must fill available viewport width');
 assert.ok(profile120.includes('Episódios por Dia'),'correct daily Profile graph must remain');
 assert.ok(home99.includes("cont:s.filter(x=>x.home_bucket==='continue'&&!caught(x))"),'Assistir a seguir must exclude series with zero released episodes remaining');
 assert.ok(home99.includes("up:s.filter(x=>x.home_bucket==='up_to_date'||(x.home_bucket==='continue'&&caught(x)))"),'caught-up continue rows must move to Em dia');
