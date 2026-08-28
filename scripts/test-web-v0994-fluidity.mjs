@@ -16,7 +16,7 @@ if(!legacy.includes('v113-persistent-hot-route-cache'))throw new Error('persiste
 if(!legacy.includes("ct0994_profile_snapshot_v3")||!legacy.includes("ct0994_discover_snapshot_v3"))throw new Error('persistent route snapshot keys missing');
 if(!legacy.includes("if(discover991.tab==='foryou'){controls.innerHTML=discoverFilters991();bindDiscoverFilters991();return loadForYou991()}"))throw new Error('Pra Voce Geral/Series/Filmes filters not restored');
 if(legacy.includes("controls.innerHTML='';discover991.filter='all';return loadForYou991()"))throw new Error('Pra Voce still resets/removes filters');
-if(!legacy.includes("if(dashboard991.length){void loadForYou991()"))throw new Error('Discover still waits for dashboard network before first paint');
+if(!legacy.includes("if(dashboard991.length){void loadDiscover991()"))throw new Error('Discover still waits for dashboard network before first paint');
 if(!home.includes("vp.dataset.ct994Anchored='1'"))throw new Error('Home initial viewport is not synchronously anchored');
 if(home.includes("requestAnimationFrame(()=>{const vp=$('#ct994-viewport',root),hist=$('.ct992-history',root);if(vp&&hist)vp.scrollTop=hist.offsetHeight})"))throw new Error('Home still visibly scrolls through history');
 if(!legacy.includes('id="ct113-activity-host"'))throw new Error('old Profile timeline was not replaced by v113 activity host');
