@@ -75,11 +75,11 @@ const required=[
   'patch-v099-v0994-web.js','patch-v101-v0994-nav-pre.js','patch-v103-v0994-session-gate.js','patch-v104-v0994-authority.js',
   'patch-v105-v0994-preload-layout.js','patch-v106-v0994-refactor.js','patch-v107-v0994-data-ui-fix.js','patch-v108-v0994-pwa-resilience.js',
   'patch-v109-v0994-settings-web.js','patch-v110-v0994-episode-check.js','patch-v111-v0994-global-search.js','patch-v112-v0994-warm-boot.js',
-  'patch-v113-v0994-fluidity.js','patch-v114-v0994-universal-detail.js','patch-v115-v0995-favorites-profile-discover.js','patch-v116-v0996-authoritative.js'
+  'patch-v113-v0994-fluidity.js','patch-v114-v0994-universal-detail.js','patch-v115-v0995-favorites-profile-discover.js','patch-v116-v0996-authoritative.js','patch-v117-v0996-final.js'
 ];
 for(const name of required)if(!html.includes(`data-ct-inline="${name}"`))throw new Error(`Android 0.99.6 missing ${name}.`);
-for(const marker of [bundle,'v116-profile-discover-single-authority','cinetracker_profile_payload_v0996','ct0996_profile_snapshot_v1','ct0996_discover_snapshot_v1','window.__ct0996WarmAll','data-ct114-rewatch','combined_credits'])if(!html.includes(marker))throw new Error(`Android 0.99.6 missing ${marker}.`);
+for(const marker of [bundle,'v116-profile-discover-single-authority','v117-posters-actors-season-ratings','cinetracker_profile_payload_v0996','ct0996_profile_snapshot_v2','ct0996_discover_snapshot_v2','window.__ct0996WarmAll','data-ct114-rewatch','combined_credits','priority=visible-posters','Avaliações dos episódios por temporada'])if(!html.includes(marker))throw new Error(`Android 0.99.6 missing ${marker}.`);
 if(!html.includes('void preloadRoute994(target);'))throw new Error('Android 0.99.6 still blocks navigation on preload.');
 if(!html.includes('window.ct15Navigate=navigate996'))throw new Error('Android native navigation is not routed to 0.99.6 authority.');
 if(html.includes('<script src="/'))throw new Error('Android 0.99.6 still has root script dependencies.');
-console.log(`Android ${version} bundle prepared with ${scripts.length} inlined scripts; exact Web 0.99.6 runtime embedded.`);
+console.log(`Android ${version} bundle prepared with ${scripts.length} inlined scripts; exact Web 0.99.6 runtime including v117 embedded.`);
