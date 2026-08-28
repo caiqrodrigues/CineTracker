@@ -2,14 +2,32 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
+async function loadPatch(name){
+  try{return await readFile(`dist/${name}`,'utf8')}catch{}
+  const runtime=await readFile('dist/cinetracker-runtime-consolidated.js','utf8');
+  const marker=`/* ==== ${name} ==== */`;
+  const start=runtime.indexOf(marker);
+  if(start<0)throw new Error(`Missing ${name} in individual and consolidated runtime`);
+  const bodyStart=start+marker.length;
+  const next=runtime.indexOf('\n/* ==== ',bodyStart);
+  return runtime.slice(bodyStart,next<0?runtime.length:next).trim();
+}
+
 const html=await readFile('dist/index.html','utf8');
-const js=await readFile('dist/patch-v118-v0997-authoritative.js','utf8');
+const name='patch-v118-v0997-authoritative.js';
+const js=await loadPatch(name);
 const pkg=await readFile('package.json','utf8');
 const sw=await readFile('apps/web/service-worker.js','utf8');
+const consolidated=html.includes('cinetracker-runtime-consolidated.js');
 
 assert.match(pkg,/"version": "0\.99\.7"/,'package must be 0.99.7');
 assert.match(sw,/ct-web-0\.99\.7/,'service worker cache must be 0.99.7');
-assert.equal((html.match(/patch-v118-v0997-authoritative\.js/g)||[]).length,1,'v118 must load exactly once');
+if(consolidated){
+  assert.equal((html.match(/cinetracker-runtime-consolidated\.js/g)||[]).length,1,'consolidated runtime must load exactly once');
+  assert.equal((html.match(/patch-v118-v0997-authoritative\.js/g)||[]).length,0,'v118 must be embedded, not separately loaded');
+}else{
+  assert.equal((html.match(/patch-v118-v0997-authoritative\.js/g)||[]).length,1,'v118 must load exactly once before consolidation');
+}
 for(const old of ['patch-v111-v0994-global-search.js','patch-v114-v0994-universal-detail.js','patch-v115-v0995-favorites-profile-discover.js','patch-v116-v0996-authoritative.js','patch-v117-v0996-final.js'])assert.ok(!html.includes(old),`${old} must not execute in 0.99.7`);
 assert.doesNotThrow(()=>new vm.Script(js),'v118 syntax invalid');
 assert.match(js,/v118-single-authority-profile-discover-detail/,'single authority marker missing');
@@ -45,4 +63,4 @@ assert.match(js,/addEventListener\('scroll'/,'scroll-driven poster repair missin
 assert.match(js,/ct111-global-search/,'duplicate legacy global search cleanup missing');
 assert.ok(!js.includes('new MutationObserver('),'0.99.7 must not add MutationObserver loops');
 assert.ok(!js.includes('setInterval('),'0.99.7 must not add permanent polling');
-console.log('WEB_0997_OK authority=single profile=local-chart actors=direct season-chart=external-scroll discover=compact-filters-strict posters=visible-repair');
+console.log(`WEB_0997_OK authority=single profile=local-chart actors=direct season-chart=external-scroll discover=compact-filters-strict posters=visible-repair delivery=${consolidated?'consolidated':'individual'}`);
