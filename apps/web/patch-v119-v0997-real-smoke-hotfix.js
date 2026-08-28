@@ -98,7 +98,8 @@ function augmentSearch119(data,type){
 window.fetch=async function(input,init){
   const response=await rawFetch119(input,init);
   try{
-    const url=new URL(typeof input==='string'?input:input?.url||'',location.href);
+    const inputUrl=input instanceof URL?input.href:(typeof input==='string'?input:input?.url||String(input||''));
+    const url=new URL(inputUrl,location.href);
     if(!url.pathname.endsWith('/functions/v1/tmdb-proxy'))return response;
     const path=url.searchParams.get('path')||'';
     const m=path.match(/^\/search\/(movie|tv)$/);if(!m||!response.ok)return response;
@@ -113,7 +114,7 @@ function cacheWrite119(x){try{localStorage.setItem(POSTER_CACHE119,JSON.stringif
 function mediaId119(card){return Number(card?.dataset?.ct118MediaId||card?.dataset?.ct994Open||card?.dataset?.card991||card?.dataset?.mediaId||0)}
 function posterEl119(card){return card?.querySelector?.('.ct118-poster,.ct994-poster,.ct991-poster,.poster,.media-poster')||null}
 function hasPoster119(el){if(!el)return true;const inline=String(el.style.backgroundImage||'');if(inline&&inline!=='none')return true;try{return getComputedStyle(el).backgroundImage!=='none'}catch{return false}}
-function img119(path,size='w342'){return path&&window.SUPABASE_URL?`${SUPABASE_URL}/functions/v1/tmdb-image?path=${encodeURIComponent(path)}&size=${size}`:''}
+function img119(path,size='w342'){const base=typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:(window.SUPABASE_URL||'');return path&&base?`${base}/functions/v1/tmdb-image?path=${encodeURIComponent(path)}&size=${size}`:''}
 async function apiSearch119(type,row){
   const q=String(row?.title||'').replace(/\s*\((?:19|20)\d{2}\)\s*$/,'').trim();if(!q)return null;
   const u=new URL(`${SUPABASE_URL}/functions/v1/tmdb-proxy`);u.searchParams.set('path',`/search/${type}`);u.searchParams.set('language',localStorage.getItem('cinetracker_locale')==='en-US'?'en-US':'pt-BR');u.searchParams.set('query',q);u.searchParams.set('include_adult','false');u.searchParams.set('page','1');
