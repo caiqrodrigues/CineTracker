@@ -7,8 +7,18 @@ const bridge='patch-v131b-v0997-person-credit-bridge.js';
 const source=resolve(root,'apps/web',patch);
 const bridgeSource=resolve(root,'apps/web',bridge);
 
+let runtime=await readFile(source,'utf8');
+const original=runtime;
+runtime=runtime
+  .replace('const tomorrow=shiftDays(1),future=shiftDays(540);','const tomorrow=shiftDays(1);')
+  .replace("'primary_release_date.gte':tomorrow,'primary_release_date.lte':future,sort_by:'primary_release_date.asc'","'primary_release_date.gte':tomorrow,sort_by:'primary_release_date.asc'")
+  .replace("'first_air_date.gte':tomorrow,'first_air_date.lte':future,sort_by:'first_air_date.asc'","'first_air_date.gte':tomorrow,sort_by:'first_air_date.asc'");
+if(runtime===original||runtime.includes('shiftDays(540)')||runtime.includes("release_date.lte':future")){
+  throw new Error('Web v131: strict future-date compile transform failed');
+}
+
 for(const dir of [resolve(root,'dist'),resolve(root,'apps/web/dist')]){
-  await copyFile(source,resolve(dir,patch));
+  await writeFile(resolve(dir,patch),runtime,'utf8');
   await copyFile(bridgeSource,resolve(dir,bridge));
   const indexPath=resolve(dir,'index.html');
   let html=await readFile(indexPath,'utf8');
@@ -20,4 +30,4 @@ for(const dir of [resolve(root,'dist'),resolve(root,'apps/web/dist')]){
   html=html.replace(anchor,`${anchor}${tag}${bridgeTag}`);
   await writeFile(indexPath,html,'utf8');
 }
-console.log('CineTracker Web 0.99.7 r131: detalhe rico + Descobrir 6 abas + bridge de filmografia emitidos.');
+console.log('CineTracker Web 0.99.7 r131: detalhe rico + Descobrir 6 abas + futuro estrito sem teto + bridge de filmografia emitidos.');
