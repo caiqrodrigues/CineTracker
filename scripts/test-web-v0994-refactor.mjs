@@ -7,7 +7,7 @@ const layer=await readFile('dist/patch-v106-v0994-refactor.js','utf8');
 const legacy=await readFile('dist/patch-v092-v0991.js','utf8');
 const pkg=await readFile('package.json','utf8');
 
-assert.match(pkg,/"version": "0\.99\.5"/,'release must be Web 0.99.5');
+assert.match(pkg,/"version": "0\.99\.6"/,'release must be Web 0.99.6');
 assert.equal((html.match(/patch-v106-v0994-refactor\.js/g)||[]).length,1,'v106 refactor layer missing or duplicated');
 assert.doesNotThrow(()=>new vm.Script(layer),'v106 syntax invalid');
 assert.ok(!layer.includes('new MutationObserver('),'v106 must not add DOM observer loops');
@@ -42,4 +42,4 @@ assert.match(legacy,/next_episode_to_air/,'Calendar must use official next episo
 assert.match(legacy,/discoverFilters991\(true\)/,'Calendar Geral/Séries/Filmes filters missing');
 assert.ok(legacy.includes("if(!['foryou','trending','anticipated','top','calendar'].includes(discover991.tab))discover991.tab='foryou'")||legacy.includes('v107-preserve-discover-state'),'Calendar/Discover selected tab must survive authority repair');
 assert.ok(legacy.includes('Nenhuma sugestão nova disponível agora')||legacy.includes('Nenhum título elegível para esta categoria.')||legacy.includes('Nenhuma opção elegível neste momento.'),'blank recommendation fallback copy missing');
-console.log('WEB_0995_REFACTOR_OK chart=cyberpunk fullscreen=desktop quick-actions=on history=recent discover=strict-exact-recommendations calendar=stable metrics=watchlist-series data-management=unified');
+console.log('WEB_0996_REFACTOR_OK chart=cyberpunk fullscreen=desktop quick-actions=on history=recent legacy-contracts=preserved final-authority=v116');
