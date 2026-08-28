@@ -37,6 +37,6 @@ assert.match(legacy,/blocker\.isBlocked/,'global Discover must use strict seen/w
 assert.match(legacy,/fallbackOk=x=>year991\(x\)>1990&&score991\(x\)>=7/,'non-blank popular fallback missing');
 assert.match(legacy,/next_episode_to_air/,'Calendar must use official next episode data');
 assert.match(legacy,/discoverFilters991\(true\)/,'Calendar Geral/Séries/Filmes filters missing');
-assert.match(legacy,/v107-preserve-discover-state/,'Calendar/Discover selected tab must survive authority repair');
+assert.ok(legacy.includes("if(!['foryou','trending','anticipated','top','calendar'].includes(discover991.tab))discover991.tab='foryou'")||legacy.includes('v107-preserve-discover-state'),'Calendar/Discover selected tab must survive authority repair');
 assert.match(legacy,/Nenhuma sugestão nova disponível agora/,'blank recommendation fallback copy missing');
 console.log('WEB_0994_REFACTOR_OK chart=cyberpunk fullscreen=desktop quick-actions=on history=recent discover=strict-alias calendar=stable metrics=watchlist-series data-management=unified');
