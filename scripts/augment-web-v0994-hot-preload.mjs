@@ -4,11 +4,11 @@ import { resolve } from 'node:path';
 const root=resolve(process.cwd());
 const targets=[resolve(root,'dist/patch-v092-v0991.js'),resolve(root,'apps/web/dist/patch-v092-v0991.js')];
 const marker="setTimeout(()=>{fixEpisodeCards991();footer991();let v='';";
-const injectedMarker='v113-persistent-hot-route-cache';
+const injectedMarker='v114-persistent-hot-route-cache';
 const injection=`
 // ${injectedMarker}: snapshots persistentes para Perfil/Descobrir e stale-while-revalidate.
-const __ct991PROFILE_KEY='ct0994_profile_snapshot_v3';
-const __ct991DISCOVER_KEY='ct0994_discover_snapshot_v3';
+const __ct991PROFILE_KEY='ct0994_profile_snapshot_v4';
+const __ct991DISCOVER_KEY='ct0994_discover_snapshot_v4';
 const __ct991CACHE_MAX=24*60*60*1000;
 function __ct991User(){try{if(currentUser?.id)return String(currentUser.id)}catch{}try{if(ctSession?.user?.id)return String(ctSession.user.id)}catch{}try{const s=JSON.parse(localStorage.getItem('cinetracker_session')||'null');return s?.user?.id?String(s.user.id):''}catch{return ''}}
 function __ct991Read(key){try{const x=JSON.parse(localStorage.getItem(key)||'null'),u=__ct991User();if(!x?.data||!u||String(x.uid||'')!==u||Date.now()-Number(x.at||0)>__ct991CACHE_MAX)return null;return x.data}catch{return null}}
@@ -33,10 +33,10 @@ const __ct991RawFetchDashboard=fetchDashboard991;
 window.__ct991Preload=async function(force=false){const data=await __ct991RawFetchDashboard(Boolean(force));__ct991PersistProfile();return data};
 window.__ct991PreloadDiscover=async function(force=false){await window.__ct991Preload(Boolean(force));const previousFilter=discover991.filter;discover991.filter='all';const today=new Date(),end=new Date(today);end.setDate(end.getDate()+45),fmt=d=>d.toISOString().slice(0,10);try{const [foryou,trending,anticipated,top,calMovies,calTv]=await Promise.all([recommendationData991(Boolean(force)),mixedRows991('trending',Boolean(force)),mixedRows991('anticipated',Boolean(force)),mixedRows991('top',Boolean(force)),api991('/discover/movie',{'primary_release_date.gte':fmt(today),'primary_release_date.lte':fmt(end),sort_by:'primary_release_date.asc',include_adult:false}),api991('/discover/tv',{'first_air_date.gte':fmt(today),'first_air_date.lte':fmt(end),sort_by:'first_air_date.asc',include_adult:false})]);__ct991DiscoverSnapshot={foryou,trending,anticipated,top,calendar_movies:calMovies?.results||[],calendar_tv:calTv?.results||[]};__ct991Write(__ct991DISCOVER_KEY,__ct991DiscoverSnapshot);return __ct991DiscoverSnapshot}finally{discover991.filter=previousFilter}};
 window.__ct991WarmSnapshot=()=>__ct991ProfileSnapshot();window.__ct991DiscoverWarmSnapshot=()=>__ct991DiscoverSnapshot;window.__ct991OpenDay=openDay991;
-window.__ct991InvalidateWarm=function(){__ct991RecommendationBusy=null;__ct991MixedBusy.clear()};window.addEventListener('cinetracker:data-changed',()=>window.__ct991InvalidateWarm?.());
+window.__ct991InvalidateWarm=function(){__ct991RecommendationCache=null;__ct991RecommendationBusy=null;__ct991DiscoverSnapshot=null;__ct991MixedCache.clear();__ct991MixedBusy.clear();try{localStorage.removeItem(__ct991DISCOVER_KEY)}catch{}};window.addEventListener('cinetracker:data-changed',()=>window.__ct991InvalidateWarm?.());
 const __ct991RawLoadCalendar=loadCalendar991;
 loadCalendar991=async function(){const snap=__ct991DiscoverSnapshot,host=$991('#ct991-discover-results'),controls=$991('#ct991-discover-controls');if(!snap||!host||!controls)return __ct991RawLoadCalendar();controls.innerHTML=discoverFilters991(true);bindDiscoverFilters991();const rows=[...(discover991.filter!=='tv'?(snap.calendar_movies||[]).map(x=>({...x,media_type:'movie',d:x.release_date})):[]),...(discover991.filter!=='movie'?(snap.calendar_tv||[]).map(x=>({...x,media_type:'tv',d:x.first_air_date})):[])].filter(x=>x.d),groups={};rows.forEach(x=>(groups[x.d]||(groups[x.d]=[])).push(x));host.innerHTML=\`<div class="ct991-calendar">\${Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([d,list])=>\`<section class="ct991-calday"><h3>\${new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})}</h3><div class="ct991-calrow">\${list.map(mediaCard991).join('')}</div></section>\`).join('')||'<div class="ct991-empty">Nenhum lançamento encontrado.</div>'}</div>\`;bindMedia991(host)};
 
 `;
 for(const file of targets){let source=await readFile(file,'utf8');if(source.includes(injectedMarker))continue;if(!source.includes(marker))throw new Error(`0.99.4 persistent preload: marker not found in ${file}`);source=source.replace(marker,injection+marker);await writeFile(file,source,'utf8')}
-console.log('CineTracker Web 0.99.4: snapshots persistentes de Perfil/Descobrir habilitados.');
+console.log('CineTracker Web 0.99.4: snapshots persistentes v4 e invalidação forte do Descobrir habilitados.');
