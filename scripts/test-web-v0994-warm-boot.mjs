@@ -19,8 +19,8 @@ if(!warm.includes("cinetracker_profile_remaining_v0994"))throw new Error('remain
 if(warm.includes('BOOT_TIMEOUT=18000')||warm.includes('await Promise.all([homeJob,dashJob'))throw new Error('old blocking all-routes warm boot is still present');
 if(!warm.includes("window.addEventListener('cinetracker:data-changed'"))throw new Error('background rewarm after data changes missing');
 if(!legacy.includes('v113-persistent-hot-route-cache'))throw new Error('persistent route cache augmentation missing');
-if(!legacy.includes('window.__ct991Preload ='))throw new Error('Profile preload export missing');
-if(!legacy.includes('window.__ct991PreloadDiscover ='))throw new Error('Discover preload export missing');
+if(!/window\.__ct991Preload\s*=/.test(legacy))throw new Error('Profile preload export missing');
+if(!/window\.__ct991PreloadDiscover\s*=/.test(legacy))throw new Error('Discover preload export missing');
 if(!legacy.includes('__ct991RecommendationCache'))throw new Error('Discover recommendations cache missing');
 if(!legacy.includes('__ct991MixedCache'))throw new Error('Discover tabs cache missing');
 console.log('CineTracker Web 0.99.4 cache-first warm boot: OK');
