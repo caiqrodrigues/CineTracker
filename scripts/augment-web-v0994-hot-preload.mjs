@@ -72,7 +72,7 @@ mixedRows991 = async function(kind,force=false){
     __ct991MixedCache.set(key,rows);
     return rows;
   }).finally(()=>{ if(__ct991MixedBusy.get(key)===job) __ct991MixedBusy.delete(key); });
-  __ct991MixedBusy.set(key,job;
+  __ct991MixedBusy.set(key,job);
   return job;
 };
 
