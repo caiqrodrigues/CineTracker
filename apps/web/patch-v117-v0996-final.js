@@ -7,6 +7,7 @@ window.__ct0996Final='v117-posters-actors-season-ratings';
 const $117=(s,r=document)=>r.querySelector(s);
 const $$117=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc117=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const img117=(p,size='w342')=>p?`${SUPABASE_URL}/functions/v1/tmdb-image?path=${encodeURIComponent(p)}&size=${size}`:'';
 async function sb117(path,options={}){const fn=typeof window.sbApi==='function'?window.sbApi:(typeof sbApi==='function'?sbApi:null);if(!fn)throw new Error('Supabase indisponível');return fn(path,options)}
 async function api117(path,params={}){const u=new URL(`${SUPABASE_URL}/functions/v1/tmdb-proxy`);u.searchParams.set('path',path);u.searchParams.set('language',localStorage.getItem('cinetracker_locale')==='en-US'?'en-US':'pt-BR');Object.entries(params).forEach(([k,v])=>v!=null&&v!==''&&u.searchParams.set(k,String(v)));const r=await fetch(u,{headers:typeof authHeaders==='function'?authHeaders():{}});if(!r.ok)throw new Error(`TMDB ${r.status}`);return r.json()}
 function route117(){try{return String(typeof view!=='undefined'?view:(window.view||'')).replace('history','profile')}catch{return String(window.view||'').replace('history','profile')}}
@@ -16,33 +17,50 @@ style.id='ct0996-v117-style';
 style.textContent=`
 .ct114-season-body>.ct114-chart{display:none!important}
 .ct115-actor-heart,.ct115-actor-detail{display:none!important}
+/* Perfil: exatamente sete dias visíveis. Como existem 14 dias (D-10..D+3), a faixa mede 200% e cada dia ocupa 1/14 dela = 1/7 do viewport. */
+.ct116-track{display:flex!important;width:200%!important;min-width:200%!important;gap:0!important;align-items:flex-end!important}
+.ct116-day{flex:0 0 calc(100% / 14)!important;min-width:0!important;scroll-snap-align:center!important}
 .ct117-cast-heart{position:absolute;top:6px;right:6px;z-index:30;width:30px;height:30px;border:1px solid #7d405a;background:#071018e8;color:#ffa1bd;border-radius:999px;display:grid;place-items:center;cursor:pointer;font-size:17px}
 .ct117-cast-heart.on,.ct117-person-fav.on{background:#651d3a;border-color:#ff789f;color:#fff}.ct114-person{position:relative!important}.ct117-person-fav{margin-top:10px;border:1px solid #7d405a;background:#211019;color:#ffabc4;border-radius:10px;padding:9px 11px;cursor:pointer}
 .ct117-season-ratings{overflow:hidden}.ct117-season-ratings-strip{display:grid;grid-auto-flow:column;grid-auto-columns:min(760px,86vw);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 1px 10px}.ct117-season-rating-card{scroll-snap-align:start;border:1px solid #26546d;background:radial-gradient(circle at 10% 0,#114c6655,transparent 42%),#07141c;border-radius:14px;padding:12px;min-height:260px}.ct117-season-rating-card h3{margin:0 0 8px;font-size:14px}.ct117-season-rating-note{color:#7893a5;font-size:9px;margin-bottom:8px}.ct117-season-svg-scroll{overflow-x:auto}.ct117-season-rating-card svg{display:block;height:220px}.ct117-season-chart-loading{display:grid;place-items:center;height:220px;color:#7892a4}.ct117-season-chart-empty{display:grid;place-items:center;height:180px;color:#7892a4;border:1px dashed #274a5e;border-radius:10px}
 `;
 document.getElementById(style.id)?.remove();document.head.appendChild(style);
 
-const posterAttempted117=new Set();let posterBusy117=false;
+const posterAttempted117=new Map();let posterBusy117=false;
+function posterAllowed117(key,ttl=4*60*1000){const last=Number(posterAttempted117.get(key)||0);if(last&&Date.now()-last<ttl)return false;posterAttempted117.set(key,Date.now());return true}
+function missingPoster117(card){const p=card?.querySelector?.('.ct116-poster,.ct992-poster,.ct994-poster,.ct991-poster,.ct99-poster');if(!p)return null;return String(p.style.backgroundImage||'').includes('url(')?null:p}
+function openRef117(card){const el=card?.matches?.('[data-open-media991]')?card:card?.querySelector?.('[data-open-media991]');if(!el)return null;const [type,id]=String(el.dataset.openMedia991||'').split(':');return ['movie','tv'].includes(type)&&Number(id)>0?{type,id:Number(id)}:null}
+function localMediaId117(card){return Number(card?.dataset?.card991||card?.dataset?.ct994Open||0)}
 async function repairVisiblePosters117(){
   if(posterBusy117)return;
-  const ids=[];
-  for(const card of $$117('[data-card991],[data-ct994-open]')){
-    const p=card.querySelector('.ct116-poster,.ct992-poster,.ct994-poster,.ct991-poster,.ct99-poster');
-    if(!p||String(p.style.backgroundImage||'').includes('url('))continue;
-    const id=Number(card.dataset.card991||card.dataset.ct994Open||0);
-    if(id>0&&!posterAttempted117.has(id)){ids.push(id);if(ids.length>=36)break}
-  }
-  if(!ids.length)return;
-  ids.forEach(x=>posterAttempted117.add(x));posterBusy117=true;
+  const candidates=[...new Set([...$$117('.ct116-card'),...$$117('[data-card991]'),...$$117('[data-ct994-open]')])].filter(c=>missingPoster117(c));
+  if(!candidates.length)return;
+  posterBusy117=true;
   try{
-    const headers=typeof authHeaders==='function'?{...authHeaders()}:{},token=(()=>{try{return ctSession?.access_token||''}catch{return''}})();
-    if(token&&!headers.Authorization)headers.Authorization=`Bearer ${token}`;
-    if(!headers.Authorization)return;
-    headers['content-type']='application/json';
-    const r=await fetch(`${SUPABASE_URL}/functions/v1/ct-enrich-media-user?limit=${ids.length}&priority=visible-posters`,{method:'POST',headers,body:JSON.stringify({requested_media_ids:ids})});
-    if(!r.ok)return;
-    const d=await r.json();
-    if(Number(d.ok||0)>0){try{localStorage.removeItem('ct0996_profile_snapshot_v2')}catch{}window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'v117-visible-poster-enrichment',count:Number(d.ok||0)}}))}
+    const direct=[];const localIds=[];
+    for(const card of candidates.slice(0,48)){
+      const poster=missingPoster117(card);if(!poster)continue;
+      const ref=openRef117(card);if(ref&&posterAllowed117(`tmdb:${ref.type}:${ref.id}`))direct.push({card,poster,...ref});
+      const mediaId=localMediaId117(card);if(mediaId>0&&posterAllowed117(`media:${mediaId}`))localIds.push(mediaId);
+    }
+    if(direct.length){
+      await Promise.allSettled(direct.slice(0,24).map(async x=>{const d=await api117(`/${x.type}/${x.id}`);if(d?.poster_path)x.poster.style.backgroundImage=`url('${img117(d.poster_path)}')`}));
+    }
+    const ids=[...new Set(localIds)].slice(0,48);
+    if(ids.length){
+      const headers=typeof authHeaders==='function'?{...authHeaders()}:{},token=(()=>{try{return ctSession?.access_token||''}catch{return''}})();
+      if(token&&!headers.Authorization)headers.Authorization=`Bearer ${token}`;
+      if(headers.Authorization){
+        headers['content-type']='application/json';
+        const r=await fetch(`${SUPABASE_URL}/functions/v1/ct-enrich-media-user?limit=${ids.length}&priority=visible-posters`,{method:'POST',headers,body:JSON.stringify({requested_media_ids:ids})});
+        if(r.ok){
+          const d=await r.json();
+          const rows=await sb117(`media?select=id,poster_path,raw_tmdb&id=in.(${ids.join(',')})`).catch(()=>[]),byId=new Map((rows||[]).map(x=>[Number(x.id),x]));
+          for(const card of candidates){const id=localMediaId117(card),row=byId.get(id),poster=missingPoster117(card),path=row?.poster_path||row?.raw_tmdb?.poster_path;if(poster&&path)poster.style.backgroundImage=`url('${img117(path)}')`}
+          if(Number(d.ok||0)>0){try{localStorage.removeItem('ct0996_profile_snapshot_v2')}catch{}window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'v117-visible-poster-enrichment',count:Number(d.ok||0)}}))}
+        }
+      }
+    }
   }catch(e){console.warn('[CineTracker 0.99.6] poster repair',e)}finally{posterBusy117=false}
 }
 
@@ -94,6 +112,7 @@ if(typeof rawById117==='function'){window.__ct0994OpenMediaById=async function(m
 const rawPerson117=window.__ct0994OpenPerson;
 if(typeof rawPerson117==='function'){window.__ct0994OpenPerson=async function(id){const r=await rawPerson117(id);decoratePersonFavorite117(Number(id));return r}}
 const rawNav117=window.__ct0994Navigate;
-if(typeof rawNav117==='function'&&!rawNav117.__ct117Wrapped){const fn=async function(target){const r=await rawNav117.apply(this,arguments);for(const d of [120,650,1800])setTimeout(()=>void repairVisiblePosters117(),d);return r};fn.__ct117Wrapped=true;window.__ct0994Navigate=fn;window.ct0994Navigate=fn;window.ct991Navigate=fn;window.ct0992Navigate=fn;window.ct99Navigate=fn;window.ct98Navigate=fn}
-for(const d of [350,1200,2600])setTimeout(()=>void repairVisiblePosters117(),d);
+if(typeof rawNav117==='function'&&!rawNav117.__ct117Wrapped){const fn=function(target){const r=rawNav117.apply(this,arguments);for(const d of [0,80,260,800,1800])setTimeout(()=>void repairVisiblePosters117(),d);Promise.resolve(r).finally(()=>{for(const d of [0,120,600])setTimeout(()=>void repairVisiblePosters117(),d)});return r};fn.__ct117Wrapped=true;window.__ct0994Navigate=fn;window.ct0994Navigate=fn;window.ct991Navigate=fn;window.ct0992Navigate=fn;window.ct99Navigate=fn;window.ct98Navigate=fn}
+window.addEventListener('cinetracker:data-changed',()=>setTimeout(()=>void repairVisiblePosters117(),100));
+for(const d of [100,350,1200,2600])setTimeout(()=>void repairVisiblePosters117(),d);
 })();
