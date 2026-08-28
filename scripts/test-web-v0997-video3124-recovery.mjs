@@ -13,7 +13,7 @@ for(const token of [
   'removeStandaloneHistory',
   "applyTenMore('Séries')",
   "applyTenMore('Filmes')",
-  'Da sua Watchlist',
+  "h==='da sua watchlist'",
   'knownContext',
   'isKnownCard',
   '+ Watchlist',
