@@ -7,7 +7,7 @@ const layer=await readFile('dist/patch-v106-v0994-refactor.js','utf8');
 const legacy=await readFile('dist/patch-v092-v0991.js','utf8');
 const pkg=await readFile('package.json','utf8');
 
-assert.match(pkg,/"version": "0\.99\.4"/,'release must remain Web 0.99.4');
+assert.match(pkg,/"version": "0\.99\.5"/,'release must be Web 0.99.5');
 assert.equal((html.match(/patch-v106-v0994-refactor\.js/g)||[]).length,1,'v106 refactor layer missing or duplicated');
 assert.doesNotThrow(()=>new vm.Script(layer),'v106 syntax invalid');
 assert.ok(!layer.includes('new MutationObserver('),'v106 must not add DOM observer loops');
@@ -26,7 +26,7 @@ assert.match(layer,/Exportar Backup \(\.CSV\)/,'CSV export missing');
 assert.match(layer,/Prévia da restauração/,'backup preview modal missing');
 assert.match(layer,/watchlist_series_remaining_minutes/,'Profile series remaining metric missing');
 assert.match(layer,/watchlist_series/,'Profile series Watchlist count missing');
-assert.match(layer,/\[data-favorite991\],\.ct991-favbtn,\.ct991-fav\{display:none!important\}/,'favorite removal missing');
+assert.match(layer,/\[data-favorite991\],\.ct991-favbtn,\.ct991-fav\{display:none!important\}/,'legacy favorite UI suppression missing');
 assert.ok(legacy.includes('order=watched_at.desc&limit=5000'),'history query must remain newest first');
 assert.ok(!legacy.includes('order=watched_at.asc&limit=5000'),'ascending history query must be removed');
 assert.match(legacy,/const hasAnyHistory=x=>Boolean/,'personal recommendation history guard missing');
@@ -34,7 +34,7 @@ assert.match(legacy,/x\.is_watchlist&&!hasAnyHistory\(x\)/,'personal Watchlist m
 assert.match(legacy,/cinetracker_discovery_exclusions_v0994/,'strict backend exclusion RPC missing');
 assert.match(legacy,/original_title/,'localized/original title alias exclusion missing');
 assert.match(legacy,/blocker\.isBlocked/,'global Discover must use strict seen/watchlist blocker');
-assert.match(legacy,/year991\(x\)>1990&&score991\(x\)>=7\.8&&!blocker\.isBlocked\(x\)/,'fresh movie/series/anime threshold missing');
+assert.match(legacy,/year991\(x\)>1990&&score991\(x\)>=7\.8&&!blocker\.isBlocked\(x\)/,'fresh series/anime threshold missing');
 assert.match(legacy,/movie\.filter\(x=>year991\(x\)>1990&&score991\(x\)>=8\)/,'daily fresh movie >=8 rule missing');
 assert.match(legacy,/Da sua Watchlist/,'exact Watchlist recommendation section missing');
 assert.match(legacy,/100% novos/,'exact fresh recommendation section missing');
@@ -42,4 +42,4 @@ assert.match(legacy,/next_episode_to_air/,'Calendar must use official next episo
 assert.match(legacy,/discoverFilters991\(true\)/,'Calendar Geral/Séries/Filmes filters missing');
 assert.ok(legacy.includes("if(!['foryou','trending','anticipated','top','calendar'].includes(discover991.tab))discover991.tab='foryou'")||legacy.includes('v107-preserve-discover-state'),'Calendar/Discover selected tab must survive authority repair');
 assert.ok(legacy.includes('Nenhuma sugestão nova disponível agora')||legacy.includes('Nenhum título elegível para esta categoria.')||legacy.includes('Nenhuma opção elegível neste momento.'),'blank recommendation fallback copy missing');
-console.log('WEB_0994_REFACTOR_OK chart=cyberpunk fullscreen=desktop quick-actions=on history=recent discover=strict-exact-recommendations calendar=stable metrics=watchlist-series data-management=unified');
+console.log('WEB_0995_REFACTOR_OK chart=cyberpunk fullscreen=desktop quick-actions=on history=recent discover=strict-exact-recommendations calendar=stable metrics=watchlist-series data-management=unified');
