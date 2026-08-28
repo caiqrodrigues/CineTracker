@@ -2,6 +2,46 @@
 
 Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do HOTFIX18, toda nova unidade lógica de mudança exige versão e registro completo conforme `docs/DEVELOPMENT_RULES.md`.
 
+## Web + Android 0.99.6 — 2026-08-28
+
+### Autoridade final de Perfil e Descobrir
+- Criados `patch-v116-v0996-authoritative.js` e `patch-v117-v0996-final.js` para impedir que renderizadores legados sobrescrevam as telas depois do carregamento.
+- Perfil passa a ser renderizado diretamente na ordem Séries → Filmes → Séries Favoritas → Filmes Favoritos → Atores Favoritos → Episódios por dia → Estatísticas extras.
+- Descobrir passa a ter renderer próprio com Pra Você, Em alta, Mais aguardados, Mais bem avaliados, Calendário e filtros Geral/Séries/Filmes.
+
+### Perfil / favoritos / atividade
+- Novo payload `cinetracker_profile_payload_v0996()` reduz chamadas e entrega dashboard, estatísticas, tempos restantes, atores favoritos e atividade.
+- Gráfico usa `watch_history`, episódios distintos por dia, D-10..D+3, exatamente sete dias visíveis e Hoje centralizado.
+- `favorite_actors` com RLS; coração no elenco e na página da pessoa; seção Atores Favoritos clicável/removível no Perfil.
+- Favoritos de filmes/séries continuam sincronizados pelo estado canônico `Liked`.
+
+### Capas / metadados
+- Auditoria encontrou 1.932 itens do dashboard sem `poster_path`; 1.931 exigiam resolução TMDB.
+- Cards usam fallback `raw_tmdb.poster_path`.
+- v117 consulta TMDB oficial imediatamente para card visível e usa `ct-enrich-media-user?priority=visible-posters` + `requested_media_ids` para registros locais/surrogates.
+- IDs solicitados são limitados ao dashboard autenticado; não é criada associação arbitrária quando o catálogo não pode ser resolvido com segurança.
+
+### Detalhe de série / avaliações
+- Episódios preservam capa, data, nota, sinopse, Marcar como visto e Marcar como revisto.
+- Gráfico legado dentro do accordion é ocultado.
+- Nova seção independente `Avaliações dos episódios por temporada` fica após o bloco de temporadas/episódios e continua visível com accordions abertos ou fechados.
+- Scroll horizontal entre temporadas; melhor episódio verde, pior vermelho, demais ciano; tooltip inclui SxxExx, nota, nome e votos.
+
+### Descobrir / fluidez
+- Exclusões de vistos, histórico, Watchlist, em andamento, em dia e concluídos são obrigatórias por ID e aliases; falha fechada quando o conjunto autenticado não está disponível.
+- Pra Você mantém sete posições: indicação diária (>1990 e nota TMDB >=8), Filme/Série/Anime da Watchlist não vistos e Filme/Série/Anime 100% novos.
+- Pools públicos consultam duas páginas por fonte; resolução de imports pessoais sem ID oficial ocorre em paralelo.
+- Calendário reutiliza `raw_tmdb.next_episode_to_air` de séries acompanhadas e datas oficiais de estreias, evitando dezenas de requisições sequenciais.
+- Cache Web `ct-web-0.99.6`, Perfil `ct0996_profile_snapshot_v2`, Descobrir `ct0996_discover_snapshot_v2`.
+
+### Android / publicação
+- Android volta a compartilhar a mesma árvore Web: `versionName 0.99.6`, `versionCode 9960`, bundle `android-v0.99.6-authoritative-preload`.
+- Verify `33165215299` / #1398: success; Vercel Production: success.
+- Android workflow `33165215281`: success; package/versionName/versionCode e assinatura validados.
+- Release `android-v0.99.6` publicada.
+- APK SHA-256: `777c55e9b2687d30de1aebf28d5b8e3db7ef6c53c7c0b68be47a66219ce5d7c9`.
+- Smoke real Web/PWA e APK permanece pendente; evidência visual prevalece sobre CI.
+
 ## Web 0.99.3 — 2026-08-27
 
 ### Navegação desktop
@@ -22,7 +62,7 @@ Todas as mudanças relevantes do CineTracker são registradas aqui. A partir do 
 - rodapé `CineTracker • v0.99.3`.
 - `scripts/apply-web-v0993.mjs` impõe a ordem pré-gate -> FIX -> FIX2 -> camada final.
 - `scripts/test-web-v0993.mjs` cobre quatro rotas, redirecionamento de Histórico, tab e filtro do Descobrir, markers e ordem do runtime.
-- Android permanece `0.99.2.3`, `versionCode 9923`; nenhum APK é reconstruído ou republicado nesta unidade Web-only.
+- Android permanece `0.99.2.3`, `versionCode 9923`; nenhum novo APK é reconstruído ou republicado nesta unidade Web-only.
 
 ## 0.99.2 FIX2 — 2026-08-27
 
