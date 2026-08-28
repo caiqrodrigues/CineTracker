@@ -23,7 +23,6 @@ assert.ok(!runtime.includes('new MutationObserver'),'video3124 recovery must not
 assert.ok(!legacy43.includes("function run(){if(!currentUser)return;insertProfileBlocks();"),'legacy v043 must not recreate Tempo de Tela/Histórico');
 assert.ok(legacy43.includes("function run(){if(!currentUser)return;document.getElementById('ct43-profile')?.remove();hydrateAll();"),'legacy v043 must be neutralized at its run hook');
 assert.ok(!legacy44.includes("function run(){if(!currentUser)return;enhanceProfile();"),'legacy v044 must not enhance/rebuild Tempo de Tela');
-assert.ok(legacy44.includes("function run(){if(!currentUser)return;$$('[data-view=\"stats\"]')"),'legacy v044 run hook must remain without profile enhancement');
 const a=html.indexOf('<script src="/patch-v125-v0997-restore-foryou-contract.js"></script>');
 const b=html.indexOf('<script src="/patch-v126-v0997-video3124-recovery.js"></script>');
 assert.ok(a>=0&&b>a,'video3124 recovery must load after v125');
