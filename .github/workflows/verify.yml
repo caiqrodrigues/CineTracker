@@ -9,21 +9,53 @@ permissions:
   contents: read
 
 jobs:
-  web_0998:
+  web_0997:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build and verify CineTracker Web 0.99.8
+      - name: Build and verify CineTracker Web 0.99.7
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Assert Web 0.99.8 final runtime
-        run: npm run verify
+      - name: Assert Web 0.99.7 final runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '"version": "0.99.7"' package.json
+          grep -q 'ct-web-0.99.7' dist/service-worker.js
+          test "$(grep -o 'patch-v118-v0997-authoritative.js' dist/index.html | wc -l)" -eq 1
+          for old in patch-v111-v0994-global-search.js patch-v114-v0994-universal-detail.js patch-v115-v0995-favorites-profile-discover.js patch-v116-v0996-authoritative.js patch-v117-v0996-final.js; do ! grep -q "$old" dist/index.html; done
+          grep -q 'v118-single-authority-profile-discover-detail' dist/patch-v118-v0997-authoritative.js
+          grep -q 'cinetracker_profile_payload_v0997' dist/patch-v118-v0997-authoritative.js
+          grep -q 'resolvedOptions().timeZone' dist/patch-v118-v0997-authoritative.js
+          grep -q 'Atores Favoritos' dist/patch-v118-v0997-authoritative.js
+          grep -q 'data-ct118-person-heart' dist/patch-v118-v0997-authoritative.js
+          grep -q 'data-ct118-person-fav' dist/patch-v118-v0997-authoritative.js
+          grep -q 'Avaliações dos episódios por temporada' dist/patch-v118-v0997-authoritative.js
+          grep -q 'ct118-season-ratings-strip' dist/patch-v118-v0997-authoritative.js
+          grep -q 'vote_count' dist/patch-v118-v0997-authoritative.js
+          grep -q 'Populares' dist/patch-v118-v0997-authoritative.js
+          grep -q 'Todos' dist/patch-v118-v0997-authoritative.js
+          grep -q 'Lista' dist/patch-v118-v0997-authoritative.js
+          grep -q 'Carrossel' dist/patch-v118-v0997-authoritative.js
+          grep -q 'Grade' dist/patch-v118-v0997-authoritative.js
+          grep -q 'repeat(auto-fill,minmax(128px,152px))' dist/patch-v118-v0997-authoritative.js
+          grep -q 'cinetracker_discovery_exclusions_v0994' dist/patch-v118-v0997-authoritative.js
+          grep -q 'Da sua Watchlist' dist/patch-v118-v0997-authoritative.js
+          grep -q '100% novos' dist/patch-v118-v0997-authoritative.js
+          grep -q 'next_episode_to_air' dist/patch-v118-v0997-authoritative.js
+          grep -q 'priority=visible-posters' dist/patch-v118-v0997-authoritative.js
+          grep -q 'ct111-global-search' dist/patch-v118-v0997-authoritative.js
+          grep -q 'cinetracker_profile_payload_v0997' supabase/migrations/20260828112000_v0997_profile_payload_local_activity.sql
+          grep -q 'timezone(tz.name,wh.watched_at)' supabase/migrations/20260828112000_v0997_profile_payload_local_activity.sql
+          grep -q 'requested_media_ids' supabase/functions/ct-enrich-media-user/index.ts
+          grep -q "priority==='visible-posters'" supabase/functions/ct-enrich-media-user/index.ts
+          node scripts/test-web-v0997-authoritative.mjs
 
   android_0997_identity:
     runs-on: ubuntu-latest
