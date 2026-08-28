@@ -20,7 +20,7 @@ if(!legacy.includes('Filme lançado após 1990 · nota TMDB 8,0 ou maior · nunc
 for(const label of ['Da sua Watchlist','100% novos','Filme','Série','Anime'])if(!legacy.includes(label))throw new Error(`Pra Voce structure missing ${label}`);
 if(!legacy.includes('score991(x)>=8'))throw new Error('daily movie score >=8 rule missing');
 if(!legacy.includes('x.is_watchlist&&!hasAnyHistory(x)'))throw new Error('personal Watchlist unseen-only rule missing');
-if(!legacy.includes('Promise.allSettled'))throw new Error('Pra Voce partial-failure resilience missing');
+if(!legacy.includes("const safe=(path,params)=>timeout(api991(path,params)).catch"))throw new Error('Pra Voce partial-failure resilience missing');
 if(!legacy.includes('source_tmdb_id'))throw new Error('effective TMDB ID support missing');
 if(!legacy.includes("aliases.has(`${type}:*:${n}`)"))throw new Error('local wildcard alias exclusion missing');
 if(!legacy.includes("filter(x=>Number(x.id)>0&&!blocker.isBlocked(x))"))throw new Error('global Discover seen/watchlist exclusion missing');
@@ -40,4 +40,4 @@ if(!fluid.includes('centerTimeline113'))throw new Error('today centering logic m
 if(fluid.includes('cinetracker_profile_activity_v0994'))throw new Error('old activity RPC must not override the requested profile timeline');
 if((html.match(/patch-v113-v0994-fluidity\.js/g)||[]).length!==1)throw new Error('v113 must load exactly once');
 if(html.indexOf('patch-v113-v0994-fluidity.js')<html.indexOf('patch-v112-v0994-warm-boot.js'))throw new Error('v113 must load after v112');
-console.log('CineTracker Web 0.99.4 correctness/fluidity: OK');
+console.log('CineTracker Web 0.99.5 correctness/fluidity: OK');
