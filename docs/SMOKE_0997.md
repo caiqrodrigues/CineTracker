@@ -19,7 +19,7 @@ Contrato do Perfil na v120, em ordem estrita e sem outros graficos/historicos in
 7. Episodios por Dia
 8. Estatisticas Extras
 
-O historico permanece incorporado ao scroll das secoes de Series e Filmes; nao existe um bloco extra de Historico na pagina Perfil.
+O historico permanece incorporado ao scroll/revelacao das secoes de Series e Filmes; nao existe bloco extra de Historico, grafico secundario ou timeline adicional no Perfil.
 
 O Descobrir v120 possui Pra Voce, Em alta, Mais aguardados, Populares, Mais bem avaliados e Calendario; filtros Todos/Series/Filmes e visualizacoes Lista/Carrossel/Grade. Falha na RPC de exclusoes nao derruba a tela: o fallback e reconstruido pelo dashboard do usuario.
 
