@@ -17,7 +17,10 @@ const must=[
   'home_bucket:bucket',
   'history_episodes',
   'history_movies',
+  "if(!histE.length||!histM.length)",
   'watch_history?select=',
+  "if(!histE.length)histE=wh.filter(x=>x.item_type==='episode')",
+  "if(!histM.length)histM=wh.filter(x=>x.item_type==='movie')",
   'media_overrides?select=media_id,state',
   'Minha Watchlist',
   "state.calendar==='watchlist'",
@@ -36,7 +39,6 @@ const must=[
   "if(p==='/profile')"
 ];
 for(const token of must)if(!source.includes(token))throw new Error(`Web r133 source contract missing: ${token}`);
-if(source.includes("history_episodes:[]")||source.includes("history_movies:[]"))throw new Error('Web r133 must not synthesize an empty Home history fallback.');
 if(source.includes('Faltam ${Math.max(0,total-seen)}'))throw new Error('Web r133 must never calculate missing episodes from total catalog episodes.');
 
 for(const dir of ['dist','apps/web/dist']){
