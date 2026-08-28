@@ -9,29 +9,30 @@ permissions:
   contents: read
 
 jobs:
-  web_0994:
+  web_0995:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build and verify CineTracker Web 0.99.4
+      - name: Build and verify CineTracker Web 0.99.5
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Assert Web 0.99.4 runtime invariants
+      - name: Assert Web 0.99.5 runtime invariants
         shell: bash
         run: |
           set -euo pipefail
-          grep -q '"version": "0.99.4"' package.json
-          grep -q 'ct-web-0.99.4' dist/service-worker.js
-          for f in patch-v092-v0991.js patch-v093-v0992.js patch-v094-v0992-compat.js patch-v095-v0992-fix.js patch-v096-v0992-unfreeze.js patch-v099-v0994-web.js patch-v101-v0994-nav-pre.js patch-v103-v0994-session-gate.js patch-v104-v0994-authority.js patch-v105-v0994-preload-layout.js patch-v106-v0994-refactor.js patch-v107-v0994-data-ui-fix.js patch-v108-v0994-pwa-resilience.js patch-v109-v0994-settings-web.js patch-v110-v0994-episode-check.js patch-v111-v0994-global-search.js patch-v112-v0994-warm-boot.js patch-v113-v0994-fluidity.js patch-v114-v0994-universal-detail.js; do grep -q "$f" dist/index.html; done
+          grep -q '"version": "0.99.5"' package.json
+          grep -q 'ct-web-0.99.5' dist/service-worker.js
+          for f in patch-v092-v0991.js patch-v093-v0992.js patch-v094-v0992-compat.js patch-v095-v0992-fix.js patch-v096-v0992-unfreeze.js patch-v099-v0994-web.js patch-v101-v0994-nav-pre.js patch-v103-v0994-session-gate.js patch-v104-v0994-authority.js patch-v105-v0994-preload-layout.js patch-v106-v0994-refactor.js patch-v107-v0994-data-ui-fix.js patch-v108-v0994-pwa-resilience.js patch-v109-v0994-settings-web.js patch-v110-v0994-episode-check.js patch-v111-v0994-global-search.js patch-v112-v0994-warm-boot.js patch-v113-v0994-fluidity.js patch-v114-v0994-universal-detail.js patch-v115-v0995-favorites-profile-discover.js; do grep -q "$f" dist/index.html; done
           test "$(grep -o 'patch-v112-v0994-warm-boot.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v113-v0994-fluidity.js' dist/index.html | wc -l)" -eq 1
           test "$(grep -o 'patch-v114-v0994-universal-detail.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v115-v0995-favorites-profile-discover.js' dist/index.html | wc -l)" -eq 1
           ! grep -q 'patch-v097-v0993-nav-pre.js' dist/index.html
           ! grep -q 'patch-v098-v0993-web.js' dist/index.html
           grep -q 'cinetracker_profile_home_payload_v0994' dist/patch-v099-v0994-web.js
@@ -49,6 +50,7 @@ jobs:
           grep -q 'v113-cache-first-fast-boot' dist/patch-v112-v0994-warm-boot.js
           grep -q 'v114-cache-first-posters-stable-enrichment' dist/patch-v113-v0994-fluidity.js
           grep -q 'v114-universal-media-person-detail' dist/patch-v114-v0994-universal-detail.js
+          grep -q 'v115-favorites-profile-discover-repair' dist/patch-v115-v0995-favorites-profile-discover.js
           grep -q 'v114-persistent-hot-route-cache' dist/patch-v092-v0991.js
           grep -q 'ct0994_profile_snapshot_v4' dist/patch-v092-v0991.js
           grep -q 'ct0994_discover_snapshot_v4' dist/patch-v092-v0991.js
@@ -60,11 +62,16 @@ jobs:
           grep -q 'Filme lançado após 1990 · nota TMDB 8,0 ou maior · nunca visto' dist/patch-v092-v0991.js
           grep -q 'Da sua Watchlist' dist/patch-v092-v0991.js
           grep -q '100% novos' dist/patch-v092-v0991.js
-          grep -q 'Promise.allSettled' dist/patch-v092-v0991.js
+          grep -q 'const safe=(path,params)=>timeout' dist/patch-v092-v0991.js
           grep -q 'source_tmdb_id' dist/patch-v092-v0991.js
           grep -q 'data-ct114-rewatch' dist/patch-v114-v0994-universal-detail.js
           grep -q 'combined_credits' dist/patch-v114-v0994-universal-detail.js
           grep -q 'polyline' dist/patch-v114-v0994-universal-detail.js
+          grep -q 'favorite_actors' dist/patch-v115-v0995-favorites-profile-discover.js
+          grep -q 'state:'"'"'Liked'"'"'' dist/patch-v115-v0995-favorites-profile-discover.js
+          grep -q 'Atores Favoritos' dist/patch-v115-v0995-favorites-profile-discover.js
+          grep -q 'Hoje centralizado · 3 dias antes e 3 depois visíveis · role até 10 dias para trás' dist/patch-v115-v0995-favorites-profile-discover.js
+          grep -q 'body.dataset.loaded='"'"'1'"'"';body.innerHTML=`${chart114(seasonNo,eps)}' dist/patch-v114-v0994-universal-detail.js
           grep -q 'vp.dataset.ct994Anchored' dist/patch-v099-v0994-web.js
           grep -q '/search/multi' dist/patch-v111-v0994-global-search.js
           grep -q 'cinetracker_mark_episode_v0994' dist/patch-v110-v0994-episode-check.js
@@ -77,6 +84,8 @@ jobs:
           grep -q '862551' supabase/migrations/20260827225500_v0994_correct_me_time_catalog_identity.sql
           grep -q 'metadata_ready' supabase/migrations/20260828011300_v0994_home_bucket_requires_reliable_episode_catalog.sql
           grep -q 'not b.metadata_ready and b.is_in_progress' supabase/migrations/20260828011300_v0994_home_bucket_requires_reliable_episode_catalog.sql
+          grep -q 'create table if not exists public.favorite_actors' supabase/migrations/20260828022500_v0995_favorite_actors.sql
+          grep -q 'favorite_actors_select_own' supabase/migrations/20260828022500_v0995_favorite_actors.sql
           grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
 
   android_0994_identity:
