@@ -70,9 +70,12 @@ assert.ok(!authority.includes('new MutationObserver('),'authority must not add a
 assert.ok(!authority.includes('setInterval('),'authority must not poll forever');
 
 assert.match(legacyDiscover,/cinetracker_discovery_exclusions_v0994/,'Discover must use authenticated strict exclusion data');
-assert.match(legacyDiscover,/v107-strict-discovery-exclusion/,'personal recommendation strict exclusion missing');
-assert.match(legacyDiscover,/v107-strict-global-discovery/,'global Discover strict exclusion missing');
+assert.match(legacyDiscover,/const hasAnyHistory=x=>Boolean/,'personal recommendation history guard missing');
+assert.match(legacyDiscover,/x\.is_watchlist&&!hasAnyHistory\(x\)/,'personal Watchlist must exclude watched/history titles');
+assert.match(legacyDiscover,/filter\(x=>Number\(x\.id\)>0&&!blocker\.isBlocked\(x\)\)/,'global Discover must exclude watched/watchlist titles');
+assert.match(legacyDiscover,/aliases\.has\(`\$\{type\}:\*:\$\{n\}`\)/,'Discover must block title aliases independent of year');
+assert.match(legacyDiscover,/score991\(x\)>=8/,'daily recommendation must enforce score >= 8');
 assert.match(legacyDiscover,/original_title/,'Discover must compare original/localized aliases');
 assert.ok(!legacyDiscover.includes("movieSeed=watch.filter(x=>x.media_type==='movie').slice(0,16)"),'legacy 16-item movie seed must not remain in emitted 0.99.4');
 
-console.log('WEB_0994_OK auth=guarded renderer=single discover=strict-alias legacy-startup-race=conditional desktop-navigation=preserved');
+console.log('WEB_0994_OK auth=guarded renderer=single discover=strict-alias behavior=validated desktop-navigation=preserved');
