@@ -14,9 +14,9 @@ const runtimeTag = '<script src="/patch-v099-v0994-web.js"></script>';
 const authTag = '<script src="/patch-v103-v0994-session-gate.js"></script>';
 const authorityTag = '<script src="/patch-v104-v0994-authority.js"></script>';
 
-assert.match(pkg,/"version": "0\.99\.4"/,'package must stay 0.99.4');
+assert.match(pkg,/"version": "0\.99\.5"/,'Web package must be 0.99.5');
 assert.ok(!pkg.includes('apply-web-v0993.mjs'),'0.99.3 build layer must not run');
-assert.match(sw,/ct-web-0\.99\.4/,'service worker cache must be 0.99.4');
+assert.match(sw,/ct-web-0\.99\.5/,'service worker cache must be 0.99.5');
 assert.equal((html.match(/patch-v101-v0994-nav-pre\.js/g)||[]).length,1,'0.99.4 pre-gate duplicated');
 assert.equal((html.match(/patch-v099-v0994-web\.js/g)||[]).length,1,'0.99.4 runtime duplicated');
 assert.equal((html.match(/patch-v103-v0994-session-gate\.js/g)||[]).length,1,'0.99.4 session gate duplicated');
@@ -57,13 +57,13 @@ assert.match(auth,/renderAuth/,'session gate must return unauthenticated users t
 assert.match(auth,/sbRpc = async function/,'session gate must protect data RPC calls');
 assert.match(auth,/window\.__ct0994Navigate = guardedNavigate994/,'session gate must protect 0.99.4 navigation');
 assert.match(auth,/rawSignIn994/,'session gate must preserve login flow');
-assert.match(auth,/guardedNavigate994\('home'\)/,'successful login must return to the 0.99.4 Home');
-assert.ok(!auth.includes('localStorage.removeItem(\'cinetracker_session\')'),'session gate must never erase the persisted session');
+assert.match(auth,/guardedNavigate994\('home'\)/,'successful login must return to the canonical Home');
+assert.ok(!auth.includes("localStorage.removeItem('cinetracker_session')"),'session gate must never erase the persisted session');
 
-assert.match(authority,/v104-single-renderer/,'0.99.4 single renderer marker missing');
+assert.match(authority,/v104-single-renderer/,'single renderer marker missing');
 assert.match(authority,/window\.render=guardedRender/,'legacy global render must be fenced after authentication');
-assert.match(authority,/window\.ct991Navigate=navigateAuthoritative/,'0.99.1 global router must yield to 0.99.4');
-assert.match(authority,/window\.ct0992Navigate=navigateAuthoritative/,'0.99.2 global router must yield to 0.99.4');
+assert.match(authority,/window\.ct991Navigate=navigateAuthoritative/,'0.99.1 global router must yield to canonical Web router');
+assert.match(authority,/window\.ct0992Navigate=navigateAuthoritative/,'0.99.2 global router must yield to canonical Web router');
 assert.match(authority,/\[90,380,820,980,1400,2200\]/,'finite startup authority repairs missing');
 assert.match(authority,/canonicalReady/,'startup repairs must be conditional on canonical view loss');
 assert.ok(!authority.includes('new MutationObserver('),'authority must not add another DOM observer loop');
@@ -76,6 +76,6 @@ assert.match(legacyDiscover,/filter\(x=>Number\(x\.id\)>0&&!blocker\.isBlocked\(
 assert.match(legacyDiscover,/aliases\.has\(`\$\{type\}:\*:\$\{n\}`\)/,'Discover must block title aliases independent of year');
 assert.match(legacyDiscover,/score991\(x\)>=8/,'daily recommendation must enforce score >= 8');
 assert.match(legacyDiscover,/original_title/,'Discover must compare original/localized aliases');
-assert.ok(!legacyDiscover.includes("movieSeed=watch.filter(x=>x.media_type==='movie').slice(0,16)"),'legacy 16-item movie seed must not remain in emitted 0.99.4');
+assert.ok(!legacyDiscover.includes("movieSeed=watch.filter(x=>x.media_type==='movie').slice(0,16)"),'legacy 16-item movie seed must not remain in emitted Web build');
 
-console.log('WEB_0994_OK auth=guarded renderer=single discover=strict-alias behavior=validated desktop-navigation=preserved');
+console.log('WEB_0995_OK auth=guarded renderer=single discover=strict-alias behavior=validated desktop-navigation=preserved');
