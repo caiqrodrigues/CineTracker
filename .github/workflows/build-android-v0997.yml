@@ -48,7 +48,10 @@ jobs:
           set -euo pipefail
           npm run build
           npm run verify
-          grep -q 'ct-web-0.99.7-r130' dist/service-worker.js
+          grep -q 'ct-web-0.99.7-r131' dist/service-worker.js
+          grep -q 'v131-rich-movie-discover-six-tabs' dist/patch-v131-v0997-rich-movie-discover.js
+          grep -q "\['new','Novidades'\]" dist/patch-v131-v0997-rich-movie-discover.js
+          grep -q "\['anticipated','Mais Aguardados'\]" dist/patch-v131-v0997-rich-movie-discover.js
           grep -q 'v126-video3124-surgical-recovery' dist/patch-v126-v0997-video3124-recovery.js
           grep -q 'v128-settings-minimal-import-export-only' dist/patch-v128-v0997-settings-minimal-transfer.js
           grep -q 'v129-settings-real-metadata-refresh-only' dist/patch-v129-v0997-settings-real-metadata-refresh.js
@@ -78,6 +81,10 @@ jobs:
           test "$VERSION_CODE" = "9972"
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'android-v0.99.7.2-ui-polish-r3'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v09972-android-ui-polish-r3'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v131-rich-movie-discover-six-tabs'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Novidades'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Mais Aguardados'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct131-movie-hero'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct-android-cast-more'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct-android-actors-more'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct-android-action-grid'
@@ -106,7 +113,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          NOTES='Android 0.99.7.2 R3 sobre o Web oficial 0.99.7. Ajustes Android: elenco principal com 3 atores visíveis, 5 + Ver mais em carrossel horizontal; ações Watchlist/Visto/Favorito preservadas e reenquadradas; gráfico Episódios por Dia reparado pelo histórico real com fallback em episode_progress; Atores Favoritos em carrossel com 4 + Ver mais; último card das estatísticas ocupa duas colunas; duração em uma linha usando H. Mantém as correções da R2 e não altera o Web nem Edge Function.'
+          NOTES='Android 0.99.7.2 R3 sobre o Web oficial 0.99.7 r131. Inclui detalhe rico de filmes, filmes relacionados com exclusão de vistos/Watchlist, Descobrir com seis abas incluindo Novidades e Mais Aguardados com datas rigorosas, e correção de abertura de obras na filmografia de atores. Mantém o polimento Android R3 anterior.'
           gh release view android-v0.99.7.2 >/dev/null 2>&1 || gh release create android-v0.99.7.2 --title "CineTracker Android 0.99.7.2 R3" --notes "$NOTES"
           gh release edit android-v0.99.7.2 --title "CineTracker Android 0.99.7.2 R3" --notes "$NOTES"
           gh release upload android-v0.99.7.2 cinetracker-android-0.99.7.2-r3-debug.apk android-v09972-sha256.txt --clobber
