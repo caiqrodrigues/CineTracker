@@ -1,3 +1,3 @@
-CineTracker Android 0.99.7.2 R3 test trigger — Web r131.
+CineTracker Android 0.99.7.2 R3 test trigger — Web r131 + actor bridge.
 Source: current official Web 0.99.7 r131 embedded offline.
-Expected: rich movie detail; related movies exclude watched/history and Watchlist; Discover has exactly 6 pills with Novidades (today-30 through today, DESC) and Mais Aguardados (strictly future, ASC, release date visible); pure Documentary/Drama excluded; actor filmography cards open media detail; previous Android R3 polish preserved.
+Expected: rich movie detail; related movies exclude watched/history and Watchlist; Discover has exactly 6 pills with Novidades (today-30 through today, DESC) and Mais Aguardados (strictly future, ASC, release date visible); pure Documentary/Drama excluded; both modern and legacy actor filmography cards open media detail; previous Android R3 polish preserved.
