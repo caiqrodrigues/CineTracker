@@ -5,12 +5,13 @@ const html=await readFile('apps/android/app/src/main/assets/hotfix5/index.html',
 const gradle=await readFile('apps/android/app/build.gradle','utf8');
 const layout=await readFile('apps/android/app/src/main/res/layout/activity_main.xml','utf8');
 
-assert.match(gradle,/versionCode 9971/,'Android versionCode must be 9971');
-assert.match(gradle,/versionName '0\.99\.7\.1'/,'Android versionName must be 0.99.7.1');
-assert.match(html,/android-v0\.99\.7\.1-web-parity-r2/,'Android R2 bundle marker missing');
-assert.match(html,/window\.__ctAndroidBuild='0\.99\.7\.1'/,'Android build marker missing');
+assert.match(gradle,/versionCode 9972/,'Android versionCode must be 9972');
+assert.match(gradle,/versionName '0\.99\.7\.2'/,'Android versionName must be 0.99.7.2');
+assert.match(html,/android-v0\.99\.7\.2-ui-polish-r3/,'Android R3 bundle marker missing');
+assert.match(html,/window\.__ctAndroidBuild='0\.99\.7\.2'/,'Android build marker missing');
 assert.match(html,/window\.__ctAndroidWebBuild='0\.99\.7'/,'embedded Web parity marker missing');
-assert.match(html,/ct-android-09971-parity/,'Android responsive parity CSS missing');
+assert.match(html,/v09972-android-ui-polish-r3/,'Android UI polish marker missing');
+assert.match(html,/ct-android-09972-polish/,'Android R3 responsive CSS missing');
 assert.ok(!html.includes('<script src="/'),'embedded APK must not depend on root JS assets');
 assert.match(html,/void preloadRoute994\(target\);/,'Android startup preload must remain non-blocking');
 assert.match(html,/window\.ct15Navigate=navigate997/,'native navigation must target current 0.99.7 authority');
@@ -32,8 +33,12 @@ for(const marker of [
   'Populares','Todos','Séries','Filmes','Lista','Carrossel','Grade','next_episode_to_air',
   "applyFourMore('Séries')","applyFourMore('Filmes')","applyFourMore('Séries Favoritas')","applyFourMore('Filmes Favoritos')","applyFourMore('Atores Favoritos')",
   'window.ct99RenderProfile=()=>false',"cont:s.filter(x=>x.home_bucket==='continue'&&!caught(x))",'ct128-main-btn',
-  'Ignorados com segurança','media?select=id,tmdb_id,media_type,title,release_year,poster_path,raw_tmdb','matches(x)&&(!yr||cy(x)===yr)'
-]) assert.ok(html.includes(marker),`Android 0.99.7.1 missing ${marker}`);
+  'Ignorados com segurança','media?select=id,tmdb_id,media_type,title,release_year,poster_path,raw_tmdb','matches(x)&&(!yr||cy(x)===yr)',
+  'ct-android-cast-more','ct-android-actors-more','ct-android-action-grid','last-child:nth-child(odd)',
+  'watch_history?select=watched_at,item_type','episode_progress?select=watched_at,watched','__ctAndroid9972RepairDaily',
+  "w.onclick=()=>void toggleWatchlist118(ctx,w)","m.onclick=()=>void markMovie118(ctx,m)","toggleMediaFav118(ctx.row?.id?{mediaId:Number(ctx.row.id)}:{type:ctx.type,tmdbId:ctx.tmdbId},f)",
+  "m[1]+' '+m[2]+', '+m[3]+' '+m[4]+' e '+m[5]+' H'"
+]) assert.ok(html.includes(marker),`Android 0.99.7.2 missing ${marker}`);
 
 for(const forbidden of [
   'patch-v111-v0994-global-search.js','patch-v114-v0994-universal-detail.js','patch-v115-v0995-favorites-profile-discover.js',
@@ -41,6 +46,6 @@ for(const forbidden of [
   "if(t==='profile')return renderProfile99()","if(v==='profile'||v==='history')renderProfile99()",
   "function run(){if(!currentUser)return;insertProfileBlocks();","function run(){if(!currentUser)return;enhanceProfile();",
   'priority=visible-posters'
-]) assert.ok(!html.includes(forbidden),`Android 0.99.7.1 must not contain ${forbidden}`);
+]) assert.ok(!html.includes(forbidden),`Android 0.99.7.2 must not contain ${forbidden}`);
 
-console.log('ANDROID_09971_OK code=9971 web=0.99.7 parity=full profile=stable+4more home=no-faltam0 settings=minimal metadata=real posters=strict');
+console.log('ANDROID_09972_OK code=9972 web=0.99.7 cast=3-visible+5+more actions=preserved activity=history-fallback actors=carousel stats=wide-last+single-line-H');
