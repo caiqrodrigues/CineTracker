@@ -3,21 +3,25 @@
 if (window.__ctAuthRuntimeGuard134Loaded) return;
 window.__ctAuthRuntimeGuard134Loaded = true;
 window.__ctAuthRuntimeGuard134 = 'r134-auth-main-thread-unfreeze';
+window.__ctAuthRuntimeGuard136 = 'r136-legacy-observer-cutoff';
 
 const authVisible=()=>Boolean(document.querySelector('.auth-page,#auth-form'));
 
 /*
- * Enquanto a tela de autenticação estiver visível, callbacks de MutationObserver
- * de camadas antigas não podem reconciliar Home/Perfil/Descobrir. Esses callbacks
- * históricos podem reescrever o #app durante o bootstrap e formar um ciclo de
- * MutationObserver -> render -> MutationObserver que prende a thread principal.
+ * Observers criados antes da autoridade r133 são históricos. Eles podem voltar a
+ * reconciliar Home/Perfil/Descobrir depois do login e iniciar ciclos de
+ * MutationObserver -> render -> MutationObserver. Guardamos a geração no momento
+ * da criação: quando a autoridade atual assumir, somente observers legados ficam
+ * silenciados. Observers novos, criados depois da r133, continuam permitidos.
  */
 const NativeMutationObserver=window.MutationObserver;
 if (NativeMutationObserver && !window.__ctAuthMutationObserverGuard134) {
   class AuthSafeMutationObserver extends NativeMutationObserver {
     constructor(callback) {
+      const legacyObserver=!window.__ct0997PrimaryReady;
       super((records,observer)=>{
         if (authVisible()) return;
+        if (legacyObserver && window.__ct0997PrimaryObserverSuppressed) return;
         return callback(records,observer);
       });
     }
@@ -28,9 +32,8 @@ if (NativeMutationObserver && !window.__ctAuthMutationObserverGuard134) {
 
 /*
  * Navegadores legados são atribuídos várias vezes durante o carregamento. O
- * accessor abaixo guarda cada função original e entrega um wrapper vinculado à
- * versão existente naquele instante. Assim, closures antigas continuam corretas
- * sem recursão, mas qualquer navegação automática vira no-op no login.
+ * accessor guarda cada função original e entrega um wrapper vinculado à versão
+ * existente naquele instante. Navegação automática continua bloqueada no login.
  */
 function guardNavigator(name){
   let current=typeof window[name]==='function'?window[name]:null;
@@ -85,5 +88,7 @@ function protectAuthUi(){
 
 protectAuthUi();
 for(const delay of [0,50,150,350,750,1500])setTimeout(protectAuthUi,delay);
-setInterval(protectAuthUi,500);
+window.addEventListener('cinetracker:auth-state-change',()=>{
+  for(const delay of [0,60,220])setTimeout(protectAuthUi,delay);
+});
 })();
