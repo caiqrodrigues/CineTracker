@@ -48,11 +48,12 @@ jobs:
           set -euo pipefail
           npm run build
           npm run verify
-          grep -q 'ct-web-0.99.7-r132' dist/service-worker.js
+          grep -q 'ct-web-0.99.7-r131' dist/service-worker.js
           grep -q 'v131-rich-movie-discover-six-tabs' dist/patch-v131-v0997-rich-movie-discover.js
           grep -q 'v131b-legacy-person-credit-open' dist/patch-v131b-v0997-person-credit-bridge.js
           grep -q 'v132-url-router-fullscreen-details-profile-10-more' dist/patch-v132-v0997-deeplink-pages.js
           grep -q 'v132-single-runtime-nav-integrity' dist/patch-v132-v0997-deeplink-pages.js
+          grep -q 'v133-primary-single-authority-home-discover-profile' dist/patch-v133-v0997-primary-authority.js
           grep -q "\['new','Novidades'\]" dist/patch-v131-v0997-rich-movie-discover.js
           grep -q "\['anticipated','Mais Aguardados'\]" dist/patch-v131-v0997-rich-movie-discover.js
           grep -q 'v126-video3124-surgical-recovery' dist/patch-v126-v0997-video3124-recovery.js
@@ -88,6 +89,7 @@ jobs:
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v131b-legacy-person-credit-open'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v132-url-router-fullscreen-details-profile-10-more'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v132-single-runtime-nav-integrity'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v133-primary-single-authority-home-discover-profile'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Novidades'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Mais Aguardados'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct131-movie-hero'
@@ -119,7 +121,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          NOTES='Android 0.99.7.2 R3 sobre o Web oficial 0.99.7 r132. Inclui navegação por deep links/hash, detalhes em tela cheia, temporadas fechadas, elenco e filmografia 10 + Ver mais, favoritos expandidos, além das seis abas do Descobrir e detalhe rico de filmes da r131.'
+          NOTES='Android 0.99.7.2 R3 sobre o Web oficial 0.99.7 r133. Inclui deep links/hash, detalhes em tela cheia, temporadas fechadas, autoridade final de Home/Descobrir/Perfil, elenco e filmografia 10 + Ver mais, favoritos expandidos e reparos de classificação/histórico/watchlist.'
           gh release view android-v0.99.7.2 >/dev/null 2>&1 || gh release create android-v0.99.7.2 --title "CineTracker Android 0.99.7.2 R3" --notes "$NOTES"
           gh release edit android-v0.99.7.2 --title "CineTracker Android 0.99.7.2 R3" --notes "$NOTES"
           gh release upload android-v0.99.7.2 cinetracker-android-0.99.7.2-r3-debug.apk android-v09972-sha256.txt --clobber
