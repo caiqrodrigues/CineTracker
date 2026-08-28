@@ -82,8 +82,8 @@ for(const dir of dirs){
 
   const legacyPath=resolve(dir,'patch-v092-v0991.js');
   let legacy=await readFile(legacyPath,'utf8');
-  legacy=replaceRange(legacy,'async function recommendationData991(){','async function mixedRows991',recommendationData991.toString(),'recommendationData991');
-  legacy=replaceRange(legacy,'async function loadForYou991(){','async function loadDiscover991',loadForYou991.toString(),'loadForYou991');
+  legacy=replaceRange(legacy,'async function recommendationData991(){','function recSlot991',recommendationData991.toString(),'recommendationData991');
+  legacy=replaceRange(legacy,'async function loadForYou991(){','async function mixedRows991',loadForYou991.toString(),'loadForYou991');
   await writeFile(legacyPath,legacy,'utf8');
 
   const homePath=resolve(dir,'patch-v099-v0994-web.js');
