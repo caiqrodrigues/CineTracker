@@ -5,8 +5,28 @@ const root=resolve(process.cwd());
 const dirs=[resolve(root,'dist'),resolve(root,'apps/web/dist')];
 const patch='patch-v126-v0997-video3124-recovery.js';
 const source=resolve(root,'apps/web',patch);
+
+const oldCss='#ct120-profile [data-ct120-slot="series"] .ct120-row,#ct120-profile [data-ct120-slot="movies"] .ct120-row,.ct126-profile-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(128px,1fr))!important;grid-auto-flow:row!important;grid-auto-columns:auto!important;max-width:100%!important;width:100%!important;overflow-x:hidden!important;gap:10px!important}.ct126-more{';
+const newCss='.ct126-profile-grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(128px,1fr))!important;grid-auto-flow:row!important;grid-auto-columns:auto!important;max-width:100%!important;width:100%!important;overflow-x:hidden!important;gap:10px!important}#ct43-profile .ct43-block:has(#ct43-history-full){display:none!important}.ct126-more{';
+const oldMobile='@media(max-width:720px){#ct120-profile [data-ct120-slot="series"] .ct120-row,#ct120-profile [data-ct120-slot="movies"] .ct120-row,.ct126-profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}';
+const newMobile='@media(max-width:720px){.ct126-profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}';
+const oldRemove="function removeStandaloneHistory(){if(route()!=='profile')return;const content=$$('.content').filter(visible).at(-1);";
+const newRemove="function removeStandaloneHistory(){if(route()!=='profile')return;const legacy=document.getElementById('ct43-history-full');legacy?.closest('.ct43-block')?.remove();document.getElementById('ct43-history-body')?.closest('.ct43-block')?.remove();const content=$$('.content').filter(visible).at(-1);";
+const oldApply="function applyFourMore(name){const sec=findProfileSection(name);if(!sec)return;const row=sec.querySelector('.ct120-row,.ct118-row');if(!row)return;row.classList.add('ct126-profile-grid');const cards=[...row.children].filter(x=>x.matches?.('.ct120-card,.ct118-card'));if(!cards.length)return;row.querySelectorAll(':scope > .ct124-more,:scope > .ct122-more-card,:scope > .ct126-more').forEach(x=>x.remove());cards.forEach((c,i)=>{c.hidden=i>=4});if(cards.length<=4)return;const more=document.createElement('button');more.type='button';more.className='ct126-more';more.innerHTML=`<span><b>Ver mais</b><small>+${cards.length-4}</small></span>`;let open=false;more.onclick=()=>{open=!open;cards.forEach((c,i)=>{c.hidden=!open&&i>=4});more.querySelector('b').textContent=open?'Mostrar menos':'Ver mais';more.querySelector('small').textContent=open?'':`+${cards.length-4}`};row.appendChild(more)}";
+const newApply="function applyFourMore(name){const sec=findProfileSection(name);if(!sec)return;const row=sec.querySelector('.ct120-row,.ct118-row,.ct120-actors,.ct118-actors');if(!row)return;row.classList.add('ct126-profile-grid');const cards=[...row.children].filter(x=>x.matches?.('.ct120-card,.ct118-card,.ct120-actor,.ct118-actor'));if(!cards.length)return;row.querySelectorAll(':scope > .ct124-more,:scope > .ct122-more-card,:scope > .ct126-more').forEach(x=>x.remove());cards.forEach((c,i)=>{c.hidden=i>=4});if(cards.length<=4)return;const actorMode=cards.some(x=>x.matches?.('.ct120-actor,.ct118-actor'));const more=document.createElement('button');more.type='button';more.className='ct126-more'+(actorMode?' ct126-more-actor':'');more.innerHTML=`<span><b>Ver mais</b><small>+${cards.length-4}</small></span>`;let open=false;more.onclick=()=>{open=!open;cards.forEach((c,i)=>{c.hidden=!open&&i>=4});more.querySelector('b').textContent=open?'Mostrar menos':'Ver mais';more.querySelector('small').textContent=open?'':`+${cards.length-4}`};row.appendChild(more)}";
+const oldCleanup="function cleanupProfile(){if(route()!=='profile')return;removeStandaloneHistory();applyFourMore('Séries');applyFourMore('Filmes')}";
+const newCleanup="function cleanupProfile(){if(route()!=='profile')return;removeStandaloneHistory();applyFourMore('Séries');applyFourMore('Filmes');applyFourMore('Séries Favoritas');applyFourMore('Filmes Favoritos');applyFourMore('Atores Favoritos')}";
+
 for(const dir of dirs){
-  await copyFile(source,resolve(dir,patch));
+  const out=resolve(dir,patch);
+  await copyFile(source,out);
+  let js=await readFile(out,'utf8');
+  for(const [from,to,label] of [[oldCss,newCss,'profile grid css'],[oldMobile,newMobile,'mobile grid css'],[oldRemove,newRemove,'legacy history removal'],[oldApply,newApply,'four-plus-more function'],[oldCleanup,newCleanup,'all profile card sections']]){
+    if(!js.includes(from))throw new Error(`Video3124 profile transform missing: ${label}`);
+    js=js.replace(from,to);
+  }
+  await writeFile(out,js,'utf8');
+
   const indexPath=resolve(dir,'index.html');
   let html=await readFile(indexPath,'utf8');
   html=html.replace(new RegExp(`<script src="/${patch.replaceAll('.','\\.')}"></script>`,'g'),'');
@@ -15,4 +35,4 @@ for(const dir of dirs){
   html=html.replace(anchor,`${anchor}<script src="/${patch}"></script>`);
   await writeFile(indexPath,html,'utf8');
 }
-console.log('CineTracker Web 0.99.7: video 1001713124 surgical recovery emitted after v125.');
+console.log('CineTracker Web 0.99.7: Perfil emitido com 4 cards + Ver mais em todas as listas e Histórico legado removido.');
