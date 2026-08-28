@@ -1,59 +1,80 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-08-27
+**Atualizado em:** 2026-08-28
 
 ## Matriz atual
 
-| Sistema | Versão | Identidade técnica | Estado atual |
+| Sistema | Versão alvo | Identidade técnica | Estado atual |
 |---|---:|---|---|
-| Web | **0.99.3** | package `0.99.3`, cache `ct-web-0.99.3`, pre-gate `patch-v097-v0993-nav-pre.js`, final `patch-v098-v0993-web.js` | `main`; Verify `33080026311` success; Vercel success; smoke real pendente |
-| Android | **0.99.2.3** | `versionName 0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative` | publicado; não alterado pela Web 0.99.3 |
-| Backend / Supabase | **0.99.2** | RPC `cinetracker_profile_home_dashboard_v0992`, tabela `daily_movie_recommendations_v0992` | migration aplicada; sem mudança na 0.99.3 |
+| Web | **0.99.6** | package `0.99.6`, cache `ct-web-0.99.6`, autoridade `patch-v116-v0996-authoritative.js`, final `patch-v117-v0996-final.js` | candidato em `fix/web-android-0.99.6-authoritative`; ainda não considerado publicado até Verify + Vercel + smoke real |
+| Android | **0.99.6** | `versionName 0.99.6`, `versionCode 9960`, bundle `android-v0.99.6-authoritative-preload` | candidato; APK final só é publicado após build, identidade, assinatura e SHA-256 aprovados |
+| Backend / Supabase | **0.99.6** | RPC `cinetracker_profile_payload_v0996`, Edge Function `ct-enrich-media-user` v5 | migrations/funções necessárias já aplicadas em produção; cliente 0.99.6 ainda em validação |
 | Windows | — | — | não lançado |
 
-## Web 0.99.3
+## Release unificada 0.99.6
 
-Release exclusiva do navegador Web desktop para recuperar navegação e reatividade do Descobrir sem substituir o runtime funcional acumulado.
+A 0.99.6 volta a alinhar Web e Android. O APK é montado a partir do mesmo `dist` validado da Web, com scripts incorporados no bundle Android.
 
-- `patch-v097-v0993-nav-pre.js` carrega antes do gate capture 0.99.2 e recebe primeiro os cliques de navegação/tabs/filtros;
-- `patch-v098-v0993-web.js` carrega depois do FIX2 e reconcilia Sidebar, pointer-events, fallback do Pra Você e rodapé;
-- Sidebar canônica: Home / Descobrir / Perfil / Configurações;
-- Histórico permanece integrado ao Perfil e é removido defensivamente do menu;
-- cache `ct-web-0.99.3`;
-- rodapé `CineTracker • v0.99.3`;
-- diagnóstico disponível em `window.__ct0993Diagnostics`.
+### Autoridade final de interface
 
-A 0.99.3 preserva `patch-v096-v0992-unfreeze.js` e todos os recursos 0.99.1/0.99.2 necessários.
+- `patch-v116-v0996-authoritative.js` é o renderer final de Perfil e Descobrir;
+- Perfil não depende mais de reorganizar DOM legado depois do render;
+- Descobrir não depende mais de listas antigas para a tela final;
+- `patch-v117-v0996-final.js` adiciona reparos finais sem criar outro renderer concorrente: capas ausentes, favoritos de atores e carrossel externo de avaliações por temporada.
 
-### Publicação técnica
+### Perfil
 
-- commit de publicação validado: `192da4a72c64abe3e8d92df8cd23ebc93b0b675b`;
-- Verify run `33080026311` / #1252: `success`;
-- build/test Web 0.99.3: `success`;
-- Vercel: `success`;
-- smoke real no navegador PC: pendente.
+Ordem canônica:
 
-## Divergência Web / Android
+1. Séries;
+2. Filmes;
+3. Séries Favoritas;
+4. Filmes Favoritos;
+5. Atores Favoritos;
+6. gráfico de episódios por dia;
+7. Estatísticas extras.
 
-A divergência é deliberada e documentada. O usuário solicitou foco exclusivo no navegador Web. Portanto a Web avança para `0.99.3`, enquanto o Android permanece exatamente na publicação `0.99.2.3` / `versionCode 9923`.
+O gráfico usa `watch_history` e conta episódios distintos por dia. A janela é de 10 dias anteriores até 3 dias futuros, com Hoje centralizado.
 
-Nenhum novo APK, `versionCode`, bundle Android ou GitHub Release Android é criado nesta unidade.
+### Detalhe de série
 
-## Android 0.99.2.3
+- temporadas continuam expansíveis para exibir episódios;
+- o gráfico de notas não fica dentro da temporada/accordion;
+- existe uma seção independente **Avaliações dos episódios por temporada** depois do bloco de episódios;
+- a seção existe mesmo com temporadas fechadas;
+- temporadas do gráfico são navegadas horizontalmente;
+- cada gráfico usa escala 0–10, SxxExx, melhor episódio verde, pior vermelho e tooltip com nota/título/votos.
+
+### Descobrir
+
+- tabs: Pra Você / Em alta / Mais aguardados / Mais bem avaliados / Calendário;
+- filtros: Geral / Séries / Filmes;
+- exclusões de visto/histórico/Watchlist são obrigatórias para conteúdo novo;
+- se o conjunto de exclusão autenticado não estiver disponível, o carregamento falha fechado em vez de recomendar algo potencialmente já visto;
+- Pra Você mantém indicação diária, Watchlist não vista e opções 100% novas;
+- Calendário usa `next_episode_to_air` oficial para séries acompanhadas e datas futuras de filmes.
+
+### Capas e metadados
+
+`ct-enrich-media-user` v5 aceita enriquecimento direcionado de IDs visíveis sem capa. IDs solicitados são limitados ao dashboard do usuário autenticado. Isso resolve imports legados com `tmdb_id` substituto/negativo e `poster_path` ausente sem liberar enriquecimento arbitrário.
+
+### Android
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.2.3`;
-- `versionCode`: `9923`;
-- bundle: `v0.99.2.3-fix2-unfreeze-authoritative`;
-- workflow: `.github/workflows/build-android-v09923.yml`;
-- release: `android-v0.99.2.3`;
-- APK: `cinetracker-android-0.99.2.3-debug.apk`;
-- SHA-256: `a7fe3bdc069ff418197305bdf3a3d5fd0f06a7928963f62dea5dc20faa4a2853`.
+- `versionName`: `0.99.6`;
+- `versionCode`: `9960`;
+- workflow: `.github/workflows/build-android-v0996.yml`;
+- release alvo: `android-v0.99.6`;
+- APK alvo: `cinetracker-android-0.99.6-debug.apk`;
+- SHA-256: pendente do build final.
+
+## Estado publicado anterior
+
+O vídeo real recebido em 2026-08-28 ainda mostra produção Web `0.99.5`. A 0.99.6 **não deve ser declarada publicada** apenas porque source, migration ou CI parcial existem.
 
 ## Regra obrigatória
 
-Source, CI, deploy Web, publicação APK e teste em ambiente real são estados separados. CI/Vercel verde não substitui smoke funcional no navegador.
+Source, migration, Edge Function, CI, Vercel, APK, assinatura e smoke em ambiente real são estados separados. Só registrar uma release como concluída quando os estados aplicáveis estiverem comprovados.
 
-Release Web atual: `docs/releases/0.99.3.md`.  
-Validação Web: `docs/validation/0.99.3.md`.  
-Release Android publicada: `docs/releases/0.99.2.3.md`.
+Release 0.99.6: `docs/releases/0.99.6.md`.  
+Validação 0.99.6: `docs/validation/0.99.6.md`.
