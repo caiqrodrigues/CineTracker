@@ -15,6 +15,7 @@ const SUPERSEDED=new Set([
   'patch-v027.js',
   'patch-v029.js',
   'patch-v030.js',
+  'patch-v034.js', // UI/history/fuzzy-TMDB removed; useful REST cache lives in runtime-core-data.js
   'patch-v040.js',
   'patch-v041.js',
   'patch-v042.js',
