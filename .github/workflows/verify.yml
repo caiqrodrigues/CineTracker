@@ -9,26 +9,28 @@ permissions:
   contents: read
 
 jobs:
-  web_0997:
+  web_0998:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build and verify CineTracker Web 0.99.7
+      - name: Build and verify CineTracker Web 0.99.8
         run: npm run build
       - name: Preserve Bingers semantics and authentication
         run: |
           node scripts/test-hotfix13-bingers-semantics.mjs
           node scripts/test-auth-recovery-red.mjs
           node scripts/test-hotfix10-native-bridge.mjs
-      - name: Assert Web 0.99.7 final runtime
+      - name: Assert Web 0.99.8 final runtime
         shell: bash
         run: |
           set -euo pipefail
-          grep -q '"version": "0.99.7"' package.json
-          grep -q 'ct-web-0.99.7' dist/service-worker.js
+          grep -q '"version": "0.99.8"' package.json
+          grep -q 'ct-web-0.99.8-r1' dist/service-worker.js
           test "$(grep -o 'patch-v118-v0997-authoritative.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v125-v0998-query-state.js' dist/index.html | wc -l)" -eq 1
+          test "$(grep -o 'patch-v126-v0998-keepalive-tabs.js' dist/index.html | wc -l)" -eq 1
           for old in patch-v111-v0994-global-search.js patch-v114-v0994-universal-detail.js patch-v115-v0995-favorites-profile-discover.js patch-v116-v0996-authoritative.js patch-v117-v0996-final.js; do ! grep -q "$old" dist/index.html; done
           grep -q 'v118-single-authority-profile-discover-detail' dist/patch-v118-v0997-authoritative.js
           grep -q 'cinetracker_profile_payload_v0997' dist/patch-v118-v0997-authoritative.js
@@ -51,11 +53,18 @@ jobs:
           grep -q 'next_episode_to_air' dist/patch-v118-v0997-authoritative.js
           grep -q 'priority=visible-posters' dist/patch-v118-v0997-authoritative.js
           grep -q 'ct111-global-search' dist/patch-v118-v0997-authoritative.js
+          grep -q 'v125-query-state-stale-while-revalidate' dist/patch-v125-v0998-query-state.js
+          grep -q 'const STALE_TIME=7\*60\*1000' dist/patch-v125-v0998-query-state.js
+          grep -q 'Promise.all' dist/patch-v125-v0998-query-state.js
+          grep -q 'v126-main-tabs-dom-keepalive' dist/patch-v126-v0998-keepalive-tabs.js
+          grep -q 'ct0998-keepalive-bin' dist/patch-v126-v0998-keepalive-tabs.js
+          grep -q '150ms' dist/patch-v126-v0998-keepalive-tabs.js
           grep -q 'cinetracker_profile_payload_v0997' supabase/migrations/20260828112000_v0997_profile_payload_local_activity.sql
           grep -q 'timezone(tz.name,wh.watched_at)' supabase/migrations/20260828112000_v0997_profile_payload_local_activity.sql
           grep -q 'requested_media_ids' supabase/functions/ct-enrich-media-user/index.ts
           grep -q "priority==='visible-posters'" supabase/functions/ct-enrich-media-user/index.ts
           node scripts/test-web-v0997-authoritative.mjs
+          node scripts/test-web-v0998-prefetch-keepalive.mjs
 
   android_0997_identity:
     runs-on: ubuntu-latest
