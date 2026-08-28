@@ -59,6 +59,7 @@ Tempo de Tela e Histórico legados devem ser removidos. Séries e Filmes mostram
 ## Segurança de publicação
 
 - versão exibida continua 0.99.7;
+- v122 é uma correção de preview/smoke e ainda não é aceite funcional de produção;
 - não mergear PR #29 antes do smoke real;
 - não publicar a Edge Function de enriquecimento antes da validação;
 - não gerar nova release Android antes da validação.
