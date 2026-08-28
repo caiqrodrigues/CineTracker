@@ -56,6 +56,17 @@ Tempo de Tela e Histórico legados devem ser removidos. Séries e Filmes mostram
 - Calendário ganha o filtro **Minha Watchlist**, que mostra lançamentos de filmes, estreias de séries e próximos episódios conhecidos da Watchlist na janela suportada;
 - o cache interno PWA/TMDB foi rotacionado para `ct-web-0.99.7-r122`, sem alterar a versão exibida, para eliminar metadados/capas antigos entre rodadas da mesma 0.99.7.
 
+## Smoke exigido antes de produção
+
+1. Home abre sem ficar presa até timeout e mantém Séries/Filmes navegáveis.
+2. Desktop não mostra menu inferior e não possui scroll horizontal global.
+3. Descobrir não exibe itens vistos/Watchlist em Em alta, Mais aguardados e Mais bem avaliados.
+4. Cards do Descobrir permitem adicionar à Watchlist e somem da recomendação depois da ação.
+5. Calendário mostra Todos/Filmes/Séries e a opção Minha Watchlist.
+6. Perfil não possui Tempo de Tela nem Histórico separados.
+7. Perfil mostra 10 Séries + Ver mais e 10 Filmes + Ver mais, sem estourar a viewport.
+8. Séries/Filmes Favoritos, Atores Favoritos, Episódios por Dia e Estatísticas Extras continuam presentes.
+
 ## Segurança de publicação
 
 - versão exibida continua 0.99.7;
