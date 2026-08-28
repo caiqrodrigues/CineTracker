@@ -32,7 +32,7 @@ set
 where media_type = 'movie'
   and release_year = 2022
   and lower(replace(title, chr(160), ' ')) = 'me time'
-  and (tmdb_id = -1520469972 or tmdb_id = 980417);
+  and tmdb_id in (-1520469972,980417,862551);
 
 update public.watch_history wh
 set external_ids = coalesce(wh.external_ids,'{}'::jsonb) || jsonb_build_object('tmdb_id',862551)
