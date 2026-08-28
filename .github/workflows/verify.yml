@@ -46,11 +46,17 @@ jobs:
           grep -q 'v110-canonical-episode-check' dist/patch-v110-v0994-episode-check.js
           grep -q 'v111-home-discover-global-search' dist/patch-v111-v0994-global-search.js
           grep -q 'v113-cache-first-fast-boot' dist/patch-v112-v0994-warm-boot.js
-          grep -q 'v113-cache-first-tabs-activity' dist/patch-v113-v0994-fluidity.js
-          grep -q 'v113-persistent-hot-route-cache' dist/patch-v092-v0991.js
-          grep -q 'ct0994_profile_snapshot_v3' dist/patch-v092-v0991.js
-          grep -q 'ct0994_discover_snapshot_v3' dist/patch-v092-v0991.js
-          grep -q 'cinetracker_profile_activity_v0994' dist/patch-v113-v0994-fluidity.js
+          grep -q 'v114-cache-first-posters-catalog' dist/patch-v113-v0994-fluidity.js
+          grep -q 'v114-persistent-hot-route-cache' dist/patch-v092-v0991.js
+          grep -q 'ct0994_profile_snapshot_v4' dist/patch-v092-v0991.js
+          grep -q 'ct0994_discover_snapshot_v4' dist/patch-v092-v0991.js
+          grep -q 'ct-enrich-media-user?limit=120&priority=home' dist/patch-v113-v0994-fluidity.js
+          ! grep -q 'cinetracker_profile_activity_v0994' dist/patch-v113-v0994-fluidity.js
+          grep -q 'for(let i=-10;i<=3;i++)' dist/patch-v092-v0991.js
+          grep -q "x.item_type==='episode'" dist/patch-v092-v0991.js
+          grep -q 'Filme lançado após 1990 · nota TMDB 8,0 ou maior · nunca visto' dist/patch-v092-v0991.js
+          grep -q 'Da sua Watchlist' dist/patch-v092-v0991.js
+          grep -q '100% novos' dist/patch-v092-v0991.js
           grep -q 'vp.dataset.ct994Anchored' dist/patch-v099-v0994-web.js
           grep -q '/search/multi' dist/patch-v111-v0994-global-search.js
           grep -q 'cinetracker_mark_episode_v0994' dist/patch-v110-v0994-episode-check.js
@@ -61,7 +67,8 @@ jobs:
           grep -q 'fix2-idempotent-dom-mutation-guard' dist/patch-v096-v0992-unfreeze.js
           grep -q 'v_state:='"'"'Completed'"'"'' supabase/migrations/20260827222500_v0994_episode_check_state_sync.sql
           grep -q '862551' supabase/migrations/20260827225500_v0994_correct_me_time_catalog_identity.sql
-          grep -q 'cinetracker_profile_activity_v0994' supabase/migrations/20260828003500_v0994_profile_activity_sessions.sql
+          grep -q 'metadata_ready' supabase/migrations/20260828011300_v0994_home_bucket_requires_reliable_episode_catalog.sql
+          grep -q 'not b.metadata_ready and b.is_in_progress' supabase/migrations/20260828011300_v0994_home_bucket_requires_reliable_episode_catalog.sql
           grep -q 'Toda atualização' docs/DEVELOPMENT_RULES.md
 
   android_0994_identity:
@@ -80,7 +87,10 @@ jobs:
           grep -q "const version = '0.99.4'" scripts/prepare-android-v0994.mjs
           grep -q 'patch-v113-v0994-fluidity.js' scripts/prepare-android-v0994.mjs
           grep -q 'v113-cache-first-fast-boot' scripts/prepare-android-v0994.mjs
-          grep -q 'v113-persistent-hot-route-cache' scripts/prepare-android-v0994.mjs
+          grep -q 'v114-persistent-hot-route-cache' scripts/prepare-android-v0994.mjs
+          grep -q 'v114-cache-first-posters-catalog' scripts/prepare-android-v0994.mjs
+          grep -q 'ct0994_profile_snapshot_v4' scripts/prepare-android-v0994.mjs
+          grep -q 'ct0994_discover_snapshot_v4' scripts/prepare-android-v0994.mjs
           grep -q 'void preloadRoute994(target);' scripts/prepare-android-v0994.mjs
           grep -q 'window.ct15Navigate = navigate994' scripts/prepare-android-v0994.mjs
           grep -q 'android:id="@+id/nav_history"' apps/android/app/src/main/res/layout/activity_main.xml
