@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
+
+const runtime=await readFile('dist/patch-v116-v0996-authoritative.js','utf8');
+const pkg=await readFile('package.json','utf8');
+const migration=await readFile('supabase/migrations/20260828062500_v0996_profile_activity_from_watch_history.sql','utf8');
+const enrich=await readFile('supabase/functions/ct-enrich-media-user/index.ts','utf8');
+
+assert.match(pkg,/"version": "0\.99\.6"/,'package must stay 0.99.6');
+assert.doesNotThrow(()=>new vm.Script(runtime),'final 0.99.6 runtime syntax invalid');
+assert.match(runtime,/ct0996_profile_snapshot_v2/,'Profile cache must rotate after activity fix');
+assert.match(runtime,/ct0996_discover_snapshot_v2/,'Discover cache must rotate after strict fix');
+assert.match(runtime,/priority=visible-posters/,'visible missing poster enrichment missing');
+assert.match(runtime,/requested_media_ids/,'targeted poster media IDs missing');
+assert.match(runtime,/ct116-cast-heart/,'cast actor favorite control missing');
+assert.match(runtime,/ct116-person-fav/,'person favorite control missing');
+assert.match(runtime,/Atores Favoritos/,'Profile actors section missing');
+assert.match(runtime,/\.ct114-season-body>\.ct114-chart\{display:none!important\}/,'season accordion chart must be hidden');
+assert.match(runtime,/Avaliações dos episódios por temporada/,'external season ratings section missing');
+assert.match(runtime,/ct116-season-ratings-strip/,'horizontal season ratings carousel missing');
+assert.match(runtime,/vote_count/,'season chart vote count tooltip missing');
+assert.match(runtime,/next_episode_to_air/,'calendar must use official next episode dates');
+assert.match(runtime,/strict_exclusions:true/,'Discover strict exclusion marker missing');
+assert.match(runtime,/Promise\.all\(\[rpc116\('cinetracker_profile_media_dashboard_v0991'/,'Discover must require authenticated dashboard');
+assert.ok(!runtime.includes("rpc116('cinetracker_discovery_exclusions_v0994',{}).catch"),'Discover exclusions must fail closed');
+assert.match(migration,/from public\.watch_history wh/,'Profile activity must use watch_history');
+assert.match(migration,/count\(distinct \(wh\.media_id,wh\.season_number,wh\.episode_number\)\)/,'Profile activity must count distinct episodes per day');
+assert.ok(!migration.includes("source='manual'"),'Profile activity must not only count manual play events');
+assert.match(enrich,/priority==='visible-posters'/,'poster priority missing in enrichment edge function');
+assert.match(enrich,/requested_media_ids/,'targeted enrichment input missing');
+assert.match(enrich,/requestedSet\.has\(Number\(x\.media_id\)\)/,'edge function must restrict requested IDs to authenticated dashboard');
+console.log('WEB_0996_FINAL_OK posters=targeted actors=favorites profile-activity=history season-charts=external-carousel discover=fail-closed calendar=official');
