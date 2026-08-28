@@ -94,9 +94,9 @@ const required=[
 for(const name of required)if(!html.includes(`data-ct-inline="${name}"`))throw new Error(`Android 0.99.7.1 missing ${name}`);
 for(const old of ['patch-v111-v0994-global-search.js','patch-v114-v0994-universal-detail.js','patch-v115-v0995-favorites-profile-discover.js','patch-v116-v0996-authoritative.js','patch-v117-v0996-final.js'])if(html.includes(`data-ct-inline="${old}"`))throw new Error(`Android 0.99.7.1 still embeds obsolete ${old}`);
 for(const marker of [
-  bundle,'v118-single-authority-profile-discover-detail','v119-real-device-smoke-hotfix','v1196-persistent-preload-indexeddb',
-  'v120-structural-profile-discover-media-authority','v121-functional-polish-no-refactor','v124-video-smoke-authority',
-  'v125-restore-foryou-contract-only','v126-video3124-surgical-recovery','v128-settings-minimal-import-export-only',
+  bundle,'v118-single-authority-profile-discover-detail','v119-real-device-smoke-hotfix','v1196-persistent-rpc-stale-while-revalidate',
+  'v120-structural-profile-discover-media-authority','v121-functional-polish-no-refactor','v124-video-smoke-production-authority',
+  'v125-restore-foryou-only-no-other-tabs','v126-video3124-surgical-recovery','v128-settings-minimal-import-export-only',
   'v129-settings-real-metadata-refresh-only','v130-nav-footer-stability-only','cinetracker_profile_payload_v0997',
   'Populares','Lista','Carrossel','Grade','Avaliações dos episódios por temporada','favorite_actors','Episódios por Dia',
   "applyFourMore('Séries Favoritas')",'window.ct99RenderProfile=()=>false',"cont:s.filter(x=>x.home_bucket==='continue'&&!caught(x))",
