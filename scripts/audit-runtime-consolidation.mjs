@@ -19,5 +19,5 @@ for(const name of files){
   rows.push(row); bytes+=row.bytes; observers+=row.observer; intervals+=row.interval; timeouts+=row.timeout; listeners+=row.listener; fetchWraps+=row.fetchWrap; rpcWrites+=row.rpcWrite; navigateWrites+=row.navigateWrite;
 }
 rows.sort((a,b)=>b.bytes-a.bytes);
-const report={mode,target:basename(target),html_bytes:Buffer.byteLength(html),external_scripts:srcs.length,patch_scripts:patchSrcs.length,js_files:files.length,js_bytes:bytes,mutation_observers:observers,set_intervals:intervals,set_timeouts:timeouts,event_listeners:listeners,window_fetch_reassignments:fetchWraps,window_sbRpc_reassignments:rpcWrites,navigation_global_reassignments:navigateWrites,largest:rows.slice(0,15)};
+const report={mode,target:basename(target),html_bytes:Buffer.byteLength(html),external_scripts:srcs.length,patch_scripts:patchSrcs.length,script_sources:srcs,js_files:files.length,js_bytes:bytes,mutation_observers:observers,set_intervals:intervals,set_timeouts:timeouts,event_listeners:listeners,window_fetch_reassignments:fetchWraps,window_sbRpc_reassignments:rpcWrites,navigation_global_reassignments:navigateWrites,largest:rows.slice(0,20)};
 console.log('RUNTIME_AUDIT '+JSON.stringify(report));
