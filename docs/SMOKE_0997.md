@@ -42,6 +42,7 @@ O histórico não existe como bloco separado. Nas seções Séries e Filmes, os 
 - Descobrir deixa de recomendar itens da Watchlist no Pra Você;
 - Descobrir passa a buscar múltiplas páginas do TMDB para não ficar vazio só porque a primeira página inteira foi excluída pela biblioteca do usuário;
 - Pra Você usa gêneros percebidos no histórico/favoritos para ampliar recomendações novas;
+- Indicação do dia continua sendo filme e também respeita todas as exclusões pessoais;
 - abas mantidas: Pra Você, Em alta, Mais aguardados, Populares, Mais bem avaliados e Calendário;
 - filtros mantidos: Todos/Séries/Filmes e Lista/Carrossel/Grade;
 - dados do Descobrir são carregados por aba, evitando baixar todas as categorias ao abrir a tela.
