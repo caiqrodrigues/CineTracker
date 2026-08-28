@@ -6,8 +6,8 @@
 
 | Sistema | Versão | Identidade técnica | Estado atual |
 |---|---:|---|---|
-| Web | **0.99.7** | package `0.99.7`, cache `ct-web-0.99.7`, autoridade final `patch-v118-v0997-authoritative.js` | branch de correção; CI/publicação pendentes |
-| Android | **0.99.7** | `versionName 0.99.7`, `versionCode 9970`, bundle `android-v0.99.7-single-authority` | builder/workflow preparados; APK/publicação pendentes |
+| Web | **0.99.7** | package `0.99.7`, cache `ct-web-0.99.7`, autoridade final `patch-v118-v0997-authoritative.js` | `main`; Verify `33168068866` success; Vercel production success; smoke real pendente |
+| Android | **0.99.7** | `versionName 0.99.7`, `versionCode 9970`, bundle `android-v0.99.7-single-authority` | workflow `33168068870` success; Release `android-v0.99.7` publicada; smoke real pendente |
 | Backend / Supabase | **0.99.7** | RPC `cinetracker_profile_payload_v0997(text)` + contratos anteriores | migration de atividade local aplicada em produção |
 | Windows | — | — | não lançado |
 
@@ -101,21 +101,26 @@ Cards usam `poster_path || raw_tmdb.poster_path`. Cards visíveis ainda sem imag
 - builder: `scripts/prepare-android-v0997.mjs`;
 - test: `scripts/test-android-v0997.mjs`;
 - workflow: `.github/workflows/build-android-v0997.yml`;
-- release alvo: `android-v0.99.7`;
-- APK alvo: `cinetracker-android-0.99.7-debug.apk`.
+- release publicada: `android-v0.99.7`;
+- APK: `cinetracker-android-0.99.7-debug.apk`;
+- SHA-256 do APK: `e8eb582d9a15801213bf28afe798671a365d8eb56c99b9bb18d82d798595e703`.
 
 O APK é gerado a partir do mesmo `dist` Web 0.99.7 e rejeita explicitamente a presença das autoridades obsoletas v111/v114/v115/v116/v117.
 
 ## Estado de publicação
 
 - Supabase RPC 0.99.7: **aplicado**;
-- source Web/Android 0.99.7: **em branch**;
-- Verify: **pendente**;
-- Vercel Production: **pendente**;
-- APK 0.99.7: **pendente**;
-- assinatura/SHA-256: **pendentes**;
-- GitHub Release Android: **pendente**;
-- smoke real Web/APK: **pendente**.
+- source Web/Android 0.99.7: **mergeado em `main`**;
+- PR #28: **mergeado**;
+- Verify `33168068866`: **success**;
+- Vercel Production: **success**;
+- Android workflow `33168068870`: **success**;
+- APK 0.99.7: **build/publicação concluídos**;
+- assinatura/package/versionCode: **validados pelo workflow**;
+- SHA-256: **registrado**;
+- GitHub Release `android-v0.99.7`: **publicada**;
+- smoke real Web/PWA: **pendente**;
+- smoke real APK em aparelho: **pendente**.
 
 ## Regra obrigatória
 
