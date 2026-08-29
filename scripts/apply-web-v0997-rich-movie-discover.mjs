@@ -48,3 +48,4 @@ await import('./apply-web-v0997-r139-cache-buttons.mjs');
 await import('./apply-web-v0997-r140-profile-discover-lock.mjs');
 await import('./apply-web-v0997-r141-boot-quarantine.mjs');
 await import('./apply-web-v0997-r142-route-freeze.mjs');
+await import('./apply-web-v0997-r143-nav-capture.mjs');
