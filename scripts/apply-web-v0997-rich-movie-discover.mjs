@@ -46,3 +46,4 @@ await import('./apply-web-v0997-r137-single-authority.mjs');
 await import('./apply-web-v0997-r138-network-gate.mjs');
 await import('./apply-web-v0997-r139-cache-buttons.mjs');
 await import('./apply-web-v0997-r140-profile-discover-lock.mjs');
+await import('./apply-web-v0997-r141-boot-quarantine.mjs');
