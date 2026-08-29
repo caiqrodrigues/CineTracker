@@ -14,15 +14,17 @@ for(const x of [
   'async function renderProfile',
   'async function renderDiscover',
   'async function renderSettings',
-  "slice(0,10)",
-  "all.length-10",
-  "window.__ct135RenderDiscover",
-  "window.__ct135EnsureCalendar",
+  'slice(0,10)',
+  'all.length-10',
+  'window.__ct135RenderDiscover',
+  'window.__ct135EnsureCalendar',
   "fn('settings')",
-  ".observe(app,{childList:true})"
+  '.observe(app,{childList:true})',
+  "total=Math.max(released,Number(x.total_episodes||0))",
+  "missing=Math.max(0,released-seen)",
+  "missing?`Faltam ${missing}`:'Em dia'"
 ])if(!js.includes(x))throw new Error('r136 runtime missing '+x);
-if(js.includes(".observe(app,{childList:true,subtree:true"))throw new Error('r136 must not observe app subtree');
-if(!js.includes("${seen}/${total||'?'} · ${missing?`Faltam ${missing}`:'Em dia'}"))throw new Error('r136 Home canonical total/released status missing');
+if(js.includes('.observe(app,{childList:true,subtree:true'))throw new Error('r136 must not observe app subtree');
 if((html.match(/patch-v136-v0997-direct-primary\.js/g)||[]).length!==1)throw new Error('r136 runtime must be emitted once');
 if(html.lastIndexOf('patch-v136-v0997-direct-primary.js')<html.lastIndexOf('patch-v135-v0997-final-primary-authority.js'))throw new Error('r136 must load after r135');
 if(!v120.includes('__ct0997DirectPrimary136Loaded'))throw new Error('v120 must yield to r136');
