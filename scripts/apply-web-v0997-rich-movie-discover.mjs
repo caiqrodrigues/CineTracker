@@ -41,3 +41,4 @@ await import('./apply-web-v0997-r134-live.mjs');
 await import('./apply-web-v0997-r134-routes.mjs');
 await import('./apply-web-v0997-r135-final-authority.mjs');
 await import('./apply-web-v0997-r135-home-card-bridge.mjs');
+await import('./apply-web-v0997-r136-direct-primary.mjs');
