@@ -13,10 +13,13 @@ for(const dir of targets){
   if(!homePattern.test(home))throw new Error(`r131g: rowSeries994 source not found in ${homePath}`);
   home=home.replace(homePattern,`function rowSeries994(x){
   const rel=Math.max(0,Number(x.released_episodes||0)),seen=Math.max(0,Number(x.watched_episodes||0)),total=Math.max(rel,seen,Number(x.total_episodes||0)),missing=Math.max(0,rel-seen),last=x.last_watched_at?new Date(x.last_watched_at).toLocaleDateString('pt-BR'):'Sem atividade';
-  return \`<div class="ct992-row" data-ct994-open="\${x.media_id}"><div class="ct992-poster"\${x.poster_path?\` style="background-image:url('\\\${img(x.poster_path)}')"\`:''}></div><div class="ct992-info"><div class="ct992-title">\${esc(x.title)}</div><div class="ct992-meta">\${seen}/\${total||'?'} · \${missing>0?\`Faltam \${missing}\`:'Em dia'}</div><div class="ct992-sub">\${esc(last)}</div></div></div>\`;
+  const poster=x.poster_path?' style="background-image:url(\\''+img(x.poster_path)+'\\')"':'';
+  const progress=seen+'/'+String(total||'?')+' · '+(missing>0?'Faltam '+missing:'Em dia');
+  return '<div class="ct992-row" data-ct994-open="'+x.media_id+'"><div class="ct992-poster"'+poster+'></div><div class="ct992-info"><div class="ct992-title">'+esc(x.title)+'</div><div class="ct992-meta">'+progress+'</div><div class="ct992-sub">'+esc(last)+'</div></div></div>';
 }
 function rowMovie994`);
   if(home.includes("${seen}/${rel||'?'} · Faltam ${missing}"))throw new Error('r131g: legacy Home progress formatter survived');
+  if(!home.includes("Number(x.total_episodes||0)")||!home.includes("missing>0?'Faltam '+missing:'Em dia'"))throw new Error('r131g: new Home progress formatter missing');
   await writeFile(homePath,home,'utf8');
 
   // 2) v126 repeatedly forced Profile back to 4 cards. Make that reconciliation itself use 10,
@@ -28,7 +31,8 @@ function rowMovie994`);
   profile=profile.replace(profilePattern,`function applyTenMore(name){const sec=findProfileSection(name);if(!sec)return;const row=sec.querySelector('.ct120-row,.ct118-row');if(!row)return;row.classList.add('ct126-profile-grid');const cards=[...row.children].filter(x=>x.matches?.('.ct120-card,.ct118-card'));if(!cards.length)return;row.querySelectorAll(':scope > .ct124-more,:scope > .ct122-more-card,:scope > .ct126-more').forEach(x=>x.remove());cards.forEach((c,i)=>{c.hidden=i>=10});if(cards.length<=10)return;const more=document.createElement('button');more.type='button';more.className='ct126-more';more.innerHTML=\`<span><b>Ver mais</b><small>+\${cards.length-10}</small></span>\`;let open=false;more.onclick=()=>{open=!open;cards.forEach((c,i)=>{c.hidden=!open&&i>=10});more.querySelector('b').textContent=open?'Mostrar menos':'Ver mais';more.querySelector('small').textContent=open?'':\`+\${cards.length-10}\`};row.appendChild(more)}
 function applyTenActors(){const sec=findProfileSection('Atores Favoritos');if(!sec)return;const row=sec.querySelector('.ct120-actors,.ct118-actors');if(!row)return;const cards=[...row.children].filter(x=>x.matches?.('.ct120-actor,.ct118-actor,.ct118-person'));if(!cards.length)return;row.querySelectorAll(':scope > .ct126-more').forEach(x=>x.remove());cards.forEach((c,i)=>{c.hidden=i>=10});if(cards.length<=10)return;const more=document.createElement('button');more.type='button';more.className='ct126-more';more.innerHTML=\`<span><b>Ver mais</b><small>+\${cards.length-10} atores</small></span>\`;let open=false;more.onclick=()=>{open=!open;cards.forEach((c,i)=>{c.hidden=!open&&i>=10});more.querySelector('b').textContent=open?'Mostrar menos':'Ver mais';more.querySelector('small').textContent=open?'':\`+\${cards.length-10} atores\`};row.appendChild(more)}
 function cleanupProfile(){if(route()!=='profile')return;removeStandaloneHistory();applyTenMore('Séries');applyTenMore('Filmes');applyTenMore('Séries Favoritas');applyTenMore('Filmes Favoritos');applyTenActors()}`);
-  if(profile.includes('applyFourMore(')||profile.includes('i>=4')||profile.includes('cards.length-4'))throw new Error('r131g: Profile four-card override survived');
+  if(profile.includes('applyFourMore(')||profile.includes('cards.length-4'))throw new Error('r131g: Profile four-card override survived');
+  if(!profile.includes("applyTenMore('Séries Favoritas')")||!profile.includes('applyTenActors()'))throw new Error('r131g: Profile 10+ favorite/actor contract missing');
   await writeFile(profilePath,profile,'utf8');
 
   // 3) v124 has a MutationObserver that keeps reclaiming Discover. Once r131 is loaded,
