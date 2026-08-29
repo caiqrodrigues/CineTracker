@@ -34,3 +34,4 @@ console.log('CineTracker Web 0.99.7 r131: detalhe rico + Descobrir 6 abas + futu
 await import('./apply-web-v0997-r131c-targeted-corrections.mjs');
 await import('./apply-web-v0997-r131d-real-data-path.mjs');
 await import('./apply-web-v0997-r131e-enable-runtime.mjs');
+await import('./apply-web-v0997-r131f-home-payload-authority.mjs');
