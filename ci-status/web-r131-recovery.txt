@@ -1,0 +1,3 @@
+CineTracker Web recovery baseline r131
+Reason: r133-r141 runtime cascade caused post-render UI freeze on PC and Android browsers.
+Scope: restore the last stable Web r131 build pipeline while keeping Vercel root-directory config, no-store runtime cache, current Supabase data fixes, and current production database state.
