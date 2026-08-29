@@ -27,7 +27,7 @@ const HEAVY=new Set([
 
 function urlOf(input){try{return typeof input==='string'?input:String(input?.url||input)}catch{return''}}
 function requestHeaders(input,init){try{return new Headers(init?.headers||input?.headers||{})}catch{return new Headers()}}
-function primaryBypass(input,init){const h=requestHeaders(input,init);return /^r138$/i.test(h.get('X-CT-Primary')||'')}
+function primaryBypass(input,init){const h=requestHeaders(input,init);return /^r13[89]$/i.test(h.get('X-CT-Primary')||'')}
 function rpcName(url){const m=String(url).match(/\/rest\/v1\/rpc\/([^?/#]+)/);return m?decodeURIComponent(m[1]):''}
 function jsonResponse(value,status=200){return Promise.resolve(new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json','X-CT-Network-Gate':'r138'}}))}
 function legacyShape(name){if(name.includes('home'))return{series:[],movie_watchlist:[],history_episodes:[],history_movies:[],_ct138LegacySuppressed:true};if(name.includes('dashboard'))return[];return{} }
