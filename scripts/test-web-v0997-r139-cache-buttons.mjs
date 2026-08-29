@@ -26,7 +26,8 @@ must(markPos>0&&mediaPos>0&&markPos<mediaPos,'movie action must be handled befor
 must(runtime.includes("e.stopImmediatePropagation();if(mark.dataset.ct139Busy==='1')return"),'double-click guard missing');
 must(runtime.includes('movie_watchlist:(homeData.movie_watchlist||[]).filter'),'optimistic watchlist update missing');
 
-must(gate.includes('/^r13[89]$/i'),'network gate does not accept r139');
+// r141 generalizou o bypass de uma lista fixa r138/r139 para toda autoridade rNNN.
+must(gate.includes('/^r\\d{3}$/i'),'network gate does not accept versioned primary runtime');
 must(count(index,'patch-v139-v0997-cache-buttons.js')===1,'r139 runtime must be emitted once');
 must(!index.includes('patch-v138-v0997-resilient-primary.js'),'r138 primary still executes');
 const gatePos=index.indexOf('patch-v138-v0997-network-gate.js');
@@ -37,4 +38,4 @@ must(proxy.includes('const TOKEN_TTL=15*60*1000'),'TMDB token TTL missing');
 must(proxy.includes('let tokenInflight:Promise<string>|null=null'),'TMDB token coalescing missing');
 must(proxy.includes("sb.rpc('cinetracker_tmdb_token')"),'TMDB token source changed unexpectedly');
 
-console.log('WEB_R139_OK home-cache=validated+revalidate movie-button=action-first tmdb-token=15m+coalesced');
+console.log('WEB_R139_OK home-cache=validated+revalidate movie-button=action-first tmdb-token=15m+coalesced gate=versioned-primary');
