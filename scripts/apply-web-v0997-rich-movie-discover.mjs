@@ -31,3 +31,4 @@ for(const dir of [resolve(root,'dist'),resolve(root,'apps/web/dist')]){
   await writeFile(indexPath,html,'utf8');
 }
 console.log('CineTracker Web 0.99.7 r131: detalhe rico + Descobrir 6 abas + futuro estrito sem teto + bridge de filmografia emitidos.');
+await import('./apply-web-v0997-r131c-targeted-corrections.mjs');
