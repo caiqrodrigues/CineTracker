@@ -2,7 +2,8 @@
 'use strict';
 if(window.__ct0997NetworkGate138Loaded)return;
 window.__ct0997NetworkGate138Loaded=true;
-window.__ct0997NetworkGate138='r138-early-heavy-request-gate';
+window.__ct0997NetworkGate138='r141-early-heavy-request-gate';
+window.__ctPrimaryBootQuarantine=true;
 
 const nativeFetch=window.fetch.bind(window);
 const cache=new Map();
@@ -27,9 +28,9 @@ const HEAVY=new Set([
 
 function urlOf(input){try{return typeof input==='string'?input:String(input?.url||input)}catch{return''}}
 function requestHeaders(input,init){try{return new Headers(init?.headers||input?.headers||{})}catch{return new Headers()}}
-function primaryBypass(input,init){const h=requestHeaders(input,init);return /^r13[89]$/i.test(h.get('X-CT-Primary')||'')}
+function primaryBypass(input,init){const h=requestHeaders(input,init);return /^r\d{3}$/i.test(h.get('X-CT-Primary')||'')}
 function rpcName(url){const m=String(url).match(/\/rest\/v1\/rpc\/([^?/#]+)/);return m?decodeURIComponent(m[1]):''}
-function jsonResponse(value,status=200){return Promise.resolve(new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json','X-CT-Network-Gate':'r138'}}))}
+function jsonResponse(value,status=200){return Promise.resolve(new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json','X-CT-Network-Gate':'r141'}}))}
 function legacyShape(name){if(name.includes('home'))return{series:[],movie_watchlist:[],history_episodes:[],history_movies:[],_ct138LegacySuppressed:true};if(name.includes('dashboard'))return[];return{} }
 function exactLegacyEpisodeQuery(url){const u=String(url);return u.includes('/rest/v1/episode_progress?')&&u.includes('watched=eq.true')&&(u.includes('media%3Amedia%28*%29')||u.includes('media:media(*)'))}
 function cloneStored(x){return new Response(x.body,{status:x.status,statusText:x.statusText,headers:x.headers})}
@@ -39,7 +40,7 @@ function heavyFetch(input,init,url,name,bypass){const method=String(init?.method
 
 window.fetch=function ct138Fetch(input,init={}){
   const url=urlOf(input),bypass=primaryBypass(input,init),name=rpcName(url);
-  if(url.includes('/functions/v1/ct-enrich-media-user'))return jsonResponse({ok:true,skipped:true,reason:'r138-primary-runtime'});
+  if(url.includes('/functions/v1/ct-enrich-media-user'))return jsonResponse({ok:true,skipped:true,reason:'r141-primary-runtime'});
   if(exactLegacyEpisodeQuery(url)&&!bypass)return jsonResponse([]);
   if(name&&OLD_ONLY.has(name)&&!bypass)return jsonResponse(legacyShape(name));
   if(name&&HEAVY.has(name))return heavyFetch(input,init,url,name,bypass);
