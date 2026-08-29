@@ -24,4 +24,5 @@ const tabs=(js.match(/\['(?:foryou|trending|popular|top|new|anticipated)','[^']+
 if(tabs.length!==6)throw new Error(`v131 expected 6 discover tabs, got ${tabs.length}`);
 await import('./test-web-v0997-r131c-targeted-corrections.mjs');
 await import('./test-web-v0997-r131d-real-data-path.mjs');
-console.log('Web v131 checks OK + r131c/r131d targeted checks OK');
+await import('./test-web-v0997-r131e-enable-runtime.mjs');
+console.log('Web v131 checks OK + r131c/r131d/r131e targeted checks OK');
