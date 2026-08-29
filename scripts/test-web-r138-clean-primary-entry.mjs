@@ -15,8 +15,7 @@ for(const base of ['dist','apps/web/dist']){
   assert.deepEqual(scripts,['inline','/patch-v133-v0997-primary-authority.js','inline'],base+': unexpected script cascade in clean primary: '+scripts.join(','));
 }
 const vercel=JSON.parse(await readFile('apps/web/vercel.json','utf8'));
-for(const route of ['/','/home','/discover','/profile','/configs'])assert.ok(vercel.rewrites.some(x=>x.source===route&&x.destination==='/primary.html'),'rewrite missing: '+route);
 const jsHeader=vercel.headers.find(x=>x.source==='/(.*)\\.js');
 assert.ok(jsHeader?.headers?.some(x=>x.key==='Cache-Control'&&x.value.includes('no-store')),'runtime JS must not be immutable-cached');
 assert.ok(!jsHeader?.headers?.some(x=>x.value.includes('31536000')),'runtime JS still has one-year cache');
-console.log('WEB_R138_OK entry=clean scripts=3 legacy=0 primary=r133-r137 cache=runtime-no-store');
+console.log('WEB_R138_OK fallback-artifact=clean scripts=3 legacy=0 cache=runtime-no-store');
