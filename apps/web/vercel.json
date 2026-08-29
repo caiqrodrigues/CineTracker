@@ -3,11 +3,11 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    {"source": "/", "destination": "/primary.html"},
-    {"source": "/home", "destination": "/primary.html"},
-    {"source": "/discover", "destination": "/primary.html"},
-    {"source": "/profile", "destination": "/primary.html"},
-    {"source": "/configs", "destination": "/primary.html"},
+    {"source": "/", "destination": "/index.html"},
+    {"source": "/home", "destination": "/index.html"},
+    {"source": "/discover", "destination": "/index.html"},
+    {"source": "/profile", "destination": "/index.html"},
+    {"source": "/configs", "destination": "/index.html"},
     {"source": "/(.*)", "destination": "/index.html"}
   ],
   "headers": [
