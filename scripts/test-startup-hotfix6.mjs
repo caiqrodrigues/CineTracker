@@ -2,23 +2,6 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 import { resolve } from 'node:path';
 
-// Final production gate: after every historical patch was emitted, strip the old 0.99.4
-// bootstrap/authority layers that can still re-render Home after the 0.99.7 authority starts.
-await import('./apply-web-v0997-disable-v0994-takeover.mjs');
-await import('./test-web-v0997-no-legacy-takeover.mjs');
-await import('./test-web-r136-interaction-authority.mjs');
-await import('./apply-web-v0997-r137-timeout-nav.mjs');
-await import('./test-web-r137-timeout-nav.mjs');
-await import('./apply-web-v0997-r138-clean-primary-entry.mjs');
-await import('./test-web-r138-clean-primary-entry.mjs');
-await import('./apply-web-v0997-r1381-cache-key.mjs');
-await import('./test-web-r1381-cache-key.mjs');
-await import('./apply-web-v0997-r139-auth-gated-runtime.mjs');
-await import('./test-web-r139-auth-gated-runtime.mjs');
-await import('./apply-web-v0997-r140-rpc-dedupe.mjs');
-await import('./test-web-r140-rpc-dedupe.mjs');
-await import('./test-web-r141-recover-full-entry.mjs');
-
 const html = await readFile(resolve(process.cwd(), 'dist/index.html'), 'utf8');
 const inline = html.match(/<script>([\s\S]*?)<\/script>/);
 if (!inline) throw new Error('Startup smoke: base inline script not found in dist/index.html');
