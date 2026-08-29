@@ -36,3 +36,6 @@ await import('./apply-web-v0997-r131d-real-data-path.mjs');
 await import('./apply-web-v0997-r131e-enable-runtime.mjs');
 await import('./apply-web-v0997-r131f-home-payload-authority.mjs');
 await import('./apply-web-v0997-r131g-source-renderer-fixes.mjs');
+await import('./apply-web-v0997-r134-discover.mjs');
+await import('./apply-web-v0997-r134-live.mjs');
+await import('./apply-web-v0997-r134-routes.mjs');
