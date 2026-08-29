@@ -22,4 +22,5 @@ for(const [name,needle] of checks)if(!js.includes(needle))throw new Error(`v131 
 if(js.includes('shiftDays(540)')||js.includes("release_date.lte':future"))throw new Error('v131 awaited query must have no upper date ceiling');
 const tabs=(js.match(/\['(?:foryou|trending|popular|top|new|anticipated)','[^']+'\]/g)||[]);
 if(tabs.length!==6)throw new Error(`v131 expected 6 discover tabs, got ${tabs.length}`);
-console.log('Web v131 checks OK');
+await import('./test-web-v0997-r131c-targeted-corrections.mjs');
+console.log('Web v131 checks OK + r131c targeted checks OK');
