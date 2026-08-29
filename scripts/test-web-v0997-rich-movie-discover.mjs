@@ -26,4 +26,5 @@ await import('./test-web-v0997-r131c-targeted-corrections.mjs');
 await import('./test-web-v0997-r131d-real-data-path.mjs');
 await import('./test-web-v0997-r131e-enable-runtime.mjs');
 await import('./test-web-v0997-r131f-home-payload-authority.mjs');
-console.log('Web v131 checks OK + r131c/r131d/r131e/r131f targeted checks OK');
+await import('./test-web-v0997-r131g-source-renderer-fixes.mjs');
+console.log('Web v131 checks OK + r131c/r131d/r131e/r131f/r131g targeted checks OK');
