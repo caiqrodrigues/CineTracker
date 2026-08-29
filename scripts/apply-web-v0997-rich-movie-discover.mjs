@@ -44,3 +44,4 @@ await import('./apply-web-v0997-r135-home-card-bridge.mjs');
 await import('./apply-web-v0997-r136-direct-primary.mjs');
 await import('./apply-web-v0997-r137-single-authority.mjs');
 await import('./apply-web-v0997-r138-network-gate.mjs');
+await import('./apply-web-v0997-r139-cache-buttons.mjs');
