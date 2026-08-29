@@ -4,6 +4,10 @@ if(window.__ct0997NetworkGate138Loaded)return;
 window.__ct0997NetworkGate138Loaded=true;
 window.__ct0997NetworkGate138='r141-early-heavy-request-gate';
 window.__ctPrimaryBootQuarantine=true;
+// Compatibilidade: os runtimes v120/v124/v126/r131/r134 já possuem guards
+// para este marcador. Mantê-lo ativo desde o primeiro script impede que eles
+// iniciem uma segunda autoridade antes de r140 carregar.
+window.__ct0997StablePrimary137Loaded=true;
 
 const nativeFetch=window.fetch.bind(window);
 const cache=new Map();
