@@ -23,3 +23,4 @@ for(const dir of [resolve(root,'dist'),resolve(root,'apps/web/dist')]){
   html=html.replace('</body>',`${tag}</body>`);await writeFile(p,html,'utf8');
 }
 console.log('WEB_R134_ROUTES full-screen media/person routes + Profile 10+ fresh runtime emitted');
+await import('./test-web-v0997-r134-complete-runtime.mjs');
