@@ -6,8 +6,9 @@ for(const route of ['/','/home','/discover','/profile','/configs']){
   assert.ok(vercel.rewrites.some(x=>x.source===route&&x.destination==='/index.html'),`r141: ${route} must use full index entry`);
 }
 const html=await readFile('dist/index.html','utf8');
-assert.ok(html.includes('r137-rpc-timeout-native-nav'),'r141: full emitted entry lost r137 navigation/timeout authority');
-assert.ok(html.includes('r133-nonblocking-home'),'r141: full emitted entry lost nonblocking Home authority');
+const authority=await readFile('dist/patch-v133-v0997-primary-authority.js','utf8');
+assert.ok(authority.includes('r137-rpc-timeout-native-nav'),'r141: full emitted authority lost r137 navigation/timeout marker');
+assert.ok(authority.includes('r133-nonblocking-home'),'r141: full emitted authority lost nonblocking Home marker');
 assert.ok(!html.includes('patch-v103-v0994-session-gate.js'),'r141: removed 0.99.4 session takeover returned');
 assert.ok(!html.includes('patch-v104-v0994-authority.js'),'r141: removed 0.99.4 authority takeover returned');
 const indexHeader=vercel.headers.find(x=>x.source==='/index.html');
