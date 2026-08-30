@@ -13,9 +13,12 @@ let runtime=await readFile(source,'utf8');
 const localHelper="const eventLocalDay=v=>{const d=new Date(v);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};";
 must(runtime.includes("const shiftDay=(n,d=new Date())=>"),'local date anchor missing');
 runtime=runtime.replace("const shiftDay=(n,d=new Date())=>{const x=new Date(d);x.setDate(x.getDate()+n);return localDay(x)};",`const shiftDay=(n,d=new Date())=>{const x=new Date(d);x.setDate(x.getDate()+n);return localDay(x)};\n${localHelper}`);
-runtime=runtime.replaceAll("new Date(e.starts_at).toLocaleDateString('sv-SE')===localDay()","eventLocalDay(e.starts_at)===localDay()");
-runtime=runtime.replaceAll("new Date(e.starts_at).toLocaleDateString('sv-SE')","eventLocalDay(e.starts_at)");
-must(runtime.includes('eventLocalDay(e.starts_at)===localDay()'),'local today comparison missing');
+for(const variable of ['e','x']){
+  runtime=runtime.replaceAll(`new Date(${variable}.starts_at).toLocaleDateString('sv-SE')===localDay()`,`eventLocalDay(${variable}.starts_at)===localDay()`);
+  runtime=runtime.replaceAll(`new Date(${variable}.starts_at).toLocaleDateString('sv-SE')`,`eventLocalDay(${variable}.starts_at)`);
+}
+must(runtime.includes('eventLocalDay(x.starts_at)===localDay()'),'local today comparison missing');
+must(runtime.includes('groupBy(events,e=>eventLocalDay(e.starts_at))'),'calendar local-day grouping missing');
 must(!runtime.includes("toLocaleDateString('sv-SE')"),'sv-SE date workaround survived');
 
 // Observer is allowed to restore Sports only when another runtime removed its root.
