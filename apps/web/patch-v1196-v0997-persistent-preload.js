@@ -47,7 +47,7 @@ async function writeSnapshot(key,value){
 }
 async function clearUserSnapshots(uid=userId()){
   memory.clear();inflight.clear();if(!uid)return;const db=await openDb();if(!db)return;
-  await new Promise(resolve=>{try{const tx=db.transaction(STORE,'readwrite'),store=db.transaction?tx.objectStore(STORE):null,req=store.openCursor();req.onsuccess=()=>{const cur=req.result;if(!cur)return;const k=String(cur.key||'');if(k.startsWith(`${uid}|`))cur.delete();cur.continue()};tx.oncomplete=()=>resolve();tx.onerror=()=>resolve();tx.onabort=()=>resolve()}catch{resolve()}});
+  await new Promise(resolve=>{try{const tx=db.transaction(STORE,'readwrite'),store=tx.objectStore(STORE),req=store.openCursor();req.onsuccess=()=>{const cur=req.result;if(!cur)return;const k=String(cur.key||'');if(k.startsWith(`${uid}|`))cur.delete();cur.continue()};tx.oncomplete=()=>resolve();tx.onerror=()=>resolve();tx.onabort=()=>resolve()}catch{resolve()}});
 }
 function expose(name,value){
   if(name===HOME_RPC&&value&&typeof value==='object')window.__ct0994PreloadedHome=value;
