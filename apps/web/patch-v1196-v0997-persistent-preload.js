@@ -5,11 +5,12 @@ window.__ct0997PersistentPreload1196Loaded=true;
 window.__ct0997PersistentPreload1196='v1196-persistent-rpc-stale-while-revalidate';
 
 const HOME_RPC='cinetracker_profile_home_payload_v0994';
+const HOME_LIVE_RPC='cinetracker_home_live_v0997_r2';
 const PROFILE_RPC='cinetracker_profile_payload_v0997';
 const DASH_RPC='cinetracker_profile_media_dashboard_v0991';
 const EX_RPC='cinetracker_discovery_exclusions_v0994';
 const REMAINING_RPC='cinetracker_profile_remaining_v0994';
-const CORE_RPCS=new Set([HOME_RPC,PROFILE_RPC,DASH_RPC,EX_RPC,REMAINING_RPC]);
+const CORE_RPCS=new Set([HOME_RPC,HOME_LIVE_RPC,PROFILE_RPC,DASH_RPC,EX_RPC,REMAINING_RPC]);
 const STALE_TIME=10*60*1000;
 const MAX_AGE=24*60*60*1000;
 const DB_NAME='cinetracker-preload-v1';
@@ -51,6 +52,7 @@ async function clearUserSnapshots(uid=userId()){
 }
 function expose(name,value){
   if(name===HOME_RPC&&value&&typeof value==='object')window.__ct0994PreloadedHome=value;
+  if(name===HOME_LIVE_RPC&&value&&typeof value==='object')window.__ct0997PreloadedHomeLive=value;
   if(name===PROFILE_RPC&&value&&typeof value==='object')window.__ct0997PreloadedProfile=value;
   return value;
 }
@@ -93,6 +95,7 @@ async function warmBoot(force=false){
   lastWarmAt=Date.now();
   const rpc=window.__ct0997PersistentPreloadRpc||window.sbRpc;
   warmBusy=Promise.allSettled([
+    rpc(HOME_LIVE_RPC,{}),
     rpc(HOME_RPC,{}),
     rpc(PROFILE_RPC,{p_tz:tz()}),
     rpc(DASH_RPC,{}),
@@ -102,13 +105,22 @@ async function warmBoot(force=false){
 }
 function scheduleWarm(delay=0,force=false){setTimeout(()=>void warmBoot(force),delay)}
 
-for(const d of [0,120,420])scheduleWarm(d);
+for(const d of [0,120,420,900,1800,3200])scheduleWarm(d);
+// restoreSession pode terminar depois dos primeiros timers. Esta sonda é curta e
+// existe só no boot: assim que a sessão restaurada aparece, aquece o runtime atual.
+let authProbeCount=0;
+const authProbe=setInterval(()=>{
+  authProbeCount+=1;
+  if(authenticated()){
+    clearInterval(authProbe);lastWarmAt=0;scheduleWarm(0,true);
+  }else if(authProbeCount>=48)clearInterval(authProbe);
+},250);
 window.addEventListener('cinetracker:auth-state-change',e=>{
   const type=String(e?.detail?.event||'');
   if(type==='SIGNED_IN'){lastWarmAt=0;scheduleWarm(0,true);scheduleWarm(250,true)}
-  if(type==='SIGNED_OUT'){const uid=lastUser;lastUser='';window.__ct0997PreloadedProfile=null;void clearUserSnapshots(uid)}
+  if(type==='SIGNED_OUT'){const uid=lastUser;lastUser='';window.__ct0997PreloadedHomeLive=null;window.__ct0997PreloadedProfile=null;void clearUserSnapshots(uid)}
 });
-window.addEventListener('cinetracker:data-changed',()=>{const uid=userId();window.__ct0997PreloadedProfile=null;void clearUserSnapshots(uid).then(()=>{lastWarmAt=0;scheduleWarm(60,true)})});
+window.addEventListener('cinetracker:data-changed',()=>{const uid=userId();window.__ct0997PreloadedHomeLive=null;window.__ct0997PreloadedProfile=null;void clearUserSnapshots(uid).then(()=>{lastWarmAt=0;scheduleWarm(60,true)})});
 window.addEventListener('focus',()=>{if(Date.now()-lastWarmAt>STALE_TIME)scheduleWarm(0,true)});
 window.__ct0997PersistentPreloadWarm=()=>warmBoot(true);
 window.__ct0997PersistentPreloadClear=()=>clearUserSnapshots(userId());
