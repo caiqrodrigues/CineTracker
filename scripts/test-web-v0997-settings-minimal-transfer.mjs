@@ -7,6 +7,7 @@ const meta=await readFile('apps/web/patch-v129-v0997-settings-real-metadata-refr
 const stable=await readFile('apps/web/patch-v130-v0997-nav-footer-stability.js','utf8');
 const html=await readFile('dist/index.html','utf8');
 const pkg=JSON.parse(await readFile('package.json','utf8'));
+function scriptPos(name){const esc=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');const m=html.match(new RegExp(`<script\\s+src="/${esc}(?:\\?[^\"]*)?"></script>`));return m?m.index:-1}
 assert.equal(pkg.version,'0.99.7','settings/nav fix must not bump version');
 for(const token of [
   'v128-settings-minimal-import-export-only','>Exportar<','>Importar<','Exportar dados','Importar dados',
@@ -37,10 +38,10 @@ assert.ok(!stable.includes('window.fetch='),'v130 must not wrap fetch');
 assert.ok(!src.includes('<h3>Importar do Bingers</h3>'),'Bingers must not be a visible standalone section in v128');
 assert.ok(!src.includes('Sincronizar agora</button>'),'sync must not be a primary visible action in v128');
 new Function(runtime);new Function(meta);new Function(stable);
-const a=html.indexOf('<script src="/patch-v127-v0997-settings-unified-data-hub.js"></script>');
-const b=html.indexOf('<script src="/patch-v128-v0997-settings-minimal-transfer.js"></script>');
-const c=html.indexOf('<script src="/patch-v129-v0997-settings-real-metadata-refresh.js"></script>');
-const d=html.indexOf('<script src="/patch-v130-v0997-nav-footer-stability.js"></script>');
+const a=scriptPos('patch-v127-v0997-settings-unified-data-hub.js');
+const b=scriptPos('patch-v128-v0997-settings-minimal-transfer.js');
+const c=scriptPos('patch-v129-v0997-settings-real-metadata-refresh.js');
+const d=scriptPos('patch-v130-v0997-nav-footer-stability.js');
 assert.ok(a>=0&&b>a&&c>b&&d>c,'settings v128/v129 and nav/footer v130 must load once after v127 in order');
 for(const p of ['patch-v128-v0997-settings-minimal-transfer.js','patch-v129-v0997-settings-real-metadata-refresh.js','patch-v130-v0997-nav-footer-stability.js'])assert.equal((html.match(new RegExp(p.replaceAll('.','\\.'),'g'))||[]).length,1,`${p} duplicated`);
 console.log('WEB_0997_SETTINGS_V128_V129_NAV_V130_OK metadata=real sidebar=locked footer=stable layout=balanced scope=settings+sidebar');

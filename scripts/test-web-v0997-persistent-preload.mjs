@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 const src=await readFile('apps/web/patch-v1196-v0997-persistent-preload.js','utf8');
 const html=await readFile('dist/index.html','utf8');
-const normalizedHtml=html.replace(/\?r\d+/g,'');
+const normalizedHtml=html.replace(/\?[^"']+/g,'');
 const pkg=JSON.parse(await readFile('package.json','utf8'));
 assert.equal(pkg.version,'0.99.7','performance-only preload must not bump version');
 for(const token of [
@@ -27,5 +27,5 @@ const a=normalizedHtml.indexOf('<script src="/patch-v1195-v0997-route-preload-co
 const b=normalizedHtml.indexOf('<script src="/patch-v1196-v0997-persistent-preload.js"></script>');
 const c=normalizedHtml.indexOf('<script src="/patch-v120-v0997-structural-authority.js"></script>');
 assert.ok(a>=0&&b>a&&c>b,'persistent preload must load after v1195 and before v120');
-assert.equal((html.match(/patch-v1196-v0997-persistent-preload\.js(?:\?r\d+)?/g)||[]).length,1,'persistent preload duplicated');
-console.log('WEB_0997_PERSISTENT_PRELOAD_OK stale=10m max=24h storage=indexeddb boot=parallel ui=untouched');
+assert.equal((html.match(/patch-v1196-v0997-persistent-preload\.js(?:\?[^"']+)?/g)||[]).length,1,'persistent preload duplicated');
+console.log('WEB_0997_PERSISTENT_PRELOAD_OK source=legacy-contract final-runtime=r154-canonical ui=untouched');

@@ -6,6 +6,7 @@ const src=await readFile(resolve(root,'apps/web/patch-v122-v0997-live-smoke-fixe
 const html=await readFile(resolve(root,'dist/index.html'),'utf8');
 const pkg=JSON.parse(await readFile(resolve(root,'package.json'),'utf8'));
 const must=(ok,msg)=>{if(!ok)throw new Error(msg)};
+function scriptPos(name){const esc=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');const m=html.match(new RegExp(`<script\\s+src="/${esc}(?:\\?[^\"]*)?"></script>`));return m?m.index:-1}
 
 must(pkg.version==='0.99.7','0.99.7 live smoke: version bump proibido');
 must(src.includes("HOME_RPC_122='cinetracker_profile_home_payload_v0994'"),'Home fast fallback ausente');
@@ -17,8 +18,8 @@ must(src.includes("cards.forEach((c,i)=>c.hidden=i>=10)")&&src.includes('data-ct
 must(src.includes("t!=='tempo de tela'&&t!=='historico'"),'Limpeza de Tempo de Tela/Histórico ausente');
 must(src.includes('.content>.mobile-nav,#ct120-page .mobile-nav{display:none!important}'),'Menu inferior deve ficar oculto no desktop');
 must(src.includes('max-width:calc(100vw - 180px)'),'Enquadramento desktop ausente');
-const a=html.indexOf('<script src="/patch-v121-v0997-functional-polish.js"></script>');
-const b=html.indexOf('<script src="/patch-v122-v0997-live-smoke-fixes.js"></script>');
+const a=scriptPos('patch-v121-v0997-functional-polish.js');
+const b=scriptPos('patch-v122-v0997-live-smoke-fixes.js');
 must(a>=0&&b>a,'v122 deve ser emitida depois da v121');
 must((html.match(/patch-v122-v0997-live-smoke-fixes\.js/g)||[]).length===1,'v122 duplicada no HTML final');
 console.log('CineTracker 0.99.7 live smoke fixes: PASS');

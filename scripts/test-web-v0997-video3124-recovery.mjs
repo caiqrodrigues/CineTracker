@@ -11,6 +11,7 @@ const auth118=await readFile('dist/patch-v118-v0997-authoritative.js','utf8');
 const profile120=await readFile('dist/patch-v120-v0997-structural-authority.js','utf8');
 const html=await readFile('dist/index.html','utf8');
 const pkg=JSON.parse(await readFile('package.json','utf8'));
+function scriptPos(name){const esc=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');const m=html.match(new RegExp(`<script\\s+src="/${esc}(?:\\?[^\"]*)?"></script>`));return m?m.index:-1}
 assert.equal(pkg.version,'0.99.7','video3124 recovery must not bump version');
 assert.ok(source.includes('v126-video3124-surgical-recovery'),'source marker missing');
 for(const token of [
@@ -44,8 +45,8 @@ assert.ok(auth118.includes('media?select=id,tmdb_id,media_type,title,release_yea
 assert.ok(auth118.includes("clean=v=>norm118(String(v||'').replace(/\\s*\\((?:18|19|20)\\d{2}\\)\\s*$/,''))"),'poster repair must normalize title without year suffix');
 assert.ok(auth118.includes("matches(x)&&(!yr||cy(x)===yr)"),'poster repair must require exact title/year when year exists');
 assert.ok(!auth118.includes('priority=visible-posters'),'visible poster repair must not use fuzzy server enrichment fallback');
-const a=html.indexOf('<script src="/patch-v125-v0997-restore-foryou-contract.js"></script>');
-const b=html.indexOf('<script src="/patch-v126-v0997-video3124-recovery.js"></script>');
+const a=scriptPos('patch-v125-v0997-restore-foryou-contract.js');
+const b=scriptPos('patch-v126-v0997-video3124-recovery.js');
 assert.ok(a>=0&&b>a,'video3124 recovery must load after v125');
 assert.equal((html.match(/patch-v126-v0997-video3124-recovery\.js/g)||[]).length,1,'video3124 recovery duplicated');
 console.log('WEB_0997_VIDEO3124_RECOVERY_OK profile=10-more+full-width+fallback home=canonical-progress posters=strict');
