@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 const src=await readFile('apps/web/patch-v1196-v0997-persistent-preload.js','utf8');
 const html=await readFile('dist/index.html','utf8');
+const normalizedHtml=html.replace(/\?r\d+/g,'');
 const pkg=JSON.parse(await readFile('package.json','utf8'));
 assert.equal(pkg.version,'0.99.7','performance-only preload must not bump version');
 for(const token of [
@@ -22,9 +23,9 @@ for(const token of [
   "if(type==='SIGNED_OUT')"
 ]) assert.ok(src.includes(token),`persistent preload missing ${token}`);
 for(const forbidden of ['innerHTML=','new MutationObserver','Pra Você','Em alta','Mais aguardados','Populares','Mais bem avaliados','Calendário','renderProfile','renderDiscover','navigate120']) assert.ok(!src.includes(forbidden),`preload must not alter UI/function contract: ${forbidden}`);
-const a=html.indexOf('<script src="/patch-v1195-v0997-route-preload-core.js"></script>');
-const b=html.indexOf('<script src="/patch-v1196-v0997-persistent-preload.js"></script>');
-const c=html.indexOf('<script src="/patch-v120-v0997-structural-authority.js"></script>');
+const a=normalizedHtml.indexOf('<script src="/patch-v1195-v0997-route-preload-core.js"></script>');
+const b=normalizedHtml.indexOf('<script src="/patch-v1196-v0997-persistent-preload.js"></script>');
+const c=normalizedHtml.indexOf('<script src="/patch-v120-v0997-structural-authority.js"></script>');
 assert.ok(a>=0&&b>a&&c>b,'persistent preload must load after v1195 and before v120');
-assert.equal((html.match(/patch-v1196-v0997-persistent-preload\.js/g)||[]).length,1,'persistent preload duplicated');
+assert.equal((html.match(/patch-v1196-v0997-persistent-preload\.js(?:\?r\d+)?/g)||[]).length,1,'persistent preload duplicated');
 console.log('WEB_0997_PERSISTENT_PRELOAD_OK stale=10m max=24h storage=indexeddb boot=parallel ui=untouched');
