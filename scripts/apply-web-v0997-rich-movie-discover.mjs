@@ -54,3 +54,4 @@ await import('./apply-web-v0997-r147-home-payload-resilience.mjs');
 await import('./apply-web-v0997-r148-desktop-web-lock.mjs');
 await import('./apply-web-v0997-r149-discover-contract.mjs');
 await import('./apply-web-v0997-r150-calendar-release-sync.mjs');
+await import('./apply-web-v0997-r150b-realtime-sync.mjs');
