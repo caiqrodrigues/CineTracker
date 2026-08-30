@@ -311,6 +311,15 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override protected void onResume() {
+        super.onResume();
+        if (webView == null) return;
+        webView.post(() -> webView.evaluateJavascript(
+            "try{window.dispatchEvent(new CustomEvent('cinetracker:app-foreground',{detail:{source:'android-onResume'}}));}catch(e){}",
+            null
+        ));
+    }
+
     @Override protected void onSaveInstanceState(Bundle outState) {
         webView.saveState(outState);
         super.onSaveInstanceState(outState);
