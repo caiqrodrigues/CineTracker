@@ -3,6 +3,7 @@
 if(window.__ct0997R151Loaded)return;
 window.__ct0997R151Loaded=true;
 window.__ct0997R151='r151-library-identity-reconcile';
+window.__ct151Scope='seen+watchlist+progress';
 window.__ctWebRevision='r151';
 
 const VERSION='r151',ENDPOINT=()=>`${SUPABASE_URL}/functions/v1/ct-reconcile-library-user`;
