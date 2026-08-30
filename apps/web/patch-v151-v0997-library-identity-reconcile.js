@@ -85,7 +85,7 @@ window.__ct151SyncLibrary=opts=>run(opts||{});
 window.__ct151ResolveMedia=async mediaId=>{const d=await callBatch({requested_media_ids:[Number(mediaId)],limit:1,force:true});announce('single-media-reconcile');return d};
 window.__ct151LibraryState=state;
 
-const observer=new MutationObserver(()=>{ensureCard();render()});observer.observe(document.body,{childList:true,subtree:true});
+const observer=new MutationObserver(()=>{if(settingsRoot()&&!document.getElementById('ct151-library-card')){ensureCard();render()}});observer.observe(document.body,{childList:true,subtree:true});
 window.addEventListener('focus',()=>{ensureCard();render();scheduleAuto(500)});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleAuto(500)});
 window.addEventListener('online',()=>scheduleAuto(300));
