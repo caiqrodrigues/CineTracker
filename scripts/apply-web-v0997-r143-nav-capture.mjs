@@ -21,13 +21,8 @@ for(const dir of dirs){
     .replaceAll('r142-route-freeze-primary','r143-nav-capture-primary')
     .replaceAll("'X-CT-Primary':'r142'","'X-CT-Primary':'r143'");
 
-  const cacheOld="function readPrimaryCache(key){try{const x=JSON.parse(sessionStorage.getItem('ct138:'+key)||'null');return x&&Date.now()-Number(x.at||0)<PRIMARY_CACHE_TTL?x.value:null}catch{return null}}";
-  const cacheNew="function readPrimaryCache(key){try{const x=JSON.parse(sessionStorage.getItem('ct138:'+key)||'null'),v=x&&Date.now()-Number(x.at||0)<PRIMARY_CACHE_TTL?x.value:null;return v?._ct138LegacySuppressed?null:v}catch{return null}}";
-  must(runtime.includes(cacheOld),'primary cache anchor missing');
-  runtime=runtime.replace(cacheOld,cacheNew);
-
-  const profileCacheOld="if(!profileData){profileData=readPrimaryCache('profile');if(profileData)profileAt=Date.now()}";
-  const profileCacheNew="if(!profileData){profileData=window.__ct0997PreloadedProfile||readPrimaryCache('profile');if(profileData)profileAt=Date.now()}";
+  const profileCacheOld="if(!profileData){profileData=readPrimaryCache('profile');if(profileData)profileAt=0}";
+  const profileCacheNew="if(!profileData){const preloaded=window.__ct0997PreloadedProfile;profileData=preloaded||readPrimaryCache('profile');if(profileData)profileAt=preloaded?Date.now():0}";
   must(runtime.includes(profileCacheOld),'profile cache anchor missing');
   runtime=runtime.replace(profileCacheOld,profileCacheNew);
 
