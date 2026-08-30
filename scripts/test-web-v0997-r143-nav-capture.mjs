@@ -16,6 +16,7 @@ must(nav.includes("width=device-width,initial-scale=1,viewport-fit=cover"),'shar
 must(nav.includes('@media(max-width:850px)'),'shared responsive media rule missing');
 must(nav.includes('.sidebar{display:none!important}'),'responsive sidebar hide missing');
 must(nav.includes('.mobile-nav{display:grid!important}'),'responsive mobile nav reveal missing');
+must(nav.includes("'ct139:home','ct139:profile'"),'r139 legacy cache cleanup missing');
 must(!nav.includes('ct144-phone')&&!nav.includes('userAgent')&&!nav.includes('maxTouchPoints'),'rejected phone-mode detection returned');
 const navPos=index.indexOf('patch-v143-v0997-nav-gate.js');
 const bootPos=index.indexOf('patch-v142-v0997-boot-gate.js');
@@ -32,9 +33,8 @@ must(primary.includes('let primaryRenderSeq=0;'),'primary sequencing missing');
 must(primary.includes('if(seq!==primaryRenderSeq)return;'),'stale primary completion is not cancelled');
 must(primary.includes("window.addEventListener('cinetracker:primary-nav'"),'primary nav event consumer missing');
 must(primary.includes("if(primaryKey()!=='settings'){schedulePrimary(0);return}"),'stale settings recovery missing');
-must(primary.includes("window.__ct0997PreloadedProfile||readPrimaryCache('profile')"),'profile does not consume persistent snapshot first');
+must(primary.includes("const preloaded=window.__ct0997PreloadedProfile;profileData=preloaded||readPrimaryCache('profile')"),'profile does not consume persistent snapshot first');
 must(primary.includes('window.__ct0997PersistentPreloadRpc||rpcDirect'),'profile persistent loader bridge missing');
-must(primary.includes("v?._ct138LegacySuppressed?null:v"),'legacy-suppressed primary cache is still accepted');
 must(primary.includes('function syncPrimaryNav(key)'),'route/nav synchronizer missing');
 must(primary.includes("schedulePrimary(0);return}syncPrimaryNav(k)") ,'DOM route self-heal missing');
 must(primary.includes("observe(app,{childList:true,subtree:true})"),'route observer does not watch nested legacy rewrites');
