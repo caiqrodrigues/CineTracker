@@ -20,8 +20,9 @@ const must=[
   'rpcCache'
 ];
 for(const marker of must)if(!src.includes(marker))throw new Error(`route preload marker missing: ${marker}`);
-const preload='<script src="/patch-v1195-v0997-route-preload-core.js"></script>';
-const authority='<script src="/patch-v120-v0997-structural-authority.js"></script>';
+function scriptPos(name){const esc=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');const m=html.match(new RegExp(`<script\\s+src="/${esc}(?:\\?[^\"]*)?"></script>`));return m?m.index:-1}
+const preload=scriptPos('patch-v1195-v0997-route-preload-core.js');
+const authority=scriptPos('patch-v120-v0997-structural-authority.js');
 if((html.match(/patch-v1195-v0997-route-preload-core\.js/g)||[]).length!==1)throw new Error('route preload must be emitted exactly once');
-if(html.indexOf(preload)<0||html.indexOf(authority)<0||html.indexOf(preload)>html.indexOf(authority))throw new Error('route preload must execute before v120 authority');
+if(preload<0||authority<0||preload>authority)throw new Error('route preload must execute before v120 authority');
 console.log('CineTracker 0.99.7 route preload: PASS');
