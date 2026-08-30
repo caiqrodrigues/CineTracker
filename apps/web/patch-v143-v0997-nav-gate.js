@@ -23,7 +23,7 @@ window.__ct0997NavGate143='r143-early-nav-capture';
 })();
 
 // Descarta somente caches temporários conhecidos como respostas legadas vazias.
-for(const key of ['ct138:home','ct138:profile']){
+for(const key of ['ct139:home','ct139:profile','ct138:home','ct138:profile']){
   try{const x=JSON.parse(sessionStorage.getItem(key)||'null');if(x?.value?._ct138LegacySuppressed)sessionStorage.removeItem(key)}catch{}
 }
 
