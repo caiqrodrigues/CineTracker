@@ -51,6 +51,7 @@ async function clearUserSnapshots(uid=userId()){
 }
 function expose(name,value){
   if(name===HOME_RPC&&value&&typeof value==='object')window.__ct0994PreloadedHome=value;
+  if(name===PROFILE_RPC&&value&&typeof value==='object')window.__ct0997PreloadedProfile=value;
   return value;
 }
 async function network(name,body,key){
@@ -80,6 +81,7 @@ if(rawRpc){
   rpc1196.__ct0997PersistentPreload=true;rpc1196.__ct0997Raw=rawRpc;
   try{sbRpc=rpc1196}catch{}
   window.sbRpc=rpc1196;
+  window.__ct0997PersistentPreloadRpc=rpc1196;
 }
 
 function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Sao_Paulo'}catch{return'America/Sao_Paulo'}}
@@ -89,7 +91,7 @@ async function warmBoot(force=false){
   if(warmBusy)return warmBusy;
   if(!force&&Date.now()-lastWarmAt<30000)return true;
   lastWarmAt=Date.now();
-  const rpc=window.sbRpc;
+  const rpc=window.__ct0997PersistentPreloadRpc||window.sbRpc;
   warmBusy=Promise.allSettled([
     rpc(HOME_RPC,{}),
     rpc(PROFILE_RPC,{p_tz:tz()}),
@@ -104,9 +106,9 @@ for(const d of [0,120,420])scheduleWarm(d);
 window.addEventListener('cinetracker:auth-state-change',e=>{
   const type=String(e?.detail?.event||'');
   if(type==='SIGNED_IN'){lastWarmAt=0;scheduleWarm(0,true);scheduleWarm(250,true)}
-  if(type==='SIGNED_OUT'){const uid=lastUser;lastUser='';void clearUserSnapshots(uid)}
+  if(type==='SIGNED_OUT'){const uid=lastUser;lastUser='';window.__ct0997PreloadedProfile=null;void clearUserSnapshots(uid)}
 });
-window.addEventListener('cinetracker:data-changed',()=>{const uid=userId();void clearUserSnapshots(uid).then(()=>{lastWarmAt=0;scheduleWarm(60,true)})});
+window.addEventListener('cinetracker:data-changed',()=>{const uid=userId();window.__ct0997PreloadedProfile=null;void clearUserSnapshots(uid).then(()=>{lastWarmAt=0;scheduleWarm(60,true)})});
 window.addEventListener('focus',()=>{if(Date.now()-lastWarmAt>STALE_TIME)scheduleWarm(0,true)});
 window.__ct0997PersistentPreloadWarm=()=>warmBoot(true);
 window.__ct0997PersistentPreloadClear=()=>clearUserSnapshots(userId());
