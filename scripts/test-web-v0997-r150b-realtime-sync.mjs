@@ -20,6 +20,14 @@ for(const marker of[
   "cinetracker:data-changed"
 ])must(runtime.includes(marker),`missing runtime marker ${marker}`);
 
+const androidPrepare=await readFile(resolve(root,'scripts/prepare-android-hotfix2-web.mjs'),'utf8');
+for(const marker of[
+  'protected void onResume()',
+  "cinetracker:app-foreground",
+  "source:'android-onResume'",
+  "window.__ct0997R150b='r150b-realtime-sync'"
+])must(androidPrepare.includes(marker),`missing Android lifecycle marker ${marker}`);
+
 for(const dir of[resolve(root,'dist'),resolve(root,'apps/web/dist')]){
   const html=await readFile(resolve(dir,'index.html'),'utf8');
   const r150='<script src="/patch-v150-v0997-calendar-release-sync.js?r150"></script>';
@@ -33,4 +41,4 @@ for(const dir of[resolve(root,'dist'),resolve(root,'apps/web/dist')]){
   const sw=await readFile(resolve(dir,'service-worker.js'),'utf8');
   must(sw.includes('ct-web-0.99.7-r150b'),'service worker revision missing');
 }
-console.log('WEB_R150B_TEST_OK realtime=filtered focus=refetch android=foreground cache=invalidate layout=unchanged');
+console.log('WEB_R150B_TEST_OK realtime=filtered focus=refetch android=onResume cache=invalidate layout=unchanged');
