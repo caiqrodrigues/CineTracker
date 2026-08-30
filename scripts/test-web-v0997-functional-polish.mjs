@@ -5,6 +5,7 @@ const root=resolve(process.cwd());
 const src=await readFile(resolve(root,'apps/web/patch-v121-v0997-functional-polish.js'),'utf8');
 const html=await readFile(resolve(root,'dist/index.html'),'utf8');
 const must=(ok,msg)=>{if(!ok)throw new Error(msg)};
+function scriptPos(name){const esc=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');const m=html.match(new RegExp(`<script\\s+src="/${esc}(?:\\?[^\"]*)?"></script>`));return m?m.index:-1}
 
 must(src.includes("window.__ct0997Functional121 = 'v121-functional-polish-no-refactor'"),'0.99.7 v121: marker ausente.');
 must(src.includes("PROFILE_ORDER121 = ['basic','series','movies','series-favorites','movie-favorites','actors','daily','extras']"),'0.99.7 v121: ordem estrita do Perfil ausente.');
@@ -21,8 +22,8 @@ must(src.includes("if(tt&&row.title)tt.textContent=row.title")&&src.includes("if
 must(src.includes("hits=(d?.results||[]).filter(x=>exactCandidate(row,x))"),'0.99.7 v121: resolução TMDB exata ausente.');
 must(!src.includes('rows[0]')&&!src.includes('results[0]'),'0.99.7 v121: fallback inseguro por primeiro resultado é proibido.');
 must(src.includes("if(key==='history'){el.remove();continue}"),'0.99.7 v121: remoção de Histórico da navegação ausente.');
-const v120=html.indexOf('<script src="/patch-v120-v0997-structural-authority.js"></script>');
-const v121=html.indexOf('<script src="/patch-v121-v0997-functional-polish.js"></script>');
+const v120=scriptPos('patch-v120-v0997-structural-authority.js');
+const v121=scriptPos('patch-v121-v0997-functional-polish.js');
 must(v120>=0&&v121>v120,'0.99.7: v121 deve ser emitida depois da v120.');
 must((html.match(/patch-v121-v0997-functional-polish\.js/g)||[]).length===1,'0.99.7: v121 duplicada no HTML final.');
 
