@@ -21,7 +21,8 @@ for(const marker of[
   'soccer','formula_1','mma','basketball','american_football','ice_hockey'
 ])must(source.includes(marker),`source missing ${marker}`);
 
-must(runtime.includes('eventLocalDay(e.starts_at)===localDay()'),'runtime today is not device-local');
+must(runtime.includes('eventLocalDay(x.starts_at)===localDay()'),'runtime today is not device-local');
+must(runtime.includes('groupBy(events,e=>eventLocalDay(e.starts_at))'),'calendar is not grouped by local day');
 must(!runtime.includes("toLocaleDateString('sv-SE')"),'runtime still uses locale hack for date key');
 must(runtime.includes("if(isSports()&&!$('#ct152-sports'))render()"),'observer root restoration guard missing');
 must(html.includes('<script src="/patch-v151-v0997-library-identity-reconcile.js?r151"></script><script src="/patch-v152-v0997-sports-hub.js?r152"></script>'),'r152 not immediately after r151');
