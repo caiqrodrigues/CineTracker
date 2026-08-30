@@ -1,4 +1,4 @@
-name: Build Android 0.99.7.3 r150 Sync
+name: Build Android 0.99.7.3 r151 Library Sync
 
 on:
   workflow_dispatch:
@@ -43,17 +43,20 @@ jobs:
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Build and verify frozen Web runtime
+      - name: Build and verify frozen Web r151 runtime
         shell: bash
         run: |
           set -euo pipefail
           npm run build
-          grep -q 'ct-web-0.99.7-r150b' dist/service-worker.js
+          grep -q 'ct-web-0.99.7-r151' dist/service-worker.js
           grep -q "window.__ct0997R150Loaded" dist/patch-v150-v0997-calendar-release-sync.js
           grep -q "window.__ct0997R150bLoaded" dist/patch-v150b-v0997-realtime-sync.js
+          grep -q "window.__ct0997R151Loaded" dist/patch-v151-v0997-library-identity-reconcile.js
           grep -q 'cinetracker_calendar_watchlist_v0997' dist/patch-v150-v0997-calendar-release-sync.js
           grep -q "event==='postgres_changes'" dist/patch-v150b-v0997-realtime-sync.js
           grep -q 'cinetracker:app-foreground' dist/patch-v150b-v0997-realtime-sync.js
+          grep -q 'ct-reconcile-library-user' dist/patch-v151-v0997-library-identity-reconcile.js
+          grep -q 'seen+watchlist+progress' dist/patch-v151-v0997-library-identity-reconcile.js
 
       - name: Prepare Android 0.99.7.3 embedded runtime
         shell: bash
@@ -67,12 +70,12 @@ jobs:
         shell: bash
         run: gradle assembleDebug --stacktrace
 
-      - name: Validate APK identity, r150 runtime and signature
+      - name: Validate APK identity, r151 runtime and signature
         shell: bash
         run: |
           set -euo pipefail
           APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
-          OUT="cinetracker-android-0.99.7.3-r150-sync-debug.apk"
+          OUT="cinetracker-android-0.99.7.3-r151-library-sync-debug.apk"
           cp "$APK" "$OUT"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
@@ -82,21 +85,25 @@ jobs:
           test "$PACKAGE" = "com.cinetracker.app"
           test "$VERSION" = "0.99.7.3"
           test "$VERSION_CODE" = "9973"
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'android-v0.99.7.3-r150-realtime'
-          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v09973-r150-realtime-sync'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'android-v0.99.7.3-r151-library-sync'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'v09973-r151-library-sync'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct0997R150Loaded'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct0997R150bLoaded'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q '__ct0997R151Loaded'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'cinetracker_calendar_watchlist_v0997'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'postgres_changes'
           unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'cinetracker:app-foreground'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'ct-reconcile-library-user'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Sincronizar pendentes'
+          unzip -p "$OUT" assets/hotfix5/index.html | grep -q 'Revalidar tudo'
           "$APKSIGNER" verify --print-certs "$OUT"
           sha256sum "$OUT" | tee android-v09973-sha256.txt
 
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.99.7.3-r150-sync-debug
+          name: cinetracker-android-0.99.7.3-r151-library-sync-debug
           path: |
-            cinetracker-android-0.99.7.3-r150-sync-debug.apk
+            cinetracker-android-0.99.7.3-r151-library-sync-debug.apk
             android-v09973-sha256.txt
           if-no-files-found: error
 
@@ -107,7 +114,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          NOTES='Android 0.99.7.3 sobre o Web r150/r150b congelado. Corrige episódios lançados no próprio dia, Calendário/Minha Watchlist, sincronização Supabase Realtime entre dispositivos, revalidação ao retornar ao app e preserva o layout Android existente.'
+          NOTES='Android 0.99.7.3 sobre o Web r151. Inclui lançamentos do dia e Calendário/Minha Watchlist da r150, Supabase Realtime e revalidação ao retornar ao app da r150b, e a reconciliação segura de todos os filmes/séries vistos e Watchlist da r151: identidade TMDB correta, busca por título/ano/tipo com proteção contra ambiguidade, recuperação de capas e bloqueio de IDs substitutos negativos.'
           gh release view android-v0.99.7.3 >/dev/null 2>&1 || gh release create android-v0.99.7.3 --title "CineTracker Android 0.99.7.3" --notes "$NOTES"
           gh release edit android-v0.99.7.3 --title "CineTracker Android 0.99.7.3" --notes "$NOTES"
-          gh release upload android-v0.99.7.3 cinetracker-android-0.99.7.3-r150-sync-debug.apk android-v09973-sha256.txt --clobber
+          gh release upload android-v0.99.7.3 cinetracker-android-0.99.7.3-r151-library-sync-debug.apk android-v09973-sha256.txt --clobber
