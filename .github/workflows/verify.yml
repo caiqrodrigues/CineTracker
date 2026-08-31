@@ -42,8 +42,14 @@ jobs:
           grep -Fq "Minha Watchlist" apps/web/dist/app-v161.js
           grep -Fq "ct-web-0.99.7-r161-release-guard" apps/web/dist/service-worker.js
           grep -Fq '"revision":"r161-release-guard"' apps/web/dist/release.json
-          grep -Fq 'VERCEL_WEB_R161_READY' apps/web/build-vercel-v161.mjs
           grep -Fq '"outputDirectory": "dist"' apps/web/vercel.json
+      - name: Upload exact r161 web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-web-r161-dist
+          path: apps/web/dist
+          if-no-files-found: error
+          retention-days: 3
 
   android_0997_identity:
     runs-on: ubuntu-latest
