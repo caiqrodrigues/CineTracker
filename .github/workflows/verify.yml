@@ -15,64 +15,58 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax check r169 source runtime
+      - name: Syntax check r170 source runtime
         run: |
           node --check apps/web/runtime-r169.js
-          node --check apps/web/build-r169.mjs
-      - name: Build exact CineTracker Web r169 artifact used by Vercel
+          node --check apps/web/runtime-r170.js
+          node --check apps/web/build-r170.mjs
+      - name: Build exact CineTracker Web r170 artifact used by Vercel
         working-directory: apps/web
         run: npm run build
-      - name: Assert single r169 authority and requested features
+      - name: Assert single r170 authority and requested fixes
         shell: bash
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v169.js
+          node --check apps/web/dist/app-v170.js
           test "$(grep -o '<script' apps/web/dist/index.html | wc -l)" -eq 1
           ! grep -Eq 'patch-v[0-9]|hotfix' apps/web/dist/index.html
           test "$(find apps/web/dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
-          for old in 162 163 164 165 166 167 168; do test ! -f "apps/web/dist/app-v${old}.js"; done
-          grep -Fq "single-clean-runtime" apps/web/dist/app-v169.js
-          grep -Fq "r169-detail-nav-discover-activity" apps/web/dist/app-v169.js
-          grep -Fq "detail-related-season-drawer-nav-fast-discover-activity" apps/web/dist/app-v169.js
-          grep -Fq "rich-movie-series-no-community" apps/web/dist/app-v169.js
-          grep -Fq "after-cast-watchlist-seen-excluded" apps/web/dist/app-v169.js
-          grep -Fq "drawer-plus-futuristic-rating-carousel" apps/web/dist/app-v169.js
-          grep -Fq "global-previous-page" apps/web/dist/app-v169.js
-          grep -Fq "instant-snapshot-preload" apps/web/dist/app-v169.js
-          grep -Fq "watchlist-fallback-compact-actions" apps/web/dist/app-v169.js
-          grep -Fq "assistido-por-dia-episodes-movies-sports-15d" apps/web/dist/app-v169.js
-          grep -Fq "polished-search-filter" apps/web/dist/app-v169.js
-          grep -Fq "Filmes Relacionados" apps/web/dist/app-v169.js
-          grep -Fq "Séries Relacionadas" apps/web/dist/app-v169.js
-          grep -Fq "data-ct169-related-watch" apps/web/dist/app-v169.js
-          grep -Fq "data-ct169-related-seen" apps/web/dist/app-v169.js
-          grep -Fq "Melhores e piores por temporada" apps/web/dist/app-v169.js
-          grep -Fq "Melhor · E" apps/web/dist/app-v169.js
-          grep -Fq "Pior · E" apps/web/dist/app-v169.js
-          grep -Fq "data-ct169-drawer-season" apps/web/dist/app-v169.js
-          grep -Fq "data-ct169-mark-episode" apps/web/dist/app-v169.js
-          grep -Fq "Assistido por dia" apps/web/dist/app-v169.js
-          grep -Fq "cinetracker_activity_by_day_v1" apps/web/dist/app-v169.js
-          grep -Fq "p_days:15" apps/web/dist/app-v169.js
-          grep -Fq "data-ct169-back" apps/web/dist/app-v169.js
-          grep -Fq "ct169Snapshot" apps/web/dist/app-v169.js
-          grep -Fq "FILTRO RÁPIDO" apps/web/dist/app-v169.js
-          grep -Fq "ct169-card-actions" apps/web/dist/app-v169.js
-          grep -Fq "ct166WatchlistPools=function" apps/web/dist/app-v169.js
-          grep -Fq "profile-resilient-discover-auth-sports-watched" apps/web/dist/app-v169.js
-          grep -Fq "cinetracker_sport_mark_watched_v1" apps/web/dist/app-v169.js
-          grep -Fq "ct169-home-skeleton" apps/web/dist/app-v169.js
-          grep -Fq '"revision":"r169-detail-nav-discover-activity"' apps/web/dist/release.json
+          for old in 162 163 164 165 166 167 168 169; do test ! -f "apps/web/dist/app-v${old}.js"; done
+          grep -Fq "single-clean-runtime" apps/web/dist/app-v170.js
+          grep -Fq "r170-reliability-actions-search" apps/web/dist/app-v170.js
+          grep -Fq "rpc-coalescing-timeout-retry-no-home-preload-stampede" apps/web/dist/app-v170.js
+          grep -Fq "media-kind-required-fixed" apps/web/dist/app-v170.js
+          grep -Fq "biography-split-filmography-favorite" apps/web/dist/app-v170.js
+          grep -Fq "functional-full-library-overlays" apps/web/dist/app-v170.js
+          grep -Fq "mixed-movie-tv-rich-metadata" apps/web/dist/app-v170.js
+          grep -Fq "media-liked-toggle" apps/web/dist/app-v170.js
+          grep -Fq "global-entity-search" apps/web/dist/app-v170.js
+          grep -Fq "ct170Inflight" apps/web/dist/app-v170.js
+          grep -Fq "attempt<3" apps/web/dist/app-v170.js
+          grep -Fq "media_kind:kind" apps/web/dist/app-v170.js
+          grep -Fq "Adicionar ator aos favoritos" apps/web/dist/app-v170.js
+          grep -Fq "<h2>Filmes</h2>" apps/web/dist/app-v170.js
+          grep -Fq "<h2>Séries</h2>" apps/web/dist/app-v170.js
+          grep -Fq "Títulos Relacionados" apps/web/dist/app-v170.js
+          grep -Fq "Filmes + Séries" apps/web/dist/app-v170.js
+          grep -Fq "Class. " apps/web/dist/app-v170.js
+          grep -Fq "TMDB " apps/web/dist/app-v170.js
+          grep -Fq "data-ct170-detail-favorite" apps/web/dist/app-v170.js
+          grep -Fq "data-ct170-person-favorite" apps/web/dist/app-v170.js
+          grep -Fq "ct170OpenProfileMore" apps/web/dist/app-v170.js
+          grep -Fq "ct-sports-search" apps/web/dist/app-v170.js
+          grep -Fq "ct169-home-skeleton" apps/web/dist/app-v170.js
+          grep -Fq "drawer-plus-futuristic-rating-carousel" apps/web/dist/app-v170.js
+          grep -Fq '"revision":"r170-reliability-actions-search"' apps/web/dist/release.json
           grep -Fq '"outputDirectory": "dist"' apps/web/vercel.json
-          grep -Fq "cinetracker_activity_by_day_v1" supabase/migrations/20260831223600_r169_activity_by_day.sql
-          grep -Fq "user_sport_watch_history" supabase/migrations/20260831223600_r169_activity_by_day.sql
-          grep -Fq "watch_history" supabase/migrations/20260831223600_r169_activity_by_day.sql
-          grep -Fq "generate_series" supabase/migrations/20260831223600_r169_activity_by_day.sql
-          ! grep -Fq "Sentimento da Comunidade" apps/web/runtime-r169.js
-      - name: Upload exact r169 web artifact
+          grep -Fq "cinetracker_media_kind_guard_v1" supabase/migrations/20260831233000_r170_media_kind_guard_and_hot_indexes.sql
+          grep -Fq "idx_watch_history_profile_item_media_r170" supabase/migrations/20260831233000_r170_media_kind_guard_and_hot_indexes.sql
+          grep -Fq "API_SPORTS_KEY" supabase/functions/ct-sports-search/index.ts
+          grep -Fq "searchteams.php" supabase/functions/ct-sports-search/index.ts
+      - name: Upload exact r170 web artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-web-r169-dist
+          name: cinetracker-web-r170-dist
           path: apps/web/dist
           if-no-files-found: error
           retention-days: 3
@@ -103,21 +97,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: Production domain serves r169
+      - name: Production domain serves r170
         shell: bash
         run: |
           set -euo pipefail
           for i in $(seq 1 60); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r169-detail-nav-discover-activity"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v169.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "const REVISION='r169-detail-nav-discover-activity';" <<<"$JS" && grep -Fq "drawer-plus-futuristic-rating-carousel" <<<"$JS" && grep -Fq "global-previous-page" <<<"$JS" && grep -Fq "assistido-por-dia-episodes-movies-sports-15d" <<<"$JS"; then
-                echo 'PRODUCTION_R169_OK rich-detail+back+discover+activity'
+            if grep -Fq '"revision":"r170-reliability-actions-search"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v170.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "const REVISION='r170-reliability-actions-search';" <<<"$JS" && grep -Fq "media-kind-required-fixed" <<<"$JS" && grep -Fq "mixed-movie-tv-rich-metadata" <<<"$JS" && grep -Fq "global-entity-search" <<<"$JS"; then
+                echo 'PRODUCTION_R170_OK reliability+watchlist+person+related+sports-search'
                 exit 0
               fi
             fi
             sleep 5
           done
-          echo 'Production domain did not serve r169-detail-nav-discover-activity in time.' >&2
+          echo 'Production domain did not serve r170-reliability-actions-search in time.' >&2
           exit 1
