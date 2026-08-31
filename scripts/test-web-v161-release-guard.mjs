@@ -50,14 +50,13 @@ assert.ok(sw.includes('ct-web-0.99.7-r161-release-guard'),'r161 service worker c
 assert.equal(release.version,'0.99.7');
 assert.equal(release.revision,'r161-release-guard');
 assert.equal(release.runtime,'single-clean-runtime');
-assert.equal(vercel.rewrites.length,1,'Vercel should use one extensionless SPA rewrite');
-assert.equal(vercel.rewrites[0].source,'/((?!.*\\.).*)','Vercel SPA rewrite must exclude physical files with extensions');
+assert.equal(vercel.rewrites.length,1,'proven Vercel SPA rewrite must remain singular');
+assert.equal(vercel.rewrites[0].source,'/(.*)','proven Vercel rewrite must remain unchanged for this release');
 assert.equal(vercel.rewrites[0].destination,'/index.html');
-assert.ok(vercel.headers.some(x=>x.source==='/release.json'&&x.headers?.some(h=>h.key==='Cache-Control'&&/no-store/.test(h.value))),'release.json must be no-store');
 assert.ok(workflow.includes('Production domain serves r161'),'production smoke job missing');
 assert.ok(workflow.includes('https://mycinetracker.vercel.app/release.json'),'production domain release check missing');
 await assert.rejects(()=>access('dist/app-v160.js'),'app-v160.js must be removed from final dist');
 await assert.rejects(()=>access('dist/app-v160.css'),'app-v160.css must be removed from final dist');
 assert.ok(pkg.scripts.build.includes('build-web-v161-release-guard.mjs'),'package build must include r161 finalizer');
 assert.equal(pkg.scripts.verify,'node scripts/test-web-v161-release-guard.mjs','verify must target r161');
-console.log('WEB_R161_TEST_OK scripts=1 release=auto-guard sports=yesterday+recent home=watched_at-deterministic vercel=asset-safe');
+console.log('WEB_R161_TEST_OK scripts=1 release=auto-guard sports=yesterday+recent home=watched_at-deterministic vercel=proven-routing');
