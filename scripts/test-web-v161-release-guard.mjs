@@ -50,8 +50,9 @@ assert.ok(sw.includes('ct-web-0.99.7-r161-release-guard'),'r161 service worker c
 assert.equal(release.version,'0.99.7');
 assert.equal(release.revision,'r161-release-guard');
 assert.equal(release.runtime,'single-clean-runtime');
-assert.ok(!vercel.rewrites.some(x=>x.source==='/(.*)'),'catch-all Vercel rewrite must be removed');
-for(const route of ['/home','/discover','/sports','/profile','/configs','/settings','/movie/:id','/series/:id','/tv/:id','/person/:id'])assert.ok(vercel.rewrites.some(x=>x.source===route&&x.destination==='/index.html'),`SPA rewrite missing: ${route}`);
+assert.equal(vercel.rewrites.length,1,'Vercel should use one extensionless SPA rewrite');
+assert.equal(vercel.rewrites[0].source,'/((?!.*\\.).*)','Vercel SPA rewrite must exclude physical files with extensions');
+assert.equal(vercel.rewrites[0].destination,'/index.html');
 assert.ok(vercel.headers.some(x=>x.source==='/release.json'&&x.headers?.some(h=>h.key==='Cache-Control'&&/no-store/.test(h.value))),'release.json must be no-store');
 assert.ok(workflow.includes('Production domain serves r161'),'production smoke job missing');
 assert.ok(workflow.includes('https://mycinetracker.vercel.app/release.json'),'production domain release check missing');
