@@ -61,6 +61,7 @@ jobs:
           grep -Fq "ct166WatchlistPools=function" apps/web/dist/app-v169.js
           grep -Fq "profile-resilient-discover-auth-sports-watched" apps/web/dist/app-v169.js
           grep -Fq "cinetracker_sport_mark_watched_v1" apps/web/dist/app-v169.js
+          grep -Fq "ct169-home-skeleton" apps/web/dist/app-v169.js
           grep -Fq '"revision":"r169-detail-nav-discover-activity"' apps/web/dist/release.json
           grep -Fq '"outputDirectory": "dist"' apps/web/vercel.json
           grep -Fq "cinetracker_activity_by_day_v1" supabase/migrations/20260831223600_r169_activity_by_day.sql
@@ -68,7 +69,6 @@ jobs:
           grep -Fq "watch_history" supabase/migrations/20260831223600_r169_activity_by_day.sql
           grep -Fq "generate_series" supabase/migrations/20260831223600_r169_activity_by_day.sql
           ! grep -Fq "Sentimento da Comunidade" apps/web/runtime-r169.js
-          ! grep -Fq "Sincronizando Home..." apps/web/runtime-r169.js
       - name: Upload exact r169 web artifact
         uses: actions/upload-artifact@v4
         with:
