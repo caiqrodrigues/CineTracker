@@ -15,23 +15,32 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build clean CineTracker Web 0.99.7
+      - name: Build clean CineTracker Web 0.99.7 r158
         run: npm run build
-      - name: Assert single Web authority
+      - name: Assert single Web authority and requested adjustments
         shell: bash
         run: |
           set -euo pipefail
-          node --check dist/app-v157.js
-          node scripts/test-web-v157-clean.mjs
+          node --check dist/app-v158.js
+          node scripts/test-web-v158-adjustments.mjs
           test "$(grep -o '<script' dist/index.html | wc -l)" -eq 1
           ! grep -Eq 'patch-v[0-9]|hotfix' dist/index.html
           test "$(find dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
-          grep -q "single-clean-runtime" dist/app-v157.js
-          grep -q "🏆 Esportes" dist/app-v157.js
-          grep -q "cinetracker_home_live_v0997_r3" dist/app-v157.js
-          grep -q "cinetracker_sports_payload_v1" dist/app-v157.js
-          grep -q "ct-sports-sync" dist/app-v157.js
-          grep -q "ct-web-0.99.7-r157-clean" dist/service-worker.js
+          grep -q "single-clean-runtime" dist/app-v158.js
+          grep -q "data-home-mark-episode" dist/app-v158.js
+          grep -q "cinetracker_mark_episode_v0994" dist/app-v158.js
+          grep -q "role para cima para revelar" dist/app-v158.js
+          grep -q "Indicação do dia" dist/app-v158.js
+          grep -q "100% novos" dist/app-v158.js
+          grep -q "Lançamentos" dist/app-v158.js
+          grep -q "Minha Watchlist" dist/app-v158.js
+          grep -q "discover-carousel" dist/app-v158.js
+          grep -q "data-add-favorite" dist/app-v158.js
+          grep -q "favorite_actors" dist/app-v158.js
+          grep -q "🏆 Esportes" dist/app-v158.js
+          grep -q "cinetracker_sports_payload_v1" dist/app-v158.js
+          grep -q "ct-sports-sync" dist/app-v158.js
+          grep -q "ct-web-0.99.7-r158-adjustments" dist/service-worker.js
 
   android_0997_identity:
     runs-on: ubuntu-latest

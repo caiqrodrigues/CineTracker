@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.99.7",
   "scripts": {
-    "build": "node scripts/build-web-v157-clean.mjs && node scripts/test-web-v157-clean.mjs",
-    "verify": "node scripts/test-web-v157-clean.mjs"
+    "build": "node scripts/build-web-v158-adjustments-v2.mjs && node scripts/test-web-v158-adjustments.mjs",
+    "verify": "node scripts/test-web-v158-adjustments.mjs"
   },
   "engines": {
     "node": ">=20"
