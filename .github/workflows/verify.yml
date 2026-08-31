@@ -6,40 +6,74 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   web_0997:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build clean CineTracker Web 0.99.7 r160
+      - name: Build exact CineTracker Web artifact used by Vercel
+        working-directory: apps/web
         run: npm run build
-      - name: Assert single Web authority, recent sports and Home history order
+      - name: Assert Vercel apps/web/dist is single r161 authority
         shell: bash
         run: |
           set -euo pipefail
-          node --check dist/app-v160.js
-          node scripts/test-web-v160-sports-recent-home-history.mjs
-          test "$(grep -o '<script' dist/index.html | wc -l)" -eq 1
-          ! grep -Eq 'patch-v[0-9]|hotfix' dist/index.html
-          test "$(find dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
-          test ! -f dist/app-v158.js
-          test ! -f dist/app-v159.js
-          grep -Fq "single-clean-runtime" dist/app-v160.js
-          grep -Fq "data-home-mark-episode" dist/app-v160.js
-          grep -Fq "history_episodes=[...episodes].reverse()" dist/app-v160.js
-          grep -Fq "history_movies=[...movies].reverse()" dist/app-v160.js
-          grep -Fq "Indicação do dia" dist/app-v160.js
-          grep -Fq "Minha Watchlist" dist/app-v160.js
-          grep -Fq "🏆 Esportes" dist/app-v160.js
-          grep -Fq "data-sport-watch" dist/app-v160.js
-          grep -Fq "Últimos 7 dias" dist/app-v160.js
-          grep -Fq "Tempo esportivo assistido" dist/app-v160.js
-          grep -Fq "date_from:shiftDays(-7),date_to:shiftDays(-1)" dist/app-v160.js
-          grep -Fq "ct-web-0.99.7-r160-sports-recent-history-order" dist/service-worker.js
+          node --check apps/web/dist/app-v161.js
+          test "$(grep -o '<script' apps/web/dist/index.html | wc -l)" -eq 1
+          ! grep -Eq 'patch-v[0-9]|hotfix' apps/web/dist/index.html
+          test "$(find apps/web/dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
+          test ! -f apps/web/dist/app-v158.js
+          test ! -f apps/web/dist/app-v159.js
+          test ! -f apps/web/dist/app-v160.js
+          grep -Fq "single-clean-runtime" apps/web/dist/app-v161.js
+          grep -Fq "r161-release-guard" apps/web/dist/app-v161.js
+          grep -Fq "release.json" apps/web/dist/app-v161.js
+          grep -Fq "b.dataset.sportsTab='yesterday'" apps/web/dist/app-v161.js
+          grep -Fq "Jogos de ontem" apps/web/dist/app-v161.js
+          grep -Fq "watchedAt161" apps/web/dist/app-v161.js
+          grep -Fq "Tempo esportivo assistido" apps/web/dist/app-v161.js
+          grep -Fq "data-sport-watch" apps/web/dist/app-v161.js
+          grep -Fq "data-home-mark-episode" apps/web/dist/app-v161.js
+          grep -Fq "Indicação do dia" apps/web/dist/app-v161.js
+          grep -Fq "Minha Watchlist" apps/web/dist/app-v161.js
+          grep -Fq "ct-web-0.99.7-r161-release-guard" apps/web/dist/service-worker.js
+          grep -Fq '"revision":"r161-release-guard"' apps/web/dist/release.json
+          grep -Fq '"outputDirectory": "dist"' apps/web/vercel.json
+      - name: Upload exact r161 web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-web-r161-dist
+          path: apps/web/dist
+          if-no-files-found: error
+          retention-days: 3
+      - name: Persist validated r161 artifact in branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/prebuilt-r161
+          mkdir -p apps/web/prebuilt-r161
+          cp apps/web/dist/app-v161.js apps/web/prebuilt-r161/
+          cp apps/web/dist/app-v161.css apps/web/prebuilt-r161/
+          cp apps/web/dist/index.html apps/web/prebuilt-r161/
+          cp apps/web/dist/service-worker.js apps/web/prebuilt-r161/
+          cp apps/web/dist/release.json apps/web/prebuilt-r161/
+          cp apps/web/dist/favicon.svg apps/web/prebuilt-r161/
+          git add apps/web/prebuilt-r161
+          if git diff --cached --quiet; then
+            echo 'PREBUILT_R161_ALREADY_CURRENT'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Web: persist validated r161 prebuilt artifact'
+          git push origin HEAD:${{ github.head_ref }}
 
   android_0997_identity:
     runs-on: ubuntu-latest
@@ -60,3 +94,28 @@ jobs:
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
           node --check scripts/prepare-android-v09973.mjs
           node --check scripts/test-android-v09973.mjs
+
+  production_smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [web_0997]
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Production domain serves r161
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
+            echo "attempt=$i body=$BODY"
+            if printf '%s' "$BODY" | grep -Fq '"revision":"r161-release-guard"'; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v161.js?ct=$(date +%s%N)" || true)"
+              if printf '%s' "$JS" | grep -Fq "const REVISION='r161-release-guard';"; then
+                echo 'PRODUCTION_R161_OK release+js'
+                exit 0
+              fi
+            fi
+            sleep 5
+          done
+          echo 'Production domain did not serve r161-release-guard in time.' >&2
+          exit 1
