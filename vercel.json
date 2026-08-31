@@ -3,12 +3,30 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    {"source": "/home", "destination": "/index.html"},
+    {"source": "/discover", "destination": "/index.html"},
+    {"source": "/sports", "destination": "/index.html"},
+    {"source": "/profile", "destination": "/index.html"},
+    {"source": "/configs", "destination": "/index.html"},
+    {"source": "/settings", "destination": "/index.html"},
+    {"source": "/movie/:id", "destination": "/index.html"},
+    {"source": "/series/:id", "destination": "/index.html"},
+    {"source": "/tv/:id", "destination": "/index.html"},
+    {"source": "/person/:id", "destination": "/index.html"}
   ],
   "headers": [
+    {
+      "source": "/index.html",
+      "headers": [
+        {"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"}
+      ]
+    },
+    {
+      "source": "/release.json",
+      "headers": [
+        {"key": "Cache-Control", "value": "no-cache, no-store, must-revalidate"}
+      ]
+    },
     {
       "source": "/(.*)\\.js",
       "headers": [
