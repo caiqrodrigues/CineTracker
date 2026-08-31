@@ -1,8 +1,9 @@
-import {readFile,writeFile,rm} from 'node:fs/promises';
+import {readFile,writeFile,rm,cp,mkdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 
 const root=resolve(process.cwd());
 const dist=resolve(root,'dist');
+const webDist=resolve(root,'apps/web/dist');
 let [html,js,css,sw]=await Promise.all([
   readFile(resolve(dist,'index.html'),'utf8'),
   readFile(resolve(dist,'app-v160.js'),'utf8'),
@@ -118,4 +119,19 @@ await Promise.all([
   writeFile(resolve(dist,'release.json'),JSON.stringify(release),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v160.js'),{force:true}),rm(resolve(dist,'app-v160.css'),{force:true})]);
-console.log('WEB_R161_BUILT runtime=single release=guard sports=yesterday+recent7 home=watched_at-ascending-hidden');
+
+// Vercel project root is apps/web and publishes apps/web/dist.
+// r158 historically populated this directory, while later finalizers only changed root /dist.
+// Always replace the Vercel artifact with the final single-runtime output.
+await rm(webDist,{recursive:true,force:true});
+await mkdir(webDist,{recursive:true});
+await cp(dist,webDist,{recursive:true,force:true});
+const [publishedHtml,publishedJs,publishedRelease]=await Promise.all([
+  readFile(resolve(webDist,'index.html'),'utf8'),
+  readFile(resolve(webDist,'app-v161.js'),'utf8'),
+  readFile(resolve(webDist,'release.json'),'utf8').then(JSON.parse)
+]);
+if(!publishedHtml.includes('/app-v161.js?ct=r161-release-guard'))throw new Error('apps/web/dist did not receive r161 HTML');
+if(!publishedJs.includes("const REVISION='r161-release-guard';"))throw new Error('apps/web/dist did not receive r161 JS');
+if(publishedRelease?.revision!=='r161-release-guard')throw new Error('apps/web/dist did not receive r161 release manifest');
+console.log('WEB_R161_BUILT runtime=single release=guard sports=yesterday+recent7 home=watched_at-ascending-hidden vercel=apps/web/dist');
