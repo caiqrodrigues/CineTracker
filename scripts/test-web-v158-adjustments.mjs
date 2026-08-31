@@ -41,6 +41,6 @@ assert.ok(css.includes('.discover-carousel'),'dedicated lateral Discover carouse
 assert.ok(css.includes('.home-viewport'),'hidden Home history viewport CSS missing');
 assert.ok(css.includes('.favorite-overlay'),'favorite add search UI CSS missing');
 assert.ok(sw.includes('ct-web-0.99.7-r158-adjustments'),'r158 service worker cache missing');
-assert.equal(pkg.scripts.build,'node scripts/build-web-v158-adjustments.mjs && node scripts/test-web-v158-adjustments.mjs','package build must use only r158 single-runtime pipeline');
+assert.equal(pkg.scripts.build,'node scripts/build-web-v158-adjustments-v2.mjs && node scripts/test-web-v158-adjustments.mjs','package build must use only r158 single-runtime pipeline');
 
 console.log('WEB_R158_TEST_OK scripts=1 patches=0 home=checks+hidden-history discover=foryou+carousel+watchlist-calendar profile=favorite-add sports=separate');
