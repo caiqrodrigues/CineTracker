@@ -21,11 +21,11 @@ assert.ok(!js.includes('MutationObserver'),'legacy observer authority leaked');
 for(const token of [
   "shiftDays(-7)+'T00:00:00'",
   "sportsState.tab==='recent'",
-  "dataSportsTab='recent'",
+  "dataset.sportsTab='recent'",
   'Últimos 7 dias',
   'Tempo assistido',
   'Tempo esportivo assistido',
-  'data-sports-time-banner',
+  "dataset.sportsTimeBanner='1'",
   "date_from:shiftDays(-7),date_to:shiftDays(-1)",
   'cinetracker_sport_mark_watched_v1',
   'data-sport-watch',
