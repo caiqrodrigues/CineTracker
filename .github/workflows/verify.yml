@@ -6,15 +6,13 @@ on:
   pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   web_0997:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - name: Build exact CineTracker Web artifact used by Vercel
@@ -52,28 +50,6 @@ jobs:
           path: apps/web/dist
           if-no-files-found: error
           retention-days: 3
-      - name: Persist validated r161 artifact in branch
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-        shell: bash
-        run: |
-          set -euo pipefail
-          rm -rf apps/web/prebuilt-r161
-          mkdir -p apps/web/prebuilt-r161
-          cp apps/web/dist/app-v161.js apps/web/prebuilt-r161/
-          cp apps/web/dist/app-v161.css apps/web/prebuilt-r161/
-          cp apps/web/dist/index.html apps/web/prebuilt-r161/
-          cp apps/web/dist/service-worker.js apps/web/prebuilt-r161/
-          cp apps/web/dist/release.json apps/web/prebuilt-r161/
-          cp apps/web/dist/favicon.svg apps/web/prebuilt-r161/
-          git add apps/web/prebuilt-r161
-          if git diff --cached --quiet; then
-            echo 'PREBUILT_R161_ALREADY_CURRENT'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'Web: persist validated r161 prebuilt artifact'
-          git push origin HEAD:${{ github.head_ref }}
 
   android_0997_identity:
     runs-on: ubuntu-latest
@@ -108,9 +84,9 @@ jobs:
           for i in $(seq 1 60); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if printf '%s' "$BODY" | grep -Fq '"revision":"r161-release-guard"'; then
+            if grep -Fq '"revision":"r161-release-guard"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v161.js?ct=$(date +%s%N)" || true)"
-              if printf '%s' "$JS" | grep -Fq "const REVISION='r161-release-guard';"; then
+              if grep -Fq "const REVISION='r161-release-guard';" <<<"$JS"; then
                 echo 'PRODUCTION_R161_OK release+js'
                 exit 0
               fi
