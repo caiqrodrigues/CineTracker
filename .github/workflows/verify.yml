@@ -28,18 +28,18 @@ jobs:
           test "$(find dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
           test ! -f dist/app-v158.js
           test ! -f dist/app-v159.js
-          grep -q "single-clean-runtime" dist/app-v160.js
-          grep -q "data-home-mark-episode" dist/app-v160.js
-          grep -q "history_episodes=\[...episodes\].reverse()" dist/app-v160.js
-          grep -q "history_movies=\[...movies\].reverse()" dist/app-v160.js
-          grep -q "Indicação do dia" dist/app-v160.js
-          grep -q "Minha Watchlist" dist/app-v160.js
-          grep -q "🏆 Esportes" dist/app-v160.js
-          grep -q "data-sport-watch" dist/app-v160.js
-          grep -q "Últimos 7 dias" dist/app-v160.js
-          grep -q "Tempo esportivo assistido" dist/app-v160.js
-          grep -q "date_from:shiftDays(-7),date_to:shiftDays(-1)" dist/app-v160.js
-          grep -q "ct-web-0.99.7-r160-sports-recent-history-order" dist/service-worker.js
+          grep -Fq "single-clean-runtime" dist/app-v160.js
+          grep -Fq "data-home-mark-episode" dist/app-v160.js
+          grep -Fq "history_episodes=[...episodes].reverse()" dist/app-v160.js
+          grep -Fq "history_movies=[...movies].reverse()" dist/app-v160.js
+          grep -Fq "Indicação do dia" dist/app-v160.js
+          grep -Fq "Minha Watchlist" dist/app-v160.js
+          grep -Fq "🏆 Esportes" dist/app-v160.js
+          grep -Fq "data-sport-watch" dist/app-v160.js
+          grep -Fq "Últimos 7 dias" dist/app-v160.js
+          grep -Fq "Tempo esportivo assistido" dist/app-v160.js
+          grep -Fq "date_from:shiftDays(-7),date_to:shiftDays(-1)" dist/app-v160.js
+          grep -Fq "ct-web-0.99.7-r160-sports-recent-history-order" dist/service-worker.js
 
   android_0997_identity:
     runs-on: ubuntu-latest
