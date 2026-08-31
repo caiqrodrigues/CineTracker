@@ -57,6 +57,6 @@ for(const token of [
 
 await assert.rejects(()=>access('dist/app-v158.js'),'app-v158.js must be removed from final dist');
 await assert.rejects(()=>access('dist/app-v158.css'),'app-v158.css must be removed from final dist');
-assert.equal(pkg.scripts.build,'node scripts/build-web-v158-adjustments-v2.mjs && node scripts/test-web-v158-adjustments.mjs && node scripts/build-web-v159-sports-watch.mjs && node scripts/test-web-v159-sports-watch.mjs','package build must produce and verify only final r159 runtime');
+assert.equal(pkg.scripts.build,'node scripts/build-web-v158-adjustments-v2.mjs && node scripts/build-web-v159-sports-watch.mjs && node scripts/test-web-v159-sports-watch.mjs','package build must produce and verify only final r159 runtime');
 
 console.log('WEB_R159_TEST_OK scripts=1 patches=0 sports=watched+history+time profile=total+sport-time r158=preserved');
