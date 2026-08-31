@@ -18,6 +18,8 @@ js=js.replace("const REVISION='r161-release-guard';","const REVISION='r162-home-
 const r162=String.raw`
 /* r162 effective Home + complete Pra voce + discover tab scroll + richer sports */
 window.__ctR162='effective-catchup-watchlist3-sports-v2';
+window.__ct162HistorySync='home+history+stats';
+window.__ct162SportsRecovery='forced-yesterday';
 
 homeSeriesRow158=function(x){
   const id=mediaTmdb(x),p=mediaPoster(x),seen=Math.max(0,Number(x.watched_episodes||0)),released=Math.max(0,Number(x.released_episodes||0)),total=Math.max(released,Number(x.total_episodes||0)),missing=Math.max(0,Number(x.history_missing_episodes??(released-seen))||0),caught=Boolean(x.is_caught_up);
@@ -28,10 +30,18 @@ homeSeriesRow158=function(x){
 
 const markNextEpisode161For162=markNextEpisode158;
 markNextEpisode158=async function(mediaId){
+  const markedAt=Date.now();
   await markNextEpisode161For162(mediaId);
-  profileCache=null;discoverCache.clear();
-  try{window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'home-watch-r162',media_id:Number(mediaId)}}))}catch{}
-  void rpc('cinetracker_profile_payload_v0997',{p_tz:tz()}).then(d=>{profileCache=d||null}).catch(()=>{});
+  const [home,profile]=await Promise.all([
+    rpc('cinetracker_home_live_v0997_r3',{p_today:localDay()}),
+    rpc('cinetracker_profile_payload_v0997',{p_tz:tz()})
+  ]);
+  homeCache=home||{};
+  profileCache=profile||{};
+  discoverCache.clear();
+  if(route()==='home')paintHome();
+  try{window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'home-watch-r162',media_id:Number(mediaId),synced:'home+history+stats',at:markedAt}}))}catch{}
+  return{home:homeCache,profile:profileCache};
 };
 
 function dashboardCard162(x){
@@ -84,12 +94,20 @@ paintSports=function(p=sportsCache||{}){
   if(badge)badge.textContent=sportsState.provider?.api_sports_configured?'API-Sports + ESPN fallback':'ESPN + TheSportsDB';
 };
 
+function sportsList162(){
+  const p=sportsCache||{},all=(p.sports||[]).map(s=>s.slug).filter(Boolean);
+  return all.length?all:['soccer','formula_1','mma','basketball','american_football','ice_hockey','baseball','tennis','volleyball','handball','rugby','motogp'];
+}
+function sportsYesterdayCount162(){
+  const day=shiftDays(-1);
+  return (sportsCache?.events||[]).filter(x=>new Date(x.starts_at).toLocaleDateString('sv-SE')===day).length;
+}
+
 syncSports=async function(force){
   if(sportsState.syncing)return;
   sportsState.syncing=true;paintSports();
   try{
-    const p=sportsCache||{},all=(p.sports||[]).map(s=>s.slug).filter(Boolean);
-    const sports=all.length?all:['soccer','formula_1','mma','basketball','american_football','ice_hockey','baseball'];
+    const sports=sportsList162();
     await Promise.all([
       edge('ct-sports-sync',{action:'sync',date_from:shiftDays(-1),date_to:shiftDays(-1),sports,force},90000),
       edge('ct-sports-sync',{action:'sync',date_from:localDay(),date_to:localDay(),sports,force},90000)
@@ -99,15 +117,33 @@ syncSports=async function(force){
   }catch(e){toast('Esportes: '+(e?.message||e))}finally{sportsState.syncing=false;paintSports()}
 };
 
+async function recoverYesterdaySports162(successKey){
+  if(sportsState.syncing)return;
+  sportsState.syncing=true;paintSports();
+  const before=sportsYesterdayCount162();
+  try{
+    await edge('ct-sports-sync',{action:'sync',date_from:shiftDays(-1),date_to:shiftDays(-1),sports:sportsList162(),force:true},90000);
+    sportsCache=null;
+    await sportsPayload(true);
+    const after=sportsYesterdayCount162();
+    if(after>before||after>=20)localStorage.setItem(successKey,'1');
+    if(route()==='sports')paintSports();
+  }catch(e){toast('Esportes ontem: '+(e?.message||e))}finally{
+    sportsState.syncing=false;
+    paintSports();
+  }
+}
+
 const renderSports161For162=renderSports;
 renderSports=async function(seq){
   await renderSports161For162(seq);
   if(seq!==navSeq||route()!=='sports')return;
-  const yesterday=shiftDays(-1),count=(sportsCache?.events||[]).filter(x=>new Date(x.starts_at).toLocaleDateString('sv-SE')===yesterday).length;
-  const key='ct:r162:sports:yesterday:'+yesterday;
-  if(count<12&&!sessionStorage.getItem(key)){
-    sessionStorage.setItem(key,'1');
-    void syncSports(false);
+  const yesterday=shiftDays(-1),count=sportsYesterdayCount162();
+  const successKey='ct:r162:sports:yesterday:ok:'+yesterday;
+  const runningKey=successKey+':running';
+  if(count<20&&localStorage.getItem(successKey)!=='1'&&!sessionStorage.getItem(runningKey)){
+    sessionStorage.setItem(runningKey,'1');
+    setTimeout(()=>void recoverYesterdaySports162(successKey).finally(()=>sessionStorage.removeItem(runningKey)),80);
   }
 };
 `;
@@ -131,4 +167,4 @@ await Promise.all([
   writeFile(resolve(dist,'release.json'),JSON.stringify(release),'utf8'),
   copyFile(resolve(src,'favicon.svg'),resolve(dist,'favicon.svg'))
 ]);
-console.log('WEB_R162_READY runtime=single home=effective-catchup discover=watchlist3+tab-scroll sports=espn-v2');
+console.log('WEB_R162_READY runtime=single home=effective-catchup+history-stats discover=watchlist3+tab-scroll sports=espn-v2+forced-yesterday');
