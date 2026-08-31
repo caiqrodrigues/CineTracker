@@ -15,14 +15,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build exact CineTracker Web r162 artifact used by Vercel
+      - name: Build exact CineTracker Web r163 artifact used by Vercel
         working-directory: apps/web
         run: npm run build
-      - name: Assert single r162 authority and requested behavior
+      - name: Assert single r163 authority and requested behavior
         shell: bash
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v162.js
+          node --check apps/web/dist/app-v163.js
           test "$(grep -o '<script' apps/web/dist/index.html | wc -l)" -eq 1
           ! grep -Eq 'patch-v[0-9]|hotfix' apps/web/dist/index.html
           test "$(find apps/web/dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
@@ -30,34 +30,40 @@ jobs:
           test ! -f apps/web/dist/app-v159.js
           test ! -f apps/web/dist/app-v160.js
           test ! -f apps/web/dist/app-v161.js
-          grep -Fq "single-clean-runtime" apps/web/dist/app-v162.js
-          grep -Fq "r162-home-discover-sports" apps/web/dist/app-v162.js
-          grep -Fq "history_missing_episodes" apps/web/dist/app-v162.js
-          grep -Fq "is_caught_up" apps/web/dist/app-v162.js
-          grep -Fq "home-watch-r162" apps/web/dist/app-v162.js
-          grep -Fq "home+history+stats" apps/web/dist/app-v162.js
-          grep -Fq "forced-yesterday" apps/web/dist/app-v162.js
-          grep -Fq "cinetracker_home_live_v0997_r3" apps/web/dist/app-v162.js
-          grep -Fq "cinetracker_profile_payload_v0997" apps/web/dist/app-v162.js
-          grep -Fq "Da sua Watchlist" apps/web/dist/app-v162.js
-          grep -Fq "watchlist_movie" apps/web/dist/app-v162.js
-          grep -Fq "watchlist_series" apps/web/dist/app-v162.js
-          grep -Fq "watchlist_anime" apps/web/dist/app-v162.js
-          grep -Fq "data-home-mark-episode" apps/web/dist/app-v162.js
-          grep -Fq "Minha Watchlist" apps/web/dist/app-v162.js
-          grep -Fq "sports:yesterday:ok" apps/web/dist/app-v162.js
-          grep -Fq "force:true" apps/web/dist/app-v162.js
-          grep -Fq "ESPN + TheSportsDB" apps/web/dist/app-v162.js
-          grep -Fq 'overflow-x:auto!important' apps/web/dist/app-v162.css
-          grep -Fq '"revision":"r162-home-discover-sports"' apps/web/dist/release.json
+          test ! -f apps/web/dist/app-v162.js
+          grep -Fq "single-clean-runtime" apps/web/dist/app-v163.js
+          grep -Fq "r163-instant-preload-stable-ui" apps/web/dist/app-v163.js
+          grep -Fq "history_missing_episodes" apps/web/dist/app-v163.js
+          grep -Fq "is_caught_up" apps/web/dist/app-v163.js
+          grep -Fq "home-watch-r162" apps/web/dist/app-v163.js
+          grep -Fq "home+history+stats" apps/web/dist/app-v163.js
+          grep -Fq "forced-yesterday" apps/web/dist/app-v163.js
+          grep -Fq "cinetracker_home_live_v0997_r3" apps/web/dist/app-v163.js
+          grep -Fq "cinetracker_profile_payload_v0997" apps/web/dist/app-v163.js
+          grep -Fq "Da sua Watchlist" apps/web/dist/app-v163.js
+          grep -Fq "watchlist_movie" apps/web/dist/app-v163.js
+          grep -Fq "watchlist_series" apps/web/dist/app-v163.js
+          grep -Fq "watchlist_anime" apps/web/dist/app-v163.js
+          grep -Fq "data-home-mark-episode" apps/web/dist/app-v163.js
+          grep -Fq "Minha Watchlist" apps/web/dist/app-v163.js
+          grep -Fq "sports:yesterday:ok" apps/web/dist/app-v163.js
+          grep -Fq "force:true" apps/web/dist/app-v163.js
+          grep -Fq "ESPN + TheSportsDB" apps/web/dist/app-v163.js
+          grep -Fq "ct163Preload" apps/web/dist/app-v163.js
+          grep -Fq "cinetracker:preload:r163:" apps/web/dist/app-v163.js
+          grep -Fq "extended-date-range" apps/web/dist/app-v163.js
+          grep -Fq "data-sports-search" apps/web/dist/app-v163.js
+          grep -Fq "data-sports-date" apps/web/dist/app-v163.js
+          grep -Fq 'overflow-x:auto' apps/web/dist/app-v163.css
+          grep -Fq '"revision":"r163-instant-preload-stable-ui"' apps/web/dist/release.json
           grep -Fq '"outputDirectory": "dist"' apps/web/vercel.json
           grep -Fq "cinetracker_latest_released_episode_v0997" supabase/migrations/20260831143000_v0997_r162_effective_catchup_home.sql
           grep -Fq "backfilled_from_episode_progress_r162" supabase/migrations/20260831152500_v0997_r162_manual_episode_history_reconcile.sql
           grep -Fq "cinetracker_episode_progress_history_guard_v0997" supabase/migrations/20260831153500_v0997_r162_episode_progress_history_guard.sql
-      - name: Upload exact r162 web artifact
+      - name: Upload exact r163 web artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-web-r162-dist
+          name: cinetracker-web-r163-dist
           path: apps/web/dist
           if-no-files-found: error
           retention-days: 3
@@ -88,21 +94,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: Production domain serves r162
+      - name: Production domain serves r163
         shell: bash
         run: |
           set -euo pipefail
           for i in $(seq 1 60); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r162-home-discover-sports"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v162.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "const REVISION='r162-home-discover-sports';" <<<"$JS" && grep -Fq "home+history+stats" <<<"$JS" && grep -Fq "forced-yesterday" <<<"$JS"; then
-                echo 'PRODUCTION_R162_OK release+js+history+sports'
+            if grep -Fq '"revision":"r163-instant-preload-stable-ui"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v163.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "r163-instant-preload-stable-ui" <<<"$JS" && grep -Fq "cinetracker:preload:r163:" <<<"$JS" && grep -Fq "extended-date-range" <<<"$JS"; then
+                echo 'PRODUCTION_R163_OK release+js+preload+sports'
                 exit 0
               fi
             fi
             sleep 5
           done
-          echo 'Production domain did not serve r162-home-discover-sports in time.' >&2
+          echo 'Production domain did not serve r163-instant-preload-stable-ui in time.' >&2
           exit 1
