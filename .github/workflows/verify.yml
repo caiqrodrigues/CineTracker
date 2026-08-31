@@ -15,32 +15,31 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build clean CineTracker Web 0.99.7 r159
+      - name: Build clean CineTracker Web 0.99.7 r160
         run: npm run build
-      - name: Assert single Web authority and sports watched time
+      - name: Assert single Web authority, recent sports and Home history order
         shell: bash
         run: |
           set -euo pipefail
-          node --check dist/app-v159.js
-          node scripts/test-web-v159-sports-watch.mjs
+          node --check dist/app-v160.js
+          node scripts/test-web-v160-sports-recent-home-history.mjs
           test "$(grep -o '<script' dist/index.html | wc -l)" -eq 1
           ! grep -Eq 'patch-v[0-9]|hotfix' dist/index.html
           test "$(find dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
           test ! -f dist/app-v158.js
-          grep -q "single-clean-runtime" dist/app-v159.js
-          grep -q "data-home-mark-episode" dist/app-v159.js
-          grep -q "Indicação do dia" dist/app-v159.js
-          grep -q "Minha Watchlist" dist/app-v159.js
-          grep -q "data-add-favorite" dist/app-v159.js
-          grep -q "🏆 Esportes" dist/app-v159.js
-          grep -q "cinetracker_sport_mark_watched_v1" dist/app-v159.js
-          grep -q "cinetracker_sport_stats_v1" dist/app-v159.js
-          grep -q "data-sport-watch" dist/app-v159.js
-          grep -q "Tempo em esportes" dist/app-v159.js
-          grep -q "Histórico assistido" dist/app-v159.js
-          grep -q "ct-sports-sync" dist/app-v159.js
-          grep -q "ct-web-0.99.7-r159-sports-watch" dist/service-worker.js
-          grep -q "user_sport_watch_history" supabase/migrations/20260831122500_sports_watch_history_stats_v1.sql
+          test ! -f dist/app-v159.js
+          grep -q "single-clean-runtime" dist/app-v160.js
+          grep -q "data-home-mark-episode" dist/app-v160.js
+          grep -q "history_episodes=\[...episodes\].reverse()" dist/app-v160.js
+          grep -q "history_movies=\[...movies\].reverse()" dist/app-v160.js
+          grep -q "Indicação do dia" dist/app-v160.js
+          grep -q "Minha Watchlist" dist/app-v160.js
+          grep -q "🏆 Esportes" dist/app-v160.js
+          grep -q "data-sport-watch" dist/app-v160.js
+          grep -q "Últimos 7 dias" dist/app-v160.js
+          grep -q "Tempo esportivo assistido" dist/app-v160.js
+          grep -q "date_from:shiftDays(-7),date_to:shiftDays(-1)" dist/app-v160.js
+          grep -q "ct-web-0.99.7-r160-sports-recent-history-order" dist/service-worker.js
 
   android_0997_identity:
     runs-on: ubuntu-latest
