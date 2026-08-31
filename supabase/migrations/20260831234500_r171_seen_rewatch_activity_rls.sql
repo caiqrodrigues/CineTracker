@@ -36,8 +36,8 @@ begin
 
   with seasons as (
     select
-      coalesce(nullif(s->>'season_number','')::int,0) season_number,
-      greatest(coalesce(nullif(s->>'episode_count','')::int,0),0) episode_count
+      coalesce(nullif(s->>'season_number','')::int,0) as season_number,
+      greatest(coalesce(nullif(s->>'episode_count','')::int,0),0) as episode_count
     from jsonb_array_elements(
       case when jsonb_typeof(v_media.raw_tmdb->'seasons')='array' then v_media.raw_tmdb->'seasons' else '[]'::jsonb end
     ) s
@@ -49,7 +49,7 @@ begin
         when v_last_s>0 and season_number=v_last_s then least(episode_count,greatest(v_last_e,0))
         when v_last_s>0 then 0
         else episode_count
-      end max_episode
+      end as max_episode
     from seasons
   ), eps as (
     select r.season_number,g.episode_number
@@ -83,55 +83,55 @@ security invoker
 set search_path=public
 as $$
 with cfg as (
-  select greatest(1,least(coalesce(p_days,15),60))::integer days,
-         (now() at time zone coalesce(nullif(p_tz,''),'America/Sao_Paulo'))::date today,
-         auth.uid() uid,
-         coalesce(nullif(p_tz,''),'America/Sao_Paulo') zone
-), days as (
-  select generate_series(c.today-(c.days-1),c.today,interval '1 day')::date day from cfg c
-), plays as (
-  select (pe.played_at at time zone c.zone)::date day,
-         count(*) filter(where pe.item_type='episode')::integer episodes,
-         count(*) filter(where pe.item_type='movie')::integer movies
+  select greatest(1,least(coalesce(p_days,15),60))::integer as day_count,
+         (now() at time zone coalesce(nullif(p_tz,''),'America/Sao_Paulo'))::date as today_date,
+         auth.uid() as uid,
+         coalesce(nullif(p_tz,''),'America/Sao_Paulo') as zone
+), date_days as (
+  select generate_series(c.today_date-(c.day_count-1),c.today_date,interval '1 day')::date as day_key from cfg c
+), play_counts as (
+  select (pe.played_at at time zone c.zone)::date as day_key,
+         count(*) filter(where pe.item_type='episode')::integer as episodes,
+         count(*) filter(where pe.item_type='movie')::integer as movies
   from public.watch_play_events_v0994 pe cross join cfg c
   where pe.profile_id=c.uid
-    and pe.played_at>=((c.today-(c.days-1))::timestamp at time zone c.zone)
-    and pe.played_at<((c.today+1)::timestamp at time zone c.zone)
+    and pe.played_at>=((c.today_date-(c.day_count-1))::timestamp at time zone c.zone)
+    and pe.played_at<((c.today_date+1)::timestamp at time zone c.zone)
   group by 1
-), legacy as (
-  select (wh.watched_at at time zone c.zone)::date day,
-         count(*) filter(where wh.item_type='episode')::integer episodes,
-         count(*) filter(where wh.item_type='movie')::integer movies
+), legacy_counts as (
+  select (wh.watched_at at time zone c.zone)::date as day_key,
+         count(*) filter(where wh.item_type='episode')::integer as episodes,
+         count(*) filter(where wh.item_type='movie')::integer as movies
   from public.watch_history wh cross join cfg c
   where wh.profile_id=c.uid
     and wh.item_type in ('episode','movie')
     and not (coalesce(wh.external_ids,'{}'::jsonb) ? 'v0994_managed')
-    and wh.watched_at>=((c.today-(c.days-1))::timestamp at time zone c.zone)
-    and wh.watched_at<((c.today+1)::timestamp at time zone c.zone)
+    and wh.watched_at>=((c.today_date-(c.day_count-1))::timestamp at time zone c.zone)
+    and wh.watched_at<((c.today_date+1)::timestamp at time zone c.zone)
   group by 1
 ), media_counts as (
-  select day,sum(episodes)::integer episodes,sum(movies)::integer movies
+  select x.day_key,sum(x.episodes)::integer as episodes,sum(x.movies)::integer as movies
   from (
-    select * from plays
+    select * from play_counts
     union all
-    select * from legacy
-  ) x group by day
+    select * from legacy_counts
+  ) x group by x.day_key
 ), sport_counts as (
-  select (sh.watched_at at time zone c.zone)::date day,count(*)::integer sports
+  select (sh.watched_at at time zone c.zone)::date as day_key,count(*)::integer as sports
   from public.user_sport_watch_history sh cross join cfg c
   where sh.profile_id=c.uid
-    and sh.watched_at>=((c.today-(c.days-1))::timestamp at time zone c.zone)
-    and sh.watched_at<((c.today+1)::timestamp at time zone c.zone)
+    and sh.watched_at>=((c.today_date-(c.day_count-1))::timestamp at time zone c.zone)
+    and sh.watched_at<((c.today_date+1)::timestamp at time zone c.zone)
   group by 1
 )
 select coalesce(jsonb_agg(jsonb_build_object(
-  'day',d.day,
+  'day',d.day_key,
   'episodes',coalesce(m.episodes,0),
   'movies',coalesce(m.movies,0),
   'sports',coalesce(s.sports,0),
   'count',coalesce(m.episodes,0)+coalesce(m.movies,0)+coalesce(s.sports,0)
-) order by d.day),'[]'::jsonb)
-from days d left join media_counts m using(day) left join sport_counts s using(day);
+) order by d.day_key),'[]'::jsonb)
+from date_days d left join media_counts m using(day_key) left join sport_counts s using(day_key);
 $$;
 
 grant execute on function public.cinetracker_activity_by_day_v1(integer,text) to authenticated;
@@ -146,44 +146,44 @@ security invoker
 set search_path=public
 as $$
 with cfg as (
-  select auth.uid() uid,coalesce(nullif(p_tz,''),'America/Sao_Paulo') zone,p_day day
+  select auth.uid() as uid,coalesce(nullif(p_tz,''),'America/Sao_Paulo') as zone,p_day as target_date
 ), media_plays as (
   select pe.id,pe.played_at as watched_at,pe.item_type,
          pe.season_number,pe.episode_number,pe.runtime_minutes,
-         m.id media_id,m.media_type,m.tmdb_id,m.title media_title,m.poster_path,
-         case when pe.item_type='episode' then coalesce(wh.title,'Episódio '||pe.episode_number::text) else m.title end title,
-         'play'::text source_kind
+         m.id as media_id,m.media_type,m.tmdb_id,m.title as media_title,m.poster_path,
+         case when pe.item_type='episode' then coalesce(wh.title,'Episódio '||pe.episode_number::text) else m.title end as title,
+         'play'::text as source_kind
   from public.watch_play_events_v0994 pe
   join public.media m on m.id=pe.media_id
   cross join cfg c
   left join public.watch_history wh on wh.profile_id=pe.profile_id and wh.media_id=pe.media_id and wh.item_type=pe.item_type
     and coalesce(wh.season_number,-1)=coalesce(pe.season_number,-1) and coalesce(wh.episode_number,-1)=coalesce(pe.episode_number,-1)
   where pe.profile_id=c.uid
-    and pe.played_at>=(c.day::timestamp at time zone c.zone)
-    and pe.played_at<((c.day+1)::timestamp at time zone c.zone)
-), legacy as (
+    and pe.played_at>=(c.target_date::timestamp at time zone c.zone)
+    and pe.played_at<((c.target_date+1)::timestamp at time zone c.zone)
+), legacy_rows as (
   select wh.id,wh.watched_at,wh.item_type,wh.season_number,wh.episode_number,
-         coalesce(m.runtime_minutes,0) runtime_minutes,m.id media_id,m.media_type,m.tmdb_id,m.title media_title,m.poster_path,
-         coalesce(wh.title,m.title) title,'legacy'::text source_kind
+         coalesce(m.runtime_minutes,0) as runtime_minutes,m.id as media_id,m.media_type,m.tmdb_id,m.title as media_title,m.poster_path,
+         coalesce(wh.title,m.title) as title,'legacy'::text as source_kind
   from public.watch_history wh
   join public.media m on m.id=wh.media_id
   cross join cfg c
   where wh.profile_id=c.uid and wh.item_type in ('episode','movie')
     and not (coalesce(wh.external_ids,'{}'::jsonb) ? 'v0994_managed')
-    and wh.watched_at>=(c.day::timestamp at time zone c.zone)
-    and wh.watched_at<((c.day+1)::timestamp at time zone c.zone)
-), sports as (
-  select sh.id,sh.watched_at,'sport'::text item_type,null::integer season_number,null::integer episode_number,
-         sh.duration_minutes runtime_minutes,null::bigint media_id,null::text media_type,null::integer tmdb_id,
-         se.title media_title,se.image_url poster_path,se.title title,'sport'::text source_kind
+    and wh.watched_at>=(c.target_date::timestamp at time zone c.zone)
+    and wh.watched_at<((c.target_date+1)::timestamp at time zone c.zone)
+), sport_rows as (
+  select sh.id,sh.watched_at,'sport'::text as item_type,null::integer as season_number,null::integer as episode_number,
+         sh.duration_minutes as runtime_minutes,null::bigint as media_id,null::text as media_type,null::integer as tmdb_id,
+         se.title as media_title,se.image_url as poster_path,se.title as title,'sport'::text as source_kind
   from public.user_sport_watch_history sh
   join public.sport_events se on se.id=sh.event_id
   cross join cfg c
   where sh.profile_id=c.uid
-    and sh.watched_at>=(c.day::timestamp at time zone c.zone)
-    and sh.watched_at<((c.day+1)::timestamp at time zone c.zone)
+    and sh.watched_at>=(c.target_date::timestamp at time zone c.zone)
+    and sh.watched_at<((c.target_date+1)::timestamp at time zone c.zone)
 ), all_rows as (
-  select * from media_plays union all select * from legacy union all select * from sports
+  select * from media_plays union all select * from legacy_rows union all select * from sport_rows
 )
 select coalesce(jsonb_agg(to_jsonb(a) order by a.watched_at desc),'[]'::jsonb) from all_rows a;
 $$;
