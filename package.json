@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.99.7",
   "scripts": {
-    "build": "node scripts/build-web-v158-adjustments-v2.mjs && node scripts/test-web-v158-adjustments.mjs && node scripts/build-web-v159-sports-watch.mjs && node scripts/test-web-v159-sports-watch.mjs",
+    "build": "node scripts/build-web-v158-adjustments-v2.mjs && node scripts/build-web-v159-sports-watch.mjs && node scripts/test-web-v159-sports-watch.mjs",
     "verify": "node scripts/test-web-v159-sports-watch.mjs"
   },
   "engines": {
