@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const [html,js,sw,pkg]=await Promise.all([readFile('dist/index.html','utf8'),readFile('dist/app-v157.js','utf8'),readFile('dist/service-worker.js','utf8'),readFile('package.json','utf8').then(JSON.parse)]);
+assert.equal((html.match(/<script\b/g)||[]).length,1,'final HTML must load exactly one application script');
+assert.ok(html.includes('/app-v157.js?ct=r157-clean'),'clean app runtime missing');
+assert.ok(!/patch-v\d|hotfix|r15[2-6]/i.test(html),'legacy/hotfix runtime leaked into final HTML');
+assert.equal((html.match(/Calendário/g)||[]).length,0,'Discover UI must be rendered by JS only, never duplicated in HTML');
+for(const token of ["['sports','🏆 Esportes']","if(p==='/sports')return'sports'","cinetracker_home_live_v0997_r3","cinetracker_profile_payload_v0997","cinetracker_calendar_watchlist_v0997","cinetracker_sports_payload_v1","ct-sports-sync","cinetracker_sport_toggle_favorite_v1","ct-reconcile-library-user","window.__ctRuntimeAuthority='single-clean-runtime'"])assert.ok(js.includes(token),`clean runtime missing ${token}`);
+for(const forbidden of ['MutationObserver','window.sbRpc=','__ct0994Navigate','__ct136Go','__ct143RenderPrimary','patch-v152','patch-v154','patch-v155'])assert.ok(!js.includes(forbidden),`legacy authority leaked: ${forbidden}`);
+assert.ok(sw.includes('ct-web-0.99.7-r157-clean'),'clean SW cache missing');
+assert.equal(pkg.scripts.build,'node scripts/build-web-v157-clean.mjs && node scripts/test-web-v157-clean.mjs','package build must use only clean pipeline');
+console.log('WEB_R157_CLEAN_TEST_OK scripts=1 patches=0 router=1 sports=active home=r3 sw=clean');

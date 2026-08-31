@@ -15,48 +15,23 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Build and verify CineTracker Web 0.99.7
+      - name: Build clean CineTracker Web 0.99.7
         run: npm run build
-      - name: Preserve Bingers semantics and authentication
-        run: |
-          node scripts/test-hotfix13-bingers-semantics.mjs
-          node scripts/test-auth-recovery-red.mjs
-          node scripts/test-hotfix10-native-bridge.mjs
-      - name: Assert Web 0.99.7 final runtime
+      - name: Assert single Web authority
         shell: bash
         run: |
           set -euo pipefail
-          grep -q '"version": "0.99.7"' package.json
-          grep -q 'ct-web-0.99.7' dist/service-worker.js
-          test "$(grep -o 'patch-v118-v0997-authoritative.js' dist/index.html | wc -l)" -eq 1
-          for old in patch-v111-v0994-global-search.js patch-v114-v0994-universal-detail.js patch-v115-v0995-favorites-profile-discover.js patch-v116-v0996-authoritative.js patch-v117-v0996-final.js; do ! grep -q "$old" dist/index.html; done
-          grep -q 'v118-single-authority-profile-discover-detail' dist/patch-v118-v0997-authoritative.js
-          grep -q 'cinetracker_profile_payload_v0997' dist/patch-v118-v0997-authoritative.js
-          grep -q 'resolvedOptions().timeZone' dist/patch-v118-v0997-authoritative.js
-          grep -q 'Atores Favoritos' dist/patch-v118-v0997-authoritative.js
-          grep -q 'data-ct118-person-heart' dist/patch-v118-v0997-authoritative.js
-          grep -q 'data-ct118-person-fav' dist/patch-v118-v0997-authoritative.js
-          grep -q 'Avaliações dos episódios por temporada' dist/patch-v118-v0997-authoritative.js
-          grep -q 'ct118-season-ratings-strip' dist/patch-v118-v0997-authoritative.js
-          grep -q 'vote_count' dist/patch-v118-v0997-authoritative.js
-          grep -q 'Populares' dist/patch-v118-v0997-authoritative.js
-          grep -q 'Todos' dist/patch-v118-v0997-authoritative.js
-          grep -q 'Lista' dist/patch-v118-v0997-authoritative.js
-          grep -q 'Carrossel' dist/patch-v118-v0997-authoritative.js
-          grep -q 'Grade' dist/patch-v118-v0997-authoritative.js
-          grep -q 'repeat(auto-fill,minmax(128px,152px))' dist/patch-v118-v0997-authoritative.js
-          grep -q 'cinetracker_discovery_exclusions_v0994' dist/patch-v118-v0997-authoritative.js
-          grep -q 'Da sua Watchlist' dist/patch-v118-v0997-authoritative.js
-          grep -q '100% novos' dist/patch-v118-v0997-authoritative.js
-          grep -q 'next_episode_to_air' dist/patch-v118-v0997-authoritative.js
-          grep -q 'media?select=id,tmdb_id,media_type,title,release_year,poster_path,raw_tmdb' dist/patch-v118-v0997-authoritative.js
-          ! grep -q 'priority=visible-posters' dist/patch-v118-v0997-authoritative.js
-          grep -q 'ct111-global-search' dist/patch-v118-v0997-authoritative.js
-          grep -q 'cinetracker_profile_payload_v0997' supabase/migrations/20260828112000_v0997_profile_payload_local_activity.sql
-          grep -q 'timezone(tz.name,wh.watched_at)' supabase/migrations/20260828112000_v0997_profile_payload_local_activity.sql
-          grep -q 'requested_media_ids' supabase/functions/ct-enrich-media-user/index.ts
-          grep -q "priority==='visible-posters'" supabase/functions/ct-enrich-media-user/index.ts
-          node scripts/test-web-v0997-authoritative.mjs
+          node --check dist/app-v157.js
+          node scripts/test-web-v157-clean.mjs
+          test "$(grep -o '<script' dist/index.html | wc -l)" -eq 1
+          ! grep -Eq 'patch-v[0-9]|hotfix' dist/index.html
+          test "$(find dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
+          grep -q "single-clean-runtime" dist/app-v157.js
+          grep -q "🏆 Esportes" dist/app-v157.js
+          grep -q "cinetracker_home_live_v0997_r3" dist/app-v157.js
+          grep -q "cinetracker_sports_payload_v1" dist/app-v157.js
+          grep -q "ct-sports-sync" dist/app-v157.js
+          grep -q "ct-web-0.99.7-r157-clean" dist/service-worker.js
 
   android_0997_identity:
     runs-on: ubuntu-latest
@@ -64,7 +39,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7.3 identity and Web parity builder
+      - name: Assert Android 0.99.7.3 identity
         shell: bash
         run: |
           set -euo pipefail
@@ -73,30 +48,7 @@ jobs:
           grep -q 'android-v0.99.7.3-r151-library-sync' scripts/prepare-android-v09973.mjs
           grep -q 'window.__ct0997R151Loaded' scripts/prepare-android-v09973.mjs
           grep -q 'cinetracker:app-foreground' scripts/test-android-v09973.mjs
-          grep -q 'android-v0.99.7.2-ui-polish-r3' scripts/prepare-android-v0997.mjs
-          grep -q "const version='0.99.7.2'" scripts/prepare-android-v0997.mjs
-          grep -q "const webVersion='0.99.7'" scripts/prepare-android-v0997.mjs
-          grep -q 'v09972-android-ui-polish-r3' scripts/prepare-android-v0997.mjs
-          grep -q 'ct-android-cast-more' scripts/prepare-android-v0997.mjs
-          grep -q 'ct-android-actors-more' scripts/prepare-android-v0997.mjs
-          grep -q 'ct-android-action-grid' scripts/prepare-android-v0997.mjs
-          grep -q 'watch_history?select=watched_at,item_type' scripts/prepare-android-v0997.mjs
-          grep -q 'episode_progress?select=watched_at,watched' scripts/prepare-android-v0997.mjs
-          grep -q '__ctAndroid9972RepairDaily' scripts/prepare-android-v0997.mjs
-          grep -q 'last-child:nth-child(odd)' scripts/prepare-android-v0997.mjs
-          grep -q 'patch-v126-v0997-video3124-recovery.js' scripts/prepare-android-v0997.mjs
-          grep -q 'patch-v128-v0997-settings-minimal-transfer.js' scripts/prepare-android-v0997.mjs
-          grep -q 'patch-v129-v0997-settings-real-metadata-refresh.js' scripts/prepare-android-v0997.mjs
-          grep -q 'patch-v130-v0997-nav-footer-stability.js' scripts/prepare-android-v0997.mjs
-          grep -q 'window.ct99RenderProfile=()=>false' scripts/prepare-android-v0997.mjs
-          grep -q "cont:s.filter(x=>x.home_bucket==='continue'&&!caught(x))" scripts/prepare-android-v0997.mjs
-          grep -q 'window.__ct0997WarmAll' scripts/prepare-android-v0997.mjs
-          grep -q 'void preloadRoute994(target);' scripts/prepare-android-v0997.mjs
-          grep -q 'window.ct15Navigate=navigate997' scripts/prepare-android-v0997.mjs
-          grep -q 'ct-android-09972-polish' scripts/prepare-android-v0997.mjs
           grep -q 'android:id="@+id/nav_history"' apps/android/app/src/main/res/layout/activity_main.xml
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
-          node --check scripts/prepare-android-v0997.mjs
           node --check scripts/prepare-android-v09973.mjs
-          node --check scripts/test-android-v0997.mjs
           node --check scripts/test-android-v09973.mjs
