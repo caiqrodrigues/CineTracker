@@ -6,7 +6,7 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   web_0997:
@@ -50,6 +50,28 @@ jobs:
           path: apps/web/dist
           if-no-files-found: error
           retention-days: 3
+      - name: Persist validated r161 artifact in branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/prebuilt-r161
+          mkdir -p apps/web/prebuilt-r161
+          cp apps/web/dist/app-v161.js apps/web/prebuilt-r161/
+          cp apps/web/dist/app-v161.css apps/web/prebuilt-r161/
+          cp apps/web/dist/index.html apps/web/prebuilt-r161/
+          cp apps/web/dist/service-worker.js apps/web/prebuilt-r161/
+          cp apps/web/dist/release.json apps/web/prebuilt-r161/
+          cp apps/web/dist/favicon.svg apps/web/prebuilt-r161/
+          git add apps/web/prebuilt-r161
+          if git diff --cached --quiet; then
+            echo 'PREBUILT_R161_ALREADY_CURRENT'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Web: persist validated r161 prebuilt artifact'
+          git push origin HEAD:${{ github.head_ref }}
 
   android_0997_identity:
     runs-on: ubuntu-latest
