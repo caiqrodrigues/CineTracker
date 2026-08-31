@@ -35,18 +35,25 @@ jobs:
           grep -Fq "history_missing_episodes" apps/web/dist/app-v162.js
           grep -Fq "is_caught_up" apps/web/dist/app-v162.js
           grep -Fq "home-watch-r162" apps/web/dist/app-v162.js
+          grep -Fq "home+history+stats" apps/web/dist/app-v162.js
+          grep -Fq "forced-yesterday" apps/web/dist/app-v162.js
+          grep -Fq "cinetracker_home_live_v0997_r3" apps/web/dist/app-v162.js
+          grep -Fq "cinetracker_profile_payload_v0997" apps/web/dist/app-v162.js
           grep -Fq "Da sua Watchlist" apps/web/dist/app-v162.js
           grep -Fq "watchlist_movie" apps/web/dist/app-v162.js
           grep -Fq "watchlist_series" apps/web/dist/app-v162.js
           grep -Fq "watchlist_anime" apps/web/dist/app-v162.js
           grep -Fq "data-home-mark-episode" apps/web/dist/app-v162.js
           grep -Fq "Minha Watchlist" apps/web/dist/app-v162.js
-          grep -Fq "sports:yesterday" apps/web/dist/app-v162.js
+          grep -Fq "sports:yesterday:ok" apps/web/dist/app-v162.js
+          grep -Fq "force:true" apps/web/dist/app-v162.js
           grep -Fq "ESPN + TheSportsDB" apps/web/dist/app-v162.js
           grep -Fq 'overflow-x:auto!important' apps/web/dist/app-v162.css
           grep -Fq '"revision":"r162-home-discover-sports"' apps/web/dist/release.json
           grep -Fq '"outputDirectory": "dist"' apps/web/vercel.json
-          grep -Fq "sports-hub-v2" supabase/functions/ct-sports-sync/index.ts
+          grep -Fq "cinetracker_latest_released_episode_v0997" supabase/migrations/20260831143000_v0997_r162_effective_catchup_home.sql
+          grep -Fq "backfilled_from_episode_progress_r162" supabase/migrations/20260831152500_v0997_r162_manual_episode_history_reconcile.sql
+          grep -Fq "cinetracker_episode_progress_history_guard_v0997" supabase/migrations/20260831153500_v0997_r162_episode_progress_history_guard.sql
       - name: Upload exact r162 web artifact
         uses: actions/upload-artifact@v4
         with:
@@ -90,8 +97,8 @@ jobs:
             echo "attempt=$i body=$BODY"
             if grep -Fq '"revision":"r162-home-discover-sports"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v162.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "const REVISION='r162-home-discover-sports';" <<<"$JS"; then
-                echo 'PRODUCTION_R162_OK release+js'
+              if grep -Fq "const REVISION='r162-home-discover-sports';" <<<"$JS" && grep -Fq "home+history+stats" <<<"$JS" && grep -Fq "forced-yesterday" <<<"$JS"; then
+                echo 'PRODUCTION_R162_OK release+js+history+sports'
                 exit 0
               fi
             fi
