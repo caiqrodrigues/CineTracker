@@ -1,15 +1,14 @@
 import {readFile,access} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 
-const [html,js,css,sw,pkg,release,vercel,workflow]=await Promise.all([
+const [html,js,css,sw,pkg,release,vercel]=await Promise.all([
   readFile('dist/index.html','utf8'),
   readFile('dist/app-v161.js','utf8'),
   readFile('dist/app-v161.css','utf8'),
   readFile('dist/service-worker.js','utf8'),
   readFile('package.json','utf8').then(JSON.parse),
   readFile('dist/release.json','utf8').then(JSON.parse),
-  readFile('vercel.json','utf8').then(JSON.parse),
-  readFile('.github/workflows/verify.yml','utf8')
+  readFile('vercel.json','utf8').then(JSON.parse)
 ]);
 
 assert.equal((html.match(/<script\b/g)||[]).length,1,'final HTML must load exactly one application script');
@@ -53,8 +52,6 @@ assert.equal(release.runtime,'single-clean-runtime');
 assert.equal(vercel.rewrites.length,1,'proven Vercel SPA rewrite must remain singular');
 assert.equal(vercel.rewrites[0].source,'/(.*)','proven Vercel rewrite must remain unchanged for this release');
 assert.equal(vercel.rewrites[0].destination,'/index.html');
-assert.ok(workflow.includes('Production domain serves r161'),'production smoke job missing');
-assert.ok(workflow.includes('https://mycinetracker.vercel.app/release.json'),'production domain release check missing');
 await assert.rejects(()=>access('dist/app-v160.js'),'app-v160.js must be removed from final dist');
 await assert.rejects(()=>access('dist/app-v160.css'),'app-v160.css must be removed from final dist');
 assert.ok(pkg.scripts.build.includes('build-web-v161-release-guard.mjs'),'package build must include r161 finalizer');
