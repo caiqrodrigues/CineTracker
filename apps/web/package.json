@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.99.7",
   "scripts": {
-    "build": "cd ../.. && npm run build",
-    "verify": "cd ../.. && npm run verify"
+    "build": "node build-vercel-v161.mjs",
+    "verify": "node build-vercel-v161.mjs"
   },
   "engines": {
     "node": ">=20"
