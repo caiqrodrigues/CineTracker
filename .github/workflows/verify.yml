@@ -56,7 +56,7 @@ jobs:
           grep -Fq "profile_id:user?.id" apps/web/dist/app-v171.js
           grep -Fq "media?select=id,media_type&media_type=eq.tv" apps/web/dist/app-v171.js
           ! grep -Fq "media?select=id&media_type&media_type=eq.tv" apps/web/dist/app-v171.js
-          grep -Fq "r170-reliability-actions-search" apps/web/dist/app-v171.js
+          grep -Fq "window.__ctR170='reliability-actions-person-mixed-related-sports-search'" apps/web/dist/app-v171.js
           grep -Fq "media-kind-required-fixed" apps/web/dist/app-v171.js
           grep -Fq "mixed-movie-tv-rich-metadata" apps/web/dist/app-v171.js
           grep -Fq "global-entity-search" apps/web/dist/app-v171.js
