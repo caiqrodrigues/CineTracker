@@ -1,5 +1,5 @@
 -- CineTracker Sports watched history + time statistics.
--- Sports stays independent from movie/tv consumption, but can contribute to the general total when explicitly marked watched.
+-- Sports stays independent from movie/tv consumption, but contributes to the general total only when explicitly marked watched.
 
 create table if not exists public.user_sport_watch_history (
   id bigint generated always as identity primary key,
@@ -63,6 +63,34 @@ as $$
 $$;
 grant execute on function public.cinetracker_sport_default_duration_v1(text) to authenticated;
 
+create or replace function public.cinetracker_sport_stats_v1()
+returns jsonb
+language sql
+stable
+security invoker
+set search_path=public
+as $$
+with h as (
+  select wh.event_id,wh.watched_at,wh.duration_minutes,ev.sport_slug
+  from public.user_sport_watch_history wh
+  join public.sport_events ev on ev.id=wh.event_id
+  where wh.profile_id=auth.uid()
+), by_sport as (
+  select h.sport_slug,count(*)::bigint as watched_events,coalesce(sum(h.duration_minutes),0)::bigint as minutes
+  from h group by h.sport_slug
+)
+select jsonb_build_object(
+  'watched_events',coalesce((select count(*) from h),0),
+  'sports_minutes',coalesce((select sum(duration_minutes) from h),0),
+  'by_sport',coalesce((select jsonb_agg(jsonb_build_object(
+    'sport_slug',b.sport_slug,
+    'watched_events',b.watched_events,
+    'minutes',b.minutes
+  ) order by b.minutes desc,b.sport_slug) from by_sport b),'[]'::jsonb)
+);
+$$;
+grant execute on function public.cinetracker_sport_stats_v1() to authenticated;
+
 create or replace function public.cinetracker_sport_mark_watched_v1(
   p_event_id bigint,
   p_watched boolean default true,
@@ -84,8 +112,7 @@ begin
   if not found then raise exception 'SPORT_EVENT_NOT_FOUND'; end if;
 
   if not coalesce(p_watched,true) then
-    delete from public.user_sport_watch_history
-    where profile_id=v_profile and event_id=p_event_id;
+    delete from public.user_sport_watch_history where profile_id=v_profile and event_id=p_event_id;
     update public.profiles set updated_at=now() where id=v_profile;
     return jsonb_build_object(
       'event_id',p_event_id,
@@ -121,78 +148,6 @@ begin
   );
 end;
 $$;
-
-create or replace function public.cinetracker_sport_stats_v1()
-returns jsonb
-language sql
-stable
-security invoker
-set search_path=public
-as $$
-with h as (
-  select wh.event_id,wh.watched_at,wh.duration_minutes,ev.sport_slug
-  from public.user_sport_watch_history wh
-  join public.sport_events ev on ev.id=wh.event_id
-  where wh.profile_id=auth.uid()
-), by_sport as (
-  select h.sport_slug,count(*)::bigint as watched_events,coalesce(sum(h.duration_minutes),0)::bigint as minutes
-  from h group by h.sport_slug
-)
-select jsonb_build_object(
-  'watched_events',coalesce((select count(*) from h),0),
-  'sports_minutes',coalesce((select sum(duration_minutes) from h),0),
-  'by_sport',coalesce((select jsonb_agg(jsonb_build_object(
-    'sport_slug',b.sport_slug,
-    'watched_events',b.watched_events,
-    'minutes',b.minutes
-  ) order by b.minutes desc,b.sport_slug) from by_sport b),'[]'::jsonb)
-);
-$$;
-grant execute on function public.cinetracker_sport_stats_v1() to authenticated;
-
--- Recreate mark function after stats RPC exists (Postgres resolves referenced function bodies at CREATE time).
-create or replace function public.cinetracker_sport_mark_watched_v1(
-  p_event_id bigint,
-  p_watched boolean default true,
-  p_duration_minutes integer default null,
-  p_watched_at timestamptz default now()
-)
-returns jsonb
-language plpgsql
-security invoker
-set search_path=public
-as $$
-declare
-  v_profile uuid:=auth.uid();
-  v_event public.sport_events%rowtype;
-  v_duration integer;
-begin
-  if v_profile is null then raise exception 'AUTH_REQUIRED'; end if;
-  select * into v_event from public.sport_events where id=p_event_id;
-  if not found then raise exception 'SPORT_EVENT_NOT_FOUND'; end if;
-
-  if not coalesce(p_watched,true) then
-    delete from public.user_sport_watch_history where profile_id=v_profile and event_id=p_event_id;
-    update public.profiles set updated_at=now() where id=v_profile;
-    return jsonb_build_object('event_id',p_event_id,'is_watched',false,'duration_minutes',0,'sports_stats',public.cinetracker_sport_stats_v1());
-  end if;
-
-  v_duration:=case
-    when coalesce(p_duration_minutes,0)>0 then least(1440,greatest(1,p_duration_minutes))
-    when v_event.ends_at is not null and v_event.ends_at>v_event.starts_at
-      and extract(epoch from (v_event.ends_at-v_event.starts_at))/60 between 1 and 1440
-      then round(extract(epoch from (v_event.ends_at-v_event.starts_at))/60)::integer
-    else public.cinetracker_sport_default_duration_v1(v_event.sport_slug)
-  end;
-
-  insert into public.user_sport_watch_history(profile_id,event_id,watched_at,duration_minutes,source,updated_at)
-  values(v_profile,p_event_id,coalesce(p_watched_at,now()),v_duration,'manual',now())
-  on conflict(profile_id,event_id) do update
-    set watched_at=excluded.watched_at,duration_minutes=excluded.duration_minutes,source='manual',updated_at=now();
-  update public.profiles set updated_at=now() where id=v_profile;
-  return jsonb_build_object('event_id',p_event_id,'is_watched',true,'duration_minutes',v_duration,'watched_at',coalesce(p_watched_at,now()),'sports_stats',public.cinetracker_sport_stats_v1());
-end;
-$$;
 grant execute on function public.cinetracker_sport_mark_watched_v1(bigint,boolean,integer,timestamptz) to authenticated;
 
 create or replace function public.cinetracker_sports_payload_v1(
@@ -219,7 +174,9 @@ begin
         h.id as home_id,h.name as home_name,h.logo_url as home_logo,
         a.id as away_id,a.name as away_name,a.logo_url as away_logo,
         exists(select 1 from public.user_sport_favorites f where f.profile_id=auth.uid() and f.entity_id=any(array[ev.competition_entity_id,ev.home_entity_id,ev.away_entity_id])) as has_favorite,
-        (wh.id is not null) as is_watched,wh.watched_at as sport_watched_at,wh.duration_minutes as watched_duration_minutes
+        (wh.id is not null) as is_watched,
+        wh.watched_at as sport_watched_at,
+        wh.duration_minutes as watched_duration_minutes
       from public.sport_events ev
       left join public.sport_entities c on c.id=ev.competition_entity_id
       left join public.sport_entities h on h.id=ev.home_entity_id
@@ -233,7 +190,9 @@ begin
         h.id as home_id,h.name as home_name,h.logo_url as home_logo,
         a.id as away_id,a.name as away_name,a.logo_url as away_logo,
         exists(select 1 from public.user_sport_favorites f where f.profile_id=auth.uid() and f.entity_id=any(array[ev.competition_entity_id,ev.home_entity_id,ev.away_entity_id])) as has_favorite,
-        true as is_watched,wh.watched_at as sport_watched_at,wh.duration_minutes as watched_duration_minutes
+        true as is_watched,
+        wh.watched_at as sport_watched_at,
+        wh.duration_minutes as watched_duration_minutes
       from public.user_sport_watch_history wh
       join public.sport_events ev on ev.id=wh.event_id
       left join public.sport_entities c on c.id=ev.competition_entity_id
