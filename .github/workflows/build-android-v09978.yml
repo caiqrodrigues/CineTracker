@@ -2,17 +2,9 @@ name: Build Android 0.99.7.8 — r174 Instant Motion
 
 on:
   workflow_dispatch:
-  pull_request:
-  push:
-    branches: [main]
 
 permissions:
-  contents: write
-  statuses: write
-
-concurrency:
-  group: cinetracker-android-v09978-${{ github.ref }}
-  cancel-in-progress: true
+  contents: read
 
 jobs:
   android_v09978:
@@ -24,75 +16,10 @@ jobs:
         with: { node-version: '20' }
       - uses: actions/setup-java@v5
         with: { distribution: temurin, java-version: '17' }
-      - name: Restore CineTracker signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.cinetracker/cinetracker.keystore
-          key: cinetracker-signing-v2
-      - name: Initialize signing key when cache is empty
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p ~/.cinetracker ~/.android
-          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
-            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
-          fi
-          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Prepare Android 0.99.7.8 r174 runtime
+      - name: Historical rebuild only
         shell: bash
         run: |
-          set -euo pipefail
           node scripts/prepare-android-v09978.mjs
           node scripts/test-android-v09978.mjs
-      - name: Build Android 0.99.7.8 APK
-        working-directory: apps/android
-        run: gradle assembleDebug --stacktrace
-      - name: Validate APK identity, embedded r174 JS and signature
-        shell: bash
-        run: |
-          set -euo pipefail
-          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
-          OUT="cinetracker-android-0.99.7.8-r174-instant-motion-debug.apk"
-          cp "$APK" "$OUT"
-          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
-          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          PACKAGE="$($AAPT dump badging "$OUT" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
-          VERSION_CODE="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
-          test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.99.7.8"
-          test "$VERSION_CODE" = "9978"
-          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct9978-index.html
-          python3 - <<'PY'
-          from pathlib import Path
-          h=Path('/tmp/ct9978-index.html').read_text()
-          marker='<script data-ct-android="r174-js">'
-          a=h.index(marker)+len(marker); b=h.index('</script>',a); js=h[a:b]
-          assert 'const $$=(s,r=document)=>' in js
-          assert js.count('const $=(s,r=document)=>') == 1
-          for m in ['r174-instant-optimistic-motion','optimistic-instant-motion-episode-toggle','cinetracker_unmark_episode_v1','ct174-flash','stacked-hero-readable-carousels-phone-panels']:
-              assert m in h, m
-          Path('/tmp/ct9978-embedded.js').write_text(js)
-          PY
-          node --check /tmp/ct9978-embedded.js
-          "$APKSIGNER" verify --print-certs "$OUT"
-          sha256sum "$OUT" | tee android-v09978-sha256.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cinetracker-android-0.99.7.8-r174-instant-motion-debug
-          path: |
-            cinetracker-android-0.99.7.8-r174-instant-motion-debug.apk
-            android-v09978-sha256.txt
-          if-no-files-found: error
-          retention-days: 14
-      - name: Publish Android 0.99.7.8 release
-        if: github.ref == 'refs/heads/main'
-        env: { GH_TOKEN: '${{ github.token }}' }
-        shell: bash
-        run: |
-          set -euo pipefail
-          NOTES='Android 0.99.7.8 porta a Web r174 para o APK mantendo a composição mobile 0.99.7.7. Marcações de episódio agora são otimistas e instantâneas, Home/histórico/ordem refluem com animação, e episódio assistido pode ser alternado para Não assistido. Sincronização acontece em segundo plano com rollback visual em caso de erro.'
-          gh release view android-v0.99.7.8 >/dev/null 2>&1 || gh release create android-v0.99.7.8 --title "CineTracker Android 0.99.7.8 — r174 Instant Motion" --notes "$NOTES"
-          gh release edit android-v0.99.7.8 --title "CineTracker Android 0.99.7.8 — r174 Instant Motion" --notes "$NOTES"
-          gh release upload android-v0.99.7.8 cinetracker-android-0.99.7.8-r174-instant-motion-debug.apk android-v09978-sha256.txt --clobber
+          cd apps/android && gradle assembleDebug --stacktrace
