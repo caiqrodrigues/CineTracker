@@ -18,8 +18,8 @@ must(html.includes('html,body{width:100%!important;max-width:100%!important;min-
 must(html.includes('.ct169-detail-hero.ct173-detail-window{width:100%!important;max-width:100%!important'), 'detail hero phone framing missing');
 must(html.includes('.row>.card{flex:0 0 clamp(112px,36vw,148px)!important'), 'generic carousel card sizing missing');
 must(html.includes('.ct169-season-chart-card{flex:0 0 calc(100vw - 28px)!important'), 'season chart local viewport missing');
-must(html.includes('versionCode 9976'),'versionCode 9976 missing');
-must(html.includes("versionName '0.99.7.6'"),'versionName 0.99.7.6 missing');
+must(gradle.includes('versionCode 9976'),'versionCode 9976 missing');
+must(gradle.includes("versionName '0.99.7.6'"),'versionName 0.99.7.6 missing');
 
 const marker='<script data-ct-android="r173-js">';
 const a=html.indexOf(marker),b=a<0?-1:html.indexOf('</script>',a+marker.length);
