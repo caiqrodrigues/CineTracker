@@ -6,7 +6,7 @@ window.__ct186History='watch_history-canonical-via-dashboard';
 window.__ct186Watchlist='only-watchlist-block-can-consume-watchlist';
 window.__ct186Unique='seven-slots-no-duplicate-media';
 window.__ct186Daily='one-movie-stable-per-user-local-day-until-midnight';
-window.__ct186Fallback='missing-watchlist-kind-uses-popular-unseen-equivalent';
+window.__ct186Fallback='reserve-popular-unseen-equivalent-keeps-seven-slots-filled';
 window.__ct186Realtime='watch_history+media_overrides-postgres-changes';
 window.__ct186Dynamic='optimistic-local-replacement-plus-realtime-refresh';
 
@@ -54,6 +54,7 @@ function ct186InWatchlist(x,c){const id=ct186Id(x),t=ct186Type(x);return Boolean
 function ct186FreshEligible(x,c){return ct186Quality(x)&&!ct186InHistory(x,c)&&!ct186InWatchlist(x,c)&&!ct186LocalBlocked.has(ct186Key(x))}
 function ct186WatchEligible(x,c){return ct186Quality(x)&&ct186InWatchlist(x,c)&&!ct186InHistory(x,c)&&!ct186LocalBlocked.has(ct186Key(x))}
 function ct186UniqueRows(rows){const seen=new Set(),out=[];for(const x of rows||[]){const k=ct186Key(x);if(!k||seen.has(k))continue;seen.add(k);out.push(x)}return out}
+function ct186MergeRows(a,b){return ct186UniqueRows([...(a||[]),...(b||[])])}
 function ct186FavoriteGenres(dash){try{return ct166FavoriteGenres(dash)}catch{return[]}}
 
 async function ct186FreshPools(c){
@@ -68,15 +69,15 @@ async function ct186FreshPools(c){
   return{movie:clean(m).filter(x=>!ct186Anime(x)),series:clean(t).filter(x=>!ct186Anime(x)),anime:clean(a).filter(x=>ct186Anime(x))};
 }
 function ct186WatchPools(c){
-  const rows=ct186UniqueRows((c.dash||[]).filter(ct186DashWatchlist).map(x=>{try{return dashboardCard162(x)}catch{return null}}).filter(Boolean)).filter(x=>ct186WatchEligible(x,c)).sort((a,b)=>Number(b?.vote_average||0)-Number(a?.vote_average||0)||Number(b?.popularity||0)-Number(a?.popularity||0));
+  const rows=ct186UniqueRows((c.dash||[]).filter(ct186DashWatchlist).map(x=>{try{const d=dashboardCard162(x);return d?{...d,_ct_watchlist:true}:null}catch{return null}}).filter(Boolean)).filter(x=>ct186WatchEligible(x,c)).sort((a,b)=>Number(b?.vote_average||0)-Number(a?.vote_average||0)||Number(b?.popularity||0)-Number(a?.popularity||0));
   return{movie:rows.filter(x=>ct186Type(x)==='movie'),series:rows.filter(x=>ct186Type(x)==='tv'&&!ct186Anime(x)),anime:rows.filter(x=>ct186Type(x)==='tv'&&ct186Anime(x))};
 }
 async function ct186PopularPool(kind,c){
   const common={'vote_average.gte':CT186_MIN_SCORE,'without_genres':'99',include_adult:false,sort_by:'popularity.desc'};
   let rows=[];
-  if(kind==='movie')rows=await pages('/discover/movie',{...common,'primary_release_date.gte':'1991-01-01','vote_count.gte':120},'movie',4);
-  else if(kind==='series')rows=await pages('/discover/tv',{...common,'first_air_date.gte':'1991-01-01','vote_count.gte':100},'tv',4);
-  else rows=await pages('/discover/tv',{...common,'first_air_date.gte':'1991-01-01','vote_count.gte':60,with_origin_country:'JP',with_genres:'16'},'tv',4);
+  if(kind==='movie')rows=await pages('/discover/movie',{...common,'primary_release_date.gte':'1991-01-01','vote_count.gte':120},'movie',6);
+  else if(kind==='series')rows=await pages('/discover/tv',{...common,'first_air_date.gte':'1991-01-01','vote_count.gte':100},'tv',6);
+  else rows=await pages('/discover/tv',{...common,'first_air_date.gte':'1991-01-01','vote_count.gte':60,with_origin_country:'JP',with_genres:'16'},'tv',6);
   return ct186UniqueRows(rows).filter(x=>ct186FreshEligible(x,c)).filter(x=>kind==='movie'?ct186Type(x)==='movie':kind==='anime'?ct186Type(x)==='tv'&&ct186Anime(x):ct186Type(x)==='tv'&&!ct186Anime(x));
 }
 function ct186Hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
@@ -107,9 +108,14 @@ async function ct186LoadForYou(force=false){
   if(!force&&ct186ForYouTask)return ct186ForYouTask;
   const cacheKey='r186:foryou:'+localDay();if(!force&&discoverCache.has(cacheKey)){const v=discoverCache.get(cacheKey);if(v&&typeof v.then!=='function')return v}
   ct186ForYouTask=(async()=>{
-    const c=await ct186Context(force),fresh=await ct186FreshPools(c),watch=ct186WatchPools(c),fallback={movie:[],series:[],anime:[]};
-    const jobs=[];for(const k of ['movie','series','anime'])if(!watch[k].length)jobs.push(ct186PopularPool(k,c).then(v=>{fallback[k]=v}));await Promise.all(jobs);
-    const data={_ct186_fresh:fresh,_ct186_watchlist:watch,_ct186_fallback:fallback,_ct166_fresh:fresh,_ct166_watchlist:watch};const s=ct186Select(data);
+    const c=await ct186Context(force),fresh=await ct186FreshPools(c),watch=ct186WatchPools(c),fallback={movie:[],series:[],anime:[]},reserve={movie:[],series:[],anime:[]};
+    const need={movie:fresh.movie.length<3||!watch.movie.length,series:fresh.series.length<2||!watch.series.length,anime:fresh.anime.length<2||!watch.anime.length};
+    await Promise.all(['movie','series','anime'].filter(k=>need[k]).map(k=>ct186PopularPool(k,c).then(v=>{reserve[k]=v})));
+    for(const k of ['movie','series','anime']){
+      if(reserve[k].length)fresh[k]=ct186MergeRows(fresh[k],reserve[k]);
+      if(!watch[k].length)fallback[k]=reserve[k];
+    }
+    const data={_ct186_fresh:fresh,_ct186_watchlist:watch,_ct186_fallback:fallback,_ct186_reserve:reserve,_ct166_fresh:fresh,_ct166_watchlist:watch};const s=ct186Select(data);
     Object.assign(data,{daily:s.daily,movie:s.fm,series:s.fs,anime:s.fa,watchlist_movie:s.wm,watchlist_series:s.ws,watchlist_anime:s.wa});
     ct186ForYouData=data;discoverCache.set(cacheKey,data);try{ct163Write('discover:foryou:all',data)}catch{}return data;
   })().finally(()=>{ct186ForYouTask=null});
@@ -120,7 +126,7 @@ const ct186DiscoverRowsBase=discoverRows;
 discoverRows=async function(tab){if(String(tab)!=='foryou')return ct186DiscoverRowsBase(tab);return ct186LoadForYou(false)};
 function ct186Slot(label,x,key,count){try{return ct166Slot(label,x,key,count)}catch{return '<div class="foryou-slot"><small>'+esc(label)+'</small>'+(x?discoverCard158(x):'<div class="empty compact">Sem item elegível</div>')+'</div>'}}
 function ct186RenderForYou(data){
-  ct186ForYouData=data||ct186ForYouData||{};const s=ct186Select(ct186ForYouData),f=ct186ForYouData?._ct186_fresh||{},w=ct186ForYouData?._ct186_watchlist||{};
+  ct186ForYouData=data||ct186ForYouData||{};const s=ct186Select(ct186ForYouData),f=ct186ForYouData?._ct186_fresh||{};
   const dailyHtml=s.daily?'<div class="foryou-grid ct166-daily-grid">'+ct186Slot('Filme',s.daily,'daily:movie',1)+'</div>':'<div class="empty">Nenhuma indicação elegível agora.</div>';
   const watchHtml='<div class="foryou-grid watchlist-picks-r162">'+ct186Slot('Filme',s.wm,'watchlist:movie',s.wmPool?.length||1)+ct186Slot('Série',s.ws,'watchlist:series',s.wsPool?.length||1)+ct186Slot('Anime',s.wa,'watchlist:anime',s.waPool?.length||1)+'</div>';
   const freshHtml='<div class="foryou-grid">'+ct186Slot('Filme',s.fm,'fresh:movie',f.movie?.length||1)+ct186Slot('Série',s.fs,'fresh:series',f.series?.length||1)+ct186Slot('Anime',s.fa,'fresh:anime',f.anime?.length||1)+'</div>';
@@ -167,7 +173,7 @@ function ct186RealtimeStart(){
   try{ct186Socket?.close()}catch{};clearInterval(ct186Heartbeat);clearTimeout(ct186Reconnect);ct186RealtimeToken=token;
   const uid=String(user?.id||session?.user?.id),wsUrl=SUPABASE_URL.replace(/^http/,'ws')+'/realtime/v1/websocket?apikey='+encodeURIComponent(SUPABASE_KEY)+'&vsn=1.0.0';
   const ws=ct186Socket=new WebSocket(wsUrl),topic='realtime:ct-r186-'+uid;
-  ws.onopen=()=>{const join=ct186Send(topic,'phx_join',{config:{broadcast:{self:false},presence:{key:''},postgres_changes:[{event:'*',schema:'public',table:'watch_history',filter:'profile_id=eq.'+uid},{event:'*',schema:'public',table:'media_overrides',filter:'profile_id=eq.'+uid}]},access_token:token});ct186Heartbeat=setInterval(()=>ct186Send('phoenix','heartbeat',{}),25000)};
+  ws.onopen=()=>{ct186Send(topic,'phx_join',{config:{broadcast:{self:false},presence:{key:''},postgres_changes:[{event:'*',schema:'public',table:'watch_history',filter:'profile_id=eq.'+uid},{event:'*',schema:'public',table:'media_overrides',filter:'profile_id=eq.'+uid}]},access_token:token});ct186Heartbeat=setInterval(()=>ct186Send('phoenix','heartbeat',{}),25000)};
   ws.onmessage=e=>{const m=ct186DecodeRealtime(e.data);if(!m||m.event!=='postgres_changes')return;const d=m.payload?.data||m.payload||{},table=String(d.table||'');ct186RealtimeChange(table,d)};
   ws.onclose=()=>{clearInterval(ct186Heartbeat);if(session)ct186Reconnect=setTimeout(ct186RealtimeStart,1800)};ws.onerror=()=>{try{ws.close()}catch{}};
 }
