@@ -1,0 +1,18 @@
+/* r172 */
+/* O selo verde grande da r171 não pertence aos cards da Home/biblioteca. */
+.ct171-seen-badge{display:none!important}.ct171-seen-host{position:static!important}
+
+/* Home: terceira linha sem remover contagem/status atual. */
+.ct172-home-copy{min-width:0}.ct172-home-episode{display:flex!important;gap:8px!important;align-items:center!important;flex-wrap:wrap!important;margin-top:4px!important;color:#8fcbe8!important;font-size:9px!important;line-height:1.25!important}.ct172-home-episode span{white-space:nowrap}.ct172-home-episode [data-ct172-ep-name]{color:#d7f3ff!important;font-weight:700;max-width:min(520px,56vw);overflow:hidden;text-overflow:ellipsis}
+
+/* A r171 removeu o bloco lateral de provedores, então o hero deve realmente usar 2 colunas. */
+.ct169-detail-hero{grid-template-columns:minmax(190px,220px) minmax(0,1fr)!important;gap:30px!important;align-items:center!important;max-width:1500px;margin:0 auto;padding:26px 14px 32px!important;min-height:390px!important}.ct169-poster-wrap{width:100%;max-width:220px}.ct169-detail-poster{width:100%!important;max-width:220px!important;background-position:center top!important}.ct169-detail-copy{padding-top:0!important}.ct169-detail-copy p{max-width:900px!important}
+
+/* Temporadas/episódios: mais espaço e melhor enquadramento dos cards no desktop. */
+.ct169-drawer{width:min(650px,96vw)!important;padding:16px!important}.ct169-drawer-ep{grid-template-columns:150px minmax(0,1fr)!important;gap:12px!important;padding:9px!important}.ct169-drawer-still{width:150px!important;background-position:center center!important}.ct169-drawer-ep-copy b{font-size:11px!important}.ct169-drawer-ep-copy small,.ct169-drawer-ep-copy p{font-size:9px!important}.ct169-drawer-progress{padding:12px 13px!important}
+
+/* Top 10 e Onde Assistir: cards principais, sem sensação de variantes repetidas. */
+.ct171-provider-tabs{gap:10px!important}.ct171-provider-tab{min-height:46px}.ct171-provider-tab b{font-size:10px!important}.ct171-provider-card{flex-basis:122px!important}.ct171-provider-card b{font-size:10px!important}
+
+@media(max-width:900px){.ct169-detail-hero{grid-template-columns:160px minmax(0,1fr)!important;gap:18px!important;align-items:start!important}.ct169-poster-wrap,.ct169-detail-poster{max-width:160px!important}.ct169-drawer{width:min(600px,97vw)!important}}
+@media(max-width:620px){.ct172-home-episode{gap:4px 7px!important}.ct172-home-episode [data-ct172-ep-name]{max-width:72vw}.ct169-detail-hero{grid-template-columns:1fr!important;padding:18px 8px 26px!important}.ct169-poster-wrap{max-width:190px!important;margin:0 auto}.ct169-detail-poster{max-width:190px!important}.ct169-drawer{width:100vw!important;padding:12px!important}.ct169-drawer-ep{grid-template-columns:110px minmax(0,1fr)!important}.ct169-drawer-still{width:110px!important}.ct171-provider-card{flex-basis:104px!important}}
