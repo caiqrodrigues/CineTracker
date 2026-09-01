@@ -1,0 +1,45 @@
+/* r182 — hierarquia visual: Home sem círculo decorativo e temporada compacta */
+
+/* HOME — o selo circular não é botão. A linha inteira continua abrindo o título. */
+[data-home] .media-row>.badge{display:none!important}
+[data-home] .media-row{grid-template-columns:48px minmax(0,1fr)!important}
+[data-home] .home-action-row{grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important}
+[data-home] .home-action-row>.media-row{min-width:0!important}
+[data-home] .home-check{flex:0 0 auto!important}
+
+/* TEMPORADAS — controle deixa de ser um bloco gigante e vira uma ação secundária integrada ao card. */
+.ct169-season-card{position:relative!important;overflow:visible!important}
+.ct181-season-control.ct182-season-control{padding:6px 0 0!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:5px!important;min-width:0!important}
+.ct182-season-progress{min-width:0!important;color:#718b9b!important;font-size:7px!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.ct169-season-card .ct181-season-toggle.ct182-season-toggle{display:inline-flex!important;width:auto!important;min-width:0!important;min-height:26px!important;max-width:88px!important;flex:0 0 auto!important;align-items:center!important;justify-content:center!important;gap:4px!important;border:1px solid #31566d!important;background:#091923!important;color:#d9edf8!important;border-radius:999px!important;padding:5px 8px!important;margin:0!important;font-size:7px!important;font-weight:800!important;line-height:1!important;white-space:nowrap!important;box-shadow:none!important;cursor:pointer!important}
+.ct169-season-card .ct181-season-toggle.ct182-season-toggle:hover{border-color:#63cfff!important;background:#0b2330!important}
+.ct169-season-card .ct181-season-toggle.ct182-season-toggle.on{border-color:#2c9f69!important;background:#0c2a1d!important;color:#72f1aa!important}
+.ct169-season-card .ct181-season-toggle.ct182-season-toggle.busy{opacity:.58!important;pointer-events:none!important}
+.ct169-season-card .ct181-season-toggle.ct182-season-toggle:disabled{opacity:.48!important;cursor:default!important}
+.ct169-season-card .ct181-season-toggle.ct182-season-toggle span{display:inline!important;min-width:0!important;font-size:7px!important;font-weight:900!important;line-height:1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.ct169-season-card .ct181-season-toggle.ct182-season-toggle small{display:none!important}
+
+/* DRAWER — mesma função, mas posicionada junto ao resumo da temporada. */
+.ct169-drawer-progress{align-items:center!important;flex-wrap:wrap!important}
+.ct181-drawer-season-control.ct182-drawer-season-control{margin-left:auto!important;padding:0!important;flex:0 0 auto!important}
+.ct169-drawer-progress .ct181-season-toggle.ct182-season-toggle.drawer{display:inline-flex!important;width:auto!important;min-width:0!important;min-height:30px!important;align-items:center!important;justify-content:center!important;border:1px solid #31566d!important;background:#091923!important;color:#d9edf8!important;border-radius:999px!important;padding:6px 10px!important;font-size:8px!important;font-weight:900!important;line-height:1!important;white-space:nowrap!important;box-shadow:none!important}
+.ct169-drawer-progress .ct181-season-toggle.ct182-season-toggle.drawer.on{border-color:#2c9f69!important;background:#0c2a1d!important;color:#72f1aa!important}
+.ct169-drawer-progress .ct181-season-toggle.ct182-season-toggle.drawer span{font-size:8px!important;line-height:1!important}
+.ct169-drawer-progress .ct181-season-toggle.ct182-season-toggle.drawer small{display:none!important}
+
+@media(max-width:700px){
+  [data-home] .media-row{grid-template-columns:56px minmax(0,1fr)!important}
+  .ct181-season-control.ct182-season-control{padding-top:7px!important;gap:6px!important}
+  .ct182-season-progress{font-size:9px!important}
+  .ct169-season-card .ct181-season-toggle.ct182-season-toggle{min-height:30px!important;max-width:none!important;padding:6px 9px!important;font-size:9px!important;flex-direction:row!important;align-items:center!important;gap:4px!important}
+  .ct169-season-card .ct181-season-toggle.ct182-season-toggle span{font-size:9px!important}
+  .ct169-drawer-progress .ct181-season-toggle.ct182-season-toggle.drawer{min-height:34px!important;padding:7px 11px!important;font-size:9px!important}
+  .ct169-drawer-progress .ct181-season-toggle.ct182-season-toggle.drawer span{font-size:9px!important}
+}
+
+@media(max-width:420px){
+  .ct181-season-control.ct182-season-control{align-items:center!important}
+  .ct182-season-progress{font-size:8px!important}
+  .ct169-season-card .ct181-season-toggle.ct182-season-toggle{padding:6px 8px!important;font-size:8px!important}
+  .ct169-season-card .ct181-season-toggle.ct182-season-toggle span{font-size:8px!important}
+}
