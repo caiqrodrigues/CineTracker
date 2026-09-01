@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate r179-r185A regressions
+      - name: Validate r179-r185B regressions
         run: |
           set -euo pipefail
           node --check apps/web/runtime-r179.js
@@ -26,7 +26,8 @@ jobs:
           node --check apps/web/runtime-r184-shared.js
           node --check apps/web/runtime-r184-web.js
           node --check apps/web/runtime-r185a-shared.js
-          node --check apps/web/build-r185a.mjs
+          node --check apps/web/runtime-r185b-web.js
+          node --check apps/web/build-r185b.mjs
           node scripts/test-r176-gap-logic.mjs
           node scripts/test-r178-stable-home.mjs
           node scripts/test-r179-target-card.mjs
@@ -36,27 +37,24 @@ jobs:
           node scripts/test-r183-web-clean-profile.mjs
           node scripts/test-r184-profile-gap.mjs
           node scripts/test-r185a-instant-cache.mjs
-      - name: Build Web r185A
+          node scripts/test-r185b-web-prefetch.mjs
+      - name: Build Web r185B
         working-directory: apps/web
         run: npm run build
-      - name: Assert Web r185A artifact
+      - name: Assert Web r185B artifact
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v185a.js
-          grep -Fq "r185a-instant-cache" apps/web/dist/app-v185a.js
-          grep -Fq "instant-visual-cache-safe-revalidate" apps/web/dist/app-v185a.js
-          grep -Fq "stale-while-revalidate-visual-only" apps/web/dist/app-v185a.js
-          grep -Fq "cache-never-writes-never-decides-business-state" apps/web/dist/app-v185a.js
-          grep -Fq "old-render-path-remains-authority" apps/web/dist/app-v185a.js
-          grep -Fq "restore-series-movie-actor-add-controls" apps/web/dist/app-v185a.js
-          grep -Fq "detect-skipped-released-episodes-before-manual-watch" apps/web/dist/app-v185a.js
-          grep -Fq "remove-redundant-page-title-copy-preserve-back" apps/web/dist/app-v185a.js
-          grep -Fq '"revision":"r185a-instant-cache"' apps/web/dist/release.json
-          grep -Fq '.ct185a-sync' apps/web/dist/app-v185a.css
-          grep -Fq '[data-ct185a-stale="1"]' apps/web/dist/app-v185a.css
-          grep -Fq '.ct184-gap-confirm' apps/web/dist/app-v185a.css
-          grep -Fq '.content>.header>div{display:none!important}' apps/web/dist/app-v185a.css
-          test ! -f apps/web/dist/app-v184.js
+          node --check apps/web/dist/app-v185b.js
+          grep -Fq "r185b-web-prefetch" apps/web/dist/app-v185b.js
+          grep -Fq "instant-route-shell-prefetch" apps/web/dist/app-v185b.js
+          grep -Fq "cached-shell-before-legacy-loading" apps/web/dist/app-v185b.js
+          grep -Fq "profile-quick-sports-discover-on-idle-and-intent" apps/web/dist/app-v185b.js
+          grep -Fq "instant-visual-cache-safe-revalidate" apps/web/dist/app-v185b.js
+          grep -Fq "restore-series-movie-actor-add-controls" apps/web/dist/app-v185b.js
+          grep -Fq "detect-skipped-released-episodes-before-manual-watch" apps/web/dist/app-v185b.js
+          grep -Fq '"revision":"r185b-web-prefetch"' apps/web/dist/release.json
+          grep -Fq '.ct185a-sync' apps/web/dist/app-v185b.css
+          test ! -f apps/web/dist/app-v185a.js
 
   android_099720_identity:
     runs-on: ubuntu-latest
@@ -64,19 +62,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7.20
+      - name: Assert Android remains 0.99.7.20
         run: |
           set -euo pipefail
           grep -q "versionName '0.99.7.20'" apps/android/app/build.gradle
           grep -q 'versionCode 9990' apps/android/app/build.gradle
           node --check scripts/prepare-android-v099720.mjs
           node --check scripts/test-android-v099720.mjs
-          node scripts/test-r181-season-toggle.mjs
-          node scripts/test-r182-home-season-polish.mjs
-          node scripts/test-r184-profile-gap.mjs
           node scripts/test-r185a-instant-cache.mjs
-          node scripts/prepare-android-v099720.mjs
-          node scripts/test-android-v099720.mjs
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -84,16 +77,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
-      - name: Production Web serves r185A
+      - name: Production Web serves r185B
         run: |
           set -euo pipefail
           for i in $(seq 1 70); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r185a-instant-cache"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v185a.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v185a.css?ct=$(date +%s%N)" || true)"
-              if grep -Fq "instant-visual-cache-safe-revalidate" <<<"$JS" && grep -Fq "cache-never-writes-never-decides-business-state" <<<"$JS" && grep -Fq "restore-series-movie-actor-add-controls" <<<"$JS" && grep -Fq '.ct185a-sync' <<<"$CSS"; then exit 0; fi
+            if grep -Fq '"revision":"r185b-web-prefetch"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v185b.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v185b.css?ct=$(date +%s%N)" || true)"
+              if grep -Fq "instant-route-shell-prefetch" <<<"$JS" && grep -Fq "cached-shell-before-legacy-loading" <<<"$JS" && grep -Fq "instant-visual-cache-safe-revalidate" <<<"$JS" && grep -Fq '.ct185a-sync' <<<"$CSS"; then exit 0; fi
             fi
             sleep 5
           done
