@@ -1,0 +1,38 @@
+/* r181 — temporada inteira */
+.ct169-season-card{position:relative;overflow:hidden}
+.ct181-season-control{padding:0 10px 10px}
+.ct181-season-toggle{width:100%;min-height:42px;border:1px solid #31566d;background:#081922;color:#d9edf8;border-radius:12px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;font:inherit;cursor:pointer;transition:border-color .16s ease,background .16s ease,transform .16s ease}
+.ct181-season-toggle:hover{border-color:#62c9ff;background:#0b2130}
+.ct181-season-toggle:active{transform:scale(.985)}
+.ct181-season-toggle span{font-weight:800;text-align:left}
+.ct181-season-toggle small{color:#789bad;white-space:nowrap;font-size:11px}
+.ct181-season-toggle.on{background:linear-gradient(135deg,#0c8c5a,#0eb774);border-color:#35e6a0;color:#fff;box-shadow:0 0 0 1px #35e6a033 inset,0 8px 28px #00b77818}
+.ct181-season-toggle.on small{color:#d8fff0}
+.ct181-season-toggle:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.ct181-season-toggle.busy{opacity:.7;pointer-events:none}
+.ct181-drawer-season-control{grid-column:1/-1;width:100%;margin-top:10px}
+.ct181-season-toggle.drawer{min-height:48px;padding:10px 14px;border-radius:13px}
+.ct181-season-confirm{position:fixed;inset:0;z-index:10080;display:grid;place-items:center;padding:20px;background:#000b;backdrop-filter:blur(10px);opacity:0;transition:opacity .14s ease}
+.ct181-season-confirm.show{opacity:1}
+.ct181-season-confirm-card{width:min(480px,100%);position:relative;border:1px solid #28536b;background:linear-gradient(160deg,#071821,#041017);border-radius:22px;padding:24px;box-shadow:0 24px 90px #000c;transform:translateY(12px) scale(.985);transition:transform .16s ease;color:#e8f5fc}
+.ct181-season-confirm.show .ct181-season-confirm-card{transform:translateY(0) scale(1)}
+.ct181-confirm-close{position:absolute;right:14px;top:14px;width:38px;height:38px;border-radius:50%;border:1px solid #31566d;background:#0a1b24;color:#d7edf8;font-size:18px;cursor:pointer}
+.ct181-confirm-icon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#0bb873;color:#fff;font-size:27px;font-weight:900;margin-bottom:14px;box-shadow:0 0 30px #0bb87335}
+.ct181-season-confirm-card>small{color:#5ccfff;font-weight:900;letter-spacing:.12em}
+.ct181-season-confirm-card h2{font-size:24px;line-height:1.15;margin:8px 42px 10px 0}
+.ct181-season-confirm-card p{color:#91aab8;line-height:1.5;margin:0 0 20px}
+.ct181-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ct181-confirm-actions button{min-height:50px;border-radius:13px;padding:10px 12px;font:inherit;font-weight:800;cursor:pointer}
+.ct181-confirm-actions .secondary{background:#0a1a23;border:1px solid #345c72;color:#d5eaf5}
+.ct181-confirm-actions .primary{background:#0caf71;border:1px solid #39e8a3;color:#fff}
+@media(max-width:700px){
+  .ct181-season-control{padding:0 8px 8px}
+  .ct181-season-toggle{min-height:44px;padding:8px 9px;align-items:flex-start;flex-direction:column;gap:2px}
+  .ct181-season-toggle small{font-size:10px}
+  .ct181-season-confirm{align-items:end;padding:12px}
+  .ct181-season-confirm-card{width:100%;border-radius:22px 22px 18px 18px;padding:22px 18px calc(18px + env(safe-area-inset-bottom))}
+  .ct181-confirm-actions{grid-template-columns:1fr}
+  .ct181-confirm-actions .primary{order:-1}
+  .ct181-drawer-season-control{margin-top:8px}
+  .ct181-season-toggle.drawer{flex-direction:row;align-items:center;min-height:52px}
+}
