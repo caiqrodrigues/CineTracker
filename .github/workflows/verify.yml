@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate r179-r185B regressions
+      - name: Validate r179-r185C regressions
         run: |
           set -euo pipefail
           node --check apps/web/runtime-r179.js
@@ -27,7 +27,9 @@ jobs:
           node --check apps/web/runtime-r184-web.js
           node --check apps/web/runtime-r185a-shared.js
           node --check apps/web/runtime-r185b-web.js
-          node --check apps/web/build-r185b.mjs
+          node --check apps/web/runtime-r185c-shared.js
+          node --check apps/web/runtime-r185c-web.js
+          node --check apps/web/build-r185c.mjs
           node scripts/test-r176-gap-logic.mjs
           node scripts/test-r178-stable-home.mjs
           node scripts/test-r179-target-card.mjs
@@ -38,38 +40,47 @@ jobs:
           node scripts/test-r184-profile-gap.mjs
           node scripts/test-r185a-instant-cache.mjs
           node scripts/test-r185b-web-prefetch.mjs
-      - name: Build Web r185B
+          node scripts/test-r185c-performance-polish.mjs
+      - name: Build Web r185C
         working-directory: apps/web
         run: npm run build
-      - name: Assert Web r185B artifact
+      - name: Assert Web r185C artifact
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v185b.js
-          grep -Fq "r185b-web-prefetch" apps/web/dist/app-v185b.js
-          grep -Fq "instant-route-shell-prefetch" apps/web/dist/app-v185b.js
-          grep -Fq "cached-shell-before-legacy-loading" apps/web/dist/app-v185b.js
-          grep -Fq "profile-quick-sports-discover-on-idle-and-intent" apps/web/dist/app-v185b.js
-          grep -Fq "instant-visual-cache-safe-revalidate" apps/web/dist/app-v185b.js
-          grep -Fq "restore-series-movie-actor-add-controls" apps/web/dist/app-v185b.js
-          grep -Fq "detect-skipped-released-episodes-before-manual-watch" apps/web/dist/app-v185b.js
-          grep -Fq '"revision":"r185b-web-prefetch"' apps/web/dist/release.json
-          grep -Fq '.ct185a-sync' apps/web/dist/app-v185b.css
-          test ! -f apps/web/dist/app-v185a.js
+          node --check apps/web/dist/app-v185c.js
+          grep -Fq "r185c-profile-discover-polish" apps/web/dist/app-v185c.js
+          grep -Fq "profile-discover-hot-route-reuse" apps/web/dist/app-v185c.js
+          grep -Fq "full-profile-idle-prefetch-short-fresh-reuse" apps/web/dist/app-v185c.js
+          grep -Fq "intent-adjacent-prefetch-hot-render" apps/web/dist/app-v185c.js
+          grep -Fq "home-entry-top-anchor" apps/web/dist/app-v185c.js
+          grep -Fq "instant-route-shell-prefetch" apps/web/dist/app-v185c.js
+          grep -Fq "instant-visual-cache-safe-revalidate" apps/web/dist/app-v185c.js
+          grep -Fq "restore-series-movie-actor-add-controls" apps/web/dist/app-v185c.js
+          grep -Fq "detect-skipped-released-episodes-before-manual-watch" apps/web/dist/app-v185c.js
+          grep -Fq '"revision":"r185c-profile-discover-polish"' apps/web/dist/release.json
+          grep -Fq -- '--ct185c-radius-panel' apps/web/dist/app-v185c.css
+          grep -Fq 'border-radius:var(--ct185c-radius-panel)' apps/web/dist/app-v185c.css
+          grep -Fq '.ct185a-sync' apps/web/dist/app-v185c.css
+          test ! -f apps/web/dist/app-v185b.js
 
-  android_099720_identity:
+  android_099721_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android remains 0.99.7.20
+      - name: Assert Android 0.99.7.21
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7.20'" apps/android/app/build.gradle
-          grep -q 'versionCode 9990' apps/android/app/build.gradle
-          node --check scripts/prepare-android-v099720.mjs
-          node --check scripts/test-android-v099720.mjs
+          grep -q "versionName '0.99.7.21'" apps/android/app/build.gradle
+          grep -q 'versionCode 9991' apps/android/app/build.gradle
+          node --check scripts/prepare-android-v099721.mjs
+          node --check scripts/test-android-v099721.mjs
           node scripts/test-r185a-instant-cache.mjs
+          node scripts/test-r185b-web-prefetch.mjs
+          node scripts/test-r185c-performance-polish.mjs
+          node scripts/prepare-android-v099721.mjs
+          node scripts/test-android-v099721.mjs
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -77,16 +88,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
-      - name: Production Web serves r185B
+      - name: Production Web serves r185C
         run: |
           set -euo pipefail
           for i in $(seq 1 70); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r185b-web-prefetch"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v185b.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v185b.css?ct=$(date +%s%N)" || true)"
-              if grep -Fq "instant-route-shell-prefetch" <<<"$JS" && grep -Fq "cached-shell-before-legacy-loading" <<<"$JS" && grep -Fq "instant-visual-cache-safe-revalidate" <<<"$JS" && grep -Fq '.ct185a-sync' <<<"$CSS"; then exit 0; fi
+            if grep -Fq '"revision":"r185c-profile-discover-polish"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v185c.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v185c.css?ct=$(date +%s%N)" || true)"
+              if grep -Fq "profile-discover-hot-route-reuse" <<<"$JS" && grep -Fq "home-entry-top-anchor" <<<"$JS" && grep -Fq "instant-route-shell-prefetch" <<<"$JS" && grep -Fq -- '--ct185c-radius-panel' <<<"$CSS"; then exit 0; fi
             fi
             sleep 5
           done
