@@ -55,7 +55,7 @@ jobs:
           grep -Fq "tmdb-gte-7.5-release-year-gt-1990" apps/web/dist/app-v186.js
           grep -Fq "block-pure-drama-18-and-any-documentary-99" apps/web/dist/app-v186.js
           grep -Fq "seven-slots-no-duplicate-media" apps/web/dist/app-v186.js
-          grep -Fq "missing-watchlist-kind-uses-popular-unseen-equivalent" apps/web/dist/app-v186.js
+          grep -Fq "reserve-popular-unseen-equivalent-keeps-seven-slots-filled" apps/web/dist/app-v186.js
           grep -Fq "watch_history+media_overrides-postgres-changes" apps/web/dist/app-v186.js
           grep -Fq "profile-discover-hot-route-reuse" apps/web/dist/app-v186.js
           grep -Fq "home-entry-top-anchor" apps/web/dist/app-v186.js
@@ -98,7 +98,7 @@ jobs:
             if grep -Fq '"revision":"r186-foryou-strict-realtime"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v186.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v186.css?ct=$(date +%s%N)" || true)"
-              if grep -Fq "foryou-strict-quality-year-history-realtime" <<<"$JS" && grep -Fq "watch_history+media_overrides-postgres-changes" <<<"$JS" && grep -Fq "profile-discover-hot-route-reuse" <<<"$JS" && grep -Fq -- '--ct185c-radius-panel' <<<"$CSS"; then exit 0; fi
+              if grep -Fq "foryou-strict-quality-year-history-realtime" <<<"$JS" && grep -Fq "reserve-popular-unseen-equivalent-keeps-seven-slots-filled" <<<"$JS" && grep -Fq "watch_history+media_overrides-postgres-changes" <<<"$JS" && grep -Fq "profile-discover-hot-route-reuse" <<<"$JS" && grep -Fq -- '--ct185c-radius-panel' <<<"$CSS"; then exit 0; fi
             fi
             sleep 5
           done
