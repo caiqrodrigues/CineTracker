@@ -20,8 +20,10 @@ render=async function(){
   const next=route();
   ct185CResetHomePending=next==='home'&&ct185CLastRoute!=='home';
   ct185CLastRoute=next;
+  const reset=ct185CResetHomePending;
   const out=await ct185CRenderRouteBase();
-  if(ct185CResetHomePending&&route()==='home')ct185CResetHomeTop();
+  if(reset&&route()==='home')ct185CResetHomeTop();
+  ct185CResetHomePending=false;
   return out;
 };
 
