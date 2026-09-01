@@ -1,0 +1,35 @@
+/* r183 — somente Web: sem títulos redundantes no topo + Perfil balanceado */
+
+/* Esconde imediatamente o bloco de texto do header; JS preserva somente o Voltar quando existir. */
+.content>.header>div{display:none!important}
+.content>.header{min-height:0!important;margin:0 0 10px!important;padding:0!important;justify-content:flex-start!important;align-items:center!important}
+.content>.header.ct-r183-back-only{display:flex!important;min-height:34px!important}
+.content>.header.ct-r183-back-only .ct169-back{margin:0!important}
+
+/* Perfil desktop: 4 colunas reais, sem buracos visuais. */
+[data-page="profile"] .ct-r183-stats-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+[data-page="profile"] .ct-r183-stats-grid .ct-r180-stat-wide{grid-column:span 2!important}
+[data-page="profile"] .ct-r183-stats-grid .stat{min-height:96px!important;padding:12px 14px!important}
+[data-page="profile"] .ct-r183-stats-grid .stat b{font-size:clamp(18px,1.55vw,25px)!important}
+
+/* Extras / Esportes assistidos também recolhível. */
+[data-page="profile"] .ct-r183-extra-stats-panel{overflow:hidden!important}
+[data-page="profile"] .ct-r183-extra-head{align-items:center!important;gap:8px!important;flex-wrap:wrap!important}
+[data-page="profile"] .ct-r183-extra-head h2,[data-page="profile"] .ct-r183-extra-head h3{margin-right:auto!important}
+[data-page="profile"] .ct-r183-extra-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:34px!important;padding:7px 11px!important;border:1px solid #24536c!important;border-radius:999px!important;background:#091b26!important;color:#c9e9f8!important;font-size:11px!important;line-height:1!important;cursor:pointer!important;white-space:nowrap!important}
+[data-page="profile"] .ct-r183-extra-toggle:hover{border-color:#46a8d3!important;background:#10354a!important}
+[data-page="profile"] .ct-r183-extra-toggle b{font-size:15px!important;line-height:1!important}
+[data-page="profile"] .ct-r183-extra-stats-body.hidden{display:none!important}
+[data-page="profile"] .ct-r183-extra-stats-body{padding-top:2px!important}
+[data-page="profile"] .ct-r183-extra-stats-body>.stats,[data-page="profile"] .ct-r183-extra-stats-body .stats{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important}
+[data-page="profile"] .ct-r183-extra-stats-body .stat{min-height:82px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;padding:12px 14px!important}
+
+@media(max-width:1000px){
+  [data-page="profile"] .ct-r183-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  [data-page="profile"] .ct-r183-stats-grid .ct-r180-stat-wide{grid-column:span 2!important}
+}
+@media(max-width:700px){
+  [data-page="profile"] .ct-r183-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  [data-page="profile"] .ct-r183-extra-stats-body>.stats,[data-page="profile"] .ct-r183-extra-stats-body .stats{grid-template-columns:1fr 1fr!important}
+  [data-page="profile"] .ct-r183-extra-toggle{min-height:32px!important;padding:6px 9px!important;font-size:10px!important}
+}
