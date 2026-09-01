@@ -58,25 +58,26 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-  android_0997_identity:
+  android_09974_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7.3 identity
+      - name: Assert Android 0.99.7.4 r173 parity identity
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7.3'" apps/android/app/build.gradle
-          grep -q 'versionCode 9973' apps/android/app/build.gradle
-          grep -q 'android-v0.99.7.3-r151-library-sync' scripts/prepare-android-v09973.mjs
-          grep -q 'window.__ct0997R151Loaded' scripts/prepare-android-v09973.mjs
-          grep -q 'cinetracker:app-foreground' scripts/test-android-v09973.mjs
-          grep -q 'android:id="@+id/nav_history"' apps/android/app/src/main/res/layout/activity_main.xml
+          grep -q "versionName '0.99.7.4'" apps/android/app/build.gradle
+          grep -q 'versionCode 9974' apps/android/app/build.gradle
+          grep -q 'android-v0.99.7.4-r173-parity' scripts/prepare-android-v09974.mjs
+          grep -q 'web-r173-full-functional-parity' scripts/prepare-android-v09974.mjs
+          grep -q 'build-r173.mjs' scripts/prepare-android-v09974.mjs
+          grep -q 'window.ct48Back' scripts/prepare-android-v09974.mjs
+          grep -q 'android:id="@+id/android_bottom_nav"' apps/android/app/src/main/res/layout/activity_main.xml
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
-          node --check scripts/prepare-android-v09973.mjs
-          node --check scripts/test-android-v09973.mjs
+          node --check scripts/prepare-android-v09974.mjs
+          node --check scripts/test-android-v09974.mjs
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -84,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: Production domain serves r173
+      - name: Production domain serves frozen r173
         shell: bash
         run: |
           set -euo pipefail
@@ -95,11 +96,11 @@ jobs:
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v173.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v173.css?ct=$(date +%s%N)" || true)"
               if grep -Fq "const REVISION='r173-detail-left-window';" <<<"$JS" && grep -Fq "detail-left-windowed-hero" <<<"$JS" && grep -Fq ".ct169-detail-hero.ct173-detail-window" <<<"$CSS"; then
-                echo 'PRODUCTION_R173_OK detail-left-window'
+                echo 'PRODUCTION_R173_FROZEN_OK detail-left-window'
                 exit 0
               fi
             fi
             sleep 5
           done
-          echo 'Production domain did not serve r173-detail-left-window in time.' >&2
+          echo 'Production domain did not serve frozen r173-detail-left-window in time.' >&2
           exit 1

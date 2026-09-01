@@ -1,130 +1,98 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-08-28
+**Atualizado em:** 2026-09-01
 
 ## Matriz atual
 
 | Sistema | Versão | Identidade técnica | Estado atual |
 |---|---:|---|---|
-| Web | **0.99.7** | package `0.99.7`, cache `ct-web-0.99.7`, autoridade final `patch-v118-v0997-authoritative.js` | `main`; Verify `33168068866` success; Vercel production success; smoke real pendente |
-| Android | **0.99.7** | `versionName 0.99.7`, `versionCode 9970`, bundle `android-v0.99.7-single-authority` | workflow `33168068870` success; Release `android-v0.99.7` publicada; smoke real pendente |
-| Backend / Supabase | **0.99.7** | RPC `cinetracker_profile_payload_v0997(text)` + contratos anteriores | migration de atividade local aplicada em produção |
+| Web | **0.99.7** | revision **`r173-detail-left-window`**, commit `9157d436bab8619a2cfbd492d35052176654c3ff` | **FROZEN**; baseline visual/funcional canônica; não alterar durante o porte Android |
+| Android | **0.99.7.4** | `versionName 0.99.7.4`, `versionCode 9974`, bundle `android-v0.99.7.4-r173-parity` | porte da r173 para APK; build/release automatizados após merge |
+| Backend / Supabase | **0.99.7** | contratos usados pela r173 e pelo APK | production compartilhado Web/Android |
 | Windows | — | — | não lançado |
 
-## Release corretiva unificada 0.99.7
+## Web r173 — baseline congelada
 
-A 0.99.7 nasce do smoke real em vídeo da release anterior. A validação visual mostrou capas ainda vazias, ausência de controles de atores favoritos, gráfico de Perfil divergente, gráfico de temporada no lugar errado e Descobrir sem os filtros/layout combinados. Por isso a 0.99.7 substitui o encadeamento de reparos dessas áreas por uma única autoridade final.
+A Web r173 é a referência atual. Não deve ser modificada durante o trabalho Android.
 
-### Autoridade de runtime
+Documento canônico:
 
-`patch-v118-v0997-authoritative.js` passa a ser o único runtime emitido para:
-- Perfil;
-- Descobrir;
-- busca global de Home/Descobrir;
-- detalhe de filme/série;
-- detalhe e favoritos de atores;
-- gráficos de avaliação das temporadas;
-- reparo/enriquecimento progressivo de capas visíveis.
+`docs/WEB_R173_FROZEN_BASELINE.md`
 
-Na saída final 0.99.7 deixam de executar os antigos `v111`, `v114`, `v115`, `v116` e `v117`, evitando que uma camada antiga sobrescreva o DOM final.
+Principais áreas já consolidadas:
 
-## Perfil 0.99.7
+- Home com séries, filmes, progresso e metadados de episódio;
+- Descobrir com Pra Você, Top 10, Em alta, Populares, Novidades, Lançamentos, Mais Aguardados, Mais bem avaliados e Calendário;
+- Esportes com busca global, favoritos, calendário, eventos e assistidos;
+- Perfil com 10 estatísticas canônicas, coleções e `Assistido por dia` clicável;
+- detalhes ricos de filme/série com painel hero enjanelado à esquerda;
+- Watchlist, Visto/Reassistido e Favorito;
+- Onde Assistir e país de produção;
+- temporadas em drawer e gráficos por temporada;
+- atores, biografia, filmografia e favoritos;
+- Títulos Relacionados mistos;
+- busca global e Voltar.
 
-Ordem canônica:
-1. Séries;
-2. Filmes;
-3. Séries Favoritas;
-4. Filmes Favoritos;
-5. Atores Favoritos;
-6. Episódios por dia;
-7. Estatísticas extras.
+## Android 0.99.7.4
 
-O gráfico de atividade usa `cinetracker_profile_payload_v0997(p_tz)`. O navegador envia o timezone IANA real; o backend agrupa `watched_at` pela data local, não pela data UTC. O intervalo é D-10..D+3, exatamente sete dias ficam visíveis por viewport e Hoje abre centralizado em D-3..D+3.
+Objetivo: paridade funcional total com a Web r173, sem alterar as regras da Web.
 
-## Atores Favoritos
+Arquivos principais:
 
-- coração aparece diretamente em cada card de elenco;
-- página da pessoa possui `Favoritar ator` / `Ator favorito`;
-- persistência em `favorite_actors`;
-- Perfil lista Atores Favoritos e permite remoção;
-- clique no coração não abre a pessoa; clique no card abre biografia/filmografia.
+- `scripts/prepare-android-v09974.mjs`
+- `scripts/test-android-v09974.mjs`
+- `apps/android/app/build.gradle`
+- `apps/android/app/src/main/res/layout/activity_main.xml`
+- `.github/workflows/build-android-v09974.yml`
+- `ci-status/android-v09974-trigger.txt`
 
-## Gráficos de temporadas
+Documento completo:
 
-Regra 0.99.7:
-- accordion da temporada contém **somente episódios**;
-- gráfico não fica acima, abaixo nem dentro dos episódios da temporada aberta;
-- existe uma seção independente **Avaliações dos episódios por temporada** após todo o bloco `Temporadas e episódios`;
-- a seção independe de qualquer temporada estar aberta;
-- temporadas do gráfico navegam por scroll horizontal;
-- melhor episódio verde, pior vermelho, demais ciano;
-- tooltip contém SxxExx, nota, título e quantidade de votos.
+`docs/ANDROID_09974_R173_PARITY.md`
 
-## Descobrir 0.99.7
+### Estratégia
 
-Tabs:
-- Pra Você;
-- Em alta;
-- Mais aguardados;
-- Populares;
-- Mais bem avaliados;
-- Calendário.
+O Android 0.99.7.4 executa `apps/web/build-r173.mjs`, embute `app-v173.js` e `app-v173.css` no APK e acrescenta apenas uma camada mobile para WebView. Assim Home, Descobrir, Top 10, Esportes, Perfil, Configurações, detalhes, temporadas, gráficos, atores, relacionados, streamings e regras de estado continuam usando a mesma autoridade r173.
 
-Filtros:
-- Tipo: Todos / Séries / Filmes;
-- Visualização: Lista / Carrossel / Grade.
+### Navegação Android
 
-Layout:
-- Grade compacta: cards de aproximadamente 128–152 px;
-- Carrossel: cards de 142 px;
-- Lista: linha compacta com pôster 64×92;
-- cards de Pra Você, Watchlist e 100% novos usam a mesma escala visual.
+A barra nativa antiga permanece escondida por compatibilidade. O APK usa a navegação mobile gerada pela própria r173:
 
-Regras:
-- `cinetracker_discovery_exclusions_v0994()` é obrigatório; sem exclusões pessoais válidas o Descobrir falha fechado;
-- vistos, histórico, Watchlist, em andamento, em dia e concluídos não entram nas coleções públicas;
-- bloqueio por TMDB ID e aliases original/localizado;
-- indicação do dia: filme após 1990, nota TMDB >= 8, nunca visto e fora da Watchlist;
-- Da sua Watchlist: Filme/Série/Anime ainda não vistos;
-- 100% novos: Filme/Série/Anime fora de histórico e Watchlist;
-- Calendário combina filmes futuros e `next_episode_to_air` das séries acompanhadas, com filtro Todos/Séries/Filmes.
+- Home
+- Descobrir
+- Esportes
+- Perfil
+- Configurações
 
-## Capas
+O botão físico Voltar usa a bridge `window.ct48Back`.
 
-Cards usam `poster_path || raw_tmdb.poster_path`. Cards visíveis ainda sem imagem são priorizados por proximidade do viewport e enviados para `ct-enrich-media-user` com `priority=visible-posters` e `requested_media_ids`. A correção é reavaliada ao rolar a página, sem polling permanente.
+### Streamings canônicos
 
-## Android 0.99.7
+Top 10 e Onde Assistir exibem somente:
 
-- `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.7`;
-- `versionCode`: `9970`;
-- builder: `scripts/prepare-android-v0997.mjs`;
-- test: `scripts/test-android-v0997.mjs`;
-- workflow: `.github/workflows/build-android-v0997.yml`;
-- release publicada: `android-v0.99.7`;
-- APK: `cinetracker-android-0.99.7-debug.apk`;
-- SHA-256 do APK: `e8eb582d9a15801213bf28afe798671a365d8eb56c99b9bb18d82d798595e703`.
+1. HBO Max
+2. Amazon Prime Video
+3. Netflix
+4. Globoplay
+5. Disney+
+6. Apple TV+
+7. Paramount+
+8. Looke
+9. Mubi
+10. Crunchyroll
 
-O APK é gerado a partir do mesmo `dist` Web 0.99.7 e rejeita explicitamente a presença das autoridades obsoletas v111/v114/v115/v116/v117.
+## Fluxo de publicação Android 0.99.7.4
 
-## Estado de publicação
-
-- Supabase RPC 0.99.7: **aplicado**;
-- source Web/Android 0.99.7: **mergeado em `main`**;
-- PR #28: **mergeado**;
-- Verify `33168068866`: **success**;
-- Vercel Production: **success**;
-- Android workflow `33168068870`: **success**;
-- APK 0.99.7: **build/publicação concluídos**;
-- assinatura/package/versionCode: **validados pelo workflow**;
-- SHA-256: **registrado**;
-- GitHub Release `android-v0.99.7`: **publicada**;
-- smoke real Web/PWA: **pendente**;
-- smoke real APK em aparelho: **pendente**.
+1. PR/CI valida identidade e scripts;
+2. merge em `main` altera `ci-status/android-v09974-trigger.txt`;
+3. workflow `.github/workflows/build-android-v09974.yml` prepara o runtime r173 embutido;
+4. Gradle gera APK debug assinado com a chave CineTracker existente;
+5. workflow valida package/versionCode/versionName e markers de paridade;
+6. SHA-256 é gerado;
+7. artifact é publicado no GitHub Actions;
+8. release `android-v0.99.7.4` é criada/atualizada com APK e SHA-256;
+9. smoke real no aparelho permanece etapa obrigatória.
 
 ## Regra obrigatória
 
-Source, migration, CI, deploy Web, build APK, assinatura, release e smoke real são estados separados. Vídeo/print real prevalece sobre CI quando houver divergência.
-
-Release: `docs/releases/0.99.7.md`.  
-Validação: `docs/validation/0.99.7.md`.
+Source, CI, deploy Web, build APK, assinatura, release e smoke real são estados separados. Vídeo/print real prevalece sobre CI quando houver divergência.

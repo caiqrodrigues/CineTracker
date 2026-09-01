@@ -1,0 +1,125 @@
+name: Build Android 0.99.7.4 — Web r173 Parity
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - 'ci-status/android-v09974-trigger.txt'
+
+permissions:
+  contents: write
+  statuses: write
+
+concurrency:
+  group: cinetracker-android-v09974-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android_v09974:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize signing key when cache is empty
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Assert Web r173 remains frozen
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq "r173-detail-left-window" apps/web/build-r173.mjs
+          grep -Fq "detail-left-windowed-hero" apps/web/runtime-r173.js
+          grep -Fq "poster-title-meta-synopsis-actions-left-window" apps/web/runtime-r173.js
+          grep -Fq "r173-detail-left-window" docs/WEB_R173_FROZEN_BASELINE.md
+
+      - name: Prepare embedded Android runtime from exact Web r173
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/prepare-android-v09974.mjs
+          node scripts/test-android-v09974.mjs
+
+      - name: Build Android 0.99.7.4 APK
+        working-directory: apps/android
+        shell: bash
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate APK identity and r173 feature parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="cinetracker-android-0.99.7.4-r173-parity-debug.apk"
+          cp "$APK" "$OUT"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          PACKAGE="$($AAPT dump badging "$OUT" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION_CODE="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
+          test "$PACKAGE" = "com.cinetracker.app"
+          test "$VERSION" = "0.99.7.4"
+          test "$VERSION_CODE" = "9974"
+          HTML="$(unzip -p "$OUT" assets/hotfix5/index.html)"
+          for marker in \
+            'android-v0.99.7.4-r173-parity' \
+            'web-r173-full-functional-parity' \
+            'r173-detail-left-window' \
+            'Top 10' \
+            'Onde Assistir' \
+            'Títulos Relacionados' \
+            'Assistido por dia' \
+            'cinetracker_series_episode_state_v1' \
+            'only-10-canonical-services-no-plan-or-channel-duplicates' \
+            'ct-sports-search' \
+            'global-entity-search' \
+            'Produção:' \
+            'window.ct48Back'; do
+              grep -Fq "$marker" <<<"$HTML"
+          done
+          ! grep -Fq '<script defer src="/app-v173.js' <<<"$HTML"
+          ! grep -Fq '<link rel="stylesheet" href="/app-v173.css' <<<"$HTML"
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee android-v09974-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.4-r173-parity-debug
+          path: |
+            cinetracker-android-0.99.7.4-r173-parity-debug.apk
+            android-v09974-sha256.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish Android 0.99.7.4 release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          NOTES='Android 0.99.7.4 porta o runtime Web r173 congelado para o APK com paridade funcional: Home com metadados de episódio, Descobrir completo com Pra Você e Top 10, Esportes, Perfil e Assistido por dia clicável, detalhes ricos de filme/série, Onde Assistir com 10 streamings canônicos, país de produção, temporadas em painel lateral, vistos/reassistidos, gráficos por temporada, atores/filmografia/favoritos, títulos relacionados, Watchlist/favoritos, busca global e navegação Voltar. A UI é adaptada para telefone sem alterar as regras da Web r173.'
+          gh release view android-v0.99.7.4 >/dev/null 2>&1 || gh release create android-v0.99.7.4 --title "CineTracker Android 0.99.7.4 — r173 Parity" --notes "$NOTES"
+          gh release edit android-v0.99.7.4 --title "CineTracker Android 0.99.7.4 — r173 Parity" --notes "$NOTES"
+          gh release upload android-v0.99.7.4 cinetracker-android-0.99.7.4-r173-parity-debug.apk android-v09974-sha256.txt --clobber
