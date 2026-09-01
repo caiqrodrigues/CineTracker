@@ -1,0 +1,3 @@
+android-v0.99.7.4-r173-parity
+frozen-web-baseline=9157d436bab8619a2cfbd492d35052176654c3ff
+web-revision=r173-detail-left-window
