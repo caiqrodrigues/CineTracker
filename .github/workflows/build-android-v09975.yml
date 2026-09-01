@@ -1,0 +1,134 @@
+name: Build Android 0.99.7.5 — r173 Boot Fix
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - 'ci-status/android-v09975-trigger.txt'
+
+permissions:
+  contents: write
+  statuses: write
+
+concurrency:
+  group: cinetracker-android-v09975-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android_v09975:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize signing key when cache is empty
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then
+            keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"
+          fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Assert Web r173 remains frozen
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq "r173-detail-left-window" apps/web/build-r173.mjs
+          grep -Fq "detail-left-windowed-hero" apps/web/runtime-r173.js
+          grep -Fq "poster-title-meta-synopsis-actions-left-window" apps/web/runtime-r173.js
+
+      - name: Prepare Android 0.99.7.5 embedded runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/prepare-android-v09975.mjs
+          node scripts/test-android-v09975.mjs
+
+      - name: Build Android 0.99.7.5 APK
+        working-directory: apps/android
+        shell: bash
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate APK identity, embedded JS syntax and r173 parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="cinetracker-android-0.99.7.5-r173-parity-bootfix-debug.apk"
+          cp "$APK" "$OUT"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          PACKAGE="$($AAPT dump badging "$OUT" | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
+          VERSION_CODE="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
+          test "$PACKAGE" = "com.cinetracker.app"
+          test "$VERSION" = "0.99.7.5"
+          test "$VERSION_CODE" = "9975"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct9975-index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          h=Path('/tmp/ct9975-index.html').read_text()
+          marker='<script data-ct-android="r173-js">'
+          a=h.index(marker)+len(marker)
+          b=h.index('</script>',a)
+          js=h[a:b]
+          assert 'const $$=(s,r=document)=>' in js
+          assert js.count('const $=(s,r=document)=>') == 1
+          Path('/tmp/ct9975-embedded.js').write_text(js)
+          PY
+          node --check /tmp/ct9975-embedded.js
+          for marker in \
+            'android-v0.99.7.5-r173-parity-bootfix' \
+            'web-r173-full-functional-parity' \
+            'r173-detail-left-window' \
+            'Top 10' \
+            'Onde Assistir' \
+            'Títulos Relacionados' \
+            'Assistido por dia' \
+            'cinetracker_series_episode_state_v1' \
+            'only-10-canonical-services-no-plan-or-channel-duplicates' \
+            'ct-sports-search' \
+            'global-entity-search' \
+            'Produção:' \
+            'window.ct48Back'; do
+              grep -Fq "$marker" /tmp/ct9975-index.html
+          done
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee android-v09975-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.5-r173-parity-bootfix-debug
+          path: |
+            cinetracker-android-0.99.7.5-r173-parity-bootfix-debug.apk
+            android-v09975-sha256.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish Android 0.99.7.5 release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          NOTES='Android 0.99.7.5 corrige a tela preta da 0.99.7.4. A causa era corrupção do JavaScript r173 durante o empacotamento: String.replace interpretava $$ como $, duplicando const $ e gerando SyntaxError antes do boot/login. A 0.99.7.5 preserva literalmente o runtime Web r173, valida o JavaScript extraído do APK com node --check e mantém toda a paridade funcional da r173. A Web permanece congelada e intocada.'
+          gh release view android-v0.99.7.5 >/dev/null 2>&1 || gh release create android-v0.99.7.5 --title "CineTracker Android 0.99.7.5 — r173 Boot Fix" --notes "$NOTES"
+          gh release edit android-v0.99.7.5 --title "CineTracker Android 0.99.7.5 — r173 Boot Fix" --notes "$NOTES"
+          gh release upload android-v0.99.7.5 cinetracker-android-0.99.7.5-r173-parity-bootfix-debug.apk android-v09975-sha256.txt --clobber
