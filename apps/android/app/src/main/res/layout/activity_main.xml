@@ -12,20 +12,25 @@
         android:layout_weight="1"
         android:background="#090909" />
 
+    <!--
+      Android 0.99.7.4 uses the exact five-tab mobile navigation rendered by the
+      frozen Web r173 runtime (Home, Descobrir, Esportes, Perfil, Configurações).
+      The native buttons remain in the layout only for binary/backward compatibility
+      with MainActivity bindings, but the whole native bar stays hidden.
+    -->
     <LinearLayout
         android:id="@+id/android_bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="66dp"
+        android:layout_height="0dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:background="#0D0D0D"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp">
+        android:visibility="gone">
 
-        <Button android:id="@+id/nav_home" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="⌂\nHome" android:textAllCaps="false" android:textSize="9sp" android:textColor="#F2F2F2" android:background="#0D0D0D" />
-        <Button android:id="@+id/nav_discover" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="✦\nDescobrir" android:textAllCaps="false" android:textSize="8sp" android:textColor="#F2F2F2" android:background="#0D0D0D" />
+        <Button android:id="@+id/nav_home" android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" android:text="Home" />
+        <Button android:id="@+id/nav_discover" android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" android:text="Descobrir" />
         <Button android:id="@+id/nav_history" android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="0" android:visibility="gone" android:text="Histórico" />
-        <Button android:id="@+id/nav_profile" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="●\nPerfil" android:textAllCaps="false" android:textSize="9sp" android:textColor="#F2F2F2" android:background="#0D0D0D" />
-        <Button android:id="@+id/nav_settings" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="⚙\nConfig." android:textAllCaps="false" android:textSize="8sp" android:textColor="#F2F2F2" android:background="#0D0D0D" />
+        <Button android:id="@+id/nav_profile" android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" android:text="Perfil" />
+        <Button android:id="@+id/nav_settings" android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" android:text="Config." />
     </LinearLayout>
 </LinearLayout>
