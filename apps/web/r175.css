@@ -1,0 +1,5 @@
+/* r175 — next episode/title swaps are part of the motion language */
+.ct175-next-episode{animation:ct175NextIn .24s cubic-bezier(.2,.8,.2,1)}
+.ct175-next-episode [data-ct172-ep-name]{font-weight:800;color:#b9efff}
+@keyframes ct175NextIn{0%{opacity:.5;transform:translateY(5px)}100%{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.ct175-next-episode{animation:none!important}}
