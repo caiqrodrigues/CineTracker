@@ -1,0 +1,32 @@
+/* r185C shared polish: surface geometry only. No colors, spacing, sizing or layout changes. */
+:root{--ct185c-radius-panel:18px;--ct185c-radius-card:17px;--ct185c-radius-row:15px;--ct185c-radius-control:13px;--ct185c-radius-media:11px}
+
+.panel,.home-section,.event,.favorite-card,.episode,.login-card,.global-results,
+.ct169-detail-section,.ct169-season-card,.ct169-episode-card,.ct171-watch-section,.ct171-provider-card,
+.ct165-event,.ct165-fav-summary,.ct184-gap-confirm,.ct181-season-toggle{
+  border-radius:var(--ct185c-radius-panel);
+  background-clip:padding-box;
+}
+
+.card,.media-row{
+  border-radius:var(--ct185c-radius-card);
+  background-clip:padding-box;
+}
+
+.media-row,.favorite-card,.episode,.ct169-episode-row,.ct169-season-row{
+  border-radius:var(--ct185c-radius-row);
+}
+
+.search-global,.field input,.field select,.login-card input,
+.btn,.btn-secondary,.logout-btn,.action,.section-more,.mini-add,
+.ct-r180-stats-toggle,.ct-r183-extra-toggle,.ct184-favorite-add,.ct184-gap-actions button,
+.ct181-season-toggle button,.ct169-detail-actions button{
+  border-radius:var(--ct185c-radius-control);
+  background-clip:padding-box;
+}
+
+.thumb,.detail-poster,.backdrop,.ct169-detail-poster,.ct171-provider-logo,
+.ct171-provider-card img,.favorite-card img{
+  border-radius:var(--ct185c-radius-media);
+  background-clip:padding-box;
+}
