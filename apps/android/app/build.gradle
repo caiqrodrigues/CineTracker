@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 9983
-        versionName '0.99.7.13'
+        versionCode 9984
+        versionName '0.99.7.14'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-v0.99.7.13 — Web r179 duplicate-safe Home target + 0.99.7.7 phone composition
+// release: android-v0.99.7.14 — frozen Web r179 + persistent 5-tab nav + immersive poster-first details + compact Onde Assistir
