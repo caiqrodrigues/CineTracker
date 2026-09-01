@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 9987
-        versionName '0.99.7.17'
+        versionCode 9988
+        versionName '0.99.7.18'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-v0.99.7.17 — Web r181 whole-season watched toggle + previous-season confirmation
+// release: android-v0.99.7.18 — Web r182 Home sem círculo redundante + controle de temporada compacto

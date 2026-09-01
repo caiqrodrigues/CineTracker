@@ -1,9 +1,7 @@
-name: Build Android 0.99.7.17 — r181 Season Toggle
+name: Build Android 0.99.7.17 — r181 Season Toggle (archived)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: write
@@ -34,7 +32,7 @@ jobs:
           if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"; fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Prepare Android 0.99.7.17 with Web r181
+      - name: Prepare archived Android 0.99.7.17 with Web r181
         run: |
           node scripts/test-r176-gap-logic.mjs
           node scripts/test-r180-discover-profile.mjs
@@ -44,39 +42,3 @@ jobs:
       - name: Build Android 0.99.7.17 APK
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
-      - name: Validate APK identity and r181 runtime
-        run: |
-          set -euo pipefail
-          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
-          OUT="cinetracker-android-0.99.7.17-r181-season-toggle-debug.apk"
-          cp "$APK" "$OUT"
-          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
-          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          test "$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)" = "0.99.7.17"
-          test "$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)" = "9987"
-          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99717-index.html
-          grep -Fq 'android-v0.99.7.17-r181-season-toggle' /tmp/ct99717-index.html
-          grep -Fq 'r181-season-whole-toggle' /tmp/ct99717-index.html
-          grep -Fq 'mark-unmark-all-released-episodes' /tmp/ct99717-index.html
-          grep -Fq 'ask-before-marking-incomplete-previous-seasons' /tmp/ct99717-index.html
-          grep -Fq 'data-ct181-season-toggle' /tmp/ct99717-index.html
-          grep -Fq 'cinetracker_unmark_episode_v1' /tmp/ct99717-index.html
-          grep -Fq 'ct176PrimeWithWatched' /tmp/ct99717-index.html
-          "$APKSIGNER" verify --print-certs "$OUT"
-          sha256sum "$OUT" | tee android-v099717-sha256.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cinetracker-android-0.99.7.17-r181-season-toggle-debug
-          path: |
-            cinetracker-android-0.99.7.17-r181-season-toggle-debug.apk
-            android-v099717-sha256.txt
-          if-no-files-found: error
-          retention-days: 14
-      - name: Publish Android 0.99.7.17 release
-        if: github.ref == 'refs/heads/main'
-        env: { GH_TOKEN: '${{ github.token }}' }
-        run: |
-          NOTES='Android 0.99.7.17 embute a Web r181. Cada temporada pode ser marcada ou desmarcada inteira usando apenas episódios já lançados. Ao marcar uma temporada posterior com temporadas anteriores incompletas, o CineTracker pergunta se elas também foram assistidas. A lógica do próximo episódio continua usando a primeira lacuna lançada não assistida da r176.'
-          gh release view android-v0.99.7.17 >/dev/null 2>&1 || gh release create android-v0.99.7.17 --title "CineTracker Android 0.99.7.17 — Season Toggle" --notes "$NOTES"
-          gh release edit android-v0.99.7.17 --title "CineTracker Android 0.99.7.17 — Season Toggle" --notes "$NOTES"
-          gh release upload android-v0.99.7.17 cinetracker-android-0.99.7.17-r181-season-toggle-debug.apk android-v099717-sha256.txt --clobber
