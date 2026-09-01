@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 const root=resolve(process.cwd());
 const sourcePath=resolve(root,'scripts/prepare-android-v09974.mjs');
 const tempPath=resolve(root,'scripts/.tmp-prepare-android-v09975-core.mjs');
+const PARITY_MARKER='web-r173-full-functional-parity';
 let source=await readFile(sourcePath,'utf8');
 
 // 0.99.7.4 embedded the generated JS through String.replace replacement text.
@@ -33,6 +34,7 @@ try{
 
 const indexPath=resolve(root,'apps/android/app/src/main/assets/hotfix5/index.html');
 const html=await readFile(indexPath,'utf8');
+if(!html.includes(PARITY_MARKER))throw new Error('Android 0.99.7.5: r173 parity marker missing');
 const marker='<script data-ct-android="r173-js">';
 const start=html.indexOf(marker);
 const end=start<0?-1:html.indexOf('</script>',start+marker.length);
