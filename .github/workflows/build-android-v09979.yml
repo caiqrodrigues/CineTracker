@@ -2,9 +2,6 @@ name: Build Android 0.99.7.9 — r175 Bingers Handoff
 
 on:
   workflow_dispatch:
-  pull_request:
-  push:
-    branches: [main]
 
 permissions:
   contents: write
