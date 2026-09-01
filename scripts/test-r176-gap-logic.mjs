@@ -3,9 +3,9 @@ import {resolve} from 'node:path';
 import assert from 'node:assert/strict';
 
 const src=await readFile(resolve(process.cwd(),'apps/web/runtime-r176.js'),'utf8');
-const a=src.indexOf('function ct176PickUnwatched');
+const a=src.indexOf('function ct176EpisodeKey');
 const b=src.indexOf('\nfunction ct176SetQueue',a);
-assert.ok(a>=0&&b>a,'ct176PickUnwatched must exist');
+assert.ok(a>=0&&b>a,'r176 pure gap helpers must exist');
 const pick=Function(src.slice(a,b)+'; return ct176PickUnwatched;')();
 const released=Array.from({length:10},(_,i)=>({season:1,episode:i+1,title:'E'+(i+1)}));
 
