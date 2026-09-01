@@ -1,0 +1,6 @@
+/* r184 Web — ações compactas de adicionar Favoritos */
+[data-page="profile"] .ct184-favorite-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;margin-left:auto!important;flex-wrap:wrap!important}
+[data-page="profile"] .ct184-favorite-add{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:0!important;min-height:32px!important;padding:6px 10px!important;border:1px solid #315b72!important;border-radius:999px!important;background:#091923!important;color:#dff6ff!important;font-size:10px!important;font-weight:800!important;line-height:1!important;white-space:nowrap!important;cursor:pointer!important}
+[data-page="profile"] .ct184-favorite-add:hover{border-color:#63cfff!important;background:#0b2635!important}
+[data-page="profile"] .ct184-favorite-actions>small{margin:0!important}
+@media(max-width:700px){[data-page="profile"] .ct184-favorite-add{min-height:34px!important;font-size:10px!important;padding:7px 10px!important}}

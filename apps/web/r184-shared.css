@@ -1,0 +1,21 @@
+/* r184 shared — confirmação de episódios pulados */
+.ct184-gap-confirm{position:fixed;inset:0;z-index:1000060;display:grid;place-items:center;padding:18px;background:#000b;backdrop-filter:blur(5px);opacity:0;transition:opacity .14s ease}
+.ct184-gap-confirm.show{opacity:1}
+.ct184-gap-card{position:relative;width:min(520px,96vw);max-height:min(82dvh,650px);overflow:auto;border:1px solid #315b72;border-radius:18px;background:linear-gradient(145deg,#07131b,#091c27);box-shadow:0 28px 90px #000d;padding:22px;color:#eef8fc}
+.ct184-gap-close{position:absolute;right:12px;top:12px;width:34px;height:34px;border:1px solid #31566c;border-radius:50%;background:#091923;color:#dff6ff;cursor:pointer}
+.ct184-gap-icon{width:46px;height:46px;display:grid;place-items:center;border:1px solid #3a7898;border-radius:14px;background:#0b2635;color:#76d6ff;font-size:25px;margin-bottom:13px}
+.ct184-gap-card>small{display:block;color:#5bcaff;font-size:9px;font-weight:900;letter-spacing:.12em}
+.ct184-gap-card h2{margin:7px 42px 8px 0;font-size:22px;line-height:1.15}
+.ct184-gap-card p{margin:0;color:#99afbb;font-size:12px;line-height:1.55}
+.ct184-gap-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}
+.ct184-gap-actions button{min-height:44px;border-radius:12px;padding:9px 12px;font-size:10px;font-weight:900;cursor:pointer}
+.ct184-gap-actions .secondary{border:1px solid #31566c;background:#091923;color:#dff6ff}
+.ct184-gap-actions .primary{border:1px solid #48aee0;background:#0c3650;color:#fff}
+.ct184-gap-actions button:hover{border-color:#70d6ff}
+@media(max-width:700px){
+ .ct184-gap-confirm{align-items:end;padding:10px 10px max(12px,env(safe-area-inset-bottom))}
+ .ct184-gap-card{width:100%;max-height:78dvh;border-radius:20px 20px 15px 15px;padding:18px}
+ .ct184-gap-card h2{font-size:19px}
+ .ct184-gap-actions{grid-template-columns:1fr}
+ .ct184-gap-actions button{min-height:50px;font-size:11px}
+}
