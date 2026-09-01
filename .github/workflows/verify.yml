@@ -28,6 +28,7 @@ jobs:
           node --check apps/web/runtime-r177.js
           node --check apps/web/build-r177.mjs
           node scripts/test-r176-gap-logic.mjs
+          node scripts/test-r177-repaint.mjs
       - name: Build exact CineTracker Web r177 artifact used by Vercel
         working-directory: apps/web
         run: npm run build
@@ -72,6 +73,7 @@ jobs:
           node --check scripts/prepare-android-v099711.mjs
           node --check scripts/test-android-v099711.mjs
           node scripts/test-r176-gap-logic.mjs
+          node scripts/test-r177-repaint.mjs
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
