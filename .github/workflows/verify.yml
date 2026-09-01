@@ -15,61 +15,55 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax check r171 source runtime
+      - name: Syntax check r172 source runtime
         run: |
           node --check apps/web/runtime-r169.js
           node --check apps/web/runtime-r170.js
           node --check apps/web/runtime-r171.js
-          node --check apps/web/build-r171.mjs
-      - name: Build exact CineTracker Web r171 artifact used by Vercel
+          node --check apps/web/runtime-r172.js
+          node --check apps/web/build-r172.mjs
+      - name: Build exact CineTracker Web r172 artifact used by Vercel
         working-directory: apps/web
         run: npm run build
-      - name: Assert single r171 authority and requested fixes
+      - name: Assert single r172 authority and requested fixes
         shell: bash
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v171.js
+          node --check apps/web/dist/app-v172.js
           test "$(grep -o '<script' apps/web/dist/index.html | wc -l)" -eq 1
           ! grep -Eq 'patch-v[0-9]|hotfix' apps/web/dist/index.html
           test "$(find apps/web/dist -maxdepth 1 -type f -name 'patch-v*.js' | wc -l)" -eq 0
-          for old in 162 163 164 165 166 167 168 169 170; do test ! -f "apps/web/dist/app-v${old}.js"; done
-          grep -Fq "single-clean-runtime" apps/web/dist/app-v171.js
-          grep -Fq "r171-top10-seen-providers-activity" apps/web/dist/app-v171.js
-          grep -Fq "top10-streaming-seen-rewatch-where-country-activity" apps/web/dist/app-v171.js
-          grep -Fq "daily-provider-movie-tv-popularity" apps/web/dist/app-v171.js
-          grep -Fq "global-seen-badges-series-episode-sync-rewatch" apps/web/dist/app-v171.js
-          grep -Fq "justwatch-style-watch-providers" apps/web/dist/app-v171.js
-          grep -Fq "production-country-detail" apps/web/dist/app-v171.js
-          grep -Fq "click-day-watch-details" apps/web/dist/app-v171.js
-          grep -Fq "media-overrides-auth-default-explicit-profile" apps/web/dist/app-v171.js
-          grep -Fq "data-discover-tab=\"top10\"" apps/web/dist/app-v171.js
-          grep -Fq "Top 10 Séries" apps/web/dist/app-v171.js
-          grep -Fq "Top 10 Filmes" apps/web/dist/app-v171.js
-          grep -Fq "with_watch_monetization_types:'flatrate'" apps/web/dist/app-v171.js
-          grep -Fq "data-ct171-rewatch-episode" apps/web/dist/app-v171.js
-          grep -Fq "cinetracker_mark_series_seen_v1" apps/web/dist/app-v171.js
-          grep -Fq "Onde Assistir" apps/web/dist/app-v171.js
-          grep -Fq "JustWatch" apps/web/dist/app-v171.js
-          grep -Fq "Produção:" apps/web/dist/app-v171.js
-          grep -Fq "data-ct171-activity-day" apps/web/dist/app-v171.js
-          grep -Fq "cinetracker_activity_items_by_day_v1" apps/web/dist/app-v171.js
-          grep -Fq "profile_id:user?.id" apps/web/dist/app-v171.js
-          grep -Fq "media?select=id,media_type&media_type=eq.tv" apps/web/dist/app-v171.js
-          ! grep -Fq "media?select=id&media_type&media_type=eq.tv" apps/web/dist/app-v171.js
-          grep -Fq "window.__ctR170='reliability-actions-person-mixed-related-sports-search'" apps/web/dist/app-v171.js
-          grep -Fq "media-kind-required-fixed" apps/web/dist/app-v171.js
-          grep -Fq "mixed-movie-tv-rich-metadata" apps/web/dist/app-v171.js
-          grep -Fq "global-entity-search" apps/web/dist/app-v171.js
-          grep -Fq '"revision":"r171-top10-seen-providers-activity"' apps/web/dist/release.json
+          for old in 162 163 164 165 166 167 168 169 170 171; do test ! -f "apps/web/dist/app-v${old}.js"; done
+          grep -Fq "single-clean-runtime" apps/web/dist/app-v172.js
+          grep -Fq "r172-home-episode-streaming-clean" apps/web/dist/app-v172.js
+          grep -Fq "home-episode-meta-logical-seen-canonical-streamings-detail-frame" apps/web/dist/app-v172.js
+          grep -Fq "episode-name-rating-release-without-removing-existing-meta" apps/web/dist/app-v172.js
+          grep -Fq "no-global-card-badge-logical-series-episode-checks" apps/web/dist/app-v172.js
+          grep -Fq "only-10-canonical-services-no-plan-or-channel-duplicates" apps/web/dist/app-v172.js
+          grep -Fq "cinetracker_home_live_v0997_r4" apps/web/dist/app-v172.js
+          grep -Fq "data-ct172-home-episode" apps/web/dist/app-v172.js
+          grep -Fq "cinetracker_series_episode_state_v1" apps/web/dist/app-v172.js
+          grep -Fq "ct171Observer.disconnect" apps/web/dist/app-v172.js
+          grep -Fq "Netflix Standard with Ads" apps/web/dist/app-v172.js
+          grep -Fq "amazon channel" apps/web/dist/app-v172.js
+          grep -Fq "HBO Max" apps/web/dist/app-v172.js
+          grep -Fq "Amazon Prime Video" apps/web/dist/app-v172.js
+          grep -Fq "Apple TV+" apps/web/dist/app-v172.js
+          grep -Fq "Crunchyroll" apps/web/dist/app-v172.js
+          grep -Fq "ct171ProviderGroup=function" apps/web/dist/app-v172.js
+          grep -Fq "payload?.results?.BR||{}" apps/web/dist/app-v172.js
+          grep -Fq "window.__ctR171='top10-streaming-seen-rewatch-where-country-activity'" apps/web/dist/app-v172.js
+          grep -Fq "data-ct171-rewatch-episode" apps/web/dist/app-v172.js
+          grep -Fq "Produção:" apps/web/dist/app-v172.js
+          grep -Fq '"revision":"r172-home-episode-streaming-clean"' apps/web/dist/release.json
           grep -Fq '"outputDirectory": "dist"' apps/web/vercel.json
-          grep -Fq "alter column profile_id set default auth.uid()" supabase/migrations/20260831234500_r171_seen_rewatch_activity_rls.sql
-          grep -Fq "cinetracker_mark_series_seen_v1" supabase/migrations/20260831234500_r171_seen_rewatch_activity_rls.sql
-          grep -Fq "watch_play_events_v0994" supabase/migrations/20260831234500_r171_seen_rewatch_activity_rls.sql
-          grep -Fq "cinetracker_activity_items_by_day_v1" supabase/migrations/20260831234500_r171_seen_rewatch_activity_rls.sql
-      - name: Upload exact r171 web artifact
+          grep -Fq "cinetracker_home_live_v0997_r4" supabase/migrations/20260831235900_r172_logical_series_episode_state_and_home_episode_meta.sql
+          grep -Fq "cinetracker_series_episode_state_v1" supabase/migrations/20260831235900_r172_logical_series_episode_state_and_home_episode_meta.sql
+          grep -Fq "cinetracker_effective_tmdb_id" supabase/migrations/20260831235900_r172_logical_series_episode_state_and_home_episode_meta.sql
+      - name: Upload exact r172 web artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-web-r171-dist
+          name: cinetracker-web-r172-dist
           path: apps/web/dist
           if-no-files-found: error
           retention-days: 3
@@ -100,21 +94,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: Production domain serves r171
+      - name: Production domain serves r172
         shell: bash
         run: |
           set -euo pipefail
           for i in $(seq 1 60); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r171-top10-seen-providers-activity"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v171.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "const REVISION='r171-top10-seen-providers-activity';" <<<"$JS" && grep -Fq "daily-provider-movie-tv-popularity" <<<"$JS" && grep -Fq "justwatch-style-watch-providers" <<<"$JS" && grep -Fq "click-day-watch-details" <<<"$JS"; then
-                echo 'PRODUCTION_R171_OK top10+seen+rewatch+providers+country+activity+rls'
+            if grep -Fq '"revision":"r172-home-episode-streaming-clean"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v172.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "const REVISION='r172-home-episode-streaming-clean';" <<<"$JS" && grep -Fq "episode-name-rating-release-without-removing-existing-meta" <<<"$JS" && grep -Fq "no-global-card-badge-logical-series-episode-checks" <<<"$JS" && grep -Fq "only-10-canonical-services-no-plan-or-channel-duplicates" <<<"$JS"; then
+                echo 'PRODUCTION_R172_OK home-episode+logical-seen+canonical-streamings+detail-frame'
                 exit 0
               fi
             fi
             sleep 5
           done
-          echo 'Production domain did not serve r171-top10-seen-providers-activity in time.' >&2
+          echo 'Production domain did not serve r172-home-episode-streaming-clean in time.' >&2
           exit 1
