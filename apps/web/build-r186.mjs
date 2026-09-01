@@ -5,14 +5,15 @@ import {fileURLToPath} from 'node:url';
 await import('./build-r185c.mjs');
 const root=dirname(fileURLToPath(import.meta.url));
 const dist=resolve(root,'dist');
-let [html,js,css,sw,patch186,patch189,patch190]=await Promise.all([
+let [html,js,css,sw,patch186,patch189,patch190,patch190b]=await Promise.all([
   readFile(resolve(dist,'index.html'),'utf8'),
   readFile(resolve(dist,'app-v185c.js'),'utf8'),
   readFile(resolve(dist,'app-v185c.css'),'utf8'),
   readFile(resolve(dist,'service-worker.js'),'utf8'),
   readFile(resolve(root,'runtime-r186-shared.js'),'utf8'),
   readFile(resolve(root,'runtime-r189-web.js'),'utf8'),
-  readFile(resolve(root,'runtime-r190-web.js'),'utf8')
+  readFile(resolve(root,'runtime-r190-web.js'),'utf8'),
+  readFile(resolve(root,'runtime-r190b-web.js'),'utf8')
 ]);
 if(!js.includes("const REVISION='r185c-profile-discover-polish';"))throw new Error('r190 requires r185C Web base');
 if(!js.includes("window.__ctR185CWeb='profile-discover-hot-route-reuse';"))throw new Error('r190 requires r185C performance');
@@ -20,9 +21,10 @@ if(!js.includes("window.__ctR184GapPrompt='detect-skipped-released-episodes-befo
 if(!patch186.includes("window.__ctR186='foryou-strict-quality-year-history-realtime';"))throw new Error('r190 requires r186 strict authority');
 if(!patch189.includes("window.__ctR189Web = 'state-authority-cache-first-actions';"))throw new Error('r190 requires r189 cache-first actions');
 if(!patch190.includes("window.__ctR190Web = 'fast-state-actions-sports-profile';"))throw new Error('r190 patch marker missing');
+if(!patch190b.includes("window.__ctR190BWeb='sports-only-global-search-guard';"))throw new Error('r190b patch marker missing');
 if(!js.includes('\nboot();'))throw new Error('r190 insertion point missing');
 js=js.replace("const REVISION='r185c-profile-discover-polish';","const REVISION='r190-fast-state-actions';");
-js=js.replace('\nboot();','\n'+patch186+'\n'+patch189+'\n'+patch190+'\nboot();');
+js=js.replace('\nboot();','\n'+patch186+'\n'+patch189+'\n'+patch190+'\n'+patch190b+'\nboot();');
 html=html.replaceAll('r185c-profile-discover-polish','r190-fast-state-actions').replaceAll('app-v185c.js','app-v190.js').replaceAll('app-v185c.css','app-v190.css');
 sw=sw.replaceAll('r185c-profile-discover-polish','r190-fast-state-actions').replaceAll('app-v185c.js','app-v190.js').replaceAll('app-v185c.css','app-v190.css');
 await Promise.all([
