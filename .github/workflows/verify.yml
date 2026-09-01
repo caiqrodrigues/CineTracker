@@ -43,9 +43,11 @@ jobs:
           node --check apps/web/dist/app-v184.js
           grep -Fq "r184-favorites-gap-prompt" apps/web/dist/app-v184.js
           grep -Fq "restore-series-movie-actor-add-controls" apps/web/dist/app-v184.js
-          grep -Fq 'data-add-favorite="tv"' apps/web/dist/app-v184.js
-          grep -Fq 'data-add-favorite="movie"' apps/web/dist/app-v184.js
-          grep -Fq 'data-add-favorite="person"' apps/web/dist/app-v184.js
+          grep -Fq "'Séries Favoritas':{kind:'tv'" apps/web/dist/app-v184.js
+          grep -Fq "'Filmes Favoritos':{kind:'movie'" apps/web/dist/app-v184.js
+          grep -Fq "'Atores Favoritos':{kind:'person'" apps/web/dist/app-v184.js
+          grep -Fq "b.dataset.addFavorite=item.kind" apps/web/dist/app-v184.js
+          grep -Fq "function openFavoriteSearch158(kind)" apps/web/dist/app-v184.js
           grep -Fq "detect-skipped-released-episodes-before-manual-watch" apps/web/dist/app-v184.js
           grep -Fq "Pular e marcar só" apps/web/dist/app-v184.js
           grep -Fq "Marcar anteriores +" apps/web/dist/app-v184.js
@@ -91,7 +93,7 @@ jobs:
             if grep -Fq '"revision":"r184-favorites-gap-prompt"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v184.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v184.css?ct=$(date +%s%N)" || true)"
-              if grep -Fq "restore-series-movie-actor-add-controls" <<<"$JS" && grep -Fq "detect-skipped-released-episodes-before-manual-watch" <<<"$JS" && grep -Fq "Pular e marcar só" <<<"$JS" && grep -Fq '.ct184-gap-confirm' <<<"$CSS"; then exit 0; fi
+              if grep -Fq "restore-series-movie-actor-add-controls" <<<"$JS" && grep -Fq "function openFavoriteSearch158(kind)" <<<"$JS" && grep -Fq "detect-skipped-released-episodes-before-manual-watch" <<<"$JS" && grep -Fq "Pular e marcar só" <<<"$JS" && grep -Fq '.ct184-gap-confirm' <<<"$CSS"; then exit 0; fi
             fi
             sleep 5
           done
