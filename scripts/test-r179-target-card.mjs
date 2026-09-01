@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+const src=await readFile(resolve(process.cwd(),'apps/web/runtime-r179.js'),'utf8');
+const must=(v,m)=>{if(!v)throw new Error('r179 target-card test: '+m)};
+must(src.includes('home-target-card-by-media-id'),'marker');
+must(src.includes('history-duplicate-safe-next-episode-card'),'duplicate-safe marker');
+must(src.includes('data-home-mark-episode=\\"${mediaId}\\"')||src.includes('data-home-mark-episode="${mediaId}"'),'media_id action selector');
+must(src.includes("closest?.('.home-action-row')"),'action host');
+must(src.includes("document.querySelectorAll('.home-action-row')"),'safe fallback');
+must(!src.includes('const media=document.querySelector(`.media-row[data-media="tv:${showId}"]`)'),'must not use first global TMDB row');
+must(src.includes(' · próximo ${tag}'),'visible next label');
+console.log('R179_TARGET_CARD_TEST_OK history duplicate cannot steal Home patch');
