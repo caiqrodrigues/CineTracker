@@ -4,84 +4,92 @@
 
 **Última atualização:** 2026-09-01  
 **Branch de produção:** `main`  
-**Web:** `0.99.7` / revision **`r173-detail-left-window` — FROZEN**  
-**Android atual:** **`0.99.7.7` / versionCode `9977`**  
+**Web:** `0.99.7` / revision **`r175-bingers-next-episode`**  
+**Android atual:** **`0.99.7.9` / versionCode `9979`**  
 **Backend:** Supabase production compartilhado por Web/Android  
 **Windows:** não lançado
 
-## 1. Regra principal
+## 1. Linha de base e retomada da Web
 
-A Web r173 está **congelada** e é a baseline canônica. O trabalho Android pode adaptar viewport, navegação e composição para telefone, mas não deve alterar arquivos funcionais nem regras da Web sem pedido explícito.
+A Web `r173-detail-left-window` permanece documentada como a antiga baseline visual quase ideal em `docs/WEB_R173_FROZEN_BASELINE.md`. Ela ficou congelada durante o primeiro porte Android.
 
-Commit canônico Web: `9157d436bab8619a2cfbd492d35052176654c3ff`  
-Revision: `r173-detail-left-window`
+Em 2026-09-01 o usuário pediu explicitamente uma nova evolução para **Web e Android**, inspirada na fluidez observada no Bingers. Isso autorizou a retomada da Web nas revisões r174/r175 sem apagar a baseline r173.
 
-Documento: `docs/WEB_R173_FROZEN_BASELINE.md`
+## 2. Web r175 — ATUAL
 
-## 2. Baseline funcional r173
+Revision: `r175-bingers-next-episode`.
 
-A baseline inclui Home de Séries/Filmes com progresso e metadados de episódio; Descobrir com Pra Você, Top 10 e demais abas; Esportes; Perfil com `Assistido por dia`; detalhes ricos; Watchlist/Visto/Reassistido/Favorito; país de produção; Onde Assistir com 10 streamings canônicos; temporadas em drawer; gráficos por temporada; atores/biografia/filmografia/favoritos; relacionados; busca global e Voltar.
+A r175 preserva todo o conjunto funcional da r173/r172 e adiciona a arquitetura de interação instantânea iniciada na r174:
 
-## 3. Histórico Android
+- regra central: **UI primeiro, persistência depois**;
+- marcar episódio muda a tela imediatamente, sem esperar Supabase;
+- Home atualiza contagem, histórico, bucket/status e posição da série imediatamente;
+- reordenação usa transição FLIP, evitando reload visual da página;
+- confirmação verde animada dá feedback instantâneo;
+- sincronização acontece em segundo plano;
+- se a persistência falhar, a alteração otimista é revertida e o usuário é avisado;
+- Home pré-carrega o **próximo episódio real a assistir e também o sucessor**;
+- ao marcar episódio 4, o card pode trocar imediatamente para episódio 5, incluindo **nome, nota e data**, sem esperar nova consulta;
+- quando a série fica em dia/concluída, ela muda imediatamente para o bucket correspondente;
+- no drawer de temporada, episódio visto pode ser alternado para **Não assistido**;
+- `Reassistido` continua sendo uma ação separada.
 
-### 0.99.7.4 — inválida
+## 3. Backend para desmarcar episódio
 
-Tela preta antes do login por corrupção do `$$` durante empacotamento do JavaScript.
+Produção possui o RPC autenticado:
 
-### 0.99.7.5 — bootfix
+`cinetracker_unmark_episode_v1`
 
-Corrigiu o empacotamento, passou a validar o JavaScript extraído do próprio APK e o smoke real confirmou boot/login e funcionalidades r173.
+Ele remove a marcação lógica do episódio em histórico/eventos/progresso para todas as linhas equivalentes da mesma série TMDB, invalida `AlreadySeen/Completed/UpToDate` quando necessário e devolve a série para `InProgress` quando ainda existem episódios vistos.
 
-### 0.99.7.6 — enquadramento inicial
+Também existe policy DELETE própria do usuário em `watch_play_events_v0994`.
 
-Bloqueou overflow global de página e introduziu carrosséis locais, mas o smoke real em vídeo mostrou que alguns componentes ainda pareciam desktop miniaturizado, principalmente hero de detalhes, Onde Assistir e proporções de cards.
+Migration documentada em:
 
-### 0.99.7.7 — ATUAL
+`supabase/migrations/202609010140_r174_episode_unwatch.sql`
+
+## 4. Android atual — 0.99.7.9
 
 Identidade:
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.7.7`;
-- `versionCode`: `9977`;
-- bundle: `android-v0.99.7.7-r173-mobile-composition`;
-- baseline: Web `r173-detail-left-window` congelada;
-- builder: `scripts/prepare-android-v09977.mjs`;
-- test: `scripts/test-android-v09977.mjs`;
-- workflow: `.github/workflows/build-android-v09977.yml`;
-- release: `android-v0.99.7.7`.
+- `versionName`: `0.99.7.9`;
+- `versionCode`: `9979`;
+- bundle: `android-v0.99.7.9-r175-bingers-handoff`;
+- Web embutida: `r175-bingers-next-episode`;
+- composição mobile herdada/refinada da 0.99.7.7;
+- builder: `scripts/prepare-android-v09979.mjs`;
+- test: `scripts/test-android-v09979.mjs`;
+- workflow: `.github/workflows/build-android-v09979.yml`;
+- release: `android-v0.99.7.9`.
 
-## 4. Composição mobile 0.99.7.7
+O APK usa a mesma experiência otimista da Web r175 e mantém hero empilhado, carrosséis mobile, drawer de episódios, safe-area e demais ajustes de enquadramento Android.
 
-Baseada diretamente no vídeo real da 0.99.7.6:
+## 5. Histórico Android resumido
 
-- hero de filme/série deixa de esmagar texto ao lado do poster e passa a composição empilhada no telefone;
-- título, metadados, sinopse e ações usam a largura integral;
-- Onde Assistir usa cards maiores e legíveis em carrossel;
-- relacionados e cards gerais mostram aproximadamente 2–2,5 itens por viewport;
-- elenco, temporadas e Top 10 usam proporções mobile mais legíveis;
-- drawer de episódios usa still e tipografia maiores sem sair do viewport;
-- Home recebe linhas e ações proporcionais ao telefone;
-- Perfil continua em duas colunas, com cards maiores;
-- Esportes/Configurações refinam inputs e painéis para toque;
-- gráficos mantêm scroll horizontal local;
-- toda a paridade funcional r173 e o bootfix são preservados.
+- **0.99.7.4:** inválida; tela preta antes do login por corrupção de `$$`.
+- **0.99.7.5:** bootfix funcional.
+- **0.99.7.6:** primeiro enquadramento mobile/carrosséis.
+- **0.99.7.7:** composição mobile baseada em vídeo real.
+- **0.99.7.8:** primeira versão com UX otimista r174 e toggle Assistido/Não assistido.
+- **0.99.7.9:** atual; acrescenta handoff instantâneo para o próximo episódio real e seu sucessor.
 
-## 5. Validação 0.99.7.7
+## 6. Validação atual
 
-- [x] PR #118 mergeada;
-- [x] Web r173 continua `SUCCESS` e congelada;
-- [x] Android identity 0.99.7.7 `SUCCESS`;
-- [x] preparação do runtime `SUCCESS`;
-- [x] JavaScript embutido passa `node --check`;
+- [x] PR #119 mergeada — r174 / Android 0.99.7.8;
+- [x] PR #120 mergeada — r175 / Android 0.99.7.9;
+- [x] Web r175 syntax/build/asserts `SUCCESS`;
+- [x] Vercel production `SUCCESS`;
+- [x] `Production domain serves r175` `SUCCESS`;
+- [x] Android 0.99.7.9 identity `SUCCESS`;
 - [x] Gradle APK build `SUCCESS`;
-- [x] validação do APK compilado `SUCCESS`;
+- [x] JavaScript r175 extraído do APK passa `node --check`;
 - [x] assinatura validada;
-- [x] artifact publicado;
-- [x] Release `android-v0.99.7.7` publicada;
-- [ ] smoke real da 0.99.7.7 no aparelho.
+- [x] Release `android-v0.99.7.9` publicada;
+- [ ] smoke real da 0.99.7.9 no aparelho.
 
 CI verde não equivale a UX validada. Print/vídeo real prevalece quando houver divergência.
 
-## 6. Streamings canônicos
+## 7. Streamings canônicos
 
 Top 10 e Onde Assistir usam somente HBO Max, Amazon Prime Video, Netflix, Globoplay, Disney+, Apple TV+, Paramount+, Looke, Mubi e Crunchyroll. Planos/variantes e canais duplicados são consolidados ou ignorados.
