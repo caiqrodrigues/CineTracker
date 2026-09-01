@@ -1,199 +1,156 @@
 # CineTracker — Project State
 
-> Documento persistente de continuidade. Deve refletir o estado real do projeto sem depender de histórico de conversa.
+> Documento persistente de continuidade. O estado real do projeto deve ser entendido por este arquivo e pelos documentos canônicos referenciados abaixo, sem depender do histórico de conversa.
 
-**Última atualização:** 2026-08-28  
-**Branch atual:** `main`  
-**Web atual:** `0.99.7`, package/cache `0.99.7`  
-**Android atual:** `0.99.7`, `versionCode 9970`  
-**Backend lógico:** `0.99.7`  
+**Última atualização:** 2026-09-01  
+**Branch de produção:** `main`  
+**Web:** `0.99.7` / revision **`r173-detail-left-window` — FROZEN**  
+**Android alvo atual:** **`0.99.7.4` / versionCode `9974`**  
+**Backend:** Supabase production compartilhado por Web/Android  
 **Windows:** não lançado
 
-## 1. Motivo da 0.99.7
+## 1. Regra principal a partir da r173
 
-Smoke real em vídeo mostrou que a publicação técnica 0.99.6 ainda não entregava corretamente a UX combinada: capas vazias persistiam, favoritos de atores não apareciam de forma confiável, o gráfico do Perfil continuava divergente, o gráfico de avaliações da série permanecia dentro do accordion da temporada e o Descobrir estava sem os filtros/layout esperados e com cards grandes.
+A Web r173 está **congelada** e não deve mais receber alterações enquanto o trabalho atual for o porte Android.
 
-A 0.99.7 não considera a existência de código ou CI como prova de UX. Ela consolida essas áreas em uma única autoridade final. A publicação técnica está concluída; o encerramento funcional depende do novo smoke real.
+Commit canônico da Web congelada:
 
-## 2. Autoridade final 0.99.7
+`9157d436bab8619a2cfbd492d35052176654c3ff`
 
-Arquivo: `apps/web/patch-v118-v0997-authoritative.js`  
-Marker: `v118-single-authority-profile-discover-detail`
+Revision exibida no rodapé:
 
-O build final remove da execução os antigos:
-- `patch-v111-v0994-global-search.js`;
-- `patch-v114-v0994-universal-detail.js`;
-- `patch-v115-v0995-favorites-profile-discover.js`;
-- `patch-v116-v0996-authoritative.js`;
-- `patch-v117-v0996-final.js`.
+`r173-detail-left-window`
 
-Assim Perfil, Descobrir, busca, detalhes, favoritos de atores, gráficos de temporada e reparo de capas não dependem de reorganização posterior do DOM legado. Continuam preservadas as camadas base necessárias de Home, auth, navegação, Configurações, episódios e preload.
+Documento completo da baseline:
 
-Não adicionar `MutationObserver` ou `setInterval` permanente. Reparos devem ser orientados a evento ou finitos.
+`docs/WEB_R173_FROZEN_BASELINE.md`
 
-## 3. Perfil
+Qualquer trabalho Android deve portar/adaptar a r173 sem alterar regras de negócio Web. Mudanças futuras na Web exigem solicitação explícita e nova revision.
 
-Ordem canônica:
-1. Séries;
-2. Filmes;
-3. Séries Favoritas;
-4. Filmes Favoritos;
-5. Atores Favoritos;
-6. Episódios por dia;
-7. Estatísticas extras.
+## 2. Estado funcional da Web r173
 
-Payload: `cinetracker_profile_payload_v0997(p_tz text)`.
+A r173 é a melhor baseline atual e inclui, entre outros:
 
-### Gráfico de atividade
+- Home de Séries e Filmes com progresso e metadados de episódio;
+- Descobrir com Pra Você, Top 10, Em alta, Populares, Novidades, Lançamentos, Mais Aguardados, Mais bem avaliados e Calendário;
+- preload em etapas e regras de exclusão pessoal;
+- Esportes com busca global, favoritos, calendário, eventos e marcação de assistido;
+- Perfil com estatísticas, coleções, favoritos e gráfico `Assistido por dia` clicável;
+- detalhe rico de filme/série com hero enjanelado à esquerda;
+- Watchlist, Visto/Reassistido e Favorito;
+- país de produção;
+- Onde Assistir limitado aos 10 streamings canônicos;
+- temporadas em drawer lateral;
+- episódios com estado visto/reassistido reconciliado pela identidade TMDB lógica;
+- gráficos modernos por temporada com melhor episódio verde e pior vermelho;
+- atores com biografia, favorito e filmografia separada;
+- títulos relacionados misturando Filmes e Séries e excluindo vistos/Watchlist;
+- navegação Voltar nas telas internas;
+- correções de RLS/identidade de mídia e sincronização de biblioteca.
 
-- fonte: `watch_history`;
-- somente `item_type='episode'`;
-- conta episódios distintos por `(media_id, season_number, episode_number)`;
-- agrupamento pela data **local** de `watched_at`, usando timezone IANA enviado pelo navegador;
-- D-10..D+3 no backend;
-- exatamente sete dias visíveis por viewport;
-- abertura com Hoje centralizado: D-3..D+3;
-- scroll horizontal permite voltar até D-10.
+A descrição detalhada e as regras exatas ficam em `docs/WEB_R173_FROZEN_BASELINE.md`.
 
-O uso anterior de `watched_at::date` em UTC não é autoridade da 0.99.7.
+## 3. Streamings canônicos
 
-## 4. Capas ausentes
+Top 10 e Onde Assistir usam somente:
 
-A biblioteca importada possui muitos registros sem `poster_path`. A 0.99.7 usa uma estratégia progressiva e visível:
-- `poster_path || raw_tmdb.poster_path` primeiro;
-- cards sem imagem mais próximos do viewport têm prioridade;
-- IDs locais visíveis são enviados a `ct-enrich-media-user` com `priority=visible-posters` e `requested_media_ids`;
-- a checagem é reexecutada ao rolar a página, com debounce, sem polling;
-- surrogate TMDB continua sendo resolvido apenas por ID efetivo ou correspondência título/ano, nunca por associação arbitrária.
+1. HBO Max
+2. Amazon Prime Video
+3. Netflix
+4. Globoplay
+5. Disney+
+6. Apple TV+
+7. Paramount+
+8. Looke
+9. Mubi
+10. Crunchyroll
 
-## 5. Atores Favoritos
+Planos/variantes e canais como `Standard with Ads`, `Premium`, `with Ads` e `Amazon Channel` são consolidados ou ignorados para evitar duplicação.
 
-Persistência: `favorite_actors` com RLS.
+## 4. Android 0.99.7.4
 
-Comportamento obrigatório:
-- coração em cada card do elenco;
-- botão Favoritar ator / Ator favorito na página da pessoa;
-- Perfil possui seção Atores Favoritos;
-- remover pelo Perfil sincroniza Supabase e UI;
-- coração não deve abrir a pessoa;
-- card da pessoa abre biografia e filmografia;
-- filmografia separada em Filmes e Séries, mais novos primeiro.
+Objetivo: **paridade funcional completa com a Web r173**, adaptando somente viewport, navegação e composição visual para telefone/WebView.
 
-## 6. Detalhe de série
-
-A autoridade v118 renderiza o detalhe diretamente.
-
-Temporada aberta:
-- contém somente a lista de episódios;
-- episódio mostra still/capa, SxxExx, título, data, nota, sinopse;
-- Marcar como visto;
-- Marcar como revisto com preservação de plays.
-
-### Avaliações dos episódios por temporada
-
-Regra absoluta:
-- não fica dentro do accordion da temporada;
-- não fica acima nem abaixo dos episódios dentro da temporada;
-- fica em seção independente **depois de todo o bloco Temporadas e episódios**;
-- aparece com temporadas abertas ou fechadas;
-- possui scroll horizontal entre temporadas;
-- cada temporada carrega sob demanda;
-- eixo Y 0–10, eixo X SxxExx;
-- melhor episódio verde, pior vermelho, demais ciano;
-- tooltip: código, nota, título e quantidade de votos.
-
-## 7. Descobrir
-
-Tabs canônicas:
-- Pra Você;
-- Em alta;
-- Mais aguardados;
-- Populares;
-- Mais bem avaliados;
-- Calendário.
-
-Filtro `☰ Filtros`:
-- Tipo: Todos / Séries / Filmes;
-- Visualização: Lista / Carrossel / Grade.
-
-Tamanhos:
-- Grade: aproximadamente 128–152 px por card;
-- Carrossel: 142 px;
-- Lista: pôster 64×92 em linha compacta;
-- Pra Você/Watchlist/100% novos usam a mesma escala de card.
-
-Regras de conteúdo:
-- `cinetracker_profile_media_dashboard_v0991()` e `cinetracker_discovery_exclusions_v0994()` são obrigatórios;
-- falha fechada: sem exclusões válidas, não mostrar lista pública potencialmente errada;
-- vistos, histórico, Watchlist, InProgress, UpToDate e Completed ficam fora das coleções públicas;
-- bloqueio por TMDB ID e aliases original/localizado;
-- filme diário: após 1990, nota TMDB >= 8, nunca visto e fora da Watchlist;
-- Da sua Watchlist: Filme/Série/Anime ainda não vistos;
-- 100% novos: Filme/Série/Anime fora de histórico e Watchlist;
-- Calendário combina filmes futuros e `next_episode_to_air` das séries acompanhadas, até 45 dias.
-
-## 8. Busca
-
-A 0.99.7 possui uma única busca global de filmes, séries e atores na Home e no Descobrir. O v118 remove o `#ct111-global-search` antigo antes de montar a busca própria, evitando a duplicação observada no vídeo.
-
-## 9. Android 0.99.7
+Identidade:
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.7`;
-- `versionCode`: `9970`;
-- bundle: `android-v0.99.7-single-authority`;
-- builder: `scripts/prepare-android-v0997.mjs`;
-- test: `scripts/test-android-v0997.mjs`;
-- workflow: `.github/workflows/build-android-v0997.yml`;
-- release publicada: `android-v0.99.7`;
-- APK: `cinetracker-android-0.99.7-debug.apk`;
-- SHA-256: `e8eb582d9a15801213bf28afe798671a365d8eb56c99b9bb18d82d798595e703`.
+- `versionName`: `0.99.7.4`;
+- `versionCode`: `9974`;
+- bundle: `android-v0.99.7.4-r173-parity`;
+- baseline: `r173-detail-left-window`;
+- builder: `scripts/prepare-android-v09974.mjs`;
+- test: `scripts/test-android-v09974.mjs`;
+- workflow: `.github/workflows/build-android-v09974.yml`;
+- release planejada/automática após merge: `android-v0.99.7.4`.
 
-O builder incorpora o mesmo `dist` final da Web e falha se encontrar v111/v114/v115/v116/v117 como scripts executáveis.
+Documento técnico completo:
 
-## 10. Backend 0.99.7
+`docs/ANDROID_09974_R173_PARITY.md`
 
-Novo contrato aplicado em produção:
-- `cinetracker_profile_payload_v0997(text)`;
-- timezone validado em `pg_timezone_names`;
-- atividade calculada no fuso do usuário;
-- execute somente para `authenticated`.
+## 5. Arquitetura Android 0.99.7.4
 
-Contratos preservados:
-- `cinetracker_discovery_exclusions_v0994()`;
-- `cinetracker_profile_media_dashboard_v0991()`;
-- `favorite_actors`;
-- `ct-enrich-media-user` com `visible-posters` / `requested_media_ids`.
+O APK continua usando WebView, mas não mantém um runtime de regras separado.
 
-## 11. Estado de validação
+O builder:
 
-Comprovado tecnicamente:
-- [x] package Web 0.99.7;
-- [x] service-worker `ct-web-0.99.7`;
-- [x] Android `versionName 0.99.7` / `versionCode 9970`;
-- [x] migration/RPC 0.99.7 aplicada em Supabase production;
-- [x] PR #28 mergeado em `main` no commit `081e903010e49fc5bd4db037f87258706810df66`;
-- [x] Verify `33168068866` success;
-- [x] Vercel Production success;
-- [x] Android workflow `33168068870` success;
-- [x] identidade e assinatura APK validadas;
-- [x] GitHub Release `android-v0.99.7` publicada;
-- [x] SHA-256 do APK registrado.
+1. executa `apps/web/build-r173.mjs`;
+2. valida a revision congelada;
+3. lê `app-v173.js` e `app-v173.css`;
+4. injeta ambos no HTML do APK;
+5. adiciona apenas adaptação mobile e bridge de navegação/back;
+6. grava `assets/hotfix5/index.html` totalmente autocontido.
 
-Pendente apenas de validação real:
-- [ ] smoke Web/PWA;
-- [ ] smoke APK em aparelho;
-- [ ] confirmação visual dos cinco defeitos reportados.
+A barra nativa antiga fica escondida. O APK usa a navegação mobile r173 com cinco destinos: Home, Descobrir, Esportes, Perfil e Configurações.
 
-Vídeo/print real prevalece sobre CI caso haja divergência.
+O botão físico Voltar é conectado a `window.ct48Back` para respeitar drawers, detalhes e rotas internas.
 
-## 12. Débitos conhecidos
+## 6. Paridade Android obrigatória
 
-- grande volume de itens importados ainda depende de enriquecimento TMDB gradual;
-- runtimes/metadados incompletos não devem ser inventados;
-- advisories históricos do Supabase permanecem separados desta release;
-- a pilha base ainda é acumulada, mas as áreas v118 não devem voltar a depender das autoridades removidas do HTML final.
+O APK 0.99.7.4 deve conter funcionalmente tudo da Web r173, incluindo:
 
-## 13. Documentos canônicos
+- Home completa;
+- Descobrir completo + Top 10;
+- Pra Você e regras pessoais;
+- Esportes completos;
+- Perfil e gráfico Assistido por dia clicável;
+- Configurações/sincronização;
+- filmes/séries ricos;
+- Onde Assistir;
+- país de produção;
+- Watchlist;
+- Visto/Reassistido;
+- Favorito;
+- temporadas/episódios;
+- gráficos por temporada;
+- atores/filmografia/favoritos;
+- títulos relacionados;
+- busca global;
+- Voltar.
 
-`README.md`, `VERSIONS.md`, `CHANGELOG.md`, `PROJECT_STATE.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.7.md`, `docs/validation/0.99.7.md`.
+Não aceitar substituição por telas Android simplificadas que removam recursos da baseline r173.
+
+## 7. Validação
+
+Estados independentes:
+
+- source/PR;
+- Verify CI;
+- build do runtime embutido;
+- Gradle/APK;
+- package/versionCode/versionName;
+- assinatura;
+- artifact;
+- GitHub Release;
+- smoke real no aparelho.
+
+CI verde não equivale a UX validada. Print/vídeo real prevalece se houver divergência.
+
+## 8. Documentos canônicos atuais
+
+- `PROJECT_STATE.md`
+- `VERSIONS.md`
+- `docs/WEB_R173_FROZEN_BASELINE.md`
+- `docs/ANDROID_09974_R173_PARITY.md`
+- `CHANGELOG.md`
+- `docs/ARCHITECTURE.md`
+- `docs/SECURITY.md`
