@@ -15,52 +15,56 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate r179-r181 regressions
+      - name: Validate r179-r182 regressions
         run: |
           set -euo pipefail
           node --check apps/web/runtime-r179.js
           node --check apps/web/runtime-r180.js
           node --check apps/web/runtime-r181.js
-          node --check apps/web/build-r181.mjs
+          node --check apps/web/runtime-r182.js
+          node --check apps/web/build-r182.mjs
           node scripts/test-r176-gap-logic.mjs
           node scripts/test-r178-stable-home.mjs
           node scripts/test-r179-target-card.mjs
           node scripts/test-r180-discover-profile.mjs
           node scripts/test-r181-season-toggle.mjs
-      - name: Build Web r181
+          node scripts/test-r182-home-season-polish.mjs
+      - name: Build Web r182
         working-directory: apps/web
         run: npm run build
-      - name: Assert Web r181 artifact
+      - name: Assert Web r182 artifact
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v181.js
-          grep -Fq "r181-season-whole-toggle" apps/web/dist/app-v181.js
-          grep -Fq "mark-unmark-all-released-episodes" apps/web/dist/app-v181.js
-          grep -Fq "ask-before-marking-incomplete-previous-seasons" apps/web/dist/app-v181.js
-          grep -Fq "data-ct181-season-toggle" apps/web/dist/app-v181.js
-          grep -Fq "cinetracker_unmark_episode_v1" apps/web/dist/app-v181.js
-          grep -Fq "ct176PrimeWithWatched" apps/web/dist/app-v181.js
-          grep -Fq "all-tabs-scroll-strict-business-rules" apps/web/dist/app-v181.js
-          grep -Fq '"revision":"r181-season-whole-toggle"' apps/web/dist/release.json
-          grep -Fq '.ct181-season-toggle.on' apps/web/dist/app-v181.css
-          test ! -f apps/web/dist/app-v180.js
+          node --check apps/web/dist/app-v182.js
+          grep -Fq "r182-home-season-polish" apps/web/dist/app-v182.js
+          grep -Fq "remove-noninteractive-circle-badge-keep-row-navigation" apps/web/dist/app-v182.js
+          grep -Fq "compact-inline-season-toggle-no-giant-button" apps/web/dist/app-v182.js
+          grep -Fq "mark-unmark-all-released-episodes" apps/web/dist/app-v182.js
+          grep -Fq "data-ct181-season-toggle" apps/web/dist/app-v182.js
+          grep -Fq "ct176PrimeWithWatched" apps/web/dist/app-v182.js
+          grep -Fq '"revision":"r182-home-season-polish"' apps/web/dist/release.json
+          grep -Fq '[data-home] .media-row>.badge{display:none!important}' apps/web/dist/app-v182.css
+          grep -Fq '.ct169-season-card .ct181-season-toggle.ct182-season-toggle' apps/web/dist/app-v182.css
+          grep -Fq 'width:auto!important' apps/web/dist/app-v182.css
+          test ! -f apps/web/dist/app-v181.js
 
-  android_099717_identity:
+  android_099718_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7.17
+      - name: Assert Android 0.99.7.18
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7.17'" apps/android/app/build.gradle
-          grep -q 'versionCode 9987' apps/android/app/build.gradle
-          node --check scripts/prepare-android-v099717.mjs
-          node --check scripts/test-android-v099717.mjs
+          grep -q "versionName '0.99.7.18'" apps/android/app/build.gradle
+          grep -q 'versionCode 9988' apps/android/app/build.gradle
+          node --check scripts/prepare-android-v099718.mjs
+          node --check scripts/test-android-v099718.mjs
           node scripts/test-r181-season-toggle.mjs
-          node scripts/prepare-android-v099717.mjs
-          node scripts/test-android-v099717.mjs
+          node scripts/test-r182-home-season-polish.mjs
+          node scripts/prepare-android-v099718.mjs
+          node scripts/test-android-v099718.mjs
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -68,15 +72,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
-      - name: Production Web serves r181
+      - name: Production Web serves r182
         run: |
           set -euo pipefail
           for i in $(seq 1 70); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r181-season-whole-toggle"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v181.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "mark-unmark-all-released-episodes" <<<"$JS" && grep -Fq "ask-before-marking-incomplete-previous-seasons" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"revision":"r182-home-season-polish"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v182.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v182.css?ct=$(date +%s%N)" || true)"
+              if grep -Fq "remove-noninteractive-circle-badge-keep-row-navigation" <<<"$JS" && grep -Fq "compact-inline-season-toggle-no-giant-button" <<<"$JS" && grep -Fq '[data-home] .media-row>.badge{display:none!important}' <<<"$CSS"; then exit 0; fi
             fi
             sleep 5
           done
