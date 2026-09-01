@@ -44,7 +44,7 @@ jobs:
           grep -Fq "data-ct172-home-episode" apps/web/dist/app-v172.js
           grep -Fq "cinetracker_series_episode_state_v1" apps/web/dist/app-v172.js
           grep -Fq "ct171Observer.disconnect" apps/web/dist/app-v172.js
-          grep -Fq "Netflix Standard with Ads" apps/web/dist/app-v172.js
+          grep -Fq "netflix standard with ads" apps/web/dist/app-v172.js
           grep -Fq "amazon channel" apps/web/dist/app-v172.js
           grep -Fq "HBO Max" apps/web/dist/app-v172.js
           grep -Fq "Amazon Prime Video" apps/web/dist/app-v172.js
