@@ -1,10 +1,13 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
-import {pathToFileURL} from 'node:url';
+import {execFileSync} from 'node:child_process';
 
 const root=resolve(process.cwd());
-await import(pathToFileURL(resolve(root,'scripts/prepare-android-v09977.mjs')).href+`?r174=${Date.now()}`);
-await import(pathToFileURL(resolve(root,'apps/web/build-r174.mjs')).href+`?android=${Date.now()}`);
+// These builders both mutate apps/web/dist and walk the r162->r174 import chain.
+// Keep them in separate Node processes so ESM module caching cannot leave dist at
+// app-v173 while a cached build-r172 prevents regeneration of app-v172.
+execFileSync(process.execPath,[resolve(root,'scripts/prepare-android-v09977.mjs')],{cwd:root,stdio:'inherit'});
+execFileSync(process.execPath,[resolve(root,'apps/web/build-r174.mjs')],{cwd:root,stdio:'inherit'});
 
 const indexPath=resolve(root,'apps/android/app/src/main/assets/hotfix5/index.html');
 const dist=resolve(root,'apps/web/dist');
