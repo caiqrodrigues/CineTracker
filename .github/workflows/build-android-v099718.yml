@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths:
+      - 'apps/android/**'
+      - 'scripts/prepare-android-v099718.mjs'
+      - 'scripts/test-android-v099718.mjs'
 
 permissions:
   contents: write
