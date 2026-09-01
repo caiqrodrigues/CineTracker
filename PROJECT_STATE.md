@@ -1,123 +1,87 @@
 # CineTracker — Project State
 
-> Documento persistente de continuidade. O estado real do projeto deve ser entendido por este arquivo e pelos documentos canônicos referenciados abaixo, sem depender do histórico de conversa.
+> Documento persistente de continuidade. O estado real do projeto deve ser entendido por este arquivo e pelos documentos canônicos, sem depender do histórico de conversa.
 
 **Última atualização:** 2026-09-01  
 **Branch de produção:** `main`  
 **Web:** `0.99.7` / revision **`r173-detail-left-window` — FROZEN**  
-**Android atual:** **`0.99.7.6` / versionCode `9976`**  
+**Android atual:** **`0.99.7.7` / versionCode `9977`**  
 **Backend:** Supabase production compartilhado por Web/Android  
 **Windows:** não lançado
 
 ## 1. Regra principal
 
-A Web r173 está **congelada** e é a baseline canônica. O trabalho Android pode adaptar viewport, navegação e composição para telefone, mas não deve alterar os arquivos funcionais nem regras da Web sem pedido explícito.
+A Web r173 está **congelada** e é a baseline canônica. O trabalho Android pode adaptar viewport, navegação e composição para telefone, mas não deve alterar arquivos funcionais nem regras da Web sem pedido explícito.
 
-Commit canônico da Web congelada:
+Commit canônico Web: `9157d436bab8619a2cfbd492d35052176654c3ff`  
+Revision: `r173-detail-left-window`
 
-`9157d436bab8619a2cfbd492d35052176654c3ff`
+Documento: `docs/WEB_R173_FROZEN_BASELINE.md`
 
-Revision Web:
+## 2. Baseline funcional r173
 
-`r173-detail-left-window`
+A baseline inclui Home de Séries/Filmes com progresso e metadados de episódio; Descobrir com Pra Você, Top 10 e demais abas; Esportes; Perfil com `Assistido por dia`; detalhes ricos; Watchlist/Visto/Reassistido/Favorito; país de produção; Onde Assistir com 10 streamings canônicos; temporadas em drawer; gráficos por temporada; atores/biografia/filmografia/favoritos; relacionados; busca global e Voltar.
 
-Documento completo:
+## 3. Histórico Android
 
-`docs/WEB_R173_FROZEN_BASELINE.md`
+### 0.99.7.4 — inválida
 
-## 2. Estado funcional da Web r173
+Tela preta antes do login por corrupção do `$$` durante empacotamento do JavaScript.
 
-Inclui Home de Séries/Filmes com progresso e metadados de episódio; Descobrir com Pra Você, Top 10, Em alta, Populares, Novidades, Lançamentos, Mais Aguardados, Mais bem avaliados e Calendário; Esportes; Perfil com `Assistido por dia` clicável; detalhes ricos; Watchlist/Visto/Reassistido/Favorito; país de produção; Onde Assistir com 10 streamings canônicos; temporadas em drawer; gráficos modernos por temporada; atores/biografia/filmografia/favoritos; títulos relacionados; busca global e Voltar.
+### 0.99.7.5 — bootfix
 
-## 3. Streamings canônicos
+Corrigiu o empacotamento, passou a validar o JavaScript extraído do próprio APK e o smoke real confirmou boot/login e funcionalidades r173.
 
-Top 10 e Onde Assistir usam somente:
+### 0.99.7.6 — enquadramento inicial
 
-1. HBO Max
-2. Amazon Prime Video
-3. Netflix
-4. Globoplay
-5. Disney+
-6. Apple TV+
-7. Paramount+
-8. Looke
-9. Mubi
-10. Crunchyroll
+Bloqueou overflow global de página e introduziu carrosséis locais, mas o smoke real em vídeo mostrou que alguns componentes ainda pareciam desktop miniaturizado, principalmente hero de detalhes, Onde Assistir e proporções de cards.
 
-Planos/variantes e canais duplicados são consolidados ou ignorados.
-
-## 4. Histórico Android
-
-### 0.99.7.4 — INVÁLIDA
-
-Primeiro porte integral da r173. O APK publicado abria em tela preta antes do login porque o empacotamento por `String.replace` transformou `$$` em `$`, duplicando `const $` e causando SyntaxError antes de `boot()`.
-
-Não usar.
-
-### 0.99.7.5 — BOOTFIX FUNCIONAL
-
-Corrigiu o empacotamento do JavaScript e passou a validar o JS extraído do próprio APK com `node --check`. Smoke real confirmou que o aplicativo carrega e as funcionalidades r173 estão presentes.
-
-O smoke em vídeo também mostrou que vários componentes ainda mantinham proporções de desktop: hero/detalhes largos, cards comprimidos e coleções sem comportamento de carrossel mobile consistente.
-
-### 0.99.7.6 — ATUAL
+### 0.99.7.7 — ATUAL
 
 Identidade:
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.7.6`;
-- `versionCode`: `9976`;
-- bundle: `android-v0.99.7.6-r173-mobile-frame`;
+- `versionName`: `0.99.7.7`;
+- `versionCode`: `9977`;
+- bundle: `android-v0.99.7.7-r173-mobile-composition`;
 - baseline: Web `r173-detail-left-window` congelada;
-- builder mobile: `scripts/prepare-android-v09976.mjs`;
-- test: `scripts/test-android-v09976.mjs`;
-- workflow: `.github/workflows/build-android-v09976.yml`;
-- release: `android-v0.99.7.6`.
+- builder: `scripts/prepare-android-v09977.mjs`;
+- test: `scripts/test-android-v09977.mjs`;
+- workflow: `.github/workflows/build-android-v09977.yml`;
+- release: `android-v0.99.7.7`.
 
-## 5. Adaptação mobile 0.99.7.6
+## 4. Composição mobile 0.99.7.7
 
-A 0.99.7.6 preserva a autoridade funcional r173 e altera somente a camada Android/mobile:
+Baseada diretamente no vídeo real da 0.99.7.6:
 
-- enquadramento global em 100% da largura útil do telefone;
-- `box-sizing` e `min-width:0` para impedir elementos filhos de alargarem a página;
-- overflow horizontal da página bloqueado; overflow horizontal permitido apenas em componentes locais que precisam de carrossel/gráfico;
-- Home permanece vertical e passa a respeitar integralmente a largura do telefone;
-- Descobrir e filtros/pílulas passam a usar scroll horizontal local;
-- Top 10 passa a usar cards mobile e swipe/scroll horizontal;
-- elenco, títulos relacionados, temporadas e provedores/streamings viram carrosséis horizontais com scroll-snap;
-- hero de filme/série mantém o conceito enjanelado da r173, mas poster/título/metadados/sinopse/botões refluem dentro do telefone;
-- títulos longos quebram linha em vez de extrapolar o viewport;
-- drawer de temporada ocupa a largura do telefone e seus episódios refluem em grid mobile;
-- gráficos continuam amplos internamente, porém rolam horizontalmente dentro do próprio componente;
-- Perfil usa duas colunas compactas para estatísticas;
-- Esportes e Configurações refluem controles para a largura do aparelho;
-- barra inferior respeita safe-area do Android;
-- carrosséis exibem barra de rolagem fina e aceitam swipe nativo do WebView.
+- hero de filme/série deixa de esmagar texto ao lado do poster e passa a composição empilhada no telefone;
+- título, metadados, sinopse e ações usam a largura integral;
+- Onde Assistir usa cards maiores e legíveis em carrossel;
+- relacionados e cards gerais mostram aproximadamente 2–2,5 itens por viewport;
+- elenco, temporadas e Top 10 usam proporções mobile mais legíveis;
+- drawer de episódios usa still e tipografia maiores sem sair do viewport;
+- Home recebe linhas e ações proporcionais ao telefone;
+- Perfil continua em duas colunas, com cards maiores;
+- Esportes/Configurações refinam inputs e painéis para toque;
+- gráficos mantêm scroll horizontal local;
+- toda a paridade funcional r173 e o bootfix são preservados.
 
-## 6. Validação 0.99.7.6
+## 5. Validação 0.99.7.7
 
-Comprovado tecnicamente:
-
-- [x] PR #117 mergeada;
-- [x] Verify da Web r173 continua `SUCCESS` e congelada;
-- [x] Android identity 0.99.7.6 `SUCCESS`;
-- [x] preparação do runtime mobile `SUCCESS`;
-- [x] JavaScript embutido preserva `const $$` e passa `node --check`;
+- [x] PR #118 mergeada;
+- [x] Web r173 continua `SUCCESS` e congelada;
+- [x] Android identity 0.99.7.7 `SUCCESS`;
+- [x] preparação do runtime `SUCCESS`;
+- [x] JavaScript embutido passa `node --check`;
 - [x] Gradle APK build `SUCCESS`;
 - [x] validação do APK compilado `SUCCESS`;
 - [x] assinatura validada;
 - [x] artifact publicado;
-- [x] Release `android-v0.99.7.6` publicada;
-- [ ] smoke real da 0.99.7.6 no aparelho.
+- [x] Release `android-v0.99.7.7` publicada;
+- [ ] smoke real da 0.99.7.7 no aparelho.
 
-CI verde não equivale a UX validada. Print/vídeo real prevalece se houver divergência.
+CI verde não equivale a UX validada. Print/vídeo real prevalece quando houver divergência.
 
-## 7. Documentos canônicos
+## 6. Streamings canônicos
 
-- `PROJECT_STATE.md`
-- `VERSIONS.md`
-- `docs/WEB_R173_FROZEN_BASELINE.md`
-- `docs/ANDROID_09974_R173_PARITY.md` (histórico do primeiro porte)
-- `CHANGELOG.md`
-- `docs/ARCHITECTURE.md`
-- `docs/SECURITY.md`
+Top 10 e Onde Assistir usam somente HBO Max, Amazon Prime Video, Netflix, Globoplay, Disney+, Apple TV+, Paramount+, Looke, Mubi e Crunchyroll. Planos/variantes e canais duplicados são consolidados ou ignorados.
