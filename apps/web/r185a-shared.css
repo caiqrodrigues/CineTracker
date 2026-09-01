@@ -1,0 +1,9 @@
+/* r185A — feedback discreto; conteúdo em cache permanece utilizável para navegação */
+.ct185a-sync{position:fixed;right:14px;top:max(12px,env(safe-area-inset-top));z-index:12000;display:flex;align-items:center;gap:7px;max-width:min(82vw,330px);padding:7px 10px;border:1px solid #24495d;border-radius:999px;background:rgba(5,19,28,.92);backdrop-filter:blur(12px);color:#b9dceb;font-size:10px;font-weight:700;letter-spacing:.02em;box-shadow:0 8px 28px rgba(0,0,0,.22);opacity:0;transform:translateY(-7px);pointer-events:none;transition:opacity .16s ease,transform .16s ease}
+.ct185a-sync::before{content:'';width:7px;height:7px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:ct185spin .8s linear infinite;flex:0 0 auto}
+.ct185a-sync.show{opacity:1;transform:translateY(0)}
+.ct185a-sync[data-tone="ok"]{color:#8de7b4;border-color:#276345}.ct185a-sync[data-tone="ok"]::before{border:0;width:8px;height:8px;background:currentColor;animation:none}
+.ct185a-sync[data-tone="offline"]{color:#ffd28a;border-color:#755525}.ct185a-sync[data-tone="offline"]::before{border:0;width:8px;height:8px;background:currentColor;animation:none}
+[data-ct185a-stale="1"] [data-ct185a-disabled="1"]{opacity:.55!important;cursor:wait!important}
+@keyframes ct185spin{to{transform:rotate(360deg)}}
+@media(max-width:700px){.ct185a-sync{top:max(8px,env(safe-area-inset-top));right:9px;padding:6px 9px;font-size:9px}}
