@@ -1,9 +1,8 @@
 import {readFile} from 'node:fs/promises';
-const [js,css,build,pkg]=await Promise.all([
+const [js,css,build]=await Promise.all([
   readFile('apps/web/runtime-r185a-shared.js','utf8'),
   readFile('apps/web/r185a-shared.css','utf8'),
-  readFile('apps/web/build-r185a.mjs','utf8'),
-  readFile('apps/web/package.json','utf8')
+  readFile('apps/web/build-r185a.mjs','utf8')
 ]);
 for(const m of [
   "window.__ctR185A='instant-visual-cache-safe-revalidate'",
@@ -23,5 +22,4 @@ for(const m of [
 for(const forbidden of ["rpc('cinetracker_","api('media_overrides","api('watch_history","fetch(`${SUPABASE_URL}"]){if(js.includes(forbidden))throw new Error('r185A cache layer must not write/fetch business data: '+forbidden)}
 for(const m of ['.ct185a-sync','[data-ct185a-stale="1"]','@keyframes ct185spin'])if(!css.includes(m))throw new Error('r185A css missing '+m);
 for(const m of ["await import('./build-r184.mjs')","r185a-instant-cache","app-v185a.js","runtime-r185a-shared.js"])if(!build.includes(m))throw new Error('r185A build missing '+m);
-if(!pkg.includes('build-r185a.mjs'))throw new Error('package not building r185A');
-console.log('R185A_INSTANT_CACHE_OK visual-only=true old-authority=true stale-safe=true fallback=true');
+console.log('R185A_INSTANT_CACHE_OK visual-only=true old-authority=true stale-safe=true fallback=true historical=true');
