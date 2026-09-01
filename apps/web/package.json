@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.99.7",
   "scripts": {
-    "build": "node build-r177.mjs",
-    "verify": "node build-r177.mjs"
+    "build": "node build-r178.mjs",
+    "verify": "node build-r178.mjs"
   },
   "engines": {
     "node": ">=20"
