@@ -2,8 +2,6 @@ name: Build Android 0.99.7.13 — r179 Home Target Card
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 permissions:
   contents: write
