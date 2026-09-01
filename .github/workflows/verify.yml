@@ -32,10 +32,10 @@ jobs:
           node scripts/test-r176-gap-logic.mjs
           node scripts/test-r178-stable-home.mjs
           node scripts/test-r179-target-card.mjs
-      - name: Build exact CineTracker Web r179 artifact used by Vercel
+      - name: Build exact frozen CineTracker Web r179 artifact used by Vercel
         working-directory: apps/web
         run: npm run build
-      - name: Assert r179 duplicate-safe Home target authority
+      - name: Assert Web remains exactly r179
         shell: bash
         run: |
           set -euo pipefail
@@ -58,23 +58,29 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-  android_099713_identity:
+  android_099714_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7.13 r179 identity
+      - name: Assert Android 0.99.7.14 composition identity
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7.13'" apps/android/app/build.gradle
-          grep -q 'versionCode 9983' apps/android/app/build.gradle
-          grep -q 'android-v0.99.7.13-r179-home-target-card' scripts/prepare-android-v099713.mjs
-          grep -q 'web-r179-home-target-card-parity' scripts/prepare-android-v099713.mjs
-          node --check scripts/prepare-android-v099713.mjs
-          node --check scripts/test-android-v099713.mjs
+          grep -q "versionName '0.99.7.14'" apps/android/app/build.gradle
+          grep -q 'versionCode 9984' apps/android/app/build.gradle
+          grep -q 'android-v0.99.7.14-r179-immersive-detail-nav' scripts/prepare-android-v099714.mjs
+          grep -q 'web-r179-frozen-android-ui-parity' scripts/prepare-android-v099714.mjs
+          grep -q 'persistent-five-tab-nav-immersive-poster-compact-where' scripts/prepare-android-v099714.mjs
+          grep -q 'always-visible-five-tabs' scripts/prepare-android-v099714.mjs
+          grep -q 'poster-first-no-detail-header' scripts/prepare-android-v099714.mjs
+          grep -q 'compact-provider-icons' scripts/prepare-android-v099714.mjs
+          node --check scripts/prepare-android-v099714.mjs
+          node --check scripts/test-android-v099714.mjs
           node scripts/test-r179-target-card.mjs
+          node scripts/prepare-android-v099714.mjs
+          node scripts/test-android-v099714.mjs
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -82,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
-      - name: Production domain serves r179
+      - name: Production Web remains r179
         shell: bash
         run: |
           set -euo pipefail
@@ -92,11 +98,11 @@ jobs:
             if grep -Fq '"revision":"r179-home-target-card"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v179.js?ct=$(date +%s%N)" || true)"
               if grep -Fq "const REVISION='r179-home-target-card';" <<<"$JS" && grep -Fq "home-target-card-by-media-id" <<<"$JS"; then
-                echo 'PRODUCTION_R179_OK target-card-by-media-id'
+                echo 'PRODUCTION_R179_FROZEN_OK'
                 exit 0
               fi
             fi
             sleep 5
           done
-          echo 'Production domain did not serve r179-home-target-card in time.' >&2
+          echo 'Production Web is not serving frozen r179.' >&2
           exit 1
