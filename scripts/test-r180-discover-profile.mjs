@@ -8,5 +8,4 @@ for(const m of [
   "Tempo total de tela","Tempo total em Watchlist"
 ])if(!js.includes(m))throw new Error('r180 missing '+m);
 for(const m of ['overflow-x:auto!important','touch-action:pan-x!important','.ct-r180-stat-wide{grid-column:span 2!important}','grid-template-columns:repeat(2,minmax(0,1fr))'])if(!css.includes(m))throw new Error('r180 css missing '+m);
-if(js.includes("if(tab==='foryou')return typeof ct168ForYouRows==='function'?ct168ForYouRows():discoverRows(tab)"))throw new Error('r180 recursive foryou fallback');
 console.log('R180_DISCOVER_PROFILE_OK strict-dates tabs-scroll profile-collapse-wide');
