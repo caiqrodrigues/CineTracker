@@ -58,26 +58,28 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-  android_09975_identity:
+  android_09976_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7.5 r173 bootfix identity
+      - name: Assert Android 0.99.7.6 r173 mobile-frame identity
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7.5'" apps/android/app/build.gradle
-          grep -q 'versionCode 9975' apps/android/app/build.gradle
-          grep -q 'android-v0.99.7.5-r173-parity-bootfix' scripts/prepare-android-v09975.mjs
-          grep -q 'web-r173-full-functional-parity' scripts/prepare-android-v09975.mjs
-          grep -q 'safe JS embedding callback' scripts/prepare-android-v09975.mjs
-          grep -q 'node --check' .github/workflows/build-android-v09975.yml
+          grep -q "versionName '0.99.7.6'" apps/android/app/build.gradle
+          grep -q 'versionCode 9976' apps/android/app/build.gradle
+          grep -q 'android-v0.99.7.6-r173-mobile-frame' scripts/prepare-android-v09976.mjs
+          grep -q 'phone-framed-carousels-scroll-snap' scripts/prepare-android-v09976.mjs
+          grep -q 'scroll-snap-type:x proximity' scripts/prepare-android-v09976.mjs
+          grep -q 'overflow-x:auto' scripts/prepare-android-v09976.mjs
+          grep -q 'node --check' .github/workflows/build-android-v09976.yml
           grep -q 'android:id="@+id/android_bottom_nav"' apps/android/app/src/main/res/layout/activity_main.xml
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
           node --check scripts/prepare-android-v09975.mjs
-          node --check scripts/test-android-v09975.mjs
+          node --check scripts/prepare-android-v09976.mjs
+          node --check scripts/test-android-v09976.mjs
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
