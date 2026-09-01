@@ -5,19 +5,19 @@
 **Última atualização:** 2026-09-01  
 **Branch de produção:** `main`  
 **Web:** `0.99.7` / revision **`r173-detail-left-window` — FROZEN**  
-**Android atual:** **`0.99.7.5` / versionCode `9975`**  
+**Android atual:** **`0.99.7.6` / versionCode `9976`**  
 **Backend:** Supabase production compartilhado por Web/Android  
 **Windows:** não lançado
 
-## 1. Regra principal a partir da r173
+## 1. Regra principal
 
-A Web r173 está **congelada**. O trabalho Android deve portar/adaptar a r173 sem alterar seus arquivos funcionais ou regras de negócio.
+A Web r173 está **congelada** e é a baseline canônica. O trabalho Android pode adaptar viewport, navegação e composição para telefone, mas não deve alterar os arquivos funcionais nem regras da Web sem pedido explícito.
 
 Commit canônico da Web congelada:
 
 `9157d436bab8619a2cfbd492d35052176654c3ff`
 
-Revision exibida no rodapé:
+Revision Web:
 
 `r173-detail-left-window`
 
@@ -27,7 +27,7 @@ Documento completo:
 
 ## 2. Estado funcional da Web r173
 
-A baseline r173 inclui Home de Séries/Filmes com progresso e metadados de episódio; Descobrir com Pra Você, Top 10, Em alta, Populares, Novidades, Lançamentos, Mais Aguardados, Mais bem avaliados e Calendário; Esportes com busca global/favoritos/calendário/assistidos; Perfil com estatísticas e `Assistido por dia` clicável; detalhes ricos de filme/série; Watchlist, Visto/Reassistido e Favorito; país de produção; Onde Assistir com 10 streamings canônicos; temporadas em drawer; gráficos modernos por temporada; atores/biografia/filmografia/favoritos; títulos relacionados mistos; busca global e Voltar.
+Inclui Home de Séries/Filmes com progresso e metadados de episódio; Descobrir com Pra Você, Top 10, Em alta, Populares, Novidades, Lançamentos, Mais Aguardados, Mais bem avaliados e Calendário; Esportes; Perfil com `Assistido por dia` clicável; detalhes ricos; Watchlist/Visto/Reassistido/Favorito; país de produção; Onde Assistir com 10 streamings canônicos; temporadas em drawer; gráficos modernos por temporada; atores/biografia/filmografia/favoritos; títulos relacionados; busca global e Voltar.
 
 ## 3. Streamings canônicos
 
@@ -46,57 +46,69 @@ Top 10 e Onde Assistir usam somente:
 
 Planos/variantes e canais duplicados são consolidados ou ignorados.
 
-## 4. Android 0.99.7.4 — INVÁLIDO
+## 4. Histórico Android
 
-A versão `0.99.7.4` foi compilada e assinada, mas o smoke real no aparelho mostrou **tela preta antes do login**.
+### 0.99.7.4 — INVÁLIDA
 
-Causa confirmada extraindo `assets/hotfix5/index.html` do APK publicado: o builder embutia `app-v173.js` usando o segundo argumento textual de `String.replace`. Nesse modo, `$$` é uma sequência especial de replacement e foi transformada em `$`. O helper original `const $$=...querySelectorAll...` virou uma segunda declaração `const $`, produzindo:
+Primeiro porte integral da r173. O APK publicado abria em tela preta antes do login porque o empacotamento por `String.replace` transformou `$$` em `$`, duplicando `const $` e causando SyntaxError antes de `boot()`.
 
-`SyntaxError: Identifier '$' has already been declared`
+Não usar.
 
-O JavaScript abortava antes de `boot()`, portanto nem o login era renderizado.
+### 0.99.7.5 — BOOTFIX FUNCIONAL
 
-A 0.99.7.4 não deve ser usada nem considerada validada funcionalmente.
+Corrigiu o empacotamento do JavaScript e passou a validar o JS extraído do próprio APK com `node --check`. Smoke real confirmou que o aplicativo carrega e as funcionalidades r173 estão presentes.
 
-## 5. Android 0.99.7.5 — ATUAL
+O smoke em vídeo também mostrou que vários componentes ainda mantinham proporções de desktop: hero/detalhes largos, cards comprimidos e coleções sem comportamento de carrossel mobile consistente.
+
+### 0.99.7.6 — ATUAL
 
 Identidade:
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.7.5`;
-- `versionCode`: `9975`;
-- bundle: `android-v0.99.7.5-r173-parity-bootfix`;
-- baseline: `r173-detail-left-window`;
-- builder: `scripts/prepare-android-v09975.mjs`;
-- test: `scripts/test-android-v09975.mjs`;
-- workflow: `.github/workflows/build-android-v09975.yml`;
-- release: `android-v0.99.7.5`.
+- `versionName`: `0.99.7.6`;
+- `versionCode`: `9976`;
+- bundle: `android-v0.99.7.6-r173-mobile-frame`;
+- baseline: Web `r173-detail-left-window` congelada;
+- builder mobile: `scripts/prepare-android-v09976.mjs`;
+- test: `scripts/test-android-v09976.mjs`;
+- workflow: `.github/workflows/build-android-v09976.yml`;
+- release: `android-v0.99.7.6`.
 
-Correção do boot:
+## 5. Adaptação mobile 0.99.7.6
 
-- o JS/CSS r173 é embutido com callback de replacement, preservando literalmente `$`, `$$` e demais sequências do runtime;
-- o builder exige `const $$` intacto e apenas uma declaração `const $`;
-- o JavaScript é extraído do HTML Android final e validado com `node --check`;
-- após compilar, o workflow abre o próprio APK, extrai novamente o JavaScript de `assets/hotfix5/index.html` e executa `node --check` antes de publicar;
-- package, versionCode, versionName, assinatura e markers de paridade também são validados.
+A 0.99.7.6 preserva a autoridade funcional r173 e altera somente a camada Android/mobile:
 
-A paridade funcional continua sendo a mesma da Web r173; somente o empacotamento Android foi corrigido.
+- enquadramento global em 100% da largura útil do telefone;
+- `box-sizing` e `min-width:0` para impedir elementos filhos de alargarem a página;
+- overflow horizontal da página bloqueado; overflow horizontal permitido apenas em componentes locais que precisam de carrossel/gráfico;
+- Home permanece vertical e passa a respeitar integralmente a largura do telefone;
+- Descobrir e filtros/pílulas passam a usar scroll horizontal local;
+- Top 10 passa a usar cards mobile e swipe/scroll horizontal;
+- elenco, títulos relacionados, temporadas e provedores/streamings viram carrosséis horizontais com scroll-snap;
+- hero de filme/série mantém o conceito enjanelado da r173, mas poster/título/metadados/sinopse/botões refluem dentro do telefone;
+- títulos longos quebram linha em vez de extrapolar o viewport;
+- drawer de temporada ocupa a largura do telefone e seus episódios refluem em grid mobile;
+- gráficos continuam amplos internamente, porém rolam horizontalmente dentro do próprio componente;
+- Perfil usa duas colunas compactas para estatísticas;
+- Esportes e Configurações refluem controles para a largura do aparelho;
+- barra inferior respeita safe-area do Android;
+- carrosséis exibem barra de rolagem fina e aceitam swipe nativo do WebView.
 
-## 6. Validação da 0.99.7.5
+## 6. Validação 0.99.7.6
 
 Comprovado tecnicamente:
 
-- [x] PR #116 mergeada;
-- [x] Verify Web r173 permanece verde e congelada;
-- [x] Android identity 0.99.7.5 success;
-- [x] preparação do runtime Android success;
-- [x] JavaScript embutido no HTML passa `node --check`;
-- [x] Gradle APK build success;
-- [x] JavaScript extraído do APK compilado passa `node --check`;
+- [x] PR #117 mergeada;
+- [x] Verify da Web r173 continua `SUCCESS` e congelada;
+- [x] Android identity 0.99.7.6 `SUCCESS`;
+- [x] preparação do runtime mobile `SUCCESS`;
+- [x] JavaScript embutido preserva `const $$` e passa `node --check`;
+- [x] Gradle APK build `SUCCESS`;
+- [x] validação do APK compilado `SUCCESS`;
 - [x] assinatura validada;
 - [x] artifact publicado;
-- [x] Release `android-v0.99.7.5` publicada;
-- [ ] smoke real 0.99.7.5 no aparelho.
+- [x] Release `android-v0.99.7.6` publicada;
+- [ ] smoke real da 0.99.7.6 no aparelho.
 
 CI verde não equivale a UX validada. Print/vídeo real prevalece se houver divergência.
 
@@ -105,7 +117,7 @@ CI verde não equivale a UX validada. Print/vídeo real prevalece se houver dive
 - `PROJECT_STATE.md`
 - `VERSIONS.md`
 - `docs/WEB_R173_FROZEN_BASELINE.md`
-- `docs/ANDROID_09974_R173_PARITY.md` (histórico do primeiro porte; 0.99.7.4 inválida)
+- `docs/ANDROID_09974_R173_PARITY.md` (histórico do primeiro porte)
 - `CHANGELOG.md`
 - `docs/ARCHITECTURE.md`
 - `docs/SECURITY.md`
