@@ -2,6 +2,7 @@ name: Build Android 0.99.7.4 — Web r173 Parity
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
     branches: [main]
     paths:
@@ -48,10 +49,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          grep -Fq "const REVISION='r173-detail-left-window';" apps/web/runtime-r173.js || true
           grep -Fq "r173-detail-left-window" apps/web/build-r173.mjs
           grep -Fq "detail-left-windowed-hero" apps/web/runtime-r173.js
           grep -Fq "poster-title-meta-synopsis-actions-left-window" apps/web/runtime-r173.js
+          grep -Fq "r173-detail-left-window" docs/WEB_R173_FROZEN_BASELINE.md
 
       - name: Prepare embedded Android runtime from exact Web r173
         shell: bash
