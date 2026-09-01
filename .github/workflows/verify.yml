@@ -58,28 +58,29 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-  android_09976_identity:
+  android_09977_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7.6 r173 mobile-frame identity
+      - name: Assert Android 0.99.7.7 r173 mobile-composition identity
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7.6'" apps/android/app/build.gradle
-          grep -q 'versionCode 9976' apps/android/app/build.gradle
-          grep -q 'android-v0.99.7.6-r173-mobile-frame' scripts/prepare-android-v09976.mjs
-          grep -q 'phone-framed-carousels-scroll-snap' scripts/prepare-android-v09976.mjs
-          grep -q 'scroll-snap-type:x proximity' scripts/prepare-android-v09976.mjs
-          grep -q 'overflow-x:auto' scripts/prepare-android-v09976.mjs
-          grep -q 'node --check' .github/workflows/build-android-v09976.yml
+          grep -q "versionName '0.99.7.7'" apps/android/app/build.gradle
+          grep -q 'versionCode 9977' apps/android/app/build.gradle
+          grep -q 'android-v0.99.7.7-r173-mobile-composition' scripts/prepare-android-v09977.mjs
+          grep -q 'stacked-hero-readable-carousels-phone-panels' scripts/prepare-android-v09977.mjs
+          grep -q 'display:block!important' scripts/prepare-android-v09977.mjs
+          grep -q 'flex:0 0 min(43vw,164px)' scripts/prepare-android-v09977.mjs
+          grep -q 'node --check' .github/workflows/build-android-v09977.yml
           grep -q 'android:id="@+id/android_bottom_nav"' apps/android/app/src/main/res/layout/activity_main.xml
           grep -q 'android:visibility="gone"' apps/android/app/src/main/res/layout/activity_main.xml
           node --check scripts/prepare-android-v09975.mjs
           node --check scripts/prepare-android-v09976.mjs
-          node --check scripts/test-android-v09976.mjs
+          node --check scripts/prepare-android-v09977.mjs
+          node --check scripts/test-android-v09977.mjs
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
