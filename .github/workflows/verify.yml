@@ -58,18 +58,21 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-  android_099710_identity:
+  android_099711_identity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Preserve current Android 0.99.7.10 identity during Web r177 validation
+      - name: Assert Android 0.99.7.11 r177 identity
         shell: bash
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7.10'" apps/android/app/build.gradle
-          grep -q 'versionCode 9980' apps/android/app/build.gradle
+          grep -q "versionName '0.99.7.11'" apps/android/app/build.gradle
+          grep -q 'versionCode 9981' apps/android/app/build.gradle
+          grep -q 'android-v0.99.7.11-r177-canonical-next-repaint' scripts/prepare-android-v099711.mjs
+          grep -q 'web-r177-canonical-next-repaint-parity' scripts/prepare-android-v099711.mjs
+          grep -q 'canonical-next-episode-repaint' scripts/prepare-android-v099711.mjs
           node --check scripts/prepare-android-v099711.mjs
           node --check scripts/test-android-v099711.mjs
           node scripts/test-r176-gap-logic.mjs

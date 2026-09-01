@@ -1,8 +1,7 @@
-name: Build Android 0.99.7.10 — r176 Gap Rewind
+name: Build Android 0.99.7.11 — r177 Canonical Next Repaint
 
 on:
   workflow_dispatch:
-  pull_request:
   push:
     branches: [main]
 
@@ -11,11 +10,11 @@ permissions:
   statuses: write
 
 concurrency:
-  group: cinetracker-android-v099710-${{ github.ref }}
+  group: cinetracker-android-v099711-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  android_v099710:
+  android_v099711:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -39,22 +38,23 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Prepare Android 0.99.7.10 r176 runtime
+      - name: Prepare Android 0.99.7.11 r177 runtime
         shell: bash
         run: |
           set -euo pipefail
           node scripts/test-r176-gap-logic.mjs
-          node scripts/prepare-android-v099710.mjs
-          node scripts/test-android-v099710.mjs
-      - name: Build Android 0.99.7.10 APK
+          node scripts/test-r177-repaint.mjs
+          node scripts/prepare-android-v099711.mjs
+          node scripts/test-android-v099711.mjs
+      - name: Build Android 0.99.7.11 APK
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
-      - name: Validate APK identity, embedded r176 JS and signature
+      - name: Validate APK identity, embedded r177 JS and signature
         shell: bash
         run: |
           set -euo pipefail
           APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
-          OUT="cinetracker-android-0.99.7.10-r176-gap-rewind-debug.apk"
+          OUT="cinetracker-android-0.99.7.11-r177-canonical-next-repaint-debug.apk"
           cp "$APK" "$OUT"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
@@ -62,38 +62,38 @@ jobs:
           VERSION="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" | head -1)"
           VERSION_CODE="$($AAPT dump badging "$OUT" | sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" | head -1)"
           test "$PACKAGE" = "com.cinetracker.app"
-          test "$VERSION" = "0.99.7.10"
-          test "$VERSION_CODE" = "9980"
-          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99710-index.html
+          test "$VERSION" = "0.99.7.11"
+          test "$VERSION_CODE" = "9981"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99711-index.html
           python3 - <<'PY'
           from pathlib import Path
-          h=Path('/tmp/ct99710-index.html').read_text()
-          marker='<script data-ct-android="r176-js">'
+          h=Path('/tmp/ct99711-index.html').read_text()
+          marker='<script data-ct-android="r177-js">'
           a=h.index(marker)+len(marker); b=h.index('</script>',a); js=h[a:b]
           assert 'const $$=(s,r=document)=>' in js
           assert js.count('const $=(s,r=document)=>') == 1
-          for m in ['r176-first-unwatched-gap','first-released-unwatched-gap-authority','next=lowest-released-episode-not-watched-never-last-pointer-plus-one','unwatch-rewinds-next-episode-and-successor-queue','cinetracker_unmark_episode_v1','ct174-flash','stacked-hero-readable-carousels-phone-panels']:
+          for m in ['r177-canonical-next-repaint','canonical-next-episode-repaint','drawer-and-home-share-first-unwatched-immediate-repaint','ct175SchedulePaint','first-released-unwatched-gap-authority','cinetracker_unmark_episode_v1','ct174-flash','stacked-hero-readable-carousels-phone-panels']:
               assert m in h, m
-          Path('/tmp/ct99710-embedded.js').write_text(js)
+          Path('/tmp/ct99711-embedded.js').write_text(js)
           PY
-          node --check /tmp/ct99710-embedded.js
+          node --check /tmp/ct99711-embedded.js
           "$APKSIGNER" verify --print-certs "$OUT"
-          sha256sum "$OUT" | tee android-v099710-sha256.txt
+          sha256sum "$OUT" | tee android-v099711-sha256.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-0.99.7.10-r176-gap-rewind-debug
+          name: cinetracker-android-0.99.7.11-r177-canonical-next-repaint-debug
           path: |
-            cinetracker-android-0.99.7.10-r176-gap-rewind-debug.apk
-            android-v099710-sha256.txt
+            cinetracker-android-0.99.7.11-r177-canonical-next-repaint-debug.apk
+            android-v099711-sha256.txt
           if-no-files-found: error
           retention-days: 14
-      - name: Publish Android 0.99.7.10 release
+      - name: Publish Android 0.99.7.11 release
         if: github.ref == 'refs/heads/main'
         env: { GH_TOKEN: '${{ github.token }}' }
         shell: bash
         run: |
           set -euo pipefail
-          NOTES='Android 0.99.7.10 embute a Web r176. O próximo episódio agora é sempre o primeiro episódio lançado que ainda não está assistido. Ao desmarcar um episódio, a sequência volta para essa lacuna; episódios posteriores já vistos são pulados corretamente. Ex.: E5 visto, E6 não visto, E7 visto => próximo E6; após marcar E6 => próximo E8.'
-          gh release view android-v0.99.7.10 >/dev/null 2>&1 || gh release create android-v0.99.7.10 --title "CineTracker Android 0.99.7.10 — r176 Gap Rewind" --notes "$NOTES"
-          gh release edit android-v0.99.7.10 --title "CineTracker Android 0.99.7.10 — r176 Gap Rewind" --notes "$NOTES"
-          gh release upload android-v0.99.7.10 cinetracker-android-0.99.7.10-r176-gap-rewind-debug.apk android-v099710-sha256.txt --clobber
+          NOTES='Android 0.99.7.11 embute a Web r177. Corrige o caso em que o drawer já mostrava a primeira lacuna não assistida, mas a Home continuava exibindo o episódio lançado mais recente. A Home agora repinta assim que a fila canônica resolve e usa a mesma fonte de episódios vistos do drawer.'
+          gh release view android-v0.99.7.11 >/dev/null 2>&1 || gh release create android-v0.99.7.11 --title "CineTracker Android 0.99.7.11 — r177 Canonical Next Repaint" --notes "$NOTES"
+          gh release edit android-v0.99.7.11 --title "CineTracker Android 0.99.7.11 — r177 Canonical Next Repaint" --notes "$NOTES"
+          gh release upload android-v0.99.7.11 cinetracker-android-0.99.7.11-r177-canonical-next-repaint-debug.apk android-v099711-sha256.txt --clobber
