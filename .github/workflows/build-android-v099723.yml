@@ -1,0 +1,150 @@
+name: Build Android 0.99.7.23 — r190-r195 Mobile Parity
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'apps/android/**'
+      - 'apps/web/runtime-r186-shared.js'
+      - 'supabase/functions/ct-sports-sync/**'
+      - 'supabase/functions/ct-sports-search/**'
+      - 'scripts/prepare-android-v099723.mjs'
+      - 'scripts/test-android-v099723.mjs'
+      - '.github/workflows/build-android-v099723.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/android/**'
+      - 'apps/web/runtime-r186-shared.js'
+      - 'supabase/functions/ct-sports-sync/**'
+      - 'supabase/functions/ct-sports-search/**'
+      - 'scripts/prepare-android-v099723.mjs'
+      - 'scripts/test-android-v099723.mjs'
+      - '.github/workflows/build-android-v099723.yml'
+
+permissions:
+  contents: write
+  statuses: write
+
+concurrency:
+  group: cinetracker-android-v099723-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android_v099723:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize signing key when cache is empty
+        run: |
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"; fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate shared sports backend sources
+        run: |
+          set -euo pipefail
+          grep -Fq "bra.copa_do_brazil" supabase/functions/ct-sports-sync/index.ts
+          grep -Fq "ksa.1" supabase/functions/ct-sports-sync/index.ts
+          grep -Fq "STATUS_FIRST_HALF" supabase/functions/ct-sports-sync/index.ts
+          grep -Fq "STATUS_HALFTIME" supabase/functions/ct-sports-sync/index.ts
+          grep -Fq "state:any=''" supabase/functions/ct-sports-sync/index.ts
+          grep -Fq "sports-hub-v4" supabase/functions/ct-sports-sync/index.ts
+          grep -Fq "searchText" supabase/functions/ct-sports-search/index.ts
+          grep -Fq "normalized_query" supabase/functions/ct-sports-search/index.ts
+          grep -Fq "sports-search-v2" supabase/functions/ct-sports-search/index.ts
+
+      - name: Prepare and test Android 0.99.7.23
+        run: |
+          set -euo pipefail
+          node scripts/test-r176-gap-logic.mjs
+          node scripts/test-r181-season-toggle.mjs
+          node scripts/test-r182-home-season-polish.mjs
+          node scripts/test-r184-profile-gap.mjs
+          node scripts/test-r185a-instant-cache.mjs
+          node scripts/test-r185c-performance-polish.mjs
+          node scripts/test-r186-foryou-strict.mjs
+          node --check apps/web/runtime-r186-shared.js
+          node --check apps/android/runtime-r195-android.js
+          node --check scripts/prepare-android-v099723.mjs
+          node --check scripts/test-android-v099723.mjs
+          node scripts/prepare-android-v099723.mjs
+          node scripts/test-android-v099723.mjs
+
+      - name: Build Android 0.99.7.23 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate APK identity, embedded parity, signing and digest
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="cinetracker-android-0.99.7.23-r195-mobile-parity-debug.apk"
+          cp "$APK" "$OUT"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          test "$(sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "0.99.7.23"
+          test "$(sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "9993"
+          grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99723-index.html
+          for marker in \
+            'android-v0.99.7.23-r195-mobile-equivalents' \
+            'r190-r195-mobile-equivalents' \
+            'canonical-known-media-fast-detail-state' \
+            'favorites-strongest-seen-history-affinity' \
+            'asian-scripted-tv-excluded-from-foryou' \
+            'statistics-less-vertical-space' \
+            'ct-sports-sync-v4+ct-sports-search-v2' \
+            'bilingual-media-search' \
+            'home-r5+profile-fast-dashboard' \
+            'cinetracker_profile_media_dashboard_v0997_fast' \
+            'cinetracker_known_media_v1' \
+            'cinetracker_media_state_v1' \
+            'cinetracker_home_live_v0997_r5' \
+            'tmdb-gte-7.5-release-year-gt-1990' \
+            'block-pure-drama-18-and-any-documentary-99' \
+            'watch_history+media_overrides-postgres-changes'; do
+            grep -Fq "$marker" /tmp/ct99723-index.html
+          done
+          ! grep -Fq "profile-discover-hot-route-reuse" /tmp/ct99723-index.html
+          ! grep -Fq "window.__ctR194Web='taste-intelligence-compact-profile'" /tmp/ct99723-index.html
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('/tmp/ct99723-index.html','utf8');
+          const marker='<script data-ct-android="r195-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('embedded Android r195 JS missing');
+          fs.writeFileSync('/tmp/ct99723.js',h.slice(a+marker.length,b));
+          NODE
+          node --check /tmp/ct99723.js
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee android-v099723-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.23-r195-mobile-parity-debug
+          path: |
+            cinetracker-android-0.99.7.23-r195-mobile-parity-debug.apk
+            android-v099723-sha256.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish Android 0.99.7.23 release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          NOTES='Android 0.99.7.23 porta para o APK, de forma adaptada ao WebView/mobile, as correções Web acumuladas após o r186 até o r195. Mantém a autoridade r186 e o Realtime; adiciona contexto rápido e autoridade canônica de mídia/estado, Home r5 e Perfil rápido, busca bilíngue, ações locais do Pra Você, personalização por favoritos e histórico, exclusão rígida de doramas e Estatísticas mais compactas. Esportes usa o backend compartilhado sports-hub-v4 / sports-search-v2, incluindo Copa do Brasil, Saudi Pro League, estados ESPN ao vivo e busca normalizada para nomes como Al-Nassr.'
+          gh release view android-v0.99.7.23 >/dev/null 2>&1 || gh release create android-v0.99.7.23 --title "CineTracker Android 0.99.7.23 — r195 Mobile Parity" --notes "$NOTES"
+          gh release edit android-v0.99.7.23 --title "CineTracker Android 0.99.7.23 — r195 Mobile Parity" --notes "$NOTES"
+          gh release upload android-v0.99.7.23 cinetracker-android-0.99.7.23-r195-mobile-parity-debug.apk android-v099723-sha256.txt --clobber
