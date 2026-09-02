@@ -98,8 +98,10 @@ function unlock196(root=document){
   for(const b of buttons){
     if(b.dataset.ct196Busy==='1')continue;
     const on=b.classList.contains('on')||b.getAttribute('aria-pressed')==='true'||/na watchlist/i.test(b.textContent||'');
-    b.disabled=false;b.dataset.on=on?'1':'0';b.setAttribute('aria-pressed',on?'true':'false');
-    b.title=on?'Remover da Watchlist':'Adicionar à Watchlist';
+    if(b.disabled)b.disabled=false;
+    b.dataset.on=on?'1':'0';
+    const pressed=on?'true':'false';if(b.getAttribute('aria-pressed')!==pressed)b.setAttribute('aria-pressed',pressed);
+    const title=on?'Remover da Watchlist':'Adicionar à Watchlist';if(b.title!==title)b.title=title;
   }
 }
 
