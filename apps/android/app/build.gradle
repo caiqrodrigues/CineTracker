@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10001
-        versionName '0.99.7.31'
+        versionCode 10002
+        versionName '0.99.7.32'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-v0.99.7.31 — Android-only compact Pra Voce + reliable Discover touch tabs
+// release: android-v0.99.7.32 — Android-only Discover three cards + touchstart tab activation
