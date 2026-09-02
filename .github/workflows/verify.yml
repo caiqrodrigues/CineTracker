@@ -62,35 +62,35 @@ jobs:
           grep -Fq 'app-v196.css' apps/web/dist/index.html
           test ! -f apps/web/dist/app-v185c.js
 
-  android_099732:
+  android_099733:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Android 0.99.7.32 source and assembled runtime
+      - name: Validate Android 0.99.7.33 source and assembled runtime
         run: |
           set -euo pipefail
-          grep -Fq "versionName '0.99.7.32'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10002' apps/android/app/build.gradle
+          grep -Fq "versionName '0.99.7.33'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10003' apps/android/app/build.gradle
           node --check apps/android/runtime-r198-mobile-performance.js
-          node --check apps/android/runtime-r204-discover-three-cards-touchstart-tabs.js
-          node --check scripts/prepare-android-v099732.mjs
-          node --check scripts/test-android-v099732.mjs
-          node scripts/prepare-android-v099732.mjs
-          node scripts/test-android-v099732.mjs
+          node --check apps/android/runtime-r205-discover-native-tab-grid.js
+          node --check scripts/prepare-android-v099733.mjs
+          node --check scripts/test-android-v099733.mjs
+          node scripts/prepare-android-v099733.mjs
+          node scripts/test-android-v099733.mjs
           node - <<'NODE'
           const fs=require('fs');
           const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
-          const marker='<script data-ct-android="r204-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
-          if(a<0||b<a)throw new Error('r204 embedded runtime missing');
+          const marker='<script data-ct-android="r205-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r205 embedded runtime missing');
           const js=h.slice(a+marker.length,b);
-          for(const m of ['discover-three-cards-touchstart-tabs','foryou-no-type-subfilters','touchstart-capture-immediate-no-synthetic-click','native-horizontal-three-cards-per-viewport','calc((100% - 16px)/3)','activateDiscover204','detail-watchlist-toggle'])if(!js.includes(m))throw new Error('missing '+m);
-          for(const old of ['restore-route-render-and-discover-pan-x','discover-direct-tabs-manual-horizontal-scroll','pointer-capture-discover-tabs-horizontal-rails','discover-direct-pointerup-native-horizontal-carousels','discover-compact-foryou-reliable-touch-tabs'])if(js.includes(old))throw new Error('old Discover runtime embedded: '+old);
-          fs.writeFileSync('/tmp/ct99732-verify.js',js);
+          for(const m of ['discover-native-tab-grid-direct-button-listeners','android-owned-grid-no-legacy-data-discover-tab','data-a33-tab','data-a33-type','ct205-tab-grid','calc((100% - 16px)/3)','detail-watchlist-toggle'])if(!js.includes(m))throw new Error('missing '+m);
+          for(const old of ['restore-route-render-and-discover-pan-x','discover-direct-tabs-manual-horizontal-scroll','pointer-capture-discover-tabs-horizontal-rails','discover-direct-pointerup-native-horizontal-carousels','discover-compact-foryou-reliable-touch-tabs','discover-three-cards-touchstart-tabs'])if(js.includes(old))throw new Error('old Discover runtime embedded: '+old);
+          fs.writeFileSync('/tmp/ct99733-verify.js',js);
           NODE
-          node --check /tmp/ct99732-verify.js
+          node --check /tmp/ct99733-verify.js
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
