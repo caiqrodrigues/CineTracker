@@ -15,7 +15,8 @@ must(runtime.includes("window.__ctAndroidTop10='r214-selector-ticket-r217-author
 must(runtime.includes('display:flex!important;flex:1 1 auto!important;flex-wrap:nowrap!important'),'Discover rail is not one horizontal flex row');
 must(runtime.includes('overflow-x:auto!important'),'Discover rail cannot scroll horizontally');
 must(runtime.includes('flex:0 0 auto!important;width:auto!important;min-width:max-content!important'),'Discover pills are still stackable/stretchable');
-for(const bad of ['grid-template-columns:repeat(3','ct219-manual-cover','negative-id-resolve-or-local-detail','ctR219FindManualMedia','manualArtworkR219']){
+must(!runtime.includes('grid-template-columns:repeat(3'),'r220 itself reintroduced the rejected 3-column grid');
+for(const bad of ['ct219-manual-cover','negative-id-resolve-or-local-detail','ctR219FindManualMedia','manualArtworkR219']){
   must(!runtime.includes(bad),'r220 contains rejected .47 behavior '+bad);
   must(!has(bad),'generated app contains rejected .47 behavior '+bad);
 }
