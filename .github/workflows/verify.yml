@@ -9,96 +9,107 @@ permissions:
   contents: read
 
 jobs:
-  web_0997:
+  web_r196:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate r179-r186 regressions
+      - name: Validate Web source chain through r196
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r179.js
-          node --check apps/web/runtime-r180.js
-          node --check apps/web/runtime-r181.js
-          node --check apps/web/runtime-r182.js
-          node --check apps/web/runtime-r183.js
-          node --check apps/web/runtime-r184-shared.js
-          node --check apps/web/runtime-r184-web.js
-          node --check apps/web/runtime-r185a-shared.js
-          node --check apps/web/runtime-r185b-web.js
-          node --check apps/web/runtime-r185c-shared.js
-          node --check apps/web/runtime-r185c-web.js
-          node --check apps/web/runtime-r186-shared.js
+          for f in \
+            apps/web/runtime-r179.js apps/web/runtime-r180.js apps/web/runtime-r181.js apps/web/runtime-r182.js \
+            apps/web/runtime-r183.js apps/web/runtime-r184-shared.js apps/web/runtime-r184-web.js \
+            apps/web/runtime-r185a-shared.js apps/web/runtime-r185b-web.js apps/web/runtime-r185c-shared.js \
+            apps/web/runtime-r185c-web.js apps/web/runtime-r186-shared.js apps/web/runtime-r190-web.js \
+            apps/web/runtime-r190b-web.js apps/web/runtime-r191-web.js apps/web/runtime-r192-web.js \
+            apps/web/runtime-r193-web.js apps/web/runtime-r193-guard.js apps/web/runtime-r194-web.js \
+            apps/web/runtime-r194-fast-context.js apps/web/runtime-r195-web.js apps/web/runtime-r196-web.js; do
+            node --check "$f"
+          done
           node --check apps/web/build-r186.mjs
-          node scripts/test-r176-gap-logic.mjs
-          node scripts/test-r178-stable-home.mjs
-          node scripts/test-r179-target-card.mjs
+          grep -Fq "window.__ctR196Web='detail-watchlist-toggle';" apps/web/runtime-r196-web.js
+          grep -Fq 'state=in.(AddedToWatchlist,WatchLater)' apps/web/runtime-r196-web.js
+          grep -Fq "{method:'DELETE'}" apps/web/runtime-r196-web.js
+          grep -Fq 'matched_media_ids' apps/web/runtime-r196-web.js
+          grep -Fq "toast('Removido da Watchlist.')" apps/web/runtime-r196-web.js
+          grep -Fq "b.disabled=false" apps/web/runtime-r196-web.js
           node scripts/test-r180-discover-profile.mjs
-          node scripts/test-r181-season-toggle.mjs
-          node scripts/test-r182-home-season-polish.mjs
-          node scripts/test-r183-web-clean-profile.mjs
           node scripts/test-r184-profile-gap.mjs
-          node scripts/test-r185a-instant-cache.mjs
-          node scripts/test-r185b-web-prefetch.mjs
           node scripts/test-r185c-performance-polish.mjs
           node scripts/test-r186-foryou-strict.mjs
-      - name: Build Web r186
+      - name: Build Web r196
         working-directory: apps/web
         run: npm run build
-      - name: Assert Web r186 artifact
+      - name: Assert assembled Web r196 artifact
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v186.js
-          grep -Fq "r186-foryou-strict-realtime" apps/web/dist/app-v186.js
-          grep -Fq "foryou-strict-quality-year-history-realtime" apps/web/dist/app-v186.js
-          grep -Fq "tmdb-gte-7.5-release-year-gt-1990" apps/web/dist/app-v186.js
-          grep -Fq "block-pure-drama-18-and-any-documentary-99" apps/web/dist/app-v186.js
-          grep -Fq "seven-slots-no-duplicate-media" apps/web/dist/app-v186.js
-          grep -Fq "reserve-popular-unseen-equivalent-keeps-seven-slots-filled" apps/web/dist/app-v186.js
-          grep -Fq "watch_history+media_overrides-postgres-changes" apps/web/dist/app-v186.js
-          grep -Fq "profile-discover-hot-route-reuse" apps/web/dist/app-v186.js
-          grep -Fq "home-entry-top-anchor" apps/web/dist/app-v186.js
-          grep -Fq "detect-skipped-released-episodes-before-manual-watch" apps/web/dist/app-v186.js
-          grep -Fq '"revision":"r186-foryou-strict-realtime"' apps/web/dist/release.json
-          grep -Fq -- '--ct185c-radius-panel' apps/web/dist/app-v186.css
+          node --check apps/web/dist/app-v196.js
+          grep -Fq "r196-watchlist-toggle" apps/web/dist/app-v196.js
+          grep -Fq "detail-watchlist-toggle" apps/web/dist/app-v196.js
+          grep -Fq "add-remove-alias-aware" apps/web/dist/app-v196.js
+          grep -Fq 'state=in.(AddedToWatchlist,WatchLater)' apps/web/dist/app-v196.js
+          grep -Fq "{method:'DELETE'}" apps/web/dist/app-v196.js
+          grep -Fq "Removido da Watchlist." apps/web/dist/app-v196.js
+          grep -Fq "asian-scripted-tv-excluded-from-foryou" apps/web/dist/app-v196.js
+          grep -Fq "favorites-strongest-seen-history-affinity" apps/web/dist/app-v196.js
+          grep -Fq '"revision":"r196-watchlist-toggle"' apps/web/dist/release.json
+          grep -Fq 'app-v196.js' apps/web/dist/index.html
+          grep -Fq 'app-v196.css' apps/web/dist/index.html
           test ! -f apps/web/dist/app-v185c.js
 
-  android_099722_identity:
+  android_099728:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Assert Android 0.99.7.22
+      - name: Validate Android 0.99.7.28 source and assembled runtime
         run: |
           set -euo pipefail
-          grep -q "versionName '0.99.7.22'" apps/android/app/build.gradle
-          grep -q 'versionCode 9992' apps/android/app/build.gradle
-          node --check scripts/prepare-android-v099722.mjs
-          node --check scripts/test-android-v099722.mjs
-          node scripts/test-r185a-instant-cache.mjs
-          node scripts/test-r185c-performance-polish.mjs
-          node scripts/test-r186-foryou-strict.mjs
-          node scripts/prepare-android-v099722.mjs
-          node scripts/test-android-v099722.mjs
+          grep -Fq "versionName '0.99.7.28'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 9998' apps/android/app/build.gradle
+          node --check apps/android/runtime-r198-mobile-performance.js
+          node --check apps/android/runtime-r199-discover-touch-fix.js
+          node --check apps/android/runtime-r200-discover-gesture-watchlist.js
+          node --check scripts/prepare-android-v099728.mjs
+          node --check scripts/test-android-v099728.mjs
+          node scripts/prepare-android-v099728.mjs
+          node scripts/test-android-v099728.mjs
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r200-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r200 embedded runtime missing');
+          const js=h.slice(a+marker.length,b);
+          for(const m of ['discover-direct-tabs-manual-horizontal-scroll','g.rail.scrollLeft=g.left-dx','void Promise.resolve(renderDiscover(seq))','detail-watchlist-toggle','state=in.(AddedToWatchlist,WatchLater)','matched_media_ids','Removido da Watchlist.'])if(!js.includes(m))throw new Error('missing '+m);
+          fs.writeFileSync('/tmp/ct99728-verify.js',js);
+          NODE
+          node --check /tmp/ct99728-verify.js
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_0997]
+    needs: [web_r196]
     runs-on: ubuntu-latest
-    timeout-minutes: 7
+    timeout-minutes: 8
     steps:
-      - name: Production Web serves r186
+      - name: Production Web serves r196
         run: |
           set -euo pipefail
-          for i in $(seq 1 70); do
+          for i in $(seq 1 80); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r186-foryou-strict-realtime"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v186.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v186.css?ct=$(date +%s%N)" || true)"
-              if grep -Fq "foryou-strict-quality-year-history-realtime" <<<"$JS" && grep -Fq "reserve-popular-unseen-equivalent-keeps-seven-slots-filled" <<<"$JS" && grep -Fq "watch_history+media_overrides-postgres-changes" <<<"$JS" && grep -Fq "profile-discover-hot-route-reuse" <<<"$JS" && grep -Fq -- '--ct185c-radius-panel' <<<"$CSS"; then exit 0; fi
+            if grep -Fq '"revision":"r196-watchlist-toggle"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v196.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "detail-watchlist-toggle" <<<"$JS" \
+                && grep -Fq "add-remove-alias-aware" <<<"$JS" \
+                && grep -Fq 'state=in.(AddedToWatchlist,WatchLater)' <<<"$JS" \
+                && grep -Fq "Removido da Watchlist." <<<"$JS"; then
+                exit 0
+              fi
             fi
             sleep 5
           done
