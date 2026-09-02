@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - fix/android-099738-discover-profile-order
+      - fix/android-099737-discover-profile-sports-layout
     paths:
       - 'apps/android/app/build.gradle'
       - 'apps/android/runtime-r210-discover-profile-order.js'
