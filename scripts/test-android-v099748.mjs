@@ -22,9 +22,10 @@ for(const bad of ['ct219-manual-cover','negative-id-resolve-or-local-detail','ct
 }
 
 must(has('synchronous-own-shell-tokenized-provider-flow'),'r217 Top10 renderer missing');
-must(has('ctR217FindManualMedia'),'r217 library/manual-media behavior missing');
+must(has("window.__ctAndroidImportedMedia='invalid-id-unique-exact-title-fallback-positive-id';"),'r217 imported/library media recovery missing');
+must(has("const P217_PREFIX='ct:a45:media:';"),'r217 imported-media resolver missing');
 must(has('remove-cinetracker-person-header-direct-photo-bio'),'actor/profile fix lost');
 must(!has("row214(3,[card214('Séries',fmt214(seriesCount))"),'removed Series profile card returned');
 must(has('whole-season-one-screen-swipe-season-only'),'season graph behavior lost');
 for(const forbidden of ["addEventListener('pointerdown'","addEventListener('pointerup'","addEventListener('touchstart'","addEventListener('touchend'"])must(!runtime.includes(forbidden),'forbidden gesture listener '+forbidden);
-console.log('ANDROID_099748_TESTS_OK top10=r214-ticket-r217 discover=horizontal-one-row manual-media=r217-library');
+console.log('ANDROID_099748_TESTS_OK top10=r214-ticket-r217 discover=horizontal-one-row imported-media=r217-recovery');
