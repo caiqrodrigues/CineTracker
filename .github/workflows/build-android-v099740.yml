@@ -1,0 +1,109 @@
+name: Build Android 0.99.7.40 — Core Discover Profile
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix/android-099737-discover-profile-sports-layout
+    paths:
+      - 'apps/android/app/build.gradle'
+      - 'apps/android/runtime-r212-core-discover-profile.js'
+      - 'scripts/prepare-android-v099740.mjs'
+      - 'scripts/test-android-v099740.mjs'
+      - '.github/workflows/build-android-v099740.yml'
+      - 'scripts/prepare-android-v099736.mjs'
+      - 'apps/android/runtime-r208-discover-sports-cleanup.js'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinetracker-android-v099740-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android_v099740:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize signing key when cache is empty
+        run: |
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"; fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Prepare and test Android 0.99.7.40
+        run: |
+          set -euo pipefail
+          node --check apps/android/runtime-r212-core-discover-profile.js
+          node --check scripts/prepare-android-v099740.mjs
+          node --check scripts/test-android-v099740.mjs
+          node scripts/prepare-android-v099740.mjs
+          node scripts/test-android-v099740.mjs
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r212-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r212 embedded JS missing');
+          fs.writeFileSync('/tmp/ct99740-prebuild.js',h.slice(a+marker.length,b));
+          NODE
+          node --check /tmp/ct99740-prebuild.js
+      - name: Build Android 0.99.7.40 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Validate APK identity, runtime, signing and digest
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="cinetracker-android-0.99.7.40-core-discover-profile-debug.apk"
+          cp "$APK" "$OUT"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          test "$(sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "0.99.7.40"
+          test "$(sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "10010"
+          grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99740-index.html
+          for marker in \
+            'android-v0.99.7.40-r212-core-discover-profile' \
+            'direct-r180-discover-explicit-profile-rows' \
+            'actual-content-switch-not-visual-only' \
+            'explicit-rows-no-css-grid-dependency' \
+            '0.99.7.36-sports-approved' \
+            'renderDiscover=renderDiscover212' \
+            'window.ct212SelectDiscoverTab=switchTab212' \
+            'single-minimal-item-search-no-date-no-summary' \
+            'calc((100% - 16px)/3)' \
+            'detail-watchlist-toggle'; do
+            grep -Fq "$marker" /tmp/ct99740-index.html
+          done
+          ! grep -Fq 'r209-android-discover-profile-sports-layout' /tmp/ct99740-index.html
+          ! grep -Fq 'r210-android-discover-profile-order' /tmp/ct99740-index.html
+          ! grep -Fq 'r211-android-real-dom-roots' /tmp/ct99740-index.html
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('/tmp/ct99740-index.html','utf8');
+          const marker='<script data-ct-android="r212-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          fs.writeFileSync('/tmp/ct99740.js',h.slice(a+marker.length,b));
+          NODE
+          node --check /tmp/ct99740.js
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee android-v099740-sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.40-core-discover-profile-debug
+          path: |
+            cinetracker-android-0.99.7.40-core-discover-profile-debug.apk
+            android-v099740-sha256.txt
+          if-no-files-found: error
+          retention-days: 14
