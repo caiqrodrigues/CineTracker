@@ -57,4 +57,4 @@ await Promise.all([
   writeFile(resolve(dist,'release.json'),JSON.stringify({version:'0.99.7',revision:'r195-no-dorama-sports-profile-density',runtime:'single-clean-runtime',generated_at:new Date().toISOString()}),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v185c.js'),{force:true}),rm(resolve(dist,'app-v185c.css'),{force:true})]);
-console.log('WEB_R195_READY foryou=no-dorama taste=r194 profile=statistics-dense sports=backend-v3');
+console.log('WEB_R195_READY foryou=no-dorama taste=r194 profile=statistics-dense sports=backend-v4');
