@@ -7,6 +7,40 @@ window.__ctAndroidR207='profile-first-tap-shell-compact-sports-tools';
 window.__ctAndroidProfileNav='immediate-shell-then-existing-cache-first-loader';
 window.__ctAndroidSportsTools='compact-mobile-search-panel';
 window.__ctAndroidInputOwnership='no-new-global-touch-pointer-click-controller';
+window.__ctAndroidPreload='profile-first-before-sports';
+
+const sleepA35=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* Warm Profile before Sports. The previous r198 order loaded Sports first and only then
+   started the two Profile RPCs, which made the first Profile open unnecessarily cold. */
+try{
+  let preloadA35=null,preloadStampA35='';
+  ct163PreloadAll=async function(){
+    if(!session||route()!=='home')return null;
+    const stamp=String(session?.user?.id||'anon')+':'+String(localDay());
+    if(preloadA35&&preloadStampA35===stamp)return preloadA35;
+    preloadStampA35=stamp;
+    preloadA35=(async()=>{
+      let cached=null;try{cached=profileCache||ct163Read('profile')}catch{cached=profileCache||null}
+      if(cached){try{profileCache=profileCache||cached}catch{}}
+      else{
+        await sleepA35(100);if(route()!=='home')return;
+        try{
+          const [quick,dash]=await Promise.all([
+            rpc('cinetracker_profile_quick_stats_v1',{}),
+            rpc('cinetracker_profile_media_dashboard_v0997_fast',{})
+          ]);
+          const p={...(quick||{}),dashboard:Array.isArray(dash)?dash:[],favorite_movies:Array.isArray(quick?.favorite_movies)?quick.favorite_movies:[],favorite_series:Array.isArray(quick?.favorite_series)?quick.favorite_series:[],favorite_actors:Array.isArray(quick?.favorite_actors)?quick.favorite_actors:[],activity:Array.isArray(quick?.activity)?quick.activity:[]};
+          profileCache=p;try{ct163Write('profile',p)}catch{}
+        }catch{}
+      }
+      await sleepA35(300);if(route()!=='home')return;
+      try{await sportsPayload(false)}catch{}
+    })().finally(()=>{preloadA35=null});
+    return preloadA35;
+  };
+  ct163WarmOnIdle=function(){if(!session)return;setTimeout(()=>{try{void ct163PreloadAll()}catch{}},450)};
+}catch{}
 
 /* Keep the existing r193 cache-first Profile loader, but mount a real Profile shell before
    any RPC can delay visual feedback. This makes the first successful navigation visible
