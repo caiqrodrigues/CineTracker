@@ -1,114 +1,13 @@
-name: Build Android 0.99.7.24 — Login Fix
+name: Build Android 0.99.7.24 — Login Fix (Frozen)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/android/**'
-      - 'apps/web/runtime-r186-shared.js'
-      - 'supabase/functions/ct-sports-sync/**'
-      - 'supabase/functions/ct-sports-search/**'
-      - 'scripts/prepare-android-v099724.mjs'
-      - 'scripts/test-android-v099724.mjs'
-      - '.github/workflows/build-android-v099724.yml'
 
 permissions:
-  contents: write
-  statuses: write
-
-concurrency:
-  group: cinetracker-android-v099724-${{ github.ref }}
-  cancel-in-progress: true
+  contents: read
 
 jobs:
-  android_v099724:
+  frozen_release:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - uses: actions/setup-java@v5
-        with: { distribution: temurin, java-version: '17' }
-      - name: Restore CineTracker signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.cinetracker/cinetracker.keystore
-          key: cinetracker-signing-v2
-      - name: Initialize signing key when cache is empty
-        run: |
-          mkdir -p ~/.cinetracker ~/.android
-          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"; fi
-          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
-      - uses: gradle/actions/setup-gradle@v4
-
-      - name: Prepare and test Android 0.99.7.24
-        run: |
-          set -euo pipefail
-          node --check apps/android/runtime-r195-android.js
-          node --check apps/android/runtime-r196-loginfix.js
-          node --check scripts/prepare-android-v099724.mjs
-          node --check scripts/test-android-v099724.mjs
-          grep -Fq "sports-hub-v4" supabase/functions/ct-sports-sync/index.ts
-          grep -Fq "sports-search-v2" supabase/functions/ct-sports-search/index.ts
-          node scripts/prepare-android-v099724.mjs
-          node scripts/test-android-v099724.mjs
-
-      - name: Build Android 0.99.7.24 APK
-        working-directory: apps/android
-        run: gradle assembleDebug --stacktrace
-
-      - name: Validate APK identity, login fix, signing and digest
-        run: |
-          set -euo pipefail
-          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
-          OUT="cinetracker-android-0.99.7.24-login-fix-debug.apk"
-          cp "$APK" "$OUT"
-          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
-          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          BADGING="$($AAPT dump badging "$OUT")"
-          test "$(sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "0.99.7.24"
-          test "$(sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "9994"
-          grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
-          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99724-index.html
-          for marker in \
-            'android-v0.99.7.24-r196-login-shell-fix' \
-            'auth-success-mount-home-shell-before-fast-paint' \
-            'session-success-home-shell-visible' \
-            'r190-r195-mobile-equivalents' \
-            'asian-scripted-tv-excluded-from-foryou' \
-            'ct-sports-sync-v4+ct-sports-search-v2'; do
-            grep -Fq "$marker" /tmp/ct99724-index.html
-          done
-          node - <<'NODE'
-          const fs=require('fs');
-          const h=fs.readFileSync('/tmp/ct99724-index.html','utf8');
-          const marker='<script data-ct-android="r196-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
-          if(a<0||b<a)throw new Error('embedded Android r196 JS missing');
-          const js=h.slice(a+marker.length,b);
-          if(!js.includes("if(!document.querySelector('[data-home]'))"))throw new Error('login shell guard missing in APK');
-          if(!js.includes("await login(f.email.value.trim(),f.password.value)"))throw new Error('login submit missing in APK');
-          fs.writeFileSync('/tmp/ct99724.js',js);
-          NODE
-          node --check /tmp/ct99724.js
-          "$APKSIGNER" verify --print-certs "$OUT"
-          sha256sum "$OUT" | tee android-v099724-sha256.txt
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cinetracker-android-0.99.7.24-login-fix-debug
-          path: |
-            cinetracker-android-0.99.7.24-login-fix-debug.apk
-            android-v099724-sha256.txt
-          if-no-files-found: error
-          retention-days: 14
-
-      - name: Publish Android 0.99.7.24 release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        env: { GH_TOKEN: '${{ github.token }}' }
-        run: |
-          NOTES='Android 0.99.7.24 preserva toda a paridade r190-r195 da 0.99.7.23 e corrige a regressão do login no WebView: após autenticação bem-sucedida, a estrutura da Home agora é montada antes do renderer rápido r5 pintar os dados. Isso impede permanecer visualmente na tela de login com os campos limpos após entrar.'
-          gh release view android-v0.99.7.24 >/dev/null 2>&1 || gh release create android-v0.99.7.24 --title "CineTracker Android 0.99.7.24 — Login Fix" --notes "$NOTES"
-          gh release edit android-v0.99.7.24 --title "CineTracker Android 0.99.7.24 — Login Fix" --notes "$NOTES"
-          gh release upload android-v0.99.7.24 cinetracker-android-0.99.7.24-login-fix-debug.apk android-v099724-sha256.txt --clobber
+      - run: echo "Android 0.99.7.24 is frozen; use the current Android release workflow."
