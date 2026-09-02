@@ -35,6 +35,10 @@ for(const m of required)if(!js.includes(m))throw new Error('0.99.7.37 missing '+
 const oldCore="const dt=e.target.closest('[data-discover-tab]');if(dt){discoverState.tab=dt.dataset.discoverTab;void render();return}";
 if(js.includes(oldCore))throw new Error('0.99.7.37 old Discover global-render branch survived');
 
+const r209Start=js.indexOf('/* Android 0.99.7.37 — reliable Discover taps');
+const r209End=js.indexOf('\n})();',r209Start);
+if(r209Start<0||r209End<r209Start)throw new Error('0.99.7.37 r209 runtime range missing');
+const r209=js.slice(r209Start,r209End+6);
 const order=[
   "ctR180StatCard('Tempo em Séries'",
   "ctR180StatCard('Tempo em Filmes'",
@@ -42,13 +46,8 @@ const order=[
   "ctR180StatCard('Tempo de série em Watchlist'",
   "ctR180StatCard('Tempo de filme em Watchlist'",
   "ctR180StatCard('Tempo total em Watchlist'"
-].map(x=>js.indexOf(x));
+].map(x=>r209.indexOf(x));
 for(let i=0;i<order.length;i++)if(order[i]<0||(i&&order[i]<=order[i-1]))throw new Error('0.99.7.37 Profile stat order invalid');
-
-const r209Start=js.indexOf('/* Android 0.99.7.37 — reliable Discover taps');
-const r209End=js.indexOf('\n})();',r209Start);
-if(r209Start<0||r209End<r209Start)throw new Error('0.99.7.37 r209 runtime range missing');
-const r209=js.slice(r209Start,r209End+6);
 for(const forbidden of ["window.addEventListener('touchstart'","window.addEventListener('touchend'","window.addEventListener('pointerdown'","window.addEventListener('pointerup'"]){
   if(r209.includes(forbidden))throw new Error('0.99.7.37 r209 owns forbidden touch/pointer path: '+forbidden);
 }
