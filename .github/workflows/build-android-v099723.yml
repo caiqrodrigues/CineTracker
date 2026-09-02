@@ -74,8 +74,10 @@ jobs:
           node scripts/test-r184-profile-gap.mjs
           node scripts/test-r185a-instant-cache.mjs
           node scripts/test-r185c-performance-polish.mjs
-          node scripts/test-r186-foryou-strict.mjs
           node --check apps/web/runtime-r186-shared.js
+          grep -Fq "window.__ctR186='foryou-strict-quality-year-history-realtime'" apps/web/runtime-r186-shared.js
+          grep -Fq "tmdb-gte-7.5-release-year-gt-1990" apps/web/runtime-r186-shared.js
+          grep -Fq "watch_history+media_overrides-postgres-changes" apps/web/runtime-r186-shared.js
           node --check apps/android/runtime-r195-android.js
           node --check scripts/prepare-android-v099723.mjs
           node --check scripts/test-android-v099723.mjs
