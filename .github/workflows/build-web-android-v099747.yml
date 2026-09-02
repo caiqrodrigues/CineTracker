@@ -1,0 +1,115 @@
+name: Build Web r198 + Android 0.99.7.47
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix/web-android-099747-top10-filter-media
+    paths:
+      - 'apps/web/runtime-r198-minimal-filters-real.js'
+      - 'apps/web/build-r198.mjs'
+      - 'apps/web/test-r198.mjs'
+      - 'apps/web/package.json'
+      - 'apps/android/runtime-r219-top10-filters-manual-media.js'
+      - 'apps/android/app/build.gradle'
+      - 'scripts/prepare-android-v099747.mjs'
+      - 'scripts/test-android-v099747.mjs'
+      - '.github/workflows/build-web-android-v099747.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinetracker-web-android-v099747-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate_web_android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize signing key when cache is empty
+        run: |
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"; fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and test Web r198
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node --check runtime-r198-minimal-filters-real.js
+          node --check build-r198.mjs
+          node --check test-r198.mjs
+          npm run build
+          node test-r198.mjs
+
+      - name: Prepare and test Android 0.99.7.47
+        run: |
+          set -euo pipefail
+          node --check apps/android/runtime-r219-top10-filters-manual-media.js
+          node --check scripts/prepare-android-v099747.mjs
+          node --check scripts/test-android-v099747.mjs
+          node scripts/prepare-android-v099747.mjs
+          node scripts/test-android-v099747.mjs
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r219-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r219 embedded JS missing');
+          fs.writeFileSync('/tmp/ct99747-prebuild.js',h.slice(a+marker.length,b));
+          NODE
+          node --check /tmp/ct99747-prebuild.js
+
+      - name: Build Android APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate Android APK
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="cinetracker-android-0.99.7.47-discover-filters-media-debug.apk"
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          test "$(sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "0.99.7.47"
+          test "$(sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "10017"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99747-index.html
+          for marker in \
+            'android-v0.99.7.47-r219-top10-filters-manual-media' \
+            'r218-single-click-direct-r217-synchronous-shell' \
+            'known-filter-groups-hidden-behind-tune-button' \
+            'negative-id-resolve-or-local-detail' \
+            'ct219-manual-cover' \
+            'remove-cinetracker-person-header-direct-photo-bio' \
+            'whole-season-one-screen-swipe-season-only'; do
+            grep -Fq "$marker" /tmp/ct99747-index.html
+          done
+          ! grep -Fq "row214(3,[card214('Séries',fmt214(seriesCount))" /tmp/ct99747-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          stat -c '%s' "$OUT" | tee android-v099747-size.txt
+          sha256sum "$OUT" | tee android-v099747-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-web-r198-android-0.99.7.47
+          path: |
+            apps/web/dist
+            cinetracker-android-0.99.7.47-discover-filters-media-debug.apk
+            android-v099747-sha256.txt
+            android-v099747-size.txt
+          if-no-files-found: error
+          retention-days: 14
