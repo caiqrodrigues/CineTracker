@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 await import('./build-r185c.mjs');
 const root=dirname(fileURLToPath(import.meta.url));
 const dist=resolve(root,'dist');
-let [html,js,css,sw,patch186,patch190,patch190b,patch191,patch192,patch193]=await Promise.all([
+let [html,js,css,sw,patch186,patch190,patch190b,patch191,patch192,patch193,guard193]=await Promise.all([
   readFile(resolve(dist,'index.html'),'utf8'),
   readFile(resolve(dist,'app-v185c.js'),'utf8'),
   readFile(resolve(dist,'app-v185c.css'),'utf8'),
@@ -15,7 +15,8 @@ let [html,js,css,sw,patch186,patch190,patch190b,patch191,patch192,patch193]=awai
   readFile(resolve(root,'runtime-r190b-web.js'),'utf8'),
   readFile(resolve(root,'runtime-r191-web.js'),'utf8'),
   readFile(resolve(root,'runtime-r192-web.js'),'utf8'),
-  readFile(resolve(root,'runtime-r193-web.js'),'utf8')
+  readFile(resolve(root,'runtime-r193-web.js'),'utf8'),
+  readFile(resolve(root,'runtime-r193-guard.js'),'utf8')
 ]);
 if(!js.includes("const REVISION='r185c-profile-discover-polish';"))throw new Error('r193 requires r185C Web base');
 if(!js.includes("window.__ctR185CWeb='profile-discover-hot-route-reuse';"))throw new Error('r193 requires r185C performance');
@@ -33,9 +34,10 @@ if(!patch193.includes("cinetracker_known_media_v1"))throw new Error('r193 known-
 if(!patch193.includes("cinetracker_media_state_v1"))throw new Error('r193 detail-state authority missing');
 if(!patch193.includes("cinetracker_home_live_v0997_r5"))throw new Error('r193 fast Home missing');
 if(!patch193.includes("cinetracker_profile_media_dashboard_v0997_fast"))throw new Error('r193 fast Profile missing');
+if(!guard193.includes("window.__ctR193Guard='detail-observer-no-repeat';"))throw new Error('r193 detail observer guard missing');
 if(!js.includes('\nboot();'))throw new Error('r193 insertion point missing');
 js=js.replace("const REVISION='r185c-profile-discover-polish';","const REVISION='r193-fast-state-authority';");
-js=js.replace('\nboot();','\n'+patch186+'\n'+patch190+'\n'+patch190b+'\n'+patch191+'\n'+patch192+'\n'+patch193+'\nboot();');
+js=js.replace('\nboot();','\n'+patch186+'\n'+patch190+'\n'+patch190b+'\n'+patch191+'\n'+patch192+'\n'+patch193+'\n'+guard193+'\nboot();');
 html=html.replaceAll('r185c-profile-discover-polish','r193-fast-state-authority').replaceAll('app-v185c.js','app-v193.js').replaceAll('app-v185c.css','app-v193.css');
 sw=sw.replaceAll('r185c-profile-discover-polish','r193-fast-state-authority').replaceAll('app-v185c.js','app-v193.js').replaceAll('app-v185c.css','app-v193.css');
 await Promise.all([
