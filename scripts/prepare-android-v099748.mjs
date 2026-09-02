@@ -3,7 +3,7 @@ import {resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
 
 const root=resolve(process.cwd());
-/* Build from .46 on purpose: .47 introduced the unwanted 3x3 rail and synthetic manual-media fallback. */
+/* Build from .46 on purpose: do not embed the .47 r219 patch that changed manual media and forced a new Discover layout. */
 execFileSync(process.execPath,[resolve(root,'scripts/prepare-android-v099746.mjs')],{cwd:root,stdio:'inherit'});
 const indexPath=resolve(root,'apps/android/app/src/main/assets/hotfix5/index.html');
 let html=await readFile(indexPath,'utf8');
@@ -37,9 +37,10 @@ js=js.replace('\nboot();','\n'+patch+'\nboot();');
 html=html.slice(0,a)+`<script data-ct-android="r220-android-js">${js}</script>`+html.slice(b+'</script>'.length);
 html=html.replace('name="ct-android-v099746" content="r218-discover-click-minimal-filters"','name="ct-android-v099748" content="r220-top10-authority-horizontal-discover"');
 
+/* Reject only the .47 r219 runtime contracts. Older bundled CSS may contain historical grid declarations,
+   but r220 is injected last and explicitly owns the final Discover rail as horizontal flex. */
 for(const bad of [
   'android-v0.99.7.47-r219-top10-filters-manual-media',
-  'grid-template-columns:repeat(3,minmax(0,1fr))',
   'r218-single-click-direct-r217-synchronous-shell',
   'negative-id-resolve-or-local-detail',
   'ct219-manual-cover',
@@ -51,6 +52,7 @@ for(const good of [
   'single-r218-click-authority-r214-selector-all-nine-tabs',
   'r214-selector-ticket-r217-authoritative-render',
   'r217-library-behavior-no-r219-synthetic-fallback',
+  'display:flex!important;flex:1 1 auto!important;flex-wrap:nowrap!important',
   'overflow-x:auto!important',
   'synchronous-own-shell-tokenized-provider-flow',
   'remove-cinetracker-person-header-direct-photo-bio',
