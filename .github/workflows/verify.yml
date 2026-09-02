@@ -30,6 +30,9 @@ jobs:
             node --check "$f"
           done
           node --check apps/web/build-r186.mjs
+          grep -Fq "window.__ctR186='foryou-strict-quality-year-history-realtime';" apps/web/runtime-r186-shared.js
+          grep -Fq 'tmdb-gte-7.5-release-year-gt-1990' apps/web/runtime-r186-shared.js
+          grep -Fq 'watch_history+media_overrides-postgres-changes' apps/web/runtime-r186-shared.js
           grep -Fq "window.__ctR196Web='detail-watchlist-toggle';" apps/web/runtime-r196-web.js
           grep -Fq 'state=in.(AddedToWatchlist,WatchLater)' apps/web/runtime-r196-web.js
           grep -Fq "{method:'DELETE'}" apps/web/runtime-r196-web.js
@@ -39,7 +42,6 @@ jobs:
           node scripts/test-r180-discover-profile.mjs
           node scripts/test-r184-profile-gap.mjs
           node scripts/test-r185c-performance-polish.mjs
-          node scripts/test-r186-foryou-strict.mjs
       - name: Build Web r196
         working-directory: apps/web
         run: npm run build
