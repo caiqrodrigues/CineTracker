@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10006
-        versionName '0.99.7.36'
+        versionCode 10007
+        versionName '0.99.7.37'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// test release: android-v0.99.7.36 — Discover rail fixed in place, Sports minimal search/no date/no summary, Profile Sports stats authoritative
+// test release: android-v0.99.7.37 — Discover core direct clicks/no-pan rail, compact ordered Profile stats, single inline Sports watched action
