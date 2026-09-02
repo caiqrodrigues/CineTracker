@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+const root=resolve(process.cwd());
+const html=await readFile(resolve(root,'apps/android/app/src/main/assets/hotfix5/index.html'),'utf8');
+const gradle=await readFile(resolve(root,'apps/android/app/build.gradle'),'utf8');
+const must=(x,s)=>{if(!x.includes(s))throw new Error('missing '+s)};
+must(gradle,'versionCode 9999');
+must(gradle,"versionName '0.99.7.29'");
+for(const s of ["const REVISION='r201-android-discover-pointer-controller';",'android-v0.99.7.29-r201-discover-pointer-controller','pointer-capture-discover-tabs-horizontal-rails','direct-capture-click-without-touch-listener-conflict','pointer-events-pan-y-manual-scrollleft-with-arrow-fallback',"document.addEventListener('pointerdown'","document.addEventListener('pointermove'",'setPointerCapture','g.rail.scrollLeft=g.left-dx','ct201-scroll-controls','data-r201-scroll','void Promise.resolve(renderDiscover(seq))','navigation-and-discover-filters-never-throttled','detail-watchlist-toggle','state=in.(AddedToWatchlist,WatchLater)','matched_media_ids','Removido da Watchlist.','mobile-first-cache-swr-progressive-render','embedded-apk-never-reloads-from-web-release-json'])must(html,s);
+if(html.includes('discover-direct-tabs-manual-horizontal-scroll'))throw new Error('r200 must be absent');
+if(html.includes('restore-route-render-and-discover-pan-x'))throw new Error('r199 must be absent');
+console.log('ANDROID_099729_TEST_OK');
