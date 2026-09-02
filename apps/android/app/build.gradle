@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10016
-        versionName '0.99.7.46'
+        versionCode 10017
+        versionName '0.99.7.47'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// test release: android-v0.99.7.46 — Discover single click authority + universal minimal filter trigger; actor/profile/graph fixes preserved
+// test release: android-v0.99.7.47 — Discover 3x3 + direct Top10 + real minimal filters + manual-media fallback
