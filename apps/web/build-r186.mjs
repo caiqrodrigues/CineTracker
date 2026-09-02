@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 await import('./build-r185c.mjs');
 const root=dirname(fileURLToPath(import.meta.url));
 const dist=resolve(root,'dist');
-let [html,js,css,sw,patch186,patch190,patch190b,patch191,patch192,patch193,guard193,patch194]=await Promise.all([
+let [html,js,css,sw,patch186,patch190,patch190b,patch191,patch192,patch193,guard193,patch194,patch194ctx]=await Promise.all([
   readFile(resolve(dist,'index.html'),'utf8'),
   readFile(resolve(dist,'app-v185c.js'),'utf8'),
   readFile(resolve(dist,'app-v185c.css'),'utf8'),
@@ -17,7 +17,8 @@ let [html,js,css,sw,patch186,patch190,patch190b,patch191,patch192,patch193,guard
   readFile(resolve(root,'runtime-r192-web.js'),'utf8'),
   readFile(resolve(root,'runtime-r193-web.js'),'utf8'),
   readFile(resolve(root,'runtime-r193-guard.js'),'utf8'),
-  readFile(resolve(root,'runtime-r194-web.js'),'utf8')
+  readFile(resolve(root,'runtime-r194-web.js'),'utf8'),
+  readFile(resolve(root,'runtime-r194-fast-context.js'),'utf8')
 ]);
 if(!js.includes("const REVISION='r185c-profile-discover-polish';"))throw new Error('r194 requires r185C Web base');
 if(!js.includes("window.__ctR185CWeb='profile-discover-hot-route-reuse';"))throw new Error('r194 requires r185C performance');
@@ -39,9 +40,10 @@ if(!guard193.includes("window.__ctR193Guard='detail-observer-no-repeat';"))throw
 if(!patch194.includes("window.__ctR194Web='taste-intelligence-compact-profile';"))throw new Error('r194 patch marker missing');
 if(!patch194.includes("favorites-strongest-seen-history-affinity"))throw new Error('r194 taste intelligence missing');
 if(!patch194.includes("same-layout-less-vertical-space"))throw new Error('r194 profile density missing');
+if(!patch194ctx.includes("window.__ctR194FastContext='dashboard-v0997-fast';"))throw new Error('r194 fast recommendation context missing');
 if(!js.includes('\nboot();'))throw new Error('r194 insertion point missing');
 js=js.replace("const REVISION='r185c-profile-discover-polish';","const REVISION='r194-taste-intelligence-compact-profile';");
-js=js.replace('\nboot();','\n'+patch186+'\n'+patch190+'\n'+patch190b+'\n'+patch191+'\n'+patch192+'\n'+patch193+'\n'+guard193+'\n'+patch194+'\nboot();');
+js=js.replace('\nboot();','\n'+patch186+'\n'+patch190+'\n'+patch190b+'\n'+patch191+'\n'+patch192+'\n'+patch193+'\n'+guard193+'\n'+patch194+'\n'+patch194ctx+'\nboot();');
 html=html.replaceAll('r185c-profile-discover-polish','r194-taste-intelligence-compact-profile').replaceAll('app-v185c.js','app-v194.js').replaceAll('app-v185c.css','app-v194.css');
 sw=sw.replaceAll('r185c-profile-discover-polish','r194-taste-intelligence-compact-profile').replaceAll('app-v185c.js','app-v194.js').replaceAll('app-v185c.css','app-v194.css');
 await Promise.all([
@@ -52,4 +54,4 @@ await Promise.all([
   writeFile(resolve(dist,'release.json'),JSON.stringify({version:'0.99.7',revision:'r194-taste-intelligence-compact-profile',runtime:'single-clean-runtime',generated_at:new Date().toISOString()}),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v185c.js'),{force:true}),rm(resolve(dist,'app-v185c.css'),{force:true})]);
-console.log('WEB_R194_READY foryou=taste-from-favorites+seen rules=r186-preserved profile=compact-same-layout');
+console.log('WEB_R194_READY foryou=taste-from-favorites+seen rules=r186-preserved profile=compact-same-layout context=fast-dashboard');
