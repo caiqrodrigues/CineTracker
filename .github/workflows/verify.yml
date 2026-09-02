@@ -62,35 +62,35 @@ jobs:
           grep -Fq 'app-v196.css' apps/web/dist/index.html
           test ! -f apps/web/dist/app-v185c.js
 
-  android_099728:
+  android_099729:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Android 0.99.7.28 source and assembled runtime
+      - name: Validate Android 0.99.7.29 source and assembled runtime
         run: |
           set -euo pipefail
-          grep -Fq "versionName '0.99.7.28'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 9998' apps/android/app/build.gradle
+          grep -Fq "versionName '0.99.7.29'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 9999' apps/android/app/build.gradle
           node --check apps/android/runtime-r198-mobile-performance.js
-          node --check apps/android/runtime-r199-discover-touch-fix.js
-          node --check apps/android/runtime-r200-discover-gesture-watchlist.js
-          node --check scripts/prepare-android-v099728.mjs
-          node --check scripts/test-android-v099728.mjs
-          node scripts/prepare-android-v099728.mjs
-          node scripts/test-android-v099728.mjs
+          node --check apps/android/runtime-r201-discover-pointer-controller.js
+          node --check scripts/prepare-android-v099729.mjs
+          node --check scripts/test-android-v099729.mjs
+          node scripts/prepare-android-v099729.mjs
+          node scripts/test-android-v099729.mjs
           node - <<'NODE'
           const fs=require('fs');
           const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
-          const marker='<script data-ct-android="r200-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
-          if(a<0||b<a)throw new Error('r200 embedded runtime missing');
+          const marker='<script data-ct-android="r201-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r201 embedded runtime missing');
           const js=h.slice(a+marker.length,b);
-          for(const m of ['discover-direct-tabs-manual-horizontal-scroll','g.rail.scrollLeft=g.left-dx','void Promise.resolve(renderDiscover(seq))','detail-watchlist-toggle','state=in.(AddedToWatchlist,WatchLater)','matched_media_ids','Removido da Watchlist.'])if(!js.includes(m))throw new Error('missing '+m);
-          fs.writeFileSync('/tmp/ct99728-verify.js',js);
+          for(const m of ['pointer-capture-discover-tabs-horizontal-rails','setPointerCapture','g.rail.scrollLeft=g.left-dx','ct201-scroll-controls','void Promise.resolve(renderDiscover(seq))','detail-watchlist-toggle','matched_media_ids','Removido da Watchlist.'])if(!js.includes(m))throw new Error('missing '+m);
+          if(js.includes('discover-direct-tabs-manual-horizontal-scroll')||js.includes('restore-route-render-and-discover-pan-x'))throw new Error('old touch patch embedded');
+          fs.writeFileSync('/tmp/ct99729-verify.js',js);
           NODE
-          node --check /tmp/ct99728-verify.js
+          node --check /tmp/ct99729-verify.js
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
