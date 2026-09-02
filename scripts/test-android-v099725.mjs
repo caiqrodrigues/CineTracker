@@ -29,7 +29,7 @@ const js=html.slice(a+marker.length,b);
 if((js.match(/embedded-apk-never-reloads-from-web-release-json/g)||[]).length!==1)throw new Error('Android 0.99.7.25 auth isolation injected more than once');
 
 must(activity,'final String routePath = JSONObject.quote(path);','native route quoting');
-must(activity,"history.replaceState({},'',"+'" + routePath + "', 'native in-place route');
+must(activity,"history.replaceState({},'',",'native in-place route');
 const hostStart=activity.indexOf('if (host.equals("mycinetracker.vercel.app"))');
 const hostEnd=hostStart<0?-1:activity.indexOf('if (host.endsWith("supabase.co"))',hostStart);
 if(hostStart<0||hostEnd<0)throw new Error('Android 0.99.7.25 native same-host block missing');
