@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-v0.99.7.59 — direct-slot Trocar with unique authority; r200/r201 removed from Top10 gesture ownership; Web r203 untouched
+// release: android-v0.99.7.59 — clean branch from .54/r226; private direct Trocar + isolated Top10 touch/pointer/arrows; Web r203 untouched

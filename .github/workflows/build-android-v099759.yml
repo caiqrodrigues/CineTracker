@@ -6,8 +6,6 @@ on:
     branches:
       - main
     paths:
-      - 'apps/android/runtime-r200-discover-gesture-watchlist.js'
-      - 'apps/android/runtime-r201-discover-pointer-controller.js'
       - 'apps/android/runtime-r231-discover-direct-actions.js'
       - 'apps/android/app/build.gradle'
       - 'scripts/prepare-android-v099759.mjs'
@@ -46,8 +44,6 @@ jobs:
       - name: Prepare and test Android 0.99.7.59
         run: |
           set -euo pipefail
-          node --check apps/android/runtime-r200-discover-gesture-watchlist.js
-          node --check apps/android/runtime-r201-discover-pointer-controller.js
           node --check apps/android/runtime-r231-discover-direct-actions.js
           node --check scripts/prepare-android-v099759.mjs
           node --check scripts/test-android-v099759.mjs
@@ -79,24 +75,31 @@ jobs:
           test "$(sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "10029"
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99759-index.html
           for marker in \
-            'android-v0.99.7.59-r231-direct-slot-trocar-native-top10' \
-            'unique-data-ct231-swap-direct-slot-replace-no-global-paint' \
-            'r200-r201-excluded-native-webview-horizontal' \
-            'stale-r200-r201-top10-pan-y-plus-global-paint-swap-chain' \
+            'android-v0.99.7.59-r231-clean-discover-actions' \
+            'branch-from-r226-no-r227-r230' \
+            'private-button-direct-slot-replace-single-authority' \
+            'isolated-row-touch-pointer-drag-with-arrow-fallback' \
             'data-ct231-swap' \
-            'data-ct166-swap-disabled-r231' \
-            'ct171-top-row-disabled-r231' \
+            'data-ct231-top-prev' \
+            'data-ct231-top-next' \
             'slot.replaceWith(fresh)' \
-            'ct166SwapIndex[key]=picked.index' \
             'optimistic-immediate-remove-next-card-background-sync' \
             'detail-seen-toggle-reversible-via-unmark-rpc' \
             'discover-filter-right-of-search' \
             'single-row-compact-auto-width-28px-pills' \
+            'persistent-2x-3x-4x-no-disable' \
             'r217-library-behavior-no-r219-synthetic-fallback'; do
             grep -Fq "$marker" /tmp/ct99759-index.html
           done
-          ! grep -Fq 'ct219-manual-cover' /tmp/ct99759-index.html
-          ! grep -Fq 'negative-id-resolve-or-local-detail' /tmp/ct99759-index.html
+          for rejected in \
+            'android-v0.99.7.55-r227-discover-swap-top10-swipe' \
+            'android-v0.99.7.56-r228-discover-swap-top10-gesture' \
+            'android-v0.99.7.57-r229-discover-swap-top10-pointer' \
+            'android-v0.99.7.58-r230-discover-original-trocar-native-top10' \
+            'ct219-manual-cover' \
+            'negative-id-resolve-or-local-detail'; do
+            ! grep -Fq "$rejected" /tmp/ct99759-index.html
+          done
           "$APKSIGNER" verify --print-certs "$OUT"
           stat -c '%s' "$OUT" | tee android-v099759-size.txt
           sha256sum "$OUT" | tee android-v099759-sha256.txt
