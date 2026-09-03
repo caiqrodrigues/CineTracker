@@ -23,8 +23,8 @@ for(const required of [
   'window.ct214SelectDiscoverTab=select224;',
   'window.ct214SelectDiscoverType=selectType224;',
   'renderDiscover=async function()',
-  'data.ct224Swap=key',
-  'data.ct224Watchlist=ref',
+  'dataset.ct224Swap=key',
+  'dataset.ct224Watchlist=ref',
   'ct224-watch-success',
   'removeFromFresh224'
 ])if(!patch.includes(required))throw new Error('Android 0.99.7.52 patch missing '+required);
