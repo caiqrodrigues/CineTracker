@@ -14,10 +14,10 @@ for(const marker of [
   'branch-from-r226-no-r227-r231',
   'window-capture-private-button-calls-r226-slot-swap',
   'native-webview-pan-provider-series-movies',
+  'window-capture-stop-legacy-start-no-prevent-default',
   'three-equal-width-equal-height',
   'data-ct232-swap',
-  'ct171-provider-tabs-r232-retired',
-  'ct171-top-row-r232-retired',
+  'window.__ctR232SwapBase=swap226',
   'optimistic-immediate-remove-next-card-background-sync',
   'detail-seen-toggle-reversible-via-unmark-rpc',
   'discover-filter-right-of-search',
@@ -35,20 +35,18 @@ for(const rejected of [
   "const REVISION='r231-android-clean-discover-actions';"
 ])if(html.includes(rejected))throw new Error('0.99.7.60 inherited failed controller: '+rejected);
 
+/* Trocar must be private in generated markup: neither old class nor old data authority. */
 const swapButtonStart=html.indexOf('function ct166SwapButton(key,count)');
 const swapButtonEnd=html.indexOf('function ct166Slot(',swapButtonStart);
 if(!(swapButtonStart>0&&swapButtonEnd>swapButtonStart))throw new Error('ct166SwapButton segment missing');
 const swapButtonSegment=html.slice(swapButtonStart,swapButtonEnd);
 if(!swapButtonSegment.includes('class="btn btn-secondary ct232-swap"'))throw new Error('Trocar button does not use private ct232 class');
 if(!swapButtonSegment.includes('data-ct232-swap='))throw new Error('Trocar button does not use private ct232 data attribute');
-if(swapButtonSegment.includes('ct166-swap')||swapButtonSegment.includes('data-ct226-swap'))throw new Error('Trocar button still exposes a legacy authority');
+if(swapButtonSegment.includes('class="btn btn-secondary ct166-swap"')||swapButtonSegment.includes('data-ct166-swap=')||swapButtonSegment.includes('data-ct226-swap='))throw new Error('Trocar button still exposes a legacy authority');
 if(!html.includes('window.__ctR232SwapBase=swap226;'))throw new Error('r226 in-place swap was not exposed to r232');
 
-for(const liveLegacy of [
-  "'[data-page=\"discover\"] .ct171-provider-tabs',",
-  "'[data-page=\"discover\"] .ct171-top-row',"
-])if(html.includes(liveLegacy))throw new Error('legacy manual gesture selector still recognizes Top10: '+liveLegacy);
-
+/* r232 never manually moves Top10. It only blocks legacy gesture START at window and
+   leaves browser default behavior untouched. */
 for(const forbidden of ["addEventListener('touchmove'","addEventListener('pointermove'","scrollLeft="])
   if(patch.includes(forbidden))throw new Error('r232 contains manual Top10 scrolling: '+forbidden);
 for(const required of [
@@ -57,22 +55,35 @@ for(const required of [
   'overflow-x:auto!important',
   'touch-action:pan-x pan-y!important',
   'grid-template-columns:repeat(3,minmax(0,1fr))!important',
+  'grid-auto-rows:1fr!important',
   'align-items:stretch!important',
-  'height:100%!important',
   "window.addEventListener('pointerup'",
   "window.addEventListener('touchend'",
-  "window.addEventListener('click'"
+  "window.addEventListener('click'",
+  "window.addEventListener('touchstart'",
+  "window.addEventListener('pointerdown'",
+  'isolateNativeTopRail232'
 ])if(!patch.includes(required))throw new Error('r232 device behavior missing '+required);
+const isoStart=patch.indexOf('function isolateNativeTopRail232('),isoEnd=patch.indexOf("window.addEventListener('touchstart'",isoStart);
+if(!(isoStart>=0&&isoEnd>isoStart))throw new Error('r232 Top10 isolation function missing');
+const isoSource=patch.slice(isoStart,isoEnd);
+if(isoSource.includes('preventDefault'))throw new Error('r232 Top10 isolation cancels native browser pan');
+if(!isoSource.includes('stopImmediatePropagation'))throw new Error('r232 Top10 isolation does not block legacy document handlers');
 
+/* Execute the private swap bridge and window event paths. */
 const listeners={};
 let styleText='',baseCalls=0,baseKey='';
 const fakeButton={
   dataset:{ct232Swap:'fresh:anime'},
   closest(sel){return sel==='[data-ct232-swap]'?this:null}
 };
+const fakeRail={dataset:{},closest(){return null}};
+const fakeRailTarget={
+  closest(sel){return sel.includes('.ct171-provider-tabs')||sel.includes('.ct171-top-row')?fakeRail:null}
+};
 const windowObj={
   __ctR232SwapBase(btn){baseCalls++;baseKey=String(btn.dataset.ct226Swap||'')},
-  addEventListener(type,fn){(listeners[type]||(listeners[type]=[])).push(fn)}
+  addEventListener(type,fn,opt){(listeners[type]||(listeners[type]=[])).push({fn,opt})}
 };
 const documentObj={
   createElement(tag){if(tag==='style')return {id:'',textContent:''};return {}},
@@ -86,20 +97,28 @@ if(typeof runSwap!=='function')throw new Error('r232 private swap bridge not exp
 if(!runSwap(fakeButton)||baseCalls!==1||baseKey!=='fresh:anime')throw new Error('r232 did not call r226 swap with the private key');
 if(Object.prototype.hasOwnProperty.call(fakeButton.dataset,'ct226Swap'))throw new Error('r232 leaked temporary ct226Swap authority onto the button');
 
-const pointer=listeners.pointerup?.[0],click=listeners.click?.[0];
-if(typeof pointer!=='function'||typeof click!=='function'||!listeners.touchend?.length)throw new Error('r232 window-capture event paths missing');
+const pointer=listeners.pointerup?.[0]?.fn,click=listeners.click?.[0]?.fn,touchEnd=listeners.touchend?.[0]?.fn;
+if(typeof pointer!=='function'||typeof click!=='function'||typeof touchEnd!=='function')throw new Error('r232 Trocar window-capture event paths missing');
 let prevented=0,stopped=0;
-const event={target:fakeButton,cancelable:true,preventDefault(){prevented++},stopImmediatePropagation(){stopped++}};
-pointer(event);
-click(event);
+const swapEvent={target:fakeButton,cancelable:true,preventDefault(){prevented++},stopImmediatePropagation(){stopped++}};
+pointer(swapEvent);
+click(swapEvent);
 if(baseCalls!==2)throw new Error('r232 synthetic click de-dupe failed; expected one event-driven swap');
-if(prevented<2||stopped<2)throw new Error('r232 did not isolate the private physical-device event path');
+if(prevented<2||stopped<2)throw new Error('r232 did not isolate the private physical-device Trocar event path');
+
+const touchStart=listeners.touchstart?.[0]?.fn,pointerDown=listeners.pointerdown?.[0]?.fn;
+if(typeof touchStart!=='function'||typeof pointerDown!=='function')throw new Error('r232 Top10 start isolation listeners missing');
+let railPrevented=0,railStopped=0;
+const railEvent={target:fakeRailTarget,cancelable:true,preventDefault(){railPrevented++},stopImmediatePropagation(){railStopped++}};
+touchStart(railEvent);pointerDown(railEvent);
+if(railStopped!==2)throw new Error('r232 did not stop both legacy Top10 gesture starts at window');
+if(railPrevented!==0)throw new Error('r232 prevented Chromium native Top10 pan');
 
 for(const css of [
   '.foryou-grid:not(.ct166-daily-grid)',
   'grid-template-columns:repeat(3,minmax(0,1fr))!important',
+  'grid-auto-rows:1fr!important',
   'align-self:stretch!important',
-  'height:100%!important',
   '.ct171-provider-tabs',
   '.ct171-top-row',
   'touch-action:pan-x pan-y!important'
@@ -108,4 +127,4 @@ for(const css of [
 for(const rejected of ['ct219-manual-cover','negative-id-resolve-or-local-detail','ctR219FindManualMedia'])
   if(html.includes(rejected))throw new Error('rejected .47 behavior returned: '+rejected);
 
-console.log('ANDROID_099760_TEST_OK base=.54/r226 trocar=private-window-capture+r226-slot top10=native-provider+series+movies equal3-width-height=true failed-.55-.59=absent web=r203-untouched');
+console.log('ANDROID_099760_TEST_OK base=.54/r226 trocar=private-window-capture+r226-slot top10=native-start-isolated-no-prevent provider+series+movies equal3-width-height=true failed-.55-.59=absent web=r203-untouched');
