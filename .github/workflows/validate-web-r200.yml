@@ -1,0 +1,39 @@
+name: Validate Web r200
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/runtime-r200-sports-search-cleanup.js'
+      - 'apps/web/build-r200.mjs'
+      - 'apps/web/test-r200.mjs'
+      - 'apps/web/package.json'
+      - '.github/workflows/validate-web-r200.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate_web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Build and test r200
+        run: npm run build
+      - name: Validate production markers
+        run: |
+          set -euo pipefail
+          grep -Fq 'r200-sports-search-cleanup' dist/release.json
+          grep -Fq 'app-v200.js' dist/index.html
+          grep -Fq 'sports-search-filter-right-central-time-profile-only' dist/app-v200.js
+          grep -Fq 'data-ct200-sports-search-row' dist/app-v200.js
+          grep -Fq 'persistent-2x-3x-4x-no-disable' dist/app-v200.js
+          grep -Fq 'view-more-opens-movie-series-person' dist/app-v200.js
+          echo WEB_R200_VALIDATED
