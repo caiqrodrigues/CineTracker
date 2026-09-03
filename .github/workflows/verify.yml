@@ -9,14 +9,14 @@ permissions:
   contents: read
 
 jobs:
-  web_r196:
+  web_r199:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Web source chain through r196
+      - name: Validate Web source chain through r199
         run: |
           set -euo pipefail
           for f in \
@@ -26,90 +26,90 @@ jobs:
             apps/web/runtime-r185c-web.js apps/web/runtime-r186-shared.js apps/web/runtime-r190-web.js \
             apps/web/runtime-r190b-web.js apps/web/runtime-r191-web.js apps/web/runtime-r192-web.js \
             apps/web/runtime-r193-web.js apps/web/runtime-r193-guard.js apps/web/runtime-r194-web.js \
-            apps/web/runtime-r194-fast-context.js apps/web/runtime-r195-web.js apps/web/runtime-r196-web.js; do
+            apps/web/runtime-r194-fast-context.js apps/web/runtime-r195-web.js apps/web/runtime-r196-web.js \
+            apps/web/runtime-r197-minimal-filters.js apps/web/runtime-r198-minimal-filters-real.js \
+            apps/web/runtime-r199-rewatch-favorites-sports.js; do
             node --check "$f"
           done
-          node --check apps/web/build-r186.mjs
-          grep -Fq "window.__ctR186='foryou-strict-quality-year-history-realtime';" apps/web/runtime-r186-shared.js
-          grep -Fq 'tmdb-gte-7.5-release-year-gt-1990' apps/web/runtime-r186-shared.js
-          grep -Fq 'watch_history+media_overrides-postgres-changes' apps/web/runtime-r186-shared.js
-          grep -Fq "window.__ctR196Web='detail-watchlist-toggle';" apps/web/runtime-r196-web.js
-          grep -Fq 'state=in.(AddedToWatchlist,WatchLater)' apps/web/runtime-r196-web.js
-          grep -Fq "{method:'DELETE'}" apps/web/runtime-r196-web.js
-          grep -Fq 'matched_media_ids' apps/web/runtime-r196-web.js
-          grep -Fq "toast('Removido da Watchlist.')" apps/web/runtime-r196-web.js
-          grep -Fq "b.disabled=false" apps/web/runtime-r196-web.js
+          node --check apps/web/build-r199.mjs
+          grep -Fq "window.__ctR199Web='rewatch-favorites-sports-navigation';" apps/web/runtime-r199-rewatch-favorites-sports.js
+          grep -Fq "window.__ctR199Rewatch='persistent-2x-3x-4x-no-disable';" apps/web/runtime-r199-rewatch-favorites-sports.js
+          grep -Fq "window.__ctR199Favorites='view-more-opens-movie-series-person';" apps/web/runtime-r199-rewatch-favorites-sports.js
+          grep -Fq "window.__ctR199Sports='remove-status-statistics-summary-card';" apps/web/runtime-r199-rewatch-favorites-sports.js
+          grep -Fq 'btn.textContent=playLabel199(plays);btn.disabled=false;' apps/web/runtime-r199-rewatch-favorites-sports.js
+          grep -Fq 'data-ct199-open-media' apps/web/runtime-r199-rewatch-favorites-sports.js
+          grep -Fq 'data-ct199-open-person' apps/web/runtime-r199-rewatch-favorites-sports.js
           node scripts/test-r180-discover-profile.mjs
           node scripts/test-r184-profile-gap.mjs
           node scripts/test-r185c-performance-polish.mjs
-      - name: Build Web r196
+      - name: Build Web r199
         working-directory: apps/web
         run: npm run build
-      - name: Assert assembled Web r196 artifact
+      - name: Assert assembled Web r199 artifact
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v196.js
-          grep -Fq "r196-watchlist-toggle" apps/web/dist/app-v196.js
-          grep -Fq "detail-watchlist-toggle" apps/web/dist/app-v196.js
-          grep -Fq "add-remove-alias-aware" apps/web/dist/app-v196.js
-          grep -Fq 'state=in.(AddedToWatchlist,WatchLater)' apps/web/dist/app-v196.js
-          grep -Fq "{method:'DELETE'}" apps/web/dist/app-v196.js
-          grep -Fq "Removido da Watchlist." apps/web/dist/app-v196.js
-          grep -Fq "asian-scripted-tv-excluded-from-foryou" apps/web/dist/app-v196.js
-          grep -Fq "favorites-strongest-seen-history-affinity" apps/web/dist/app-v196.js
-          grep -Fq '"revision":"r196-watchlist-toggle"' apps/web/dist/release.json
-          grep -Fq 'app-v196.js' apps/web/dist/index.html
-          grep -Fq 'app-v196.css' apps/web/dist/index.html
-          test ! -f apps/web/dist/app-v185c.js
+          node --check apps/web/dist/app-v199.js
+          grep -Fq "r199-rewatch-favorites-sports" apps/web/dist/app-v199.js
+          grep -Fq "persistent-2x-3x-4x-no-disable" apps/web/dist/app-v199.js
+          grep -Fq "view-more-opens-movie-series-person" apps/web/dist/app-v199.js
+          grep -Fq "remove-status-statistics-summary-card" apps/web/dist/app-v199.js
+          grep -Fq 'data-ct199-open-media' apps/web/dist/app-v199.js
+          grep -Fq 'data-ct199-open-person' apps/web/dist/app-v199.js
+          grep -Fq 'btn.textContent=playLabel199(plays);btn.disabled=false;' apps/web/dist/app-v199.js
+          grep -Fq "ctR180RenderTop10" apps/web/dist/app-v199.js
+          grep -Fq '"revision":"r199-rewatch-favorites-sports"' apps/web/dist/release.json
+          grep -Fq 'app-v199.js' apps/web/dist/index.html
+          grep -Fq 'app-v199.css' apps/web/dist/index.html
+          test ! -f apps/web/dist/app-v198.js
 
-  android_099734:
+  android_099749:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Android 0.99.7.34 source and assembled runtime
+      - name: Validate Android 0.99.7.49 source and assembled runtime
         run: |
           set -euo pipefail
-          grep -Fq "versionName '0.99.7.34'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10004' apps/android/app/build.gradle
-          node --check apps/android/runtime-r198-mobile-performance.js
-          node --check apps/android/runtime-r206-discover-core-events.js
-          node --check scripts/prepare-android-v099734.mjs
-          node --check scripts/test-android-v099734.mjs
-          node scripts/prepare-android-v099734.mjs
-          node scripts/test-android-v099734.mjs
+          grep -Fq "versionName '0.99.7.49'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10019' apps/android/app/build.gradle
+          node --check apps/android/runtime-r221-rewatch-favorites-sports.js
+          node --check scripts/prepare-android-v099749.mjs
+          node --check scripts/test-android-v099749.mjs
+          node scripts/prepare-android-v099749.mjs
+          node scripts/test-android-v099749.mjs
           node - <<'NODE'
           const fs=require('fs');
           const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
-          const marker='<script data-ct-android="r206-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
-          if(a<0||b<a)throw new Error('r206 embedded runtime missing');
+          const marker='<script data-ct-android="r221-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r221 embedded runtime missing');
           const js=h.slice(a+marker.length,b);
-          for(const m of ['discover-core-events-three-cards','core-document-click-no-android-capture','discover-state-aware-foreground-throttle','foryou-no-type-subfilters','native-horizontal-three-cards-per-viewport','calc((100% - 16px)/3)','discover-only-no-global-render-no-sports-profile-nav-overrides','detail-watchlist-toggle'])if(!js.includes(m))throw new Error('missing '+m);
-          for(const old of ['restore-route-render-and-discover-pan-x','discover-direct-tabs-manual-horizontal-scroll','pointer-capture-discover-tabs-horizontal-rails','discover-direct-pointerup-native-horizontal-carousels','discover-compact-foryou-reliable-touch-tabs','discover-three-cards-touchstart-tabs','discover-native-tab-grid-direct-button-listeners'])if(js.includes(old))throw new Error('old Discover runtime embedded: '+old);
-          fs.writeFileSync('/tmp/ct99734-verify.js',js);
+          for(const m of ['persistent-2x-3x-4x-no-disable','view-more-opens-movie-series-person','remove-status-statistics-summary-card','r214-selector-ticket-r217-authoritative-render','r217-library-behavior-no-r219-synthetic-fallback','overflow-x:auto!important'])if(!js.includes(m))throw new Error('missing '+m);
+          for(const old of ['ct219-manual-cover','negative-id-resolve-or-local-detail','ctR219FindManualMedia'])if(js.includes(old))throw new Error('rejected .47 runtime embedded: '+old);
+          fs.writeFileSync('/tmp/ct99749-verify.js',js);
           NODE
-          node --check /tmp/ct99734-verify.js
+          node --check /tmp/ct99749-verify.js
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r196]
+    needs: [web_r199]
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
-      - name: Production Web serves r196
+      - name: Production Web serves r199
         run: |
           set -euo pipefail
-          for i in $(seq 1 80); do
+          for i in $(seq 1 100); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r196-watchlist-toggle"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v196.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "detail-watchlist-toggle" <<<"$JS" \
-                && grep -Fq "add-remove-alias-aware" <<<"$JS" \
-                && grep -Fq 'state=in.(AddedToWatchlist,WatchLater)' <<<"$JS" \
-                && grep -Fq "Removido da Watchlist." <<<"$JS"; then
+            if grep -Fq '"revision":"r199-rewatch-favorites-sports"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v199.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "persistent-2x-3x-4x-no-disable" <<<"$JS" \
+                && grep -Fq "view-more-opens-movie-series-person" <<<"$JS" \
+                && grep -Fq 'remove-status-statistics-summary-card' <<<"$JS" \
+                && grep -Fq 'data-ct199-open-media' <<<"$JS" \
+                && grep -Fq 'data-ct199-open-person' <<<"$JS"; then
                 exit 0
               fi
             fi
