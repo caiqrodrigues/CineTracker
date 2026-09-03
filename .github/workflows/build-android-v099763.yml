@@ -1,4 +1,5 @@
 name: Build Android 0.99.7.63
+# physical-device final gate: fixed cards, direct Trocar, dynamic Top10 rails
 
 on:
   workflow_dispatch:
