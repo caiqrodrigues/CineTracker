@@ -7,6 +7,7 @@ window.__ctAndroidR229='discover-swap-direct-target-top10-pointer-capture';
 window.__ctAndroidBundle='android-v0.99.7.57-r229-discover-swap-top10-pointer';
 window.__ctR229Swap='direct-button-listeners-official-index-plus-fallback';
 window.__ctR229Top10='pointer-capture-horizontal-scrollleft';
+window.__ctR229SwipeAttr='data-ct229-swipe';
 window.__ctR229Scope='android-only-web-r203-untouched';
 window.__ctR229Stale='disable-r227-r228-stale-gesture-authorities';
 
