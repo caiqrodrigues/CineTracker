@@ -1,0 +1,82 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  web_r203:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Validate and build Web r203
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node --check runtime-r203-discover-filter-search-row.js
+          node --check build-r203.mjs
+          node --check test-r203.mjs
+          npm run build
+          node --check dist/app-v203.js
+          grep -Fq 'r203-discover-filter-search-right' dist/app-v203.js
+          grep -Fq 'single-filter-trigger-right-of-search-no-orphan' dist/app-v203.js
+          grep -Fq 'ct203-discover-search-row' dist/app-v203.js
+          grep -Fq 'ct203-discover-filter-button' dist/app-v203.js
+          grep -Fq 'remove-standalone-duplicate-filter-events-up' dist/app-v203.js
+          grep -Fq 'persistent-2x-3x-4x-no-disable' dist/app-v203.js
+          grep -Fq 'view-more-opens-movie-series-person' dist/app-v203.js
+          grep -Fq '"revision":"r203-discover-filter-search-right"' dist/release.json
+
+  android_099754:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Validate Android 0.99.7.54 runtime
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '0.99.7.54'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10024' apps/android/app/build.gradle
+          node --check apps/android/runtime-r226-discover-authoritative-fast-actions.js
+          node --check scripts/prepare-android-v099754.mjs
+          node --check scripts/test-android-v099754.mjs
+          node scripts/prepare-android-v099754.mjs
+          node scripts/test-android-v099754.mjs
+          grep -Fq 'all-nine-tabs-one-authority-top10-inline-no-r217-shell' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'raw-swap-buttons-owned-and-replaced-immediately' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'optimistic-immediate-remove-next-card-background-sync' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'detail-seen-toggle-reversible-via-unmark-rpc' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'discover-filter-right-of-search' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'cinetracker_unmark_media_seen_v1' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'single-row-compact-auto-width-28px-pills' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'r217-library-behavior-no-r219-synthetic-fallback' apps/android/app/src/main/assets/hotfix5/index.html
+
+  production_smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [web_r203]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Production Web serves r203
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 100); do
+            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"revision":"r203-discover-filter-search-right"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v203.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq 'single-filter-trigger-right-of-search-no-orphan' <<<"$JS" \
+                && grep -Fq 'ct203-discover-search-row' <<<"$JS" \
+                && grep -Fq 'remove-standalone-duplicate-filter-events-up' <<<"$JS"; then exit 0; fi
+            fi
+            sleep 5
+          done
+          exit 1
