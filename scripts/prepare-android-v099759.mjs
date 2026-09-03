@@ -18,14 +18,14 @@ function replaceOnce(from,to,label){
   if(n!==1)throw new Error(`Android 0.99.7.59 ${label}: expected exactly one match, got ${n}`);
   js=js.replace(from,to);
 }
-function replaceInSegment(startMarker,endMarker,from,to,label){
-  const start=js.indexOf(startMarker);
-  const end=start<0?-1:js.indexOf(endMarker,start+startMarker.length);
-  if(start<0||end<start)throw new Error(`Android 0.99.7.59 ${label}: segment not found`);
+function replaceInsideRuntime(runtimeMarker,from,to,expected,label){
+  const start=js.indexOf(runtimeMarker);
+  const end=start<0?-1:js.indexOf('\n})();',start+runtimeMarker.length);
+  if(start<0||end<start)throw new Error(`Android 0.99.7.59 ${label}: runtime not found`);
   const segment=js.slice(start,end);
   const n=segment.split(from).length-1;
-  if(n!==1)throw new Error(`Android 0.99.7.59 ${label}: expected selector once inside segment, got ${n}`);
-  js=js.slice(0,start)+segment.replace(from,to)+js.slice(end);
+  if(n!==expected)throw new Error(`Android 0.99.7.59 ${label}: expected ${expected} target(s) in runtime, got ${n}`);
+  js=js.slice(0,start)+segment.split(from).join(to)+js.slice(end);
 }
 
 /* Trocar: give the generated button a private attribute no legacy decorator recognizes. */
@@ -40,14 +40,20 @@ replaceOnce(
   'disable original global-paint Trocar handler'
 );
 
-/* Top 10 root cause: r200 and r201 were still claiming the row before r230.
-   Patch the controller definitions themselves, so earlier formatting changes cannot hide them. */
-const realTop="'[data-page=\"discover\"] .ct171-top-row'";
-const disabledTop="'[data-page=\"discover\"] .ct171-top-row-disabled-r231'";
-replaceInSegment('const HORIZONTAL_R200=[',"].join(',');",realTop,disabledTop,'exclude Top10 from r200 touch rail');
-replaceInSegment("const styleR200=document.createElement('style')",'document.getElementById(styleR200.id)',
-  '[data-page="discover"] .ct171-top-row,','[data-page="discover"] .ct171-top-row-disabled-r231,','remove r200 pan-y CSS from real Top10 row');
-replaceInSegment('const RAIL_SEL_R201=[',"].join(',');",realTop,disabledTop,'exclude Top10 from r201 pointer rail');
+/* Top 10 root cause: the old r200/r201 runtimes still survive in the final embedded bundle.
+   Neutralize the real selector inside those runtime closures, regardless of variable names or formatting. */
+const realTop='[data-page="discover"] .ct171-top-row';
+const disabledTop='[data-page="discover"] .ct171-top-row-disabled-r231';
+replaceInsideRuntime(
+  "window.__ctAndroidR200='discover-direct-tabs-manual-horizontal-scroll';",
+  realTop,disabledTop,2,
+  'exclude Top10 from surviving r200 touch runtime + pan-y CSS'
+);
+replaceInsideRuntime(
+  "window.__ctAndroidR201='pointer-capture-discover-tabs-horizontal-rails';",
+  realTop,disabledTop,1,
+  'exclude Top10 from surviving r201 pointer runtime'
+);
 
 const patch=await readFile(resolve(root,'apps/android/runtime-r231-discover-direct-actions.js'),'utf8');
 for(const required of [
