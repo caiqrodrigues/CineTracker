@@ -8,10 +8,12 @@ window.__ctAndroidBundle='android-v0.99.7.60-r232-device-discover-fix';
 window.__ctR232Base='branch-from-r226-no-r227-r231';
 window.__ctR232Swap='window-capture-private-button-calls-r226-slot-swap';
 window.__ctR232Top10='native-webview-pan-provider-series-movies';
+window.__ctR232Top10Isolation='window-capture-stop-legacy-start-no-prevent-default';
 window.__ctR232Cards='three-equal-width-equal-height';
 window.__ctR232Scope='android-only-web-r203-untouched';
 
 const SWAP232='[data-ct232-swap]';
+const TOP_RAIL232='[data-page="discover"] .ct171-provider-tabs,[data-page="discover"] .ct171-top-row';
 const onDiscover232=()=>{try{return String(route?.()||'')==='discover'}catch{return String(location.pathname||'').replace(/^\/+/,'').split('/')[0]==='discover'}};
 
 function runSwap232(btn){
@@ -49,6 +51,19 @@ window.addEventListener('touchend',swapEvent232,{capture:true,passive:false});
 window.addEventListener('click',swapEvent232,true);
 window.__ctR232SwapEvent=swapEvent232;
 
+/* r200/r201 own anonymous document-level touch/pointer drag handlers. Let their events
+   stop at window for the three real Top10 rails, WITHOUT preventDefault. That keeps the
+   Chromium/WebView native pan alive while preventing the old JS drag state from starting. */
+function isolateNativeTopRail232(e){
+  const rail=e?.target?.closest?.(TOP_RAIL232);
+  if(!rail||!onDiscover232())return false;
+  e.stopImmediatePropagation?.();
+  return true;
+}
+window.addEventListener('touchstart',isolateNativeTopRail232,{capture:true,passive:true});
+window.addEventListener('pointerdown',isolateNativeTopRail232,true);
+window.__ctR232IsolateNativeTopRail=isolateNativeTopRail232;
+
 const style232=document.createElement('style');
 style232.id='ct-android-099760-device-discover-fix';
 style232.textContent=`
@@ -57,6 +72,7 @@ style232.textContent=`
 [data-page="discover"] .foryou-grid:not(.ct166-daily-grid){
   display:grid!important;
   grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-auto-rows:1fr!important;
   gap:8px!important;
   width:100%!important;
   min-width:0!important;
@@ -71,8 +87,8 @@ style232.textContent=`
   width:auto!important;
   min-width:0!important;
   max-width:none!important;
-  height:auto!important;
-  min-height:100%!important;
+  height:100%!important;
+  min-height:0!important;
   flex:none!important;
   align-self:stretch!important;
   display:flex!important;
@@ -84,7 +100,8 @@ style232.textContent=`
   width:100%!important;
   min-width:0!important;
   max-width:100%!important;
-  height:100%!important;
+  height:auto!important;
+  min-height:0!important;
   flex:1 1 auto!important;
 }
 [data-page="discover"] .foryou-grid:not(.ct166-daily-grid)>.ct166-slot .poster,
