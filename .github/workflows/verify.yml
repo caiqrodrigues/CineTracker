@@ -34,36 +34,37 @@ jobs:
           grep -Fq 'view-more-opens-movie-series-person' dist/app-v203.js
           grep -Fq '"revision":"r203-discover-filter-search-right"' dist/release.json
 
-  android_099759:
+  android_099762:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Android 0.99.7.59 runtime
+      - name: Validate Android 0.99.7.62 runtime
         run: |
           set -euo pipefail
-          grep -Fq "versionName '0.99.7.59'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10029' apps/android/app/build.gradle
-          node --check apps/android/runtime-r231-discover-direct-actions.js
-          node --check scripts/prepare-android-v099759.mjs
-          node --check scripts/test-android-v099759.mjs
-          node scripts/prepare-android-v099759.mjs
-          node scripts/test-android-v099759.mjs
-          grep -Fq 'unique-data-ct231-swap-direct-slot-replace-no-global-paint' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'r200-r201-excluded-native-webview-horizontal' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'stale-r200-r201-top10-pan-y-plus-global-paint-swap-chain' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'data-ct231-swap' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'data-ct166-swap-disabled-r231' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'ct171-top-row-disabled-r231' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'slot.replaceWith(fresh)' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'ct166SwapIndex[key]=picked.index' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "versionName '0.99.7.62'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10032' apps/android/app/build.gradle
+          node --check apps/android/runtime-r234-discover-final-swap-top10.js
+          node --check scripts/prepare-android-v099762.mjs
+          node --check scripts/test-android-v099762.mjs
+          node scripts/prepare-android-v099762.mjs
+          node scripts/test-android-v099762.mjs
+          grep -Fq 'ct186-authoritative-full-foryou-repaint-private-event-authority' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'native-webview-horizontal-overflow-no-manual-touch-pointer-controller' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'preserve-ct169-card-actions-and-three-card-approved-layout' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'class="btn btn-secondary ct166-swap ct234-swap"' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'data-ct234-swap' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq '[data-discover] .ct171-provider-tabs' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq '[data-discover] .ct171-top-row' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'touch-action:pan-x pan-y!important' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'optimistic-immediate-remove-next-card-background-sync' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'detail-seen-toggle-reversible-via-unmark-rpc' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'discover-filter-right-of-search' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'single-row-compact-auto-width-28px-pills' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'r217-library-behavior-no-r219-synthetic-fallback' apps/android/app/src/main/assets/hotfix5/index.html
+          for rejected in 'android-v0.99.7.55-r227-discover-swap-top10-swipe' 'android-v0.99.7.56-r228-discover-swap-top10-gesture' 'android-v0.99.7.57-r229-discover-swap-top10-pointer' 'android-v0.99.7.58-r230-discover-original-trocar-native-top10' 'android-v0.99.7.59-r231-clean-discover-actions' 'android-v0.99.7.60-r232-device-discover-fix' 'android-v0.99.7.61-r233-physical-discover-fix'; do ! grep -Fq "$rejected" apps/android/app/src/main/assets/hotfix5/index.html; done
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
