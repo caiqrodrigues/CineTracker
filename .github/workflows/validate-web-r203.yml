@@ -1,0 +1,47 @@
+name: Validate Web r203
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release/0.99.7.54-r203
+      - main
+    paths:
+      - 'apps/web/runtime-r203-discover-filter-search-row.js'
+      - 'apps/web/build-r203.mjs'
+      - 'apps/web/test-r203.mjs'
+      - 'apps/web/package.json'
+      - '.github/workflows/validate-web-r203.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate_web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build and test r203
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node --check runtime-r203-discover-filter-search-row.js
+          node --check build-r203.mjs
+          node --check test-r203.mjs
+          npm run build
+      - name: Validate assembled r203 markers
+        run: |
+          set -euo pipefail
+          node --check apps/web/dist/app-v203.js
+          grep -Fq 'r203-discover-filter-search-right' apps/web/dist/app-v203.js
+          grep -Fq 'single-filter-trigger-right-of-search-no-orphan' apps/web/dist/app-v203.js
+          grep -Fq 'ct203-discover-search-row' apps/web/dist/app-v203.js
+          grep -Fq 'ct203-discover-filter-button' apps/web/dist/app-v203.js
+          grep -Fq 'remove-standalone-duplicate-filter-events-up' apps/web/dist/app-v203.js
+          grep -Fq '"revision":"r203-discover-filter-search-right"' apps/web/dist/release.json
+          grep -Fq 'app-v203.js' apps/web/dist/index.html
+          grep -Fq 'app-v203.css' apps/web/dist/index.html
