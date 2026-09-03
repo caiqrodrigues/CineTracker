@@ -53,7 +53,7 @@ async function select224(value,opt={}){
   try{
     const rows=await rows224(selected);
     if(my!==ticket224||!isDiscover224()||tab224(discoverState?.tab)!==selected)return true;
-    if(selected==='foryou')paintDiscover(rows||{});else ctR180RenderArray(rows||[]);
+    if(selected==='foryou')paintDiscover(rows||{});else{ctR180RenderArray(rows||[]);decorateActions224()}
     if(my!==ticket224)return true;
     try{discoverState.tab=selected}catch{};mark224(selected);restoreRail224(left);
   }catch(e){if(my===ticket224&&isDiscover224()){const h=document.querySelector('[data-discover-content]');if(h)h.innerHTML=fail('Falha ao carregar Descobrir: '+(e?.message||e),'discover')}}
@@ -87,11 +87,15 @@ function removeFromFresh224(type,id){
   try{
     const data=ct166ForYouData;if(!data)return;
     const fresh=data._ct166_fresh;if(!fresh)return;
-    for(const kind of ['movie','series','anime'])if(Array.isArray(fresh[kind]))fresh[kind]=fresh[kind].filter(x=>Number(x?.id||0)!==Number(id));
-    if(data.daily&&Number(data.daily.id||0)===Number(id))data.daily=null;
-    if(data.movie&&Number(data.movie.id||0)===Number(id))data.movie=null;
-    if(data.series&&Number(data.series.id||0)===Number(id))data.series=null;
-    if(data.anime&&Number(data.anime.id||0)===Number(id))data.anime=null;
+    const kinds=type==='movie'?['movie']:['series','anime'];
+    for(const kind of kinds)if(Array.isArray(fresh[kind]))fresh[kind]=fresh[kind].filter(x=>Number(x?.id||0)!==Number(id));
+    if(type==='movie'){
+      if(data.daily&&Number(data.daily.id||0)===Number(id))data.daily=null;
+      if(data.movie&&Number(data.movie.id||0)===Number(id))data.movie=null;
+    }else{
+      if(data.series&&Number(data.series.id||0)===Number(id))data.series=null;
+      if(data.anime&&Number(data.anime.id||0)===Number(id))data.anime=null;
+    }
   }catch{}
 }
 function repaintForYou224(){try{if(isDiscover224()&&tab224(discoverState?.tab)==='foryou'&&ct166ForYouData)paintDiscover(ct166ForYouData)}catch{}}
