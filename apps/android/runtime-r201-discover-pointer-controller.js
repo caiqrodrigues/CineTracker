@@ -33,7 +33,7 @@ const RAIL_SEL_R201=[
   '[data-page="discover"] [data-discover-content] .row',
   '[data-page="discover"] .discover-carousel',
   '[data-page="discover"] .ct171-provider-tabs',
-  '[data-page="discover"] .ct171-top-row',
+  '[data-page="discover"] .ct171-top-row-disabled-r231',
   '.ct169-cast-row','.ct169-related-row','.ct169-season-row','.ct169-season-chart-carousel',
   '.ct171-provider-row','.ct169-chart-scroll','.ct169-activity-scroll','.timeline'
 ].join(',');
@@ -139,8 +139,8 @@ try{
 }catch{}
 
 const style=document.createElement('style');style.id='ct-android-099729-pointer-controller';style.textContent=`
-/* Remove all previous smooth/snap behavior. The pointer controller owns horizontal drag;
-   pan-y remains native so normal page scrolling is never trapped. */
+/* Remove all previous smooth/snap behavior. The pointer controller owns legacy horizontal drag;
+   Top 10 is excluded and remains native. */
 ${RAIL_SEL_R201}{overflow-x:auto!important;overflow-y:hidden!important;scroll-behavior:auto!important;scroll-snap-type:none!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;overscroll-behavior-x:contain!important;pointer-events:auto!important}
 ${RAIL_SEL_R201} *{touch-action:pan-y!important}
 [data-page="discover"] .ct-r180-tab-shell{min-width:0!important;width:100%!important;max-width:100%!important;display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;align-items:center!important;gap:4px!important;overflow:visible!important}

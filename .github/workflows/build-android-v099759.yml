@@ -6,6 +6,8 @@ on:
     branches:
       - main
     paths:
+      - 'apps/android/runtime-r200-discover-gesture-watchlist.js'
+      - 'apps/android/runtime-r201-discover-pointer-controller.js'
       - 'apps/android/runtime-r231-discover-direct-actions.js'
       - 'apps/android/app/build.gradle'
       - 'scripts/prepare-android-v099759.mjs'
@@ -44,6 +46,8 @@ jobs:
       - name: Prepare and test Android 0.99.7.59
         run: |
           set -euo pipefail
+          node --check apps/android/runtime-r200-discover-gesture-watchlist.js
+          node --check apps/android/runtime-r201-discover-pointer-controller.js
           node --check apps/android/runtime-r231-discover-direct-actions.js
           node --check scripts/prepare-android-v099759.mjs
           node --check scripts/test-android-v099759.mjs

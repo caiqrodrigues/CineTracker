@@ -15,7 +15,7 @@ const HORIZONTAL_R200=[
   '[data-page="discover"] .discover-carousel',
   '[data-page="discover"] [data-discover-content] .row',
   '[data-page="discover"] .ct171-provider-tabs',
-  '[data-page="discover"] .ct171-top-row',
+  '[data-page="discover"] .ct171-top-row-disabled-r231',
   '.ct169-cast-row',
   '.ct169-related-row',
   '.ct169-season-row',
@@ -84,7 +84,7 @@ window.addEventListener('click',e=>{
   }
 },true);
 
-/* JS owns horizontal displacement; Android/Chromium keeps vertical page panning native. */
+/* JS owns horizontal displacement for legacy rails only. Top 10 is excluded and remains native. */
 const styleR200=document.createElement('style');styleR200.id='ct-android-099728-horizontal-engine';styleR200.textContent=`
 [data-page="discover"] [data-ct-r180-tabs],
 [data-page="discover"] .ct-r180-type-filters,
@@ -92,7 +92,7 @@ const styleR200=document.createElement('style');styleR200.id='ct-android-099728-
 [data-page="discover"] .discover-carousel,
 [data-page="discover"] [data-discover-content] .row,
 [data-page="discover"] .ct171-provider-tabs,
-[data-page="discover"] .ct171-top-row,
+[data-page="discover"] .ct171-top-row-disabled-r231,
 .ct169-cast-row,.ct169-related-row,.ct169-season-row,.ct169-season-chart-carousel,.ct171-provider-row,.ct169-chart-scroll,.ct169-activity-scroll{
   overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:none!important;scroll-behavior:auto!important;
   overscroll-behavior-x:contain!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;

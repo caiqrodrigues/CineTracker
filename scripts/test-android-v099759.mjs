@@ -5,6 +5,8 @@ import vm from 'node:vm';
 const root=resolve(process.cwd());
 const patch=await readFile(resolve(root,'apps/android/runtime-r231-discover-direct-actions.js'),'utf8');
 const html=await readFile(resolve(root,'apps/android/app/src/main/assets/hotfix5/index.html'),'utf8');
+const r200Source=await readFile(resolve(root,'apps/android/runtime-r200-discover-gesture-watchlist.js'),'utf8');
+const r201Source=await readFile(resolve(root,'apps/android/runtime-r201-discover-pointer-controller.js'),'utf8');
 
 for(const marker of [
   '<script data-ct-android="r231-android-js">',
@@ -51,16 +53,7 @@ const document={
   getElementById(){return null},
   head:{appendChild(node){styleText=String(node.textContent||'')}}
 };
-const sandbox={
-  window:{},
-  document,
-  console,
-  location:{pathname:'/discover'},
-  route:()=> 'discover',
-  ct166ForYouData:{},
-  ct166SwapIndex:{},
-  ct166Slot:()=>'<div></div>'
-};
+const sandbox={window:{},document,console,location:{pathname:'/discover'},route:()=> 'discover',ct166ForYouData:{},ct166SwapIndex:{},ct166Slot:()=>'<div></div>'};
 vm.runInNewContext(patch,sandbox,{filename:'runtime-r231-discover-direct-actions.js'});
 const pick=sandbox.window.__ctR231PickNext;
 if(typeof pick!=='function')throw new Error('r231 pure picker not exposed');
@@ -73,29 +66,32 @@ if(p.next!==null)throw new Error('r231 picker must not fake an alternative when 
 if(listeners.filter(x=>x.type==='click').length!==1)throw new Error('r231 must register exactly one Trocar click authority');
 if(listeners.some(x=>x.type==='pointermove'||x.type==='touchmove'))throw new Error('r231 must not register a Top10 movement authority');
 
-/* Top10: inspect the actual old controller definitions, not CSS ordering. */
-const r200Start=html.indexOf('const HORIZONTAL_R200=['),r200End=html.indexOf("].join(',');",r200Start);
-if(!(r200Start>0&&r200End>r200Start))throw new Error('r200 rail definition missing');
-const r200=html.slice(r200Start,r200End);
-if(/^\s*'\[data-page="discover"\] \.ct171-top-row',\s*$/m.test(r200))throw new Error('r200 still recognizes real Top10 row');
-if(!r200.includes('.ct171-top-row-disabled-r231'))throw new Error('r200 Top10 exclusion marker missing');
+/* Top10: verify the actual source gesture engines exclude the real row before embedding. */
+const real="'[data-page=\"discover\"] .ct171-top-row'";
+const disabled="'[data-page=\"discover\"] .ct171-top-row-disabled-r231'";
+const r200RailStart=r200Source.indexOf('const HORIZONTAL_R200=['),r200RailEnd=r200Source.indexOf("].join(',');",r200RailStart);
+if(!(r200RailStart>0&&r200RailEnd>r200RailStart))throw new Error('r200 source rail definition missing');
+const r200Rail=r200Source.slice(r200RailStart,r200RailEnd);
+if(r200Rail.includes(real))throw new Error('r200 source still recognizes real Top10 row');
+if(!r200Rail.includes(disabled))throw new Error('r200 source Top10 exclusion marker missing');
+const r200StyleStart=r200Source.indexOf("styleR200.textContent=`"),r200StyleEnd=r200Source.indexOf('`;',r200StyleStart);
+if(!(r200StyleStart>0&&r200StyleEnd>r200StyleStart))throw new Error('r200 source style definition missing');
+const r200Style=r200Source.slice(r200StyleStart,r200StyleEnd);
+if(r200Style.includes('[data-page="discover"] .ct171-top-row,'))throw new Error('r200 source pan-y CSS still targets real Top10');
+if(!r200Style.includes('[data-page="discover"] .ct171-top-row-disabled-r231,'))throw new Error('r200 source CSS exclusion marker missing');
 
-const r201Start=html.indexOf('const RAIL_SEL_R201=['),r201End=html.indexOf("].join(',');",r201Start);
-if(!(r201Start>0&&r201End>r201Start))throw new Error('r201 rail definition missing');
-const r201=html.slice(r201Start,r201End);
-if(/^\s*'\[data-page="discover"\] \.ct171-top-row',\s*$/m.test(r201))throw new Error('r201 still recognizes real Top10 row');
-if(!r201.includes('.ct171-top-row-disabled-r231'))throw new Error('r201 Top10 exclusion marker missing');
+const r201RailStart=r201Source.indexOf('const RAIL_SEL_R201=['),r201RailEnd=r201Source.indexOf("].join(',');",r201RailStart);
+if(!(r201RailStart>0&&r201RailEnd>r201RailStart))throw new Error('r201 source rail definition missing');
+const r201Rail=r201Source.slice(r201RailStart,r201RailEnd);
+if(r201Rail.includes(real))throw new Error('r201 source still recognizes real Top10 row');
+if(!r201Rail.includes(disabled))throw new Error('r201 source Top10 exclusion marker missing');
 
-const r200StyleStart=html.indexOf("styleR200.textContent=`"),r200StyleEnd=html.indexOf('`;',r200StyleStart);
-if(!(r200StyleStart>0&&r200StyleEnd>r200StyleStart))throw new Error('r200 style definition missing');
-const r200Style=html.slice(r200StyleStart,r200StyleEnd);
-if(r200Style.includes('[data-page="discover"] .ct171-top-row,'))throw new Error('r200 pan-y CSS still directly targets Top10');
-if(!r200Style.includes('.ct171-top-row-disabled-r231'))throw new Error('r200 CSS Top10 exclusion marker missing');
-
+const propagated=(html.match(/ct171-top-row-disabled-r231/g)||[]).length;
+if(propagated<2)throw new Error(`source Top10 exclusions did not propagate to final Android bundle: ${propagated}`);
 if(!styleText.includes('[data-page="discover"] .ct171-top-row{')||!styleText.includes('touch-action:auto!important'))throw new Error('r231 final native Top10 CSS missing');
 if(patch.includes('setPointerCapture')||patch.includes('scrollLeft='))throw new Error('r231 must never manually drive Top10');
 
 for(const rejected of ['ct219-manual-cover','negative-id-resolve-or-local-detail','ctR219FindManualMedia'])
   if(html.includes(rejected))throw new Error('rejected .47 behavior returned: '+rejected);
 
-console.log('ANDROID_099759_TEST_OK trocar=direct-slot-single-authority top10=r200-r201-excluded-native-webview web=r203-untouched');
+console.log(`ANDROID_099759_TEST_OK trocar=direct-slot-single-authority top10=source-r200-r201-excluded propagated=${propagated} native-webview web=r203-untouched`);

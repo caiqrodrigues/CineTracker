@@ -18,15 +18,6 @@ function replaceOnce(from,to,label){
   if(n!==1)throw new Error(`Android 0.99.7.59 ${label}: expected exactly one match, got ${n}`);
   js=js.replace(from,to);
 }
-function replaceInsideRuntime(runtimeMarker,from,to,expected,label){
-  const start=js.indexOf(runtimeMarker);
-  const end=start<0?-1:js.indexOf('\n})();',start+runtimeMarker.length);
-  if(start<0||end<start)throw new Error(`Android 0.99.7.59 ${label}: runtime not found`);
-  const segment=js.slice(start,end);
-  const n=segment.split(from).length-1;
-  if(n!==expected)throw new Error(`Android 0.99.7.59 ${label}: expected ${expected} target(s) in runtime, got ${n}`);
-  js=js.slice(0,start)+segment.split(from).join(to)+js.slice(end);
-}
 
 /* Trocar: give the generated button a private attribute no legacy decorator recognizes. */
 replaceOnce(
@@ -40,20 +31,10 @@ replaceOnce(
   'disable original global-paint Trocar handler'
 );
 
-/* Top 10 root cause: the old r200/r201 runtimes still survive in the final embedded bundle.
-   Neutralize the real selector inside those runtime closures, regardless of variable names or formatting. */
-const realTop='[data-page="discover"] .ct171-top-row';
-const disabledTop='[data-page="discover"] .ct171-top-row-disabled-r231';
-replaceInsideRuntime(
-  "window.__ctAndroidR200='discover-direct-tabs-manual-horizontal-scroll';",
-  realTop,disabledTop,2,
-  'exclude Top10 from surviving r200 touch runtime + pan-y CSS'
-);
-replaceInsideRuntime(
-  "window.__ctAndroidR201='pointer-capture-discover-tabs-horizontal-rails';",
-  realTop,disabledTop,1,
-  'exclude Top10 from surviving r201 pointer runtime'
-);
+/* Top 10 is now excluded at the source in runtime-r200 and runtime-r201, before the
+   historical preparation chain embeds them. The final bundle must carry that marker. */
+const disabledTopCount=js.split('ct171-top-row-disabled-r231').length-1;
+if(disabledTopCount<2)throw new Error(`Android 0.99.7.59 source-level Top10 exclusion did not propagate; markers=${disabledTopCount}`);
 
 const patch=await readFile(resolve(root,'apps/android/runtime-r231-discover-direct-actions.js'),'utf8');
 for(const required of [
@@ -96,4 +77,4 @@ for(const bad of ['android-v0.99.7.47-r219-top10-filters-manual-media','negative
   if(html.includes(bad))throw new Error('Android 0.99.7.59 leaked rejected .47 behavior: '+bad);
 
 await writeFile(indexPath,html,'utf8');
-console.log('ANDROID_099759_READY trocar=unique-r231-direct-slot top10=r200+r201-excluded-native-scroll web=r203-untouched');
+console.log(`ANDROID_099759_READY trocar=unique-r231-direct-slot top10=source-level-r200+r201-excluded markers=${disabledTopCount} web=r203-untouched`);
