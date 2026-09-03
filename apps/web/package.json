@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.99.7",
   "scripts": {
-    "build": "node build-r200.mjs && node test-r200.mjs",
-    "verify": "node build-r200.mjs && node test-r200.mjs"
+    "build": "node build-r201.mjs && node test-r201.mjs",
+    "verify": "node build-r201.mjs && node test-r201.mjs"
   },
   "engines": {
     "node": ">=20"
