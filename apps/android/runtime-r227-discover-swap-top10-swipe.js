@@ -59,7 +59,7 @@ function enableTopSwipe227(root=document){
   if(!isDiscover227()||selected227()!=='top10')return;
   const rows=[];try{if(root?.matches?.('.ct171-top-row'))rows.push(root)}catch{};try{rows.push(...(root?.querySelectorAll?.('.ct171-top-row')||[]))}catch{}
   for(const row of rows){
-    if(row.dataset.ct227Swipe==='1')continue;row.dataset.ct227Swipe='1';
+    if(row.getAttribute('data-ct227-swipe')==='1')continue;row.setAttribute('data-ct227-swipe','1');
     let state=null;
     row.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;const t=e.touches[0];state={x:t.clientX,y:t.clientY,left:row.scrollLeft,horizontal:false}}, {passive:true});
     row.addEventListener('touchmove',e=>{if(!state||e.touches.length!==1)return;const t=e.touches[0],dx=t.clientX-state.x,dy=t.clientY-state.y;if(!state.horizontal&&Math.abs(dx)>6&&Math.abs(dx)>Math.abs(dy)*1.08)state.horizontal=true;if(!state.horizontal)return;e.preventDefault();row.scrollLeft=state.left-dx}, {passive:false});
