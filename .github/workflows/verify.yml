@@ -34,40 +34,40 @@ jobs:
           grep -Fq 'view-more-opens-movie-series-person' dist/app-v203.js
           grep -Fq '"revision":"r203-discover-filter-search-right"' dist/release.json
 
-  android_099756:
+  android_099757:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Android 0.99.7.56 runtime
+      - name: Validate Android 0.99.7.57 runtime
         run: |
           set -euo pipefail
-          grep -Fq "versionName '0.99.7.56'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10026' apps/android/app/build.gradle
-          node --check apps/android/runtime-r228-discover-swap-top10-gesture.js
-          node --check scripts/prepare-android-v099756.mjs
-          node --check scripts/test-android-v099756.mjs
-          node scripts/prepare-android-v099756.mjs
-          node scripts/test-android-v099756.mjs
-          grep -Fq 'cloned-direct-button-one-alternative-valid' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'bind-any-visible-top-row-no-selected-state-gate' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'android-discover-only-web-untouched' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'data-ct228-swap' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'data-ct228-swipe' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'cloneNode(true)' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq "document.addEventListener('touchmove'" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 's.row.scrollLeft=s.left-dx' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq '.ct171-top-row{display:flex!important' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "versionName '0.99.7.57'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10027' apps/android/app/build.gradle
+          node --check apps/android/runtime-r229-discover-swap-top10-pointer.js
+          node --check scripts/prepare-android-v099757.mjs
+          node --check scripts/test-android-v099757.mjs
+          node scripts/prepare-android-v099757.mjs
+          node scripts/test-android-v099757.mjs
+          grep -Fq 'direct-button-listeners-official-index-plus-fallback' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'pointer-capture-horizontal-scrollleft' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'disable-r227-r228-stale-gesture-authorities' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'android-only-web-r203-untouched' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'data-ct229-swap' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'data-ct229-swipe' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "clone.addEventListener('pointerup'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "row.addEventListener('pointermove'" apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'setPointerCapture' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'applyDrag229(row,s.left,dx)' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'data-ct227-swap-disabled-r229' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'data-ct228-swap-disabled-r229' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'optimistic-immediate-remove-next-card-background-sync' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'detail-seen-toggle-reversible-via-unmark-rpc' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'discover-filter-right-of-search' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'single-row-compact-auto-width-28px-pills' apps/android/app/src/main/assets/hotfix5/index.html
           grep -Fq 'r217-library-behavior-no-r219-synthetic-fallback' apps/android/app/src/main/assets/hotfix5/index.html
-          ! grep -Fq 'pool.length<2' apps/android/runtime-r228-discover-swap-top10-gesture.js
-          ! grep -Fq 'selected228' apps/android/runtime-r228-discover-swap-top10-gesture.js
-          ! grep -Fq '[data-page="discover"] .ct171-top-row' apps/android/runtime-r228-discover-swap-top10-gesture.js
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
