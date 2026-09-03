@@ -40,17 +40,21 @@ function discoverFilter201(){
   if(!isDiscover201())return;
   const page=document.querySelector('[data-page="discover"]')||document.querySelector('[data-discover]')?.closest('[data-page]');
   if(!page)return;
-  const discover=page.querySelector('[data-discover]')||page;
-  const panel=[...discover.querySelectorAll('[data-ct198-filter="1"],[data-ct-mini-filter="1"]')].find(g=>g.querySelector?.('[data-discover-type]'));
+  const panel=[...page.querySelectorAll('[data-ct198-filter="1"],[data-ct-mini-filter="1"]')].find(g=>g.querySelector?.('[data-discover-type]'));
   if(!panel)return;
   let trigger=panel.previousElementSibling?.classList?.contains('ct-mini-filter-trigger')?panel.previousElementSibling:null;
-  if(!trigger)trigger=[...page.querySelectorAll('.ct-mini-filter-trigger,.ct198-filter-trigger')].find(b=>b.nextElementSibling===panel)||null;
-  if(!trigger)return;
+  if(!trigger)return; /* Keep trigger immediately before panel so r198 never creates a duplicate. */
   const search=page.querySelector('.search-global,[data-global-search]')?.closest?.('.search-global')||page.querySelector('.search-global');
   if(!search)return;
-  trigger.classList.add('ct201-discover-filter-button');
-  trigger.dataset.ct201DiscoverFilter='1';
-  if(trigger.parentElement!==search)search.appendChild(trigger);
+  let row=page.querySelector('[data-ct201-discover-search-row]');
+  if(!row){
+    row=document.createElement('div');row.className='ct201-discover-search-row';row.dataset.ct201DiscoverSearchRow='1';
+    search.parentNode?.insertBefore(row,search);row.appendChild(search);
+  }else if(search.parentElement!==row)row.prepend(search);
+  trigger.classList.add('ct201-discover-filter-button');trigger.dataset.ct201DiscoverFilter='1';
+  panel.classList.add('ct201-discover-filter-panel');panel.dataset.ct201DiscoverFilterPanel='1';
+  if(trigger.parentElement!==row||panel.parentElement!==row){row.appendChild(trigger);row.appendChild(panel)}
+  else if(trigger.nextElementSibling!==panel){row.insertBefore(trigger,panel)}
 }
 
 function apply201(){removeSports201();discoverFilter201()}
@@ -62,9 +66,11 @@ window.addEventListener('popstate',()=>setTimeout(apply201,0));window.addEventLi
 
 const style=document.createElement('style');style.id='ct-web-r201';style.textContent=`
 [data-sports] .sports-summary,[data-sports] .sports-summary-r159,[data-sports] [data-sports-summary],[data-sports] [data-sports-stats],[data-sports] .sports-stats,[data-sports] .sport-stats,[data-sports] .sports-kpis,[data-sports] [data-sports-time-banner],[data-sports] .sports-time-banner{display:none!important}
-[data-page="discover"] .search-global{display:flex!important;align-items:center!important;min-width:0!important;gap:7px!important}
-[data-page="discover"] .search-global [data-global-search]{flex:1 1 auto!important;min-width:0!important}
-[data-page="discover"] .search-global .ct201-discover-filter-button{position:relative!important;flex:0 0 36px!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;margin:0!important;align-self:center!important;inset:auto!important}
+[data-page="discover"] .ct201-discover-search-row{display:grid!important;grid-template-columns:minmax(0,1fr) 36px!important;align-items:center!important;gap:7px!important;width:100%!important;min-width:0!important;margin-bottom:8px!important}
+[data-page="discover"] .ct201-discover-search-row>.search-global{grid-column:1!important;grid-row:1!important;display:flex!important;align-items:center!important;min-width:0!important;width:100%!important;margin:0!important}
+[data-page="discover"] .ct201-discover-search-row>.search-global [data-global-search]{flex:1 1 auto!important;min-width:0!important}
+[data-page="discover"] .ct201-discover-search-row>.ct201-discover-filter-button{grid-column:2!important;grid-row:1!important;position:relative!important;display:inline-grid!important;place-items:center!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important;margin:0!important;inset:auto!important}
+[data-page="discover"] .ct201-discover-search-row>.ct201-discover-filter-panel{grid-column:1/-1!important;grid-row:2!important;width:100%!important;margin:0!important}
 `;
 document.getElementById(style.id)?.remove();document.head.appendChild(style);
 requestAnimationFrame(apply201);
