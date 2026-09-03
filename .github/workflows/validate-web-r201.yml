@@ -1,0 +1,48 @@
+name: Validate Web r201
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release/0.99.7.52-r201
+      - main
+    paths:
+      - 'apps/web/runtime-r201-sports-discover-filter.js'
+      - 'apps/web/build-r201.mjs'
+      - 'apps/web/test-r201.mjs'
+      - 'apps/web/package.json'
+      - '.github/workflows/validate-web-r201.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate_web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Build and test r201
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node --check runtime-r201-sports-discover-filter.js
+          node --check build-r201.mjs
+          node --check test-r201.mjs
+          npm run build
+      - name: Validate assembled r201 markers
+        run: |
+          set -euo pipefail
+          node --check apps/web/dist/app-v201.js
+          grep -Fq 'r201-sports-discover-filter' apps/web/dist/app-v201.js
+          grep -Fq 'remove-summary-time-empty-bars-profile-stats-only' apps/web/dist/app-v201.js
+          grep -Fq 'filter-trigger-right-of-global-search' apps/web/dist/app-v201.js
+          grep -Fq '.sports-summary-r159' apps/web/dist/app-v201.js
+          grep -Fq '[data-sports-time-banner]' apps/web/dist/app-v201.js
+          grep -Fq 'ct201-discover-filter-button' apps/web/dist/app-v201.js
+          grep -Fq 'search.appendChild(trigger)' apps/web/dist/app-v201.js
+          grep -Fq '"revision":"r201-sports-discover-filter"' apps/web/dist/release.json
+          grep -Fq 'app-v201.js' apps/web/dist/index.html
+          grep -Fq 'app-v201.css' apps/web/dist/index.html
