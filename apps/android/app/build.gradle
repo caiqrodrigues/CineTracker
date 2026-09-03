@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10024
-        versionName '0.99.7.54'
+        versionCode 10025
+        versionName '0.99.7.55'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-v0.99.7.54 — r226 owns Discover Top10/swap/watchlist, reversible seen and filter beside search
+// release: android-v0.99.7.55 — r227 fixes Trocar deterministically and enables horizontal swipe inside Top 10 card rails; Web untouched
