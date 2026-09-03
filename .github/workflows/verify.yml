@@ -1,0 +1,75 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  web_r202:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Validate and build Web r202
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node --check runtime-r202-sports-single-filter.js
+          node --check build-r202.mjs
+          node --check test-r202.mjs
+          npm run build
+          node --check dist/app-v202.js
+          grep -Fq 'r202-sports-single-filter' dist/app-v202.js
+          grep -Fq 'remove-standalone-duplicate-filter-events-up' dist/app-v202.js
+          grep -Fq 'ct200-sports-filter-button' dist/app-v202.js
+          grep -Fq 'ct202-events-up' dist/app-v202.js
+          grep -Fq 'persistent-2x-3x-4x-no-disable' dist/app-v202.js
+          grep -Fq 'view-more-opens-movie-series-person' dist/app-v202.js
+          grep -Fq '"revision":"r202-sports-single-filter"' dist/release.json
+
+  android_099753:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Validate Android 0.99.7.53 runtime
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '0.99.7.53'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10023' apps/android/app/build.gradle
+          node --check apps/android/runtime-r225-discover-inplace-swap.js
+          node --check scripts/prepare-android-v099753.mjs
+          node --check scripts/test-android-v099753.mjs
+          node scripts/prepare-android-v099753.mjs
+          node scripts/test-android-v099753.mjs
+          grep -Fq 'normal-tabs-update-content-in-place-top10-r217-only' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'trocar-replaces-own-slot-with-different-item' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'data-ct225-swap' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'success-animation-immediate-next-recommendation' apps/android/app/src/main/assets/hotfix5/index.html
+
+  production_smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [web_r202]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Production Web serves r202
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 100); do
+            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"revision":"r202-sports-single-filter"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v202.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq 'remove-standalone-duplicate-filter-events-up' <<<"$JS" && grep -Fq 'ct202-events-up' <<<"$JS"; then exit 0; fi
+            fi
+            sleep 5
+          done
+          exit 1
