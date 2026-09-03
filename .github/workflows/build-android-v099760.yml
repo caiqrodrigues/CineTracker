@@ -79,12 +79,12 @@ jobs:
             'branch-from-r226-no-r227-r231' \
             'window-capture-private-button-calls-r226-slot-swap' \
             'native-webview-pan-provider-series-movies' \
+            'window-capture-stop-legacy-start-no-prevent-default' \
             'three-equal-width-equal-height' \
             'data-ct232-swap' \
-            'ct171-provider-tabs-r232-retired' \
-            'ct171-top-row-r232-retired' \
             'touch-action:pan-x pan-y!important' \
             'grid-template-columns:repeat(3,minmax(0,1fr))!important' \
+            'grid-auto-rows:1fr!important' \
             'window.__ctR232SwapBase=swap226' \
             'optimistic-immediate-remove-next-card-background-sync' \
             'detail-seen-toggle-reversible-via-unmark-rpc' \
