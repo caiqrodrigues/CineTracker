@@ -9,107 +9,92 @@ permissions:
   contents: read
 
 jobs:
-  web_r199:
+  web_r201:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Web source chain through r199
+      - name: Validate Web r201 source chain
         run: |
           set -euo pipefail
-          for f in \
-            apps/web/runtime-r179.js apps/web/runtime-r180.js apps/web/runtime-r181.js apps/web/runtime-r182.js \
-            apps/web/runtime-r183.js apps/web/runtime-r184-shared.js apps/web/runtime-r184-web.js \
-            apps/web/runtime-r185a-shared.js apps/web/runtime-r185b-web.js apps/web/runtime-r185c-shared.js \
-            apps/web/runtime-r185c-web.js apps/web/runtime-r186-shared.js apps/web/runtime-r190-web.js \
-            apps/web/runtime-r190b-web.js apps/web/runtime-r191-web.js apps/web/runtime-r192-web.js \
-            apps/web/runtime-r193-web.js apps/web/runtime-r193-guard.js apps/web/runtime-r194-web.js \
-            apps/web/runtime-r194-fast-context.js apps/web/runtime-r195-web.js apps/web/runtime-r196-web.js \
-            apps/web/runtime-r197-minimal-filters.js apps/web/runtime-r198-minimal-filters-real.js \
-            apps/web/runtime-r199-rewatch-favorites-sports.js; do
-            node --check "$f"
-          done
-          node --check apps/web/build-r199.mjs
-          grep -Fq "window.__ctR199Web='rewatch-favorites-sports-navigation';" apps/web/runtime-r199-rewatch-favorites-sports.js
+          node --check apps/web/runtime-r199-rewatch-favorites-sports.js
+          node --check apps/web/runtime-r200-sports-search-cleanup.js
+          node --check apps/web/runtime-r201-sports-discover-filter.js
+          node --check apps/web/build-r201.mjs
+          node --check apps/web/test-r201.mjs
           grep -Fq "window.__ctR199Rewatch='persistent-2x-3x-4x-no-disable';" apps/web/runtime-r199-rewatch-favorites-sports.js
           grep -Fq "window.__ctR199Favorites='view-more-opens-movie-series-person';" apps/web/runtime-r199-rewatch-favorites-sports.js
-          grep -Fq "window.__ctR199Sports='remove-status-statistics-summary-card';" apps/web/runtime-r199-rewatch-favorites-sports.js
-          grep -Fq 'btn.textContent=playLabel199(plays);btn.disabled=false;' apps/web/runtime-r199-rewatch-favorites-sports.js
-          grep -Fq 'data-ct199-open-media' apps/web/runtime-r199-rewatch-favorites-sports.js
-          grep -Fq 'data-ct199-open-person' apps/web/runtime-r199-rewatch-favorites-sports.js
-          node scripts/test-r180-discover-profile.mjs
-          node scripts/test-r184-profile-gap.mjs
-          node scripts/test-r185c-performance-polish.mjs
-      - name: Build Web r199
+          grep -Fq "window.__ctR201Sports='remove-summary-time-empty-bars-profile-stats-only';" apps/web/runtime-r201-sports-discover-filter.js
+          grep -Fq "window.__ctR201Discover='filter-trigger-right-of-global-search';" apps/web/runtime-r201-sports-discover-filter.js
+      - name: Build Web r201
         working-directory: apps/web
         run: npm run build
-      - name: Assert assembled Web r199 artifact
+      - name: Assert assembled Web r201 artifact
         run: |
           set -euo pipefail
-          node --check apps/web/dist/app-v199.js
-          grep -Fq "r199-rewatch-favorites-sports" apps/web/dist/app-v199.js
-          grep -Fq "persistent-2x-3x-4x-no-disable" apps/web/dist/app-v199.js
-          grep -Fq "view-more-opens-movie-series-person" apps/web/dist/app-v199.js
-          grep -Fq "remove-status-statistics-summary-card" apps/web/dist/app-v199.js
-          grep -Fq 'data-ct199-open-media' apps/web/dist/app-v199.js
-          grep -Fq 'data-ct199-open-person' apps/web/dist/app-v199.js
-          grep -Fq 'btn.textContent=playLabel199(plays);btn.disabled=false;' apps/web/dist/app-v199.js
-          grep -Fq "ctR180RenderTop10" apps/web/dist/app-v199.js
-          grep -Fq '"revision":"r199-rewatch-favorites-sports"' apps/web/dist/release.json
-          grep -Fq 'app-v199.js' apps/web/dist/index.html
-          grep -Fq 'app-v199.css' apps/web/dist/index.html
-          test ! -f apps/web/dist/app-v198.js
+          node --check apps/web/dist/app-v201.js
+          grep -Fq 'r201-sports-discover-filter' apps/web/dist/app-v201.js
+          grep -Fq 'persistent-2x-3x-4x-no-disable' apps/web/dist/app-v201.js
+          grep -Fq 'view-more-opens-movie-series-person' apps/web/dist/app-v201.js
+          grep -Fq 'remove-summary-time-empty-bars-profile-stats-only' apps/web/dist/app-v201.js
+          grep -Fq 'filter-trigger-right-of-global-search' apps/web/dist/app-v201.js
+          grep -Fq '.sports-summary-r159' apps/web/dist/app-v201.js
+          grep -Fq '[data-sports-time-banner]' apps/web/dist/app-v201.js
+          grep -Fq 'ct201-discover-filter-button' apps/web/dist/app-v201.js
+          grep -Fq '"revision":"r201-sports-discover-filter"' apps/web/dist/release.json
+          grep -Fq 'app-v201.js' apps/web/dist/index.html
+          test ! -f apps/web/dist/app-v200.js
 
-  android_099749:
+  android_099752:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Android 0.99.7.49 source and assembled runtime
+      - name: Validate Android 0.99.7.52 source and assembled runtime
         run: |
           set -euo pipefail
-          grep -Fq "versionName '0.99.7.49'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10019' apps/android/app/build.gradle
-          node --check apps/android/runtime-r221-rewatch-favorites-sports.js
-          node --check scripts/prepare-android-v099749.mjs
-          node --check scripts/test-android-v099749.mjs
-          node scripts/prepare-android-v099749.mjs
-          node scripts/test-android-v099749.mjs
+          grep -Fq "versionName '0.99.7.52'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10022' apps/android/app/build.gradle
+          node --check apps/android/runtime-r224-discover-controller-watchlist.js
+          node --check scripts/prepare-android-v099752.mjs
+          node --check scripts/test-android-v099752.mjs
+          node scripts/prepare-android-v099752.mjs
+          node scripts/test-android-v099752.mjs
           node - <<'NODE'
           const fs=require('fs');
           const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
-          const marker='<script data-ct-android="r221-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
-          if(a<0||b<a)throw new Error('r221 embedded runtime missing');
+          const marker='<script data-ct-android="r224-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r224 embedded runtime missing');
           const js=h.slice(a+marker.length,b);
-          for(const m of ['persistent-2x-3x-4x-no-disable','view-more-opens-movie-series-person','remove-status-statistics-summary-card','r214-selector-ticket-r217-authoritative-render','r217-library-behavior-no-r219-synthetic-fallback','overflow-x:auto!important'])if(!js.includes(m))throw new Error('missing '+m);
+          for(const m of ['one-controller-all-nine-tabs-r217-top10-no-stale-paint','foryou-trocar-immediate-in-place','success-animation-immediate-next-recommendation','single-row-compact-auto-width-28px-pills','persistent-2x-3x-4x-no-disable','view-more-opens-movie-series-person','r217-library-behavior-no-r219-synthetic-fallback'])if(!js.includes(m))throw new Error('missing '+m);
           for(const old of ['ct219-manual-cover','negative-id-resolve-or-local-detail','ctR219FindManualMedia'])if(js.includes(old))throw new Error('rejected .47 runtime embedded: '+old);
-          fs.writeFileSync('/tmp/ct99749-verify.js',js);
+          fs.writeFileSync('/tmp/ct99752-verify.js',js);
           NODE
-          node --check /tmp/ct99749-verify.js
+          node --check /tmp/ct99752-verify.js
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r199]
+    needs: [web_r201]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Production Web serves r199
+      - name: Production Web serves r201
         run: |
           set -euo pipefail
           for i in $(seq 1 100); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             echo "attempt=$i body=$BODY"
-            if grep -Fq '"revision":"r199-rewatch-favorites-sports"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v199.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "persistent-2x-3x-4x-no-disable" <<<"$JS" \
-                && grep -Fq "view-more-opens-movie-series-person" <<<"$JS" \
-                && grep -Fq 'remove-status-statistics-summary-card' <<<"$JS" \
-                && grep -Fq 'data-ct199-open-media' <<<"$JS" \
-                && grep -Fq 'data-ct199-open-person' <<<"$JS"; then
+            if grep -Fq '"revision":"r201-sports-discover-filter"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v201.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq 'remove-summary-time-empty-bars-profile-stats-only' <<<"$JS" \
+                && grep -Fq 'filter-trigger-right-of-global-search' <<<"$JS" \
+                && grep -Fq 'ct201-discover-filter-button' <<<"$JS" \
+                && grep -Fq 'persistent-2x-3x-4x-no-disable' <<<"$JS" \
+                && grep -Fq 'view-more-opens-movie-series-person' <<<"$JS"; then
                 exit 0
               fi
             fi
