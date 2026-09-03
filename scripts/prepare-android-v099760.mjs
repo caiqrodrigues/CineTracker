@@ -32,12 +32,6 @@ function replaceOnce(from,to,label){
   if(n!==1)throw new Error(`Android 0.99.7.60 ${label}: expected exactly one match, got ${n}`);
   js=js.replace(from,to);
 }
-function replaceAllAtLeast(from,to,min,label){
-  const n=js.split(from).length-1;
-  if(n<min)throw new Error(`Android 0.99.7.60 ${label}: expected at least ${min} matches, got ${n}`);
-  js=js.split(from).join(to);
-  return n;
-}
 
 /* Private button: remove BOTH the old class and old data attribute so no legacy
    delegated listener can recognize the physical-device Trocar control. */
@@ -47,28 +41,12 @@ replaceOnce(
   'private Trocar markup'
 );
 
-/* Reuse the r226 in-place slot replacement algorithm, but expose it only to r232.
+/* Reuse the proven r226 in-place slot replacement algorithm, but expose it only to r232.
    r232 temporarily maps its private key to ct226Swap while calling this function. */
 replaceOnce(
   "slot.replaceWith(fresh);fresh.classList.add('ct226-swap-pulse');decorate226(fresh);\n}\nfunction watchlistSection226(btn){",
   "slot.replaceWith(fresh);fresh.classList.add('ct226-swap-pulse');decorate226(fresh);\n}\nwindow.__ctR232SwapBase=swap226;\nfunction watchlistSection226(btn){",
   'expose r226 slot swap'
-);
-
-/* r200 and r201 install anonymous manual gesture handlers. They cannot be removed at
-   runtime, so retire Top10/provider selectors in their selector arrays before the APK
-   is assembled. Later CSS then returns these real rows to native Chromium panning. */
-const retiredProvider=replaceAllAtLeast(
-  "'[data-page=\"discover\"] .ct171-provider-tabs',",
-  "'[data-page=\"discover\"] .ct171-provider-tabs-r232-retired',",
-  2,
-  'retire legacy provider gesture selectors'
-);
-const retiredTop=replaceAllAtLeast(
-  "'[data-page=\"discover\"] .ct171-top-row',",
-  "'[data-page=\"discover\"] .ct171-top-row-r232-retired',",
-  2,
-  'retire legacy Top10 gesture selectors'
 );
 
 const patch=await readFile(resolve(root,'apps/android/runtime-r232-discover-device-fix.js'),'utf8');
@@ -78,20 +56,32 @@ for(const required of [
   "window.__ctR232Base='branch-from-r226-no-r227-r231';",
   "window.__ctR232Swap='window-capture-private-button-calls-r226-slot-swap';",
   "window.__ctR232Top10='native-webview-pan-provider-series-movies';",
+  "window.__ctR232Top10Isolation='window-capture-stop-legacy-start-no-prevent-default';",
   "window.__ctR232Cards='three-equal-width-equal-height';",
   "window.__ctR232Scope='android-only-web-r203-untouched';",
   'data-ct232-swap',
   "window.addEventListener('pointerup'",
   "window.addEventListener('touchend'",
   "window.addEventListener('click'",
+  "window.addEventListener('touchstart'",
+  "window.addEventListener('pointerdown'",
+  'isolateNativeTopRail232',
   '.ct171-provider-tabs',
   '.ct171-top-row',
   'touch-action:pan-x pan-y!important',
   'grid-template-columns:repeat(3,minmax(0,1fr))!important',
-  'height:100%!important'
+  'grid-auto-rows:1fr!important',
+  'align-items:stretch!important'
 ])if(!patch.includes(required))throw new Error('Android 0.99.7.60 r232 patch missing '+required);
 for(const forbidden of ["addEventListener('touchmove'","addEventListener('pointermove'","scrollLeft="])
   if(patch.includes(forbidden))throw new Error('Android 0.99.7.60 r232 must use native Top10 scrolling, found '+forbidden);
+
+/* The Top10 isolation path must not cancel Chromium's native default action. */
+const isoStart=patch.indexOf('function isolateNativeTopRail232('),isoEnd=patch.indexOf("window.addEventListener('touchstart'",isoStart);
+if(!(isoStart>=0&&isoEnd>isoStart))throw new Error('Android 0.99.7.60 Top10 isolation function missing');
+const iso=patch.slice(isoStart,isoEnd);
+if(iso.includes('preventDefault'))throw new Error('Android 0.99.7.60 Top10 isolation must not prevent native pan');
+if(!iso.includes('stopImmediatePropagation'))throw new Error('Android 0.99.7.60 Top10 isolation must stop legacy document gesture handlers');
 
 js=js.replace("const REVISION='r226-android-discover-authoritative-fast-actions';","const REVISION='r232-android-device-discover-fix';");
 js=js.replace('\nboot();','\n'+patch+'\nboot();');
@@ -105,10 +95,10 @@ for(const good of [
   'branch-from-r226-no-r227-r231',
   'window-capture-private-button-calls-r226-slot-swap',
   'native-webview-pan-provider-series-movies',
+  'window-capture-stop-legacy-start-no-prevent-default',
   'three-equal-width-equal-height',
   'data-ct232-swap',
-  'ct171-provider-tabs-r232-retired',
-  'ct171-top-row-r232-retired',
+  'window.__ctR232SwapBase=swap226',
   'optimistic-immediate-remove-next-card-background-sync',
   'detail-seen-toggle-reversible-via-unmark-rpc',
   'discover-filter-right-of-search',
@@ -126,4 +116,4 @@ for(const bad of [
 ])if(html.includes(bad))throw new Error('Android 0.99.7.60 contains rejected behavior: '+bad);
 
 await writeFile(indexPath,html,'utf8');
-console.log(`ANDROID_099760_READY base=.54/r226 trocar=private-window-capture+r226-slot top10=native-provider+series+movies equal3=true retiredLegacy=${retiredProvider}/${retiredTop} web=r203-untouched`);
+console.log('ANDROID_099760_READY base=.54/r226 trocar=private-window-capture+r226-slot top10=native-provider+series+movies legacy-start=blocked-at-window-no-prevent equal3=true web=r203-untouched');
