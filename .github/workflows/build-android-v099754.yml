@@ -1,0 +1,110 @@
+name: Build Android 0.99.7.54
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release/0.99.7.54-r203
+    paths:
+      - 'apps/android/runtime-r226-discover-authoritative-fast-actions.js'
+      - 'apps/android/app/build.gradle'
+      - 'scripts/prepare-android-v099754.mjs'
+      - 'scripts/test-android-v099754.mjs'
+      - '.github/workflows/build-android-v099754.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinetracker-android-v099754-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate_android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Initialize signing key when cache is empty
+        run: |
+          mkdir -p ~/.cinetracker ~/.android
+          if [ ! -f ~/.cinetracker/cinetracker.keystore ]; then keytool -genkeypair -v -keystore ~/.cinetracker/cinetracker.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=CineTracker Android,O=CineTracker,C=BR"; fi
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Prepare and test Android 0.99.7.54
+        run: |
+          set -euo pipefail
+          node --check apps/android/runtime-r226-discover-authoritative-fast-actions.js
+          node --check scripts/prepare-android-v099754.mjs
+          node --check scripts/test-android-v099754.mjs
+          node scripts/prepare-android-v099754.mjs
+          node scripts/test-android-v099754.mjs
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r226-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r226 embedded JS missing');
+          fs.writeFileSync('/tmp/ct99754-prebuild.js',h.slice(a+marker.length,b));
+          NODE
+          node --check /tmp/ct99754-prebuild.js
+
+      - name: Build Android APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate Android APK
+        run: |
+          set -euo pipefail
+          APK="apps/android/app/build/outputs/apk/debug/app-debug.apk"
+          OUT="CineTracker-0.99.7.54.apk"
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          test "$(sed -n "s/^package:.*versionName='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "0.99.7.54"
+          test "$(sed -n "s/^package:.*versionCode='\([^']*\)'.*/\1/p" <<<"$BADGING" | head -1)" = "10024"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99754-index.html
+          for marker in \
+            'android-v0.99.7.49-r221-rewatch-favorites-sports' \
+            'android-v0.99.7.50-r222-discover-compact-horizontal' \
+            'android-v0.99.7.51-r223-top10-sports-search-final' \
+            'android-v0.99.7.52-r224-discover-controller-watchlist' \
+            'android-v0.99.7.53-r225-discover-inplace-swap' \
+            'android-v0.99.7.54-r226-discover-authoritative-fast-actions' \
+            'all-nine-tabs-one-authority-top10-inline-no-r217-shell' \
+            'raw-swap-buttons-owned-and-replaced-immediately' \
+            'optimistic-immediate-remove-next-card-background-sync' \
+            'detail-seen-toggle-reversible-via-unmark-rpc' \
+            'discover-filter-right-of-search' \
+            'cinetracker_unmark_media_seen_v1' \
+            'single-row-compact-auto-width-28px-pills' \
+            'persistent-2x-3x-4x-no-disable' \
+            'view-more-opens-movie-series-person' \
+            'r217-library-behavior-no-r219-synthetic-fallback'; do
+            grep -Fq "$marker" /tmp/ct99754-index.html
+          done
+          ! grep -Fq 'ct219-manual-cover' /tmp/ct99754-index.html
+          ! grep -Fq 'negative-id-resolve-or-local-detail' /tmp/ct99754-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          stat -c '%s' "$OUT" | tee android-v099754-size.txt
+          sha256sum "$OUT" | tee android-v099754-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.54
+          path: |
+            CineTracker-0.99.7.54.apk
+            android-v099754-sha256.txt
+            android-v099754-size.txt
+          if-no-files-found: error
+          retention-days: 14
