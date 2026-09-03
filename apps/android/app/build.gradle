@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10033
-        versionName '0.99.7.63'
+        versionCode 10034
+        versionName '0.99.7.64'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-v0.99.7.63 — clean .54/r226 base; touchstart direct Trocar; bare dynamic Top10 touch scroll; fixed single-line ellipsis card geometry; Web r203 untouched
+// release: android-v0.99.7.64 — clean .54/r226 base; real Watchlist + fresh ct166 Trocar; constrained direct-touch Top10 media/provider rails; approved .63 card geometry preserved; Web r203 untouched
