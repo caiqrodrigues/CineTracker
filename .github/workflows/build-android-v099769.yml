@@ -1,0 +1,151 @@
+name: Build Android 0.99.7.69
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/android/runtime-r241-watchlist-owner-layout.js'
+      - 'apps/android/app/build.gradle'
+      - 'scripts/prepare-android-v099769.mjs'
+      - '.github/workflows/build-android-v099769.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinetracker-android-v099769-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install cached signing key
+        run: |
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate r241 source scope
+        run: |
+          set -euo pipefail
+          node --check apps/android/runtime-r241-watchlist-owner-layout.js
+          node --check scripts/prepare-android-v099769.mjs
+          grep -Fq "versionName '0.99.7.69'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10039' apps/android/app/build.gradle
+          grep -Fq "window.__ctR241Events='none-r237-single-authority'" apps/android/runtime-r241-watchlist-owner-layout.js
+          grep -Fq 'grid-auto-rows:auto!important' apps/android/runtime-r241-watchlist-owner-layout.js
+          grep -Fq 'contain:layout paint!important' apps/android/runtime-r241-watchlist-owner-layout.js
+          ! grep -Fq "addEventListener('pointerup'" apps/android/runtime-r241-watchlist-owner-layout.js
+          ! grep -Fq "addEventListener('click'" apps/android/runtime-r241-watchlist-owner-layout.js
+          ! grep -Fq 'clientX' apps/android/runtime-r241-watchlist-owner-layout.js
+          ! grep -Fq 'getBoundingClientRect' apps/android/runtime-r241-watchlist-owner-layout.js
+
+      - name: Prepare Android 0.99.7.69
+        run: |
+          set -euo pipefail
+          node scripts/prepare-android-v099769.mjs
+          INDEX='apps/android/app/src/main/assets/hotfix5/index.html'
+          grep -Fq 'android-v0.99.7.69-r241-watchlist-owner-layout' "$INDEX"
+          grep -Fq 'immutable-slot-key-plus-natural-grid-height' "$INDEX"
+          grep -Fq 'data-ct241-section="watchlist"' "$INDEX"
+          grep -Fq 'data-ct241-section="fresh"' "$INDEX"
+          grep -Fq 'data-ct241-slot-key=' "$INDEX"
+          grep -Fq "ownerKey237=String(slot?.dataset?.ct241SlotKey||'')" "$INDEX"
+          grep -Fq 'grid-auto-rows:auto!important' "$INDEX"
+          grep -Fq 'contain:layout paint!important' "$INDEX"
+          grep -Fq 'native-webview-horizontal-no-manual-touch' "$INDEX"
+          ! grep -Fq 'android-v0.99.7.68-r240-watchlist-hit-route' "$INDEX"
+          ! grep -Fq 'first-handler-routes-watchlist-slot-by-section-and-column' "$INDEX"
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r241-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r241 embedded JS missing');
+          const js=h.slice(a+marker.length,b);
+          fs.writeFileSync('/tmp/ct99769-prebuild.js',js);
+          const m=js.match(/function ct166SwapButton\(key,count\)\{[\s\S]*?\n\}\nfunction ct166Slot\(label,x,key,count\)\{[\s\S]*?\n\}/);
+          if(!m)throw new Error('ct166 slot renderer extraction failed');
+          const api=new Function('esc','discoverCard158',m[0]+';return {ct166SwapButton,ct166Slot};')(String,()=>'<article class="card discover-card"></article>');
+          const w=api.ct166Slot('Filme',{id:1},'watchlist:movie',3);
+          const f=api.ct166Slot('Filme',{id:2},'fresh:movie',3);
+          if(!w.includes('data-ct241-slot-key="watchlist:movie"')||!w.includes('data-ct237-swap="watchlist:movie"'))throw new Error('Watchlist slot ownership is not immutable');
+          if(!f.includes('data-ct241-slot-key="fresh:movie"')||!f.includes('data-ct237-swap="fresh:movie"'))throw new Error('Fresh slot ownership is not immutable');
+          if(w.includes('data-ct237-swap="fresh:movie"')||f.includes('data-ct237-swap="watchlist:movie"'))throw new Error('cross-section swap key leaked');
+          console.log('R241_SLOT_OWNER_TEST_OK watchlist=watchlist:movie fresh=fresh:movie');
+          NODE
+          node --check /tmp/ct99769-prebuild.js
+
+      - name: Browser hit-test Watchlist vs 100% novos
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME"
+          node - <<'NODE'
+          const fs=require('fs');
+          const r=fs.readFileSync('apps/android/runtime-r241-watchlist-owner-layout.js','utf8');
+          const m=r.match(/style241\.textContent=`([\s\S]*?)`;/);if(!m)throw new Error('r241 CSS missing');
+          const r241=m[1];
+          const r237=`
+          [data-discover] .foryou-grid:not(.ct166-daily-grid){display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:1fr!important;gap:6px!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow:visible!important;align-items:stretch!important;padding:1px!important}
+          [data-discover] .foryou-grid:not(.ct166-daily-grid)>.ct166-slot{box-sizing:border-box!important;display:grid!important;grid-template-rows:auto minmax(0,1fr)!important;width:auto!important;min-width:0!important;height:100%!important;align-self:stretch!important}
+          [data-discover] .foryou-grid:not(.ct166-daily-grid)>.ct166-slot>.discover-card{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;width:100%!important;min-width:0!important;height:100%!important;overflow:hidden!important}
+          [data-discover] .ct169-card-actions{box-sizing:border-box!important;min-height:38px!important;height:38px!important;max-height:38px!important;overflow:hidden!important}
+          `;
+          const slot=(key,id)=>`<div class="foryou-slot ct166-slot" data-ct241-slot-key="${key}"><div class="ct166-slot-head"><small>Filme</small></div><article class="card discover-card"><button type="button" data-media="movie:${id}"><div class="poster"></div><div class="card-body"><b>${key}</b></div></button><div class="ct169-card-actions"><button type="button">+ Watchlist</button><button type="button" data-ct237-swap="${key}" id="${key==='watchlist:movie'?'watchSwap':key==='fresh:movie'?'freshSwap':''}">Trocar</button></div></article></div>`;
+          const grid=(kind,start)=>`<div class="foryou-grid">${slot(kind+':movie',start)}${slot(kind+':series',start+1)}${slot(kind+':anime',start+2)}</div>`;
+          const html=`<!doctype html><meta charset="utf-8"><style>*{box-sizing:border-box}body{margin:0;padding:12px;width:412px}.panel{padding:10px;margin:0 0 8px;border:1px solid #345}.panel-head{margin-bottom:7px}.ct166-slot-head{min-height:20px}.poster{width:100%;aspect-ratio:2/3;background:#345}.card-body{height:42px}.ct169-card-actions{display:grid;grid-template-columns:1fr auto;gap:5px;padding:0 6px 7px}${r237}${r241}</style><body><div data-page="discover"><div data-discover><section class="panel discover-section" data-ct241-section="watchlist" id="watchSection"><div class="panel-head"><h2>Da sua Watchlist</h2></div>${grid('watchlist',10)}</section><section class="panel discover-section" data-ct241-section="fresh" id="freshSection"><div class="panel-head"><h2>100% novos</h2></div>${grid('fresh',20)}</section></div></div><pre id="result"></pre><script>addEventListener('load',()=>{const wb=document.getElementById('watchSwap'),ws=document.getElementById('watchSection'),fs=document.getElementById('freshSection');const br=wb.getBoundingClientRect(),wr=ws.getBoundingClientRect(),fr=fs.getBoundingClientRect();const hit=document.elementFromPoint((br.left+br.right)/2,(br.top+br.bottom)/2);const owner=hit&&hit.closest&&hit.closest('[data-ct237-swap]');const ok=owner===wb&&br.top>=wr.top&&br.bottom<=wr.bottom&&wr.bottom<=fr.top+0.5;document.getElementById('result').textContent=ok?'CT241_HITTEST_OK':'CT241_HITTEST_FAIL '+JSON.stringify({button:[br.top,br.bottom],watch:[wr.top,wr.bottom],fresh:[fr.top,fr.bottom],hit:owner&&owner.id})})<\/script>`;
+          fs.writeFileSync('/tmp/ct241-hit.html',html);
+          NODE
+          timeout 20s "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=412,915 --virtual-time-budget=1000 --dump-dom file:///tmp/ct241-hit.html > /tmp/ct241-hit-dom.txt
+          grep -Fq 'CT241_HITTEST_OK' /tmp/ct241-hit-dom.txt
+          echo 'R241_BROWSER_HITTEST_OK watchlist-button-contained-and-topmost'
+
+      - name: Build Android APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate final Android APK
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-0.99.7.69.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='0.99.7.69'" <<<"$BADGING"
+          grep -Fq "versionCode='10039'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99769-index.html
+          grep -Fq 'android-v0.99.7.69-r241-watchlist-owner-layout' /tmp/ct99769-index.html
+          grep -Fq 'data-ct241-section="watchlist"' /tmp/ct99769-index.html
+          grep -Fq 'data-ct241-slot-key=' /tmp/ct99769-index.html
+          grep -Fq 'grid-auto-rows:auto!important' /tmp/ct99769-index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct99769-index.html
+          ! grep -Fq 'android-v0.99.7.68-r240-watchlist-hit-route' /tmp/ct99769-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          stat -c '%s' "$OUT" | tee android-v099769-size.txt
+          sha256sum "$OUT" | tee android-v099769-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.69
+          path: |
+            CineTracker-0.99.7.69.apk
+            android-v099769-sha256.txt
+            android-v099769-size.txt
+          if-no-files-found: error
+          retention-days: 14
