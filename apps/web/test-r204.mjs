@@ -1,6 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 
+// Official 1.0.0 release gate: this file intentionally triggers release-v1.yml on the release branch.
 const root=resolve(process.cwd());
 const [js,html,release]=await Promise.all([
   readFile(resolve(root,'dist/app-v204.js'),'utf8'),
