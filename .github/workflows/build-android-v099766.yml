@@ -1,0 +1,114 @@
+name: Build Android 0.99.7.66
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/android/runtime-r238-watchlist-swap-only.js'
+      - 'apps/android/app/build.gradle'
+      - 'scripts/prepare-android-v099766.mjs'
+      - '.github/workflows/build-android-v099766.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinetracker-android-v099766-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install cached signing key
+        run: |
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Prepare and validate Watchlist Trocar only
+        run: |
+          set -euo pipefail
+          node --check apps/android/runtime-r238-watchlist-swap-only.js
+          node --check scripts/prepare-android-v099766.mjs
+          node scripts/prepare-android-v099766.mjs
+          INDEX='apps/android/app/src/main/assets/hotfix5/index.html'
+          grep -Fq "versionName '0.99.7.66'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10036' apps/android/app/build.gradle
+          grep -Fq 'android-v0.99.7.66-r238-watchlist-swap-only' "$INDEX"
+          grep -Fq 'watchlist-swap-only-scroll-r237-and-fresh-swap-untouched' "$INDEX"
+          grep -Fq 'r237-live-plus-full-profile-dashboard' "$INDEX"
+          grep -Fq "rpc('cinetracker_profile_media_dashboard_v0991',{})" "$INDEX"
+          grep -Fq 'data-ct238-watch-swap' "$INDEX"
+          grep -Fq "key.startsWith('watchlist:')" "$INDEX"
+          grep -Fq 'native-webview-horizontal-no-manual-touch' "$INDEX"
+          grep -Fq 'touch-action:pan-x pan-y!important' "$INDEX"
+          grep -Fq 'overflow-x:scroll!important' "$INDEX"
+          grep -Fq 'data-ct237-swap="' "$INDEX"
+          ! grep -Fq "addEventListener('touchmove'" apps/android/runtime-r238-watchlist-swap-only.js
+          ! grep -Fq "addEventListener('touchstart'" apps/android/runtime-r238-watchlist-swap-only.js
+          ! grep -Fq 'ct171-top-row' apps/android/runtime-r238-watchlist-swap-only.js
+          ! grep -Fq 'overflow-x:' apps/android/runtime-r238-watchlist-swap-only.js
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r238-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r238 embedded JS missing');
+          const js=h.slice(a+marker.length,b);
+          if(!js.includes('data-ct238-watch-swap'))throw new Error('private Watchlist swap authority missing');
+          if(!js.includes('data-ct237-swap="'))throw new Error('working r237 fresh swap template missing');
+          if(!js.includes('native-webview-horizontal-no-manual-touch'))throw new Error('working r237 scroll missing');
+          fs.writeFileSync('/tmp/ct99766-prebuild.js',js);
+          NODE
+          node --check /tmp/ct99766-prebuild.js
+
+      - name: Build Android APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate final Android APK
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-0.99.7.66.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='0.99.7.66'" <<<"$BADGING"
+          grep -Fq "versionCode='10036'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99766-index.html
+          grep -Fq 'android-v0.99.7.66-r238-watchlist-swap-only' /tmp/ct99766-index.html
+          grep -Fq 'watchlist-swap-only-scroll-r237-and-fresh-swap-untouched' /tmp/ct99766-index.html
+          grep -Fq 'data-ct238-watch-swap' /tmp/ct99766-index.html
+          grep -Fq 'r237-live-plus-full-profile-dashboard' /tmp/ct99766-index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct99766-index.html
+          grep -Fq 'touch-action:pan-x pan-y!important' /tmp/ct99766-index.html
+          grep -Fq 'overflow-x:scroll!important' /tmp/ct99766-index.html
+          grep -Fq 'data-ct237-swap="' /tmp/ct99766-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          stat -c '%s' "$OUT" | tee android-v099766-size.txt
+          sha256sum "$OUT" | tee android-v099766-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.66
+          path: |
+            CineTracker-0.99.7.66.apk
+            android-v099766-sha256.txt
+            android-v099766-size.txt
+          if-no-files-found: error
+          retention-days: 14
