@@ -1,46 +1,61 @@
 # 🎬 CineTracker
 
-CineTracker é um companion multiplataforma para filmes, séries e animes. Web e Android compartilham conta, biblioteca, Watchlist, histórico, progresso, Perfil, Descobrir, configurações e backup via Supabase.
+CineTracker é um companion pessoal multiplataforma para filmes, séries, animes e esportes. Web e Android compartilham conta, biblioteca, Watchlist, histórico/progresso, Perfil, Descobrir, configurações, importação/backup e sincronização pelo Supabase.
 
-## Versão atual
+## Versão oficial
 
-| Sistema | Versão | Identidade |
-|---|---:|---|
-| Web | **0.99.3** | package `0.99.3`, cache `ct-web-0.99.3`, pre-gate `patch-v097-v0993-nav-pre.js`, final `patch-v098-v0993-web.js` |
-| Android | **0.99.2.3** | `versionName 0.99.2.3`, `versionCode 9923`, bundle `v0.99.2.3-fix2-unfreeze-authoritative` |
-| Backend | **0.99.2** | RPC/tabela Home no Supabase |
-| Windows | — | não lançado |
+**CineTracker 1.0.0** é a primeira release oficial estável do projeto.
 
-A Web 0.99.3 é uma unidade exclusiva do navegador desktop. O Android não é alterado nesta release.
+| Plataforma | Versão | Identidade técnica | Estado |
+|---|---:|---|---|
+| Web | **1.0.0** | `r204-official-1.0.0`, base funcional r203 | oficial |
+| Android | **1.0.0** | `versionCode 10042`, base funcional 0.99.7.71 / r243 | oficial |
+| Backend | produção compartilhada | Supabase | oficial |
+| Windows | — | — | não lançado |
 
-## Web 0.99.3 — navegação e Descobrir
+Produção Web: `https://mycinetracker.vercel.app`
 
-A correção preserva o runtime 0.99.1/0.99.2 e adiciona duas camadas Web:
+## O que a 1.0.0 consolida
 
-- `patch-v097-v0993-nav-pre.js`, antes do listener capture legado de `patch-v095-v0992-fix.js`, para receber primeiro os cliques de Home / Descobrir / Perfil / Configurações e das tabs/filtros do Descobrir;
-- `patch-v098-v0993-web.js`, depois do anti-freeze `patch-v096-v0992-unfreeze.js`, para reconciliar Sidebar, hit-area, fallback do Pra Você e rodapé.
+- Home de séries e filmes com progresso, Assistir a seguir, estados de biblioteca e interação otimista;
+- Descobrir/Pra Você com indicação diária, itens da Watchlist e títulos 100% novos;
+- exclusões pessoais para evitar recomendar itens vistos, em andamento ou já presentes na Watchlist;
+- filtros e modos de visualização do Descobrir;
+- Top 10 e streamings com rolagem horizontal nativa no Android;
+- botão `Trocar` independente para Filme/Série/Anime na Watchlist e em 100% novos;
+- reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x`…;
+- detalhes ricos de filmes, séries, temporadas, episódios, elenco e pessoas;
+- Perfil com estatísticas, favoritos, atividade e tempos;
+- Sports integrado ao mesmo shell do CineTracker;
+- busca, importação, sincronização, manutenção e backup;
+- Supabase como estado compartilhado entre Web e Android.
 
-O menu lateral é limitado a **Home, Descobrir, Perfil e Configurações**. Histórico permanece integrado ao Perfil e qualquer item legado que reapareça é removido defensivamente.
+## Baseline Android 1.0.0
 
-Descobrir mantém Pra Você, Em Alta, Mais Aguardados, Mais bem avaliados, Calendário e filtros Geral/Séries/Filmes. Quando o Pra Você não possui dados elegíveis, a tela oferece ações de atualizar recomendações ou importar/sincronizar dados em vez de permanecer em um estado vazio rígido.
+A 1.0.0 **não reescreve o comportamento da 0.99.7.71**. Ela promove exatamente a cadeia validada no aparelho pelo usuário:
 
-Cliques e erros globais são registrados em `window.__ct0993Diagnostics` para facilitar diagnóstico no navegador.
+- Watchlist `Trocar` usa o mesmo `wmPool/wsPool/waPool` selecionado pelo renderer ativo `ct186`;
+- `r237` continua como autoridade única de `pointerup/click` do Trocar;
+- `100% novos` permanece no comportamento já funcional;
+- Top 10/streamings preserva scroll horizontal nativo, sem `touchmove` manual;
+- a mudança da 1.0.0 é de identidade, documentação, pipeline e apresentação do número da versão.
 
-## Conteúdo preservado
+## Baseline Web 1.0.0
 
-- Perfil com estatísticas, timeline, filtros/layouts e expansões completas;
-- Home Séries em lista vertical com Pull-to-Reveal, Assistir a seguir, Juntando poeira, Em dia, Não Iniciadas/Watchlist e Concluídas;
-- Home Filmes com Vistos Pull-to-Reveal, Escolha para Hoje e Watchlist;
-- quick mark, LRU e sincronização de lançamentos;
-- episódios ricos e confirmação inteligente;
-- cinegrafia;
-- Bingers em Importar Dados;
-- backup;
-- hardening de `profile_id`/`media_kind`;
-- anti-freeze FIX2 de `Node.textContent` preservado.
+A Web 1.0.0 preserva integralmente a r203 e cria a identidade `r204-official-1.0.0`. O rodapé visível, `window.__ctWebBuild`, snapshot de backup, `release.json`, package e assets passam a declarar **1.0.0**.
 
-## Estado de validação
+## Arquitetura
 
-Build, Verify e deploy são estados técnicos. A Web 0.99.3 só é considerada funcionalmente validada depois de smoke real no navegador PC confirmar navegação repetida, tabs/filtros do Descobrir, Perfil, Configurações e responsividade por pelo menos 60 segundos.
+- `apps/web` — Web/PWA e build de produção;
+- `apps/android` — Activity + WebView e assets embarcados;
+- `supabase` — migrations/RPCs e estado compartilhado;
+- `scripts` — preparação e validação dos bundles;
+- `.github/workflows/release-v1.yml` — pipeline oficial 1.0.0;
+- `docs/releases/1.0.0.md` — contrato da release;
+- `docs/validation/1.0.0.md` — evidências de validação.
 
-Documentação canônica: `PROJECT_STATE.md`, `VERSIONS.md`, `CHANGELOG.md`, `docs/DEVELOPMENT_RULES.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY.md`, `docs/releases/0.99.3.md` e `docs/validation/0.99.3.md`.
+## Regra de validação
+
+Build, CI, deploy, APK, assinatura e smoke em aparelho são evidências separadas. Teste real no aparelho/navegador prevalece sobre asserts de CI quando houver divergência.
+
+Documentação canônica: `PROJECT_STATE.md`, `VERSIONS.md`, `CHANGELOG.md`, `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_RULES.md`, `docs/SECURITY.md`, `docs/releases/1.0.0.md` e `docs/validation/1.0.0.md`.
