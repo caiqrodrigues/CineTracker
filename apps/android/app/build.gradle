@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-v0.99.7.65 — only two fixes: Watchlist Trocar merges ct166+ct186 sources; Top10 uses native horizontal WebView scrolling without manual touch handlers; approved card geometry preserved; Web untouched
+// release: android-v0.99.7.65 — only two fixes: Watchlist Trocar merges ct166+ct186 sources; Top10 uses native horizontal WebView scrolling without manual touch handlers; approved card geometry preserved; Web untouched; validated build trigger
