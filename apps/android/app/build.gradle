@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10036
-        versionName '0.99.7.66'
+        versionCode 10037
+        versionName '0.99.7.67'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// release: android-v0.99.7.66 — only Watchlist Trocar changed; native Top10 scroll and 100% novos Trocar stay exactly on the verified 0.99.7.65/r237 behavior; Web untouched
+// release: android-v0.99.7.67 — Watchlist Trocar rebuilt directly from profile dashboard; failed r238 excluded; native Top10 scroll and 100% novos Trocar remain on verified r237 behavior; Web untouched
