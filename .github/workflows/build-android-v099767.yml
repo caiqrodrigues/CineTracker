@@ -1,0 +1,145 @@
+name: Build Android 0.99.7.67
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/android/runtime-r239-watchlist-swap-direct-dashboard.js'
+      - 'apps/android/app/build.gradle'
+      - 'scripts/prepare-android-v099767.mjs'
+      - '.github/workflows/build-android-v099767.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinetracker-android-v099767-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install cached signing key
+        run: |
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate direct Watchlist source
+        run: |
+          set -euo pipefail
+          node --check apps/android/runtime-r239-watchlist-swap-direct-dashboard.js
+          node --check scripts/prepare-android-v099767.mjs
+          node - <<'NODE'
+          const fs=require('fs'),vm=require('vm');
+          global.window=global;
+          global.location={pathname:'/discover'};
+          global.route=()=>'/discover';
+          global.discoverState={tab:'foryou'};
+          global.document={querySelector:()=>null,querySelectorAll:()=>[],documentElement:{}};
+          global.requestAnimationFrame=()=>0;
+          global.MutationObserver=class{observe(){}};
+          global.addEventListener=()=>{};
+          global.window.addEventListener=()=>{};
+          global.rpc=async()=>[
+            {tmdb_id:101,media_kind:'movie',title:'Filme A',poster_path:'/a.jpg',rating:8.1,is_watchlist:true,is_seen:false,is_completed:false,raw_tmdb:{id:101,title:'Filme A',poster_path:'/a.jpg',media_type:'movie'}},
+            {tmdb_id:102,media_kind:'movie',title:'Filme B',poster_path:'/b.jpg',rating:7.9,is_watchlist:true,is_seen:false,is_completed:false,raw_tmdb:{id:102,title:'Filme B',poster_path:'/b.jpg',media_type:'movie'}},
+            {tmdb_id:201,media_kind:'tv',title:'Série A',poster_path:'/s.jpg',is_watchlist:true,is_seen:false,is_completed:false,raw_tmdb:{id:201,name:'Série A',poster_path:'/s.jpg',media_type:'tv',genre_ids:[18],original_language:'en'}},
+            {tmdb_id:301,media_kind:'tv',title:'Anime A',poster_path:'/n.jpg',is_watchlist:true,is_seen:false,is_completed:false,raw_tmdb:{id:301,name:'Anime A',poster_path:'/n.jpg',media_type:'tv',genre_ids:[16],original_language:'ja',origin_country:['JP']}}
+          ];
+          vm.runInThisContext(fs.readFileSync('apps/android/runtime-r239-watchlist-swap-direct-dashboard.js','utf8'));
+          const mapped=global.__ctR239CardFromDashboard({tmdb_id:999,media_kind:'movie',title:'Direto',poster_path:'/d.jpg',raw_tmdb:{}});
+          if(mapped?.id!==999||mapped?.media_type!=='movie'||mapped?.title!=='Direto'||mapped?.poster_path!=='/d.jpg')throw new Error('dashboard row direct mapping failed');
+          (async()=>{
+            const movies=await global.__ctR239Pool('watchlist:movie');
+            const series=await global.__ctR239Pool('watchlist:series');
+            const anime=await global.__ctR239Pool('watchlist:anime');
+            if(movies.length!==2||!movies.some(x=>x.id===101)||!movies.some(x=>x.id===102))throw new Error('movie Watchlist pool failed');
+            if(series.length!==1||series[0].id!==201)throw new Error('series Watchlist pool failed');
+            if(anime.length!==1||anime[0].id!==301)throw new Error('anime Watchlist pool failed');
+            console.log('R239_DIRECT_DASHBOARD_TEST_OK movies=2 series=1 anime=1');
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+
+      - name: Prepare Android 0.99.7.67
+        run: |
+          set -euo pipefail
+          node scripts/prepare-android-v099767.mjs
+          INDEX='apps/android/app/src/main/assets/hotfix5/index.html'
+          grep -Fq "versionName '0.99.7.67'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10037' apps/android/app/build.gradle
+          grep -Fq 'android-v0.99.7.67-r239-watchlist-direct-dashboard' "$INDEX"
+          grep -Fq 'profile-dashboard-direct-row-to-card-no-helper-dependency' "$INDEX"
+          grep -Fq "rpc('cinetracker_profile_media_dashboard_v0991',{})" "$INDEX"
+          grep -Fq 'data-ct239-watch-swap' "$INDEX"
+          grep -Fq 'native-webview-horizontal-no-manual-touch' "$INDEX"
+          grep -Fq 'touch-action:pan-x pan-y!important' "$INDEX"
+          grep -Fq 'overflow-x:scroll!important' "$INDEX"
+          grep -Fq 'data-ct237-swap="' "$INDEX"
+          ! grep -Fq 'android-v0.99.7.66-r238-watchlist-swap-only' "$INDEX"
+          ! grep -Fq "addEventListener('touchmove'" apps/android/runtime-r239-watchlist-swap-direct-dashboard.js
+          ! grep -Fq "addEventListener('touchstart'" apps/android/runtime-r239-watchlist-swap-direct-dashboard.js
+          ! grep -Fq 'ct171-top-row{' apps/android/runtime-r239-watchlist-swap-direct-dashboard.js
+          ! grep -Fq 'overflow-x:scroll!important' apps/android/runtime-r239-watchlist-swap-direct-dashboard.js
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r239-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r239 embedded JS missing');
+          const js=h.slice(a+marker.length,b);
+          if(!js.includes('data-ct239-watch-swap'))throw new Error('Watchlist private authority missing');
+          if(!js.includes('data-ct237-swap="'))throw new Error('working 100% novos r237 authority missing');
+          if(!js.includes('native-webview-horizontal-no-manual-touch'))throw new Error('confirmed native scroll missing');
+          fs.writeFileSync('/tmp/ct99767-prebuild.js',js);
+          NODE
+          node --check /tmp/ct99767-prebuild.js
+
+      - name: Build Android APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate final Android APK
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-0.99.7.67.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='0.99.7.67'" <<<"$BADGING"
+          grep -Fq "versionCode='10037'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99767-index.html
+          grep -Fq 'android-v0.99.7.67-r239-watchlist-direct-dashboard' /tmp/ct99767-index.html
+          grep -Fq 'profile-dashboard-direct-row-to-card-no-helper-dependency' /tmp/ct99767-index.html
+          grep -Fq 'data-ct239-watch-swap' /tmp/ct99767-index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct99767-index.html
+          grep -Fq 'data-ct237-swap="' /tmp/ct99767-index.html
+          ! grep -Fq 'android-v0.99.7.66-r238-watchlist-swap-only' /tmp/ct99767-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          stat -c '%s' "$OUT" | tee android-v099767-size.txt
+          sha256sum "$OUT" | tee android-v099767-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.67
+          path: |
+            CineTracker-0.99.7.67.apk
+            android-v099767-sha256.txt
+            android-v099767-size.txt
+          if-no-files-found: error
+          retention-days: 14
