@@ -1,10 +1,10 @@
 {
   "name": "cinetracker",
   "private": true,
-  "version": "0.99.7",
+  "version": "1.0.0",
   "scripts": {
-    "build": "node scripts/build-web-v158-adjustments-v2.mjs && node scripts/build-web-v159-sports-watch.mjs && node scripts/build-web-v160-sports-recent-home-history.mjs && node scripts/build-web-v161-release-guard.mjs && node scripts/build-web-v164-preload-sports-favorites.mjs && node scripts/test-web-v161-release-guard.mjs",
-    "verify": "node scripts/test-web-v161-release-guard.mjs"
+    "build": "cd apps/web && npm run build",
+    "verify": "cd apps/web && npm run verify"
   },
   "engines": {
     "node": ">=20"
