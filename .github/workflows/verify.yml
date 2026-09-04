@@ -1,89 +1,72 @@
-name: Verify
+name: Verify 1.0.0
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'release/1.0.0']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_r203:
+  web_1_0_0:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate and build Web r203
+      - name: Validate official Web 1.0.0
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r203-discover-filter-search-row.js
-          node --check build-r203.mjs
-          node --check test-r203.mjs
+          grep -Fq '"version": "1.0.0"' package.json
+          node --check build-r204.mjs
+          node --check test-r204.mjs
           npm run build
-          node --check dist/app-v203.js
-          grep -Fq 'r203-discover-filter-search-right' dist/app-v203.js
-          grep -Fq 'single-filter-trigger-right-of-search-no-orphan' dist/app-v203.js
-          grep -Fq 'ct203-discover-search-row' dist/app-v203.js
-          grep -Fq 'ct203-discover-filter-button' dist/app-v203.js
-          grep -Fq 'remove-standalone-duplicate-filter-events-up' dist/app-v203.js
-          grep -Fq 'persistent-2x-3x-4x-no-disable' dist/app-v203.js
-          grep -Fq 'view-more-opens-movie-series-person' dist/app-v203.js
-          grep -Fq '"revision":"r203-discover-filter-search-right"' dist/release.json
+          node --check dist/app-v204.js
+          grep -Fq "window.__ctWebBuild='1.0.0';window.__ctOfficialVersion='1.0.0';" dist/app-v204.js
+          grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' dist/app-v204.js
+          grep -Fq "const REVISION='r204-official-1.0.0';" dist/app-v204.js
+          grep -Fq 'single-filter-trigger-right-of-search-no-orphan' dist/app-v204.js
+          grep -Fq 'persistent-2x-3x-4x-no-disable' dist/app-v204.js
+          grep -Fq 'view-more-opens-movie-series-person' dist/app-v204.js
+          grep -Fq '"version":"1.0.0"' dist/release.json
 
-  android_099764:
+  android_1_0_0_source:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Android 0.99.7.64 runtime
+      - name: Validate official Android 1.0.0 source/runtime
         run: |
           set -euo pipefail
-          grep -Fq "versionName '0.99.7.64'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10034' apps/android/app/build.gradle
-          node --check apps/android/runtime-r236-watchlist-top10-real-rails.js
-          node --check scripts/prepare-android-v099764.mjs
-          node --check scripts/test-android-v099764.mjs
-          node scripts/prepare-android-v099764.mjs
-          node scripts/test-android-v099764.mjs
-          grep -Fq 'android-v0.99.7.64-r236-watchlist-top10-real-rails' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'ct166pick-watchlist-and-fresh-direct-slot' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'constrain-real-rail-direct-touchmove-scrollleft' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'class="btn btn-secondary ct166-swap ct236-swap"' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'data-ct236-swap' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq "if(key==='watchlist:movie')" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq "setImp236(r.style,'width',w+'px')" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq "const RAIL236='.ct171-provider-tabs,.ct171-top-row';" apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'grid-auto-rows:1fr!important' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'text-overflow:ellipsis!important' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'optimistic-immediate-remove-next-card-background-sync' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'detail-seen-toggle-reversible-via-unmark-rpc' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'discover-filter-right-of-search' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'single-row-compact-auto-width-28px-pills' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'r217-library-behavior-no-r219-synthetic-fallback' apps/android/app/src/main/assets/hotfix5/index.html
-          for rejected in 'android-v0.99.7.55-r227-discover-swap-top10-swipe' 'android-v0.99.7.56-r228-discover-swap-top10-gesture' 'android-v0.99.7.57-r229-discover-swap-top10-pointer' 'android-v0.99.7.58-r230-discover-original-trocar-native-top10' 'android-v0.99.7.59-r231-clean-discover-actions' 'android-v0.99.7.60-r232-device-discover-fix' 'android-v0.99.7.61-r233-physical-discover-fix' 'android-v0.99.7.62-r234-discover-final-swap-top10' 'android-v0.99.7.63-r235-final-device-fix'; do ! grep -Fq "$rejected" apps/android/app/src/main/assets/hotfix5/index.html; done
+          grep -Fq "versionName '1.0.0'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10042' apps/android/app/build.gradle
+          node --check scripts/prepare-android-v1000.mjs
+          node --check scripts/test-android-v1000.mjs
+          node scripts/prepare-android-v1000.mjs
+          node scripts/test-android-v1000.mjs
+          grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' apps/android/app/src/main/assets/hotfix5/index.html
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r203]
+    needs: [web_1_0_0]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
-      - name: Production Web serves r203
+      - name: Production Web serves 1.0.0
         run: |
           set -euo pipefail
-          for i in $(seq 1 100); do
+          for i in $(seq 1 120); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"revision":"r203-discover-filter-search-right"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v203.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq 'single-filter-trigger-right-of-search-no-orphan' <<<"$JS" \
-                && grep -Fq 'ct203-discover-search-row' <<<"$JS" \
-                && grep -Fq 'remove-standalone-duplicate-filter-events-up' <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version":"1.0.0"' <<<"$BODY" && grep -Fq '"revision":"r204-official-1.0.0"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v204.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' <<<"$JS" && grep -Fq 'single-filter-trigger-right-of-search-no-orphan' <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done
