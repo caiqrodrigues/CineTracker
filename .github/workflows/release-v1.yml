@@ -1,0 +1,192 @@
+name: CineTracker 1.0.0 Official
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'release/1.0.0']
+    paths:
+      - 'apps/web/package.json'
+      - 'apps/web/build-r204.mjs'
+      - 'apps/web/test-r204.mjs'
+      - 'apps/android/app/build.gradle'
+      - 'scripts/prepare-android-v1000.mjs'
+      - 'scripts/test-android-v1000.mjs'
+      - '.github/workflows/release-v1.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinetracker-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web_1_0_0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Build and validate Web 1.0.0
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node --check build-r204.mjs
+          node --check test-r204.mjs
+          npm run build
+          node --check dist/app-v204.js
+          grep -Fq "window.__ctWebBuild='1.0.0';window.__ctOfficialVersion='1.0.0';" dist/app-v204.js
+          grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' dist/app-v204.js
+          grep -Fq "const REVISION='r204-official-1.0.0';" dist/app-v204.js
+          grep -Fq 'single-filter-trigger-right-of-search-no-orphan' dist/app-v204.js
+          grep -Fq 'persistent-2x-3x-4x-no-disable' dist/app-v204.js
+          grep -Fq 'view-more-opens-movie-series-person' dist/app-v204.js
+          grep -Fq '"version":"1.0.0"' dist/release.json
+          grep -Fq '"revision":"r204-official-1.0.0"' dist/release.json
+
+  android_1_0_0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install cached signing key
+        run: |
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Prepare official Android 1.0.0
+        run: |
+          set -euo pipefail
+          node --check scripts/prepare-android-v1000.mjs
+          node --check scripts/test-android-v1000.mjs
+          grep -Fq "versionName '1.0.0'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10042' apps/android/app/build.gradle
+          node scripts/prepare-android-v1000.mjs
+          node scripts/test-android-v1000.mjs
+
+      - name: Prove Watchlist still uses exact visible renderer pool
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r243-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r243 embedded JS missing');
+          const js=h.slice(a+marker.length,b);fs.writeFileSync('/tmp/ct1000-prebuild.js',js);
+          const u0=js.indexOf('function unique237(rows){'),u1=js.indexOf('\nwindow.__ctR237Pool=pool237;',u0);
+          if(u0<0||u1<u0)throw new Error('r237 pool range missing');
+          const src=js.slice(u0,u1);
+          if(!src.includes('ct186Select(ct186ForYouData)')||!src.includes('selected237?.wmPool'))throw new Error('Watchlist pool no longer matches renderer');
+          const active={_ct186_fresh:{movie:[{id:21},{id:22}],series:[],anime:[]},_ct186_watchlist:{movie:[],series:[],anime:[]}};
+          const selected={wmPool:[{id:11},{id:14}],wsPool:[{id:12},{id:15}],waPool:[{id:13},{id:16}]};
+          const api=new Function('ct186ForYouData','ct166ForYouData','ct186Select',`${src};return pool237;`)(active,null,()=>selected);
+          const movie=api('watchlist:movie').map(x=>x.id),series=api('watchlist:series').map(x=>x.id),anime=api('watchlist:anime').map(x=>x.id),fresh=api('fresh:movie').map(x=>x.id);
+          if(movie.join(',')!=='11,14'||series.join(',')!=='12,15'||anime.join(',')!=='13,16'||fresh.join(',')!=='21,22')throw new Error('1.0.0 pool regression '+JSON.stringify({movie,series,anime,fresh}));
+          console.log('V1_EXACT_POOL_OK watchlist=renderer-selected fresh=unchanged');
+          NODE
+          node --check /tmp/ct1000-prebuild.js
+
+      - name: Browser full click regression — Watchlist only
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME"
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r243-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length),js=h.slice(a+marker.length,b);
+          if(a<0||b<a)throw new Error('r243 JS missing');
+          const c0=js.indexOf('function ct166Pick(pool,key,excluded){'),c1=js.indexOf('\nfunction ct166RenderForYou(data){',c0);
+          const r0=js.indexOf('function mediaId237(slot){'),r1=js.indexOf('\nfunction visibleWidth237(r){',r0);
+          if(c0<0||c1<c0||r0<0||r1<r0)throw new Error('actual swap function extraction failed');
+          const ct166=js.slice(c0,c1),r237=js.slice(r0,r1);
+          const harness=`<!doctype html><meta charset="utf-8"><body><div data-discover id="root"></div><pre id="result"></pre><script>
+          const SWAP237='[data-ct237-swap]';const ct166SwapIndex={};let ct166ForYouData=null;
+          const watchRows=[{id:11,media_type:'movie',title:'Watch A'},{id:14,media_type:'movie',title:'Watch B'}];
+          const freshRows=[{id:21,media_type:'movie',title:'Fresh A'},{id:22,media_type:'movie',title:'Fresh B'}];
+          let ct186ForYouData={_ct186_fresh:{movie:freshRows,series:[],anime:[]},_ct186_watchlist:{movie:[],series:[],anime:[]}};
+          function ct186Select(){return {wmPool:watchRows,wsPool:[],waPool:[]}}
+          function esc(v){return String(v??'').replace(/[&<>\"]/g,'')}
+          function discoverCard158(x){return '<article class="card discover-card"><button type="button" data-media="movie:'+x.id+'"><div class="card-body"><b>'+esc(x.title)+'</b></div></button><div class="ct169-card-actions"></div></article>'}
+          function isForYou237(){return true} function decorate226(){} function ct169TuneForYou(){}
+          ${ct166}
+          ${r237}
+          const root=document.getElementById('root');
+          root.innerHTML='<section data-ct241-section="watchlist" id="watch">'+ct166Slot('Filme',watchRows[0],'watchlist:movie',watchRows.length)+'</section><section data-ct241-section="fresh" id="fresh">'+ct166Slot('Filme',freshRows[0],'fresh:movie',freshRows.length)+'</section>';
+          decorateSwap237(root);
+          const watchButton=root.querySelector('[data-ct241-slot-key="watchlist:movie"] [data-ct237-swap]');
+          const beforeWatch=mediaId237(root.querySelector('[data-ct241-slot-key="watchlist:movie"]')),beforeFresh=mediaId237(root.querySelector('[data-ct241-slot-key="fresh:movie"]'));
+          watchButton.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerType:'touch'}));
+          setTimeout(()=>{const afterWatch=mediaId237(root.querySelector('[data-ct241-slot-key="watchlist:movie"]')),afterFresh=mediaId237(root.querySelector('[data-ct241-slot-key="fresh:movie"]'));const ok=beforeWatch===11&&afterWatch===14&&beforeFresh===21&&afterFresh===21;document.getElementById('result').textContent=ok?'V1_FULL_CLICK_OK watchlist=11->14 fresh=21->21':'V1_FULL_CLICK_FAIL '+JSON.stringify({beforeWatch,afterWatch,beforeFresh,afterFresh})},30);
+          <\/script>`;
+          fs.writeFileSync('/tmp/ct1000-click.html',harness);
+          NODE
+          timeout 20s "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=412,915 --virtual-time-budget=500 --dump-dom file:///tmp/ct1000-click.html > /tmp/ct1000-click-dom.txt
+          grep -Fq 'V1_FULL_CLICK_OK watchlist=11-&gt;14 fresh=21-&gt;21' /tmp/ct1000-click-dom.txt || grep -Fq 'V1_FULL_CLICK_OK watchlist=11->14 fresh=21->21' /tmp/ct1000-click-dom.txt
+          echo 'V1_BROWSER_FULL_CLICK_CHAIN_OK'
+
+      - name: Build Android APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate final Android 1.0.0 APK
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-1.0.0.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='1.0.0'" <<<"$BADGING"
+          grep -Fq "versionCode='10042'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1000-index.html
+          grep -Fq 'name="ct-official-version" content="1.0.0"' /tmp/ct1000-index.html
+          grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' /tmp/ct1000-index.html
+          grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' /tmp/ct1000-index.html
+          grep -Fq 'const selected237=ct186Select(ct186ForYouData);' /tmp/ct1000-index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct1000-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          stat -c '%s' "$OUT" | tee android-v1000-size.txt
+          sha256sum "$OUT" | tee android-v1000-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-1.0.0
+          path: |
+            CineTracker-1.0.0.apk
+            android-v1000-sha256.txt
+            android-v1000-size.txt
+          if-no-files-found: error
+          retention-days: 30
+
+  production_web_smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [web_1_0_0]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Production Web serves 1.0.0
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 120); do
+            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version":"1.0.0"' <<<"$BODY" && grep -Fq '"revision":"r204-official-1.0.0"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v204.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' <<<"$JS" && grep -Fq 'single-filter-trigger-right-of-search-no-orphan' <<<"$JS"; then exit 0; fi
+            fi
+            sleep 5
+          done
+          exit 1
