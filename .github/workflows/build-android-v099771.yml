@@ -1,0 +1,166 @@
+name: Build Android 0.99.7.71
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/android/runtime-r243-watchlist-renderer-pool.js'
+      - 'apps/android/app/build.gradle'
+      - 'scripts/prepare-android-v099771.mjs'
+      - '.github/workflows/build-android-v099771.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cinetracker-android-v099771-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install cached signing key
+        run: |
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate 0.99.7.71 source scope
+        run: |
+          set -euo pipefail
+          node --check apps/android/runtime-r243-watchlist-renderer-pool.js
+          node --check scripts/prepare-android-v099771.mjs
+          grep -Fq "versionName '0.99.7.71'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10041' apps/android/app/build.gradle
+          grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" apps/android/runtime-r243-watchlist-renderer-pool.js
+          grep -Fq "window.__ctR243Events='none-r237-single-authority'" apps/android/runtime-r243-watchlist-renderer-pool.js
+          ! grep -Fq "addEventListener('pointerup'" apps/android/runtime-r243-watchlist-renderer-pool.js
+          ! grep -Fq "addEventListener('click'" apps/android/runtime-r243-watchlist-renderer-pool.js
+
+      - name: Prepare Android 0.99.7.71
+        run: |
+          set -euo pipefail
+          node scripts/prepare-android-v099771.mjs
+          INDEX='apps/android/app/src/main/assets/hotfix5/index.html'
+          grep -Fq 'android-v0.99.7.71-r243-watchlist-renderer-pool' "$INDEX"
+          grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' "$INDEX"
+          grep -Fq 'wmPool-wsPool-waPool-same-as-visible-renderer' "$INDEX"
+          grep -Fq 'const selected237=ct186Select(ct186ForYouData);' "$INDEX"
+          grep -Fq 'selected237?.wmPool' "$INDEX"
+          grep -Fq 'selected237?.wsPool' "$INDEX"
+          grep -Fq 'selected237?.waPool' "$INDEX"
+          grep -Fq 'native-webview-horizontal-no-manual-touch' "$INDEX"
+          grep -Fq 'window.__ctR242ActiveForYouRenderer=ct186RenderForYou' "$INDEX"
+          ! grep -Fq 'android-v0.99.7.67-r239-watchlist-direct-dashboard' "$INDEX"
+
+      - name: Prove Watchlist uses the exact active renderer pool
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r243-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r243 embedded JS missing');
+          const js=h.slice(a+marker.length,b);fs.writeFileSync('/tmp/ct99771-prebuild.js',js);
+          const u0=js.indexOf('function unique237(rows){'),u1=js.indexOf('\nwindow.__ctR237Pool=pool237;',u0);
+          if(u0<0||u1<u0)throw new Error('r237 pool range missing');
+          const src=js.slice(u0,u1);
+          if(!src.includes('ct186Select(ct186ForYouData)')||!src.includes('selected237?.wmPool'))throw new Error('Watchlist pool is still reconstructed independently');
+          const active={_ct186_fresh:{movie:[{id:21},{id:22}],series:[],anime:[]},_ct186_watchlist:{movie:[],series:[],anime:[]}};
+          const selected={wmPool:[{id:11},{id:14}],wsPool:[{id:12},{id:15}],waPool:[{id:13},{id:16}]};
+          const api=new Function('ct186ForYouData','ct166ForYouData','ct186Select',`${src};return pool237;`)(active,null,()=>selected);
+          const movie=api('watchlist:movie').map(x=>x.id),series=api('watchlist:series').map(x=>x.id),anime=api('watchlist:anime').map(x=>x.id);
+          if(movie.join(',')!=='11,14'||series.join(',')!=='12,15'||anime.join(',')!=='13,16')throw new Error('Watchlist swap pool differs from renderer selected pool '+JSON.stringify({movie,series,anime}));
+          const fresh=api('fresh:movie').map(x=>x.id);if(fresh.join(',')!=='21,22')throw new Error('100% novos pool changed unexpectedly '+fresh);
+          console.log('R243_EXACT_RENDERER_POOL_OK watchlist=wm/ws/wa fresh=r237-unchanged');
+          NODE
+          node --check /tmp/ct99771-prebuild.js
+
+      - name: Browser full click chain Watchlist only
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME"
+          node - <<'NODE'
+          const fs=require('fs');
+          const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const marker='<script data-ct-android="r243-android-js">',a=h.indexOf(marker),b=h.indexOf('</script>',a+marker.length),js=h.slice(a+marker.length,b);
+          if(a<0||b<a)throw new Error('r243 JS missing');
+          const c0=js.indexOf('function ct166Pick(pool,key,excluded){'),c1=js.indexOf('\nfunction ct166RenderForYou(data){',c0);
+          const r0=js.indexOf('function mediaId237(slot){'),r1=js.indexOf('\nfunction visibleWidth237(r){',r0);
+          if(c0<0||c1<c0||r0<0||r1<r0)throw new Error('actual swap function extraction failed');
+          const ct166=js.slice(c0,c1),r237=js.slice(r0,r1);
+          const harness=`<!doctype html><meta charset="utf-8"><body><div data-discover id="root"></div><pre id="result"></pre><script>
+          const SWAP237='[data-ct237-swap]';const ct166SwapIndex={};let ct166ForYouData=null;
+          const watchRows=[{id:11,media_type:'movie',title:'Watch A'},{id:14,media_type:'movie',title:'Watch B'}];
+          const freshRows=[{id:21,media_type:'movie',title:'Fresh A'},{id:22,media_type:'movie',title:'Fresh B'}];
+          let ct186ForYouData={_ct186_fresh:{movie:freshRows,series:[],anime:[]},_ct186_watchlist:{movie:[],series:[],anime:[]}};
+          function ct186Select(){return {wmPool:watchRows,wsPool:[],waPool:[]}}
+          function esc(v){return String(v??'').replace(/[&<>\"]/g,'')}
+          function discoverCard158(x){return '<article class="card discover-card"><button type="button" data-media="movie:'+x.id+'"><div class="card-body"><b>'+esc(x.title)+'</b></div></button><div class="ct169-card-actions"></div></article>'}
+          function isForYou237(){return true} function decorate226(){} function ct169TuneForYou(){}
+          ${ct166}
+          ${r237}
+          const root=document.getElementById('root');
+          root.innerHTML='<section data-ct241-section="watchlist" id="watch">'+ct166Slot('Filme',watchRows[0],'watchlist:movie',watchRows.length)+'</section><section data-ct241-section="fresh" id="fresh">'+ct166Slot('Filme',freshRows[0],'fresh:movie',freshRows.length)+'</section>';
+          decorateSwap237(root);
+          const watchButton=root.querySelector('[data-ct241-slot-key="watchlist:movie"] [data-ct237-swap]');
+          const beforeWatch=mediaId237(root.querySelector('[data-ct241-slot-key="watchlist:movie"]')),beforeFresh=mediaId237(root.querySelector('[data-ct241-slot-key="fresh:movie"]'));
+          watchButton.dispatchEvent(new PointerEvent('pointerup',{bubbles:true,cancelable:true,pointerType:'touch'}));
+          setTimeout(()=>{const afterWatch=mediaId237(root.querySelector('[data-ct241-slot-key="watchlist:movie"]')),afterFresh=mediaId237(root.querySelector('[data-ct241-slot-key="fresh:movie"]'));const ok=beforeWatch===11&&afterWatch===14&&beforeFresh===21&&afterFresh===21;document.getElementById('result').textContent=ok?'R243_FULL_CLICK_OK watchlist=11->14 fresh=21->21':'R243_FULL_CLICK_FAIL '+JSON.stringify({beforeWatch,afterWatch,beforeFresh,afterFresh})},30);
+          <\/script>`;
+          fs.writeFileSync('/tmp/ct243-click.html',harness);
+          NODE
+          timeout 20s "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=412,915 --virtual-time-budget=500 --dump-dom file:///tmp/ct243-click.html > /tmp/ct243-click-dom.txt
+          cat /tmp/ct243-click-dom.txt | grep -o 'R243_FULL_CLICK_[^<]*' || true
+          grep -Fq 'R243_FULL_CLICK_OK watchlist=11-&gt;14 fresh=21-&gt;21' /tmp/ct243-click-dom.txt || grep -Fq 'R243_FULL_CLICK_OK watchlist=11->14 fresh=21->21' /tmp/ct243-click-dom.txt
+          echo 'R243_BROWSER_FULL_CLICK_CHAIN_OK'
+
+      - name: Build Android APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Validate final Android APK
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-0.99.7.71.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='0.99.7.71'" <<<"$BADGING"
+          grep -Fq "versionCode='10041'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct99771-index.html
+          grep -Fq 'android-v0.99.7.71-r243-watchlist-renderer-pool' /tmp/ct99771-index.html
+          grep -Fq 'const selected237=ct186Select(ct186ForYouData);' /tmp/ct99771-index.html
+          grep -Fq 'selected237?.wmPool' /tmp/ct99771-index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct99771-index.html
+          grep -Fq 'window.__ctR242ActiveForYouRenderer=ct186RenderForYou' /tmp/ct99771-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          stat -c '%s' "$OUT" | tee android-v099771-size.txt
+          sha256sum "$OUT" | tee android-v099771-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-0.99.7.71
+          path: |
+            CineTracker-0.99.7.71.apk
+            android-v099771-sha256.txt
+            android-v099771-size.txt
+          if-no-files-found: error
+          retention-days: 14
