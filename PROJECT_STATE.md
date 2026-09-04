@@ -1,95 +1,107 @@
 # CineTracker — Project State
 
-> Documento persistente de continuidade. O estado real do projeto deve ser entendido por este arquivo e pelos documentos canônicos, sem depender do histórico de conversa.
+> Documento canônico de continuidade. O estado atual deve ser lido daqui e dos documentos vinculados, não inferido de versões históricas ou do histórico de conversa.
 
-**Última atualização:** 2026-09-01  
+**Última atualização:** 2026-09-04  
 **Branch de produção:** `main`  
-**Web:** `0.99.7` / revision **`r175-bingers-next-episode`**  
-**Android atual:** **`0.99.7.9` / versionCode `9979`**  
-**Backend:** Supabase production compartilhado por Web/Android  
+**Release oficial:** **1.0.0**  
+**Web:** **1.0.0 / `r204-official-1.0.0`**  
+**Android:** **1.0.0 / versionCode `10042`**  
+**Backend:** Supabase production compartilhado Web/Android  
 **Windows:** não lançado
 
-## 1. Linha de base e retomada da Web
+## 1. Baseline oficial 1.0.0
 
-A Web `r173-detail-left-window` permanece documentada como a antiga baseline visual quase ideal em `docs/WEB_R173_FROZEN_BASELINE.md`. Ela ficou congelada durante o primeiro porte Android.
+A 1.0.0 encerra a fase pré-1.0 e passa a ser a única baseline recomendada para novas mudanças. Não reabre correções já aceitas; qualquer regressão deve ser tratada a partir desta release.
 
-Em 2026-09-01 o usuário pediu explicitamente uma nova evolução para **Web e Android**, inspirada na fluidez observada no Bingers. Isso autorizou a retomada da Web nas revisões r174/r175 sem apagar a baseline r173.
+A promoção foi deliberadamente conservadora:
 
-## 2. Web r175 — ATUAL
+- Web 1.0.0 = comportamento r203 + identidade oficial r204;
+- Android 1.0.0 = comportamento 0.99.7.71/r243 validado fisicamente + identidade oficial 1.0.0;
+- Supabase permanece o backend compartilhado atual, sem migration criada apenas para renumerar a aplicação.
 
-Revision: `r175-bingers-next-episode`.
+## 2. Web oficial
 
-A r175 preserva todo o conjunto funcional da r173/r172 e adiciona a arquitetura de interação instantânea iniciada na r174:
+Revision: `r204-official-1.0.0`.
 
-- regra central: **UI primeiro, persistência depois**;
-- marcar episódio muda a tela imediatamente, sem esperar Supabase;
-- Home atualiza contagem, histórico, bucket/status e posição da série imediatamente;
-- reordenação usa transição FLIP, evitando reload visual da página;
-- confirmação verde animada dá feedback instantâneo;
-- sincronização acontece em segundo plano;
-- se a persistência falhar, a alteração otimista é revertida e o usuário é avisado;
-- Home pré-carrega o **próximo episódio real a assistir e também o sucessor**;
-- ao marcar episódio 4, o card pode trocar imediatamente para episódio 5, incluindo **nome, nota e data**, sem esperar nova consulta;
-- quando a série fica em dia/concluída, ela muda imediatamente para o bucket correspondente;
-- no drawer de temporada, episódio visto pode ser alternado para **Não assistido**;
-- `Reassistido` continua sendo uma ação separada.
+A r204 importa integralmente a r203 e altera somente o envelope de release: package, revision/cache identity, asset final, `release.json`, snapshot e versão visível no rodapé.
 
-## 3. Backend para desmarcar episódio
+Comportamentos preservados incluem Home, Descobrir, filtros, Sports, Perfil, busca, detalhes, favoritos, importação/sincronização, rewatch persistente e exclusões pessoais.
 
-Produção possui o RPC autenticado:
+Produção: `https://mycinetracker.vercel.app`.
 
-`cinetracker_unmark_episode_v1`
-
-Ele remove a marcação lógica do episódio em histórico/eventos/progresso para todas as linhas equivalentes da mesma série TMDB, invalida `AlreadySeen/Completed/UpToDate` quando necessário e devolve a série para `InProgress` quando ainda existem episódios vistos.
-
-Também existe policy DELETE própria do usuário em `watch_play_events_v0994`.
-
-Migration documentada em:
-
-`supabase/migrations/202609010140_r174_episode_unwatch.sql`
-
-## 4. Android atual — 0.99.7.9
+## 3. Android oficial
 
 Identidade:
 
 - `applicationId`: `com.cinetracker.app`;
-- `versionName`: `0.99.7.9`;
-- `versionCode`: `9979`;
-- bundle: `android-v0.99.7.9-r175-bingers-handoff`;
-- Web embutida: `r175-bingers-next-episode`;
-- composição mobile herdada/refinada da 0.99.7.7;
-- builder: `scripts/prepare-android-v09979.mjs`;
-- test: `scripts/test-android-v09979.mjs`;
-- workflow: `.github/workflows/build-android-v09979.yml`;
-- release: `android-v0.99.7.9`.
+- `versionName`: `1.0.0`;
+- `versionCode`: `10042`;
+- base funcional: `0.99.7.71 / r243-android-watchlist-renderer-pool`;
+- preparação oficial: `scripts/prepare-android-v1000.mjs`;
+- teste oficial: `scripts/test-android-v1000.mjs`;
+- pipeline: `.github/workflows/release-v1.yml`;
+- APK: `CineTracker-1.0.0.apk`.
 
-O APK usa a mesma experiência otimista da Web r175 e mantém hero empilhado, carrosséis mobile, drawer de episódios, safe-area e demais ajustes de enquadramento Android.
+### Estado funcional congelado
 
-## 5. Histórico Android resumido
+O último bug bloqueador antes da 1.0.0 era o `Trocar` em **Pra você → Da sua Watchlist**. A causa final estava na divergência entre o pool usado pelo renderer `ct186` e o pool reconstruído pelo handler `r237`. A 0.99.7.71 passou a usar exatamente `wmPool/wsPool/waPool` selecionados pelo renderer visível. O usuário confirmou no aparelho que a correção funcionou.
 
-- **0.99.7.4:** inválida; tela preta antes do login por corrupção de `$$`.
-- **0.99.7.5:** bootfix funcional.
-- **0.99.7.6:** primeiro enquadramento mobile/carrosséis.
-- **0.99.7.7:** composição mobile baseada em vídeo real.
-- **0.99.7.8:** primeira versão com UX otimista r174 e toggle Assistido/Não assistido.
-- **0.99.7.9:** atual; acrescenta handoff instantâneo para o próximo episódio real e seu sucessor.
+Também está validado pelo usuário que o scroll lateral do Top 10/streamings ficou funcional. A implementação usa scroll horizontal nativo no WebView e não reintroduz `touchmove` manual.
 
-## 6. Validação atual
+A 1.0.0 não altera essa lógica; apenas renumera a aplicação e a versão exibida.
 
-- [x] PR #119 mergeada — r174 / Android 0.99.7.8;
-- [x] PR #120 mergeada — r175 / Android 0.99.7.9;
-- [x] Web r175 syntax/build/asserts `SUCCESS`;
-- [x] Vercel production `SUCCESS`;
-- [x] `Production domain serves r175` `SUCCESS`;
-- [x] Android 0.99.7.9 identity `SUCCESS`;
-- [x] Gradle APK build `SUCCESS`;
-- [x] JavaScript r175 extraído do APK passa `node --check`;
-- [x] assinatura validada;
-- [x] Release `android-v0.99.7.9` publicada;
-- [ ] smoke real da 0.99.7.9 no aparelho.
+## 4. Versionamento visível
 
-CI verde não equivale a UX validada. Print/vídeo real prevalece quando houver divergência.
+A versão **1.0.0** deve aparecer:
 
-## 7. Streamings canônicos
+- no rodapé da Web;
+- no rodapé/runtime embarcado do Android;
+- em `window.__ctWebBuild` / identidade oficial do runtime;
+- em `apps/web/package.json`;
+- em `dist/release.json` da Web;
+- em `versionName` do APK;
+- na documentação canônica.
 
-Top 10 e Onde Assistir usam somente HBO Max, Amazon Prime Video, Netflix, Globoplay, Disney+, Apple TV+, Paramount+, Looke, Mubi e Crunchyroll. Planos/variantes e canais duplicados são consolidados ou ignorados.
+O `versionCode` Android é `10042` para manter monotonicidade em relação à 0.99.7.71 (`10041`).
+
+## 5. Pipeline e governança
+
+Pipeline oficial: `.github/workflows/release-v1.yml`.
+
+Ele valida Web e Android juntos, incluindo:
+
+- build/test Web 1.0.0;
+- identidade visual 1.0.0;
+- preservação dos markers funcionais da r203;
+- preparação Android em cima da .71;
+- pool Watchlist igual ao renderer ativo;
+- clique completo Watchlist `11 → 14` mantendo 100% novos `21 → 21`;
+- Gradle APK;
+- `aapt` versionName/versionCode;
+- `apksigner`;
+- artifact oficial.
+
+## 6. Regra de evidência
+
+Estados separados:
+
+1. source/documentação;
+2. CI/testes;
+3. deploy Web;
+4. APK/assinatura;
+5. smoke real Web;
+6. smoke real Android.
+
+Print/vídeo/teste físico prevalece sobre CI quando houver divergência.
+
+## 7. Documentos canônicos
+
+- `README.md`
+- `VERSIONS.md`
+- `CHANGELOG.md`
+- `docs/ARCHITECTURE.md`
+- `docs/DEVELOPMENT_RULES.md`
+- `docs/SECURITY.md`
+- `docs/releases/1.0.0.md`
+- `docs/validation/1.0.0.md`
