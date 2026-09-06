@@ -1,0 +1,131 @@
+name: Publish CineTracker v1.0.2 Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [release/1.0.2]
+    paths:
+      - '.github/workflows/publish-v102-release.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cinetracker-publish-v102-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install signing key
+        run: |
+          set -euo pipefail
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - name: Validate Web 1.0.2
+        run: |
+          set -euo pipefail
+          node apps/web/build-r206.mjs
+          node --check apps/web/dist/app-v206.js
+          grep -Fq 'r206-official-1.0.2' apps/web/dist/app-v206.js
+          grep -Fq 'click-to-rpc-persistent-plays' apps/web/dist/app-v206.js
+          grep -Fq 'cinetracker_mark_watch_v0994' apps/web/dist/app-v206.js
+          grep -Fq '[data-ct171-rewatch-media],[data-ct171-rewatch-episode],[data-rewatch-episode]' apps/web/dist/app-v206.js
+          grep -Fq 'jolpica-f1-hub-calendar-standings-results' apps/web/dist/app-v206.js
+          grep -Fq 'current/driverstandings' apps/web/dist/app-v206.js
+          grep -Fq 'current/constructorstandings' apps/web/dist/app-v206.js
+          grep -Fq 'current/last/results' apps/web/dist/app-v206.js
+          grep -Fq 'remove-status-statistics-summary-card-runtime' apps/web/dist/app-v206.js
+      - name: Prepare Android 1.0.2
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0.2'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10044' apps/android/app/build.gradle
+          node scripts/prepare-android-v1002.mjs
+          node scripts/test-android-v1002.mjs
+      - name: Build APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Validate and package APK
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-1.0.2.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='1.0.2'" <<<"$BADGING"
+          grep -Fq "versionCode='10044'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct102-index.html
+          grep -Fq 'name="ct-official-version" content="1.0.2"' /tmp/ct102-index.html
+          grep -Fq "window.__ctR244='f1-hub-rewatch-functional-sports-cleanup-android'" /tmp/ct102-index.html
+          grep -Fq 'cinetracker_mark_watch_v0994' /tmp/ct102-index.html
+          grep -Fq '[data-ct171-rewatch-media],[data-ct171-rewatch-episode],[data-rewatch-episode]' /tmp/ct102-index.html
+          grep -Fq 'https://api.jolpi.ca/ergast/f1' /tmp/ct102-index.html
+          grep -Fq 'current/driverstandings' /tmp/ct102-index.html
+          grep -Fq 'current/constructorstandings' /tmp/ct102-index.html
+          grep -Fq 'current/last/results' /tmp/ct102-index.html
+          grep -Fq 'current/last/qualifying' /tmp/ct102-index.html
+          grep -Fq 'remove-status-statistics-summary-card-runtime' /tmp/ct102-index.html
+          grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' /tmp/ct102-index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct102-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee CineTracker-1.0.2-SHA256.txt
+          stat -c '%s' "$OUT" | tee CineTracker-1.0.2-size.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.2
+          path: |
+            CineTracker-1.0.2.apk
+            CineTracker-1.0.2-SHA256.txt
+            CineTracker-1.0.2-size.txt
+      - name: Publish GitHub Release v1.0.2
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          NOTES=$(cat <<'EOF'
+          # CineTracker 1.0.2
+
+          - Corrigido o acionamento real de Reassistir para filmes e episódios, com contador persistente 2x, 3x, 4x...
+          - Removido em runtime o card antigo de status/estatísticas do Sports
+          - Novo Hub de Fórmula 1 dentro de Esportes: próximo GP, calendário, classificação de pilotos e construtores, equipes, grid/qualificação e resultados
+          - Dados de F1 via Jolpica com cache local e fallback para cache
+          - Implementação presente na Web e no HTML final executado pelo WebView Android
+          - Preservados o pool validado de Watchlist e o scroll nativo do Top 10 Android
+          - APK Android 1.0.2 / versionCode 10044 validado por testes, aapt e apksigner
+          EOF
+          )
+          if gh release view v1.0.2 >/dev/null 2>&1; then
+            gh release upload v1.0.2 CineTracker-1.0.2.apk CineTracker-1.0.2-SHA256.txt CineTracker-1.0.2-size.txt --clobber
+            gh release edit v1.0.2 --title 'CineTracker 1.0.2' --notes "$NOTES" --latest
+          else
+            gh release create v1.0.2 CineTracker-1.0.2.apk CineTracker-1.0.2-SHA256.txt CineTracker-1.0.2-size.txt --target "$GITHUB_SHA" --title 'CineTracker 1.0.2' --notes "$NOTES" --latest
+          fi
+      - name: Verify published assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release view v1.0.2 --json tagName,name,isDraft,isPrerelease,url,assets > /tmp/release.json
+          grep -Fq 'CineTracker-1.0.2.apk' /tmp/release.json
+          grep -Fq 'CineTracker-1.0.2-SHA256.txt' /tmp/release.json
+          cat /tmp/release.json
