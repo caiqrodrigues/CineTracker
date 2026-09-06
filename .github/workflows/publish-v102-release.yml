@@ -14,11 +14,9 @@ on:
 
 permissions:
   contents: write
-
 concurrency:
   group: cinetracker-publish-v102-release
   cancel-in-progress: false
-
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -26,12 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+        with: { node-version: '20' }
       - uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: '17'
+        with: { distribution: temurin, java-version: '17' }
       - uses: gradle/actions/setup-gradle@v4
       - name: Restore CineTracker signing key
         uses: actions/cache@v4
@@ -44,19 +39,26 @@ jobs:
           test -f ~/.cinetracker/cinetracker.keystore
           mkdir -p ~/.android
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
-      - name: Validate Web 1.0.2
+      - name: Build Web 1.0.2 bundle
+        run: node apps/web/build-r206.mjs
+      - name: Assert Web rewatch runtime
         run: |
           set -euo pipefail
-          node apps/web/build-r206.mjs
           grep -Fq 'r206-official-1.0.2' apps/web/dist/app-v206.js
           grep -Fq 'click-to-rpc-persistent-plays' apps/web/dist/app-v206.js
           grep -Fq 'cinetracker_mark_watch_v0994' apps/web/dist/app-v206.js
           grep -Fq '[data-ct171-rewatch-media],[data-ct171-rewatch-episode],[data-rewatch-episode]' apps/web/dist/app-v206.js
+      - name: Assert Web F1 and Sports runtime
+        run: |
+          set -euo pipefail
           grep -Fq 'jolpica-f1-hub-calendar-standings-results' apps/web/dist/app-v206.js
           grep -Fq 'current/driverstandings' apps/web/dist/app-v206.js
           grep -Fq 'current/constructorstandings' apps/web/dist/app-v206.js
           grep -Fq 'current/last/results' apps/web/dist/app-v206.js
           grep -Fq 'remove-status-statistics-summary-card-runtime' apps/web/dist/app-v206.js
+      - name: Assert Web final assets
+        run: |
+          set -euo pipefail
           grep -Fq 'app-v206.js' apps/web/dist/index.html
           grep -Fq 'app-v206.js' apps/web/dist/service-worker.js
       - name: Prepare Android 1.0.2
@@ -104,20 +106,18 @@ jobs:
             CineTracker-1.0.2-SHA256.txt
             CineTracker-1.0.2-size.txt
       - name: Publish GitHub Release v1.0.2
-        env:
-          GH_TOKEN: ${{ github.token }}
+        env: { GH_TOKEN: '${{ github.token }}' }
         run: |
           set -euo pipefail
           NOTES=$(cat <<'EOF'
           # CineTracker 1.0.2
-
-          - Corrigido o acionamento real de Reassistir para filmes e episódios, com contador persistente 2x, 3x, 4x...
-          - Removido em runtime o card antigo de status/estatísticas do Sports
-          - Novo Hub de Fórmula 1 dentro de Esportes: próximo GP, calendário, classificação de pilotos e construtores, equipes, grid/qualificação e resultados
-          - Dados de F1 via Jolpica com cache local e fallback para cache
-          - Implementação presente na Web e no HTML final executado pelo WebView Android
-          - Preservados o pool validado de Watchlist e o scroll nativo do Top 10 Android
-          - APK Android 1.0.2 / versionCode 10044 validado por testes, aapt e apksigner
+          - Reassistir filmes e episódios corrigido no clique real, com contador persistente 2x, 3x, 4x...
+          - Card antigo de status/estatísticas do Sports removido
+          - Hub de Fórmula 1 em Esportes: próximo GP, calendário, pilotos, construtores, equipes, grid/qualificação e resultados
+          - Dados via Jolpica com cache local e fallback
+          - Web e runtime final do WebView Android validados
+          - Preservados Watchlist pool e Top 10 nativo Android
+          - Android 1.0.2 / versionCode 10044 validado por aapt e apksigner
           EOF
           )
           if gh release view v1.0.2 >/dev/null 2>&1; then
@@ -127,8 +127,7 @@ jobs:
             gh release create v1.0.2 CineTracker-1.0.2.apk CineTracker-1.0.2-SHA256.txt CineTracker-1.0.2-size.txt --target "$GITHUB_SHA" --title 'CineTracker 1.0.2' --notes "$NOTES" --latest
           fi
       - name: Verify published assets
-        env:
-          GH_TOKEN: ${{ github.token }}
+        env: { GH_TOKEN: '${{ github.token }}' }
         run: |
           set -euo pipefail
           gh release view v1.0.2 --json tagName,name,isDraft,isPrerelease,url,assets > /tmp/release.json
