@@ -1,0 +1,17 @@
+import {readFile,writeFile,rm} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r204.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+let [html,js,css,sw]=await Promise.all([readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v204.js'),'utf8'),readFile(resolve(dist,'app-v204.css'),'utf8'),readFile(resolve(dist,'service-worker.js'),'utf8')]);
+const once=(s,a,b,label)=>{const n=s.split(a).length-1;if(n!==1)throw new Error(`Web 1.0.1 expected one ${label}, found ${n}`);return s.replace(a,b)};
+for(const required of ['persistent-2x-3x-4x-no-disable','ct171RewatchMovie=async function','ct171RewatchEpisode=async function','remove-status-statistics-summary-card','cleanSports199','single-filter-trigger-right-of-search-no-orphan','remove-standalone-duplicate-filter-events-up'])if(!js.includes(required))throw new Error('Web 1.0.1 lost '+required);
+js=once(js,"const REVISION='r204-official-1.0.0';","const REVISION='r205-official-1.0.1';",'revision');
+js=once(js,"window.__ctWebBuild='1.0.0';window.__ctOfficialVersion='1.0.0';","window.__ctWebBuild='1.0.1';window.__ctOfficialVersion='1.0.1';window.__ctRelease101='rewatch-movie-episode-plus-sports-summary-removal';",'build identity');
+js=once(js,'CineTracker • v1.0.0 • ${REVISION}','CineTracker • v1.0.1 • ${REVISION}','footer');
+js=once(js,"JSON.stringify({version:'1.0.0',revision:REVISION","JSON.stringify({version:'1.0.1',revision:REVISION",'snapshot');
+html=html.replaceAll('r204-official-1.0.0','r205-official-1.0.1').replaceAll('app-v204.js','app-v205.js').replaceAll('app-v204.css','app-v205.css');
+sw=sw.replaceAll('r204-official-1.0.0','r205-official-1.0.1').replaceAll('app-v204.js','app-v205.js').replaceAll('app-v204.css','app-v205.css');
+await Promise.all([writeFile(resolve(dist,'index.html'),html,'utf8'),writeFile(resolve(dist,'app-v205.js'),js,'utf8'),writeFile(resolve(dist,'app-v205.css'),css,'utf8'),writeFile(resolve(dist,'service-worker.js'),sw,'utf8'),writeFile(resolve(dist,'release.json'),JSON.stringify({version:'1.0.1',revision:'r205-official-1.0.1',base:'r204-official-1.0.0',rewatch:'movie+episode-unbounded-counter',sports:'summary-card-removed',generated_at:new Date().toISOString()}),'utf8')]);
+await Promise.all([rm(resolve(dist,'app-v204.js'),{force:true}),rm(resolve(dist,'app-v204.css'),{force:true})]);
+console.log('WEB_1_0_1_READY rewatch=movie+episode-counter sports=summary-card-removed revision=r205-official-1.0.1');
