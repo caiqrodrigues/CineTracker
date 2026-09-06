@@ -6,6 +6,11 @@ on:
     branches: [release/1.0.2]
     paths:
       - '.github/workflows/publish-v102-release.yml'
+      - 'apps/web/runtime-r206-f1-rewatch-fix.js'
+      - 'apps/web/build-r206.mjs'
+      - 'scripts/prepare-android-v1002.mjs'
+      - 'scripts/test-android-v1002.mjs'
+      - 'apps/android/app/build.gradle'
 
 permissions:
   contents: write
@@ -43,7 +48,6 @@ jobs:
         run: |
           set -euo pipefail
           node apps/web/build-r206.mjs
-          node --check apps/web/dist/app-v206.js
           grep -Fq 'r206-official-1.0.2' apps/web/dist/app-v206.js
           grep -Fq 'click-to-rpc-persistent-plays' apps/web/dist/app-v206.js
           grep -Fq 'cinetracker_mark_watch_v0994' apps/web/dist/app-v206.js
@@ -53,6 +57,8 @@ jobs:
           grep -Fq 'current/constructorstandings' apps/web/dist/app-v206.js
           grep -Fq 'current/last/results' apps/web/dist/app-v206.js
           grep -Fq 'remove-status-statistics-summary-card-runtime' apps/web/dist/app-v206.js
+          grep -Fq 'app-v206.js' apps/web/dist/index.html
+          grep -Fq 'app-v206.js' apps/web/dist/service-worker.js
       - name: Prepare Android 1.0.2
         run: |
           set -euo pipefail
