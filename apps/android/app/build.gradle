@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10042
-        versionName '1.0.0'
+        versionCode 10043
+        versionName '1.0.1'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Official release 1.0.0 — versionCode 10042. Runtime behavior is the user-validated Android 0.99.7.71 / r243 Watchlist-pool fix with native Top 10 scrolling preserved. Only release identity/version presentation changes in this promotion.
+// Official release 1.0.1 — versionCode 10043. Preserves the user-validated Android 0.99.7.71 / r243 Watchlist-pool and native Top 10 behavior while promoting repeat-watch counters for movies/episodes and removing the Sports status/statistics summary card.
