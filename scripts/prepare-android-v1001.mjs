@@ -1,0 +1,18 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {execFileSync} from 'node:child_process';
+const root=resolve(process.cwd());
+execFileSync(process.execPath,[resolve(root,'scripts/prepare-android-v1000.mjs')],{cwd:root,stdio:'inherit'});
+const indexPath=resolve(root,'apps/android/app/src/main/assets/hotfix5/index.html');
+let html=await readFile(indexPath,'utf8');
+for(const required of ["window.__ctR221Rewatch='persistent-2x-3x-4x-no-disable';","window.__ctR221Sports='remove-status-statistics-summary-card';",'ct171RewatchMovie=async function','ct171RewatchEpisode=async function','cleanSports221','watchlist-swap-uses-active-ct186-selected-pool','native-webview-horizontal-no-manual-touch'])if(!html.includes(required))throw new Error('Android 1.0.1 lost '+required);
+const once=(s,a,b,label)=>{const n=s.split(a).length-1;if(n!==1)throw new Error(`Android 1.0.1 expected one ${label}, found ${n}`);return s.replace(a,b)};
+html=once(html,'name="ct-official-version" content="1.0.0"','name="ct-official-version" content="1.0.1"','official meta');
+html=html.replace('name="ct-android-v1000" content="r243-watchlist-renderer-pool-user-validated"','name="ct-android-v1001" content="r243-plus-rewatch-sports-validated"');
+html=once(html,"window.__ctWebBuild='1.0.0';window.__ctOfficialVersion='1.0.0';window.__ctAndroidOfficialVersion='1.0.0';","window.__ctWebBuild='1.0.1';window.__ctOfficialVersion='1.0.1';window.__ctAndroidOfficialVersion='1.0.1';",'runtime identity');
+html=once(html,'CineTracker • v1.0.0 • ${REVISION}','CineTracker • v1.0.1 • ${REVISION}','visible footer');
+html=once(html,"JSON.stringify({version:'1.0.0',revision:REVISION","JSON.stringify({version:'1.0.1',revision:REVISION",'snapshot identity');
+html=once(html,"window.__ctAndroidRelease='1.0.0';window.__ctAndroidReleaseBase='0.99.7.71-r243-user-validated';window.__ctAndroidReleaseScope='identity-only-no-runtime-behavior-change';","window.__ctAndroidRelease='1.0.1';window.__ctAndroidReleaseBase='1.0.0-r243-user-validated';window.__ctAndroidReleaseScope='rewatch-movie-episode-plus-sports-summary-removal-web-android';",'release identity');
+for(const expected of ['name="ct-official-version" content="1.0.1"','name="ct-android-v1001" content="r243-plus-rewatch-sports-validated"',"window.__ctOfficialVersion='1.0.1'",'CineTracker • v1.0.1 • ${REVISION}',"window.__ctAndroidRelease='1.0.1'",'persistent-2x-3x-4x-no-disable','remove-status-statistics-summary-card'])if(!html.includes(expected))throw new Error('Android 1.0.1 missing '+expected);
+await writeFile(indexPath,html,'utf8');
+console.log('ANDROID_1_0_1_READY rewatch=movie+episode-counter sports=summary-card-removed base=1.0.0-r243');
