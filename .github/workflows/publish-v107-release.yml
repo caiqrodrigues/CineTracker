@@ -49,8 +49,8 @@ jobs:
           node --check apps/web/runtime-r212-v107-rewatch-authority.js
           grep -Fq "window.__ctR211='v107-behavior-authority'" apps/web/runtime-r211-v107-behavior.js
           grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" apps/web/runtime-r212-v107-rewatch-authority.js
-          grep -Fq '__ctV107EnsureMedia' apps/web/runtime-r212-v107-rewatch-authority.js
-          grep -Fq '__ctV107Rpc' apps/web/runtime-r212-v107-rewatch-authority.js
+          grep -Fq '__CT107_RPC__' apps/web/runtime-r212-v107-rewatch-authority.js
+          grep -Fq '__CT107_ENSURE__' apps/web/runtime-r212-v107-rewatch-authority.js
           grep -Fq "cinetracker_mark_watch_v0994" apps/web/runtime-r211-v107-behavior.js
           grep -Fq "cinetracker_mark_watch_v0994" apps/web/runtime-r212-v107-rewatch-authority.js
           ! grep -Fq "cinetracker_mark_episode_v0994" apps/web/runtime-r211-v107-behavior.js
@@ -63,16 +63,8 @@ jobs:
           set -euo pipefail
           ok=0
           for attempt in 1 2 3 4; do
-            if curl --fail --silent --show-error --max-time 25 \
-              -H 'content-type: application/json' \
-              -d '{"season":2026}' \
-              https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1 > /tmp/f1.json \
-              && node -e "const d=require('/tmp/f1.json'); if(!Array.isArray(d.races)||!d.drivers||!d.constructors) process.exit(1); console.log('F1_LIVE_OK races='+d.races.length)"; then
-              ok=1
-              break
-            fi
-            echo "F1 live check attempt ${attempt} failed"
-            sleep $((attempt * 2))
+            if curl --fail --silent --show-error --max-time 25 -H 'content-type: application/json' -d '{"season":2026}' https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1 > /tmp/f1.json && node -e "const d=require('/tmp/f1.json'); if(!Array.isArray(d.races)||!d.drivers||!d.constructors) process.exit(1); console.log('F1_LIVE_OK races='+d.races.length)"; then ok=1; break; fi
+            echo "F1 live check attempt ${attempt} failed"; sleep $((attempt * 2))
           done
           test "$ok" = 1
       - name: Browser behavior fixture
@@ -85,12 +77,12 @@ jobs:
           test -f apps/web/dist/app-v211.js
           grep -Fq "window.__ctR211='v107-behavior-authority'" apps/web/dist/app-v211.js
           grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" apps/web/dist/app-v211.js
-          grep -Fq '__ctV107Rpc' apps/web/dist/app-v211.js
-          grep -Fq '__ctV107EnsureMedia' apps/web/dist/app-v211.js
           grep -Fq 'data-ct107-rewatch' apps/web/dist/app-v211.js
           grep -Fq 'cinetracker_recommendation_state_v107' apps/web/dist/app-v211.js
           grep -Fq 'ct-f1-v107' apps/web/dist/app-v211.js
           grep -Fq -- '--ct104-card-w' apps/web/dist/app-v211.js
+          ! grep -Fq '__CT107_RPC__' apps/web/dist/app-v211.js
+          ! grep -Fq '__CT107_ENSURE__' apps/web/dist/app-v211.js
           ! grep -Fq "window.__ctR209='v105-video-corrections'" apps/web/dist/app-v211.js
           ! grep -Fq "window.__ctR210='v106-scope-safe-runtime'" apps/web/dist/app-v211.js
           ! grep -Fq 'cinetracker_mark_episode_v0994' apps/web/dist/app-v211.js
@@ -107,27 +99,22 @@ jobs:
       - name: Validate final APK behavior payload
         run: |
           set -euo pipefail
-          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
-          OUT='CineTracker-1.0.7.apk'
-          cp "$APK" "$OUT"
-          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
-          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
-          BADGING="$($AAPT dump badging "$OUT")"
-          grep -Fq "versionName='1.0.7'" <<<"$BADGING"
-          grep -Fq "versionCode='10049'" <<<"$BADGING"
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'; OUT='CineTracker-1.0.7.apk'; cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"; APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"; grep -Fq "versionName='1.0.7'" <<<"$BADGING"; grep -Fq "versionCode='10049'" <<<"$BADGING"
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct107-index.html
           grep -Fq '<script data-ct-android="r249-android-js">' /tmp/ct107-index.html
           grep -Fq "const REVISION='r249-android-official-1.0.7'" /tmp/ct107-index.html
           grep -Fq "window.__ctR211='v107-behavior-authority'" /tmp/ct107-index.html
           grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" /tmp/ct107-index.html
-          grep -Fq '__ctV107Rpc' /tmp/ct107-index.html
-          grep -Fq '__ctV107EnsureMedia' /tmp/ct107-index.html
           grep -Fq 'cinetracker_mark_watch_v0994' /tmp/ct107-index.html
           grep -Fq 'cinetracker_recommendation_state_v107' /tmp/ct107-index.html
           grep -Fq 'ct-f1-v107' /tmp/ct107-index.html
           grep -Fq -- '--ct104-card-w' /tmp/ct107-index.html
           grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' /tmp/ct107-index.html
           grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct107-index.html
+          ! grep -Fq '__CT107_RPC__' /tmp/ct107-index.html
+          ! grep -Fq '__CT107_ENSURE__' /tmp/ct107-index.html
           ! grep -Fq 'cinetracker_mark_episode_v0994' /tmp/ct107-index.html
           ! grep -Fq "window.__ctR209='v105-video-corrections'" /tmp/ct107-index.html
           ! grep -Fq "window.__ctR210='v106-scope-safe-runtime'" /tmp/ct107-index.html
@@ -155,12 +142,7 @@ jobs:
           - Remove apenas o resumo antigo de Sports; Estatísticas do Perfil permanecem
           EOF
           )
-          if gh release view v1.0.7 >/dev/null 2>&1; then
-            gh release upload v1.0.7 CineTracker-1.0.7.apk CineTracker-1.0.7-SHA256.txt CineTracker-1.0.7-size.txt --clobber
-            gh release edit v1.0.7 --title 'CineTracker 1.0.7' --notes "$NOTES" --latest
-          else
-            gh release create v1.0.7 CineTracker-1.0.7.apk CineTracker-1.0.7-SHA256.txt CineTracker-1.0.7-size.txt --target "$GITHUB_SHA" --title 'CineTracker 1.0.7' --notes "$NOTES" --latest
-          fi
+          if gh release view v1.0.7 >/dev/null 2>&1; then gh release upload v1.0.7 CineTracker-1.0.7.apk CineTracker-1.0.7-SHA256.txt CineTracker-1.0.7-size.txt --clobber; gh release edit v1.0.7 --title 'CineTracker 1.0.7' --notes "$NOTES" --latest; else gh release create v1.0.7 CineTracker-1.0.7.apk CineTracker-1.0.7-SHA256.txt CineTracker-1.0.7-size.txt --target "$GITHUB_SHA" --title 'CineTracker 1.0.7' --notes "$NOTES" --latest; fi
       - name: Verify published assets
         env: { GH_TOKEN: '${{ github.token }}' }
         run: |
