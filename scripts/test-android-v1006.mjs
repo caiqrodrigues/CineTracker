@@ -1,0 +1,5 @@
+import fs from 'node:fs';
+const p='apps/android/app/src/main/assets/hotfix5/index.html';const s=fs.readFileSync(p,'utf8');
+for(const x of ['<script data-ct-android="r248-android-js">',"const REVISION='r248-android-official-1.0.6';","window.__ctR210='v106-scope-safe-runtime'",'data-ct106-rewatch-movie','data-ct106-rewatch-episode','data-ct106-history-rewatch','cinetracker-f1-v1','--ct104-card-w','watchlist-swap-uses-active-ct186-selected-pool','native-webview-horizontal-no-manual-touch'])if(!s.includes(x))throw new Error('Android 1.0.6 missing '+x);
+for(const x of ["window.__ctR209='v105-video-corrections'",'ct104PaintF1=async function','ct104Blocked=function'])if(s.includes(x))throw new Error('Android 1.0.6 contains rejected 1.0.5 runtime '+x);
+console.log('ANDROID_1_0_6_VALIDATED r248 scope-safe cards-preserved');

@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+const dist='apps/web/dist';
+const html=fs.readFileSync(`${dist}/index.html`,'utf8');
+const js=fs.readFileSync(`${dist}/app-v210.js`,'utf8');
+const release=JSON.parse(fs.readFileSync(`${dist}/release.json`,'utf8'));
+for(const x of ['app-v210.js','r210-official-1.0.6'])if(!html.includes(x))throw new Error('Web 1.0.6 html missing '+x);
+for(const x of ["window.__ctR210='v106-scope-safe-runtime'",'data-ct106-rewatch-movie','data-ct106-rewatch-episode','data-ct106-history-rewatch','cinetracker-f1-v1','boot();'])if(!js.includes(x))throw new Error('Web 1.0.6 js missing '+x);
+for(const x of ["window.__ctR209='v105-video-corrections'",'ct104PaintF1=async function','ct104Blocked=function'])if(js.includes(x))throw new Error('Web 1.0.6 contains rejected 1.0.5 runtime '+x);
+if(release.version!=='1.0.6'||release.revision!=='r210-official-1.0.6')throw new Error('Web 1.0.6 release identity invalid');
+console.log('WEB_1_0_6_VALIDATED boot-safe no-r209');
