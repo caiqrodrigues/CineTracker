@@ -72,5 +72,7 @@ async function act(btn){
 }
 document.addEventListener('click',ev=>{const b=ev.target.closest?.('[data-ct214-rewatch]');if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();void act(b)},true);
 const style=document.createElement('style');style.id='ct214-hotfix-css';style.textContent='#ct-f1-v104{display:none!important}.ct214-rewatch{margin-left:8px!important;white-space:nowrap!important;flex:0 0 auto!important}';document.getElementById(style.id)?.remove();document.head.appendChild(style);
-let raf=0;const sync=()=>{if(raf)return;raf=requestAnimationFrame(async()=>{raf=0;await loadCounts(false);ensureButtons()})};new MutationObserver(sync).observe(document.documentElement,{childList:true,subtree:true});window.addEventListener('cinetracker:data-changed',sync);setTimeout(sync,0);setTimeout(sync,500);setTimeout(sync,1500);
+let raf=0,syncing=false,resync=false;
+const sync=()=>{if(syncing){resync=true;return}if(raf)return;raf=requestAnimationFrame(async()=>{raf=0;syncing=true;try{await loadCounts(false);ensureButtons()}finally{syncing=false;if(resync){resync=false;sync()}}})};
+new MutationObserver(sync).observe(document.documentElement,{childList:true,subtree:true});window.addEventListener('cinetracker:data-changed',sync);setTimeout(sync,0);setTimeout(sync,500);setTimeout(sync,1500);
 })();
