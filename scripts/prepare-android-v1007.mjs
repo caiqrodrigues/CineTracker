@@ -17,10 +17,11 @@ for(const m of ["window.__ctR214='v107-ui-regression-hotfix'",'data-ct214-rewatc
 const cut=(src,x,y,label)=>{const i=src.indexOf(x),j=src.indexOf(y);if(i<0||j<0||j<=i)throw new Error('Android 1.0.7 cannot strip '+label);return src.slice(0,i)+src.slice(j)};
 patch=cut(patch,'/* Canonical replay source:','/* Authoritative recommendation eligibility','overlapping replay authority');
 patch=cut(patch,'/* Instant route feedback:','/* Standalone public F1 hub','snapshot navigation interception');
+const f1Marker='/* Standalone public F1 hub';if(!patch.includes(f1Marker))throw new Error('Android F1 marker missing');
+patch=patch.replace(f1Marker,"function rootFor(k){return q(k==='home'?'[data-home]':k==='discover'?'[data-discover]':k==='sports'?'[data-sports]':k==='profile'?'[data-profile]':k==='configs'?'[data-configs],[data-settings]':'main')}\n\n"+f1Marker);
 const oldDecorate="function decorateAll(){stamp();restoreSnapshot(routeKey());void decorateRewatch();if(routeKey()==='sports')void ensureF1(false);saveSnapshot()}";
 const newDecorate="function decorateAll(){stamp();if(routeKey()==='sports')void ensureF1(false)}";
-if(!patch.includes(oldDecorate))throw new Error('Android 1.0.7 decorateAll legacy composition missing');
-patch=patch.replace(oldDecorate,newDecorate);
+if(!patch.includes(oldDecorate))throw new Error('Android 1.0.7 decorateAll legacy composition missing');patch=patch.replace(oldDecorate,newDecorate);
 if(patch.includes('data-ct107-rewatch')||patch.includes('ct107:snapshot:')||patch.includes('restoreSnapshot(')||patch.includes('decorateRewatch(')||patch.includes('saveSnapshot('))throw new Error('Android obsolete replay/snapshot code survived strip');
 patch=patch.replace("const A=typeof CT104_ANDROID!=='undefined'&&CT104_ANDROID;","const A=true;");if(!patch.includes('const A=true;'))throw new Error('Android platform flag failed');
 js=js.replaceAll("'cinetracker_mark_episode_v0994'","'cinetracker_legacy_episode_disabled_v107'").replaceAll('"cinetracker_mark_episode_v0994"','"cinetracker_legacy_episode_disabled_v107"');
