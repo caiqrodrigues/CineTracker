@@ -41,8 +41,8 @@ await w.ct171RewatchEpisode(1,2,buttons.find(b=>b.dataset.ct104Kind==='episode')
 const epCall=calls.find(x=>x.name==='cinetracker_mark_episode_v0994');
 assert.equal(epCall.args.p_media_id,1200);assert.equal(epCall.args.p_season_number,1);assert.equal(epCall.args.p_episode_number,2);
 const d=await w.discoverRows('foryou');
-assert.deepEqual(d._ct186_fresh.movie.map(x=>x.id),[11],'Fresh recommendations must never reuse previously shown titles');
-assert.deepEqual(d._ct186_watchlist.movie.map(x=>x.id),[21],'Watchlist must enforce 30-day cooldown but allow older items');
+assert.equal(JSON.stringify(Array.from(d._ct186_fresh.movie,x=>x.id)),'[11]','Fresh recommendations must never reuse previously shown titles');
+assert.equal(JSON.stringify(Array.from(d._ct186_watchlist.movie,x=>x.id)),'[21]','Watchlist must enforce 30-day cooldown but allow older items');
 w.document.querySelector('#app').innerHTML='<a data-nav="profile" href="/profile">Perfil</a>';
 w.document.querySelector('[data-nav="profile"]').click();
 assert.equal(goCalls.at(-1),'/profile','Global nav must route immediately');
