@@ -7,6 +7,7 @@ const w=dom.window;
 let calls=[],goCalls=[];
 w.eval(`
 var homeCache=null,profileCache=null,discoverCache=new Map(),ct171SeenMap=null,ct169CurrentDetail={detail:{number_of_episodes:12,status:'Returning Series'}},ct169DrawerState={showId:200,seasonNo:1,episodes:[{episode_number:2,name:'Ep 2',runtime:48}]},discoverState={tab:'foryou'},ct186ForYouData=null;
+var ct171RewatchMovie=function(){},ct171RewatchEpisode=function(){};
 function route(){return location.pathname.replace(/^\\/+/, '').split('/')[0]||'home'}
 function pathFor(k){return k==='configs'?'/configs':'/'+k}
 function go(p){window.__goCalls.push(p)}
