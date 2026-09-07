@@ -2,19 +2,17 @@ import {readFile,writeFile,rm} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
 const root=resolve(process.cwd());
-const [runtime,authority]=await Promise.all([readFile(resolve(root,'apps/web/runtime-r211-v107-behavior.js'),'utf8'),readFile(resolve(root,'apps/web/runtime-r212-v107-rewatch-authority.js'),'utf8')]);
-if(runtime.includes('cinetracker_mark_episode_v0994')||authority.includes('cinetracker_mark_episode_v0994'))throw new Error('nonexistent episode RPC leaked');
+const [runtime,authorityRaw]=await Promise.all([readFile(resolve(root,'apps/web/runtime-r211-v107-behavior.js'),'utf8'),readFile(resolve(root,'apps/web/runtime-r212-v107-rewatch-authority.js'),'utf8')]);
+if(runtime.includes('cinetracker_mark_episode_v0994')||authorityRaw.includes('cinetracker_mark_episode_v0994'))throw new Error('nonexistent episode RPC leaked');
+if(!authorityRaw.includes('__CT107_RPC__')||!authorityRaw.includes('__CT107_ENSURE__'))throw new Error('r212 dependency tokens missing');
+const authority=authorityRaw.replace('__CT107_RPC__','window.__testCtRpc').replace('__CT107_ENSURE__','window.__testCtEnsure');
 const fixture=resolve('/tmp','sports-v107-fixture.html');
 const f1={season:2026,next:{round:'18',raceName:'Fixture GP',date:'2026-09-20',Circuit:{circuitName:'Fixture Circuit'},FirstPractice:{date:'2026-09-18',time:'10:00:00Z'},Qualifying:{date:'2026-09-19',time:'14:00:00Z'}},races:[{round:'18',raceName:'Fixture GP',date:'2026-09-20',Circuit:{circuitName:'Fixture Circuit'}}],drivers:{MRData:{StandingsTable:{StandingsLists:[{DriverStandings:[{position:'1',points:'250',Driver:{givenName:'Max',familyName:'Fixture'},Constructors:[{name:'Team A'}]}]}]}}},constructors:{MRData:{StandingsTable:{StandingsLists:[{ConstructorStandings:[{position:'1',points:'400',Constructor:{name:'Team A'}}]}]}}},results:{MRData:{RaceTable:{Races:[{Results:[{position:'1',Driver:{givenName:'Max',familyName:'Fixture'},Constructor:{name:'Team A'},Time:{time:'1:30:00'}}]}]}}},qualifying:{MRData:{RaceTable:{Races:[{QualifyingResults:[]} ]}}},sprint:null,pitstops:null,laps:null};
 const pre=`<script>
 var homeCache=null,profileCache=null,discoverCache=new Map(),ct169DrawerState={showId:456,seasonNo:1};window.__markCalls=0;
-function mediaTmdb(x){return Number(x?.id||x?.tmdb_id||0)}
-async function discoverRows(){return {}}
-function go(){}
-function toast(){}
-async function rpc(name,args){if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_recommendation_state_v107')return {fresh_excluded:[],watchlist:[]};return []}
-window.__ctV107EnsureMedia=async(type,id)=>({id:type==='movie'?9001:9002,title:type==='movie'?'Movie Fixture':'Series Fixture',runtime_minutes:100});
-window.__ctV107Rpc=async(name,args)=>{if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_mark_watch_v0994'){window.__markCalls++;document.body.dataset.markCalls=String(window.__markCalls);return {plays:3}};return []};
+function mediaTmdb(x){return Number(x?.id||x?.tmdb_id||0)} async function discoverRows(){return {}} function go(){} function toast(){} async function rpc(name,args){if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_recommendation_state_v107')return {fresh_excluded:[],watchlist:[]};return []}
+window.__testCtEnsure=async(type,id)=>({id:type==='movie'?9001:9002,title:type==='movie'?'Movie Fixture':'Series Fixture',runtime_minutes:100});
+window.__testCtRpc=async(name,args)=>{if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_mark_watch_v0994'){window.__markCalls++;document.body.dataset.markCalls=String(window.__markCalls);return {plays:3}};return []};
 window.fetch=async()=>({ok:true,json:async()=>${JSON.stringify(f1)}});
 </script>`;
 const bundle=`<script>${authority.replaceAll('</script>','<\\/script>')}\n${runtime.replaceAll('</script>','<\\/script>')}</script>`;
@@ -26,4 +24,4 @@ await rm(fixture,{force:true});if(!out)throw new Error('Chrome/Chromium unavaila
 for(const must of ['EVENT CARD PRESERVED','id="ct-f1-v107"','Fixture GP','Fixture Circuit','data-ct107-rewatch="movie"','data-ct107-rewatch="episode"','data-ct212-bound="1"','data-mark-calls="1"','Reassistir 3x','CineTracker • v1.0.7'])if(!out.includes(must)){console.log('REWATCH_DOM',out.match(/<button[^>]*data-ct107-rewatch[^>]*>[^<]*/g));console.log('BODY_MARK',out.match(/data-mark-calls="[^"]+"/g));console.log('R212_STAGE',out.match(/data-ct212-stage="[^"]+"/g));console.log('CHROME_ERR',stderr.slice(-1500));throw new Error('Browser behavior missing '+must)}
 if(out.includes('sports-summary'))throw new Error('Old Sports summary still visible');
 const legacy=out.match(/<button[^>]*data-ct104-rewatch[^>]*>/)?.[0]||'';if(!legacy.includes('display: none'))throw new Error('Legacy replay control is not hidden');
-console.log('V107_BROWSER_BEHAVIOR_OK f1=visible rewatch=movie+episode+history first_capture=r212 canonical=mark_watch bridge=explicit sports_summary=removed legacy=hidden event=preserved');
+console.log('V107_BROWSER_BEHAVIOR_OK f1=visible rewatch=movie+episode+history first_capture=r212 canonical=mark_watch deps=iife sports_summary=removed legacy=hidden event=preserved');
