@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10048
-        versionName '1.0.6'
+        versionCode 10049
+        versionName '1.0.7'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker 1.0.6 — versionCode 10048. Rebuilds from the stable 1.0.4 runtime, preserves validated card geometry, removes the crashing 1.0.5 scope leak, restores visible rewatch controls and uses the F1 Edge Function v2.
+// CineTracker 1.0.7 — versionCode 10049. Preserves the approved 1.0.4 card geometry and fixes canonical episode rewatch, recommendation eligibility, instant route snapshots, Sports summary cleanup and standalone F1 Hub.
