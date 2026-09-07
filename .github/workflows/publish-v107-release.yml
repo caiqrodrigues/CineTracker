@@ -49,8 +49,8 @@ jobs:
           node --check apps/web/runtime-r212-v107-rewatch-authority.js
           grep -Fq "window.__ctR211='v107-behavior-authority'" apps/web/runtime-r211-v107-behavior.js
           grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" apps/web/runtime-r212-v107-rewatch-authority.js
-          grep -Fq 'getEnsureMedia' apps/web/runtime-r212-v107-rewatch-authority.js
-          grep -Fq 'getRpc' apps/web/runtime-r212-v107-rewatch-authority.js
+          grep -Fq '__ctV107EnsureMedia' apps/web/runtime-r212-v107-rewatch-authority.js
+          grep -Fq '__ctV107Rpc' apps/web/runtime-r212-v107-rewatch-authority.js
           grep -Fq "cinetracker_mark_watch_v0994" apps/web/runtime-r211-v107-behavior.js
           grep -Fq "cinetracker_mark_watch_v0994" apps/web/runtime-r212-v107-rewatch-authority.js
           ! grep -Fq "cinetracker_mark_episode_v0994" apps/web/runtime-r211-v107-behavior.js
@@ -61,11 +61,20 @@ jobs:
       - name: Verify live public F1 backend
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --max-time 25 \
-            -H 'content-type: application/json' \
-            -d '{"season":2026}' \
-            https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1 > /tmp/f1.json
-          node -e "const d=require('/tmp/f1.json'); if(!Array.isArray(d.races)||!d.drivers||!d.constructors) process.exit(1); console.log('F1_LIVE_OK races='+d.races.length)"
+          ok=0
+          for attempt in 1 2 3 4; do
+            if curl --fail --silent --show-error --max-time 25 \
+              -H 'content-type: application/json' \
+              -d '{"season":2026}' \
+              https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1 > /tmp/f1.json \
+              && node -e "const d=require('/tmp/f1.json'); if(!Array.isArray(d.races)||!d.drivers||!d.constructors) process.exit(1); console.log('F1_LIVE_OK races='+d.races.length)"; then
+              ok=1
+              break
+            fi
+            echo "F1 live check attempt ${attempt} failed"
+            sleep $((attempt * 2))
+          done
+          test "$ok" = 1
       - name: Browser behavior fixture
         run: node scripts/test-v107-browser.mjs
       - name: Build Web 1.0.7
@@ -76,6 +85,8 @@ jobs:
           test -f apps/web/dist/app-v211.js
           grep -Fq "window.__ctR211='v107-behavior-authority'" apps/web/dist/app-v211.js
           grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" apps/web/dist/app-v211.js
+          grep -Fq '__ctV107Rpc' apps/web/dist/app-v211.js
+          grep -Fq '__ctV107EnsureMedia' apps/web/dist/app-v211.js
           grep -Fq 'data-ct107-rewatch' apps/web/dist/app-v211.js
           grep -Fq 'cinetracker_recommendation_state_v107' apps/web/dist/app-v211.js
           grep -Fq 'ct-f1-v107' apps/web/dist/app-v211.js
@@ -109,6 +120,8 @@ jobs:
           grep -Fq "const REVISION='r249-android-official-1.0.7'" /tmp/ct107-index.html
           grep -Fq "window.__ctR211='v107-behavior-authority'" /tmp/ct107-index.html
           grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" /tmp/ct107-index.html
+          grep -Fq '__ctV107Rpc' /tmp/ct107-index.html
+          grep -Fq '__ctV107EnsureMedia' /tmp/ct107-index.html
           grep -Fq 'cinetracker_mark_watch_v0994' /tmp/ct107-index.html
           grep -Fq 'cinetracker_recommendation_state_v107' /tmp/ct107-index.html
           grep -Fq 'ct-f1-v107' /tmp/ct107-index.html
