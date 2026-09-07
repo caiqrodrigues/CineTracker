@@ -1,0 +1,149 @@
+name: Publish CineTracker v1.0.7 Release
+on:
+  workflow_dispatch:
+  push:
+    branches: [release/1.0.7]
+    paths:
+      - '.github/workflows/publish-v107-release.yml'
+      - 'apps/web/runtime-r211-v107-behavior.js'
+      - 'apps/web/build-r211.mjs'
+      - 'apps/web/package.json'
+      - 'package.json'
+      - 'scripts/prepare-android-v1007.mjs'
+      - 'scripts/test-v107-browser.mjs'
+      - 'apps/android/app/build.gradle'
+      - 'supabase/functions/cinetracker-f1-v1/index.ts'
+      - 'supabase/migrations/20260907203000_recommendation_state_v107.sql'
+permissions:
+  contents: write
+concurrency:
+  group: cinetracker-publish-v107-release
+  cancel-in-progress: true
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Restore signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install signing key
+        run: |
+          set -euo pipefail
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - name: Validate 1.0.7 source contracts
+        run: |
+          set -euo pipefail
+          node --check apps/web/runtime-r211-v107-behavior.js
+          grep -Fq "window.__ctR211='v107-behavior-authority'" apps/web/runtime-r211-v107-behavior.js
+          grep -Fq "cinetracker_mark_watch_v0994" apps/web/runtime-r211-v107-behavior.js
+          ! grep -Fq "cinetracker_mark_episode_v0994" apps/web/runtime-r211-v107-behavior.js
+          grep -Fq "cinetracker_recommendation_state_v107" apps/web/runtime-r211-v107-behavior.js
+          grep -Fq "ct-f1-v107" apps/web/runtime-r211-v107-behavior.js
+          grep -Fq "ct107:snapshot:" apps/web/runtime-r211-v107-behavior.js
+      - name: Verify live public F1 backend
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --max-time 25 \
+            -H 'content-type: application/json' \
+            -d '{"season":2026}' \
+            https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1 > /tmp/f1.json
+          node -e "const d=require('/tmp/f1.json'); if(!Array.isArray(d.races)||!d.drivers||!d.constructors) process.exit(1); console.log('F1_LIVE_OK races='+d.races.length)"
+      - name: Browser behavior fixture
+        run: node scripts/test-v107-browser.mjs
+      - name: Build Web 1.0.7
+        run: node apps/web/build-r211.mjs
+      - name: Validate built Web behavior runtime
+        run: |
+          set -euo pipefail
+          test -f apps/web/dist/app-v211.js
+          grep -Fq "window.__ctR211='v107-behavior-authority'" apps/web/dist/app-v211.js
+          grep -Fq 'data-ct107-rewatch' apps/web/dist/app-v211.js
+          grep -Fq 'cinetracker_recommendation_state_v107' apps/web/dist/app-v211.js
+          grep -Fq 'ct-f1-v107' apps/web/dist/app-v211.js
+          grep -Fq -- '--ct104-card-w' apps/web/dist/app-v211.js
+          ! grep -Fq "window.__ctR209='v105-video-corrections'" apps/web/dist/app-v211.js
+          ! grep -Fq "window.__ctR210='v106-scope-safe-runtime'" apps/web/dist/app-v211.js
+          ! grep -Fq 'cinetracker_mark_episode_v0994' apps/web/dist/app-v211.js
+          grep -Fq 'app-v211.js' apps/web/dist/index.html
+      - name: Prepare Android 1.0.7
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0.7'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10049' apps/android/app/build.gradle
+          node scripts/prepare-android-v1007.mjs
+      - name: Build APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Validate final APK behavior payload
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-1.0.7.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='1.0.7'" <<<"$BADGING"
+          grep -Fq "versionCode='10049'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct107-index.html
+          grep -Fq '<script data-ct-android="r249-android-js">' /tmp/ct107-index.html
+          grep -Fq "const REVISION='r249-android-official-1.0.7'" /tmp/ct107-index.html
+          grep -Fq "window.__ctR211='v107-behavior-authority'" /tmp/ct107-index.html
+          grep -Fq 'cinetracker_mark_watch_v0994' /tmp/ct107-index.html
+          grep -Fq 'cinetracker_recommendation_state_v107' /tmp/ct107-index.html
+          grep -Fq 'ct-f1-v107' /tmp/ct107-index.html
+          grep -Fq -- '--ct104-card-w' /tmp/ct107-index.html
+          grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' /tmp/ct107-index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct107-index.html
+          ! grep -Fq 'cinetracker_mark_episode_v0994' /tmp/ct107-index.html
+          ! grep -Fq "window.__ctR209='v105-video-corrections'" /tmp/ct107-index.html
+          ! grep -Fq "window.__ctR210='v106-scope-safe-runtime'" /tmp/ct107-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee CineTracker-1.0.7-SHA256.txt
+          stat -c '%s' "$OUT" | tee CineTracker-1.0.7-size.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.7
+          path: |
+            CineTracker-1.0.7.apk
+            CineTracker-1.0.7-SHA256.txt
+            CineTracker-1.0.7-size.txt
+      - name: Publish GitHub Release v1.0.7
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          set -euo pipefail
+          NOTES=$(cat <<'EOF'
+          # CineTracker 1.0.7
+          - Preserva a geometria de cards aprovada da 1.0.4
+          - Corrige reassistir de episódios usando o RPC canônico existente e mantém 2x/3x/4x no filme, episódio e Histórico
+          - Filtra o Pra você pelo estado real do usuário no Supabase, além da memória persistente já existente
+          - Reutiliza a última tela estável enquanto a atualização assíncrona acontece para evitar loader em toda troca de aba
+          - F1 Hub independente com backend público de dados públicos e abas de calendário, pilotos, construtores, último GP, pit stops e voltas
+          - Remove apenas o resumo antigo de Sports; Estatísticas do Perfil permanecem
+          EOF
+          )
+          if gh release view v1.0.7 >/dev/null 2>&1; then
+            gh release upload v1.0.7 CineTracker-1.0.7.apk CineTracker-1.0.7-SHA256.txt CineTracker-1.0.7-size.txt --clobber
+            gh release edit v1.0.7 --title 'CineTracker 1.0.7' --notes "$NOTES" --latest
+          else
+            gh release create v1.0.7 CineTracker-1.0.7.apk CineTracker-1.0.7-SHA256.txt CineTracker-1.0.7-size.txt --target "$GITHUB_SHA" --title 'CineTracker 1.0.7' --notes "$NOTES" --latest
+          fi
+      - name: Verify published assets
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          set -euo pipefail
+          gh release view v1.0.7 --json tagName,name,url,assets > /tmp/release.json
+          grep -Fq 'CineTracker-1.0.7.apk' /tmp/release.json
+          grep -Fq 'CineTracker-1.0.7-SHA256.txt' /tmp/release.json
+          cat /tmp/release.json
