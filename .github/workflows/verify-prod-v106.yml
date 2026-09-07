@@ -1,0 +1,31 @@
+name: Verify CineTracker 1.0.6 Production
+on:
+  push:
+    branches: [release/1.0.6]
+    paths: ['.github/workflows/verify-prod-v106.yml']
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify production shell
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 5 --retry-delay 2 'https://mycinetracker.vercel.app/?ct_verify=106' -o /tmp/index.html
+          grep -Fq 'app-v210.js' /tmp/index.html
+          ! grep -Fq 'app-v209.js' /tmp/index.html
+          curl -fsSL --retry 5 --retry-delay 2 'https://mycinetracker.vercel.app/app-v210.js?ct_verify=106' -o /tmp/app-v210.js
+          node --check /tmp/app-v210.js
+          grep -Fq "window.__ctR210='v106-scope-safe-runtime'" /tmp/app-v210.js
+          ! grep -Fq "window.__ctR209='v105-video-corrections'" /tmp/app-v210.js
+      - name: Verify browser renders content
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=10000 --dump-dom 'https://mycinetracker.vercel.app/?ct_verify=106' > /tmp/dom.html 2>/tmp/chrome.log
+          test -s /tmp/dom.html
+          grep -Eiq 'CineTracker|Entrar|Login|Home|Descobrir' /tmp/dom.html
+          ! grep -Eiq 'ReferenceError: ct104PaintF1|ReferenceError: ct104Blocked' /tmp/chrome.log
+          echo 'PRODUCTION_1_0_6_RENDER_OK'
