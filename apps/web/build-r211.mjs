@@ -12,6 +12,9 @@ if(!js.includes('\nboot();'))throw new Error('Web 1.0.7 insertion point missing'
 const cut=(src,a,b,label)=>{const i=src.indexOf(a),j=src.indexOf(b);if(i<0||j<0||j<=i)throw new Error('Web 1.0.7 cannot strip '+label);return src.slice(0,i)+src.slice(j)};
 patch=cut(patch,'/* Canonical replay source:','/* Authoritative recommendation eligibility','overlapping replay authority');
 patch=cut(patch,'/* Instant route feedback:','/* Standalone public F1 hub','snapshot navigation interception');
+const f1Marker='/* Standalone public F1 hub';
+if(!patch.includes(f1Marker))throw new Error('Web F1 marker missing');
+patch=patch.replace(f1Marker,"function rootFor(k){return q(k==='home'?'[data-home]':k==='discover'?'[data-discover]':k==='sports'?'[data-sports]':k==='profile'?'[data-profile]':k==='configs'?'[data-configs],[data-settings]':'main')}\n\n"+f1Marker);
 const oldDecorate="function decorateAll(){stamp();restoreSnapshot(routeKey());void decorateRewatch();if(routeKey()==='sports')void ensureF1(false);saveSnapshot()}";
 const newDecorate="function decorateAll(){stamp();if(routeKey()==='sports')void ensureF1(false)}";
 if(!patch.includes(oldDecorate))throw new Error('Web 1.0.7 decorateAll legacy composition missing');
