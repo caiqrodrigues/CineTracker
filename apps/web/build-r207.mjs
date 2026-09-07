@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
+execFileSync(process.execPath,['apps/web/build-r206.mjs'],{stdio:'inherit'});
+const dist='apps/web/dist';
+let html=fs.readFileSync(`${dist}/index.html`,'utf8');
+let js=fs.readFileSync(`${dist}/app-v206.js`,'utf8');
+let sw=fs.readFileSync(`${dist}/service-worker.js`,'utf8');
+const patch=fs.readFileSync('apps/web/runtime-r207-v103.js','utf8');
+for(const marker of ["window.__ctR207='v103-rewatch-navigation-recommendations-f1'",'cinetracker_recommendation_memory_v101','cinetracker_recommendation_record_v101','p_media_id:x.mediaId','p_item_type:x.itemType','instant-global-nav-closes-details','current/last/pitstops','current/last/laps']) if(!patch.includes(marker)) throw new Error(`r207 runtime missing ${marker}`);
+js += `\n;${patch}\n;window.__ctOfficialVersion='1.0.3';window.__ctOfficialRevision='r207-official-1.0.3';window.__ctRelease103='rewatch-navigation-recommendation-memory-f1-advanced';\n`;
+html=html.replaceAll('app-v206.js','app-v207.js').replaceAll('r206-official-1.0.2','r207-official-1.0.3');
+sw=sw.replace(/const VERSION='[^']+';/,"const VERSION='ct-web-1.0.3-r207';").replaceAll('app-v206.js','app-v207.js').replaceAll('r206-official-1.0.2','r207-official-1.0.3');
+sw += '\n// Web application bundle identity: app-v207.js\n';
+fs.writeFileSync(`${dist}/app-v207.js`,js);
+fs.writeFileSync(`${dist}/index.html`,html);
+fs.writeFileSync(`${dist}/service-worker.js`,sw);
+fs.writeFileSync(`${dist}/release.json`,JSON.stringify({version:'1.0.3',revision:'r207-official-1.0.3',scope:'rewatch-navigation-recommendation-memory-f1-advanced-web-android',generatedAt:new Date().toISOString()},null,2));
+console.log('WEB_1_0_3_READY revision=r207-official-1.0.3');
