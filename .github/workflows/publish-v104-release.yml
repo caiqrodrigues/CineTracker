@@ -54,6 +54,7 @@ jobs:
         run: |
           set -euo pipefail
           B='apps/web/dist/app-v208.js'
+          test -f "$B"
           grep -Fq "const REVISION='r208-official-1.0.4'" "$B"
           grep -Fq "window.__ctR208='v104-authoritative-internal-runtime'" "$B"
           grep -Fq 'cinetracker_rewatch_counts_v104' "$B"
@@ -63,8 +64,9 @@ jobs:
           grep -Fq 'cinetracker-f1-v1' "$B"
           grep -Fq 'ct104EnsureF1' "$B"
           grep -Fq 'app-v208.js' apps/web/dist/index.html
-          grep -Fq 'app-v208.js' apps/web/dist/service-worker.js
+          grep -Fq "const VERSION='ct-web-1.0.4-r208'" apps/web/dist/service-worker.js
           grep -Fq '"version": "1.0.4"' apps/web/package.json
+          echo 'WEB_1_0_4_ASSETS_VALIDATED'
       - name: Prepare Android 1.0.4 authoritative runtime
         run: |
           set -euo pipefail
