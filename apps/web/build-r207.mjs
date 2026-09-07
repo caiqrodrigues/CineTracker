@@ -1,5 +1,9 @@
 import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+process.chdir(repo);
 execFileSync(process.execPath,['apps/web/build-r206.mjs'],{stdio:'inherit'});
 const dist='apps/web/dist';
 let html=fs.readFileSync(`${dist}/index.html`,'utf8');
