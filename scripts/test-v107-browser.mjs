@@ -6,12 +6,13 @@ let [runtime,hotfix]=await Promise.all([readFile(resolve(root,'apps/web/runtime-
 const cut=(src,a,b,label)=>{const i=src.indexOf(a),j=src.indexOf(b);if(i<0||j<0||j<=i)throw new Error('cannot strip '+label);return src.slice(0,i)+src.slice(j)};
 runtime=cut(runtime,'/* Canonical replay source:','/* Authoritative recommendation eligibility','overlapping replay authority');
 runtime=cut(runtime,'/* Instant route feedback:','/* Standalone public F1 hub','snapshot navigation interception');
+const f1Marker='/* Standalone public F1 hub';if(!runtime.includes(f1Marker))throw new Error('F1 marker missing');
+runtime=runtime.replace(f1Marker,"function rootFor(k){return q(k==='home'?'[data-home]':k==='discover'?'[data-discover]':k==='sports'?'[data-sports]':k==='profile'?'[data-profile]':k==='configs'?'[data-configs],[data-settings]':'main')}\n\n"+f1Marker);
 const oldDecorate="function decorateAll(){stamp();restoreSnapshot(routeKey());void decorateRewatch();if(routeKey()==='sports')void ensureF1(false);saveSnapshot()}";
 const newDecorate="function decorateAll(){stamp();if(routeKey()==='sports')void ensureF1(false)}";
 if(!runtime.includes(oldDecorate))throw new Error('legacy decorateAll composition missing');runtime=runtime.replace(oldDecorate,newDecorate);
 for(const bad of ['data-ct107-rewatch','ct107:snapshot:','restoreSnapshot(','decorateRewatch(','saveSnapshot('])if(runtime.includes(bad))throw new Error('obsolete v107 UI authority survived: '+bad);
-if(!hotfix.includes("window.__ctR214='v107-ui-regression-hotfix'"))throw new Error('r214 marker missing');
-if(!hotfix.includes('#ct-f1-v104{display:none!important}'))throw new Error('legacy F1 hide rule missing');
+if(!hotfix.includes("window.__ctR214='v107-ui-regression-hotfix'"))throw new Error('r214 marker missing');if(!hotfix.includes('#ct-f1-v104{display:none!important}'))throw new Error('legacy F1 hide rule missing');
 const fixtureDir=resolve('/tmp','sports-v107-hotfix-fixture');await mkdir(fixtureDir,{recursive:true});const fixture=resolve(fixtureDir,'index.html');
 const f1={season:2026,next:{round:'18',raceName:'Fixture GP',date:'2026-09-20',Circuit:{circuitName:'Fixture Circuit'},FirstPractice:{date:'2026-09-18',time:'10:00:00Z'},Qualifying:{date:'2026-09-19',time:'14:00:00Z'}},races:[{round:'18',raceName:'Fixture GP',date:'2026-09-20',Circuit:{circuitName:'Fixture Circuit'}}],drivers:{MRData:{StandingsTable:{StandingsLists:[{DriverStandings:[{position:'1',points:'250',Driver:{givenName:'Max',familyName:'Fixture'},Constructors:[{name:'Team A'}]}]}]}}},constructors:{MRData:{StandingsTable:{StandingsLists:[{ConstructorStandings:[{position:'1',points:'400',Constructor:{name:'Team A'}}]}]}}},results:{MRData:{RaceTable:{Races:[{Results:[{position:'1',Driver:{givenName:'Max',familyName:'Fixture'},Constructor:{name:'Team A'},Time:{time:'1:30:00'}}]}]}}},qualifying:{MRData:{RaceTable:{Races:[{QualifyingResults:[]} ]}}},sprint:null,pitstops:null,laps:null};
 const pre=`<script>
