@@ -12,10 +12,10 @@ window.ensureMedia=async(type,id)=>({id:type==='movie'?9001:9002,title:type==='m
 window.rpc=async(name,args)=>{if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_recommendation_state_v107')return {fresh_excluded:[],watchlist:[]};if(name==='cinetracker_mark_watch_v0994')return {plays:3};return []};
 window.fetch=async()=>({ok:true,json:async()=>${JSON.stringify(f1)}});
 </script>`;
-const post=`<script>setTimeout(()=>{const b=document.querySelector('[data-ct107-rewatch="episode"]');if(b)b.click()},700)</script>`;
+const post=`<script>{let n=0;const t=setInterval(()=>{n++;const b=document.querySelector('[data-ct107-rewatch="episode"]');if(b){clearInterval(t);b.click()}else if(n>30)clearInterval(t)},100)}</script>`;
 const html=`<!doctype html><html><head></head><body><div class="version"></div><main data-sports><div class="sports-summary card">10 jogos · 3 favoritos · 4 eventos</div><div class="card" id="keep-event">EVENT CARD PRESERVED</div><section><h2>Histórico recente</h2><div class="media-row" data-media="movie:123"><b>History Movie</b></div></section><div class="detail-view" data-media="movie:123"><button>✓ ASSISTIDO</button></div><div class="episode-row" data-media="tv:456" data-episode-number="2">E2 · Assistido</div></main>${pre}<script>${runtime.replaceAll('</script>','<\\/script>')}</script>${post}</body></html>`;
 await writeFile(fixture,html,'utf8');
-let out='';for(const bin of ['google-chrome','chromium','chromium-browser']){try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--virtual-time-budget=2500','--dump-dom','file://'+fixture],{encoding:'utf8',stdio:['ignore','pipe','pipe']});if(out)break}catch{}}
+let out='';for(const bin of ['google-chrome','chromium','chromium-browser']){try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--virtual-time-budget=4000','--dump-dom','file://'+fixture],{encoding:'utf8',stdio:['ignore','pipe','pipe']});if(out)break}catch{}}
 await rm(fixture,{force:true});if(!out)throw new Error('Chrome/Chromium unavailable');
 for(const must of ['EVENT CARD PRESERVED','id="ct-f1-v107"','Fixture GP','Fixture Circuit','data-ct107-rewatch="movie"','data-ct107-rewatch="episode"','Reassistir 3x','CineTracker • v1.0.7'])if(!out.includes(must))throw new Error('Browser behavior missing '+must);
 if(out.includes('sports-summary'))throw new Error('Old Sports summary still visible');
