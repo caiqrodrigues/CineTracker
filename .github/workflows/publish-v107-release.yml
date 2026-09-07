@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/publish-v107-release.yml'
       - 'apps/web/runtime-r211-v107-behavior.js'
+      - 'apps/web/runtime-r212-v107-rewatch-authority.js'
       - 'apps/web/build-r211.mjs'
       - 'apps/web/package.json'
       - 'package.json'
@@ -45,9 +46,15 @@ jobs:
         run: |
           set -euo pipefail
           node --check apps/web/runtime-r211-v107-behavior.js
+          node --check apps/web/runtime-r212-v107-rewatch-authority.js
           grep -Fq "window.__ctR211='v107-behavior-authority'" apps/web/runtime-r211-v107-behavior.js
+          grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" apps/web/runtime-r212-v107-rewatch-authority.js
+          grep -Fq 'getEnsureMedia' apps/web/runtime-r212-v107-rewatch-authority.js
+          grep -Fq 'getRpc' apps/web/runtime-r212-v107-rewatch-authority.js
           grep -Fq "cinetracker_mark_watch_v0994" apps/web/runtime-r211-v107-behavior.js
+          grep -Fq "cinetracker_mark_watch_v0994" apps/web/runtime-r212-v107-rewatch-authority.js
           ! grep -Fq "cinetracker_mark_episode_v0994" apps/web/runtime-r211-v107-behavior.js
+          ! grep -Fq "cinetracker_mark_episode_v0994" apps/web/runtime-r212-v107-rewatch-authority.js
           grep -Fq "cinetracker_recommendation_state_v107" apps/web/runtime-r211-v107-behavior.js
           grep -Fq "ct-f1-v107" apps/web/runtime-r211-v107-behavior.js
           grep -Fq "ct107:snapshot:" apps/web/runtime-r211-v107-behavior.js
@@ -68,6 +75,7 @@ jobs:
           set -euo pipefail
           test -f apps/web/dist/app-v211.js
           grep -Fq "window.__ctR211='v107-behavior-authority'" apps/web/dist/app-v211.js
+          grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" apps/web/dist/app-v211.js
           grep -Fq 'data-ct107-rewatch' apps/web/dist/app-v211.js
           grep -Fq 'cinetracker_recommendation_state_v107' apps/web/dist/app-v211.js
           grep -Fq 'ct-f1-v107' apps/web/dist/app-v211.js
@@ -100,6 +108,7 @@ jobs:
           grep -Fq '<script data-ct-android="r249-android-js">' /tmp/ct107-index.html
           grep -Fq "const REVISION='r249-android-official-1.0.7'" /tmp/ct107-index.html
           grep -Fq "window.__ctR211='v107-behavior-authority'" /tmp/ct107-index.html
+          grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" /tmp/ct107-index.html
           grep -Fq 'cinetracker_mark_watch_v0994' /tmp/ct107-index.html
           grep -Fq 'cinetracker_recommendation_state_v107' /tmp/ct107-index.html
           grep -Fq 'ct-f1-v107' /tmp/ct107-index.html
