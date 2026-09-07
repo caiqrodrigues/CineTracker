@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10046
-        versionName '1.0.4'
+        versionCode 10047
+        versionName '1.0.5'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Official release 1.0.4 — versionCode 10046. Runtime injected inside the validated r243 scope before boot(): History/movie/episode rewatch counters, instant global navigation, persistent recommendation memory, standardized Android cards and authenticated F1 Hub.
+// CineTracker 1.0.5 — versionCode 10047. Preserves validated card geometry and fixes visible rewatch controls/counts, recommendation session memory, F1 data loading, and route feedback.
