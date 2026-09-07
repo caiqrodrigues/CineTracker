@@ -1,0 +1,92 @@
+name: Validate CineTracker 1.0.7 UI Hotfix
+on:
+  workflow_dispatch:
+  push:
+    branches: [hotfix/1.0.7-ui-regressions]
+    paths:
+      - '.github/workflows/validate-v107-ui-hotfix.yml'
+      - 'apps/web/runtime-r211-v107-behavior.js'
+      - 'apps/web/runtime-r214-v107-ui-hotfix.js'
+      - 'apps/web/build-r211.mjs'
+      - 'scripts/prepare-android-v1007.mjs'
+      - 'scripts/test-v107-browser.mjs'
+      - 'apps/android/app/build.gradle'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Validate source syntax and authority model
+        run: |
+          set -euo pipefail
+          node --check apps/web/runtime-r211-v107-behavior.js
+          node --check apps/web/runtime-r214-v107-ui-hotfix.js
+          node --check scripts/test-v107-browser.mjs
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" apps/web/runtime-r214-v107-ui-hotfix.js
+          grep -Fq '#ct-f1-v104{display:none!important}' apps/web/runtime-r214-v107-ui-hotfix.js
+          grep -Fq 'cinetracker_mark_watch_v0994' apps/web/runtime-r214-v107-ui-hotfix.js
+      - name: Browser behavior hotfix fixture
+        run: node scripts/test-v107-browser.mjs
+      - name: Build Web hotfix
+        run: node apps/web/build-r211.mjs
+      - name: Inspect built Web authority
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v211.js
+          test -f "$B"
+          grep -Fq "window.__ctR211='v107-behavior-authority'" "$B"
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" "$B"
+          grep -Fq 'data-ct214-rewatch' "$B"
+          grep -Fq 'ct-f1-v107' "$B"
+          grep -Fq '#ct-f1-v104{display:none!important}' "$B"
+          ! grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" "$B"
+          ! grep -Fq "window.__ctR213='v107-sports-summary-authority'" "$B"
+          ! grep -Fq 'ct107:snapshot:' "$B"
+          ! grep -Fq 'data-ct107-rewatch' "$B"
+          ! grep -Fq 'cinetracker_mark_episode_v0994' "$B"
+          grep -Fq 'ct-web-1.0.7-r211-hotfix1' apps/web/dist/service-worker.js
+      - name: Prepare Android hotfix
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0.7'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10049' apps/android/app/build.gradle
+          node scripts/prepare-android-v1007.mjs
+      - name: Inspect prepared Android runtime
+        run: |
+          set -euo pipefail
+          H=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq '<script data-ct-android="r249-android-js">' "$H"
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" "$H"
+          grep -Fq 'data-ct214-rewatch' "$H"
+          grep -Fq 'ct-f1-v107' "$H"
+          ! grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" "$H"
+          ! grep -Fq "window.__ctR213='v107-sports-summary-authority'" "$H"
+          ! grep -Fq 'ct107:snapshot:' "$H"
+          ! grep -Fq 'data-ct107-rewatch' "$H"
+          ! grep -Fq 'cinetracker_mark_episode_v0994' "$H"
+      - name: Build Android APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Inspect APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          unzip -p "$APK" assets/hotfix5/index.html > /tmp/hotfix.html
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" /tmp/hotfix.html
+          grep -Fq 'data-ct214-rewatch' /tmp/hotfix.html
+          grep -Fq 'ct-f1-v107' /tmp/hotfix.html
+          ! grep -Fq "window.__ctR212='v107-direct-rewatch-authority'" /tmp/hotfix.html
+          ! grep -Fq "window.__ctR213='v107-sports-summary-authority'" /tmp/hotfix.html
+          ! grep -Fq 'ct107:snapshot:' /tmp/hotfix.html
+          sha256sum "$APK"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.7-ui-hotfix-validation
+          path: apps/android/app/build/outputs/apk/debug/app-debug.apk
