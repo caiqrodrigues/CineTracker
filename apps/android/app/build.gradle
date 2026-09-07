@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10044
-        versionName '1.0.2'
+        versionCode 10045
+        versionName '1.0.3'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Official release 1.0.2 — versionCode 10044. Functional movie/episode rewatch counters, Sports summary removal and F1 Hub, preserving the validated Watchlist pool and native Android Top 10 behavior.
+// Official release 1.0.3 — versionCode 10045. Correct Supabase rewatch source of truth, instant global navigation/detail close, persistent Pra voce recommendation memory and advanced F1 data, preserving Watchlist and native Android Top 10.
