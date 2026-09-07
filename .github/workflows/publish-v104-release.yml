@@ -1,5 +1,4 @@
 name: Publish CineTracker v1.0.4 Release
-
 on:
   workflow_dispatch:
   push:
@@ -13,10 +12,10 @@ on:
       - 'scripts/prepare-android-v1004.mjs'
       - 'scripts/test-android-v1004.mjs'
       - 'scripts/test-v104-runtime.mjs'
+      - 'scripts/validate-web-v104.mjs'
       - 'apps/android/app/build.gradle'
       - 'supabase/migrations/20260907153000_v104_rewatch_counts.sql'
       - 'supabase/functions/cinetracker-f1-v1/index.ts'
-
 permissions:
   contents: write
 concurrency:
@@ -33,7 +32,7 @@ jobs:
       - uses: actions/setup-java@v5
         with: { distribution: temurin, java-version: '17' }
       - uses: gradle/actions/setup-gradle@v4
-      - name: Restore CineTracker signing key
+      - name: Restore signing key
         uses: actions/cache@v4
         with:
           path: ~/.cinetracker/cinetracker.keystore
@@ -46,27 +45,12 @@ jobs:
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - name: Install behavior-test runtime
         run: npm install --no-save --no-package-lock jsdom@24.1.3
-      - name: Run behavior-level 1.0.4 tests
+      - name: Behavior validation
         run: node scripts/test-v104-runtime.mjs
-      - name: Build Web 1.0.4 from clean internal runtime
+      - name: Build Web 1.0.4
         run: node apps/web/build-r208.mjs
-      - name: Validate Web internal runtime and assets
-        run: |
-          set -euo pipefail
-          B='apps/web/dist/app-v208.js'
-          test -f "$B"
-          grep -Fq "const REVISION='r208-official-1.0.4'" "$B"
-          grep -Fq "window.__ctR208='v104-authoritative-internal-runtime'" "$B"
-          grep -Fq 'cinetracker_rewatch_counts_v104' "$B"
-          grep -Fq 'ct104DecorateHistory' "$B"
-          grep -Fq 'cinetracker_recommendation_memory_v101' "$B"
-          grep -Fq 'cinetracker_recommendation_record_v101' "$B"
-          grep -Fq 'cinetracker-f1-v1' "$B"
-          grep -Fq 'ct104EnsureF1' "$B"
-          grep -Fq 'app-v208.js' apps/web/dist/index.html
-          grep -Fq "const VERSION='ct-web-1.0.4-r208'" apps/web/dist/service-worker.js
-          grep -Fq '"version": "1.0.4"' apps/web/package.json
-          echo 'WEB_1_0_4_ASSETS_VALIDATED'
+      - name: Validate Web 1.0.4
+        run: node scripts/validate-web-v104.mjs
       - name: Prepare Android 1.0.4 authoritative runtime
         run: |
           set -euo pipefail
@@ -77,7 +61,7 @@ jobs:
       - name: Build APK
         working-directory: apps/android
         run: gradle assembleDebug --stacktrace
-      - name: Validate final APK runtime, version and signature
+      - name: Validate final APK
         run: |
           set -euo pipefail
           APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
@@ -101,8 +85,8 @@ jobs:
           grep -Fq -- '--ct104-card-w' /tmp/ct104-index.html
           grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' /tmp/ct104-index.html
           grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct104-index.html
-          if grep -Fq "window.__ctR244='f1-hub-rewatch-functional-sports-cleanup-android'" /tmp/ct104-index.html; then exit 1; fi
-          if grep -Fq "window.__ctR245='v103-rewatch-navigation-recommendations-f1-android'" /tmp/ct104-index.html; then exit 1; fi
+          ! grep -Fq "window.__ctR244='f1-hub-rewatch-functional-sports-cleanup-android'" /tmp/ct104-index.html
+          ! grep -Fq "window.__ctR245='v103-rewatch-navigation-recommendations-f1-android'" /tmp/ct104-index.html
           "$APKSIGNER" verify --print-certs "$OUT"
           sha256sum "$OUT" | tee CineTracker-1.0.4-SHA256.txt
           stat -c '%s' "$OUT" | tee CineTracker-1.0.4-size.txt
@@ -119,15 +103,14 @@ jobs:
           set -euo pipefail
           NOTES=$(cat <<'EOF'
           # CineTracker 1.0.4
-          - Runtime Web/Android 1.0.4 executa dentro do escopo principal antes do boot, não em overlay externo
-          - Reassistir no Histórico para filmes e episódios com 2x, 3x, 4x... e mesma fonte persistente dos detalhes/Perfil/tempo assistido
-          - Contadores de reassistidas carregados pelo RPC cinetracker_rewatch_counts_v104
-          - Navegação global troca de aba imediatamente e fecha detalhes sem exigir X
-          - Pra você usa memória persistente: 100% novos não repetem, Trocar descarta, Watchlist respeita cooldown de 30 dias e categorias independentes
-          - Android padroniza cards pelo tamanho do Descobrir com três cards visíveis, incluindo Perfil e listas reutilizadas
-          - Sports remove somente o resumo/status antigo; Estatísticas do Perfil permanecem
-          - F1 Hub autenticado via Supabase: próximo GP, calendário, pilotos, construtores, último GP, classificação, Sprint, pit stops e voltas
-          - Preservados Watchlist r243 e Top 10 nativo Android
+          - Runtime Web/Android executado dentro do escopo principal antes do boot
+          - Reassistir no Histórico e episódios com contagem persistente 2x, 3x, 4x...
+          - Navegação global imediata e fechamento automático de detalhes
+          - Pra você com memória persistente, descarte por Trocar e cooldown Watchlist de 30 dias
+          - Cards Android padronizados em três visíveis, incluindo Perfil e listas expandidas
+          - Estatísticas do Perfil preservadas; somente resumo/status antigo de Sports removido
+          - F1 Hub via Supabase: próximo GP, calendário, pilotos, construtores, resultados, classificação, Sprint, pit stops e voltas
+          - Watchlist r243 e Top 10 nativo preservados
           EOF
           )
           if gh release view v1.0.4 >/dev/null 2>&1; then
@@ -136,7 +119,7 @@ jobs:
           else
             gh release create v1.0.4 CineTracker-1.0.4.apk CineTracker-1.0.4-SHA256.txt CineTracker-1.0.4-size.txt --target "$GITHUB_SHA" --title 'CineTracker 1.0.4' --notes "$NOTES" --latest
           fi
-      - name: Verify published release assets
+      - name: Verify published assets
         env: { GH_TOKEN: '${{ github.token }}' }
         run: |
           set -euo pipefail
