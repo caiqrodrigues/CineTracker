@@ -12,9 +12,9 @@ function mediaTmdb(x){return Number(x?.id||x?.tmdb_id||0)}
 async function discoverRows(){return {}}
 function go(){}
 function toast(){}
-async function ensureMedia(type,id){return {id:type==='movie'?9001:9002,title:type==='movie'?'Movie Fixture':'Series Fixture',runtime_minutes:100}}
-async function rpc(name,args){if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_recommendation_state_v107')return {fresh_excluded:[],watchlist:[]};if(name==='cinetracker_mark_watch_v0994'){window.__markCalls++;document.body.dataset.markCalls=String(window.__markCalls);return {plays:3}};return []}
-window.__ctV107EnsureMedia=(type,id)=>ensureMedia(type,id);window.__ctV107Rpc=(name,args)=>rpc(name,args);
+async function rpc(name,args){if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_recommendation_state_v107')return {fresh_excluded:[],watchlist:[]};return []}
+window.__ctV107EnsureMedia=async(type,id)=>({id:type==='movie'?9001:9002,title:type==='movie'?'Movie Fixture':'Series Fixture',runtime_minutes:100});
+window.__ctV107Rpc=async(name,args)=>{if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_mark_watch_v0994'){window.__markCalls++;document.body.dataset.markCalls=String(window.__markCalls);return {plays:3}};return []};
 window.fetch=async()=>({ok:true,json:async()=>${JSON.stringify(f1)}});
 </script>`;
 const bundle=`<script>${authority.replaceAll('</script>','<\\/script>')}\n${runtime.replaceAll('</script>','<\\/script>')}</script>`;
