@@ -1,0 +1,140 @@
+name: Publish CineTracker v1.0.3 Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [release/1.0.3]
+    paths:
+      - '.github/workflows/publish-v103-release.yml'
+      - 'apps/web/runtime-r207-v103.js'
+      - 'apps/web/build-r207.mjs'
+      - 'apps/web/package.json'
+      - 'package.json'
+      - 'scripts/prepare-android-v1003.mjs'
+      - 'scripts/test-android-v1003.mjs'
+      - 'apps/android/app/build.gradle'
+
+permissions:
+  contents: write
+concurrency:
+  group: cinetracker-publish-v103-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Restore CineTracker signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install signing key
+        run: |
+          set -euo pipefail
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - name: Build Web 1.0.3 bundle
+        run: node apps/web/build-r207.mjs
+      - name: Assert Web 1.0.3 functional runtime
+        run: |
+          set -euo pipefail
+          B='apps/web/dist/app-v207.js'
+          grep -Fq 'r207-official-1.0.3' "$B"
+          grep -Fq 'rpc-signature-source-of-truth' "$B"
+          grep -Fq 'p_media_id:x.mediaId' "$B"
+          grep -Fq 'p_item_type:x.itemType' "$B"
+          grep -Fq 'p_season_number:x.itemType' "$B"
+          grep -Fq 'p_episode_number:x.itemType' "$B"
+          grep -Fq 'instant-global-nav-closes-details' "$B"
+          grep -Fq 'cinetracker_recommendation_memory_v101' "$B"
+          grep -Fq 'cinetracker_recommendation_record_v101' "$B"
+          grep -Fq 'current/last/pitstops' "$B"
+          grep -Fq 'current/last/laps' "$B"
+          grep -Fq 'current/last/sprint' "$B"
+          grep -Fq 'Sprint Shootout' "$B"
+      - name: Assert Web final assets
+        run: |
+          set -euo pipefail
+          grep -Fq 'app-v207.js' apps/web/dist/index.html
+          grep -Fq 'app-v207.js' apps/web/dist/service-worker.js
+          grep -Fq '"version": "1.0.3"' apps/web/package.json
+      - name: Prepare Android 1.0.3
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0.3'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10045' apps/android/app/build.gradle
+          node scripts/prepare-android-v1003.mjs
+          node scripts/test-android-v1003.mjs
+      - name: Build APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Validate and package APK
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-1.0.3.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='1.0.3'" <<<"$BADGING"
+          grep -Fq "versionCode='10045'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct103-index.html
+          grep -Fq 'name="ct-official-version" content="1.0.3"' /tmp/ct103-index.html
+          grep -Fq "window.__ctR245='v103-rewatch-navigation-recommendations-f1-android'" /tmp/ct103-index.html
+          grep -Fq 'p_media_id:x.mediaId' /tmp/ct103-index.html
+          grep -Fq 'p_season_number:x.itemType' /tmp/ct103-index.html
+          grep -Fq 'cinetracker_recommendation_memory_v101' /tmp/ct103-index.html
+          grep -Fq 'instant-global-nav-closes-details' /tmp/ct103-index.html
+          grep -Fq 'current/last/pitstops' /tmp/ct103-index.html
+          grep -Fq 'current/last/laps' /tmp/ct103-index.html
+          grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' /tmp/ct103-index.html
+          grep -Fq 'native-webview-horizontal-no-manual-touch' /tmp/ct103-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee CineTracker-1.0.3-SHA256.txt
+          stat -c '%s' "$OUT" | tee CineTracker-1.0.3-size.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.3
+          path: |
+            CineTracker-1.0.3.apk
+            CineTracker-1.0.3-SHA256.txt
+            CineTracker-1.0.3-size.txt
+      - name: Publish GitHub Release v1.0.3
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          set -euo pipefail
+          NOTES=$(cat <<'EOF'
+          # CineTracker 1.0.3
+          - Reassistir corrigido contra a assinatura real do Supabase para filmes e episódios, com 2x, 3x, 4x... persistentes
+          - Histórico, detalhes, Perfil e estatísticas recebem o mesmo evento/fonte de atualização
+          - Navegação global fecha detalhes automaticamente e troca de aba sem exigir o X
+          - Memória persistente do Pra você integrada aos RPCs v1.0.1 já existentes
+          - Descobrir mantém filtros em uma única linha horizontal e Top 10 isolado
+          - F1 ampliada com sessões de fim de semana, Sprint, classificação/corrida, pit stops e voltas via Jolpica
+          - Preservados Watchlist pool e Top 10 nativo Android
+          - Android 1.0.3 / versionCode 10045 validado por aapt e apksigner
+          EOF
+          )
+          if gh release view v1.0.3 >/dev/null 2>&1; then
+            gh release upload v1.0.3 CineTracker-1.0.3.apk CineTracker-1.0.3-SHA256.txt CineTracker-1.0.3-size.txt --clobber
+            gh release edit v1.0.3 --title 'CineTracker 1.0.3' --notes "$NOTES" --latest
+          else
+            gh release create v1.0.3 CineTracker-1.0.3.apk CineTracker-1.0.3-SHA256.txt CineTracker-1.0.3-size.txt --target "$GITHUB_SHA" --title 'CineTracker 1.0.3' --notes "$NOTES" --latest
+          fi
+      - name: Verify published assets
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          set -euo pipefail
+          gh release view v1.0.3 --json tagName,name,isDraft,isPrerelease,url,assets > /tmp/release.json
+          grep -Fq 'CineTracker-1.0.3.apk' /tmp/release.json
+          grep -Fq 'CineTracker-1.0.3-SHA256.txt' /tmp/release.json
+          cat /tmp/release.json
