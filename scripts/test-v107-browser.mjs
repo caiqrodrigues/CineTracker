@@ -14,7 +14,7 @@ function go(){}
 function toast(){}
 async function ensureMedia(type,id){return {id:type==='movie'?9001:9002,title:type==='movie'?'Movie Fixture':'Series Fixture',runtime_minutes:100}}
 async function rpc(name,args){if(name==='cinetracker_rewatch_counts_v104')return [{item_type:'movie',tmdb_id:123,plays:1},{item_type:'episode',tmdb_id:456,season_number:1,episode_number:2,plays:2}];if(name==='cinetracker_recommendation_state_v107')return {fresh_excluded:[],watchlist:[]};if(name==='cinetracker_mark_watch_v0994'){window.__markCalls++;document.body.dataset.markCalls=String(window.__markCalls);return {plays:3}};return []}
-globalThis.ensureMedia=ensureMedia;globalThis.rpc=rpc;globalThis.mediaTmdb=mediaTmdb;globalThis.discoverRows=discoverRows;globalThis.go=go;globalThis.toast=toast;
+window.__ctV107EnsureMedia=(type,id)=>ensureMedia(type,id);window.__ctV107Rpc=(name,args)=>rpc(name,args);
 window.fetch=async()=>({ok:true,json:async()=>${JSON.stringify(f1)}});
 </script>`;
 const bundle=`<script>${authority.replaceAll('</script>','<\\/script>')}\n${runtime.replaceAll('</script>','<\\/script>')}</script>`;
@@ -26,4 +26,4 @@ await rm(fixture,{force:true});if(!out)throw new Error('Chrome/Chromium unavaila
 for(const must of ['EVENT CARD PRESERVED','id="ct-f1-v107"','Fixture GP','Fixture Circuit','data-ct107-rewatch="movie"','data-ct107-rewatch="episode"','data-ct212-bound="1"','data-mark-calls="1"','Reassistir 3x','CineTracker • v1.0.7'])if(!out.includes(must)){console.log('REWATCH_DOM',out.match(/<button[^>]*data-ct107-rewatch[^>]*>[^<]*/g));console.log('BODY_MARK',out.match(/data-mark-calls="[^"]+"/g));console.log('R212_STAGE',out.match(/data-ct212-stage="[^"]+"/g));console.log('CHROME_ERR',stderr.slice(-1500));throw new Error('Browser behavior missing '+must)}
 if(out.includes('sports-summary'))throw new Error('Old Sports summary still visible');
 const legacy=out.match(/<button[^>]*data-ct104-rewatch[^>]*>/)?.[0]||'';if(!legacy.includes('display: none'))throw new Error('Legacy replay control is not hidden');
-console.log('V107_BROWSER_BEHAVIOR_OK f1=visible rewatch=movie+episode+history first_capture=r212 canonical=mark_watch sports_summary=removed legacy=hidden event=preserved');
+console.log('V107_BROWSER_BEHAVIOR_OK f1=visible rewatch=movie+episode+history first_capture=r212 canonical=mark_watch bridge=explicit sports_summary=removed legacy=hidden event=preserved');
