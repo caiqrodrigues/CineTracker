@@ -51,6 +51,6 @@ w.document.querySelector('#app').innerHTML='<div data-sports><div data-sports-su
 w.paintSports();await new Promise(r=>setTimeout(r,30));
 assert.ok(w.document.querySelector('#ct-f1-v104'),'Sports must render F1 Hub');
 assert.equal(w.document.querySelector('[data-sports-summary]'),null,'Sports status summary must be removed');
-assert.match(w.shell(),'v1.0.4','Shell must paint 1.0.4 identity');
+assert.ok(w.shell().includes('v1.0.4'),'Shell must paint 1.0.4 identity');
 console.log('V104_BEHAVIOR_TEST_OK history=movie+episode counts=shared rpc=canonical recommendations=no-repeat+30d nav=instant sports=f1');
 dom.window.close();
