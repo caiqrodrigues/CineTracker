@@ -16,18 +16,17 @@ let [patch,rewatch]=await Promise.all([
  readFile(resolve(root,'apps/web/runtime-r212-v107-rewatch-authority.js'),'utf8')
 ]);
 for(const m of ["window.__ctR211='v107-behavior-authority'",'cinetracker_mark_watch_v0994','cinetracker_recommendation_state_v107','data-ct107-rewatch','ct-f1-v107','ct107:snapshot:'])if(!patch.includes(m))throw new Error('Android 1.0.7 runtime missing '+m);
-for(const m of ["window.__ctR212='v107-direct-rewatch-authority'",'ct212Bound','cinetracker_mark_watch_v0994','stopImmediatePropagation'])if(!rewatch.includes(m))throw new Error('Android 1.0.7 replay authority missing '+m);
+for(const m of ["window.__ctR212='v107-direct-rewatch-authority'",'ct212Bound','cinetracker_mark_watch_v0994','stopImmediatePropagation','__ctV107EnsureMedia','__ctV107Rpc'])if(!rewatch.includes(m))throw new Error('Android 1.0.7 replay authority missing '+m);
 if(patch.includes('cinetracker_mark_episode_v0994')||rewatch.includes('cinetracker_mark_episode_v0994'))throw new Error('Android 1.0.7 new runtimes must not call nonexistent episode RPC');
 patch=patch.replace("const A=typeof CT104_ANDROID!=='undefined'&&CT104_ANDROID;","const A=true;");
 if(!patch.includes('const A=true;'))throw new Error('Android 1.0.7 platform flag failed');
-// Disable the broken legacy 1.0.4 episode RPC. The new r212 controls own replay.
 js=js.replaceAll("'cinetracker_mark_episode_v0994'","'cinetracker_legacy_episode_disabled_v107'").replaceAll('"cinetracker_mark_episode_v0994"','"cinetracker_legacy_episode_disabled_v107"');
 js=js.replaceAll('r246-android-official-1.0.4','r249-android-official-1.0.7').replaceAll('CineTracker • v1.0.4','CineTracker • v1.0.7').replaceAll("window.__ctOfficialVersion='1.0.4'","window.__ctOfficialVersion='1.0.7'").replaceAll("window.__ctAndroidOfficialVersion='1.0.4'","window.__ctAndroidOfficialVersion='1.0.7'").replaceAll('window.__ctAndroidOfficialCode=10046','window.__ctAndroidOfficialCode=10049').replaceAll("window.__ctAndroidRelease='1.0.4'","window.__ctAndroidRelease='1.0.7'");
-// r212 MUST register before r211 so the replay capture owner wins before legacy/delegated handlers.
-js=js.replace('\nboot();','\n'+rewatch+'\n'+patch+'\nboot();');
+const bridge="window.__ctV107Rpc=(name,args)=>rpc(name,args);window.__ctV107EnsureMedia=(type,id)=>ensureMedia(type,id);";
+js=js.replace('\nboot();','\n'+bridge+'\n'+rewatch+'\n'+patch+'\nboot();');
 html=html.slice(0,a)+`<script data-ct-android="r249-android-js">${js}</script>`+html.slice(b+'</script>'.length);
 html=html.replaceAll('content="1.0.4"','content="1.0.7"').replaceAll('ct-android-v1004','ct-android-v1007').replaceAll('r246-authoritative-internal-runtime','r249-behavior-authority');
-for(const good of ["const REVISION='r249-android-official-1.0.7';","window.__ctR211='v107-behavior-authority'","window.__ctR212='v107-direct-rewatch-authority'",'const A=true;','cinetracker_mark_watch_v0994','cinetracker_recommendation_state_v107','data-ct107-rewatch','ct-f1-v107','--ct104-card-w','watchlist-swap-uses-active-ct186-selected-pool','native-webview-horizontal-no-manual-touch'])if(!html.includes(good))throw new Error('Android 1.0.7 final runtime missing '+good);
+for(const good of ["const REVISION='r249-android-official-1.0.7';","window.__ctR211='v107-behavior-authority'","window.__ctR212='v107-direct-rewatch-authority'",'__ctV107Rpc','__ctV107EnsureMedia','const A=true;','cinetracker_mark_watch_v0994','cinetracker_recommendation_state_v107','data-ct107-rewatch','ct-f1-v107','--ct104-card-w','watchlist-swap-uses-active-ct186-selected-pool','native-webview-horizontal-no-manual-touch'])if(!html.includes(good))throw new Error('Android 1.0.7 final runtime missing '+good);
 for(const bad of ["window.__ctR209='v105-video-corrections'","window.__ctR210='v106-scope-safe-runtime'",'cinetracker_mark_episode_v0994'])if(html.includes(bad))throw new Error('Android 1.0.7 leaked rejected runtime/API '+bad);
 await writeFile(indexPath,html,'utf8');
-console.log('ANDROID_1_0_7_READY runtime=r249/r212-first-capture base=r246/r243');
+console.log('ANDROID_1_0_7_READY runtime=r249/r212-explicit-bridge base=r246/r243');
