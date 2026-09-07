@@ -1,0 +1,118 @@
+name: Publish CineTracker v1.0.6 Release
+on:
+  workflow_dispatch:
+  push:
+    branches: [release/1.0.6]
+    paths:
+      - '.github/workflows/publish-v106-release.yml'
+      - 'apps/web/runtime-r210-v106-safe.js'
+      - 'apps/web/build-r210.mjs'
+      - 'apps/web/package.json'
+      - 'package.json'
+      - 'scripts/prepare-android-v1006.mjs'
+      - 'scripts/test-android-v1006.mjs'
+      - 'scripts/test-v106-runtime.mjs'
+      - 'scripts/validate-web-v106.mjs'
+      - 'apps/android/app/build.gradle'
+permissions:
+  contents: write
+concurrency:
+  group: cinetracker-publish-v106-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Restore signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Install signing key
+        run: |
+          set -euo pipefail
+          test -f ~/.cinetracker/cinetracker.keystore
+          mkdir -p ~/.android
+          cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
+      - name: Validate 1.0.6 runtime source
+        run: node scripts/test-v106-runtime.mjs
+      - name: Build Web 1.0.6
+        run: node apps/web/build-r210.mjs
+      - name: Validate Web 1.0.6
+        run: node scripts/validate-web-v106.mjs
+      - name: Prepare Android 1.0.6
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0.6'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10048' apps/android/app/build.gradle
+          node scripts/prepare-android-v1006.mjs
+          node scripts/test-android-v1006.mjs
+      - name: Build APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+      - name: Validate final APK
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
+          OUT='CineTracker-1.0.6.apk'
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$OUT")"
+          grep -Fq "versionName='1.0.6'" <<<"$BADGING"
+          grep -Fq "versionCode='10048'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct106-index.html
+          grep -Fq '<script data-ct-android="r248-android-js">' /tmp/ct106-index.html
+          grep -Fq "const REVISION='r248-android-official-1.0.6'" /tmp/ct106-index.html
+          grep -Fq "window.__ctR210='v106-scope-safe-runtime'" /tmp/ct106-index.html
+          grep -Fq 'data-ct106-rewatch-movie' /tmp/ct106-index.html
+          grep -Fq 'data-ct106-rewatch-episode' /tmp/ct106-index.html
+          grep -Fq 'data-ct106-history-rewatch' /tmp/ct106-index.html
+          grep -Fq 'cinetracker-f1-v1' /tmp/ct106-index.html
+          grep -Fq -- '--ct104-card-w' /tmp/ct106-index.html
+          ! grep -Fq "window.__ctR209='v105-video-corrections'" /tmp/ct106-index.html
+          ! grep -Fq 'ct104PaintF1=async function' /tmp/ct106-index.html
+          "$APKSIGNER" verify --print-certs "$OUT"
+          sha256sum "$OUT" | tee CineTracker-1.0.6-SHA256.txt
+          stat -c '%s' "$OUT" | tee CineTracker-1.0.6-size.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.6
+          path: |
+            CineTracker-1.0.6.apk
+            CineTracker-1.0.6-SHA256.txt
+            CineTracker-1.0.6-size.txt
+      - name: Publish GitHub Release v1.0.6
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          set -euo pipefail
+          NOTES=$(cat <<'EOF'
+          # CineTracker 1.0.6
+          - Rebuild a partir da base Web/Android 1.0.4 funcional, sem carregar o runtime r209 da 1.0.5
+          - Corrige a tela preta causada por acesso a símbolos privados do runtime 1.0.4
+          - Mantém a geometria de cards aprovada na 1.0.4
+          - Reassistir visível em filme, episódios e Histórico com contadores persistentes
+          - F1 Hub independente via Edge Function v2
+          - Feedback imediato de navegação inferior
+          EOF
+          )
+          if gh release view v1.0.6 >/dev/null 2>&1; then
+            gh release upload v1.0.6 CineTracker-1.0.6.apk CineTracker-1.0.6-SHA256.txt CineTracker-1.0.6-size.txt --clobber
+            gh release edit v1.0.6 --title 'CineTracker 1.0.6' --notes "$NOTES" --latest
+          else
+            gh release create v1.0.6 CineTracker-1.0.6.apk CineTracker-1.0.6-SHA256.txt CineTracker-1.0.6-size.txt --target "$GITHUB_SHA" --title 'CineTracker 1.0.6' --notes "$NOTES" --latest
+          fi
+      - name: Verify published assets
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          set -euo pipefail
+          gh release view v1.0.6 --json tagName,name,url,assets > /tmp/release.json
+          grep -Fq 'CineTracker-1.0.6.apk' /tmp/release.json
+          cat /tmp/release.json
