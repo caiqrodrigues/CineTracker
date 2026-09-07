@@ -1,12 +1,12 @@
-/* CineTracker 1.0.7 replay authority: first capture owner + scope-safe app adapters. */
+/* CineTracker 1.0.7 replay authority: first capture owner + explicit app bridges. */
 (()=>{
 'use strict';
 window.__ctR212='v107-direct-rewatch-authority';
 const n=v=>{const x=Number(v);return Number.isFinite(x)?x:0};
 const mark=s=>{try{document.body.dataset.ct212Stage=s}catch{}};
 const key=(kind,tmdb,s=0,e=0)=>kind==='episode'?`episode:${tmdb}:${s}:${e}`:`movie:${tmdb}`;
-const getRpc=()=>{try{if(typeof rpc==='function')return rpc}catch{};if(typeof globalThis.rpc==='function')return globalThis.rpc;throw new Error('rpc unavailable')};
-const getEnsureMedia=()=>{try{if(typeof ensureMedia==='function')return ensureMedia}catch{};if(typeof globalThis.ensureMedia==='function')return globalThis.ensureMedia;throw new Error('ensureMedia unavailable')};
+const getRpc=()=>{if(typeof globalThis.__ctV107Rpc==='function')return globalThis.__ctV107Rpc;try{if(typeof rpc==='function')return rpc}catch{};if(typeof globalThis.rpc==='function')return globalThis.rpc;throw new Error('rpc unavailable')};
+const getEnsureMedia=()=>{if(typeof globalThis.__ctV107EnsureMedia==='function')return globalThis.__ctV107EnsureMedia;try{if(typeof ensureMedia==='function')return ensureMedia}catch{};if(typeof globalThis.ensureMedia==='function')return globalThis.ensureMedia;throw new Error('ensureMedia unavailable')};
 const callRpc=(name,args)=>getRpc()(name,args),ensure=(type,id)=>getEnsureMedia()(type,id);
 const cache=new Map();let loadedAt=0,task=null;
 async function load(force=false){if(!force&&Date.now()-loadedAt<10000)return cache;if(task)return task;task=(async()=>{try{const rows=await callRpc('cinetracker_rewatch_counts_v104',{});cache.clear();for(const x of Array.isArray(rows)?rows:[])cache.set(key(String(x.item_type),n(x.tmdb_id),n(x.season_number),n(x.episode_number)),Math.max(1,n(x.plays)||1));loadedAt=Date.now()}catch{}return cache})().finally(()=>task=null);return task}
