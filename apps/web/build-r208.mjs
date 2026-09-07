@@ -15,9 +15,11 @@ js=once(js,'CineTracker • v1.0.1 • ${REVISION}','CineTracker • v1.0.4 • 
 js=once(js,"JSON.stringify({version:'1.0.1',revision:REVISION","JSON.stringify({version:'1.0.4',revision:REVISION",'snapshot');
 js=js.replace('\nboot();','\n'+patch+'\nboot();');
 html=html.replaceAll('r205-official-1.0.1','r208-official-1.0.4').replaceAll('app-v205.js','app-v208.js').replaceAll('app-v205.css','app-v208.css');
-sw=sw.replace(/const VERSION='[^']+';/,"const VERSION='ct-web-1.0.4-r208';").replaceAll('r205-official-1.0.1','r208-official-1.0.4').replaceAll('app-v205.js','app-v208.js').replaceAll('app-v205.css','app-v208.css');
+const swVersion=/const\s+VERSION\s*=\s*['"][^'"]+['"]\s*;/;
+if(!swVersion.test(sw))throw new Error('Web 1.0.4 service worker VERSION declaration missing');
+sw=sw.replace(swVersion,"const VERSION='ct-web-1.0.4-r208';").replaceAll('r205-official-1.0.1','r208-official-1.0.4').replaceAll('app-v205.js','app-v208.js').replaceAll('app-v205.css','app-v208.css');
 await Promise.all([
  writeFile(resolve(dist,'index.html'),html,'utf8'),writeFile(resolve(dist,'app-v208.js'),js,'utf8'),writeFile(resolve(dist,'app-v208.css'),css,'utf8'),writeFile(resolve(dist,'service-worker.js'),sw,'utf8'),writeFile(resolve(dist,'release.json'),JSON.stringify({version:'1.0.4',revision:'r208-official-1.0.4',runtime:'authoritative-internal-before-boot',rewatch:'history+movie+episode-shared-counts',recommendations:'persistent-no-repeat+watchlist-30d',sports:'f1-hub+summary-cleanup',generated_at:new Date().toISOString()},null,2),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v205.js'),{force:true}),rm(resolve(dist,'app-v205.css'),{force:true})]);
-console.log('WEB_1_0_4_READY runtime=internal-before-boot revision=r208-official-1.0.4');
+console.log('WEB_1_0_4_READY runtime=internal-before-boot revision=r208-official-1.0.4 sw=ct-web-1.0.4-r208');
