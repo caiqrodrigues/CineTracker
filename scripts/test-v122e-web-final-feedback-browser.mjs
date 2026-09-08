@@ -6,7 +6,7 @@ let code=await readFile(src,'utf8');
 code=code.replace("'apps/web/runtime-r228c-v122-authority-guards.js'","'apps/web/runtime-r228c-v122-authority-guards.js','apps/web/runtime-r228d-v122-exact-count-authority.js'");
 // The final 1.0.22 bundle neutralizes r227 before it can rewrite the semantic placeholder.
 // Reproduce the actual final bundle state: semantic text remains intact and the loading label is CSS-only.
-code=code.replace('<div id="empty" class="ct121-pending-empty">Buscando recomendação…</div>','<div id="empty" class="ct121-pending-empty">Sem item elegível</div>');
+code=code.replace('Buscando recomendação…</div>','Sem item elegível</div>');
 code=code.replace("await new Promise(r=>setTimeout(r,450));const empty=", "await new Promise(r=>setTimeout(r,450));await window.__ctV122SyncCounts(true);const empty=");
 await writeFile(tmp,code,'utf8');
 try{execFileSync(process.execPath,[tmp],{cwd:root,stdio:'inherit',timeout:60000})}finally{await rm(tmp,{force:true})}
