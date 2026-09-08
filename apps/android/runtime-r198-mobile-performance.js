@@ -1,13 +1,15 @@
-/* Android 0.99.7.26 — mobile-first responsiveness/performance */
+/* Android 0.99.7.26 / 1.0.8 continuity — mobile-first responsiveness/performance */
 (() => {
 'use strict';
 if(window.__ctAndroidR198Loaded)return;
 window.__ctAndroidR198Loaded=true;
-window.__ctAndroidR198='mobile-first-cache-swr-progressive-render';
-window.__ctAndroidPreload='sequential-light-no-request-stampede';
+window.__ctAndroidR198='mobile-first-cache-swr-progressive-render-v108-stable-home';
+window.__ctAndroidPreload='sequential-primary-tabs-no-request-stampede';
 window.__ctAndroidDiscoverPerf='persistent-snapshot-tmdb-pages-capped-progressive-cards';
 window.__ctAndroidSportsPerf='persistent-arena-progressive-events-fast-favorite-modal';
 window.__ctAndroidTouchPerf='no-full-repaint-on-search-or-watched-toggle';
+window.__ctAndroidHomeContinuity='background-refresh-no-passive-visible-repaint';
+window.__ctAndroidWarmPrimary='profile-foryou-top10-sports-sequential';
 
 const A26_PREFIX='ct:a26:';
 const nowA26=()=>Date.now();
@@ -56,8 +58,9 @@ try{
   };
 }catch{}
 
-/* Home: stale-while-revalidate. Never hold a visible route waiting for the fresh r5 RPC
-   when a synchronized snapshot already exists. */
+/* Home: stale-while-revalidate without a second visible paint. The video regression was
+   caused by the background r5 refresh replacing the already-painted cached Home while the
+   user was looking at it. Fresh data is stored for the next explicit render/navigation. */
 try{
   const renderHomeFreshA26=renderHome;
   let homeRefreshA26=null;
@@ -66,7 +69,7 @@ try{
     homeRefreshA26=rpc('cinetracker_home_live_v0997_r5',{p_today:localDay()}).then(d=>{
       if(d&&typeof d==='object'){
         homeCache=d;try{ct163Write('home',d)}catch{};writeA26('home',d);
-        if(seq===navSeq&&route()==='home')paintHome();
+        window.__ctA26HomeFreshAt=nowA26();
       }
       return d;
     }).catch(()=>null).finally(()=>{homeRefreshA26=null});
@@ -153,24 +156,34 @@ try{
   };
 }catch{}
 
-/* Replace the old all-at-once idle preload. Only cheap, sequential data is warmed and
-   only while Home remains visible; Discover is intentionally demand-loaded. */
+/* 1.0.8 primary-tab warmup. Keep requests sequential, but prioritize what the user opens
+   immediately after Home in the recorded flow: Perfil, Pra voce, Top 10, then Sports. */
 try{
   ct163PreloadAll=async function(){
     if(ct163PreloadStarted||!session)return;ct163PreloadStarted=true;
     if(route()!=='home')return;
-    if(!arenaA26){await sleepA26(450);if(route()==='home')try{await sportsPayload(false)}catch{}}
-    await sleepA26(650);if(route()!=='home')return;
-    let pc=null;try{pc=ct163Read('profile')}catch{}
+
+    await sleepA26(300);if(route()!=='home')return;
+    let pc=null;try{pc=profileCache||ct163Read('profile')}catch{}
     if(!pc){
       try{
         const [quick,dash]=await Promise.all([rpc('cinetracker_profile_quick_stats_v1',{}),rpc('cinetracker_profile_media_dashboard_v0997_fast',{})]);
         const p={...(quick||{}),dashboard:Array.isArray(dash)?dash:[],favorite_movies:Array.isArray(quick?.favorite_movies)?quick.favorite_movies:[],favorite_series:Array.isArray(quick?.favorite_series)?quick.favorite_series:[],favorite_actors:Array.isArray(quick?.favorite_actors)?quick.favorite_actors:[],activity:Array.isArray(quick?.activity)?quick.activity:[]};
-        try{ct163Write('profile',p)}catch{}
+        profileCache=p;try{ct163Write('profile',p)}catch{}
       }catch{}
     }
+
+    await sleepA26(250);if(route()!=='home')return;
+    try{await discoverRows('foryou')}catch{}
+
+    await sleepA26(300);if(route()!=='home')return;
+    try{await discoverRows('top10')}catch{}
+
+    await sleepA26(350);if(route()!=='home')return;
+    if(!arenaA26)try{await sportsPayload(false)}catch{}
+    window.__ctA26PrimaryWarmAt=nowA26();
   };
-  ct163WarmOnIdle=function(){if(!session)return;laterA26(()=>ct163PreloadAll(),2200)};
+  ct163WarmOnIdle=function(){if(!session)return;laterA26(()=>ct163PreloadAll(),650)};
 }catch{}
 
 /* The legacy foreground hook called render() after every app resume. Suppress only that
