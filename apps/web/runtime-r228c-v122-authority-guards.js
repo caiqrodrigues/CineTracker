@@ -1,0 +1,6 @@
+/* CineTracker 1.0.22 — neutralize legacy selectors that can steal final UI events. */
+(()=>{'use strict';if(window.__ctR228cV122)return;window.__ctR228cV122='neutralize-legacy-watchlist-stat-selectors';
+const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+function guard(){const root=document.querySelector('[data-profile]');if(!root)return;for(const el of root.querySelectorAll('.stat,button.stat')){const label=norm(el.querySelector('small')?.textContent||'');const kind=label==='filmes watchlist'?'movie':label==='series watchlist'?'series':'';if(!kind)continue;for(const a of ['data-ct117-watchlist-stat','data-ct118-watchlist','data-ct119-count','data-ct120-watchlist','data-ct121-watchlist'])el.removeAttribute(a);el.dataset.ct122Watchlist=kind;el.setAttribute('type','button')}}
+let t=0;function sync(){clearTimeout(t);t=setTimeout(guard,20)}try{new MutationObserver(sync).observe(document.querySelector('#app')||document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-ct117-watchlist-stat','data-ct118-watchlist','data-ct120-watchlist','data-ct121-watchlist']})}catch{}setInterval(guard,500);guard();window.__ctV122GuardStats=guard;
+})();
