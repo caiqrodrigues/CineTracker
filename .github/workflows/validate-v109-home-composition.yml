@@ -1,0 +1,111 @@
+name: Validate CineTracker 1.0.9 Home Composition
+
+on:
+  push:
+    branches:
+      - fix/1.0.9-home-composition
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.9 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.9"' package.json
+          grep -Fq '"version": "1.0.9"' apps/web/package.json
+          grep -Fq 'build-r215.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.9'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10051' apps/android/app/build.gradle
+          node --check apps/web/runtime-r215-v109-home-composition.js
+          node --check apps/web/build-r215.mjs
+          node --check scripts/prepare-android-v1009.mjs
+          node --check scripts/test-v109-home-composition-browser.mjs
+
+      - name: Prove Home composition in Chromium
+        run: node scripts/test-v109-home-composition-browser.mjs
+
+      - name: Preserve 1.0.8 Home continuity
+        run: node scripts/test-v108-continuity-browser.mjs
+
+      - name: Preserve 1.0.7 F1 and rewatch behavior
+        run: node scripts/test-v107-browser.mjs
+
+      - name: Build Web 1.0.9
+        run: npm run build
+
+      - name: Inspect Web 1.0.9 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v215.js
+          test -f "$B"
+          grep -Fq "window.__ctR215HomeComposition='no-standalone-history-home'" "$B"
+          grep -Fq "window.__ctHomeHistoryPolicy='history-hidden-from-home-canonical-buckets-only'" "$B"
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" "$B"
+          grep -Fq 'ct-f1-v107' "$B"
+          grep -Fq 'cinetracker_mark_watch_v0994' "$B"
+          grep -Fq 'ct-web-1.0.9-r215' apps/web/dist/service-worker.js
+          grep -Fq '"version": "1.0.9"' apps/web/dist/release.json
+
+      - name: Prepare Android 1.0.9 exact runtime
+        run: node scripts/prepare-android-v1009.mjs
+
+      - name: Inspect prepared Android 1.0.9
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          A=apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -Fq "const REVISION='r251-android-official-1.0.9';" "$I"
+          grep -Fq "window.__ctR215HomeComposition='no-standalone-history-home'" "$I"
+          grep -Fq "window.__ctAndroidHomeContinuity='background-refresh-no-passive-visible-repaint'" "$I"
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" "$I"
+          grep -Fq 'cinetracker_mark_watch_v0994' "$I"
+          grep -Fq 'ct-f1-v107' "$I"
+          grep -Fq 'onPageCommitVisible(WebView view, String url)' "$A"
+          grep -Fq 'runOnUiThread(() -> requestNotificationPermission());' "$A"
+          ! grep -Fq 'ct107:snapshot:' "$I"
+          ! grep -Fq 'data-ct107-rewatch' "$I"
+          ! grep -Fq 'cinetracker_mark_episode_v0994' "$I"
+
+      - name: Build Android 1.0.9 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v109-apk && mkdir -p /tmp/v109-apk
+          unzip -q "$APK" -d /tmp/v109-apk
+          I=/tmp/v109-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r251-android-official-1.0.9';" "$I"
+          grep -Fq "window.__ctR215HomeComposition='no-standalone-history-home'" "$I"
+          grep -Fq "window.__ctAndroidHomeContinuity='background-refresh-no-passive-visible-repaint'" "$I"
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" "$I"
+          grep -Fq 'ct-f1-v107' "$I"
+          grep -Fq 'cinetracker_mark_watch_v0994' "$I"
+          ! grep -Fq 'ct107:snapshot:' "$I"
+          sha256sum "$APK" | tee /tmp/v109-sha256.txt
+          echo 'V109_APK_PAYLOAD_OK version=1.0.9 code=10051 runtime=r251'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.9-home-composition
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v109-sha256.txt
+          if-no-files-found: error
