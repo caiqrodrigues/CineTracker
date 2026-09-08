@@ -1,0 +1,37 @@
+import {readFile,writeFile,rm,mkdir} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {execFileSync} from 'node:child_process';
+const root=resolve(process.cwd()),patch=(await readFile(resolve(root,'apps/web/runtime-r226-v120-final-authority-ui.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const dir='/tmp/ct-v120-browser';await mkdir(dir,{recursive:true});
+const payload={rows:[
+ {media_type:'movie',tmdb_id:101,title:'Zeta Filme',poster_path:'/z.jpg',release_year:2020,added_at:'2026-09-08T10:00:00Z'},
+ {media_type:'movie',tmdb_id:102,title:'Alpha Filme',poster_path:'/a.jpg',release_year:2024,added_at:'2026-08-01T10:00:00Z'},
+ {media_type:'tv',tmdb_id:201,title:'Beta Série',poster_path:'/b.jpg',release_year:2010,added_at:'2026-09-01T10:00:00Z'},
+ {media_type:'tv',tmdb_id:202,title:'Anime Série',poster_path:'/c.jpg',release_year:2025,added_at:'2026-07-01T10:00:00Z'}
+],counts:{movie:2,series:2}};
+const pre=`<script>
+function esc(x){return String(x)} function img(p){return 'https://img.test'+p} function mediaTmdb(x){return Number(x.tmdb_id||x.id||0)}
+async function rpc(name){if(name==='cinetracker_watchlist_full_v119')return ${JSON.stringify(payload)};throw new Error(name)}
+function go(p){window.__opened120=p}
+function ctR180StatCard(label,value,wide=false){return '<div class="stat"><small>'+label+'</small><b>'+value+'</b></div>'}
+// Reproduz a autoridade antiga da 1.0.17: se o seletor legado sobreviver, abre o modal errado primeiro.
+document.addEventListener('click',e=>{const s=e.target.closest?.('[data-ct117-watchlist-stat]');if(s){const old=document.createElement('div');old.dataset.ct117WatchModal=s.dataset.ct117WatchlistStat;old.id='legacy-modal';document.body.appendChild(old)}},true);
+</script>`;
+const fixture=`<div id="app"><div data-profile id="profile"></div><div data-page="discover"><button id="swap">↻ Trocar</button><button id="wl">+ Watchlist</button></div><div data-sports><div class="event-grid" id="grid"><article class="event ct117-event-card ct119-event-card" id="event"><div class="fav-actions"><button class="fav">Dutch Eredivisie</button><button class="fav">FC Utrecht</button><button class="fav">Go Ahead Eagles</button></div><span class="chip">✓ Marcarassistido</span><button class="btn">Ver eventos</button><button class="btn" data-ct165-open-favorite="1">Ver eventos</button><button class="btn">✓ Marcar como assistido</button></article></div></div></div>`;
+const run=`<script>(async()=>{try{
+ document.querySelector('#profile').innerHTML=ctR180StatCard('Séries Watchlist','564')+ctR180StatCard('Filmes Watchlist','1.358');
+ await new Promise(r=>setTimeout(r,180));
+ const sb=document.querySelector('[data-ct120-watchlist="series"]'),mb=document.querySelector('[data-ct120-watchlist="movie"]');
+ document.body.dataset.legacyAttrs=String(document.querySelectorAll('[data-ct117-watchlist-stat],[data-ct118-watchlist]').length);
+ document.body.dataset.seriesCount=sb?.querySelector('b')?.textContent||'';document.body.dataset.movieCount=mb?.querySelector('b')?.textContent||'';
+ sb.click();await new Promise(r=>setTimeout(r,50));let modal=document.querySelector('[data-ct120-watch-modal="series"]');document.body.dataset.newModal=String(!!modal);document.body.dataset.oldModal=String(!!document.querySelector('#legacy-modal'));document.body.dataset.sort=String(!!modal?.querySelector('[data-ct120-sort]'));document.querySelector('[data-ct120-close]')?.click();
+ mb.click();await new Promise(r=>setTimeout(r,40));modal=document.querySelector('[data-ct120-watch-modal="movie"]');let rows=[...modal.querySelectorAll('[data-ct120-media]')];document.body.dataset.alpha=rows.map(x=>x.dataset.ct120Media).join(',');const sel=modal.querySelector('[data-ct120-sort]');sel.value='release_desc';sel.dispatchEvent(new Event('change',{bubbles:true}));rows=[...modal.querySelectorAll('[data-ct120-media]')];document.body.dataset.release=rows.map(x=>x.dataset.ct120Media).join(',');sel.value='release_asc';sel.dispatchEvent(new Event('change',{bubbles:true}));rows=[...modal.querySelectorAll('[data-ct120-media]')];document.body.dataset.releaseAsc=rows.map(x=>x.dataset.ct120Media).join(',');sel.value='added_desc';sel.dispatchEvent(new Event('change',{bubbles:true}));rows=[...modal.querySelectorAll('[data-ct120-media]')];document.body.dataset.added=rows.map(x=>x.dataset.ct120Media).join(',');rows[0].click();await new Promise(r=>setTimeout(r,30));document.body.dataset.opened=window.__opened120||'';document.body.dataset.closed=String(!document.querySelector('[data-ct120-watch-modal]'));
+ await new Promise(r=>setTimeout(r,100));const card=document.querySelector('#event'),bar=card.querySelector('.ct120-sport-actions');document.body.dataset.legacyEventClass=String(card.classList.contains('event')||card.classList.contains('ct117-event-card')||card.classList.contains('ct119-event-card'));document.body.dataset.actions=String(bar?.querySelectorAll('.ct120-sport-action').length||0);document.body.dataset.events=String([...card.querySelectorAll('.ct120-sport-action')].filter(x=>x.textContent==='Eventos').length);document.body.dataset.watched=String([...card.querySelectorAll('.ct120-sport-action')].filter(x=>/Assistido|Desmarcar/.test(x.textContent)).length);document.body.dataset.chips=String(card.querySelectorAll('.ct120-sport-chip').length);
+ document.body.dataset.swapText=document.querySelector('#swap').textContent;document.body.dataset.wlText=document.querySelector('#wl').textContent;document.body.dataset.swapAction=document.querySelector('#swap').dataset.ct120Action||'';document.body.dataset.wlAction=document.querySelector('#wl').dataset.ct120Action||'';
+ }catch(e){document.body.dataset.err=String(e?.stack||e)}finally{document.body.dataset.done='1'}})()</script>`;
+async function make(name,android=false){const f=resolve(dir,name);await writeFile(f,`<!doctype html><html><body>${pre}${fixture}${android?'<script>window.__ctAndroidOfficialVersion="1.0.20"</script>':''}<script>${patch}</script>${run}</body></html>`);return f}
+function chrome(path,width){for(const bin of ['google-chrome','chromium','chromium-browser'])try{return execFileSync(bin,['--headless','--no-sandbox','--disable-gpu',`--window-size=${width},1100`,'--virtual-time-budget=3500','--dump-dom','file://'+path],{encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:35000})}catch{}return''}
+const web=chrome(await make('web.html'),1500),android=chrome(await make('android.html',true),430);await rm(dir,{recursive:true,force:true});if(!web||!android)throw new Error('Chromium unavailable');
+for(const out of [web,android])for(const must of ['data-done="1"','data-legacy-attrs="0"','data-series-count="2"','data-movie-count="2"','data-new-modal="true"','data-old-modal="false"','data-sort="true"','data-alpha="movie:102,movie:101"','data-release="movie:102,movie:101"','data-release-asc="movie:101,movie:102"','data-added="movie:101,movie:102"','data-opened="/movie/101"','data-closed="true"','data-legacy-event-class="false"','data-actions="2"','data-events="1"','data-watched="1"','data-chips="3"','data-swap-text="↻"','data-wl-text="＋"','data-swap-action="swap"','data-wl-action="watchlist"'])if(!out.includes(must))throw new Error('V120 authority contract missing '+must+'\n'+out.slice(-16000));
+if(web.includes('data-err=')||android.includes('data-err='))throw new Error('V120 runtime error');
+console.log('V120_BROWSER_OK legacy-watchlist-listener=bypassed counts=authoritative sort=4 detail=direct sports=canonical-no-legacy foryou=icon-only web+android');
