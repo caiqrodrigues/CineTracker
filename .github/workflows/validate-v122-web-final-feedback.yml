@@ -31,6 +31,13 @@ jobs:
           grep -Fq 'global-grid-direct-children-two-actions' apps/web/runtime-r228-v122-web-authority.js
           grep -Fq 'exact-renderable-watchlist-counts' apps/web/runtime-r228-v122-web-authority.js
           grep -Fq 'exact-watchlist-counter-final-pass' apps/web/runtime-r228d-v122-exact-count-authority.js
+          test -f apps/web/ui-refinement-v122.css
+          grep -Fq 'pure UI refinement' apps/web/ui-refinement-v122.css
+          grep -Fq -- '--ct-ui-space-1:8px' apps/web/ui-refinement-v122.css
+          if grep -En '#[0-9a-fA-F]{3,8}|rgba?\(|hsla?\(|(^|[;{[:space:]])color[[:space:]]*:|background(-color)?[[:space:]]*:|border-color[[:space:]]*:' apps/web/ui-refinement-v122.css; then
+            echo 'UI refinement illegally defines a color' >&2
+            exit 1
+          fi
 
       - name: Reproduce physical Web feedback in clean Chromium fixture
         run: node scripts/test-v122-final-browser.mjs
@@ -51,13 +58,18 @@ jobs:
         run: |
           set -euo pipefail
           B=apps/web/dist/app-v228.js
+          C=apps/web/dist/app-v228.css
           test -f "$B"
+          test -f "$C"
           grep -Fq "const REVISION='r228-official-1.0.22';" "$B"
           grep -Fq "window.__ctR228V122='discover-metadata-series-settle-sports-source-counts-exact'" "$B"
           grep -Fq "window.__ctR228bV122='all-discover-cards-year-genres'" "$B"
           grep -Fq "window.__ctR228cV122='neutralize-legacy-watchlist-stat-selectors'" "$B"
           grep -Fq "window.__ctR228dV122='exact-watchlist-counter-final-pass'" "$B"
+          grep -Fq 'pure UI refinement' "$C"
+          grep -Fq -- '--ct-ui-radius-lg:18px' "$C"
           grep -Fq "ct-web-1.0.22-r228" apps/web/dist/service-worker.js
           grep -Fq 'r228-official-1.0.22' apps/web/dist/release.json
+          grep -Fq 'pure-refinement-no-color-no-logic' apps/web/dist/release.json
           ! grep -Fq "el.textContent='Buscando recomendação…'" "$B"
           ! grep -Fq "function sync121(){clearTimeout(timer);timer=setTimeout(()=>{void syncWlCounts121();discover121();statsToggle121();sports121()},45)}" "$B"

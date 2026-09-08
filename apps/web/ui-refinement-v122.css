@@ -1,0 +1,61 @@
+/* CineTracker 1.0.22 — pure UI refinement. No color, logic, order or handler changes. */
+:root{--ct-ui-space-1:8px;--ct-ui-space-2:16px;--ct-ui-space-3:24px;--ct-ui-radius-sm:10px;--ct-ui-radius-md:14px;--ct-ui-radius-lg:18px;--ct-ui-speed:200ms}
+
+/* Clickable surfaces */
+button,.btn,[role="button"],a[role="button"],select,input{transition:transform var(--ct-ui-speed) ease,border-radius var(--ct-ui-speed) ease,opacity var(--ct-ui-speed) ease}
+button:hover,.btn:hover,[role="button"]:hover,a[role="button"]:hover{transform:translateY(-1px)}
+button:active,.btn:active,[role="button"]:active,a[role="button"]:active{transform:translateY(0)}
+button,.btn{min-height:32px;border-radius:var(--ct-ui-radius-sm);padding-inline:12px}
+button.primary,.btn.primary,.ct122-action.primary{min-height:40px;border-radius:12px;padding-inline:16px}
+[data-ct122-stats],[data-ct122-close],button[aria-label*="Recolher"],button[aria-label*="Expandir"]{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:12px!important}
+
+/* Navigation pills */
+.tabs button,.pills button,.segmented button,[data-tabs] button,[role="tab"]{height:36px;min-height:36px;padding-inline:12px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+
+/* Panels / sections */
+section,.panel,[data-profile]>.panel,[data-page="discover"]>section,[data-discover]>section{border-radius:var(--ct-ui-radius-lg)}
+.panel-head,section>header,.ct122-dialog>header{gap:var(--ct-ui-space-2);align-items:center}
+
+/* Media cards — visual only, preserve DOM/order */
+[data-page="discover"] article,[data-discover] article,[data-profile] .media-card,[data-profile] .card{border-radius:var(--ct-ui-radius-md);overflow:hidden;transition:transform var(--ct-ui-speed) ease}
+[data-page="discover"] article:hover,[data-discover] article:hover,[data-profile] .media-card:hover,[data-profile] .card:hover{transform:translateY(-2px)}
+[data-page="discover"] article img,[data-discover] article img,[data-profile] .media-card img,[data-profile] .card img{aspect-ratio:2/3;object-fit:cover}
+[data-page="discover"] article b,[data-page="discover"] article strong,[data-discover] article b,[data-discover] article strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;font-weight:600}
+.ct122-card-meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35;font-size:.78rem;margin-top:4px}
+
+/* Discover quick actions */
+[data-page="discover"] article button,[data-discover] article button{min-width:36px;height:36px;min-height:36px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px}
+
+/* Sports: consistent rhythm; runtime owns which actions exist */
+.event-grid{gap:var(--ct-ui-space-2)!important;align-items:stretch}
+.ct122-event-card{padding:var(--ct-ui-space-2)!important;border-radius:var(--ct-ui-radius-lg)!important;min-width:0}
+.ct122-event-card>*+*{margin-top:var(--ct-ui-space-1)}
+.ct122-actions{gap:var(--ct-ui-space-1)!important;padding-top:var(--ct-ui-space-2)!important}
+.ct122-action{height:40px!important;min-height:40px!important;border-radius:12px!important;padding-inline:16px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:1!important;font-weight:600}
+.ct122-event-card .chip,.ct122-event-card [class*="chip"]{min-height:32px;display:inline-flex;align-items:center;border-radius:10px;padding-inline:12px;line-height:1.1}
+
+/* Profile statistics */
+[data-profile] .stat,[data-profile] button.stat{padding:var(--ct-ui-space-2)!important;border-radius:var(--ct-ui-radius-md)!important;min-height:96px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+[data-profile] .stat small,[data-profile] button.stat small{line-height:1.2;letter-spacing:.01em}
+[data-profile] .stat b,[data-profile] button.stat b{line-height:1;font-weight:700}
+
+/* Watchlist modal */
+.ct122-dialog{border-radius:var(--ct-ui-radius-lg)!important}
+.ct122-dialog>header{padding:var(--ct-ui-space-2)!important}
+.ct122-toolbar{padding:var(--ct-ui-space-1) var(--ct-ui-space-2)!important;gap:var(--ct-ui-space-1)}
+.ct122-toolbar select{height:40px;border-radius:12px;padding-inline:12px}
+.ct122-list{padding:var(--ct-ui-space-2)!important;gap:var(--ct-ui-space-1)!important}
+.ct122-watch-row{padding:12px!important;border-radius:14px!important;align-items:center!important;gap:12px!important}
+.ct122-watch-row b{font-weight:600;line-height:1.2}
+.ct122-watch-row small{line-height:1.3}
+
+/* Forms / modal action rows */
+.modal footer,.dialog footer,[role="dialog"] footer,.modal-actions,.form-actions{display:flex;align-items:center;justify-content:flex-end;gap:var(--ct-ui-space-1)}
+
+@media(max-width:700px){
+  button,.btn{min-height:32px}
+  [data-page="discover"] article,[data-discover] article{border-radius:14px}
+  .ct122-event-card{padding:12px!important}
+  .ct122-actions{grid-template-columns:1fr 1fr!important}
+  [data-profile] .stat,[data-profile] button.stat{min-height:88px;padding:12px!important}
+}
