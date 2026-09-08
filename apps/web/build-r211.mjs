@@ -20,7 +20,7 @@ if(!patch.includes(oldDecorate))throw new Error('Web 1.0.7 decorateAll legacy co
 if(patch.includes('data-ct107-rewatch')||patch.includes('ct107:snapshot:')||patch.includes('restoreSnapshot(')||patch.includes('decorateRewatch(')||patch.includes('saveSnapshot('))throw new Error('Web 1.0.7 obsolete replay/snapshot code survived strip');
 const replayLoop="for(const row of qa('[data-episode-number],[data-episode],.episode-row,.ct169-episode,.ct171-episode-row,.episode-item')){\n  if(q('[data-ct214-rewatch=\"episode\"]',row))continue;";
 const safeReplayLoop="for(const row of qa('[data-episode-number],[data-episode],.episode-row,.ct169-episode,.ct171-episode-row,.episode-item')){\n  if(row.matches?.('[data-ct214-rewatch]'))continue;if(q('[data-ct214-rewatch=\"episode\"]',row))continue;";
-if(!hotfix.includes(replayLoop))throw new Error('Web replay loop composition point missing');hotfix=hotfix.replace(replayLoop,safeReplayLoop);
+if(hotfix.includes(replayLoop))hotfix=hotfix.replace(replayLoop,safeReplayLoop);else if(!hotfix.includes(safeReplayLoop))throw new Error('Web safe replay loop missing');
 js=js.replaceAll("'cinetracker_mark_episode_v0994'","'cinetracker_legacy_episode_disabled_v107'").replaceAll('"cinetracker_mark_episode_v0994"','"cinetracker_legacy_episode_disabled_v107"');
 js=js.replaceAll('r208-official-1.0.4','r211-official-1.0.7').replaceAll('CineTracker • v1.0.4','CineTracker • v1.0.7').replaceAll("window.__ctOfficialVersion='1.0.4'","window.__ctOfficialVersion='1.0.7'").replaceAll("window.__ctWebBuild='1.0.4'","window.__ctWebBuild='1.0.7'");
 js=js.replace('\nboot();','\n'+patch+'\n'+hotfix+'\nboot();');
