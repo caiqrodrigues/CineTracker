@@ -18,15 +18,12 @@ const payload={rows:[
   {media_type:'movie',tmdb_id:0,title:'Inválido'},
   {media_type:'tv',tmdb_id:21,title:'S',release_year:2022}
 ],counts:{movie:1358,series:564}};
-const pools={
-  movie:[{media_type:'movie',tmdb_id:99,title:'Absolut',release_date:'2025-05-01',genre_ids:[878,53]}],
-  series:[],anime:[]
-};
+const pools={movie:[{media_type:'movie',tmdb_id:99,title:'Absolut',release_date:'2025-05-01',genre_ids:[878,53]}],series:[],anime:[]};
 const html=`<!doctype html><html><body>
 <div id="app">
   <div data-page="discover" data-discover>
     <div id="empty">Sem item elegível</div>
-    <article id="movie"><span>Filme</span><img src="x"><b>Absolut</b><small>Filme · ★ 8.1</small><div><button>＋</button><button>↻</button></div></article>
+    <article id="movie"><span>Filme</span><img src="data:,x"><b>Absolut</b><small>Filme · ★ 8.1</small><div><button>＋</button><button>↻</button></div></article>
   </div>
   <div class="event-grid"><article id="sport"><button>Liga</button><button>Ver eventos</button><button data-ct165-open-favorite="1">Ver eventos</button><span role="button">✓ Marcar como assistido</span><button>✓ Marcar como assistido</button></article></div>
   <div data-profile>
@@ -37,6 +34,7 @@ const html=`<!doctype html><html><body>
 </div>
 <script>
 window.setInterval=()=>0;
+window.MutationObserver=class{observe(){} disconnect(){}};
 let profileCache={dashboard:[]};
 function mediaTmdb(x){return Number(x?.tmdb_id||x?.id||0)}
 function mediaType(x){return x?.media_type==='movie'?'movie':'tv'}
@@ -80,27 +78,11 @@ const file=resolve(dir,'index.html');
 await writeFile(file,html,'utf8');
 let out='';
 for(const bin of ['google-chrome','chromium','chromium-browser']){
-  try{
-    out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--window-size=1400,900','--virtual-time-budget=2200','--dump-dom','file://'+file],{encoding:'utf8',timeout:30000,stdio:['ignore','pipe','pipe']});
-    if(out)break;
-  }catch{}
+  try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--window-size=1400,900','--virtual-time-budget=2500','--dump-dom','file://'+file],{encoding:'utf8',timeout:30000,stdio:['ignore','pipe','pipe']});if(out)break}catch{}
 }
 await rm(dir,{recursive:true,force:true});
 if(!out)throw new Error('Chromium unavailable');
-const must=[
-  'data-done="1"',
-  'data-semantic="Sem item elegível"',
-  'data-loading="true"',
-  'data-meta="2025 · Ficção científica, Suspense"',
-  'data-movie-count="2"',
-  'data-series-count="1"',
-  'data-rows-movie="2"',
-  'data-rows-series="1"',
-  'data-actions="2"',
-  'data-events="1"',
-  'data-watched="1"',
-  'data-outside="0"'
-];
+const must=['data-done="1"','data-semantic="Sem item elegível"','data-loading="true"','data-meta="2025 · Ficção científica, Suspense"','data-movie-count="2"','data-series-count="1"','data-rows-movie="2"','data-rows-series="1"','data-actions="2"','data-events="1"','data-watched="1"','data-outside="0"'];
 for(const m of must)if(!out.includes(m))throw new Error('V122_FINAL missing '+m+'\n'+out.slice(-12000));
 if(!(/data-collapse="⌃"/.test(out)||/data-collapse="⌄"/.test(out)))throw new Error('V122_FINAL statistics toggle returned to text');
 if(out.includes('data-err='))throw new Error('V122_FINAL runtime error\n'+out.slice(-8000));
