@@ -48,21 +48,31 @@ function render(){}
 function toast(){}
 </script>`;
 const post=`<script>
+document.body.dataset.runtimeLoaded=String(window.__ctAndroidR198Loaded===true);
+document.body.dataset.renderHomeType=typeof renderHome;
+document.body.dataset.preloadType=typeof ct163PreloadAll;
 (async()=>{
-  await renderHome(1);
-  await new Promise(r=>setTimeout(r,250));
-  document.body.dataset.paintAfterFresh=String(paintCount);
-  document.body.dataset.homeAfterFresh=String(homeCache?.marker||'');
-  ct163PreloadStarted=false;
-  calls=[];
-  await ct163PreloadAll();
-  const iQuick=calls.indexOf('profile:quick'),iDash=calls.indexOf('profile:dash'),iForYou=calls.indexOf('discover:foryou'),iTop10=calls.indexOf('discover:top10'),iSports=calls.indexOf('sports');
-  const profileBeforeForYou=iQuick>=0&&iDash>=0&&iForYou>iQuick&&iForYou>iDash;
-  const sequential=profileBeforeForYou&&iTop10>iForYou&&iSports>iTop10;
-  document.body.dataset.warmOrder=calls.join('|');
-  document.body.dataset.warmSequential=String(sequential);
-  document.body.dataset.profileCached=String(!!profileCache);
-  document.body.dataset.done='true';
+  try{
+    await renderHome(1);
+    document.body.dataset.afterRender='true';
+    await new Promise(r=>setTimeout(r,250));
+    document.body.dataset.paintAfterFresh=String(paintCount);
+    document.body.dataset.homeAfterFresh=String(homeCache?.marker||'');
+    ct163PreloadStarted=false;
+    calls=[];
+    await ct163PreloadAll();
+    document.body.dataset.afterPreload='true';
+    const iQuick=calls.indexOf('profile:quick'),iDash=calls.indexOf('profile:dash'),iForYou=calls.indexOf('discover:foryou'),iTop10=calls.indexOf('discover:top10'),iSports=calls.indexOf('sports');
+    const profileBeforeForYou=iQuick>=0&&iDash>=0&&iForYou>iQuick&&iForYou>iDash;
+    const sequential=profileBeforeForYou&&iTop10>iForYou&&iSports>iTop10;
+    document.body.dataset.warmOrder=calls.join('|');
+    document.body.dataset.warmSequential=String(sequential);
+    document.body.dataset.profileCached=String(!!profileCache);
+  }catch(err){
+    document.body.dataset.testError=String(err?.stack||err?.message||err).slice(0,700);
+  }finally{
+    document.body.dataset.done='true';
+  }
 })();
 </script>`;
 const html=`<!doctype html><html><head></head><body><div id="app"><div class="page" data-home></div></div>${pre}<script>${runtimeSafe}</script>${post}</body></html>`;
@@ -76,14 +86,20 @@ for(const bin of ['google-chrome','chromium','chromium-browser']){
 }
 await rm(dir,{recursive:true,force:true});
 if(!out)throw new Error('Chrome/Chromium unavailable '+stderr.slice(-1000));
+if(out.includes('data-test-error=')) throw new Error('1.0.8 continuity runtime error\n'+out.match(/data-test-error="([^"]*)"/)?.[1]+'\n'+out.slice(-2500));
 for(const must of [
+  'data-runtime-loaded="true"',
+  'data-render-home-type="function"',
+  'data-preload-type="function"',
   'data-done="true"',
+  'data-after-render="true"',
+  'data-after-preload="true"',
   'data-paint-after-fresh="1"',
   'data-home-after-fresh="fresh"',
   'data-warm-sequential="true"',
   'data-profile-cached="true"'
-]) if(!out.includes(must)) throw new Error('1.0.8 continuity behavior missing '+must+'\n'+out.slice(-2500));
+]) if(!out.includes(must)) throw new Error('1.0.8 continuity behavior missing '+must+'\n'+out.slice(-3000));
 if(!/data-warm-order="[^"]*profile:quick[^"]*profile:dash[^"]*discover:foryou[^"]*discover:top10[^"]*sports/.test(out)
    && !/data-warm-order="[^"]*profile:dash[^"]*profile:quick[^"]*discover:foryou[^"]*discover:top10[^"]*sports/.test(out))
-  throw new Error('1.0.8 primary warm order is wrong');
+  throw new Error('1.0.8 primary warm order is wrong\n'+out.slice(-2500));
 console.log('V108_CONTINUITY_BROWSER_OK home=cached-single-paint fresh=stored-no-passive-repaint warm=profile>foryou>top10>sports');
