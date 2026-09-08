@@ -1,0 +1,103 @@
+name: Validate CineTracker 1.0.17 Profile Watchlist Sports UI
+
+on:
+  push:
+    branches:
+      - fix/1.0.17-profile-watchlist-sports-ui
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.17 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.17"' package.json
+          grep -Fq '"version": "1.0.17"' apps/web/package.json
+          grep -Fq 'build-r223.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.17'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10059' apps/android/app/build.gradle
+          node --check apps/web/runtime-r223-v117-profile-watchlist-sports-ui.js
+          node --check apps/web/build-r223.mjs
+          node --check scripts/prepare-android-v1017.mjs
+          node --check scripts/test-v117-profile-watchlist-sports-browser.mjs
+          grep -Fq 'stats-click-complete-watchlist-modal' apps/web/runtime-r223-v117-profile-watchlist-sports-ui.js
+          grep -Fq 'four-column-structured-single-actionbar-deduped' apps/web/runtime-r223-v117-profile-watchlist-sports-ui.js
+          grep -Fq "rpc('cinetracker_profile_payload_v0997'" apps/web/runtime-r223-v117-profile-watchlist-sports-ui.js
+
+      - name: Prove Profile Watchlist and final Web Sports DOM in Chromium
+        run: node scripts/test-v117-profile-watchlist-sports-browser.mjs
+
+      - name: Preserve 1.0.16 final-authority behavior
+        run: node scripts/test-v116-final-authorities-browser.mjs
+
+      - name: Build Web 1.0.17
+        run: npm run build
+
+      - name: Inspect Web 1.0.17 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v223.js
+          test -f "$B"
+          grep -Fq "window.__ctR223V117='profile-watchlist-drilldown-sports-organized-ui'" "$B"
+          grep -Fq 'stats-click-complete-watchlist-modal' "$B"
+          grep -Fq 'four-column-structured-single-actionbar-deduped' "$B"
+          grep -Fq 'ct117-event-actions' "$B"
+          grep -Fq "ct-web-1.0.17-r223" apps/web/dist/service-worker.js
+
+      - name: Prepare Android 1.0.17
+        run: node scripts/prepare-android-v1017.mjs
+
+      - name: Inspect prepared Android runtime
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r259-android-official-1.0.17';" "$I"
+          grep -Fq 'window.__ctAndroidOfficialCode=10059' "$I"
+          grep -Fq "window.__ctR223V117='profile-watchlist-drilldown-sports-organized-ui'" "$I"
+          grep -Fq 'stats-click-complete-watchlist-modal' "$I"
+          grep -Fq "rpc('cinetracker_profile_payload_v0997'" "$I"
+          node - <<'NODE'
+          const fs=require('fs'),h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const m=h.match(/<script data-ct-android="r259-android-js">([\s\S]*?)<\/script>/);if(!m)throw new Error('r259 script missing');fs.writeFileSync('/tmp/r259.js',m[1]);
+          NODE
+          node --check /tmp/r259.js
+
+      - name: Build Android 1.0.17 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect exact APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v117-apk && mkdir -p /tmp/v117-apk
+          unzip -q "$APK" -d /tmp/v117-apk
+          I=/tmp/v117-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r259-android-official-1.0.17';" "$I"
+          grep -Fq "window.__ctR223V117='profile-watchlist-drilldown-sports-organized-ui'" "$I"
+          grep -Fq 'stats-click-complete-watchlist-modal' "$I"
+          sha256sum "$APK" | tee /tmp/v117-sha256.txt
+          echo 'V117_APK_PAYLOAD_OK version=1.0.17 code=10059 runtime=r259'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.17-profile-watchlist-sports-ui
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v117-sha256.txt
+          if-no-files-found: error
