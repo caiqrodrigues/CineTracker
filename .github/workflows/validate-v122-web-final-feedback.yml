@@ -25,13 +25,13 @@ jobs:
           node --check apps/web/runtime-r228b-v122-card-metadata.js
           node --check apps/web/runtime-r228c-v122-authority-guards.js
           node --check apps/web/build-r228.mjs
-          node --check scripts/test-v122b-web-final-feedback-browser.mjs
+          node --check scripts/test-v122c-web-final-feedback-browser.mjs
           grep -Fq 'css-loading-preserves-empty-authority+year-genres' apps/web/runtime-r228-v122-web-authority.js
           grep -Fq 'global-grid-direct-children-two-actions' apps/web/runtime-r228-v122-web-authority.js
           grep -Fq 'exact-renderable-watchlist-counts' apps/web/runtime-r228-v122-web-authority.js
 
       - name: Reproduce physical Web feedback in Chromium
-        run: node scripts/test-v122b-web-final-feedback-browser.mjs
+        run: node scripts/test-v122c-web-final-feedback-browser.mjs
 
       - name: Preserve Pra Voce affinity
         run: node scripts/test-v118-foryou-affinity-profile-browser.mjs
