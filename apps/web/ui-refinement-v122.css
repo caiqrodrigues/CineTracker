@@ -16,22 +16,29 @@ button.primary,.btn.primary,.ct122-action.primary{min-height:40px;border-radius:
 section,.panel,[data-profile]>.panel,[data-page="discover"]>section,[data-discover]>section{border-radius:var(--ct-ui-radius-lg)}
 .panel-head,section>header,.ct122-dialog>header{gap:var(--ct-ui-space-2);align-items:center}
 
-/* Media cards — visual only, preserve DOM/order */
+/* Media cards */
 [data-page="discover"] article,[data-discover] article,[data-profile] .media-card,[data-profile] .card{border-radius:var(--ct-ui-radius-md);overflow:hidden;transition:transform var(--ct-ui-speed) ease}
 [data-page="discover"] article:hover,[data-discover] article:hover,[data-profile] .media-card:hover,[data-profile] .card:hover{transform:translateY(-2px)}
 [data-page="discover"] article img,[data-discover] article img,[data-profile] .media-card img,[data-profile] .card img{aspect-ratio:2/3;object-fit:cover}
 [data-page="discover"] article b,[data-page="discover"] article strong,[data-discover] article b,[data-discover] article strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.25;font-weight:600}
-.ct122-card-meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35;font-size:.78rem;margin-top:4px}
+.ct122-media-card{display:flex!important;flex-direction:column!important;min-width:0!important;overflow:hidden!important}
+.ct122-media-card>*{min-width:0!important;max-width:100%!important;box-sizing:border-box!important}
+.ct122-media-card>img,.ct122-media-card picture,.ct122-media-card picture>img{width:100%!important;display:block!important}
+.ct122-media-info{display:flex!important;flex-direction:column!important;gap:4px!important;padding:8px 10px 0!important;overflow:hidden!important}
+.ct122-card-meta{display:block!important;white-space:normal!important;overflow:hidden!important;text-overflow:ellipsis!important;line-height:1.35!important;font-size:.78rem!important;max-height:2.7em!important;margin:0!important}
+.ct122-media-actions{display:flex!important;align-items:center!important;gap:8px!important;margin-top:auto!important;padding:10px!important;min-height:52px!important}
+.ct122-media-action{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:10px!important;line-height:1!important;font-size:1rem!important;flex:0 0 36px!important}
+.ct122-media-card .ct122-media-actions~*{max-width:100%!important}
 
 /* Discover quick actions */
 [data-page="discover"] article button,[data-discover] article button{min-width:36px;height:36px;min-height:36px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px}
 
 /* Sports: consistent rhythm; runtime owns which actions exist */
 .event-grid{gap:var(--ct-ui-space-2)!important;align-items:stretch}
-.ct122-event-card{padding:var(--ct-ui-space-2)!important;border-radius:var(--ct-ui-radius-lg)!important;min-width:0}
+.ct122-event-card{padding:var(--ct-ui-space-2)!important;border-radius:var(--ct-ui-radius-lg)!important;min-width:0!important;overflow:hidden!important}
 .ct122-event-card>*+*{margin-top:var(--ct-ui-space-1)}
-.ct122-actions{gap:var(--ct-ui-space-1)!important;padding-top:var(--ct-ui-space-2)!important}
-.ct122-action{height:40px!important;min-height:40px!important;border-radius:12px!important;padding-inline:16px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:1!important;font-weight:600}
+.ct122-actions{gap:var(--ct-ui-space-1)!important;padding-top:var(--ct-ui-space-2)!important;margin-top:auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important}
+.ct122-action{width:100%!important;height:40px!important;min-height:40px!important;border-radius:12px!important;padding-inline:12px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;line-height:1!important;font-weight:600;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
 .ct122-event-card .chip,.ct122-event-card [class*="chip"]{min-height:32px;display:inline-flex;align-items:center;border-radius:10px;padding-inline:12px;line-height:1.1}
 
 /* Profile statistics */
