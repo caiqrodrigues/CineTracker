@@ -74,7 +74,7 @@ function actionKind117(el){
  if(compact.includes('marcarcomoassistido')||compact.includes('marcarassistido')||compact.includes('desmarcarcomoassistido')||compact.includes('desmarcarassistido'))return'watched';
  return'';
 }
-function bestAction117(nodes,kind){
+function bestAction117(nodes){
  return [...nodes].sort((a,b)=>{
   const ac=(a.classList.contains('chip')?-20:0)+String(a.textContent||'').length+(a.hasAttribute('data-ct165-open-favorite')?5:0),bc=(b.classList.contains('chip')?-20:0)+String(b.textContent||'').length+(b.hasAttribute('data-ct165-open-favorite')?5:0);return bc-ac;
  })[0]||null;
@@ -84,9 +84,9 @@ function organizeEvent117(card){
  let bar=q117(':scope > .ct117-event-actions',card);if(!bar){bar=document.createElement('div');bar.className='ct117-event-actions';card.appendChild(bar)}
  const all=qa117('button,a.btn,a.button',card).filter(x=>!bar.contains(x));
  for(const kind of ['events','watched']){
-  const found=[...all,...qa117('button,a.btn,a.button',bar)].filter(x=>actionKind117(x)===kind),keep=bestAction117(found,kind);if(!keep)continue;
+  const found=[...all,...qa117('button,a.btn,a.button',bar)].filter(x=>actionKind117(x)===kind),keep=bestAction117(found);if(!keep)continue;
   for(const x of found)if(x!==keep)x.remove();
-  keep.classList.remove('chip');keep.classList.add('ct117-event-action',kind==='watched'?'ct117-event-action-primary':'ct117-event-action-secondary');bar.appendChild(keep);
+  keep.classList.remove('chip');keep.classList.add('ct117-event-action',kind==='watched'?'ct117-event-action-primary':'ct117-event-action-secondary');if(keep.parentElement!==bar)bar.appendChild(keep);
  }
  for(const el of qa117('button,a.btn,a.button',card)){if(bar.contains(el))continue;el.classList.add('ct117-event-meta-control')}
  bar.dataset.ct117Actions=String(qa117('.ct117-event-action',bar).length);
