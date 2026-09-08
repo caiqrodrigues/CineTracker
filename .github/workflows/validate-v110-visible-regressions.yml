@@ -1,0 +1,114 @@
+name: Validate CineTracker 1.0.10 Visible Regressions
+
+on:
+  push:
+    branches:
+      - fix/1.0.10-real-regressions
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.10 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.10"' package.json
+          grep -Fq '"version": "1.0.10"' apps/web/package.json
+          grep -Fq 'build-r216.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.10'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10052' apps/android/app/build.gradle
+          node --check apps/web/runtime-r216-v110-real-regressions.js
+          node --check apps/web/build-r216.mjs
+          node --check scripts/prepare-android-v1010.mjs
+          node --check scripts/test-v110-visible-regressions-browser.mjs
+
+      - name: Prove visible regressions in Chromium
+        run: node scripts/test-v110-visible-regressions-browser.mjs
+
+      - name: Verify live Formula 1 backend
+        run: |
+          node - <<'NODE'
+          const u='https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1';
+          const key='sb_publishable_UERbQXkZk4rnnu6Y8XJSgw_vcZd_V_Q';
+          const c=new AbortController();const t=setTimeout(()=>c.abort(),35000);
+          try{
+            const r=await fetch(u,{method:'POST',headers:{'content-type':'application/json',apikey:key},body:JSON.stringify({season:2026}),signal:c.signal});
+            const d=await r.json();if(!r.ok)throw new Error(JSON.stringify(d));if(!Array.isArray(d.races)||d.races.length<20)throw new Error('F1 calendar incomplete');
+            console.log('V110_F1_LIVE_OK races='+d.races.length+' next='+(d.next?.raceName||'none')+' partial='+d.partial);
+          } finally { clearTimeout(t) }
+          NODE
+
+      - name: Preserve Home composition
+        run: node scripts/test-v109-home-composition-browser.mjs
+
+      - name: Preserve 1.0.8 Home continuity
+        run: node scripts/test-v108-continuity-browser.mjs
+
+      - name: Build Web 1.0.10
+        run: npm run build
+
+      - name: Inspect Web 1.0.10 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v216.js
+          test -f "$B"
+          grep -Fq "window.__ctR216RealRegressions='foryou-f1-rewatch-history-mobile-layout'" "$B"
+          grep -Fq "setTimeout(()=>r(null),3500)" "$B"
+          grep -Fq "edge('cinetracker-f1-v1',{season},30000)" "$B"
+          grep -Fq 'data-ct216-rewatch' "$B"
+          grep -Fq 'grid-template-columns:minmax(0,1fr)' "$B"
+          grep -Fq 'ct-web-1.0.10-r216' apps/web/dist/service-worker.js
+
+      - name: Prepare Android 1.0.10 exact runtime
+        run: node scripts/prepare-android-v1010.mjs
+
+      - name: Inspect prepared Android 1.0.10
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r252-android-official-1.0.10';" "$I"
+          grep -Fq "window.__ctR216RealRegressions='foryou-f1-rewatch-history-mobile-layout'" "$I"
+          grep -Fq "setTimeout(()=>r(null),3500)" "$I"
+          grep -Fq "edge('cinetracker-f1-v1',{season},30000)" "$I"
+          grep -Fq 'data-ct216-rewatch' "$I"
+          grep -Fq 'grid-template-columns:minmax(0,1fr)' "$I"
+
+      - name: Build Android 1.0.10 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v110-apk && mkdir -p /tmp/v110-apk
+          unzip -q "$APK" -d /tmp/v110-apk
+          I=/tmp/v110-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r252-android-official-1.0.10';" "$I"
+          grep -Fq "window.__ctR216RealRegressions='foryou-f1-rewatch-history-mobile-layout'" "$I"
+          grep -Fq "edge('cinetracker-f1-v1',{season},30000)" "$I"
+          grep -Fq 'data-ct216-rewatch' "$I"
+          sha256sum "$APK" | tee /tmp/v110-sha256.txt
+          echo 'V110_APK_PAYLOAD_OK version=1.0.10 code=10052 runtime=r252'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.10-real-regressions
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v110-sha256.txt
+          if-no-files-found: error
