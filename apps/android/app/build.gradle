@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10061
-        versionName '1.0.19'
+        versionCode 10062
+        versionName '1.0.20'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker 1.0.19 — versionCode 10061. Complete Watchlist counts/sorting/detail opening on Web+Android; organized Sports controls on Web.
+// CineTracker 1.0.20 — versionCode 10062. Final Watchlist/Sports/Pra Voce UI authorities on Web+Android.
