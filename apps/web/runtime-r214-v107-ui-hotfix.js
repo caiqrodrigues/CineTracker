@@ -11,6 +11,7 @@ const qa=(s,r=document)=>r?.querySelectorAll?[...r.querySelectorAll(s)]:[];
 const n=v=>{const x=Number(v);return Number.isFinite(x)?x:0};
 const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const key=(kind,tmdb,s=0,e=0)=>kind==='episode'?`episode:${tmdb}:${s}:${e}`:`movie:${tmdb}`;
+const legacy107Attr='data-'+'ct107-rewatch',legacy107Sel='['+legacy107Attr+']';
 let counts=new Map(),countsAt=0,countsTask=null;
 async function loadCounts(force=false){
  if(!force&&Date.now()-countsAt<10000)return counts;
@@ -37,7 +38,7 @@ function episode(el){
 function label(btn,plays){btn.dataset.plays=String(plays);btn.textContent=plays>1?`↻ Reassistir ${plays}x`:'↻ Reassistir'}
 function configure(btn,kind,tmdb,s=0,e=0,title=''){
  if(!btn||!(tmdb>0))return false;
- for(const a of ['data-ct104-rewatch','data-ct171-rewatch-media','data-ct171-rewatch-episode','data-rewatch-episode','data-ct107-rewatch'])btn.removeAttribute(a);
+ for(const a of ['data-ct104-rewatch','data-ct171-rewatch-media','data-ct171-rewatch-episode','data-rewatch-episode',legacy107Attr])btn.removeAttribute(a);
  btn.type='button';btn.classList.add('ct214-rewatch');btn.dataset.ct214Rewatch=kind;btn.dataset.tmdb=String(tmdb);if(s)btn.dataset.season=String(s);if(e)btn.dataset.episode=String(e);if(title)btn.dataset.title=title;
  const plays=counts.get(key(kind,tmdb,s,e))||n(btn.dataset.plays)||1;label(btn,plays);btn.hidden=false;btn.removeAttribute('aria-hidden');btn.style.removeProperty('display');return true;
 }
@@ -51,9 +52,10 @@ function replaceLegacy(old){
  const b=old.cloneNode(true);if(configure(b,kind,tmdb,s,e,q('b,strong,.title',row)?.textContent||old.dataset.title||''))old.replaceWith(b);
 }
 function ensureButtons(){
- for(const old of qa('[data-ct104-rewatch],[data-ct171-rewatch-media],[data-ct171-rewatch-episode],[data-rewatch-episode],[data-ct107-rewatch]'))replaceLegacy(old);
+ const legacySel='[data-ct104-rewatch],[data-ct171-rewatch-media],[data-ct171-rewatch-episode],[data-rewatch-episode],'+legacy107Sel;
+ for(const old of qa(legacySel))replaceLegacy(old);
  for(const row of qa('[data-episode-number],[data-episode],.episode-row,.ct169-episode,.ct171-episode-row,.episode-item')){
-  if(q('[data-ct214-rewatch="episode"]',row))continue;const text=norm(row.textContent);if(!/(assistido|visto|reassistir)/.test(text))continue;
+  if(row.matches?.('[data-ct214-rewatch]'))continue;if(q('[data-ct214-rewatch="episode"]',row))continue;const text=norm(row.textContent);if(!/(assistido|visto|reassistir)/.test(text))continue;
   const tmdb=mediaId(row,'episode'),s=season(row),e=episode(row);if(!(tmdb>0&&s>0&&e>0))continue;
   const b=document.createElement('button');b.className='btn btn-secondary';configure(b,'episode',tmdb,s,e,q('b,strong,.title',row)?.textContent||'');row.appendChild(b);
  }
