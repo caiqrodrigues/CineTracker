@@ -24,14 +24,16 @@ jobs:
           node --check apps/web/runtime-r228-v122-web-authority.js
           node --check apps/web/runtime-r228b-v122-card-metadata.js
           node --check apps/web/runtime-r228c-v122-authority-guards.js
+          node --check apps/web/runtime-r228d-v122-exact-count-authority.js
           node --check apps/web/build-r228.mjs
-          node --check scripts/test-v122d-web-final-feedback-browser.mjs
+          node --check scripts/test-v122e-web-final-feedback-browser.mjs
           grep -Fq 'css-loading-preserves-empty-authority+year-genres' apps/web/runtime-r228-v122-web-authority.js
           grep -Fq 'global-grid-direct-children-two-actions' apps/web/runtime-r228-v122-web-authority.js
           grep -Fq 'exact-renderable-watchlist-counts' apps/web/runtime-r228-v122-web-authority.js
+          grep -Fq 'exact-watchlist-counter-final-pass' apps/web/runtime-r228d-v122-exact-count-authority.js
 
       - name: Reproduce physical Web feedback in Chromium
-        run: node scripts/test-v122d-web-final-feedback-browser.mjs
+        run: node scripts/test-v122e-web-final-feedback-browser.mjs
 
       - name: Preserve Pra Voce affinity
         run: node scripts/test-v118-foryou-affinity-profile-browser.mjs
@@ -54,5 +56,6 @@ jobs:
           grep -Fq "window.__ctR228V122='discover-metadata-series-settle-sports-source-counts-exact'" "$B"
           grep -Fq "window.__ctR228bV122='all-discover-cards-year-genres'" "$B"
           grep -Fq "window.__ctR228cV122='neutralize-legacy-watchlist-stat-selectors'" "$B"
+          grep -Fq "window.__ctR228dV122='exact-watchlist-counter-final-pass'" "$B"
           grep -Fq "ct-web-1.0.22-r228" apps/web/dist/service-worker.js
           grep -Fq 'r228-official-1.0.22' apps/web/dist/release.json
