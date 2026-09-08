@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10057
-        versionName '1.0.15'
+        versionCode 10058
+        versionName '1.0.16'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker 1.0.15 — versionCode 10057. Gives Watchlist its own eligibility contract and adds complete F1 weekend sessions to generic Sports.
+// CineTracker 1.0.16 — versionCode 10058. Final DOM authority for Watchlist recommendations and direct Formula 1 favorite-event modal sessions.
