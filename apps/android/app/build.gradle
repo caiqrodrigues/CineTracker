@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10051
-        versionName '1.0.9'
+        versionCode 10052
+        versionName '1.0.10'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker 1.0.9 — versionCode 10051. Preserves the validated 1.0.8 startup/continuity fixes and removes standalone History from Home on Web and Android.
+// CineTracker 1.0.10 — versionCode 10052. Repairs the visible regressions captured in video 1001745761: Pra Voce stall, F1 Hub, History rewatch controls and mobile card/sports layout.
