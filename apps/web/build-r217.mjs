@@ -30,11 +30,13 @@ js=once(js,"window.__ctWebBuild='1.0.0';window.__ctOfficialVersion='1.0.0';","wi
 js=once(js,'CineTracker • v1.0.0 • ${REVISION}','CineTracker • v1.0.11 • ${REVISION}','footer');
 js=js.replace('\nboot();','\n'+patch+'\nboot();');
 html=html.replaceAll('r204-official-1.0.0','r217-official-1.0.11').replaceAll('app-v204.js','app-v217.js').replaceAll('app-v204.css','app-v217.css');
-const swVersion=/const\s+VERSION\s*=\s*['"][^'"]+['"]\s*;/;if(!swVersion.test(sw))throw new Error('service worker VERSION missing');
-sw=sw.replace(swVersion,"const VERSION='ct-web-1.0.11-r217';").replaceAll('app-v204.js','app-v217.js').replaceAll('app-v204.css','app-v217.css').replaceAll('r204-official-1.0.0','r217-official-1.0.11');
+/* r204 descends from prebuilt-r161, whose SW uses const CACHE rather than const VERSION. */
+const swCache=/const\s+CACHE\s*=\s*['"][^'"]+['"]\s*;/;
+if(!swCache.test(sw))throw new Error('r204 service worker CACHE declaration missing');
+sw=sw.replace(swCache,"const CACHE='ct-web-1.0.11-r217';").replaceAll('app-v204.js','app-v217.js').replaceAll('app-v204.css','app-v217.css').replaceAll('r204-official-1.0.0','r217-official-1.0.11');
 await Promise.all([
  writeFile(resolve(dist,'index.html'),html,'utf8'),writeFile(resolve(dist,'app-v217.js'),js,'utf8'),writeFile(resolve(dist,'app-v217.css'),css,'utf8'),writeFile(resolve(dist,'service-worker.js'),sw,'utf8'),
  writeFile(resolve(dist,'release.json'),JSON.stringify({version:'1.0.11',revision:'r217-official-1.0.11',base:'r204-official-1.0.0',policy:'skip-r205-r216',history:'hidden-above-home+explicit-rewatch',f1:'single-season-hub',top10:'3-complete-mobile',sports:'no-summary-single-column-mobile',generated_at:new Date().toISOString()},null,2),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v204.js'),{force:true}),rm(resolve(dist,'app-v204.css'),{force:true})]);
-console.log('WEB_1_0_11_READY base=r204 skipped=r205-r216 authority=r217');
+console.log('WEB_1_0_11_READY base=r204 skipped=r205-r216 authority=r217 sw=cache-r217');
