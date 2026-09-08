@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 await import('./build-r227.mjs');
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
 let [html,js,css,sw,patch,meta,guards]=await Promise.all([
- readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v227.js'),'utf8'),readFile(resolve(dist,'app-v227.css'),'utf8'),readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(root,'runtime-r228-v122-web-final-feedback.js'),'utf8'),readFile(resolve(root,'runtime-r228b-v122-card-metadata.js'),'utf8'),readFile(resolve(root,'runtime-r228c-v122-authority-guards.js'),'utf8')
+ readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v227.js'),'utf8'),readFile(resolve(dist,'app-v227.css'),'utf8'),readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(root,'runtime-r228-v122-web-authority.js'),'utf8'),readFile(resolve(root,'runtime-r228b-v122-card-metadata.js'),'utf8'),readFile(resolve(root,'runtime-r228c-v122-authority-guards.js'),'utf8')
 ]);
 const once=(s,a,b,label)=>{const n=s.split(a).length-1;if(n!==1)throw new Error(`Web 1.0.22 expected one ${label}, found ${n}`);return s.replace(a,b)};
 for(const must of ["window.__ctR228V122='discover-metadata-series-settle-sports-source-counts-exact'",'css-loading-preserves-empty-authority+year-genres','global-grid-direct-children-two-actions','exact-renderable-watchlist-counts'])if(!patch.includes(must))throw new Error('Web 1.0.22 patch missing '+must);
