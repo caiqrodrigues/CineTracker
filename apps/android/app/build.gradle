@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10062
-        versionName '1.0.20'
+        versionCode 10063
+        versionName '1.0.24'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker 1.0.20 — versionCode 10062. Final Watchlist/Sports/Pra Voce UI authorities on Web+Android.
+// CineTracker 1.0.24 — versionCode 10063. Consolidated final Home/Pra Voce/Sports/Statistics authority.
