@@ -44,6 +44,8 @@ function ct166FavoriteBody(){return ''}
 function ct163Read(k){return k==='home'?{marker:'cached'}:null}
 function ct163Write(){}
 function ct165OpenFavorite(){}
+async function ct163PreloadAll(){}
+function ct163WarmOnIdle(){}
 function render(){}
 function toast(){}
 </script>`;
