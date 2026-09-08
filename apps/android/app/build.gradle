@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10055
-        versionName '1.0.13'
+        versionCode 10056
+        versionName '1.0.14'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker 1.0.13 — versionCode 10055. Adds persistent Supabase recommendation memory and collapsible F1 Hub with starting grid.
+// CineTracker 1.0.14 — versionCode 10056. Restores strict Watchlist recommendations with TMDB enrichment, immediate replacement after add, and icon-only collapse controls.
