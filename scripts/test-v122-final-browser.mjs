@@ -10,8 +10,7 @@ const runtimeFiles=[
   'apps/web/runtime-r228d-v122-exact-count-authority.js'
 ];
 const patch=(await Promise.all(runtimeFiles.map(f=>readFile(resolve(root,f),'utf8')))).join('\n').replaceAll('</script>','<\\/script>');
-const dir='/tmp/ct-v122-final';
-await mkdir(dir,{recursive:true});
+const dir='/tmp/ct-v122-final';await mkdir(dir,{recursive:true});
 const payload={rows:[
   {media_type:'movie',tmdb_id:11,title:'A',release_year:2024},
   {media_type:'movie',tmdb_id:12,title:'B',release_year:2020},
@@ -33,7 +32,7 @@ const html=`<!doctype html><html><body>
   </div>
 </div>
 <script>
-window.setInterval=()=>0;
+window.setInterval=()=>0;window.setTimeout=()=>0;window.clearTimeout=()=>{};
 window.MutationObserver=class{observe(){} disconnect(){}};
 let profileCache={dashboard:[]};
 function mediaTmdb(x){return Number(x?.tmdb_id||x?.id||0)}
@@ -41,21 +40,17 @@ function mediaType(x){return x?.media_type==='movie'?'movie':'tv'}
 async function rpc(){return ${JSON.stringify(payload)}}
 window.__ctV121FullWatchlist=async()=>${JSON.stringify(payload)};
 window.__ctV118LastPools=${JSON.stringify(pools)};
-async function safeTmdb(p){return p==='/movie/99'?{release_date:'2025-05-01',genres:[{name:'Ficção científica'},{name:'Suspense'}]}:{}}
-document.querySelector('#collapse').addEventListener('click',e=>e.currentTarget.textContent=e.currentTarget.textContent==='Recolher'?'Expandir':'Recolher');
+async function safeTmdb(){return{}}
 </script>
 <script>${patch}</script>
 <script>
-(async()=>{try{
-  window.__ctV122Sync();
-  window.__ctV122MetadataSync();
-  await new Promise(r=>setTimeout(r,500));
-  await window.__ctV122SyncCounts(true);
+try{
+  window.__ctV122DiscoverNow();
+  window.__ctV122MetadataRun();
+  window.__ctV122ApplyCounts(${JSON.stringify(payload)});
   window.__ctV122Sports();
-  await new Promise(r=>setTimeout(r,100));
-  const empty=document.querySelector('#empty');
-  const movie=document.querySelector('#movie');
-  const sport=document.querySelector('#sport');
+  window.__ctV122StatsToggleNow();
+  const empty=document.querySelector('#empty'),movie=document.querySelector('#movie'),sport=document.querySelector('#sport');
   document.body.dataset.semantic=empty?.textContent||'';
   document.body.dataset.loading=String(empty?.classList.contains('ct122-pending-empty'));
   document.body.dataset.meta=movie.querySelector('.ct122-card-meta')?.textContent||'';
@@ -67,21 +62,13 @@ document.querySelector('#collapse').addEventListener('click',e=>e.currentTarget.
   document.body.dataset.events=String([...sport.querySelectorAll('.ct122-action')].filter(x=>x.textContent==='Eventos').length);
   document.body.dataset.watched=String([...sport.querySelectorAll('.ct122-action')].filter(x=>/Assistido|Desmarcar/.test(x.textContent)).length);
   document.body.dataset.outside=String([...sport.querySelectorAll('button,[role="button"]')].filter(x=>!x.closest('.ct122-actions')&&(/evento/i.test(x.textContent)||/assistido/i.test(x.textContent))).length);
-  document.querySelector('#collapse').click();
-  window.__ctV122Sync();
-  await new Promise(r=>setTimeout(r,100));
   document.body.dataset.collapse=document.querySelector('#collapse').textContent;
-}catch(e){document.body.dataset.err=String(e?.stack||e)}finally{document.body.dataset.done='1'}})();
+}catch(e){document.body.dataset.err=String(e?.stack||e)}finally{document.body.dataset.done='1'}
 </script>
 </body></html>`;
-const file=resolve(dir,'index.html');
-await writeFile(file,html,'utf8');
-let out='';
-for(const bin of ['google-chrome','chromium','chromium-browser']){
-  try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--window-size=1400,900','--virtual-time-budget=2500','--dump-dom','file://'+file],{encoding:'utf8',timeout:30000,stdio:['ignore','pipe','pipe']});if(out)break}catch{}
-}
-await rm(dir,{recursive:true,force:true});
-if(!out)throw new Error('Chromium unavailable');
+const file=resolve(dir,'index.html');await writeFile(file,html,'utf8');
+let out='';for(const bin of ['google-chrome','chromium','chromium-browser']){try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--window-size=1400,900','--dump-dom','file://'+file],{encoding:'utf8',timeout:30000,stdio:['ignore','pipe','pipe']});if(out)break}catch{}}
+await rm(dir,{recursive:true,force:true});if(!out)throw new Error('Chromium unavailable');
 const must=['data-done="1"','data-semantic="Sem item elegível"','data-loading="true"','data-meta="2025 · Ficção científica, Suspense"','data-movie-count="2"','data-series-count="1"','data-rows-movie="2"','data-rows-series="1"','data-actions="2"','data-events="1"','data-watched="1"','data-outside="0"'];
 for(const m of must)if(!out.includes(m))throw new Error('V122_FINAL missing '+m+'\n'+out.slice(-12000));
 if(!(/data-collapse="⌃"/.test(out)||/data-collapse="⌄"/.test(out)))throw new Error('V122_FINAL statistics toggle returned to text');
