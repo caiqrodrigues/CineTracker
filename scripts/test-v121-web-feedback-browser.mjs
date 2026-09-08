@@ -18,7 +18,6 @@ function mediaTmdb(x){return x.tmdb_id} function img(){return''} function esc(x)
 async function rpc(name){if(name!=='cinetracker_watchlist_full_v119')throw new Error('unexpected');calls++;if(calls===1)throw new Error('JWT expired');return ${JSON.stringify(payload)}}
 async function authRequest(path,body){refreshes++;return{access_token:'fresh',refresh_token:'refresh',user:{id:'u'}}} function saveSession(d){session=d} async function restoreSession(){return false}
 function ctR180StatCard(){return''}
-// legacy stats handler rewrites icon to text after every click
 collapse.addEventListener('click',()=>{collapse.textContent=collapse.textContent==='Recolher'?'Expandir':'Recolher'});
 </script><script>${patch}</script><script>
 (async()=>{await new Promise(r=>setTimeout(r,220));document.body.dataset.pending=empty.textContent;document.body.dataset.refreshes=String(refreshes);document.body.dataset.series=document.querySelector('[data-ct121-watchlist="series"] b')?.textContent||'';collapse.click();await new Promise(r=>setTimeout(r,80));document.body.dataset.collapse=collapse.textContent;const card=document.querySelector('#sport');document.body.dataset.actions=String(card.querySelectorAll('.ct121-action').length);document.body.dataset.events=String([...card.querySelectorAll('.ct121-action')].filter(x=>x.textContent==='Eventos').length);document.body.dataset.watched=String([...card.querySelectorAll('.ct121-action')].filter(x=>/Assistido|Desmarcar/.test(x.textContent)).length);document.body.dataset.cols=getComputedStyle(grid).gridTemplateColumns;document.querySelector('[data-ct121-watchlist="series"]').click();await new Promise(r=>setTimeout(r,80));document.body.dataset.modal=String(!!document.querySelector('[data-ct121-watch-modal="series"]'));document.body.dataset.rows=String(document.querySelectorAll('[data-ct121-media]').length);document.body.dataset.done='1'})()
@@ -26,6 +25,8 @@ collapse.addEventListener('click',()=>{collapse.textContent=collapse.textContent
 const file=resolve(dir,'index.html');await writeFile(file,html);
 function chrome(){for(const bin of ['google-chrome','chromium','chromium-browser'])try{return execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--window-size=1400,900','--virtual-time-budget=3500','--dump-dom','file://'+file],{encoding:'utf8',timeout:30000,stdio:['ignore','pipe','pipe']})}catch{}return''}
 const out=chrome();await rm(dir,{recursive:true,force:true});if(!out)throw new Error('Chromium unavailable');
-for(const must of ['data-done="1"','data-pending="Buscando recomendação…"','data-refreshes="1"','data-series="1"','data-collapse="⌄"','data-actions="2"','data-events="1"','data-watched="1"','data-modal="true"','data-rows="1"'])if(!out.includes(must))throw new Error('V121 contract missing '+must+'\n'+out.slice(-12000));
+for(const must of ['data-done="1"','data-pending="Buscando recomendação…"','data-refreshes="1"','data-series="1"','data-actions="2"','data-events="1"','data-watched="1"','data-modal="true"','data-rows="1"'])if(!out.includes(must))throw new Error('V121 contract missing '+must+'\n'+out.slice(-12000));
+if(!(/data-collapse="⌃"/.test(out)||/data-collapse="⌄"/.test(out)))throw new Error('V121 collapse control returned to text\n'+out.slice(-8000));
+if(/data-collapse="(?:Recolher|Expandir)"/.test(out))throw new Error('V121 collapse text leaked');
 if(/JWT expired/.test(out))throw new Error('JWT error leaked to modal');
 console.log('V121_BROWSER_OK foryou=no-premature-empty watchlist=jwt-refresh-retry stats=icon-stable sports=2-actions-grid');
