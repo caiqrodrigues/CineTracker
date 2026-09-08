@@ -1,0 +1,9 @@
+import {writeFile,rm,mkdir} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {spawn,execFileSync} from 'node:child_process';
+const dir='/tmp/ct-v112-f1-cors';await mkdir(dir,{recursive:true});const file=resolve(dir,'index.html');
+const key='sb_publishable_UERbQXkZk4rnnu6Y8XJSgw_vcZd_V_Q';
+await writeFile(file,`<!doctype html><html><body><script>(async()=>{try{const r=await fetch('https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1',{method:'POST',headers:{apikey:'${key}','Content-Type':'application/json'},body:JSON.stringify({season:2026})});const d=await r.json();document.body.dataset.status=String(r.status);document.body.dataset.races=String(Array.isArray(d.races)?d.races.length:0);document.body.dataset.cors='ok'}catch(e){document.body.dataset.cors='fail';document.body.dataset.err=String(e.message||e)}finally{document.body.dataset.done='1'}})()</script></body></html>`,'utf8');
+const server=spawn('python3',['-m','http.server','8765','--bind','127.0.0.1','--directory',dir],{stdio:'ignore'});await new Promise(r=>setTimeout(r,500));
+let out='';try{for(const bin of ['google-chrome','chromium','chromium-browser']){try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--window-size=390,900','--virtual-time-budget=35000','--dump-dom','http://127.0.0.1:8765/index.html'],{encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:45000});if(out)break}catch{}}}finally{server.kill('SIGTERM');await rm(dir,{recursive:true,force:true})}
+if(!out)throw new Error('Chromium unavailable');for(const must of ['data-done="1"','data-cors="ok"','data-status="200"'])if(!out.includes(must))throw new Error('V112 F1 browser CORS missing '+must+'\n'+out.slice(-3000));const m=out.match(/data-races="(\d+)"/);if(!m||Number(m[1])<20)throw new Error('V112 F1 browser calendar incomplete '+(m?.[1]||'none'));console.log('V112_F1_BROWSER_OK status=200 races='+m[1]+' cors=preflight+post');
