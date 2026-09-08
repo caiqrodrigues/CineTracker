@@ -1,0 +1,115 @@
+name: Validate CineTracker 1.0.19 Watchlist Sports
+
+on:
+  push:
+    branches:
+      - fix/1.0.19-watchlist-sports-ui
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.19 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.19"' package.json
+          grep -Fq '"version": "1.0.19"' apps/web/package.json
+          grep -Fq 'build-r225.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.19'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10061' apps/android/app/build.gradle
+          node --check apps/web/runtime-r225-v119-watchlist-sports-ui.js
+          node --check apps/web/build-r225.mjs
+          node --check scripts/prepare-android-v1019.mjs
+          node --check scripts/test-v119-watchlist-sports-browser.mjs
+          grep -Fq 'cinetracker_watchlist_full_v119' supabase/migrations/20260908141500_v119_complete_watchlist_rpc.sql
+          grep -Fq 'security invoker' supabase/migrations/20260908141500_v119_complete_watchlist_rpc.sql
+          grep -Fq 'full-rpc-counts-sort-detail-open' apps/web/runtime-r225-v119-watchlist-sports-ui.js
+          grep -Fq 'three-column-single-actionbar-no-duplicates' apps/web/runtime-r225-v119-watchlist-sports-ui.js
+          grep -Fq 'Mais recente adicionada' apps/web/runtime-r225-v119-watchlist-sports-ui.js
+          grep -Fq 'data-ct119-watch-media' apps/web/runtime-r225-v119-watchlist-sports-ui.js
+
+      - name: Prove Watchlist counts sorting details and Sports final UI in Chromium
+        run: node scripts/test-v119-watchlist-sports-browser.mjs
+
+      - name: Preserve 1.0.18 affinity and direct Profile authority
+        run: node scripts/test-v118-foryou-affinity-profile-browser.mjs
+
+      - name: Preserve 1.0.16 Watchlist and F1 final authorities
+        run: node scripts/test-v116-final-authorities-browser.mjs
+
+      - name: Preserve strict recommendation exclusions and memory
+        run: node scripts/test-v112-foryou-profile-browser.mjs
+
+      - name: Build Web 1.0.19
+        run: npm run build
+
+      - name: Inspect Web 1.0.19 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v225.js
+          test -f "$B"
+          grep -Fq "const REVISION='r225-official-1.0.19';" "$B"
+          grep -Fq "window.__ctR225V119='watchlist-authoritative-sort-details-sports-controls'" "$B"
+          grep -Fq 'cinetracker_watchlist_full_v119' "$B"
+          grep -Fq 'Mais recente adicionada' "$B"
+          grep -Fq 'data-ct119-watch-media' "$B"
+          grep -Fq 'ct119-sport-actions' "$B"
+          grep -Fq "ct-web-1.0.19-r225" apps/web/dist/service-worker.js
+
+      - name: Prepare Android 1.0.19
+        run: node scripts/prepare-android-v1019.mjs
+
+      - name: Inspect prepared Android runtime
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r261-android-official-1.0.19';" "$I"
+          grep -Fq 'window.__ctAndroidOfficialCode=10061' "$I"
+          grep -Fq "window.__ctR225V119='watchlist-authoritative-sort-details-sports-controls'" "$I"
+          grep -Fq 'cinetracker_watchlist_full_v119' "$I"
+          grep -Fq 'data-ct119-watch-media' "$I"
+          node - <<'NODE'
+          const fs=require('fs'),h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const m=h.match(/<script data-ct-android="r261-android-js">([\s\S]*?)<\/script>/);if(!m)throw new Error('r261 script missing');fs.writeFileSync('/tmp/r261.js',m[1]);
+          NODE
+          node --check /tmp/r261.js
+
+      - name: Build Android 1.0.19 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect exact APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v119-apk && mkdir -p /tmp/v119-apk
+          unzip -q "$APK" -d /tmp/v119-apk
+          I=/tmp/v119-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r261-android-official-1.0.19';" "$I"
+          grep -Fq "window.__ctR225V119='watchlist-authoritative-sort-details-sports-controls'" "$I"
+          grep -Fq 'cinetracker_watchlist_full_v119' "$I"
+          grep -Fq 'data-ct119-watch-media' "$I"
+          sha256sum "$APK" | tee /tmp/v119-sha256.txt
+          echo 'V119_APK_PAYLOAD_OK version=1.0.19 code=10061 runtime=r261'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.19-watchlist-sports
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v119-sha256.txt
+          if-no-files-found: error
