@@ -38,13 +38,10 @@ try{
   };
 }catch{}
 
-let scheduled=false;
-const schedule=()=>{
-  if(scheduled)return;scheduled=true;
-  requestAnimationFrame(()=>{scheduled=false;if(document.querySelector('[data-home]'))cleanHomeHistory()});
-};
+/* Remove any late reinserted History in the same mutation turn. Removals do not add nodes,
+   so this does not create an observer loop. */
 new MutationObserver(records=>{
-  if(records.some(r=>r.addedNodes?.length))schedule();
+  if(records.some(r=>r.addedNodes?.length)&&document.querySelector('[data-home]'))cleanHomeHistory();
 }).observe(document.documentElement,{childList:true,subtree:true});
 setTimeout(cleanHomeHistory,0);
 setTimeout(cleanHomeHistory,350);
