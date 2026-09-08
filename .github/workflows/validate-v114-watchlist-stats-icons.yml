@@ -1,0 +1,112 @@
+name: Validate CineTracker 1.0.14 Watchlist and Compact UI
+
+on:
+  push:
+    branches:
+      - fix/1.0.14-watchlist-stats-icons
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.14 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.14"' package.json
+          grep -Fq '"version": "1.0.14"' apps/web/package.json
+          grep -Fq 'build-r220.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.14'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10056' apps/android/app/build.gradle
+          node --check apps/web/runtime-r220-v114-watchlist-stats-icons.js
+          node --check apps/web/build-r220.mjs
+          node --check scripts/prepare-android-v1014.mjs
+          node --check scripts/test-v114-watchlist-stats-browser.mjs
+          grep -Fq 'tmdb-enriched-before-strict-filter' apps/web/runtime-r220-v114-watchlist-stats-icons.js
+          grep -Fq 'fresh-card-add-replaces-in-place-like-swap' apps/web/runtime-r220-v114-watchlist-stats-icons.js
+          grep -Fq 'web-main-plus-sports-collapse-together-icon-only' apps/web/runtime-r220-v114-watchlist-stats-icons.js
+
+      - name: Prove Watchlist enrichment, instant replacement and compact UI in Chromium
+        run: node scripts/test-v114-watchlist-stats-browser.mjs
+
+      - name: Preserve 1.0.13 recommendation memory and F1 grid
+        run: node scripts/test-v113-memory-f1-browser.mjs
+
+      - name: Preserve 1.0.12 regressions
+        run: node scripts/test-v112-foryou-profile-browser.mjs
+
+      - name: Build Web 1.0.14
+        run: npm run build
+
+      - name: Inspect Web 1.0.14 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v220.js
+          test -f "$B"
+          grep -Fq "window.__ctR219V113='persistent-foryou-memory-f1-collapse-grid'" "$B"
+          grep -Fq "window.__ctR220V114='watchlist-enrichment-inplace-add-stats-unified-icons'" "$B"
+          grep -Fq 'window.__ctV114PrepareWatchPools' "$B"
+          grep -Fq 'window.__ctR237SwapNow' "$B"
+          grep -Fq 'data-ct114-stats-group' "$B"
+          grep -Fq 'ct114-collapse-icon' "$B"
+          grep -Fq 'data-ct113-f1-grid' "$B"
+          grep -Fq "ct-web-1.0.14-r220" apps/web/dist/service-worker.js
+
+      - name: Prepare Android 1.0.14
+        run: node scripts/prepare-android-v1014.mjs
+
+      - name: Inspect prepared Android runtime
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r256-android-official-1.0.14';" "$I"
+          grep -Fq 'window.__ctAndroidOfficialCode=10056' "$I"
+          grep -Fq "window.__ctR220V114='watchlist-enrichment-inplace-add-stats-unified-icons'" "$I"
+          grep -Fq 'tmdb-enriched-before-strict-filter' "$I"
+          grep -Fq 'fresh-card-add-replaces-in-place-like-swap' "$I"
+          grep -Fq 'ct114-collapse-icon' "$I"
+          grep -Fq 'data-ct113-f1-grid' "$I"
+          node - <<'NODE'
+          const fs=require('fs'),h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const m=h.match(/<script data-ct-android="r256-android-js">([\s\S]*?)<\/script>/);if(!m)throw new Error('r256 script missing');fs.writeFileSync('/tmp/r256.js',m[1]);
+          NODE
+          node --check /tmp/r256.js
+
+      - name: Build Android 1.0.14 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect exact APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v114-apk && mkdir -p /tmp/v114-apk
+          unzip -q "$APK" -d /tmp/v114-apk
+          I=/tmp/v114-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r256-android-official-1.0.14';" "$I"
+          grep -Fq "window.__ctR220V114='watchlist-enrichment-inplace-add-stats-unified-icons'" "$I"
+          grep -Fq 'ct114-collapse-icon' "$I"
+          grep -Fq 'data-ct113-f1-grid' "$I"
+          sha256sum "$APK" | tee /tmp/v114-sha256.txt
+          echo 'V114_APK_PAYLOAD_OK version=1.0.14 code=10056 runtime=r256'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.14-watchlist-stats-icons
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v114-sha256.txt
+          if-no-files-found: error
