@@ -75,10 +75,7 @@ jobs:
 
       - name: Build Android 1.0.8 APK
         working-directory: apps/android
-        run: |
-          set -euo pipefail
-          chmod +x gradlew
-          ./gradlew --no-daemon assembleDebug
+        run: gradle assembleDebug --stacktrace
 
       - name: Inspect APK payload
         run: |
