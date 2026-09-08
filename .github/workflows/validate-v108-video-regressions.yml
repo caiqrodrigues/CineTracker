@@ -32,11 +32,15 @@ jobs:
           grep -Fq 'versionCode 10050' apps/android/app/build.gradle
           node --check apps/android/runtime-r198-mobile-performance.js
           node --check scripts/prepare-android-v1008.mjs
+          node --check scripts/test-v108-continuity-browser.mjs
           grep -Fq "window.__ctAndroidHomeContinuity='background-refresh-no-passive-visible-repaint'" apps/android/runtime-r198-mobile-performance.js
           grep -Fq "window.__ctAndroidWarmPrimary='profile-foryou-top10-sports-sequential'" apps/android/runtime-r198-mobile-performance.js
           ! grep -Fq "if(seq===navSeq&&route()==='home')paintHome()" apps/android/runtime-r198-mobile-performance.js
           grep -Fq "await discoverRows('foryou')" apps/android/runtime-r198-mobile-performance.js
           grep -Fq "await discoverRows('top10')" apps/android/runtime-r198-mobile-performance.js
+
+      - name: Prove Home continuity and primary warmup in Chromium
+        run: node scripts/test-v108-continuity-browser.mjs
 
       - name: Preserve 1.0.7 F1 and rewatch behavior
         run: node scripts/test-v107-browser.mjs
