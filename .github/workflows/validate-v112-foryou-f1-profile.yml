@@ -1,0 +1,122 @@
+name: Validate CineTracker 1.0.12 Pra Voce F1 Profile
+
+on:
+  push:
+    branches:
+      - fix/1.0.12-foryou-f1-profile
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.12 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.12"' package.json
+          grep -Fq '"version": "1.0.12"' apps/web/package.json
+          grep -Fq 'build-r218.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.12'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10054' apps/android/app/build.gradle
+          grep -Fq "access-control-allow-methods" supabase/functions/cinetracker-f1-v1/index.ts
+          node --check apps/web/runtime-r218-v112-foryou-f1-profile.js
+          node --check apps/web/build-r218.mjs
+          node --check scripts/prepare-android-v1012.mjs
+          node --check scripts/test-v112-foryou-profile-browser.mjs
+          node --check scripts/test-v112-f1-browser-cors.mjs
+
+      - name: Prove Pra Voce rules and Profile geometry in Chromium
+        run: node scripts/test-v112-foryou-profile-browser.mjs
+
+      - name: Prove F1 browser CORS live
+        run: node scripts/test-v112-f1-browser-cors.mjs
+
+      - name: Prove F1 preflight headers explicitly
+        run: |
+          set -euo pipefail
+          H=$(mktemp)
+          curl -fsS -D "$H" -o /tmp/f1-options.json -X OPTIONS 'https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1' \
+            -H 'Origin: https://mycinetracker.vercel.app' \
+            -H 'Access-Control-Request-Method: POST' \
+            -H 'Access-Control-Request-Headers: apikey,content-type,authorization'
+          tr -d '\r' < "$H" > /tmp/f1-headers.txt
+          grep -Eiq '^access-control-allow-origin: \*$' /tmp/f1-headers.txt
+          grep -Eiq '^access-control-allow-methods: .*POST' /tmp/f1-headers.txt
+          grep -Eiq '^access-control-allow-headers: .*authorization' /tmp/f1-headers.txt
+          echo 'V112_F1_PREFLIGHT_OK origin=* method=POST authorization=allowed'
+
+      - name: Preserve 1.0.11 consolidated behavior
+        run: node scripts/test-v111-consolidated-browser.mjs
+
+      - name: Build Web 1.0.12
+        run: npm run build
+
+      - name: Inspect Web 1.0.12 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v218.js
+          test -f "$B"
+          grep -Fq "const REVISION='r218-official-1.0.12';" "$B"
+          grep -Fq "window.__ctR218V112='foryou-strict-f1-cors-profile-three-cards'" "$B"
+          grep -Fq "window.__ctV112ForYou='fresh-never-known-never-repeat-watchlist-not-started-30d'" "$B"
+          grep -Fq 'cinetracker_recommendation_memory_v101' "$B"
+          grep -Fq 'cinetracker_recommendation_record_v101' "$B"
+          grep -Fq 'grid-auto-columns:calc((100% - 16px)/3)' "$B"
+          grep -Fq "const CACHE='ct-web-1.0.12-r218';" apps/web/dist/service-worker.js
+          for bad in "window.__ctR208='v104-authoritative-internal-runtime'" "window.__ctR214='v107-ui-regression-hotfix'" "window.__ctR216RealRegressions"; do ! grep -Fq "$bad" "$B"; done
+
+      - name: Prepare Android 1.0.12 exact runtime
+        run: node scripts/prepare-android-v1012.mjs
+
+      - name: Inspect prepared Android 1.0.12 and JS syntax
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r254-android-official-1.0.12';" "$I"
+          grep -Fq 'window.__ctAndroidOfficialCode=10054' "$I"
+          grep -Fq "window.__ctR218V112='foryou-strict-f1-cors-profile-three-cards'" "$I"
+          grep -Fq 'grid-auto-columns:calc((100% - 16px)/3)' "$I"
+          node - <<'NODE'
+          const fs=require('fs');const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');const m='<script data-ct-android="r254-android-js">',a=h.indexOf(m),b=h.indexOf('</script>',a+m.length);if(a<0||b<a)throw new Error('r254 script missing');fs.writeFileSync('/tmp/v112-android.js',h.slice(a+m.length,b));
+          NODE
+          node --check /tmp/v112-android.js
+
+      - name: Build Android 1.0.12 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect exact APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v112-apk && mkdir -p /tmp/v112-apk
+          unzip -q "$APK" -d /tmp/v112-apk
+          I=/tmp/v112-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r254-android-official-1.0.12';" "$I"
+          grep -Fq "window.__ctV112ForYou='fresh-never-known-never-repeat-watchlist-not-started-30d'" "$I"
+          grep -Fq "window.__ctV112F1='browser-cors-preflight-v5'" "$I"
+          grep -Fq "window.__ctV112Profile='three-complete-cards-mobile'" "$I"
+          grep -Fq 'grid-auto-columns:calc((100% - 16px)/3)' "$I"
+          sha256sum "$APK" | tee /tmp/v112-sha256.txt
+          echo 'V112_APK_PAYLOAD_OK version=1.0.12 code=10054 runtime=r254'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.12-foryou-f1-profile
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v112-sha256.txt
+          if-no-files-found: error
