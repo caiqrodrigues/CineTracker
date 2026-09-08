@@ -1,5 +1,5 @@
 /* CineTracker 1.0.22 — recommendation-card metadata + final card layout authority. */
-(()=>{'use strict';if(window.__ctR228bV122)return;window.__ctR228bV122='all-discover-cards-year-genres-inside-card-actions-fixed';
+(()=>{'use strict';if(window.__ctR228bV122)return;window.__ctR228bV122='all-discover-cards-year-genres';window.__ctV122CardLayout='inside-card-actions-fixed';
 const q=(s,r=document)=>r?.querySelector?.(s)||null,qa=(s,r=document)=>r?.querySelectorAll?[...r.querySelectorAll(s)]:[];
 const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const gids=x=>[...(x?.genre_ids||x?.raw_tmdb?.genre_ids||x?.genres?.map?.(g=>g?.id)||x?.raw_tmdb?.genres?.map?.(g=>g?.id)||[])].map(Number).filter(Boolean);
