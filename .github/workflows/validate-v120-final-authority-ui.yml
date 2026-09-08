@@ -1,0 +1,112 @@
+name: Validate CineTracker 1.0.20 Final Authority UI
+
+on:
+  push:
+    branches:
+      - fix/1.0.20-final-authority-ui
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.20 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.20"' package.json
+          grep -Fq '"version": "1.0.20"' apps/web/package.json
+          grep -Fq 'build-r226.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.20'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10062' apps/android/app/build.gradle
+          node --check apps/web/runtime-r226-v120-final-authority-ui.js
+          node --check apps/web/build-r226.mjs
+          node --check scripts/prepare-android-v1020.mjs
+          node --check scripts/test-v120-final-authority-browser.mjs
+          grep -Fq 'exclusive-stat-selector-authoritative-modal' apps/web/runtime-r226-v120-final-authority-ui.js
+          grep -Fq 'canonical-card-no-legacy-event-class' apps/web/runtime-r226-v120-final-authority-ui.js
+          grep -Fq 'web-android-icon-only-equal-actions' apps/web/runtime-r226-v120-final-authority-ui.js
+          grep -Fq "removeAttribute('data-ct117-watchlist-stat')" apps/web/runtime-r226-v120-final-authority-ui.js
+          grep -Fq "removeAttribute('data-ct118-watchlist')" apps/web/runtime-r226-v120-final-authority-ui.js
+
+      - name: Reproduce and prove final authority conflicts in Chromium
+        run: node scripts/test-v120-final-authority-browser.mjs
+
+      - name: Preserve 1.0.18 Pra Voce affinity
+        run: node scripts/test-v118-foryou-affinity-profile-browser.mjs
+
+      - name: Preserve 1.0.16 Watchlist and F1 authorities
+        run: node scripts/test-v116-final-authorities-browser.mjs
+
+      - name: Preserve strict recommendation exclusions and memory
+        run: node scripts/test-v112-foryou-profile-browser.mjs
+
+      - name: Build Web 1.0.20
+        run: npm run build
+
+      - name: Inspect Web 1.0.20 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v226.js
+          test -f "$B"
+          grep -Fq "const REVISION='r226-official-1.0.20';" "$B"
+          grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" "$B"
+          grep -Fq 'data-ct120-watchlist' "$B"
+          grep -Fq 'web-android-icon-only-equal-actions' "$B"
+          grep -Fq "ct-web-1.0.20-r226" apps/web/dist/service-worker.js
+
+      - name: Prepare Android 1.0.20
+        run: node scripts/prepare-android-v1020.mjs
+
+      - name: Inspect prepared Android runtime
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r262-android-official-1.0.20';" "$I"
+          grep -Fq 'window.__ctAndroidOfficialCode=10062' "$I"
+          grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" "$I"
+          grep -Fq 'data-ct120-watchlist' "$I"
+          grep -Fq 'web-android-icon-only-equal-actions' "$I"
+          node - <<'NODE'
+          const fs=require('fs'),h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const m=h.match(/<script data-ct-android="r262-android-js">([\s\S]*?)<\/script>/);if(!m)throw new Error('r262 script missing');fs.writeFileSync('/tmp/r262.js',m[1]);
+          NODE
+          node --check /tmp/r262.js
+
+      - name: Build Android 1.0.20 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect exact APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v120-apk && mkdir -p /tmp/v120-apk
+          unzip -q "$APK" -d /tmp/v120-apk
+          I=/tmp/v120-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r262-android-official-1.0.20';" "$I"
+          grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" "$I"
+          grep -Fq 'data-ct120-watchlist' "$I"
+          grep -Fq 'web-android-icon-only-equal-actions' "$I"
+          sha256sum "$APK" | tee /tmp/v120-sha256.txt
+          echo 'V120_APK_PAYLOAD_OK version=1.0.20 code=10062 runtime=r262'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.20-final-authority-ui
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v120-sha256.txt
+          if-no-files-found: error
