@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10054
-        versionName '1.0.12'
+        versionCode 10055
+        versionName '1.0.13'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker 1.0.12 — versionCode 10054. Restores strict Pra Voce eligibility/memory, fixes browser CORS for F1 Hub, and enforces 3 complete Profile cards on mobile.
+// CineTracker 1.0.13 — versionCode 10055. Adds persistent Supabase recommendation memory and collapsible F1 Hub with starting grid.
