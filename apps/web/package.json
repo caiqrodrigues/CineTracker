@@ -1,10 +1,10 @@
 {
   "name": "cinetracker-web-entry",
   "private": true,
-  "version": "1.0.21",
+  "version": "1.0.22",
   "scripts": {
-    "build": "node build-r227.mjs",
-    "verify": "node build-r227.mjs"
+    "build": "node build-r228.mjs",
+    "verify": "node build-r228.mjs"
   },
   "engines": {
     "node": ">=20"
