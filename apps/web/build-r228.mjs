@@ -16,13 +16,20 @@ if(!js.includes('\nboot();'))throw new Error('Web 1.0.22 boot point missing');
 js=once(js,"const REVISION='r227-official-1.0.21';","const REVISION='r228-official-1.0.22';",'revision');
 js=once(js,"window.__ctWebBuild='1.0.21';window.__ctOfficialVersion='1.0.21';","window.__ctWebBuild='1.0.22';window.__ctOfficialVersion='1.0.22';",'identity');
 js=js.replaceAll('CineTracker • v1.0.21','CineTracker • v1.0.22').replaceAll("JSON.stringify({version:'1.0.21',revision:REVISION","JSON.stringify({version:'1.0.22',revision:REVISION");
+// 1.0.21 must remain available for auth/session transport, but its DOM normalizers may no longer mutate Discover, Sports or Statistics.
+const oldLoading="if(age<12000){el.classList.add('ct121-pending-empty');el.textContent='Buscando recomendação…'}";
+if(!js.includes(oldLoading))throw new Error('Web 1.0.22 could not neutralize r227 loading mutation');
+js=js.replace(oldLoading,"if(age<12000){el.classList.add('ct121-pending-empty')}");
+const oldSync="let timer=0;function sync121(){clearTimeout(timer);timer=setTimeout(()=>{void syncWlCounts121();discover121();statsToggle121();sports121()},45)}";
+if(!js.includes(oldSync))throw new Error('Web 1.0.22 could not neutralize r227 DOM sync');
+js=js.replace(oldSync,"let timer=0;function sync121(){}");
 js=js.replace('\nboot();','\n'+patch+'\n'+meta+'\n'+guards+'\n'+counts+'\nboot();');
 html=html.replaceAll('r227-official-1.0.21','r228-official-1.0.22').replaceAll('app-v227.js','app-v228.js').replaceAll('app-v227.css','app-v228.css');
 const swCache=/const\s+CACHE\s*=\s*['"][^'"]+['"]\s*;/;if(!swCache.test(sw))throw new Error('SW CACHE missing');
 sw=sw.replace(swCache,"const CACHE='ct-web-1.0.22-r228';").replaceAll('app-v227.js','app-v228.js').replaceAll('app-v227.css','app-v228.css');
 await Promise.all([
  writeFile(resolve(dist,'index.html'),html,'utf8'),writeFile(resolve(dist,'app-v228.js'),js,'utf8'),writeFile(resolve(dist,'app-v228.css'),css,'utf8'),writeFile(resolve(dist,'service-worker.js'),sw,'utf8'),
- writeFile(resolve(dist,'release.json'),JSON.stringify({version:'1.0.22',revision:'r228-official-1.0.22',base:'r227-official-1.0.21',discover:'metadata+semantic-loading',sports:'global-final-two-actions',profile:'exact-renderable-watchlist-counts',generated_at:new Date().toISOString()},null,2),'utf8')
+ writeFile(resolve(dist,'release.json'),JSON.stringify({version:'1.0.22',revision:'r228-official-1.0.22',base:'r227-official-1.0.21',discover:'metadata+semantic-loading-r227-neutralized',sports:'global-final-two-actions-r227-neutralized',profile:'exact-renderable-watchlist-counts',generated_at:new Date().toISOString()},null,2),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v227.js'),{force:true}),rm(resolve(dist,'app-v227.css'),{force:true})]);
-console.log('WEB_1_0_22_READY discover=metadata+series-settle sports=two-actions profile=exact-counts');
+console.log('WEB_1_0_22_READY discover=metadata+series-settle sports=two-actions profile=exact-counts r227-dom=neutralized');
