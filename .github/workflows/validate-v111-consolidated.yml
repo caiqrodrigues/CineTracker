@@ -1,0 +1,116 @@
+name: Validate CineTracker 1.0.11 Consolidated Runtime
+
+on:
+  push:
+    branches:
+      - fix/1.0.11-consolidated-runtime
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - uses: actions/setup-java@v5
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v4
+        with: { cache-read-only: true }
+
+      - name: Validate source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.11"' package.json
+          grep -Fq '"version": "1.0.11"' apps/web/package.json
+          grep -Fq 'build-r217.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.11'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10053' apps/android/app/build.gradle
+          node --check apps/web/runtime-r217-v111-consolidated.js
+          node --check apps/web/build-r217.mjs
+          node --check scripts/prepare-android-v1011.mjs
+          node --check scripts/test-v111-consolidated-browser.mjs
+
+      - name: Prove consolidated behavior in Chromium
+        run: node scripts/test-v111-consolidated-browser.mjs
+
+      - name: Verify live Formula 1 backend
+        run: |
+          node - <<'NODE'
+          const u='https://pjmkxryboypluleuuupp.supabase.co/functions/v1/cinetracker-f1-v1';
+          const key='sb_publishable_UERbQXkZk4rnnu6Y8XJSgw_vcZd_V_Q';
+          const c=new AbortController();const t=setTimeout(()=>c.abort(),35000);
+          try{const r=await fetch(u,{method:'POST',headers:{'content-type':'application/json',apikey:key},body:JSON.stringify({season:2026}),signal:c.signal});const d=await r.json();if(!r.ok)throw new Error(JSON.stringify(d));if(!Array.isArray(d.races)||d.races.length<20)throw new Error('F1 calendar incomplete');console.log('V111_F1_LIVE_OK races='+d.races.length+' next='+(d.next?.raceName||'none'));}finally{clearTimeout(t)}
+          NODE
+
+      - name: Build Web 1.0.11 from r204
+        run: npm run build
+
+      - name: Prove Web bundle has one release authority
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v217.js
+          test -f "$B"
+          grep -Fq "const REVISION='r217-official-1.0.11';" "$B"
+          grep -Fq "window.__ctR217Consolidated='v111-r204-r243-single-release-authority'" "$B"
+          grep -Fq "window.__ctV111History='hidden-above-home-rewatch-explicit'" "$B"
+          grep -Fq 'data-ct111-rewatch' "$B"
+          grep -Fq 'ct-f1-v111' "$B"
+          grep -Fq 'primeHomeHistory158' "$B"
+          grep -Fq 'scrollTop=hist.offsetHeight' "$B"
+          grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' "$B" || true
+          for bad in "window.__ctR208='v104-authoritative-internal-runtime'" "window.__ctR214='v107-ui-regression-hotfix'" 'window.__ctR215HomeComposition' 'window.__ctR216RealRegressions' 'ct-f1-v104' 'ct-f1-v107' 'data-ct214-rewatch' 'data-ct216-rewatch'; do
+            if grep -Fq "$bad" "$B"; then echo "REJECTED WEB AUTHORITY: $bad"; exit 1; fi
+          done
+          grep -Fq 'ct-web-1.0.11-r217' apps/web/dist/service-worker.js
+
+      - name: Prepare Android 1.0.11 from r243
+        run: node scripts/prepare-android-v1011.mjs
+
+      - name: Prove prepared Android authority and syntax
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r253-android-official-1.0.11';" "$I"
+          grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" "$I"
+          grep -Fq "window.__ctR217Consolidated='v111-r204-r243-single-release-authority'" "$I"
+          grep -Fq 'data-ct111-rewatch' "$I"
+          grep -Fq 'ct-f1-v111' "$I"
+          grep -Fq 'onPageCommitVisible(WebView view, String url)' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          for bad in "window.__ctR208='v104-authoritative-internal-runtime'" "window.__ctR214='v107-ui-regression-hotfix'" 'window.__ctR215HomeComposition' 'window.__ctR216RealRegressions' 'ct-f1-v104' 'ct-f1-v107' 'data-ct214-rewatch' 'data-ct216-rewatch'; do
+            if grep -Fq "$bad" "$I"; then echo "REJECTED ANDROID AUTHORITY: $bad"; exit 1; fi
+          done
+          node - <<'NODE'
+          const fs=require('fs');const s=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');const m='<script data-ct-android="r253-android-js">',a=s.indexOf(m),b=s.indexOf('</script>',a+m.length);if(a<0||b<a)throw new Error('r253 script missing');fs.writeFileSync('/tmp/v111-android.js',s.slice(a+m.length,b));
+          NODE
+          node --check /tmp/v111-android.js
+
+      - name: Build Android 1.0.11 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect exact APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v111-apk && mkdir -p /tmp/v111-apk
+          unzip -q "$APK" -d /tmp/v111-apk
+          I=/tmp/v111-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r253-android-official-1.0.11';" "$I"
+          grep -Fq "window.__ctR217Consolidated='v111-r204-r243-single-release-authority'" "$I"
+          grep -Fq 'data-ct111-rewatch' "$I"
+          grep -Fq 'ct-f1-v111' "$I"
+          for bad in "window.__ctR208='v104-authoritative-internal-runtime'" "window.__ctR214='v107-ui-regression-hotfix'" 'window.__ctR215HomeComposition' 'window.__ctR216RealRegressions' 'ct-f1-v104' 'ct-f1-v107' 'data-ct214-rewatch' 'data-ct216-rewatch'; do
+            if grep -Fq "$bad" "$I"; then echo "REJECTED APK AUTHORITY: $bad"; exit 1; fi
+          done
+          sha256sum "$APK" | tee /tmp/v111-sha256.txt
+          echo 'V111_APK_PAYLOAD_OK version=1.0.11 code=10053 runtime=r253 base=r243 authority=r217'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.11-consolidated
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v111-sha256.txt
+          if-no-files-found: error
