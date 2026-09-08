@@ -1,0 +1,51 @@
+name: Validate CineTracker 1.0.23 Sports Card Authority
+
+on:
+  push:
+    branches:
+      - fix/1.0.23-sports-card-authority
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate 1.0.23 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.23"' package.json
+          grep -Fq '"version": "1.0.23"' apps/web/package.json
+          grep -Fq 'build-r229.mjs' apps/web/package.json
+          node --check apps/web/runtime-r229-v123-sports-card-authority.js
+          node --check apps/web/build-r229.mjs
+          node --check scripts/test-v123-sports-final-browser.mjs
+          grep -Fq "sports-card-single-action-zone-no-floating-actions" apps/web/runtime-r229-v123-sports-card-authority.js
+
+      - name: Reproduce physical Sports card mess in Chromium
+        run: node scripts/test-v123-sports-final-browser.mjs
+
+      - name: Preserve 1.0.22 final feedback contract
+        run: node scripts/test-v122-final-browser.mjs
+
+      - name: Preserve Pra Voce affinity
+        run: node scripts/test-v118-foryou-affinity-profile-browser.mjs
+
+      - name: Build Web 1.0.23
+        run: npm run build
+
+      - name: Inspect Web 1.0.23 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v229.js
+          test -f "$B"
+          grep -Fq "const REVISION='r229-official-1.0.23';" "$B"
+          grep -Fq "window.__ctR229V123='sports-card-single-action-zone-no-floating-actions'" "$B"
+          grep -Fq "function sports(){}" "$B"
+          grep -Fq "ct-web-1.0.23-r229" apps/web/dist/service-worker.js
+          grep -Fq 'r229-official-1.0.23' apps/web/dist/release.json
+          grep -Fq 'single-action-zone-no-floating-actions' apps/web/dist/release.json

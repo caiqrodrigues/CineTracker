@@ -1,0 +1,16 @@
+import {readFile,writeFile,rm,mkdir} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {execFileSync} from 'node:child_process';
+const root=resolve(process.cwd());
+const patch=(await readFile(resolve(root,'apps/web/runtime-r229-v123-sports-card-authority.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const dir='/tmp/ct-v123';await mkdir(dir,{recursive:true});
+const html=`<!doctype html><html><body><div id="app"><div class="event-grid" id="grid">
+<article id="a"><div><button class="chip">Dutch Eredivisie</button><button class="chip">FC Utrecht</button><button class="chip">Go Ahead Eagles</button><span role="button" class="chip">✓ Marcarassistido</span></div><div><button>Ver eventos</button></div><div><button style="width:220px;height:42px">✓ Marcar como assistido</button></div></article>
+<article id="b"><div><button class="chip">Russian KHL</button><button class="chip">Team A</button><button class="chip">Team B</button></div><button data-ct165-open-favorite="1">Ver eventos</button><button>Ver eventos</button><span role="button">✓ Marcar assistido</span><button style="width:220px;height:42px">✓ Marcar como assistido</button></article>
+</div></div><script>window.setInterval=()=>0;window.MutationObserver=class{observe(){} disconnect(){}}</script><script>${patch}</script><script>try{window.__ctV123SportsNow();for(const id of ['a','b']){const c=document.querySelector('#'+id);document.body.dataset[id+'Actions']=String(c.querySelectorAll(':scope > .ct123-actions > .ct123-action').length);document.body.dataset[id+'Outside']=String([...c.querySelectorAll('button,a,[role="button"]')].filter(x=>!x.closest('.ct123-actions')&&(/evento/i.test(x.textContent)||/assistido/i.test(x.textContent))).length);document.body.dataset[id+'Events']=String([...c.querySelectorAll('.ct123-action')].filter(x=>x.textContent==='Eventos').length);document.body.dataset[id+'Watched']=String([...c.querySelectorAll('.ct123-action')].filter(x=>/Assistido|Desmarcar/.test(x.textContent)).length);document.body.dataset[id+'Labels']=[...c.querySelectorAll('.ct123-action')].map(x=>x.textContent).join('|');document.body.dataset[id+'Chips']=String([...c.querySelectorAll('.chip')].filter(x=>!/assistido/i.test(x.textContent)).length)}document.body.dataset.done='1'}catch(e){document.body.dataset.err=String(e?.stack||e)}</script></body></html>`;
+const file=resolve(dir,'index.html');await writeFile(file,html,'utf8');
+let out='';for(const bin of ['google-chrome','chromium','chromium-browser'])try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--window-size=1400,900','--dump-dom','file://'+file],{encoding:'utf8',timeout:30000,stdio:['ignore','pipe','pipe']});if(out)break}catch{}
+await rm(dir,{recursive:true,force:true});if(!out)throw new Error('Chromium unavailable');
+for(const id of ['a','b'])for(const must of [`data-${id}-actions="2"`,`data-${id}-outside="0"`,`data-${id}-events="1"`,`data-${id}-watched="1"`,`data-${id}-labels="Eventos|✓ Assistido"`,`data-${id}-chips="3"`])if(!out.includes(must))throw new Error('V123 missing '+must+'\n'+out.slice(-12000));
+if(!out.includes('data-done="1"')||out.includes('data-err='))throw new Error('V123 runtime error\n'+out.slice(-9000));
+console.log('V123_SPORTS_BROWSER_OK cards=canonical actions=Eventos+Assistido duplicates=0 floating-action-text=0 chips=metadata-only');
