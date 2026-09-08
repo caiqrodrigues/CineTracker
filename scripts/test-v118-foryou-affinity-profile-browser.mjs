@@ -45,7 +45,7 @@ const run=`<script>(async()=>{try{
  window.__ctAndroidOfficialVersion='1.0.18';const mobile=document.createElement('div');mobile.innerHTML=ctR180StatCard('Séries Watchlist','7');document.body.appendChild(mobile);mobile.querySelector('[data-ct118-watchlist]').click();document.body.dataset.openedFinal=opened.join(',');
  }catch(e){document.body.dataset.err=String(e?.stack||e)}finally{document.body.dataset.done='1'}})()</script>`;
 const html=`<!doctype html><html><head></head><body>${pre}<script>${patch}</script>${run}</body></html>`;await writeFile(file,html);
-let out='';for(const bin of ['google-chrome','chromium','chromium-browser']){try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--virtual-time-budget=3500','--dump-dom','file://'+file],{encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:12000});if(out)break}catch{}}
+let out='';for(const bin of ['google-chrome','chromium','chromium-browser']){try{out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--virtual-time-budget=3500','--dump-dom','file://'+file],{encoding:'utf8',stdio:['ignore','pipe','pipe']});if(out)break}catch{}}
 await rm(dir,{recursive:true,force:true});if(!out)throw new Error('Chromium unavailable');
 for(const must of ['data-done="1"','data-movie="101"','data-series="201"','data-anime="301"','data-bad="false"','data-popular="0"','data-unrelated="0"','data-buttons="BUTTON:series:series|BUTTON:movie:movie"','data-opened-final="series,movie,series"'])if(!out.includes(must))throw new Error('V118 contract missing '+must+'\n'+out.slice(-12000));
 if(out.includes('data-err='))throw new Error('V118 browser runtime error\n'+out.slice(-6000));
