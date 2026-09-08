@@ -1,0 +1,111 @@
+name: Validate CineTracker 1.0.8 Video Regressions
+
+on:
+  push:
+    branches:
+      - fix/1.0.8-video-regressions
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.8 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0.8'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10050' apps/android/app/build.gradle
+          node --check apps/android/runtime-r198-mobile-performance.js
+          node --check scripts/prepare-android-v1008.mjs
+          node --check scripts/test-v108-continuity-browser.mjs
+          grep -Fq "window.__ctAndroidHomeContinuity='background-refresh-no-passive-visible-repaint'" apps/android/runtime-r198-mobile-performance.js
+          grep -Fq "window.__ctAndroidWarmPrimary='profile-foryou-top10-sports-sequential'" apps/android/runtime-r198-mobile-performance.js
+          ! grep -Fq "if(seq===navSeq&&route()==='home')paintHome()" apps/android/runtime-r198-mobile-performance.js
+          grep -Fq "await discoverRows('foryou')" apps/android/runtime-r198-mobile-performance.js
+          grep -Fq "await discoverRows('top10')" apps/android/runtime-r198-mobile-performance.js
+
+      - name: Prove Home continuity and primary warmup in Chromium
+        run: node scripts/test-v108-continuity-browser.mjs
+
+      - name: Preserve 1.0.7 F1 and rewatch behavior
+        run: node scripts/test-v107-browser.mjs
+
+      - name: Prepare Android 1.0.8 exact runtime
+        run: node scripts/prepare-android-v1008.mjs
+
+      - name: Inspect prepared native startup and runtime
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          A=apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          L=apps/android/app/src/main/res/layout/activity_main.xml
+          grep -Fq "const REVISION='r250-android-official-1.0.8';" "$I"
+          grep -Fq "window.__ctAndroidHomeContinuity='background-refresh-no-passive-visible-repaint'" "$I"
+          grep -Fq "window.__ctAndroidWarmPrimary='profile-foryou-top10-sports-sequential'" "$I"
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" "$I"
+          grep -Fq 'cinetracker_mark_watch_v0994' "$I"
+          grep -Fq 'ct-f1-v107' "$I"
+          grep -Fq 'data-ct214-rewatch' "$I"
+          ! grep -Fq 'ct107:snapshot:' "$I"
+          ! grep -Fq 'data-ct107-rewatch' "$I"
+          ! grep -Fq 'cinetracker_mark_episode_v0994' "$I"
+          grep -Fq 'private View startupSplash;' "$A"
+          grep -Fq 'webView.setVisibility(View.INVISIBLE);' "$A"
+          grep -Fq 'onPageCommitVisible(WebView view, String url)' "$A"
+          grep -Fq 'runOnUiThread(() -> requestNotificationPermission());' "$A"
+          grep -Fq 'android:id="@+id/startup_splash"' "$L"
+          node - <<'NODE'
+          const fs=require('fs');
+          const a=fs.readFileSync('apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java','utf8');
+          const p=a.slice(a.indexOf('@Override protected void onCreate'),a.indexOf('private SharedPreferences importPrefs'));
+          if(p.includes('requestNotificationPermission();')) throw new Error('notification permission still requested during onCreate');
+          console.log('V108_NATIVE_STARTUP_OK splash=until-commit notification=after-session');
+          NODE
+
+      - name: Build Android 1.0.8 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v108-apk && mkdir -p /tmp/v108-apk
+          unzip -q "$APK" -d /tmp/v108-apk
+          I=/tmp/v108-apk/assets/hotfix5/index.html
+          test -f "$I"
+          grep -Fq "const REVISION='r250-android-official-1.0.8';" "$I"
+          grep -Fq "window.__ctAndroidHomeContinuity='background-refresh-no-passive-visible-repaint'" "$I"
+          grep -Fq "window.__ctAndroidWarmPrimary='profile-foryou-top10-sports-sequential'" "$I"
+          grep -Fq "window.__ctR214='v107-ui-regression-hotfix'" "$I"
+          grep -Fq 'cinetracker_mark_watch_v0994' "$I"
+          grep -Fq 'ct-f1-v107' "$I"
+          ! grep -Fq 'ct107:snapshot:' "$I"
+          ! grep -Fq 'data-ct107-rewatch' "$I"
+          ! grep -Fq 'cinetracker_mark_episode_v0994' "$I"
+          sha256sum "$APK" | tee /tmp/v108-sha256.txt
+          echo 'V108_APK_PAYLOAD_OK version=1.0.8 code=10050 runtime=r250'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.8-video-regressions
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v108-sha256.txt
+          if-no-files-found: error
