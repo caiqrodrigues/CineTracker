@@ -49,8 +49,11 @@ jobs:
       - name: Preserve 1.0.16 final authorities
         run: node scripts/test-v116-final-authorities-browser.mjs
 
-      - name: Preserve 1.0.13 strict memory and F1 behavior
-        run: node scripts/test-v113-recommendations-f1-browser.mjs
+      - name: Preserve strict recommendation exclusions and memory
+        run: node scripts/test-v112-foryou-profile-browser.mjs
+
+      - name: Preserve live F1 browser CORS
+        run: node scripts/test-v112-f1-browser-cors.mjs
 
       - name: Build Web 1.0.18
         run: npm run build
