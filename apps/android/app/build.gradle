@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10059
-        versionName '1.0.17'
+        versionCode 10060
+        versionName '1.0.18'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker 1.0.17 — versionCode 10059. Adds complete Watchlist drill-down in Profile; Web Sports gets standardized cards and a single action bar.
+// CineTracker 1.0.18 — versionCode 10060. Pra Voce affinity intelligence from recent watched + Watchlist; direct Profile Watchlist statistic buttons.

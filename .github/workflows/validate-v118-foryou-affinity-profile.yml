@@ -1,0 +1,115 @@
+name: Validate CineTracker 1.0.18 Pra Voce Affinity Profile
+
+on:
+  push:
+    branches:
+      - fix/1.0.18-foryou-affinity-profile-watchlist
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: true
+
+      - name: Validate 1.0.18 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.18"' package.json
+          grep -Fq '"version": "1.0.18"' apps/web/package.json
+          grep -Fq 'build-r224.mjs' apps/web/package.json
+          grep -Fq "versionName '1.0.18'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10060' apps/android/app/build.gradle
+          node --check apps/web/runtime-r224-v118-foryou-affinity-profile-watchlist.js
+          node --check apps/web/build-r224.mjs
+          node --check scripts/prepare-android-v1018.mjs
+          node --check scripts/test-v118-foryou-affinity-profile-browser.mjs
+          grep -Fq 'recent-watched+watchlist-weighted-affinity-independent-kinds' apps/web/runtime-r224-v118-foryou-affinity-profile-watchlist.js
+          grep -Fq 'direct-r180-stat-renderer-buttons' apps/web/runtime-r224-v118-foryou-affinity-profile-watchlist.js
+          grep -Fq 'ct186FreshPools=async function' apps/web/runtime-r224-v118-foryou-affinity-profile-watchlist.js
+          grep -Fq 'ct186PopularPool=async function(){return []}' apps/web/runtime-r224-v118-foryou-affinity-profile-watchlist.js
+          grep -Fq 'data-ct117-watchlist-stat' apps/web/runtime-r224-v118-foryou-affinity-profile-watchlist.js
+
+      - name: Prove affinity and direct Profile buttons in Chromium
+        run: node scripts/test-v118-foryou-affinity-profile-browser.mjs
+
+      - name: Preserve 1.0.17 Profile and Sports behavior
+        run: node scripts/test-v117-profile-watchlist-sports-browser.mjs
+
+      - name: Preserve 1.0.16 final authorities
+        run: node scripts/test-v116-final-authorities-browser.mjs
+
+      - name: Preserve strict recommendation exclusions and memory
+        run: node scripts/test-v112-foryou-profile-browser.mjs
+
+      - name: Preserve live F1 browser CORS
+        run: node scripts/test-v112-f1-browser-cors.mjs
+
+      - name: Build Web 1.0.18
+        run: npm run build
+
+      - name: Inspect Web 1.0.18 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v224.js
+          test -f "$B"
+          grep -Fq "const REVISION='r224-official-1.0.18';" "$B"
+          grep -Fq "window.__ctR224V118='foryou-affinity-profile-watchlist-render-authority'" "$B"
+          grep -Fq 'recent-watched+watchlist-weighted-affinity-independent-kinds' "$B"
+          grep -Fq 'direct-r180-stat-renderer-buttons' "$B"
+          grep -Fq 'data-ct118-watchlist' "$B"
+          grep -Fq "ct-web-1.0.18-r224" apps/web/dist/service-worker.js
+
+      - name: Prepare Android 1.0.18
+        run: node scripts/prepare-android-v1018.mjs
+
+      - name: Inspect prepared Android runtime
+        run: |
+          set -euo pipefail
+          I=apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r260-android-official-1.0.18';" "$I"
+          grep -Fq 'window.__ctAndroidOfficialCode=10060' "$I"
+          grep -Fq "window.__ctR224V118='foryou-affinity-profile-watchlist-render-authority'" "$I"
+          grep -Fq 'direct-r180-stat-renderer-buttons' "$I"
+          grep -Fq 'recent-watched+watchlist-weighted-affinity-independent-kinds' "$I"
+          node - <<'NODE'
+          const fs=require('fs'),h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
+          const m=h.match(/<script data-ct-android="r260-android-js">([\s\S]*?)<\/script>/);if(!m)throw new Error('r260 script missing');fs.writeFileSync('/tmp/r260.js',m[1]);
+          NODE
+          node --check /tmp/r260.js
+
+      - name: Build Android 1.0.18 APK
+        working-directory: apps/android
+        run: gradle assembleDebug --stacktrace
+
+      - name: Inspect exact APK payload
+        run: |
+          set -euo pipefail
+          APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          rm -rf /tmp/v118-apk && mkdir -p /tmp/v118-apk
+          unzip -q "$APK" -d /tmp/v118-apk
+          I=/tmp/v118-apk/assets/hotfix5/index.html
+          grep -Fq "const REVISION='r260-android-official-1.0.18';" "$I"
+          grep -Fq "window.__ctR224V118='foryou-affinity-profile-watchlist-render-authority'" "$I"
+          grep -Fq 'data-ct118-watchlist' "$I"
+          sha256sum "$APK" | tee /tmp/v118-sha256.txt
+          echo 'V118_APK_PAYLOAD_OK version=1.0.18 code=10060 runtime=r260'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CineTracker-1.0.18-foryou-affinity-profile
+          path: |
+            apps/android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/v118-sha256.txt
+          if-no-files-found: error
