@@ -4,7 +4,8 @@
 if(window.__ctAndroidR198Loaded)return;
 window.__ctAndroidR198Loaded=true;
 window.__ctAndroidR198='mobile-first-cache-swr-progressive-render-v108-stable-home';
-window.__ctAndroidPreload='sequential-primary-tabs-no-request-stampede';
+window.__ctAndroidPreload='sequential-light-no-request-stampede';
+window.__ctAndroidPreloadV108='sequential-primary-tabs-no-request-stampede';
 window.__ctAndroidDiscoverPerf='persistent-snapshot-tmdb-pages-capped-progressive-cards';
 window.__ctAndroidSportsPerf='persistent-arena-progressive-events-fast-favorite-modal';
 window.__ctAndroidTouchPerf='no-full-repaint-on-search-or-watched-toggle';
