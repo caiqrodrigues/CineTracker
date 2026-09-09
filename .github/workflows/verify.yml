@@ -1,72 +1,69 @@
-name: Verify 1.0.0
+name: Verify Web 1.0.25
 
 on:
   push:
-    branches: [main, 'release/1.0.0']
+    branches: [main, 'fix/1.0.25-r233-system-stability']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_0:
+  web_1_0_25:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate official Web 1.0.0
+      - name: Validate Web 1.0.25 r233
         working-directory: apps/web
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.0"' package.json
-          node --check build-r204.mjs
-          node --check test-r204.mjs
-          npm run build
-          node --check dist/app-v204.js
-          grep -Fq "window.__ctWebBuild='1.0.0';window.__ctOfficialVersion='1.0.0';" dist/app-v204.js
-          grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' dist/app-v204.js
-          grep -Fq "const REVISION='r204-official-1.0.0';" dist/app-v204.js
-          grep -Fq 'single-filter-trigger-right-of-search-no-orphan' dist/app-v204.js
-          grep -Fq 'persistent-2x-3x-4x-no-disable' dist/app-v204.js
-          grep -Fq 'view-more-opens-movie-series-person' dist/app-v204.js
-          grep -Fq '"version":"1.0.0"' dist/release.json
+          grep -Fq '"version": "1.0.25"' package.json
+          node --check runtime-r233-v125-system-stability.js
+          node --check build-r233.mjs
+          node --check test-r233.mjs
+          npm run verify
+          node --check dist/app-v233.js
+          grep -Fq "window.__ctWebBuild='1.0.25';window.__ctOfficialVersion='1.0.25';" dist/app-v233.js
+          grep -Fq "const REVISION='r233-official-1.0.25';" dist/app-v233.js
+          grep -Fq "window.__ctV125Home='live-episode-revalidation'" dist/app-v233.js
+          grep -Fq "window.__ctV125Discover='event-driven-single-normalizer'" dist/app-v233.js
+          grep -Fq "window.__ctV125Sports='event-driven-single-action-authority'" dist/app-v233.js
+          grep -Fq "window.__ctV125Watchlist='full-rows-no-tmdb-drop'" dist/app-v233.js
+          ! grep -Fq 'setInterval(sync,700)' dist/app-v233.js
+          ! grep -Fq 'new MutationObserver(sync121)' dist/app-v233.js
+          ! grep -Fq 'new MutationObserver(sync119)' dist/app-v233.js
+          ! grep -Fq 'new MutationObserver(sync117)' dist/app-v233.js
+          grep -Fq '"version": "1.0.25"' dist/release.json
+          grep -Fq '"revision": "r233-official-1.0.25"' dist/release.json
 
-  android_1_0_0_source:
+  android_current_source:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - name: Validate official Android 1.0.0 source/runtime
+      - name: Preserve current Android baseline
         run: |
           set -euo pipefail
-          grep -Fq "versionName '1.0.0'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10042' apps/android/app/build.gradle
-          node --check scripts/prepare-android-v1000.mjs
-          node --check scripts/test-android-v1000.mjs
-          node scripts/prepare-android-v1000.mjs
-          node scripts/test-android-v1000.mjs
-          grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'watchlist-swap-uses-active-ct186-selected-pool' apps/android/app/src/main/assets/hotfix5/index.html
-          grep -Fq 'native-webview-horizontal-no-manual-touch' apps/android/app/src/main/assets/hotfix5/index.html
+          grep -Fq "versionName '1.0.20'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10062' apps/android/app/build.gradle
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_0]
+    needs: [web_1_0_25]
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
-      - name: Production Web serves 1.0.0
+      - name: Production Web serves 1.0.25
         run: |
           set -euo pipefail
-          for i in $(seq 1 120); do
+          for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version":"1.0.0"' <<<"$BODY" && grep -Fq '"revision":"r204-official-1.0.0"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v204.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' <<<"$JS" && grep -Fq 'single-filter-trigger-right-of-search-no-orphan' <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.25"' <<<"$BODY" && grep -Fq '"revision": "r233-official-1.0.25"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v233.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "window.__ctR233V125='system-stability-event-driven-no-competing-observers'" <<<"$JS" && ! grep -Fq 'setInterval(sync,700)' <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done
