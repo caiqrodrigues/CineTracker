@@ -1,16 +1,7 @@
-name: Build Android 0.99.7.62
+name: Build Android 0.99.7.62 (historical)
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/android/runtime-r234-discover-final-swap-top10.js'
-      - 'apps/android/app/build.gradle'
-      - 'scripts/prepare-android-v099762.mjs'
-      - 'scripts/test-android-v099762.mjs'
-      - '.github/workflows/build-android-v099762.yml'
-      - '.github/workflows/verify.yml'
 
 permissions:
   contents: read
@@ -36,7 +27,7 @@ jobs:
           mkdir -p ~/.android
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
-      - name: Prepare and test Android 0.99.7.62
+      - name: Prepare and test historical Android 0.99.7.62
         run: |
           set -euo pipefail
           node --check apps/android/runtime-r234-discover-final-swap-top10.js
