@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=dirname(fileURLToPath(import.meta.url));
+const [src,build,pkg]=await Promise.all([readFile(resolve(root,'runtime-r240-sports-four-tabs.js'),'utf8'),readFile(resolve(root,'build-r240.mjs'),'utf8'),readFile(resolve(root,'package.json'),'utf8')]);
+const need=(s,x)=>{if(!s.includes(x))throw new Error('r240 invariant missing: '+x)};
+for(const x of ["window.__ctR240='sports-four-data-authority'","['next','Próximos']","['previous','Anteriores']","['favorites','Favoritos']","['watched','Assistidos']","sportsTabs=function()","sportsPayload=async function()","sportsFiltered=function(rows)","p_scope:'today'","p_favorite_only:true","r240Shift(now,-3)","ms>=now.getTime()&&ms<tomorrow.getTime()","LEGACY_WATCHED_KEY_240"])need(src,x);
+for(const old of ["['today','Hoje']","['yesterday','Ontem']","['recent','Recentes']","['live','Ao vivo']","['calendar','Calendário']"])if(src.includes(old))throw new Error('r240 old tab must not be emitted: '+old);
+for(const x of ["const REVISION='r240-official-1.0.32'","app-v240.js","version:'1.0.32'","sports_tabs:['Próximos','Anteriores','Favoritos','Assistidos']"])need(build,x);
+const p=JSON.parse(pkg);if(p.version!=='1.0.32'||p.scripts?.build!=='node build-r240.mjs'||p.scripts?.verify!=='node build-r240.mjs && node test-r240.mjs')throw new Error('r240 package identity wrong');
+console.log('R240_STATIC_OK sports=data-authority tabs=4 next=today-only previous=3-days favorites-only watched-preserved');
