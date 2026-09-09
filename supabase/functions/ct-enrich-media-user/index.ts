@@ -42,20 +42,31 @@ Deno.serve(async(req)=>{
     let candidates=rowsDash.filter(needs);
     if(requestedSet.size)candidates=candidates.filter((x:any)=>requestedSet.has(Number(x.media_id)));
     const ids=candidates.sort((a:any,b:any)=>score(b)-score(a)).slice(0,limit).map((x:any)=>Number(x.media_id)).filter(Boolean);
-    if(!ids.length) return json({processed:0,ok:0,fail:0,resolved_surrogates:0,official_refreshed:0,remaining:0,priority,requested:requestedIds.length});
+    if(!ids.length) return json({processed:0,ok:0,fail:0,resolved_surrogates:0,resolved_external:0,official_refreshed:0,remaining:0,priority,requested:requestedIds.length});
     const {data:selected,error}=await sb.from('media')
       .select('id,tmdb_id,media_type,title,release_year,poster_path,runtime_minutes,total_episodes,raw_tmdb,updated_at')
       .in('id',ids);
     if(error) throw error;
     const order=new Map(ids.map((id:number,i:number)=>[id,i]));
     const rows=(selected||[]).sort((a:any,b:any)=>(order.get(a.id)??9999)-(order.get(b.id)??9999));
-    let ok=0,fail=0,resolvedSurrogates=0,officialRefreshed=0;
+    let ok=0,fail=0,resolvedSurrogates=0,resolvedExternal=0,officialRefreshed=0;
     for(let i=0;i<rows.length;i+=6){
       await Promise.all(rows.slice(i,i+6).map(async(m:any)=>{
         try{
           let tmdbId=Number(m.tmdb_id||0),detail:any=null;
           const effective=Number(m.raw_tmdb?.source_tmdb_id||0);
           if(tmdbId<=0&&effective>0)tmdbId=effective;
+          if(tmdbId<=0&&m.media_type==='tv'){
+            const tvdbId=Number(m.raw_tmdb?.tvdb_id||0);
+            if(tvdbId>0){
+              const fr=await fetch(`https://api.themoviedb.org/3/find/${tvdbId}?external_source=tvdb_id&language=pt-BR`,{headers:{Authorization:`Bearer ${token}`,Accept:'application/json'}});
+              if(fr.ok){
+                const fd=await fr.json();
+                const found=(fd?.tv_results||[])[0];
+                if(Number(found?.id)>0){tmdbId=Number(found.id);resolvedExternal++;}
+              }
+            }
+          }
           if(tmdbId>0){
             const r=await fetch(`https://api.themoviedb.org/3/${m.media_type}/${tmdbId}?language=pt-BR`,{headers:{Authorization:`Bearer ${token}`,Accept:'application/json'}});
             if(!r.ok) throw new Error(`detail ${r.status}`);
@@ -93,6 +104,6 @@ Deno.serve(async(req)=>{
         }catch(e){fail++;try{await sb.from('media').update({raw_tmdb:{...(m.raw_tmdb||{}),enrichment_attempted_at:new Date().toISOString(),enrichment_error:String(e).slice(0,180)},updated_at:new Date().toISOString()}).eq('id',m.id)}catch{}}
       }));
     }
-    return json({processed:rows.length,ok,fail,resolved_surrogates:resolvedSurrogates,official_refreshed:officialRefreshed,remaining:Math.max(0,candidates.length-rows.length),effective_tmdb_ids:true,priority,requested:requestedIds.length});
+    return json({processed:rows.length,ok,fail,resolved_surrogates:resolvedSurrogates,resolved_external:resolvedExternal,official_refreshed:officialRefreshed,remaining:Math.max(0,candidates.length-rows.length),effective_tmdb_ids:true,priority,requested:requestedIds.length});
   }catch(e){return json({error:String(e)},500)}
 });
