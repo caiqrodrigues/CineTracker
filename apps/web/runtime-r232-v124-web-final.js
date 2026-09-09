@@ -34,9 +34,9 @@ function poolIndex(){
  return m;
 }
 function actionKind(b){
- const t=norm(b?.textContent||''),a=norm(b?.getAttribute?.('aria-label')||'');
- if(t==='↻'||t.includes('trocar')||a.includes('trocar'))return'swap';
- if(t==='+'||t==='＋'||t.includes('watchlist')||a.includes('watchlist'))return'watch';
+ const raw=String(b?.textContent||'').trim(),t=norm(raw),a=norm(b?.getAttribute?.('aria-label')||'');
+ if(raw==='↻'||t.includes('trocar')||a.includes('trocar'))return'swap';
+ if(raw==='+'||raw==='＋'||t.includes('watchlist')||a.includes('watchlist'))return'watch';
  return'';
 }
 function ensureActionBar(card){
