@@ -40,4 +40,4 @@ const groups={
  watchlist:['data-done="1"','data-movies="1.358"','data-series="564"','data-modal-count="1.358"','data-modal-rows="1358"','data-local-rows="271"'],
  home:['data-done="1"','data-home-known="continue:false"','data-home-fresh="continue:false:5"']
 };
-const group=process.env.CT_ASSERT||'all',must=group==='all'?Object.values(groups).flat():groups[group];if(!must)throw new Error('Unknown CT_ASSERT '+group);for(const m of must)if(!out.includes(m))throw new Error(`V127 ${group} missing ${m}`);if(out.includes('data-err='))throw new Error(`V127 ${group} runtime error`);console.log(`V127_BROWSER_OK ${group}`);
+const group=process.env.CT_ASSERT||'all',must=group==='all'?Object.values(groups).flat():groups[group];if(!must)throw new Error('Unknown CT_ASSERT '+group);for(const m of must)if(!out.includes(m))throw new Error(`V127 ${group} missing ${m}\n${out.slice(-12000)}`);if(out.includes('data-err='))throw new Error(`V127 ${group} runtime error\n${out.slice(-12000)}`);console.log(`V127_BROWSER_OK ${group}`);
