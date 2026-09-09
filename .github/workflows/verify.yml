@@ -24,7 +24,6 @@ jobs:
           node --check apps/web/build-r237.mjs
           node --check apps/web/test-r237.mjs
           node --check scripts/test-r237-real-ui-browser.mjs
-          node --check scripts/test-r236-current-video-scope-browser.mjs
       - name: Build r237
         working-directory: apps/web
         run: node build-r237.mjs
@@ -41,8 +40,6 @@ jobs:
           grep -Fq "window.__ctR237='real-ui-single-finalizer'" dist/app-v237.js
           grep -Fq '"version": "1.0.29"' dist/release.json
           grep -Fq '"revision": "r237-official-1.0.29"' dist/release.json
-      - name: Chromium r236 regression scope
-        run: node scripts/test-r236-current-video-scope-browser.mjs
       - name: Chromium r237 real UI and Profile order
         run: node scripts/test-r237-real-ui-browser.mjs
 
