@@ -22,7 +22,7 @@ paintDiscover({});window.__ctR239Reconcile();setTimeout(()=>{try{
  const grid=document.querySelector('.ct239-profile-grid'),cards=[...grid.children];
  document.body.dataset.profileCols=getComputedStyle(grid).gridTemplateColumns.split(' ').length;
  document.body.dataset.profileOrder=cards.map(x=>x.querySelector('small').textContent).join('|');
- document.body.dataset.profileTotals=cards.slice(-2).map(x=>getComputedStyle(x).gridColumnEnd.includes('span 2')).join('|');
+ document.body.dataset.profileTotals=cards.slice(-2).map(x=>{const s=getComputedStyle(x);return s.gridColumnStart.includes('span 2')||s.gridColumnEnd.includes('span 2')}).join('|');
  const heads=[...document.querySelectorAll('[data-discover-content]>section.panel .panel-head h2')].map(x=>x.textContent).join('|');document.body.dataset.discoverHeads=heads;
  document.body.dataset.discoverSlot=Math.round(document.querySelector('.ct239-foryou .foryou-slot').getBoundingClientRect().width);
  const watch=document.querySelector('#watch'),ws=getComputedStyle(watch);document.body.dataset.sportButtons=document.querySelectorAll('#sport button').length;document.body.dataset.sportText=watch.textContent.trim();document.body.dataset.sportBg=ws.backgroundColor;document.body.dataset.sportRadius=ws.borderRadius;
