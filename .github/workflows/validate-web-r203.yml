@@ -1,16 +1,14 @@
-name: Validate Web r203
+name: Validate Web r203 (historical)
 
 on:
   workflow_dispatch:
   push:
     branches:
       - release/0.99.7.54-r203
-      - main
     paths:
       - 'apps/web/runtime-r203-discover-filter-search-row.js'
       - 'apps/web/build-r203.mjs'
       - 'apps/web/test-r203.mjs'
-      - 'apps/web/package.json'
       - '.github/workflows/validate-web-r203.yml'
 
 permissions:
@@ -25,14 +23,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Build and test r203
+      - name: Build and test historical r203
         working-directory: apps/web
         run: |
           set -euo pipefail
           node --check runtime-r203-discover-filter-search-row.js
           node --check build-r203.mjs
           node --check test-r203.mjs
-          npm run build
+          node build-r203.mjs
+          node test-r203.mjs
       - name: Validate assembled r203 markers
         run: |
           set -euo pipefail
