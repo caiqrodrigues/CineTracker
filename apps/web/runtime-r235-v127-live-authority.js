@@ -145,7 +145,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeWatch127()},tru
 /* ---------------- One observer. This is the piece r234 was missing in production. ---------------- */
 let reconcileQueued127=false,reconciling127=false;
 function reconcile127(){if(reconciling127)return;reconciling127=true;try{if(q('[data-page="discover"],[data-discover]'))normalizeDiscover127();if(q('[data-sports]'))normalizeSports127();if(q('[data-profile]')){markStats127();void syncWatch127(false)}if(q('[data-home]'))fixKnownHome127()}finally{reconciling127=false}}
-function queue127(){if(reconcileQueued127)return;reconcileQueued127=true;requestAnimationFrame(()=>{reconcileQueued127=false;reconcile127()})}
+function queue127(){if(reconcileQueued127)return;reconcileQueued127=true;setTimeout(()=>{reconcileQueued127=false;reconcile127()},0)}
 try{new MutationObserver(queue127).observe(q('#app')||document.documentElement,{subtree:true,childList:true,characterData:true})}catch{}
 window.addEventListener('popstate',queue127);
 window.addEventListener('cinetracker:data-changed',()=>{wlData127=null;wlAt127=0;homeDetails127.clear();queue127();if(q('[data-home]'))requestAnimationFrame(()=>void refreshHome127())});
