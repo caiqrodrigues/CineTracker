@@ -74,9 +74,9 @@ jobs:
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
-            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://cine-tracker-omega.vercel.app/release.json?ct=$(date +%s%N)" || true)"
+            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             if grep -Fq '"version": "1.0.27"' <<<"$BODY" && grep -Fq '"revision": "r235-official-1.0.27"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://cine-tracker-omega.vercel.app/app-v235.js?ct=$(date +%s%N)" || true)"
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v235.js?ct=$(date +%s%N)" || true)"
               if grep -Fq "window.__ctR235V127='single-live-dom-authority'" <<<"$JS" && grep -Fq "new MutationObserver(queue127)" <<<"$JS"; then exit 0; fi
             fi
             sleep 5
