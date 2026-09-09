@@ -1,0 +1,2 @@
+/* r236b: generic Home repaint after async aired-episode hydration. */
+(()=>{'use strict';if(window.__ctR236BHome)return;window.__ctR236BHome='generic-home-hydration-repaint';let inflight=false;try{const prior=paintHome;paintHome=function(...args){const out=prior.apply(this,args);if(!inflight&&document.querySelector('[data-home]')&&typeof window.__ctV127RefreshHome==='function'){inflight=true;Promise.resolve(window.__ctV127RefreshHome()).then(()=>{if(document.querySelector('[data-home]'))prior.apply(this,args)}).finally(()=>{inflight=false})}return out}}catch{};})();
