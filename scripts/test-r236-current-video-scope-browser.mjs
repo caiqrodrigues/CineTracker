@@ -2,7 +2,8 @@ import {readFile,writeFile,rm,mkdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
 const root=resolve(process.cwd());
-const patch=(await readFile(resolve(root,'apps/web/runtime-r236-current-video-scope.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const [runtime,homeRepaint]=await Promise.all([readFile(resolve(root,'apps/web/runtime-r236-current-video-scope.js'),'utf8'),readFile(resolve(root,'apps/web/runtime-r236b-home-repaint.js'),'utf8')]);
+const patch=(runtime+'\n'+homeRepaint).replaceAll('</script>','<\\/script>');
 const dir='/tmp/ct-r236-current',file=resolve(dir,'index.html');await mkdir(dir,{recursive:true});
 const fixture=`<!doctype html><html><head><meta charset="utf-8"></head><body><div id="app"></div><script>
 let homeCache={series:[{tmdb_id:9001,title:'Generic Show',watched_episodes:2,latest_episode_name:''}]};
@@ -11,7 +12,7 @@ window.__ctV127RefreshHome=async()=>{await new Promise(r=>setTimeout(r,80));home
 function paintDiscover(){}async function renderDiscover(){}function paintSports(){}async function renderSports(){}async function syncSports(){}
 </script><script>${patch}</script><script>
 (async()=>{try{
- paintHome();await new Promise(r=>setTimeout(r,220));document.body.dataset.homeText=document.querySelector('[data-home]')?.textContent.trim()||'';document.body.dataset.homePending=String(!!document.querySelector('.ct236-home-episode-pending'));
+ paintHome();await new Promise(r=>setTimeout(r,260));document.body.dataset.homeText=document.querySelector('[data-home]')?.textContent.trim()||'';document.body.dataset.homePending=String(!!document.querySelector('.ct236-home-episode-pending'));
  document.querySelector('#app').innerHTML='<div data-page="discover" data-discover><button class="active">Pra você</button><div data-discover-content><div class="row ct127-discover-row"><article id="dc" class="card ct127-discover-card"><div class="poster"></div>Card</article></div></div></div>';window.__ctR236StabilizeDiscover();const dc=document.querySelector('#dc');document.body.dataset.discoverOldClass=String(dc.classList.contains('ct127-discover-card'));document.body.dataset.discoverRoute=document.querySelector('[data-discover]').dataset.ct236DiscoverRoute;
  document.querySelector('#app').innerHTML='<div data-sports><div class="event-grid"><article id="sport"><div>Time A x Time B</div><button>Eventos</button><button>Ver eventos</button><button>✓ Marcar como assistido</button></article></div><section id="f1" data-r235-f1-card><div><h3>F1 Hub</h3></div><div class="f1Body"><div class="oldtabs"><button>Pilotos</button><button>Equipes</button><button>Pontuação</button><button>Corridas</button></div><article class="race">GP Teste 2026-09-20 · Circuito Teste</article><article class="race">GP Anterior 2026-09-01 · Resultado completo</article></div></section></div>';window.__ctR236NormalizeSports();window.__ctR236NormalizeF1();
  const sp=document.querySelector('#sport');document.body.dataset.sportEventos=String([...sp.querySelectorAll('button')].some(b=>/eventos/i.test(b.textContent)));document.body.dataset.sportButtons=String(sp.querySelectorAll('button').length);document.body.dataset.sportWatch=sp.querySelector('button')?.textContent.trim()||'';
