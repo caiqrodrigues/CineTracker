@@ -24,11 +24,16 @@ jobs:
           node --check apps/web/build-r235.mjs
           node --check apps/web/test-r235.mjs
           node --check scripts/test-v127-live-authority-browser.mjs
-      - name: Build and static invariants r235
+      - name: Build r235
+        working-directory: apps/web
+        run: node build-r235.mjs
+      - name: Static invariants r235
+        working-directory: apps/web
+        run: node test-r235.mjs
+      - name: Final bundle identity r235
         working-directory: apps/web
         run: |
           set -euo pipefail
-          npm run verify
           node --check dist/app-v235.js
           grep -Fq "window.__ctWebBuild='1.0.27';window.__ctOfficialVersion='1.0.27';" dist/app-v235.js
           grep -Fq "const REVISION='r235-official-1.0.27';" dist/app-v235.js
