@@ -6,26 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.25** | `r233-official-1.0.25`, base r232 | produção |
+| Web | **1.0.26** | `r234-real-regressions-baseline-preserving-authority` | produção |
 | Android | **1.0.20** | `versionCode 10062` | produção |
-| Backend | produção compartilhada | Supabase | produção |
+| Backend | produção compartilhada | Supabase / `ct-enrich-media-user` v7 | produção |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.25 / r233
+## Web 1.0.26 / r234
 
-A 1.0.25 consolida uma autoridade final orientada a eventos para Home, Descobrir, Esportes e Watchlist. O objetivo é impedir que normalizadores antigos continuem reescrevendo a interface depois que a tela já foi renderizada.
+A 1.0.26 corrige regressões reais observadas após a 1.0.25. Em vez de empilhar outra autoridade sobre a r233, a r234 volta ao último baseline visual comprovado para cada área e limita cada correção ao escopo necessário.
 
-- remove o polling esportivo concorrente de `700ms` da r229;
-- neutraliza MutationObservers e polls legados que ainda alteravam Descobrir, Esportes ou contagens da Watchlist;
-- usa um normalizador final único na r233 para classificação de controles e ações;
-- revalida séries classificadas como `Em dia` consultando o episódio mais recente efetivamente lançado no TMDB antes de manter esse estado;
-- recalcula episódios liberados usando temporadas anteriores + episódio atual da temporada mais recente;
-- corrige a Watchlist do Perfil para usar todas as linhas retornadas pelo RPC completo, sem descartar registros apenas por não possuírem TMDB id válido;
-- mantém registros locais sem TMDB visíveis no modal da Watchlist, enquanto títulos com id continuam abrindo os detalhes normalmente;
-- mantém a autoridade visual consolidada dos cards de Esportes, mas passa a executá-la somente após render/paint reais da aplicação;
-- substitui observação contínua de DOM por execução vinculada aos eventos reais de renderização, atualização de dados e navegação.
+- Home aplica imediatamente o estado conhecido de episódios antes do paint e faz revalidação TMDB em background, sem bloquear a tela;
+- o hidratador antigo que fazia a cascata temporada → série é neutralizado para eliminar a demora de dezenas de segundos no carregamento de episódios;
+- séries com episódio já lançado e ainda não assistido deixam de permanecer incorretamente como `Em dia` e retornam para `Assistir a seguir`;
+- Descobrir reutiliza o baseline r232 e atua somente em `Indicação do dia`, `Da sua Watchlist` e `100% novos`; Top 10 fica explicitamente fora do alcance da r234;
+- Esportes volta a usar o layout canônico r123, preservando posição e composição visual dos botões;
+- Watchlist do Perfil e modal passam a consumir o mesmo universo lógico completo, mantendo inclusive registros importados ainda sem TMDB resolvido;
+- registros locais sem capa mantêm geometria estável e recebem enriquecimento progressivo apenas quando visíveis;
+- séries importadas podem ser resolvidas por TVDB → TMDB antes do fallback por título através da Edge Function `ct-enrich-media-user` v7;
+- o build oficial passa a ser `apps/web/build-r234.mjs`, com `test-r234.mjs` como regressão obrigatória da Web 1.0.26.
 
 ## Funcionalidades consolidadas
 
@@ -44,7 +44,7 @@ A 1.0.25 consolida uma autoridade final orientada a eventos para Home, Descobrir
 
 - `apps/web` — Web/PWA e cadeia de build de produção;
 - `apps/android` — Activity + WebView e assets embarcados;
-- `supabase` — migrations/RPCs e estado compartilhado;
+- `supabase` — migrations/RPCs, Edge Functions e estado compartilhado;
 - `scripts` — preparação e validação dos bundles;
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.

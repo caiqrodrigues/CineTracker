@@ -1,43 +1,46 @@
-name: Verify Web 1.0.25
+name: Verify Web 1.0.26
 
 on:
   push:
-    branches: [main, 'fix/1.0.25-r233-system-stability']
+    branches: [main, 'fix/1.0.26-r234-real-regressions']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_25:
+  web_1_0_26:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Web 1.0.25 r233
+      - name: Validate Web 1.0.26 r234
         working-directory: apps/web
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.25"' package.json
-          node --check runtime-r233-v125-system-stability.js
-          node --check build-r233.mjs
-          node --check test-r233.mjs
+          grep -Fq '"version": "1.0.26"' package.json
+          node --check runtime-r234-v126-real-regressions.js
+          node --check build-r234.mjs
+          node --check test-r234.mjs
           npm run verify
-          node --check dist/app-v233.js
-          grep -Fq "window.__ctWebBuild='1.0.25';window.__ctOfficialVersion='1.0.25';" dist/app-v233.js
-          grep -Fq "const REVISION='r233-official-1.0.25';" dist/app-v233.js
-          grep -Fq "window.__ctV125Home='live-episode-revalidation'" dist/app-v233.js
-          grep -Fq "window.__ctV125Discover='event-driven-single-normalizer'" dist/app-v233.js
-          grep -Fq "window.__ctV125Sports='event-driven-single-action-authority'" dist/app-v233.js
-          grep -Fq "window.__ctV125Watchlist='full-rows-no-tmdb-drop'" dist/app-v233.js
-          ! grep -Fq 'setInterval(sync,700)' dist/app-v233.js
-          ! grep -Fq 'new MutationObserver(sync121)' dist/app-v233.js
-          ! grep -Fq 'new MutationObserver(sync119)' dist/app-v233.js
-          ! grep -Fq 'new MutationObserver(sync117)' dist/app-v233.js
-          grep -Fq '"version": "1.0.25"' dist/release.json
-          grep -Fq '"revision": "r233-official-1.0.25"' dist/release.json
+          node --check dist/app-v234.js
+          grep -Fq "window.__ctWebBuild='1.0.26';window.__ctOfficialVersion='1.0.26';" dist/app-v234.js
+          grep -Fq "const REVISION='r234-official-1.0.26';" dist/app-v234.js
+          grep -Fq "window.__ctV126Home='instant-payload-state+nonblocking-single-tmdb-refresh'" dist/app-v234.js
+          grep -Fq "window.__ctV126Discover='r232-target-sections-only-top10-untouched'" dist/app-v234.js
+          grep -Fq "window.__ctV126Sports='r123-layout-preserved-event-driven'" dist/app-v234.js
+          grep -Fq "window.__ctV126Watchlist='full-logical-count+single-modal+visible-poster-enrichment'" dist/app-v234.js
+          ! grep -Fq "window.__ctR233V125='system-stability-event-driven-no-competing-observers'" dist/app-v234.js
+          ! grep -Fq '.ct125-media-card' dist/app-v234.js
+          ! grep -Fq 'await revalidateHome233()' dist/app-v234.js
+          ! grep -Fq 'setInterval(sync,700)' dist/app-v234.js
+          ! grep -Fq 'new MutationObserver(sync121)' dist/app-v234.js
+          ! grep -Fq 'new MutationObserver(sync119)' dist/app-v234.js
+          ! grep -Fq 'new MutationObserver(sync117)' dist/app-v234.js
+          grep -Fq '"version": "1.0.26"' dist/release.json
+          grep -Fq '"revision": "r234-official-1.0.26"' dist/release.json
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -52,18 +55,18 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_25]
+    needs: [web_1_0_26]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Production Web serves 1.0.25
+      - name: Production Web serves 1.0.26
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.25"' <<<"$BODY" && grep -Fq '"revision": "r233-official-1.0.25"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v233.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR233V125='system-stability-event-driven-no-competing-observers'" <<<"$JS" && ! grep -Fq 'setInterval(sync,700)' <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.26"' <<<"$BODY" && grep -Fq '"revision": "r234-official-1.0.26"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v234.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "window.__ctR234V126='real-regressions-baseline-preserving-authority'" <<<"$JS" && ! grep -Fq "window.__ctR233V125='system-stability-event-driven-no-competing-observers'" <<<"$JS" && ! grep -Fq '.ct125-media-card' <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done
