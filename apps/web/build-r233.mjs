@@ -21,7 +21,7 @@ if(!js.includes('\nboot();'))throw new Error('Web 1.0.25 boot point missing');
 // Remove legacy DOM polling/observers that can rewrite Discover, Sports or Watchlist after the final paint.
 js=drop(js,"try{new MutationObserver(sync117).observe(q117('#app')||document.documentElement,{subtree:true,childList:true})}catch{}\n",'r223/v117 observer');
 js=drop(js,"try{new MutationObserver(sync119).observe(q119('#app')||document.documentElement,{subtree:true,childList:true})}catch{}\n",'r225/v119 observer');
-js=drop(js,"try{new MutationObserver(sync).observe(q('#app')||document.documentElement,{subtree:true,childList:true})}catch{}\n",'v120/v122 discover observers',2);
+js=drop(js,"try{new MutationObserver(sync).observe(q('#app')||document.documentElement,{subtree:true,childList:true})}catch{}\n",'v120/v122 discover observer');
 js=drop(js,"try{new MutationObserver(sync121).observe(q('#app')||document.documentElement,{subtree:true,childList:true,characterData:true})}catch{}\nsetInterval(()=>{if(q('[data-page=\"discover\"], [data-discover], [data-sports], [data-profile]'))sync121()},1000);\n",'r227/v121 observer+poll');
 js=drop(js,"try{new MutationObserver(sync).observe(q('#app')||document.documentElement,{subtree:true,childList:true,characterData:true})}catch{}setInterval(sync,350);sync();",'r228/v122 core observer+350ms poll');
 js=drop(js,"setInterval(sync,1200);sync();window.__ctV122MetadataSync=sync;",'r228b metadata 1200ms poll');
