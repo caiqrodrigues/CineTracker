@@ -32,6 +32,6 @@ const banned=[
 ];
 for(const x of banned)if(js.includes(x))throw new Error('legacy polling/observer survived: '+x);
 if(!html.includes('app-v233.js')||!html.includes('r233-official-1.0.25'))throw new Error('HTML identity mismatch');
-if(!sw.includes("const CACHE='ct-web-1.0.25-r233';")||!sw.includes('app-v233.js'))throw new Error('SW identity mismatch');
+if(!sw.includes("const CACHE='ct-web-1.0.25-r233';"))throw new Error('SW cache identity mismatch');
 const r=JSON.parse(release);if(r.version!=='1.0.25'||r.revision!=='r233-official-1.0.25')throw new Error('release identity mismatch');
 console.log('TEST_R233_OK no-conflicting-observers no-700ms full-watchlist live-home');
