@@ -38,13 +38,19 @@ jobs:
           grep -Fq "window.__ctWebBuild='1.0.27';window.__ctOfficialVersion='1.0.27';" dist/app-v235.js
           grep -Fq "const REVISION='r235-official-1.0.27';" dist/app-v235.js
           grep -Fq "window.__ctR235V127='single-live-dom-authority'" dist/app-v235.js
-          grep -Fq "window.__ctV127Home='aired-unwatched-never-up-to-date'" dist/app-v235.js
-          grep -Fq "window.__ctV127Discover='stable-content-no-legends-uniform-cards-top10-safe'" dist/app-v235.js
-          grep -Fq "window.__ctV127Sports='single-action-zone-live-reconcile+provider-dedupe'" dist/app-v235.js
-          grep -Fq "window.__ctV127Watchlist='rpc-full-universe-count-modal-identical'" dist/app-v235.js
           grep -Fq '"version": "1.0.27"' dist/release.json
           grep -Fq '"revision": "r235-official-1.0.27"' dist/release.json
-      - name: Real Chromium behavior r235
+      - name: Chromium Discover live behavior
+        env: { CT_ASSERT: discover }
+        run: node scripts/test-v127-live-authority-browser.mjs
+      - name: Chromium Sports live behavior
+        env: { CT_ASSERT: sports }
+        run: node scripts/test-v127-live-authority-browser.mjs
+      - name: Chromium Watchlist 1358+564 behavior
+        env: { CT_ASSERT: watchlist }
+        run: node scripts/test-v127-live-authority-browser.mjs
+      - name: Chromium Home aired-unwatched behavior
+        env: { CT_ASSERT: home }
         run: node scripts/test-v127-live-authority-browser.mjs
 
   android_current_source:
