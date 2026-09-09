@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [runtime,js,release]=await Promise.all([readFile(resolve(root,'runtime-r237-real-ui-authority.js'),'utf8'),readFile(resolve(dist,'app-v237.js'),'utf8'),readFile(resolve(dist,'release.json'),'utf8')]);
+for(const x of ["window.__ctR237='real-ui-single-finalizer'","window.__ctR237Profile='exact-requested-stat-order'","window.__ctR237Discover='base-geometry-no-runtime-card-resize'","window.__ctR237Sports='standard-card-assistido-only'","window.__ctR237F1='requested-six-tabs'"])if(!runtime.includes(x))throw new Error('r237 runtime missing '+x);
+for(const x of ['Stuart','Lioness','WWE Raw'])if(runtime.includes(x))throw new Error('r237 hardcoded title '+x);
+if(js.includes("for(const card of cards)card.classList.add('ct127-discover-card');"))throw new Error('r237 still has destructive Discover card authority');
+if(js.includes("ev.textContent='Ver eventos'"))throw new Error('r237 still recreates Eventos in r235 authority');
+if(!js.includes("window.__ctWebBuild='1.0.29';window.__ctOfficialVersion='1.0.29';"))throw new Error('r237 identity missing');
+const rel=JSON.parse(release);if(rel.version!=='1.0.29'||rel.revision!=='r237-official-1.0.29'||rel.profile!=='requested-stat-order')throw new Error('r237 release identity/profile mismatch');
+console.log('R237_STATIC_OK real-ui-authority');
