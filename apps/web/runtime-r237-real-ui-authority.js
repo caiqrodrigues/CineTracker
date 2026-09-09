@@ -55,7 +55,8 @@ const profileOrder237=[
  ['series-time',['tempo em series']],['movies-time',['tempo em filmes']],['series-watch-time',['tempo de serie em watchlist','tempo em serie watchlist','tempo da serie em watchlist']],['movies-watch-time',['tempo de filmes em watchlist','tempo em filmes watchlist']],
  ['screen-total',['tempo total de tela']],['watch-total',['tempo total em watchlist']]
 ];
-function statKey237(card){const t=norm(card.textContent||'');for(const[k,labels]of profileOrder237)if(labels.some(x=>t.includes(x)))return k;return''}
+const profileMatchers237=profileOrder237.flatMap(([k,labels])=>labels.map(label=>({k,label}))).sort((a,b)=>b.label.length-a.label.length);
+function statKey237(card){const t=norm(card.textContent||'');return profileMatchers237.find(x=>t.includes(x.label))?.k||''}
 function profile237(){
  const root=q('[data-profile]');if(!root)return;
  const cards=qa('.stat,[data-stat],button.stat',root).filter(x=>statKey237(x));if(cards.length<8)return;
