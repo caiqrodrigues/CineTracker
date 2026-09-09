@@ -37,11 +37,11 @@ jobs:
           node --check dist/app-v240.js
           grep -Fq "window.__ctWebBuild='1.0.32';window.__ctOfficialVersion='1.0.32';" dist/app-v240.js
           grep -Fq "const REVISION='r240-official-1.0.32';" dist/app-v240.js
-          grep -Fq "window.__ctR240='sports-four-semantic-tabs'" dist/app-v240.js
-          grep -Fq "window.__ctR240Sports='proximos-today-upcoming+anteriores-3-days+favorites+watched'" dist/app-v240.js
+          grep -Fq "window.__ctR240='sports-four-data-authority'" dist/app-v240.js
+          grep -Fq "window.__ctR240Sports='next-today-only+previous-last-3-days+favorites-only+watched'" dist/app-v240.js
           grep -Fq '"version": "1.0.32"' dist/release.json
           grep -Fq '"revision": "r240-official-1.0.32"' dist/release.json
-      - name: Chromium r240 Sports semantic tabs
+      - name: Chromium r240 Sports exact behavior
         run: node scripts/test-r240-sports-four-tabs-browser.mjs
 
   android_current_source:
@@ -68,7 +68,7 @@ jobs:
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
             if grep -Fq '"version": "1.0.32"' <<<"$BODY" && grep -Fq '"revision": "r240-official-1.0.32"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v240.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR240='sports-four-semantic-tabs'" <<<"$JS" && grep -Fq "window.__ctR240Sports='proximos-today-upcoming+anteriores-3-days+favorites+watched'" <<<"$JS"; then exit 0; fi
+              if grep -Fq "window.__ctR240='sports-four-data-authority'" <<<"$JS" && grep -Fq "window.__ctR240Sports='next-today-only+previous-last-3-days+favorites-only+watched'" <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done
