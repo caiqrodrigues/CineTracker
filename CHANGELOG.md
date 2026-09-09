@@ -2,6 +2,43 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.25 — 2026-09-09 — Web r233
+
+### Estabilidade de runtime
+- Criada a autoridade final `r233-official-1.0.25` sobre a Web 1.0.24/r232.
+- Eliminado o polling esportivo concorrente de `700ms` introduzido pela autoridade r229.
+- Neutralizados MutationObservers e polls legados de r223/r225/r226/r227/r228/r228b/r228c/r228d/r229/r232 que continuavam reescrevendo Descobrir, Esportes ou contagens da Watchlist depois do paint final.
+- A r233 não cria novo `MutationObserver` nem `setInterval`; normalizações finais são acionadas pelos próprios eventos de render/paint e por `cinetracker:data-changed`.
+- Padronizado um normalizador final compartilhado pela r233 para classificação de ações e textos.
+
+### Home / episódios
+- Séries classificadas como `Em dia` passam por revalidação ao vivo do TMDB após o carregamento da Home.
+- A posição do último episódio efetivamente lançado (`last_episode_to_air`) é comparada com a última posição assistida.
+- O total liberado é recalculado pelas temporadas anteriores mais os episódios já lançados da temporada atual.
+- Se houver episódio novo já lançado, `is_caught_up` é corrigido e o item sai de `Em dia` para `Assistir a seguir` sem depender de metadado persistido desatualizado.
+
+### Descobrir
+- Removidos observadores conflitantes que repintavam cards e ações de forma assíncrona depois da navegação.
+- A normalização final de cards, Watchlist e `Trocar` ocorre somente após render/paint real.
+- Mantida a camada de metadados consolidada da 1.0.24, agora chamada de forma determinística e sem polling contínuo.
+
+### Esportes
+- Mantida a semântica visual da autoridade v123: uma zona final de ações com `Eventos` e `Assistido/Desmarcar`.
+- A canonicalização dos cards passa a ser acionada somente após `paintSports`/`renderSports`, sem loop de 700ms.
+- Normalizadores esportivos legados que disputavam o mesmo DOM deixam de ser disparados automaticamente.
+
+### Watchlist / Perfil
+- A contagem e o modal passam a usar todas as linhas retornadas por `cinetracker_watchlist_full_v119`.
+- Removido o filtro que descartava entradas sem TMDB id válido antes da contagem.
+- Registros locais sem TMDB continuam visíveis no modal; itens com TMDB id mantêm navegação para os detalhes.
+- Contagem exibida e quantidade de linhas do modal passam a usar exatamente a mesma fonte.
+
+### Build e validação
+- Web package e package raiz atualizados para `1.0.25`.
+- Build oficial passa a ser `apps/web/build-r233.mjs` e gera `app-v233.js`, cache `ct-web-1.0.25-r233` e `release.json` da 1.0.25.
+- Adicionado `test-r233.mjs` para bloquear regressões de polling/observers e validar as quatro autoridades finais: Home, Descobrir, Esportes e Watchlist.
+- `verify.yml` atualizado para validar a Web 1.0.25 e manter a baseline Android atual separada.
+
 ## 1.0.0 — 2026-09-04 — OFICIAL
 
 ### Release
