@@ -1,0 +1,57 @@
+name: Validate CineTracker 1.0.24 Web Final
+
+on:
+  push:
+    branches:
+      - fix/1.0.24-web-final-consolidation
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate 1.0.24 source contract
+        run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.24"' package.json
+          grep -Fq '"version": "1.0.24"' apps/web/package.json
+          grep -Fq 'build-r232.mjs' apps/web/package.json
+          node --check apps/web/runtime-r232-v124-web-final.js
+          node --check apps/web/build-r232.mjs
+          node --check scripts/test-v124-web-final-browser.mjs
+          grep -Fq "final-web-consolidation-preserve-v123-sports" apps/web/runtime-r232-v124-web-final.js
+          grep -Fq "preserve-v123-authority" apps/web/runtime-r232-v124-web-final.js
+
+      - name: Reproduce final Web feedback in Chromium
+        run: node scripts/test-v124-web-final-browser.mjs
+
+      - name: Preserve 1.0.23 Sports authority
+        run: node scripts/test-v123-sports-final-browser.mjs
+
+      - name: Preserve Pra Voce affinity
+        run: node scripts/test-v118-foryou-affinity-profile-browser.mjs
+
+      - name: Preserve Watchlist and F1 authorities
+        run: node scripts/test-v116-final-authorities-browser.mjs
+
+      - name: Build Web 1.0.24 r232
+        run: npm run build
+
+      - name: Inspect Web 1.0.24 r232 bundle
+        run: |
+          set -euo pipefail
+          B=apps/web/dist/app-v232.js
+          test -f "$B"
+          test -f apps/web/dist/app-v232.css
+          grep -Fq "const REVISION='r232-official-1.0.24';" "$B"
+          grep -Fq "window.__ctR229V123='sports-card-single-action-zone-no-floating-actions'" "$B"
+          grep -Fq "window.__ctR232V124='final-web-consolidation-preserve-v123-sports'" "$B"
+          grep -Fq "data-ct122-watchlist-disabled" "$B"
+          grep -Fq "ct-web-1.0.24-r232" apps/web/dist/service-worker.js
+          grep -Fq 'r232-official-1.0.24' apps/web/dist/release.json
+          grep -Fq 'preserve-v123-single-action-zone' apps/web/dist/release.json
