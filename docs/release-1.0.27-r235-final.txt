@@ -1,0 +1,2 @@
+CineTracker 1.0.27 / r235 final validation marker.
+Reconciler scheduler moved off requestAnimationFrame so asynchronous route/DOM mutations are normalized reliably before release.
