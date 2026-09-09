@@ -16,7 +16,7 @@
 
   function stripLegends(){
     for(const e of qa('small,p,span,div')){
-      if(e.childElementCount>2) continue;
+      if(e.childElementCount!==0) continue;
       const t=norm(e.textContent);
       if(!t||t.length>320) continue;
       if(t.startsWith('regra ativa personalizado')||t.includes('baseado nos seus vistos e favoritos')||t.includes('prioridade pelo seu gosto')||t.includes('separado de filmes e series')||t.includes('filmes e series ficam nas estatisticas acima')||t.includes('respeita historico progresso e watchlist')) e.remove();
