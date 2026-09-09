@@ -8,8 +8,13 @@ let [html,js,css,sw,patch]=await Promise.all([
 ]);
 const must=(s,x,label)=>{if(!s.includes(x))throw new Error('r239 missing '+label);return s};
 for(const marker of ["window.__ctR239='production-video-ground-truth'","window.__ctR239Profile='exact-four-column-reference-layout'","window.__ctR239Discover='restore-real-foryou-sections-from-r166'","window.__ctR239Sports='canonical-app-button-not-gray'","window.__ctR239F1='single-tab-group-real-collapse'"])must(patch,marker,marker);
-/* runtime-r239 is also exercised standalone by the browser fixture, but production discoverState is lexical in the monolithic app bundle. */
+/* The standalone fixture exposes discoverState on window; production keeps it lexical in the monolithic app. */
 patch=patch.replaceAll('globalThis.discoverState?.tab','discoverState?.tab');
+/* Avoid a childList mutation loop: physically reorder Profile cards only when the producer emitted a wrong order. */
+const reorder239="for(const label of expected){const c=by.get(label);if(c&&c.parentElement===grid)grid.appendChild(c)}";
+const stableReorder239="if(cards.map(c=>norm(q('small',c)?.textContent||'')).join('|')!==expected.join('|'))for(const label of expected){const c=by.get(label);if(c&&c.parentElement===grid)grid.appendChild(c)}";
+if(!patch.includes(reorder239))throw new Error('r239 expected Profile reorder loop');
+patch=patch.replace(reorder239,stableReorder239);
 if(!js.includes("const REVISION='r238-official-1.0.30';"))throw new Error('r239 requires r238 base');
 if(!js.includes("window.__ctR238='real-r180-profile-renderer'"))throw new Error('r239 requires r238 profile baseline');
 if(!js.includes('function ct166RenderForYou(data)'))throw new Error('r239 requires semantic r166 Pra Voce renderer');
