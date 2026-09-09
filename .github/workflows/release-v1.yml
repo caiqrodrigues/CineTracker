@@ -1,11 +1,10 @@
-name: CineTracker 1.0.0 Official
+name: CineTracker 1.0.0 Official (historical)
 
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'release/1.0.0']
+    branches: ['release/1.0.0']
     paths:
-      - 'apps/web/package.json'
       - 'apps/web/build-r204.mjs'
       - 'apps/web/test-r204.mjs'
       - 'apps/android/app/build.gradle'
@@ -17,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: cinetracker-v1-${{ github.ref }}
+  group: cinetracker-v1-historical-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -28,13 +27,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
-      - name: Build and validate Web 1.0.0
+      - name: Build and validate historical Web 1.0.0
         working-directory: apps/web
         run: |
           set -euo pipefail
           node --check build-r204.mjs
           node --check test-r204.mjs
-          npm run build
+          node build-r204.mjs
+          node test-r204.mjs
           node --check dist/app-v204.js
           grep -Fq "window.__ctWebBuild='1.0.0';window.__ctOfficialVersion='1.0.0';" dist/app-v204.js
           grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' dist/app-v204.js
@@ -66,7 +66,7 @@ jobs:
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Prepare official Android 1.0.0
+      - name: Prepare historical Android 1.0.0
         run: |
           set -euo pipefail
           node --check scripts/prepare-android-v1000.mjs
@@ -171,22 +171,3 @@ jobs:
             android-v1000-size.txt
           if-no-files-found: error
           retention-days: 30
-
-  production_web_smoke:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_0]
-    runs-on: ubuntu-latest
-    timeout-minutes: 12
-    steps:
-      - name: Production Web serves 1.0.0
-        run: |
-          set -euo pipefail
-          for i in $(seq 1 120); do
-            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version":"1.0.0"' <<<"$BODY" && grep -Fq '"revision":"r204-official-1.0.0"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v204.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq 'CineTracker • v1.0.0 • ${REVISION}' <<<"$JS" && grep -Fq 'single-filter-trigger-right-of-search-no-orphan' <<<"$JS"; then exit 0; fi
-            fi
-            sleep 5
-          done
-          exit 1
