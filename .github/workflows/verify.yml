@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Validate Web 1.0.27 r235
+      - name: Syntax r235
         run: |
           set -euo pipefail
           grep -Fq '"version": "1.0.27"' apps/web/package.json
@@ -24,7 +24,10 @@ jobs:
           node --check apps/web/build-r235.mjs
           node --check apps/web/test-r235.mjs
           node --check scripts/test-v127-live-authority-browser.mjs
-          cd apps/web
+      - name: Build and static invariants r235
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
           npm run verify
           node --check dist/app-v235.js
           grep -Fq "window.__ctWebBuild='1.0.27';window.__ctOfficialVersion='1.0.27';" dist/app-v235.js
@@ -36,8 +39,8 @@ jobs:
           grep -Fq "window.__ctV127Watchlist='rpc-full-universe-count-modal-identical'" dist/app-v235.js
           grep -Fq '"version": "1.0.27"' dist/release.json
           grep -Fq '"revision": "r235-official-1.0.27"' dist/release.json
-          cd ../..
-          node scripts/test-v127-live-authority-browser.mjs
+      - name: Real Chromium behavior r235
+        run: node scripts/test-v127-live-authority-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
