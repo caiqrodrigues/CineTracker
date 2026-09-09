@@ -1,57 +1,60 @@
-name: Verify Web 1.0.27
+name: Verify Web 1.0.28
 
 on:
   push:
-    branches: [main, 'fix/1.0.27-r235-live-authority']
+    branches: [main, 'fix/1.0.28-r236-current-video-scope']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_27:
+  web_1_0_28:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r235
+      - name: Syntax r236
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.27"' apps/web/package.json
-          node --check apps/web/runtime-r235-v127-live-authority.js
-          node --check apps/web/build-r235.mjs
-          node --check apps/web/test-r235.mjs
+          grep -Fq '"version": "1.0.28"' apps/web/package.json
+          node --check apps/web/runtime-r236-current-video-scope.js
+          node --check apps/web/build-r236.mjs
+          node --check apps/web/test-r236.mjs
           node --check scripts/test-v127-live-authority-browser.mjs
-      - name: Build r235
+          node --check scripts/test-r236-current-video-scope-browser.mjs
+      - name: Build r236
         working-directory: apps/web
-        run: node build-r235.mjs
-      - name: Static invariants r235
+        run: node build-r236.mjs
+      - name: Static invariants r236
         working-directory: apps/web
-        run: node test-r235.mjs
-      - name: Final bundle identity r235
+        run: node test-r236.mjs
+      - name: Final bundle identity r236
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v235.js
-          grep -Fq "window.__ctWebBuild='1.0.27';window.__ctOfficialVersion='1.0.27';" dist/app-v235.js
-          grep -Fq "const REVISION='r235-official-1.0.27';" dist/app-v235.js
-          grep -Fq "window.__ctR235V127='single-live-dom-authority'" dist/app-v235.js
-          grep -Fq '"version": "1.0.27"' dist/release.json
-          grep -Fq '"revision": "r235-official-1.0.27"' dist/release.json
-      - name: Chromium Discover live behavior
+          node --check dist/app-v236.js
+          grep -Fq "window.__ctWebBuild='1.0.28';window.__ctOfficialVersion='1.0.28';" dist/app-v236.js
+          grep -Fq "const REVISION='r236-official-1.0.28';" dist/app-v236.js
+          grep -Fq "window.__ctR236='current-video-scope-authority'" dist/app-v236.js
+          grep -Fq '"version": "1.0.28"' dist/release.json
+          grep -Fq '"revision": "r236-official-1.0.28"' dist/release.json
+      - name: Chromium r235 regression suite Discover
         env: { CT_ASSERT: discover }
         run: node scripts/test-v127-live-authority-browser.mjs
-      - name: Chromium Sports live behavior
+      - name: Chromium r235 regression suite Sports
         env: { CT_ASSERT: sports }
         run: node scripts/test-v127-live-authority-browser.mjs
-      - name: Chromium Watchlist 1358+564 behavior
+      - name: Chromium r235 regression suite Watchlist
         env: { CT_ASSERT: watchlist }
         run: node scripts/test-v127-live-authority-browser.mjs
-      - name: Chromium Home aired-unwatched behavior
+      - name: Chromium r235 regression suite Home
         env: { CT_ASSERT: home }
         run: node scripts/test-v127-live-authority-browser.mjs
+      - name: Chromium r236 current video scope
+        run: node scripts/test-r236-current-video-scope-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -66,18 +69,18 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_27]
+    needs: [web_1_0_28]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Official production serves 1.0.27 r235
+      - name: Official production serves 1.0.28 r236
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.27"' <<<"$BODY" && grep -Fq '"revision": "r235-official-1.0.27"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v235.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR235V127='single-live-dom-authority'" <<<"$JS" && grep -Fq "new MutationObserver(queue127)" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.28"' <<<"$BODY" && grep -Fq '"revision": "r236-official-1.0.28"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v236.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "window.__ctR236='current-video-scope-authority'" <<<"$JS" && grep -Fq "new MutationObserver(queue236)" <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done
