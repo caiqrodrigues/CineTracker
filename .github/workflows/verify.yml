@@ -1,47 +1,48 @@
-name: Verify Web 1.0.29
+name: Verify Web 1.0.30
 
 on:
   push:
-    branches: [main, 'fix/1.0.29-r237-real-ui-authority']
+    branches: [main, 'fix/1.0.30-r238-real-profile-renderer']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_29:
+  web_1_0_30:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r237
+      - name: Syntax r238
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.29"' apps/web/package.json
-          node --check apps/web/runtime-r237-real-ui-authority.js
-          node --check apps/web/build-r237.mjs
-          node --check apps/web/test-r237.mjs
-          node --check scripts/test-r237-real-ui-browser.mjs
-      - name: Build r237
+          grep -Fq '"version": "1.0.30"' apps/web/package.json
+          node --check apps/web/runtime-r238-real-profile-renderer.js
+          node --check apps/web/build-r238.mjs
+          node --check apps/web/test-r238.mjs
+          node --check scripts/test-r238-real-profile-browser.mjs
+      - name: Build r238
         working-directory: apps/web
-        run: node build-r237.mjs
-      - name: Static invariants r237
+        run: node build-r238.mjs
+      - name: Static invariants r238
         working-directory: apps/web
-        run: node test-r237.mjs
-      - name: Final bundle identity r237
+        run: node test-r238.mjs
+      - name: Final bundle identity r238
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v237.js
-          grep -Fq "window.__ctWebBuild='1.0.29';window.__ctOfficialVersion='1.0.29';" dist/app-v237.js
-          grep -Fq "const REVISION='r237-official-1.0.29';" dist/app-v237.js
-          grep -Fq "window.__ctR237='real-ui-single-finalizer'" dist/app-v237.js
-          grep -Fq '"version": "1.0.29"' dist/release.json
-          grep -Fq '"revision": "r237-official-1.0.29"' dist/release.json
-      - name: Chromium r237 real UI and Profile order
-        run: node scripts/test-r237-real-ui-browser.mjs
+          node --check dist/app-v238.js
+          grep -Fq "window.__ctWebBuild='1.0.30';window.__ctOfficialVersion='1.0.30';" dist/app-v238.js
+          grep -Fq "const REVISION='r238-official-1.0.30';" dist/app-v238.js
+          grep -Fq "window.__ctR238='real-r180-profile-renderer'" dist/app-v238.js
+          grep -Fq "ctR180ProfileStats=ctR238ProfileStats" dist/app-v238.js
+          grep -Fq '"version": "1.0.30"' dist/release.json
+          grep -Fq '"revision": "r238-official-1.0.30"' dist/release.json
+      - name: Chromium r238 real Profile producer
+        run: node scripts/test-r238-real-profile-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -56,18 +57,18 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_29]
+    needs: [web_1_0_30]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Official production serves 1.0.29 r237
+      - name: Official production serves 1.0.30 r238
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.29"' <<<"$BODY" && grep -Fq '"revision": "r237-official-1.0.29"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v237.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR237='real-ui-single-finalizer'" <<<"$JS" && grep -Fq "window.__ctR237Profile='exact-requested-stat-order'" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.30"' <<<"$BODY" && grep -Fq '"revision": "r238-official-1.0.30"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v238.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "window.__ctR238='real-r180-profile-renderer'" <<<"$JS" && grep -Fq "ctR180ProfileStats=ctR238ProfileStats" <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done
