@@ -1,56 +1,68 @@
-name: Verify Web 1.0.34 r243 Home
+name: Verify Web 1.0.35 r244 Series Overflow
 
 on:
   push:
-    branches: [main, 'fix/r243-home-interaction-catchup']
+    branches: [main, 'fix/r244-series-horizontal-overflow']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_34_home:
+  web_1_0_35_series_overflow:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r243
+      - name: Syntax r243 + r244
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.34"' apps/web/package.json
+          grep -Fq '"version": "1.0.35"' apps/web/package.json
           node --check apps/web/runtime-r243-home-interaction-catchup.js
           node --check apps/web/build-r243.mjs
           node --check apps/web/test-r243.mjs
           node --check scripts/test-r239-video-ground-truth-browser.mjs
           node --check scripts/test-r243-home-browser.mjs
-      - name: Build r243
+          node --check apps/web/runtime-r244-series-horizontal-overflow.js
+          node --check apps/web/build-r244.mjs
+          node --check apps/web/test-r244.mjs
+          node --check scripts/test-r244-series-overflow-browser.mjs
+      - name: Build inherited r243 baseline
         working-directory: apps/web
         run: node build-r243.mjs
-      - name: Static invariants r243
+      - name: Static invariants inherited r243
         working-directory: apps/web
         run: node test-r243.mjs
-      - name: Final bundle identity r243
+      - name: Chromium r239 regression ground truth
+        run: node scripts/test-r239-video-ground-truth-browser.mjs
+      - name: Chromium r243 Home regression
+        run: node scripts/test-r243-home-browser.mjs
+      - name: Build r244
+        working-directory: apps/web
+        run: node build-r244.mjs
+      - name: Static invariants r244
+        working-directory: apps/web
+        run: node test-r244.mjs
+      - name: Final bundle identity r244
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v243.js
-          grep -Fq "window.__ctWebBuild='1.0.34';window.__ctOfficialVersion='1.0.34';" dist/app-v243.js
-          grep -Fq "const REVISION='r243-official-1.0.34';" dist/app-v243.js
-          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v243.js
-          grep -Fq "window.__ctR242HomeAdditive='preview-first-movie-metadata'" dist/app-v243.js
-          grep -Fq "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'" dist/app-v243.js
-          grep -Fq "window.__ctR243MovieHydration='single-queue-max-3'" dist/app-v243.js
-          grep -Fq "window.__ctR243SeriesAuthority='all-up-to-date-through-r176-canonical'" dist/app-v243.js
-          grep -Fq 'app-v243.js' dist/index.html
-          grep -Fq '"version": "1.0.34"' dist/release.json
-          grep -Fq '"revision": "r243-official-1.0.34"' dist/release.json
-          if grep -Fq "if(unique.length)void ct242Hydrate(unique);" dist/app-v243.js; then exit 1; fi
-      - name: Chromium r239 regression ground truth
-        run: node scripts/test-r239-video-ground-truth-browser.mjs
-      - name: Chromium r243 Home interaction and catch-up
-        run: node scripts/test-r243-home-browser.mjs
+          node --check dist/app-v244.js
+          grep -Fq "window.__ctWebBuild='1.0.35';window.__ctOfficialVersion='1.0.35';" dist/app-v244.js
+          grep -Fq "const REVISION='r244-official-1.0.35';" dist/app-v244.js
+          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v244.js
+          grep -Fq "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'" dist/app-v244.js
+          grep -Fq "window.__ctR244='series-detail-local-horizontal-overflow'" dist/app-v244.js
+          grep -Fq 'app-v244.js' dist/index.html
+          grep -Fq 'app-v244.css' dist/index.html
+          grep -Fq '"version": "1.0.35"' dist/release.json
+          grep -Fq '"revision": "r244-official-1.0.35"' dist/release.json
+          grep -Fq 'html,body{width:100%;max-width:100%;overflow-x:hidden}' dist/app-v244.css
+          grep -Fq 'touch-action:pan-x pan-y!important' dist/app-v244.css
+      - name: Chromium r244 series overflow behavior
+        run: node scripts/test-r244-series-overflow-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -65,19 +77,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_34_home]
+    needs: [web_1_0_35_series_overflow]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Official production serves 1.0.34 r243
+      - name: Official production serves 1.0.35 r244
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.34"' <<<"$BODY" && grep -Fq '"revision": "r243-official-1.0.34"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v243.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.35"' <<<"$BODY" && grep -Fq '"revision": "r244-official-1.0.35"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v244.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v244.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'" <<<"$JS" && grep -Fq "window.__ctR243MovieHydration='single-queue-max-3'" <<<"$JS" && grep -Fq 'app-v243.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR244='series-detail-local-horizontal-overflow'" <<<"$JS" && grep -Fq 'touch-action:pan-x pan-y!important' <<<"$CSS" && grep -Fq 'app-v244.js' <<<"$HTML" && grep -Fq 'app-v244.css' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
