@@ -8,6 +8,7 @@ const dir='/tmp/ct-r242-home-final',file=resolve(dir,'index.html'),profile=resol
 const preview={preview:true,series:[],movie_watchlist:[{media_id:1,tmdb_id:101,title:'Filme Teste',poster_path:null,release_year:2024,runtime_minutes:111,genres:[]}],history_episodes:[],history_movies:[],seen_movie_tmdb_ids:[]};
 const stub=`
 window.__ctR242Errors=[];window.__ctR242FullCalled=false;window.__ctR242FullResolved=false;window.__ctR242PreviewCalled=false;
+window.requestIdleCallback=()=>0;window.cancelIdleCallback=()=>{};
 addEventListener('error',e=>window.__ctR242Errors.push('error:'+String(e.message||e.error||e)));
 addEventListener('unhandledrejection',e=>window.__ctR242Errors.push('rejection:'+String(e.reason||e)));
 localStorage.clear();
@@ -36,7 +37,7 @@ function cdp(wsUrl){return new Promise((resolve,reject)=>{const ws=new WebSocket
 let client;
 try{
  const list=await targets(),target=list.find(x=>x.type==='page'&&String(x.url||'').startsWith('file:'))||list.find(x=>x.type==='page');if(!target?.webSocketDebuggerUrl)throw new Error('No page debugger target '+JSON.stringify(list).slice(0,500));
- client=await cdp(target.webSocketDebuggerUrl);await client.call('Runtime.enable');await sleep(1800);
+ client=await cdp(target.webSocketDebuggerUrl);await client.call('Runtime.enable');await sleep(900);
  const expression=`(()=>{const home=document.querySelector('[data-home]'),row=document.querySelector('[data-media="movie:101"]'),small=row?.querySelector('small');return{marker:window.__ctR242HomeAdditive||'',homeVisible:Boolean(home&&!home.querySelector('.loader')&&home.textContent.trim()),fast:home?.dataset.ct242Fast||'',movieMeta:small?.textContent||'',errors:(window.__ctR242Errors||[]).join(' | '),appChars:document.querySelector('#app')?.textContent?.trim().length||0,fullCalled:Boolean(window.__ctR242FullCalled),fullResolved:Boolean(window.__ctR242FullResolved),previewCalled:Boolean(window.__ctR242PreviewCalled)}})()`;
  const result=await client.call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:false});const v=result?.result?.value;if(!v)throw new Error('No Runtime.evaluate value '+JSON.stringify(result));
  if(v.marker!=='preview-first-movie-metadata')throw new Error('R242 marker missing '+JSON.stringify(v));
