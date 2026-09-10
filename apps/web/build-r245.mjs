@@ -15,7 +15,8 @@ const must=(s,x,label=x)=>{if(!s.includes(x))throw new Error('r245 missing '+lab
 for(const marker of [
   "const REVISION='r244-official-1.0.35';",
   "window.__ctR244='series-detail-local-horizontal-overflow'",
-  "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'"
+  "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'",
+  "const CT243_SERIES_MAX=2;"
 ])must(js,marker,marker);
 for(const marker of [
   "window.__ctR245='real-horizontal-drag-and-started-series-authority'",
@@ -28,6 +29,9 @@ for(const marker of [
   "row.home_bucket='continue'"
 ])must(patch,marker,marker);
 
+/* r245 fully supersedes r243's narrow up_to_date-only audit. Disable that worker in
+   the final generated bundle so the same series cannot be force-audited twice. */
+js=js.replace("const CT243_SERIES_MAX=2;","const CT243_SERIES_MAX=0;/* r245 supersedes narrow series audit */");
 js=js.replace("const REVISION='r244-official-1.0.35';","const REVISION='r245-official-1.0.36';")
   .replace("window.__ctWebBuild='1.0.35';window.__ctOfficialVersion='1.0.35';","window.__ctWebBuild='1.0.36';window.__ctOfficialVersion='1.0.36';")
   .replaceAll('CineTracker • v1.0.35','CineTracker • v1.0.36')
@@ -66,6 +70,7 @@ await Promise.all([
     global_horizontal_scroll:'disabled',vertical_page_scroll:'preserved',
     seasons_horizontal_scroll:'real-pointer-drag',related_titles_horizontal_scroll:'real-pointer-drag',episode_chart_horizontal_scroll:'real-pointer-drag',
     series_continue:'all-started-series-audited-by-canonical-released-unwatched-authority',series_audit_concurrency:4,
+    previous_series_audit:'r243-up-to-date-worker-disabled-in-final-bundle',
     home_priority:'canonical-series-before-secondary-movie-metadata',android:'unchanged-1.0.20',generated_at:new Date().toISOString()
   },null,2),'utf8')
 ]);
