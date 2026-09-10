@@ -39,10 +39,28 @@ jobs:
           node --check scripts/test-r246-complete-ui-browser.mjs
       - name: Chromium r239 regression ground truth
         run: node scripts/test-r239-video-ground-truth-browser.mjs
+      - name: Build inherited r243
+        working-directory: apps/web
+        run: node build-r243.mjs
+      - name: Static inherited r243
+        working-directory: apps/web
+        run: node test-r243.mjs
       - name: Chromium r243 Home regression
         run: node scripts/test-r243-home-browser.mjs
+      - name: Build inherited r244
+        working-directory: apps/web
+        run: node build-r244.mjs
+      - name: Static inherited r244
+        working-directory: apps/web
+        run: node test-r244.mjs
       - name: Chromium r244 overflow regression
         run: node scripts/test-r244-series-overflow-browser.mjs
+      - name: Build inherited r245
+        working-directory: apps/web
+        run: node build-r245.mjs
+      - name: Static inherited r245
+        working-directory: apps/web
+        run: node test-r245.mjs
       - name: Chromium r245 Home and drag regression
         run: node scripts/test-r245-horizontal-home-browser.mjs
       - name: Build r246
