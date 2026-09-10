@@ -1,0 +1,34 @@
+name: Inspect r241 producers
+on:
+  push:
+    branches: [fix/1.0.33-r241-complete-user-video]
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install --no-audit --no-fund
+      - run: node build-r239.mjs
+      - name: Dump authorities
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const js=readFileSync('dist/app-v239.js','utf8');
+          const css=readFileSync('dist/app-v239.css','utf8');
+          const qs=['ctR180ProfileStats','ct175PrimeHome','ct175EpisodePairs','paintHome','paintDiscover','discoverTab','discoverTabs','foryou','Indicação do dia','100% novos','Da sua Watchlist','data-ct127-f1tabs','Visão geral','Grid de largada','Temporada de Fórmula 1','f1Hub','ct127','sportsTabs','sport-actions','data-sport-watch'];
+          for(const q of qs){
+            const i=js.indexOf(q); console.log('\n===== JS '+q+' @ '+i+' =====');
+            if(i>=0) console.log(js.slice(Math.max(0,i-3000),Math.min(js.length,i+12000)));
+          }
+          for(const q of ['profile','stats-grid','profile-btn','sport-actions','sport-event','discover']){
+            const i=css.indexOf(q); console.log('\n===== CSS '+q+' @ '+i+' =====');
+            if(i>=0) console.log(css.slice(Math.max(0,i-2000),Math.min(css.length,i+8000)));
+          }
+          NODE
