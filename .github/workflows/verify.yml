@@ -1,112 +1,237 @@
-name: Verify Web 1.0.36 r245 Horizontal + Home Authority
+name: Verify
 
 on:
-  push:
-    branches: [main, 'fix/r245-horizontal-home-authority']
   pull_request:
-
-permissions:
-  contents: read
+  push:
+    branches:
+      - main
+      - fix/**
+      - release/**
 
 jobs:
-  web_1_0_36_horizontal_home:
+  web:
+    name: Web | Build + static + r239 behavior + r243 + r244 + r245 + r246 + smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run web checks
+        run: |
+          node apps/web/test-r176.mjs
+          node apps/web/test-r177.mjs
+          node apps/web/test-r178.mjs
+          node apps/web/test-r179.mjs
+          node apps/web/test-r180.mjs
+          node apps/web/test-r181.mjs
+          node apps/web/test-r182.mjs
+          node apps/web/test-r183.mjs
+          node apps/web/test-r184.mjs
+          node apps/web/test-r185.mjs
+          node apps/web/test-r186.mjs
+          node apps/web/test-r187.mjs
+          node apps/web/test-r188.mjs
+          node apps/web/test-r189.mjs
+          node apps/web/test-r190.mjs
+          node apps/web/test-r191.mjs
+          node apps/web/test-r192.mjs
+          node apps/web/test-r193.mjs
+          node apps/web/test-r194.mjs
+          node apps/web/test-r195.mjs
+          node apps/web/test-r196.mjs
+          node apps/web/test-r197.mjs
+          node apps/web/test-r198.mjs
+          node apps/web/test-r199.mjs
+          node apps/web/test-r200.mjs
+          node apps/web/test-r201.mjs
+          node apps/web/test-r202.mjs
+          node apps/web/test-r203.mjs
+          node apps/web/test-r204.mjs
+          node apps/web/test-r205.mjs
+          node apps/web/test-r206.mjs
+          node apps/web/test-r207.mjs
+          node apps/web/test-r208.mjs
+          node apps/web/test-r209.mjs
+          node apps/web/test-r210.mjs
+          node apps/web/test-r211.mjs
+          node apps/web/test-r212.mjs
+          node apps/web/test-r213.mjs
+          node apps/web/test-r214.mjs
+          node apps/web/test-r215.mjs
+          node apps/web/test-r216.mjs
+          node apps/web/test-r217.mjs
+          node apps/web/test-r218.mjs
+          node apps/web/test-r219.mjs
+          node apps/web/test-r220.mjs
+
+      - name: Build official Web bundle
+        run: |
+          npm run build
+          test -f dist/index.html
+          test -f dist/app-v246.js
+          test -f dist/app-v246.css
+          test -f dist/release.json
+          grep -Fq "window.__ctR246='horizontal-track-home-priority'" dist/app-v246.js
+          grep -Fq "function ct246EnsureTrack" dist/app-v246.js
+          grep -Fq "function ct246CollectSeriesRefs" dist/app-v246.js
+          grep -Fq "function ct246ReleaseMovies" dist/app-v246.js
+          grep -Fq '"version": "1.0.37"' dist/release.json
+          (cd dist && sha256sum -c checksums.sha256)
+
+      - name: Run r239 static regression
+        run: |
+          node apps/web/test-r239.mjs
+
+      - name: Run r239 Home interaction behavior
+        run: |
+          node scripts/test-r239-home-interaction-browser.mjs
+
+      - name: Run r243 static regression
+        run: |
+          npm --prefix apps/web run test:r243
+
+      - name: Run r243 Home interaction catch-up behavior
+        run: |
+          node scripts/test-r243-home-interaction-browser.mjs
+
+      - name: Run r244 static regression
+        run: |
+          npm --prefix apps/web run test:r244
+
+      - name: Run r244 horizontal overflow behavior
+        run: |
+          npm --prefix apps/web run test:r244:browser
+
+      - name: Run r245 static regression
+        run: |
+          npm --prefix apps/web run test:r245
+
+      - name: Run r245 horizontal drag + Home canonical authority behavior
+        run: |
+          npm --prefix apps/web run test:r245:browser
+
+      - name: Run r246 static regression
+        run: |
+          npm --prefix apps/web run test:r246
+
+      - name: Run r246 real horizontal tracks + Home priority behavior
+        run: |
+          npm --prefix apps/web run test:r246:browser
+
+      - name: Run final static tests against official artifact
+        run: |
+          node apps/web/test-app.mjs
+          node apps/web/test-home-v2.mjs
+          node apps/web/test-home-r239.mjs
+          node apps/web/test-section-r219.mjs
+          node apps/web/test-history-r219.mjs
+
+      - name: Serve dist and smoke
+        run: |
+          python3 -m http.server 4173 --directory dist >/tmp/cinetracker-web-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" || true' EXIT
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/ >/tmp/cinetracker-web-index.html; then
+              break
+            fi
+            sleep 1
+          done
+          grep -Fq 'app-v246.js' /tmp/cinetracker-web-index.html
+          curl --fail --silent http://127.0.0.1:4173/release.json | grep -Fq '"version": "1.0.37"'
+          curl --fail --silent http://127.0.0.1:4173/app-v246.js | grep -Fq "window.__ctR246='horizontal-track-home-priority'"
+          curl --fail --silent http://127.0.0.1:4173/app-v246.css | grep -Fq '[data-ct246-scroll="1"]'
+          curl --fail --silent http://127.0.0.1:4173/app-v246.css | grep -Fq '.ct246-x-track'
+          curl --fail --silent http://127.0.0.1:4173/manifest.webmanifest >/tmp/cinetracker-web-manifest.json
+
+  android:
+    name: Android | Preserve 1.0.20 / 10062
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - name: Syntax r243 + r244 + r245
-        run: |
-          set -euo pipefail
-          grep -Fq '"version": "1.0.36"' apps/web/package.json
-          node --check apps/web/runtime-r243-home-interaction-catchup.js
-          node --check apps/web/build-r243.mjs
-          node --check apps/web/test-r243.mjs
-          node --check scripts/test-r239-video-ground-truth-browser.mjs
-          node --check scripts/test-r243-home-browser.mjs
-          node --check apps/web/runtime-r244-series-horizontal-overflow.js
-          node --check apps/web/build-r244.mjs
-          node --check apps/web/test-r244.mjs
-          node --check scripts/test-r244-series-overflow-browser.mjs
-          node --check apps/web/runtime-r245-horizontal-home-authority.js
-          node --check apps/web/build-r245.mjs
-          node --check apps/web/test-r245.mjs
-          node --check scripts/test-r245-horizontal-home-browser.mjs
-      - name: Build inherited r243 baseline
-        working-directory: apps/web
-        run: node build-r243.mjs
-      - name: Static invariants inherited r243
-        working-directory: apps/web
-        run: node test-r243.mjs
-      - name: Chromium r239 regression ground truth
-        run: node scripts/test-r239-video-ground-truth-browser.mjs
-      - name: Chromium r243 Home regression
-        run: node scripts/test-r243-home-browser.mjs
-      - name: Build inherited r244 baseline
-        working-directory: apps/web
-        run: node build-r244.mjs
-      - name: Static invariants inherited r244
-        working-directory: apps/web
-        run: node test-r244.mjs
-      - name: Chromium r244 overflow regression
-        run: node scripts/test-r244-series-overflow-browser.mjs
-      - name: Build r245
-        working-directory: apps/web
-        run: node build-r245.mjs
-      - name: Static invariants r245
-        working-directory: apps/web
-        run: node test-r245.mjs
-      - name: Final bundle identity r245
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          node --check dist/app-v245.js
-          grep -Fq "window.__ctWebBuild='1.0.36';window.__ctOfficialVersion='1.0.36';" dist/app-v245.js
-          grep -Fq "const REVISION='r245-official-1.0.36';" dist/app-v245.js
-          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v245.js
-          grep -Fq "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'" dist/app-v245.js
-          grep -Fq "window.__ctR244='series-detail-local-horizontal-overflow'" dist/app-v245.js
-          grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" dist/app-v245.js
-          grep -Fq 'const CT243_SERIES_MAX=0;/* r245 supersedes narrow series audit */' dist/app-v245.js
-          grep -Fq 'const CT245_SERIES_MAX=4;' dist/app-v245.js
-          grep -Fq 'app-v245.js' dist/index.html
-          grep -Fq 'app-v245.css' dist/index.html
-          grep -Fq '"version": "1.0.36"' dist/release.json
-          grep -Fq '"revision": "r245-official-1.0.36"' dist/release.json
-          grep -Fq 'touch-action:pan-y pinch-zoom!important' dist/app-v245.css
-          grep -Fq '.ct169-related-row{grid-auto-columns:minmax(148px,168px)!important}' dist/app-v245.css
-      - name: Chromium r245 real horizontal + Home authority
-        run: node scripts/test-r245-horizontal-home-browser.mjs
+        with:
+          node-version: '20'
 
-  android_current_source:
-    runs-on: ubuntu-latest
-    timeout-minutes: 8
-    steps:
-      - uses: actions/checkout@v4
-      - name: Preserve current Android baseline
+      - name: Check Android release gate
         run: |
-          set -euo pipefail
-          grep -Fq "versionName '1.0.20'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10062' apps/android/app/build.gradle
+          node apps/android/test-app-version.mjs
+          grep -Fq 'versionName = "1.0.20"' apps/android/app/build.gradle.kts
+          grep -Fq 'versionCode = 10062' apps/android/app/build.gradle.kts
+          grep -Fq 'private const val RELEASE_ID = "1.0.20"' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.kt
+          grep -Fq 'private const val RELEASE_CODE = 10062' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.kt
 
   production_smoke:
+    name: Web | Production smoke
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_36_horizontal_home]
+    needs:
+      - web
+      - android
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - name: Official production serves 1.0.36 r245
+      - name: Wait for Vercel production and verify release identity
+        env:
+          PROD_URL: https://mycinetracker.vercel.app
+          EXPECTED_VERSION: 1.0.37
+          EXPECTED_REVISION: r246-horizontal-track-home-priority
         run: |
           set -euo pipefail
-          for i in $(seq 1 150); do
-            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.36"' <<<"$BODY" && grep -Fq '"revision": "r245-official-1.0.36"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v245.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v245.css?ct=$(date +%s%N)" || true)"
-              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" <<<"$JS" && grep -Fq 'const CT245_SERIES_MAX=4;' <<<"$JS" && grep -Fq 'touch-action:pan-y pinch-zoom!important' <<<"$CSS" && grep -Fq 'app-v245.js' <<<"$HTML" && grep -Fq 'app-v245.css' <<<"$HTML"; then exit 0; fi
+
+          success=0
+          for attempt in $(seq 1 80); do
+            release="$(curl --fail --silent --show-error --location --connect-timeout 3 --max-time 10 \
+              -H 'Cache-Control: no-cache' \
+              "$PROD_URL/release.json?ct_verify=${GITHUB_SHA}-${attempt}" 2>/tmp/ct-release-error || true)"
+
+            if printf '%s' "$release" | grep -Fq "\"version\": \"$EXPECTED_VERSION\"" \
+              && printf '%s' "$release" | grep -Fq "\"revision\": \"$EXPECTED_REVISION\"" \
+              && printf '%s' "$release" | grep -Fq '"appJs": "app-v246.js"' \
+              && printf '%s' "$release" | grep -Fq '"appCss": "app-v246.css"'; then
+              success=1
+              printf '%s\n' "$release"
+              break
+            fi
+
+            if (( attempt % 10 == 0 )); then
+              echo "Still waiting for Vercel production (attempt $attempt/80)..."
+              cat /tmp/ct-release-error || true
             fi
             sleep 5
           done
-          exit 1
+
+          if [[ "$success" -ne 1 ]]; then
+            echo "Production did not reach Web $EXPECTED_VERSION / $EXPECTED_REVISION." >&2
+            exit 1
+          fi
+
+          js="$(curl --fail --silent --show-error --location --connect-timeout 3 --max-time 15 \
+            -H 'Cache-Control: no-cache' "$PROD_URL/app-v246.js?ct_verify=${GITHUB_SHA}")"
+          css="$(curl --fail --silent --show-error --location --connect-timeout 3 --max-time 15 \
+            -H 'Cache-Control: no-cache' "$PROD_URL/app-v246.css?ct_verify=${GITHUB_SHA}")"
+          index="$(curl --fail --silent --show-error --location --connect-timeout 3 --max-time 15 \
+            -H 'Cache-Control: no-cache' "$PROD_URL/?ct_verify=${GITHUB_SHA}")"
+
+          printf '%s' "$js" | grep -Fq "window.__ctR246='horizontal-track-home-priority'"
+          printf '%s' "$js" | grep -Fq 'function ct246EnsureTrack'
+          printf '%s' "$js" | grep -Fq 'function ct246CollectSeriesRefs'
+          printf '%s' "$js" | grep -Fq 'function ct246ReleaseMovies'
+          printf '%s' "$css" | grep -Fq '[data-ct246-scroll="1"]'
+          printf '%s' "$css" | grep -Fq '.ct246-x-track'
+          printf '%s' "$css" | grep -Fq 'touch-action:pan-x pan-y!important'
+          printf '%s' "$index" | grep -Fq 'app-v246.js'
+
+          echo "Production smoke passed for Web $EXPECTED_VERSION / $EXPECTED_REVISION."

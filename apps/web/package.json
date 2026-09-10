@@ -1,12 +1,24 @@
 {
-  "name": "cinetracker-web-entry",
+  "name": "cinetracker-web-pwa",
+  "version": "1.0.37",
   "private": true,
-  "version": "1.0.36",
+  "type": "module",
   "scripts": {
-    "build": "node build-r245.mjs",
-    "verify": "node build-r245.mjs && node test-r245.mjs"
-  },
-  "engines": {
-    "node": ">=20"
+    "preinstall": "node ../../scripts/assert-install-root.mjs",
+    "start": "node server.mjs",
+    "build": "node build-r246.mjs",
+    "build:r239": "node build-r239.mjs",
+    "build:r243": "node build-r243.mjs",
+    "test:r243": "node test-r243.mjs",
+    "build:r244": "node build-r244.mjs",
+    "test:r244": "node test-r244.mjs",
+    "test:r244:browser": "node ../../scripts/test-r244-horizontal-overflow-browser.mjs",
+    "build:r245": "node build-r245.mjs",
+    "test:r245": "node test-r245.mjs",
+    "test:r245:browser": "node ../../scripts/test-r245-horizontal-home-browser.mjs",
+    "build:r246": "node build-r246.mjs",
+    "test:r246": "node test-r246.mjs",
+    "test:r246:browser": "node ../../scripts/test-r246-horizontal-home-browser.mjs",
+    "verify": "npm run build && npm run test:r243 && npm run test:r244 && npm run test:r245 && npm run test:r246 && npm run test:r244:browser && npm run test:r245:browser && npm run test:r246:browser"
   }
 }
