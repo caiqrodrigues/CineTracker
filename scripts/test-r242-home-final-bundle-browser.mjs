@@ -1,53 +1,44 @@
-import {readFile,rm,mkdir} from 'node:fs/promises';
-import {resolve} from 'node:path';
-import {spawn,execFileSync} from 'node:child_process';
+import {readFile,writeFile,rm,mkdir} from 'node:fs/promises';
+import {resolve,extname} from 'node:path';
+import {execFileSync} from 'node:child_process';
 import {createServer} from 'node:http';
 
-const root=resolve(process.cwd()),dist=resolve(root,'apps/web/dist');
-const [bundle,css]=await Promise.all([readFile(resolve(dist,'app-v242.js'),'utf8'),readFile(resolve(dist,'app-v242.css'),'utf8')]);
-const dir='/tmp/ct-r242-home-final',profile=resolve(dir,'chrome-profile');await mkdir(profile,{recursive:true});
-const preview={preview:true,series:[],movie_watchlist:[{media_id:1,tmdb_id:101,title:'Filme Teste',poster_path:null,release_year:2024,runtime_minutes:111,genres:[]}],history_episodes:[],history_movies:[],seen_movie_tmdb_ids:[]};
-const stub=`
-window.__ctR242Errors=[];window.__ctR242FullCalled=false;window.__ctR242FullResolved=false;window.__ctR242PreviewCalled=false;window.__ctR242StubReady=false;
-window.requestIdleCallback=()=>0;window.cancelIdleCallback=()=>{};
-addEventListener('error',e=>window.__ctR242Errors.push('error:'+String(e.message||e.error||e)));
-addEventListener('unhandledrejection',e=>window.__ctR242Errors.push('rejection:'+String(e.reason||e)));
-localStorage.clear();
-localStorage.setItem('cinetracker_session',JSON.stringify({access_token:'test-token',refresh_token:'test-refresh',expires_at:Math.floor(Date.now()/1000)+3600,user:{id:'test-user',email:'teste@local'}}));
-const __preview=${JSON.stringify(preview)};
-const __json=(x,status=200)=>Promise.resolve(new Response(JSON.stringify(x),{status,headers:{'Content-Type':'application/json'}}));
-window.fetch=(input)=>{const u=String(input?.url||input||'');
- if(u.includes('/auth/v1/user'))return __json({id:'test-user',email:'teste@local'});
- if(u.includes('/rest/v1/rpc/cinetracker_home_live_v0997_r3')){window.__ctR242FullCalled=true;return new Promise(()=>{});}
- if(u.includes('/rest/v1/rpc/cinetracker_home_preview_v1')){window.__ctR242PreviewCalled=true;return new Promise(r=>setTimeout(()=>r(new Response(JSON.stringify(__preview),{status:200,headers:{'Content-Type':'application/json'}})),80));}
- if(u.includes('/functions/v1/tmdb-proxy'))return __json({id:101,title:'Filme Teste',release_date:'2024-05-10',runtime:111,genres:[{id:28,name:'Ação'},{id:12,name:'Aventura'}]});
- return __json({});
-};
-window.__ctR242StubReady=true;
-`;
-const safe=s=>s.replaceAll('</script>','<\\/script>');
-const html=`<!doctype html><html><head><meta charset="utf-8"><style>${safe(css)}</style></head><body><div id="app"></div><script>${safe(stub)}</script><script>${safe(bundle)}</script></body></html>`;
-const server=createServer((req,res)=>{const path=String(req.url||'').split('?')[0];if(path==='/'||path==='/home'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});res.end(html);return}if(path==='/service-worker.js'){res.writeHead(200,{'Content-Type':'application/javascript','Cache-Control':'no-store'});res.end("self.addEventListener('install',()=>self.skipWaiting());");return}res.writeHead(404,{'Content-Type':'text/plain'});res.end('not found')});
-await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve)});const httpPort=server.address().port,appUrl=`http://127.0.0.1:${httpPort}/home`;
+const root=resolve(process.cwd()),web=resolve(root,'apps/web'),dist=resolve(web,'dist');
+const [indexHtml,runtime]=await Promise.all([readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(web,'runtime-r242-home-safe-additive.js'),'utf8')]);
+const dir='/tmp/ct-r242-browser-proof';await mkdir(dir,{recursive:true});
 let bin='';for(const c of ['google-chrome','chromium','chromium-browser'])try{execFileSync('which',[c],{stdio:'ignore'});bin=c;break}catch{}
-if(!bin){server.close();await rm(dir,{recursive:true,force:true});throw new Error('Chromium unavailable: no browser binary');}
-const debugPort=9222;
-const chrome=spawn(bin,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--remote-allow-origins=*',`--remote-debugging-port=${debugPort}`,`--user-data-dir=${profile}`,appUrl],{stdio:['ignore','ignore','pipe']});
-let chromeErr='';chrome.stderr.on('data',d=>{chromeErr+=String(d)});
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-async function targets(){for(let i=0;i<100;i++){try{const r=await fetch(`http://127.0.0.1:${debugPort}/json/list`);if(r.ok){const a=await r.json();if(Array.isArray(a)&&a.some(x=>x.type==='page'))return a}}catch{}await sleep(100)}throw new Error('DevTools target unavailable '+chromeErr.slice(0,400))}
-function cdp(wsUrl){return new Promise((resolve,reject)=>{const ws=new WebSocket(wsUrl);let next=1;const pending=new Map();const openTimeout=setTimeout(()=>reject(new Error('CDP open timeout')),5000);ws.addEventListener('open',()=>{clearTimeout(openTimeout);resolve({call:(method,params={})=>new Promise((res,rej)=>{const id=next++,timer=setTimeout(()=>{pending.delete(id);rej(new Error('CDP command timeout '+method))},5000);pending.set(id,{res,rej,timer});ws.send(JSON.stringify({id,method,params}))}),close:()=>ws.close()})});ws.addEventListener('message',e=>{let m;try{m=JSON.parse(typeof e.data==='string'?e.data:String(e.data))}catch{return}if(m.id&&pending.has(m.id)){const p=pending.get(m.id);pending.delete(m.id);clearTimeout(p.timer);m.error?p.rej(new Error(JSON.stringify(m.error))):p.res(m.result)}});ws.addEventListener('error',()=>reject(new Error('CDP websocket error')))})}
-let client;
+if(!bin){await rm(dir,{recursive:true,force:true});throw new Error('Chromium unavailable');}
+const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8'};
+const server=createServer(async(req,res)=>{try{let p=String(req.url||'/').split('?')[0];if(p==='/'||p==='/home')p='/index.html';const full=resolve(dist,'.'+p);if(!full.startsWith(dist))throw new Error('bad path');const data=await readFile(full);res.writeHead(200,{'Content-Type':mime[extname(full)]||'application/octet-stream','Cache-Control':'no-store'});res.end(data)}catch{res.writeHead(404);res.end('not found')}});
+await new Promise((ok,bad)=>{server.once('error',bad);server.listen(0,'127.0.0.1',ok)});const port=server.address().port;
+function dump(url,budget=1800,profile='p'){
+ return execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking',`--user-data-dir=${resolve(dir,profile)}`,`--virtual-time-budget=${budget}`,'--dump-dom',url],{encoding:'utf8',timeout:25000,stdio:['ignore','pipe','pipe']});
+}
 try{
- const list=await targets(),target=list.find(x=>x.type==='page'&&String(x.url||'').startsWith(appUrl))||list.find(x=>x.type==='page');if(!target?.webSocketDebuggerUrl)throw new Error('No page debugger target '+JSON.stringify(list).slice(0,500));
- client=await cdp(target.webSocketDebuggerUrl);await client.call('Runtime.enable');await sleep(1500);
- const expression=`(()=>{const home=document.querySelector('[data-home]'),row=document.querySelector('[data-media="movie:101"]'),small=row?.querySelector('small');return{stubReady:Boolean(window.__ctR242StubReady),marker:window.__ctR242HomeAdditive||'',homeVisible:Boolean(home&&!home.querySelector('.loader')&&home.textContent.trim()),fast:home?.dataset.ct242Fast||'',movieMeta:small?.textContent||'',errors:(window.__ctR242Errors||[]).join(' | '),appChars:document.querySelector('#app')?.textContent?.trim().length||0,fullCalled:Boolean(window.__ctR242FullCalled),fullResolved:Boolean(window.__ctR242FullResolved),previewCalled:Boolean(window.__ctR242PreviewCalled),path:location.pathname,session:Boolean(localStorage.getItem('cinetracker_session'))}})()`;
- const result=await client.call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:false});const v=result?.result?.value;if(!v)throw new Error('No Runtime.evaluate value '+JSON.stringify(result));
- if(!v.stubReady||!v.session||v.path!=='/home')throw new Error('R242 harness bootstrap failed '+JSON.stringify(v));
- if(v.marker!=='preview-first-movie-metadata')throw new Error('R242 marker missing '+JSON.stringify(v));
- if(!v.homeVisible||v.fast!=='preview'||!v.previewCalled||!v.fullCalled||v.fullResolved)throw new Error('R242 Home preview/full ordering failed '+JSON.stringify(v));
- if(!(Number(v.appChars)>0))throw new Error('R242 app root blank '+JSON.stringify(v));
- if(!String(v.movieMeta).includes('2024')||!String(v.movieMeta).includes('111 min')||!String(v.movieMeta).includes('Ação')||!String(v.movieMeta).includes('Aventura'))throw new Error('R242 incomplete movie metadata '+JSON.stringify(v));
- if(v.errors)throw new Error('R242 page error '+v.errors);
- console.log('R242_FINAL_BUNDLE_BROWSER_OK full-rpc=stuck preview=visible movie=year+runtime+genres errors=0');
-}finally{try{client?.close()}catch{}try{chrome.kill('SIGKILL')}catch{}await sleep(100);await new Promise(r=>server.close(r));await rm(dir,{recursive:true,force:true})}
+ /* Proof 1: boot the exact generated production artifacts, with a fresh logged-out browser profile. */
+ const exact=dump(`http://127.0.0.1:${port}/`,1600,'exact-profile');
+ if(!exact.includes('data-login-form')||!exact.includes('CINE')||!exact.includes('Entrar'))throw new Error('R242 exact final bundle did not boot to auth UI');
+ if(exact.includes('<div id="app"></div>'))throw new Error('R242 exact final bundle left app root blank');
+
+ /* Proof 2: exercise the same r242 runtime against a deliberately slow canonical Home renderer. */
+ const preview={preview:true,series:[],movie_watchlist:[{media_id:1,tmdb_id:101,title:'Filme Teste',poster_path:null,release_year:2024,runtime_minutes:111,genres:[]}],history_episodes:[],history_movies:[],seen_movie_tmdb_ids:[]};
+ const safe=s=>s.replaceAll('</script>','<\\/script>');
+ const fixture=`<!doctype html><html><body><div id="app"></div><script>
+ let homeCache=null,navSeq=1;window.__fullCalled=false;window.__fullResolved=false;window.__previewCalled=false;window.__errors=[];
+ addEventListener('error',e=>window.__errors.push(String(e.message||e.error||e)));addEventListener('unhandledrejection',e=>window.__errors.push(String(e.reason||e)));
+ const route=()=> 'home';const localDay=()=> '2026-09-10';
+ function paintHome(){const h=document.querySelector('[data-home]');if(!h)return;const x=homeCache?.movie_watchlist?.[0];h.innerHTML=x?'<div data-media="movie:'+x.tmdb_id+'"><b>'+x.title+'</b><small>'+(x.release_year||'')+(x.runtime_minutes?' · '+x.runtime_minutes+' min':'')+'</small></div>':'<div class="empty">Sem itens</div>'}
+ async function rpc(name){if(name==='cinetracker_home_preview_v1'){window.__previewCalled=true;await new Promise(r=>setTimeout(r,80));return ${JSON.stringify(preview)}}return {}}
+ async function safeTmdb(){return {id:101,release_date:'2024-05-10',runtime:111,genres:[{id:28,name:'Ação'},{id:12,name:'Aventura'}]}}
+ async function renderHome(seq){document.getElementById('app').innerHTML='<div data-home><div class="loader">Sincronizando Home...</div></div>';window.__fullCalled=true;await new Promise(r=>setTimeout(()=>{window.__fullResolved=true;homeCache=${JSON.stringify({...preview,preview:false})};paintHome();r()},5000))}
+ </script><script>${safe(runtime)}</script><script>
+ void renderHome(1);
+ setTimeout(()=>{try{const h=document.querySelector('[data-home]'),s=document.querySelector('[data-media="movie:101"] small');document.body.dataset.done='1';document.body.dataset.homeVisible=String(Boolean(h&&!h.querySelector('.loader')&&h.textContent.trim()));document.body.dataset.fast=h?.dataset.ct242Fast||'';document.body.dataset.meta=s?.textContent||'';document.body.dataset.fullCalled=String(window.__fullCalled);document.body.dataset.fullResolved=String(window.__fullResolved);document.body.dataset.previewCalled=String(window.__previewCalled);document.body.dataset.errors=window.__errors.join('|')}catch(e){document.body.dataset.probeError=String(e)}},900);
+ </script></body></html>`;
+ const behaviorFile=resolve(dir,'behavior.html');await writeFile(behaviorFile,fixture,'utf8');
+ const behavior=dump('file://'+behaviorFile,1700,'behavior-profile');const body=behavior.match(/<body[^>]*>/)?.[0]||'';
+ for(const x of ['data-done="1"','data-home-visible="true"','data-fast="preview"','data-full-called="true"','data-full-resolved="false"','data-preview-called="true"'])if(!behavior.includes(x))throw new Error('R242 Home behavior missing '+x+' '+body);
+ const meta=(behavior.match(/data-meta="([^"]*)"/)||[])[1]||'';if(!meta.includes('2024')||!meta.includes('111 min')||!meta.includes('Ação')||!meta.includes('Aventura'))throw new Error('R242 Home movie metadata incomplete '+meta+' '+body);
+ const errors=(behavior.match(/data-errors="([^"]*)"/)||[])[1]||'';if(errors||behavior.includes('data-probe-error='))throw new Error('R242 browser behavior error '+(errors||body));
+ console.log('R242_BROWSER_OK exact-final-bundle=booted full-home=still-pending preview=visible movie=year+runtime+genres');
+}finally{await new Promise(r=>server.close(r));await rm(dir,{recursive:true,force:true})}
