@@ -4,25 +4,41 @@ import {fileURLToPath} from 'node:url';
 
 await import('./build-r245.mjs');
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
-let [html,js,css,sw,patch]=await Promise.all([
+let [html,js,css,sw,sportsPatch,semanticPatch,patch]=await Promise.all([
   readFile(resolve(dist,'index.html'),'utf8'),
   readFile(resolve(dist,'app-v245.js'),'utf8'),
   readFile(resolve(dist,'app-v245.css'),'utf8'),
   readFile(resolve(dist,'service-worker.js'),'utf8'),
+  readFile(resolve(root,'runtime-r240-sports-four-tabs.js'),'utf8'),
+  readFile(resolve(root,'runtime-r240-user-video-semantics.js'),'utf8'),
   readFile(resolve(root,'runtime-r246-complete-ui-authority.js'),'utf8')
 ]);
 const must=(s,x,label=x)=>{if(!s.includes(x))throw new Error('r246 missing '+label)};
 for(const marker of [
   "const REVISION='r245-official-1.0.36';",
   "window.__ctR239='production-video-ground-truth'",
-  "window.__ctR240='sports-four-data-authority'",
-  "window.__ctR240Semantic='user-video-semantic-authority'",
   "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'",
   "window.__ctR245='real-horizontal-drag-and-started-series-authority'",
   "const CT245_SERIES_MAX=4;",
   "const CT245_PRIORITY_BATCH=12;",
   "setTimeout(ct245ReleaseMovies,1400)"
 ])must(js,marker,marker);
+for(const marker of [
+  "window.__ctR240='sports-four-data-authority'",
+  "window.__ctR240Sports='next-today-only+previous-last-3-days+favorites-only+watched'",
+  "sportsTabs=function()","sportsPayload=async function()","sportsFiltered=function(rows)",
+  "p_scope:'today'","p_favorite_only:true","r240Shift(now,-3)"
+])must(sportsPatch,marker,'r240 sports '+marker);
+for(const marker of [
+  "window.__ctR240='user-video-semantic-authority'",
+  "window.__ctR240Home='follow-first-history-hidden'",
+  "window.__ctR240Discover='canonical-exclusions-atomic-switch'",
+  "window.__ctR240Sports='search-focus-caret-stable'",
+  "blockedState240","exclusionContext158()","restoreDiscover240","captureSports240","setSelectionRange"
+])must(semanticPatch,marker,'r240 semantics '+marker);
+semanticPatch=semanticPatch
+  .replace("if(window.__ctR240)return;\nwindow.__ctR240='user-video-semantic-authority';","if(window.__ctR240Semantic)return;\nwindow.__ctR240Semantic='user-video-semantic-authority';")
+  .replace("window.__ctR240Sports='search-focus-caret-stable';","window.__ctR240SportsSearch='search-focus-caret-stable';");
 for(const marker of [
   "window.__ctR246='complete-ui-authority'",
   "window.__ctR246Home='eager-canonical-series-refresh'",
@@ -38,7 +54,7 @@ for(const marker of [
 
 /* Home freshness/performance: increase the existing canonical r245 worker instead
    of stacking another network authority. Also treat a tracked caught-up/manual
-   in-progress TV item as started so sports/event series use the same episode rule. */
+   in-progress TV item as started so event-series follow the same episode rule. */
 js=js.replace('const CT245_SERIES_MAX=4;','const CT245_SERIES_MAX=6;')
   .replace('const CT245_PRIORITY_BATCH=12;','const CT245_PRIORITY_BATCH=24;')
   .replace('setTimeout(ct245ReleaseMovies,1400)','setTimeout(ct245ReleaseMovies,500)');
@@ -53,7 +69,7 @@ js=js.replace("const REVISION='r245-official-1.0.36';","const REVISION='r246-off
   .replaceAll('CineTracker • v1.0.36','CineTracker • v1.0.37')
   .replaceAll("JSON.stringify({version:'1.0.36',revision:REVISION","JSON.stringify({version:'1.0.37',revision:REVISION");
 if(!js.includes('\nboot();'))throw new Error('r246 boot insertion point missing');
-js=js.replace('\nboot();','\n'+patch+'\nboot();');
+js=js.replace('\nboot();','\n'+sportsPatch+'\n'+semanticPatch+'\n'+patch+'\nboot();');
 
 css+=`\n/* CineTracker Web 1.0.37 r246 — local overflow + stable UI authority. */
 html,body,#app{max-width:100%!important;overflow-x:clip!important}
@@ -97,12 +113,12 @@ await Promise.all([
   writeFile(resolve(dist,'release.json'),JSON.stringify({
     version:'1.0.37',revision:'r246-official-1.0.37',base:'r245-official-1.0.36',scope:'web-complete-ui-authority',
     home:'eager-canonical-series-refresh-6-workers-500ms-secondary-failsafe',
-    discover:'stable-r239-r240-canonical-rules',
-    sports_tabs:['Próximos','Anteriores','Favoritos','Assistidos'],sports_events_action:'removed',sports_watched:'canonical+click-animation',
+    discover:'r240-canonical-user-state-exclusions+atomic-stable-r239-foryou',
+    sports_tabs:['Próximos','Anteriores','Favoritos','Assistidos'],sports_next:'today-future-only',sports_previous:'previous-three-calendar-days-only',sports_favorites:'favorite-only',sports_events_action:'removed',sports_watched:'canonical+click-animation',
     f1:'persistent-collapse+six-canonical-tabs',profile:'single-statistics-group',
     global_horizontal_scroll:'disabled',vertical_page_scroll:'preserved',local_horizontal_scrollbars:'visible-on-detail-and-discover-tracks',
     android:'unchanged-1.0.20',generated_at:new Date().toISOString()
   },null,2),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v245.js'),{force:true}),rm(resolve(dist,'app-v245.css'),{force:true})]);
-console.log('WEB_1_0_37_READY r246 complete-ui-authority android=unchanged');
+console.log('WEB_1_0_37_READY r246 complete-ui-authority r240=restored android=unchanged');
