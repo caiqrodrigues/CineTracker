@@ -48,7 +48,7 @@ jobs:
       - name: Chromium r239 regression ground truth
         run: node scripts/test-r239-video-ground-truth-browser.mjs
       - name: Chromium r242 exact final bundle Home
-        run: node scripts/test-r242-home-final-bundle-browser.mjs
+        run: node --experimental-websocket scripts/test-r242-home-final-bundle-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
