@@ -1,25 +1,25 @@
-name: Verify Web 1.0.36 r245 Horizontal + Home Authority
+name: Verify Web 1.0.37 r246 Complete UI Authority
 
 on:
   push:
-    branches: [main, 'fix/r245-horizontal-home-authority']
+    branches: [main, 'fix/r246-complete-ui-authority']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_36_horizontal_home:
+  web_1_0_37_complete_ui:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r243 + r244 + r245
+      - name: Syntax inherited + r246
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.36"' apps/web/package.json
+          grep -Fq '"version": "1.0.37"' apps/web/package.json
           node --check apps/web/runtime-r243-home-interaction-catchup.js
           node --check apps/web/build-r243.mjs
           node --check apps/web/test-r243.mjs
@@ -33,51 +33,48 @@ jobs:
           node --check apps/web/build-r245.mjs
           node --check apps/web/test-r245.mjs
           node --check scripts/test-r245-horizontal-home-browser.mjs
-      - name: Build inherited r243 baseline
-        working-directory: apps/web
-        run: node build-r243.mjs
-      - name: Static invariants inherited r243
-        working-directory: apps/web
-        run: node test-r243.mjs
+          node --check apps/web/runtime-r246-complete-ui-authority.js
+          node --check apps/web/build-r246.mjs
+          node --check apps/web/test-r246.mjs
+          node --check scripts/test-r246-complete-ui-browser.mjs
       - name: Chromium r239 regression ground truth
         run: node scripts/test-r239-video-ground-truth-browser.mjs
       - name: Chromium r243 Home regression
         run: node scripts/test-r243-home-browser.mjs
-      - name: Build inherited r244 baseline
-        working-directory: apps/web
-        run: node build-r244.mjs
-      - name: Static invariants inherited r244
-        working-directory: apps/web
-        run: node test-r244.mjs
       - name: Chromium r244 overflow regression
         run: node scripts/test-r244-series-overflow-browser.mjs
-      - name: Build r245
+      - name: Chromium r245 Home and drag regression
+        run: node scripts/test-r245-horizontal-home-browser.mjs
+      - name: Build r246
         working-directory: apps/web
-        run: node build-r245.mjs
-      - name: Static invariants r245
+        run: node build-r246.mjs
+      - name: Static invariants r246
         working-directory: apps/web
-        run: node test-r245.mjs
-      - name: Final bundle identity r245
+        run: node test-r246.mjs
+      - name: Final bundle identity r246
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v245.js
-          grep -Fq "window.__ctWebBuild='1.0.36';window.__ctOfficialVersion='1.0.36';" dist/app-v245.js
-          grep -Fq "const REVISION='r245-official-1.0.36';" dist/app-v245.js
-          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v245.js
-          grep -Fq "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'" dist/app-v245.js
-          grep -Fq "window.__ctR244='series-detail-local-horizontal-overflow'" dist/app-v245.js
-          grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" dist/app-v245.js
-          grep -Fq 'const CT243_SERIES_MAX=0;/* r245 supersedes narrow series audit */' dist/app-v245.js
-          grep -Fq 'const CT245_SERIES_MAX=4;' dist/app-v245.js
-          grep -Fq 'app-v245.js' dist/index.html
-          grep -Fq 'app-v245.css' dist/index.html
-          grep -Fq '"version": "1.0.36"' dist/release.json
-          grep -Fq '"revision": "r245-official-1.0.36"' dist/release.json
-          grep -Fq 'touch-action:pan-y pinch-zoom!important' dist/app-v245.css
-          grep -Fq '.ct169-related-row{grid-auto-columns:minmax(148px,168px)!important}' dist/app-v245.css
-      - name: Chromium r245 real horizontal + Home authority
-        run: node scripts/test-r245-horizontal-home-browser.mjs
+          node --check dist/app-v246.js
+          grep -Fq "window.__ctWebBuild='1.0.37';window.__ctOfficialVersion='1.0.37';" dist/app-v246.js
+          grep -Fq "const REVISION='r246-official-1.0.37';" dist/app-v246.js
+          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v246.js
+          grep -Fq "window.__ctR240='sports-four-data-authority'" dist/app-v246.js
+          grep -Fq "window.__ctR240Semantic='user-video-semantic-authority'" dist/app-v246.js
+          grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" dist/app-v246.js
+          grep -Fq "window.__ctR246='complete-ui-authority'" dist/app-v246.js
+          grep -Fq 'const CT245_SERIES_MAX=6;' dist/app-v246.js
+          grep -Fq 'const CT245_PRIORITY_BATCH=24;' dist/app-v246.js
+          grep -Fq 'setTimeout(ct245ReleaseMovies,500)' dist/app-v246.js
+          grep -Fq 'app-v246.js' dist/index.html
+          grep -Fq 'app-v246.css' dist/index.html
+          grep -Fq '"version": "1.0.37"' dist/release.json
+          grep -Fq '"revision": "r246-official-1.0.37"' dist/release.json
+          grep -Fq 'overflow-x:clip!important' dist/app-v246.css
+          grep -Fq 'touch-action:pan-x pan-y!important' dist/app-v246.css
+          grep -Fq '@keyframes ct246WatchPop' dist/app-v246.css
+      - name: Chromium r246 complete UI behavior
+        run: node scripts/test-r246-complete-ui-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -92,20 +89,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_36_horizontal_home]
+    needs: [web_1_0_37_complete_ui]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Official production serves 1.0.36 r245
+      - name: Official production serves 1.0.37 r246
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.36"' <<<"$BODY" && grep -Fq '"revision": "r245-official-1.0.36"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v245.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v245.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.37"' <<<"$BODY" && grep -Fq '"revision": "r246-official-1.0.37"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v246.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v246.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" <<<"$JS" && grep -Fq 'const CT245_SERIES_MAX=4;' <<<"$JS" && grep -Fq 'touch-action:pan-y pinch-zoom!important' <<<"$CSS" && grep -Fq 'app-v245.js' <<<"$HTML" && grep -Fq 'app-v245.css' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR246='complete-ui-authority'" <<<"$JS" && grep -Fq 'const CT245_SERIES_MAX=6;' <<<"$JS" && grep -Fq 'touch-action:pan-x pan-y!important' <<<"$CSS" && grep -Fq 'app-v246.js' <<<"$HTML" && grep -Fq 'app-v246.css' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
