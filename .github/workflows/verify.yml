@@ -1,25 +1,25 @@
-name: Verify Web 1.0.35 r244 Series Overflow
+name: Verify Web 1.0.36 r245 Horizontal + Home Authority
 
 on:
   push:
-    branches: [main, 'fix/r244-series-horizontal-overflow']
+    branches: [main, 'fix/r245-horizontal-home-authority']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_35_series_overflow:
+  web_1_0_36_horizontal_home:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r243 + r244
+      - name: Syntax r243 + r244 + r245
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.35"' apps/web/package.json
+          grep -Fq '"version": "1.0.36"' apps/web/package.json
           node --check apps/web/runtime-r243-home-interaction-catchup.js
           node --check apps/web/build-r243.mjs
           node --check apps/web/test-r243.mjs
@@ -29,6 +29,10 @@ jobs:
           node --check apps/web/build-r244.mjs
           node --check apps/web/test-r244.mjs
           node --check scripts/test-r244-series-overflow-browser.mjs
+          node --check apps/web/runtime-r245-horizontal-home-authority.js
+          node --check apps/web/build-r245.mjs
+          node --check apps/web/test-r245.mjs
+          node --check scripts/test-r245-horizontal-home-browser.mjs
       - name: Build inherited r243 baseline
         working-directory: apps/web
         run: node build-r243.mjs
@@ -39,30 +43,41 @@ jobs:
         run: node scripts/test-r239-video-ground-truth-browser.mjs
       - name: Chromium r243 Home regression
         run: node scripts/test-r243-home-browser.mjs
-      - name: Build r244
+      - name: Build inherited r244 baseline
         working-directory: apps/web
         run: node build-r244.mjs
-      - name: Static invariants r244
+      - name: Static invariants inherited r244
         working-directory: apps/web
         run: node test-r244.mjs
-      - name: Final bundle identity r244
+      - name: Chromium r244 overflow regression
+        run: node scripts/test-r244-series-overflow-browser.mjs
+      - name: Build r245
+        working-directory: apps/web
+        run: node build-r245.mjs
+      - name: Static invariants r245
+        working-directory: apps/web
+        run: node test-r245.mjs
+      - name: Final bundle identity r245
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v244.js
-          grep -Fq "window.__ctWebBuild='1.0.35';window.__ctOfficialVersion='1.0.35';" dist/app-v244.js
-          grep -Fq "const REVISION='r244-official-1.0.35';" dist/app-v244.js
-          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v244.js
-          grep -Fq "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'" dist/app-v244.js
-          grep -Fq "window.__ctR244='series-detail-local-horizontal-overflow'" dist/app-v244.js
-          grep -Fq 'app-v244.js' dist/index.html
-          grep -Fq 'app-v244.css' dist/index.html
-          grep -Fq '"version": "1.0.35"' dist/release.json
-          grep -Fq '"revision": "r244-official-1.0.35"' dist/release.json
-          grep -Fq 'html,body{width:100%;max-width:100%;overflow-x:hidden}' dist/app-v244.css
-          grep -Fq 'touch-action:pan-x pan-y!important' dist/app-v244.css
-      - name: Chromium r244 series overflow behavior
-        run: node scripts/test-r244-series-overflow-browser.mjs
+          node --check dist/app-v245.js
+          grep -Fq "window.__ctWebBuild='1.0.36';window.__ctOfficialVersion='1.0.36';" dist/app-v245.js
+          grep -Fq "const REVISION='r245-official-1.0.36';" dist/app-v245.js
+          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v245.js
+          grep -Fq "window.__ctR243='home-interaction-bounded-metadata-canonical-catchup'" dist/app-v245.js
+          grep -Fq "window.__ctR244='series-detail-local-horizontal-overflow'" dist/app-v245.js
+          grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" dist/app-v245.js
+          grep -Fq 'const CT243_SERIES_MAX=0;/* r245 supersedes narrow series audit */' dist/app-v245.js
+          grep -Fq 'const CT245_SERIES_MAX=4;' dist/app-v245.js
+          grep -Fq 'app-v245.js' dist/index.html
+          grep -Fq 'app-v245.css' dist/index.html
+          grep -Fq '"version": "1.0.36"' dist/release.json
+          grep -Fq '"revision": "r245-official-1.0.36"' dist/release.json
+          grep -Fq 'touch-action:pan-y pinch-zoom!important' dist/app-v245.css
+          grep -Fq '.ct169-related-row{grid-auto-columns:minmax(148px,168px)!important}' dist/app-v245.css
+      - name: Chromium r245 real horizontal + Home authority
+        run: node scripts/test-r245-horizontal-home-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -77,20 +92,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_35_series_overflow]
+    needs: [web_1_0_36_horizontal_home]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Official production serves 1.0.35 r244
+      - name: Official production serves 1.0.36 r245
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.35"' <<<"$BODY" && grep -Fq '"revision": "r244-official-1.0.35"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v244.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v244.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.36"' <<<"$BODY" && grep -Fq '"revision": "r245-official-1.0.36"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v245.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v245.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR244='series-detail-local-horizontal-overflow'" <<<"$JS" && grep -Fq 'touch-action:pan-x pan-y!important' <<<"$CSS" && grep -Fq 'app-v244.js' <<<"$HTML" && grep -Fq 'app-v244.css' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" <<<"$JS" && grep -Fq 'const CT245_SERIES_MAX=4;' <<<"$JS" && grep -Fq 'touch-action:pan-y pinch-zoom!important' <<<"$CSS" && grep -Fq 'app-v245.js' <<<"$HTML" && grep -Fq 'app-v245.css' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
