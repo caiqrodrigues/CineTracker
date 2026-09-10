@@ -6,7 +6,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.37** | `r246-official-1.0.37` | candidata à produção até o pipeline/smoke do `main` concluir |
+| Web | **1.0.37** | `r246-official-1.0.37` | produção validada por CI e smoke oficial |
 | Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r246 |
 | Backend | produção compartilhada | Supabase | produção |
 | Windows | — | — | não lançado |
