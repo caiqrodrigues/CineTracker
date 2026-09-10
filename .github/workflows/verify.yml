@@ -1,52 +1,44 @@
-name: Verify Web 1.0.31
+name: Verify Web 1.0.32 r241 Home
 
 on:
   push:
-    branches: [main, 'fix/1.0.31-r239-video-ground-truth']
+    branches: [main, 'fix/1.0.32-r241-home-only']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_31:
+  web_1_0_32_home:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r239
+      - name: Syntax r241
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.31"' apps/web/package.json
-          node --check apps/web/runtime-r239-video-ground-truth.js
-          node --check apps/web/build-r239.mjs
-          node --check apps/web/test-r239.mjs
-          node --check scripts/test-r239-video-ground-truth-browser.mjs
-      - name: Build r239
+          grep -Fq '"version": "1.0.32"' apps/web/package.json
+          node --check apps/web/runtime-r241-home-fast-metadata.js
+          node --check apps/web/build-r241.mjs
+          node --check apps/web/test-r241.mjs
+      - name: Build r241
         working-directory: apps/web
-        run: node build-r239.mjs
-      - name: Static invariants r239
+        run: node build-r241.mjs
+      - name: Home invariants r241
         working-directory: apps/web
-        run: node test-r239.mjs
-      - name: Final bundle identity r239
+        run: node test-r241.mjs
+      - name: Final bundle identity r241
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v239.js
-          grep -Fq "window.__ctWebBuild='1.0.31';window.__ctOfficialVersion='1.0.31';" dist/app-v239.js
-          grep -Fq "const REVISION='r239-official-1.0.31';" dist/app-v239.js
-          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v239.js
-          grep -Fq "window.__ctR239Profile='exact-four-column-reference-layout'" dist/app-v239.js
-          grep -Fq "window.__ctR239Discover='restore-real-foryou-sections-from-r166'" dist/app-v239.js
-          grep -Fq "window.__ctR239Sports='canonical-app-button-not-gray'" dist/app-v239.js
-          grep -Fq "window.__ctR239F1='single-tab-group-real-collapse'" dist/app-v239.js
-          grep -Fq "window.__ctR239SetF1Open(card,card.dataset.ct236F1Open!=='0')" dist/app-v239.js
-          grep -Fq '"version": "1.0.31"' dist/release.json
-          grep -Fq '"revision": "r239-official-1.0.31"' dist/release.json
-      - name: Chromium r239 production-video topology
-        run: node scripts/test-r239-video-ground-truth-browser.mjs
+          node --check dist/app-v241.js
+          grep -Fq "window.__ctWebBuild='1.0.32';window.__ctOfficialVersion='1.0.32';" dist/app-v241.js
+          grep -Fq "const REVISION='r241-official-1.0.32';" dist/app-v241.js
+          grep -Fq "window.__ctR241Home='fast-first-paint-episode-and-movie-metadata'" dist/app-v241.js
+          grep -Fq "window.__ctR241Scope='home-only'" dist/app-v241.js
+          grep -Fq '"revision": "r241-official-1.0.32"' dist/release.json
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -61,18 +53,18 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_31]
+    needs: [web_1_0_32_home]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Official production serves 1.0.31 r239
+      - name: Official production serves 1.0.32 r241
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.31"' <<<"$BODY" && grep -Fq '"revision": "r239-official-1.0.31"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v239.js?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR239='production-video-ground-truth'" <<<"$JS" && grep -Fq "window.__ctR239F1='single-tab-group-real-collapse'" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.32"' <<<"$BODY" && grep -Fq '"revision": "r241-official-1.0.32"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v241.js?ct=$(date +%s%N)" || true)"
+              if grep -Fq "window.__ctR241Home='fast-first-paint-episode-and-movie-metadata'" <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done
