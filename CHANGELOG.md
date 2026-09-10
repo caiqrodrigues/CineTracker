@@ -2,6 +2,43 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.37 — 2026-09-10 — Web r246
+
+### Home
+- A autoridade canônica de episódios da r245 passa de 4 para 6 auditorias concorrentes e amplia o lote prioritário de 12 para 24 séries acompanhadas.
+- O fallback que liberava metadados secundários de filmes cai de 1400 ms para 500 ms, reduzindo a espera sem bloquear a verificação de episódios.
+- Entrada na Home, retorno de visibilidade e `pageshow` forçam nova auditoria; estados `Em dia`/`Concluída` não ficam congelados após a liberação de um episódio.
+- Séries acompanhadas marcadas como caught-up ou manualmente em andamento entram na mesma regra genérica de episódio liberado e não assistido, sem hardcode por título; isso cobre também séries/eventos acompanhados como F1 e Super Bowl quando presentes no universo de séries do usuário.
+- Cards com informação de episódio ainda em hidratação deixam de ser escondidos, evitando o atraso visual em branco.
+
+### Descobrir
+- Mantidas como autoridade de negócio as exclusões canônicas da r240 e as três seções reais de `Pra você` da r239.
+- Geometria dos cards e trilhos passa a ser estável durante hidratação assíncrona, removendo transformações/animações concorrentes responsáveis por tremores e pulos.
+- Trilhos do Descobrir recebem scroll horizontal próprio, preservando a página sem overflow lateral global.
+
+### Esportes e F1 Hub
+- Restabelecida a autoridade de quatro abas da r240: `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`.
+- `Próximos` continua restrito aos eventos futuros do dia atual; `Anteriores`, aos três dias anteriores; `Favoritos`, somente aos favoritos; `Assistidos`, ao feed canônico de vistos.
+- A ação `Eventos/Agenda` é removida dos cards; o botão `Assistido` permanece único e recebe animação de confirmação ao clique.
+- O F1 Hub mantém exatamente seis abas (`Visão geral`, `Calendário`, `Próximo GP`, `Pilotos`, `Construtores`, `Último GP`).
+- O estado minimizar/expandir fica persistente e é reaplicado após repaints de Esportes, impedindo expansão automática.
+
+### Perfil
+- O painel separado `Estatísticas de esporte` é incorporado ao grid principal `Estatísticas`.
+- Preservada a ordem 4+4+2 da autoridade r239 para mídia; estatísticas esportivas passam a coexistir no mesmo grupo sem trocar de posição entre repaints.
+
+### Rolagem e layout
+- A página mantém rolagem vertical e bloqueia overflow horizontal global.
+- Temporadas, títulos relacionados/semelhantes, gráficos de episódios e demais trilhos largos de detalhes/Descobrir recebem scrollbar horizontal visível e interação local por mouse/toque.
+- O gesto local aceita pan horizontal sem bloquear o pan vertical da página.
+
+### Build e validação
+- Web atualizada para `1.0.37 / r246`; Android permanece `1.0.20 / versionCode 10062` sem alterações.
+- Build oficial: `apps/web/build-r246.mjs`.
+- Invariantes: `apps/web/test-r246.mjs`.
+- Teste comportamental Chromium: `scripts/test-r246-complete-ui-browser.mjs`.
+- `verify.yml` exige regressões herdadas, bundle final r246, Chromium e smoke de produção antes de considerar a release válida.
+
 ## 1.0.26 — 2026-09-09 — Web r234
 
 ### Regressões reais corrigidas
@@ -128,7 +165,7 @@ Principais marcos preservados pela 1.0.0:
 
 - Home com progresso e interação otimista;
 - Descobrir/Pra Você, filtros, Watchlist e 100% novos;
-- exclusões pessoais de vistos/em andamento/Watchlist;
+- exclusões pessoais para evitar recomendar itens vistos, em andamento ou na Watchlist;
 - detalhes ricos, temporadas, episódios, avaliações e elenco;
 - Perfil, favoritos, atividade e estatísticas;
 - Sports integrado;
