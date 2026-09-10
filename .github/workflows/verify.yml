@@ -16,10 +16,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax inherited + r246
+      - name: Syntax inherited + restored r240 + r246
         run: |
           set -euo pipefail
           grep -Fq '"version": "1.0.37"' apps/web/package.json
+          node --check apps/web/runtime-r240-sports-four-tabs.js
+          node --check apps/web/runtime-r240-user-video-semantics.js
+          node --check scripts/test-r240-sports-four-tabs-browser.mjs
+          node --check scripts/test-r240-user-video-semantics-browser.mjs
           node --check apps/web/runtime-r243-home-interaction-catchup.js
           node --check apps/web/build-r243.mjs
           node --check apps/web/test-r243.mjs
@@ -39,6 +43,10 @@ jobs:
           node --check scripts/test-r246-complete-ui-browser.mjs
       - name: Chromium r239 regression ground truth
         run: node scripts/test-r239-video-ground-truth-browser.mjs
+      - name: Chromium r240 sports four-tab contract
+        run: node scripts/test-r240-sports-four-tabs-browser.mjs
+      - name: Chromium r240 exclusions and atomic Discover contract
+        run: node scripts/test-r240-user-video-semantics-browser.mjs
       - name: Build inherited r243
         working-directory: apps/web
         run: node build-r243.mjs
@@ -79,6 +87,9 @@ jobs:
           grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v246.js
           grep -Fq "window.__ctR240='sports-four-data-authority'" dist/app-v246.js
           grep -Fq "window.__ctR240Semantic='user-video-semantic-authority'" dist/app-v246.js
+          grep -Fq "window.__ctR240Home='follow-first-history-hidden'" dist/app-v246.js
+          grep -Fq "window.__ctR240Discover='canonical-exclusions-atomic-switch'" dist/app-v246.js
+          grep -Fq "window.__ctR240SportsSearch='search-focus-caret-stable'" dist/app-v246.js
           grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" dist/app-v246.js
           grep -Fq "window.__ctR246='complete-ui-authority'" dist/app-v246.js
           grep -Fq 'const CT245_SERIES_MAX=6;' dist/app-v246.js
@@ -120,7 +131,7 @@ jobs:
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v246.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v246.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR246='complete-ui-authority'" <<<"$JS" && grep -Fq 'const CT245_SERIES_MAX=6;' <<<"$JS" && grep -Fq 'touch-action:pan-x pan-y!important' <<<"$CSS" && grep -Fq 'app-v246.js' <<<"$HTML" && grep -Fq 'app-v246.css' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR246='complete-ui-authority'" <<<"$JS" && grep -Fq "window.__ctR240='sports-four-data-authority'" <<<"$JS" && grep -Fq "window.__ctR240Semantic='user-video-semantic-authority'" <<<"$JS" && grep -Fq 'const CT245_SERIES_MAX=6;' <<<"$JS" && grep -Fq 'touch-action:pan-x pan-y!important' <<<"$CSS" && grep -Fq 'app-v246.js' <<<"$HTML" && grep -Fq 'app-v246.css' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
