@@ -40,7 +40,8 @@ jobs:
           grep -Fq "const REVISION='r242-official-1.0.33';" dist/app-v242.js
           grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v242.js
           grep -Fq "window.__ctR242HomeAdditive='preview-first-movie-metadata'" dist/app-v242.js
-          grep -Fq "window.__ctR242Safety='no-renderer-override'" dist/app-v242.js
+          grep -Fq "window.__ctR242Safety='delegating-render-wrapper'" dist/app-v242.js
+          grep -Fq "const ct242RenderHomeBase=renderHome" dist/app-v242.js
           grep -Fq "cinetracker_home_preview_v1" dist/app-v242.js
           grep -Fq 'app-v242.js' dist/index.html
           grep -Fq '"version": "1.0.33"' dist/release.json
@@ -75,7 +76,7 @@ jobs:
             if grep -Fq '"version": "1.0.33"' <<<"$BODY" && grep -Fq '"revision": "r242-official-1.0.33"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v242.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR242HomeAdditive='preview-first-movie-metadata'" <<<"$JS" && grep -Fq "window.__ctR242Safety='no-renderer-override'" <<<"$JS" && grep -Fq 'app-v242.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR242HomeAdditive='preview-first-movie-metadata'" <<<"$JS" && grep -Fq "window.__ctR242Safety='delegating-render-wrapper'" <<<"$JS" && grep -Fq 'app-v242.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
