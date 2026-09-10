@@ -1,10 +1,10 @@
-/* CineTracker Web 1.0.33 r242 — HOME ONLY. Additive observer: never replaces renderHome/paintHome. */
+/* CineTracker Web 1.0.33 r242 — HOME ONLY. Delegates to the complete current Home renderer and only releases its initial wait sooner. */
 (()=>{
 'use strict';
 if(window.__ctR242HomeAdditive)return;
 window.__ctR242HomeAdditive='preview-first-movie-metadata';
 window.__ctR242Scope='home-only';
-window.__ctR242Safety='no-renderer-override';
+window.__ctR242Safety='delegating-render-wrapper';
 
 const CT242_META_KEY='cinetracker:r242:movie-meta:v1';
 const CT242_META_AGE=1000*60*60*24*30;
@@ -83,12 +83,12 @@ function ct242RestoreCachedPayload(){
   if(route()!=='home')return false;const root=document.querySelector('[data-home]');if(!root||!root.querySelector('.loader'))return false;
   try{
     const cached=homeCache||((typeof ct163Read==='function')?ct163Read('home'):null);
-    if(!cached)return false;homeCache=cached;paintHome();root.dataset.ct242Fast='cache';ct242ScheduleDecorate();return true;
+    if(!cached)return false;homeCache=cached;paintHome();const painted=document.querySelector('[data-home]');if(painted)painted.dataset.ct242Fast='cache';ct242ScheduleDecorate();return true;
   }catch{return false}
 }
-async function ct242PreviewHome(){
+async function ct242PreviewHome(seq){
   if(route()!=='home')return;const root=document.querySelector('[data-home]');if(!root||!root.querySelector('.loader'))return;
-  const token=++ct242PreviewToken,seq=navSeq;
+  const token=++ct242PreviewToken;
   try{
     const data=await rpc('cinetracker_home_preview_v1',{p_today:localDay()});
     if(token!==ct242PreviewToken||seq!==navSeq||route()!=='home')return;
@@ -96,12 +96,22 @@ async function ct242PreviewHome(){
     homeCache=data;paintHome();const painted=document.querySelector('[data-home]');if(painted)painted.dataset.ct242Fast='preview';ct242ScheduleDecorate();
   }catch{}
 }
-function ct242EnsureFastHome(){
-  if(route()!=='home')return;const root=document.querySelector('[data-home]');if(!root)return;
-  if(root.querySelector('.loader')){if(!ct242RestoreCachedPayload())void ct242PreviewHome()}else ct242ScheduleDecorate();
+function ct242KickFastHome(seq){
+  if(seq!==navSeq||route()!=='home')return;
+  const root=document.querySelector('[data-home]');if(!root)return;
+  if(root.querySelector('.loader')){if(!ct242RestoreCachedPayload())void ct242PreviewHome(seq)}else ct242ScheduleDecorate();
 }
-const ct242Observer=new MutationObserver(()=>{if(route()==='home'){clearTimeout(ct242DecorateTimer);ct242DecorateTimer=setTimeout(ct242EnsureFastHome,0)}});
-const ct242App=document.getElementById('app');if(ct242App)ct242Observer.observe(ct242App,{childList:true,subtree:true});
-queueMicrotask(ct242EnsureFastHome);
+
+/* Keep the complete renderer chain as authority. Calling it starts its normal shell/RPC immediately; this wrapper only paints cache/preview while that promise is still pending. */
+const ct242RenderHomeBase=renderHome;
+renderHome=async function(seq){
+  let task;
+  try{task=Promise.resolve(ct242RenderHomeBase(seq))}catch(e){throw e}
+  ct242KickFastHome(seq);
+  try{return await task}finally{if(seq===navSeq&&route()==='home')ct242ScheduleDecorate()}
+};
+
+document.addEventListener('cinetracker:data-changed',()=>{if(route()==='home')ct242ScheduleDecorate()});
+window.addEventListener('pageshow',()=>{if(route()==='home')ct242ScheduleDecorate()});
 window.__ctR242DecorateMovies=ct242DecorateMovies;
 })();
