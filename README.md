@@ -6,26 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.26** | `r234-real-regressions-baseline-preserving-authority` | produção |
-| Android | **1.0.20** | `versionCode 10062` | produção |
-| Backend | produção compartilhada | Supabase / `ct-enrich-media-user` v7 | produção |
+| Web | **1.0.37** | `r246-official-1.0.37` | candidata à produção até o pipeline/smoke do `main` concluir |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r246 |
+| Backend | produção compartilhada | Supabase | produção |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.26 / r234
+## Web 1.0.37 / r246
 
-A 1.0.26 corrige regressões reais observadas após a 1.0.25. Em vez de empilhar outra autoridade sobre a r233, a r234 volta ao último baseline visual comprovado para cada área e limita cada correção ao escopo necessário.
+A r246 consolida numa autoridade final os comportamentos que estavam sendo disputados por patches anteriores, sem alterar o Android.
 
-- Home aplica imediatamente o estado conhecido de episódios antes do paint e faz revalidação TMDB em background, sem bloquear a tela;
-- o hidratador antigo que fazia a cascata temporada → série é neutralizado para eliminar a demora de dezenas de segundos no carregamento de episódios;
-- séries com episódio já lançado e ainda não assistido deixam de permanecer incorretamente como `Em dia` e retornam para `Assistir a seguir`;
-- Descobrir reutiliza o baseline r232 e atua somente em `Indicação do dia`, `Da sua Watchlist` e `100% novos`; Top 10 fica explicitamente fora do alcance da r234;
-- Esportes volta a usar o layout canônico r123, preservando posição e composição visual dos botões;
-- Watchlist do Perfil e modal passam a consumir o mesmo universo lógico completo, mantendo inclusive registros importados ainda sem TMDB resolvido;
-- registros locais sem capa mantêm geometria estável e recebem enriquecimento progressivo apenas quando visíveis;
-- séries importadas podem ser resolvidas por TVDB → TMDB antes do fallback por título através da Edge Function `ct-enrich-media-user` v7;
-- o build oficial passa a ser `apps/web/build-r234.mjs`, com `test-r234.mjs` como regressão obrigatória da Web 1.0.26.
+- Home força nova auditoria canônica de séries acompanhadas ao entrar/retomar a tela, usa 6 workers para episódios e reduz para 500 ms o fallback de metadados secundários de filmes;
+- séries/eventos acompanhados em estado caught-up ou manualmente em andamento entram na mesma regra genérica de episódio liberado e não assistido, sem hardcode de títulos;
+- Descobrir mantém as exclusões pessoais canônicas da r240 e as três seções reais de `Pra você` da r239, com geometria estável para evitar cards tremendo/pulando;
+- Esportes expõe somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, remove a ação `Eventos/Agenda` e anima o botão `Assistido` ao clique;
+- `Próximos` mostra somente o restante do dia atual; `Anteriores`, os três dias anteriores; `Favoritos`, apenas favoritos; `Assistidos`, o feed canônico de vistos;
+- F1 Hub mantém seis abas (`Visão geral`, `Calendário`, `Próximo GP`, `Pilotos`, `Construtores`, `Último GP`) e persiste o estado minimizar/expandir entre repaints;
+- Perfil passa a manter estatísticas de mídia e esporte em um único grupo `Estatísticas`, preservando a ordem principal 4+4+2;
+- a página continua com scroll vertical e sem overflow horizontal global; temporadas, relacionados/semelhantes, gráficos e demais trilhos largos ganham scrollbar horizontal local visível;
+- build oficial: `apps/web/build-r246.mjs`; invariantes: `apps/web/test-r246.mjs`; teste Chromium: `scripts/test-r246-complete-ui-browser.mjs`.
 
 ## Funcionalidades consolidadas
 
