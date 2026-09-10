@@ -41,13 +41,15 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 `;
 
 html=html.replaceAll('r243-official-1.0.34','r244-official-1.0.35')
-  .replaceAll('app-v243.js','app-v244.js')
-  .replaceAll('app-v243.css','app-v244.css');
+  .replace(/app-v\d+\.js/g,'app-v244.js')
+  .replace(/app-v\d+\.css/g,'app-v244.css');
+must(html,'app-v244.js','generated index app-v244.js');
+must(html,'app-v244.css','generated index app-v244.css');
 const swCache=/const\s+CACHE\s*=\s*['"][^'"]+['"]\s*;/;
 if(!swCache.test(sw))throw new Error('r244 SW CACHE missing');
 sw=sw.replace(swCache,"const CACHE='ct-web-1.0.35-r244';")
-  .replaceAll('app-v243.js','app-v244.js')
-  .replaceAll('app-v243.css','app-v244.css');
+  .replace(/app-v\d+\.js/g,'app-v244.js')
+  .replace(/app-v\d+\.css/g,'app-v244.css');
 
 await Promise.all([
   writeFile(resolve(dist,'index.html'),html,'utf8'),
