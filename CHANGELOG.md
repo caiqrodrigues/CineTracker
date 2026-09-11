@@ -2,6 +2,51 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.44 — 2026-09-11 — Web r253
+
+### Causa raiz / autoridade única
+- O vídeo posterior à r252 comprovou que a tela de Esportes estava sendo produzida por duas autoridades ao mesmo tempo: as quatro abas r248 apareciam junto da navegação antiga (`Hoje`, `Ao vivo`, `Calendário` etc.). A r253 substitui esse empilhamento por um único renderer final.
+- O `MutationObserver` permanente da r239, que reaplicava autoridades antigas após mutações do `#app`, é removido do bundle r253. Isso encerra a troca visual de “versão certa para versão antiga” após o paint.
+- Os wrappers da r252 que reclassificavam Home pelo tempo desde o último episódio são neutralizados. A Home volta a usar o estado canônico do payload vivo e uma normalização apenas para contradições comprováveis.
+
+### Home / Histórico / Juntando Poeira
+- `renderHome` busca `cinetracker_home_live_v0997_r3` novamente ao entrar na tela e preserva o renderer visual aprovado.
+- Uma série `is_caught_up`, sem episódios realmente faltantes ou já no último episódio liberado não entra em `Juntando Poeira` apenas porque a última reprodução ocorreu há mais de 30 dias.
+- Séries encerradas e em dia ficam em `Concluídas`; séries em dia aguardando nova temporada permanecem em `Em dia`.
+- `Juntando Poeira` fica reservado a séries iniciadas que possuem pendência real e continuam atrasadas.
+- Raw, SmackDown, Fórmula 1 e Super Bowl continuam tratando backlog histórico como histórico, sem transformar episódios antigos em pendência atual nem marcá-los artificialmente como vistos.
+- `history_episodes` e `history_movies` vêm do payload vivo, preservando registros recentes posteriores aos itens que apareciam como último histórico na UI obsoleta.
+
+### Esportes / F1
+- Existe um único conjunto público de abas: `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`; seletores r253 próprios impedem handlers herdados de reabrirem a navegação antiga.
+- `Próximos` mostra somente eventos futuros do dia atual; `Anteriores`, somente as 72 horas anteriores; `Favoritos`, somente eventos ligados aos favoritos; `Assistidos`, o `watch_history` canônico completo retornado por `cinetracker_sports_payload_v1`.
+- Contagem e tempo assistido usam `cinetracker_sport_stats_v1`, eliminando números congelados como 43 quando o backend já possui 48 registros.
+- Marcar/desmarcar assistido usa `cinetracker_sport_mark_watched_v1` e força recarga do payload canônico depois da gravação.
+- O F1 Hub continua sendo a implementação escura r248 com seis áreas e estado persistente de minimizar/expandir; a r253 garante uma única instância após cada paint de Esportes.
+
+### Descobrir
+- A tela passa a ter um único renderer r253 com seletores exclusivos, sem reutilizar os handlers legados `data-discover-tab` que chamavam o render global e deixavam o conteúdo preso em `Carregando títulos...`.
+- Permanecem nove abas: `Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário`.
+- A aba ativa muda imediatamente; cada carregamento possui geração própria e respostas de uma aba anterior são descartadas antes de tocar no DOM.
+- Pools TMDB passam a consultar uma página por fonte em paralelo no primeiro carregamento, reduzindo a espera que ocorria com múltiplas páginas por categoria.
+- `Pra você` mantém cards nativos e exatamente três blocos: `Indicação do Dia`, `Da sua Watchlist` e `100% Novos`.
+- Permanecem TMDB >= 7,5, ano > 1990, exclusão de Drama/Documentário puro, vistos, em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio, além da janela de sete dias de `shown_recommendations`.
+- `Trocar` utiliza o mesmo pipeline r253 e não recarrega o shell nem a página inteira.
+
+### Perfil / dados atuais
+- O Perfil não é redesenhado. A ordem física e a composição aprovadas da r238 permanecem como produtor visual.
+- Depois do paint, `cinetracker_profile_payload_v0997_r2` atualiza o backing data das estatísticas existentes sem mudar sua ordem.
+- O painel `Esportes assistidos` recebe somente os valores atuais de `cinetracker_sport_stats_v1`, preservando o layout e corrigindo contagem/tempo obsoletos.
+
+### Build / validação
+- Web atualizada para `1.0.44 / r253-official-1.0.44`; Android permanece `1.0.20 / versionCode 10062`.
+- `package.json` raiz e `apps/web/package.json` alinhados em `1.0.44`.
+- Build oficial: `apps/web/build-r253-official.mjs`; runtime: `apps/web/runtime-r253-single-authority-live-data.js`.
+- `test-r253.mjs` bloqueia retorno do observer r239, dos classificadores Home r252 e dos seletores antigos nas autoridades r253.
+- `test-r253-algorithms.mjs` cobre série em dia antiga que não deve juntar poeira, pendência real que deve permanecer em poeira, backlog legado, janela esportiva de 72h, 48 itens no histórico canônico e filtros de recomendação.
+- `test-r253-browser.mjs` valida em Chromium quatro abas esportivas sem a navegação antiga, uma instância do F1 Hub, 48 assistidos, nove abas do Descobrir clicáveis, proteção contra corrida assíncrona, Perfil com ordem preservada e valor esportivo atualizado, Home sem poeira falsa e Histórico recente posterior a Black Mirror.
+- `verify.yml` exige build, testes estáticos, algoritmos, Chromium, identidade final do bundle, Android inalterado e `production_smoke` da r253 após merge em `main`.
+
 ## 1.0.43 — 2026-09-11 — Web r252
 
 ### Recuperação da interface
