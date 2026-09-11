@@ -98,37 +98,33 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          p=Path('CHANGELOG.md')
-          text=p.read_text(encoding='utf-8')
-          marker='## 1.0.42 — 2026-09-11 — Web r251'
+          p = Path('CHANGELOG.md')
+          text = p.read_text(encoding='utf-8')
+          marker = '## 1.0.42 — 2026-09-11 — Web r251'
           if marker in text:
               raise SystemExit(0)
-          intro="# Changelog\n\nMudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.\n\n"
-          section="""## 1.0.42 — 2026-09-11 — Web r251
-
-### Autoridade direta / Home
-- Home, Descobrir, Esportes/F1 e Perfil passam a assumir os renderizadores ativos antes do `boot()`, removendo a dependência da reconciliação tardia que permitiu às r249/r250 passarem no CI sem refletir corretamente a tela real.
-- A Home usa a fronteira efetivamente assistida: backlog histórico permanece preservado, mas só episódio liberado depois da fronteira atual volta para `Assistir a seguir`.
-- A auditoria canônica de episódios roda de forma concorrente e repinta a Home assim que o estado atual é confirmado.
-
-### Descobrir / recomendações
-- Recomendações exigem TMDB >= 7,5 e ano posterior a 1990, removem Drama/Documentário puro, vistos, em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio.
-- `Indicação do Dia`, `Da sua Watchlist` e `100% Novos` são blocos obrigatórios com antirrepetição; `Trocar` substitui o item elegível sem reload global.
-- A migration `20260911175655_r251_shown_recommendations.sql` cria `shown_recommendations` com RLS e sustenta a janela de 7 dias sem repetir recomendações já exibidas.
-
-### Esportes / F1 / Perfil / layout
-- Esportes mantém somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, usando `cinetracker_sports_payload_v1` e `cinetracker_sport_mark_watched_v1`; o bundle r251 não chama `cinetracker_sports_events_v0997`.
-- O F1 Hub possui uma única instância e respeita o estado persistido de minimizar/expandir sem autoexpansão herdada.
-- Perfil possui um único bloco expansível de `Estatísticas`, incluindo Esportes; Home, Perfil, Configurações e sidebar recebem polish de proporção e espaçamento.
-- Overflow horizontal global permanece bloqueado; temporadas, gráficos, trilhos, Descobrir e F1 usam scroll horizontal somente no componente local.
-
-### Build / validação
-- Web atualizada para `1.0.42 / r251-official-1.0.42`; Android permanece `1.0.20 / versionCode 10062`.
-- Build oficial: `apps/web/build-r251-official.mjs`; runtime final: `apps/web/runtime-r251-ground-truth.js`.
-- Pipeline preserva a regressão r250 e valida invariantes, lógica, Chromium ground-truth e identidade final do bundle r251 antes da promoção ao `main`.
-
-"""
-          p.write_text((intro+section+text[len(intro):]) if text.startswith(intro) else (section+text),encoding='utf-8')
+          intro = "# Changelog\n\nMudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.\n\n"
+          section = (
+              "## 1.0.42 — 2026-09-11 — Web r251\n\n"
+              "### Autoridade direta / Home\n"
+              "- Home, Descobrir, Esportes/F1 e Perfil passam a assumir os renderizadores ativos antes do `boot()`, removendo a dependência da reconciliação tardia que permitiu às r249/r250 passarem no CI sem refletir corretamente a tela real.\n"
+              "- A Home usa a fronteira efetivamente assistida: backlog histórico permanece preservado, mas só episódio liberado depois da fronteira atual volta para `Assistir a seguir`.\n"
+              "- A auditoria canônica de episódios roda de forma concorrente e repinta a Home assim que o estado atual é confirmado.\n\n"
+              "### Descobrir / recomendações\n"
+              "- Recomendações exigem TMDB >= 7,5 e ano posterior a 1990, removem Drama/Documentário puro, vistos, em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio.\n"
+              "- `Indicação do Dia`, `Da sua Watchlist` e `100% Novos` são blocos obrigatórios com antirrepetição; `Trocar` substitui o item elegível sem reload global.\n"
+              "- A migration `20260911175655_r251_shown_recommendations.sql` cria `shown_recommendations` com RLS e sustenta a janela de 7 dias sem repetir recomendações já exibidas.\n\n"
+              "### Esportes / F1 / Perfil / layout\n"
+              "- Esportes mantém somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, usando `cinetracker_sports_payload_v1` e `cinetracker_sport_mark_watched_v1`; o bundle r251 não chama `cinetracker_sports_events_v0997`.\n"
+              "- O F1 Hub possui uma única instância e respeita o estado persistido de minimizar/expandir sem autoexpansão herdada.\n"
+              "- Perfil possui um único bloco expansível de `Estatísticas`, incluindo Esportes; Home, Perfil, Configurações e sidebar recebem polish de proporção e espaçamento.\n"
+              "- Overflow horizontal global permanece bloqueado; temporadas, gráficos, trilhos, Descobrir e F1 usam scroll horizontal somente no componente local.\n\n"
+              "### Build / validação\n"
+              "- Web atualizada para `1.0.42 / r251-official-1.0.42`; Android permanece `1.0.20 / versionCode 10062`.\n"
+              "- Build oficial: `apps/web/build-r251-official.mjs`; runtime final: `apps/web/runtime-r251-ground-truth.js`.\n"
+              "- Pipeline preserva a regressão r250 e valida invariantes, lógica, Chromium ground-truth e identidade final do bundle r251 antes da promoção ao `main`.\n\n"
+          )
+          p.write_text((intro + section + text[len(intro):]) if text.startswith(intro) else (section + text), encoding='utf-8')
           PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
