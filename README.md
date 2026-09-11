@@ -6,7 +6,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.38** | `r247-official-1.0.38` | correção validada em CI; promoção ao `main` exige smoke e boot real em produção |
+| Web | **1.0.38** | `r247-official-1.0.38` | produção validada por CI, boot do bundle final e smoke em Chrome contra a URL pública |
 | Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r247 |
 | Backend | produção compartilhada | Supabase | produção |
 | Windows | — | — | não lançado |
@@ -26,7 +26,7 @@ A r247 corrige a tela preta introduzida pela r246 e torna obrigatório validar o
 - Descobrir preserva as exclusões pessoais e a troca atômica da r240 sem reintroduzir a autoridade esportiva incompatível;
 - F1 Hub preserva as seis abas e o estado minimizar/expandir; Perfil mantém um único grupo `Estatísticas`; scroll vertical global e barras horizontais locais continuam preservados;
 - o pipeline agora executa `scripts/test-r247-exact-bundle-browser.mjs`, que carrega o `app-v247.js` final inteiro em Chromium, captura `error`/`unhandledrejection` e falha se `#app` permanecer vazio;
-- o smoke do `main` também abre a URL pública em Chrome headless e exige DOM renderizado, impedindo que apenas `release.json` e assets existentes sejam aceitos como prova de produção funcional.
+- o smoke do `main` abre a URL pública em Chrome headless e exige DOM renderizado; a produção `1.0.38 / r247` passou essa validação, além dos checks de `release.json`, JS e CSS.
 
 ## Funcionalidades consolidadas
 
