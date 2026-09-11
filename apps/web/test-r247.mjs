@@ -24,5 +24,5 @@ for(const x of [
  "legacy r240 Sports runtime is NOT injected"
 ])must(build,x);
 if(build.includes("readFile(resolve(root,'runtime-r240-sports-four-tabs.js')"))throw new Error('r247 build executes unsafe r240 sports runtime');
-const p=JSON.parse(pkg);if(!['1.0.38','1.0.39'].includes(p.version))throw new Error('r247 regression package version incompatible');
+const p=JSON.parse(pkg);if(!['1.0.38','1.0.39','1.0.40'].includes(p.version))throw new Error('r247 regression package version incompatible');
 console.log('R247_STATIC_OK black-screen=guarded sports=current-runtime-hooks home+discover+f1+profile+scroll=preserved current-package='+p.version);
