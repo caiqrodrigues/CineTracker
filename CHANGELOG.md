@@ -2,6 +2,40 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.38 — 2026-09-11 — Web r247
+
+### Correção crítica de boot
+- Reproduzida a tela preta da r246 carregando o bundle final `app-v246.js` inteiro em Chromium: `#app` permanecia vazio e o navegador registrava `ReferenceError: sportsTabs is not defined` antes de `boot()`.
+- A causa era a injeção de `runtime-r240-sports-four-tabs.js`, que atribuía diretamente `sportsTabs = ...` em modo estrito embora esse identificador já não existisse no baseline atual.
+- A r247 volta a compor a release sobre a r245 estável e remove completamente essa injeção incompatível.
+- A autoridade esportiva final passa a usar somente hooks existentes no runtime atual, protegidos por `typeof sportsPayload === 'function'` e `typeof sportsFiltered === 'function'`; nenhuma função removida é criada por atribuição direta.
+
+### Home e Descobrir
+- Preservada a auditoria canônica da r245 com 6 workers, lote prioritário de 24 séries e liberação de metadados secundários de filmes em 500 ms.
+- Mantida a regra genérica de episódio liberado e não assistido para séries acompanhadas/caught-up/manualmente em andamento.
+- A regressão herdada continua cobrindo Lioness, Stuart e séries iniciadas genéricas retornando a `Assistir a seguir` quando há episódio pendente.
+- Descobrir mantém as exclusões pessoais e a troca atômica da autoridade semântica r240, sem reintroduzir o runtime esportivo incompatível.
+- Cards e trilhos permanecem estáveis durante hidratação assíncrona.
+
+### Esportes e F1 Hub
+- Mantidas somente as abas `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`.
+- `Próximos` filtra somente eventos futuros do dia atual; `Anteriores`, os três dias anteriores; `Favoritos`, somente favoritos; `Assistidos`, o feed canônico legado.
+- A ação `Eventos/Agenda` continua removida e o botão `Assistido` mantém animação de confirmação.
+- O F1 Hub mantém seis abas (`Visão geral`, `Calendário`, `Próximo GP`, `Pilotos`, `Construtores`, `Último GP`) e persiste minimizar/expandir entre repaints.
+
+### Perfil e rolagem
+- Estatísticas esportivas permanecem incorporadas ao grupo único `Estatísticas`.
+- A página preserva rolagem vertical e bloqueia overflow horizontal global.
+- Temporadas, títulos relacionados/semelhantes, gráficos e demais trilhos largos mantêm scrollbar horizontal local visível.
+
+### Build e validação
+- Web atualizada para `1.0.38 / r247`; Android permanece `1.0.20 / versionCode 10062` sem alteração.
+- Build oficial: `apps/web/build-r247.mjs`.
+- Invariantes: `apps/web/test-r247.mjs`.
+- Teste esportivo Chromium: `scripts/test-r247-sports-browser.mjs`.
+- Novo teste obrigatório `scripts/test-r247-exact-bundle-browser.mjs` carrega o bundle final completo, captura `error`/`unhandledrejection` e falha se o app não renderizar conteúdo.
+- O smoke de produção do `main` também abre `mycinetracker.vercel.app` em Chrome headless e exige DOM renderizado, não apenas presença de `release.json` e assets.
+
 ## 1.0.37 — 2026-09-10 — Web r246
 
 ### Home
@@ -52,7 +86,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - O estado já conhecido do payload é aplicado imediatamente antes do paint.
 - Séries com episódio liberado pendente são movidas de `Em dia` para `Assistir a seguir` assim que o payload já comprova atraso.
 - A revalidação TMDB é executada em background com uma consulta de série, sem bloquear `renderHome`.
-- Neutralizado o hidratador legado r172 que fazia a cadeia temporada → série e contribuía para carregamentos de dezenas de segundos.
+- Neutralizado o hidratador legado r172 que fazia a cascata temporada → série e contribuía para carregamentos de dezenas de segundos.
 - Metadados do último episódio lançado, contagem liberada e `is_caught_up` são atualizados sem travar a primeira renderização.
 
 ### Descobrir
