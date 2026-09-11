@@ -26,6 +26,7 @@ jobs:
           node --check apps/web/build-r253-official.mjs
           node --check apps/web/test-r253.mjs
           node --check apps/web/test-r253-algorithms.mjs
+          node --check apps/web/test-r253-profile-backend-ground-truth.mjs
           node --check apps/web/test-r253-browser.mjs
           node --check scripts/test-r253-exact-bundle-browser.mjs
       - name: Build official r253
@@ -37,6 +38,9 @@ jobs:
       - name: Logic regressions r253
         working-directory: apps/web
         run: node test-r253-algorithms.mjs
+      - name: Live backend authority regression r253
+        working-directory: apps/web
+        run: node test-r253-profile-backend-ground-truth.mjs
       - name: Chromium single-authority behavior r253
         working-directory: apps/web
         run: node test-r253-browser.mjs
