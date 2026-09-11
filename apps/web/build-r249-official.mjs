@@ -20,7 +20,7 @@ for(const marker of [
 ])must(js,marker,marker);
 if(js.includes('cinetracker_sports_events_v0997'))throw new Error('r249 official contains removed sports RPC');
 const tail=js.slice(js.indexOf("window.__ctR248='current-following-complete-ui-authority'"));
-if(tail.includes('observer.observe(document.body,{subtree:true,childList:true});'))throw new Error('r249 official still attaches r248 current-ui observer');
+if(tail.includes('observer.observe(document.documentElement,{childList:true,subtree:true});'))throw new Error('r249 official still attaches r248 current-ui observer');
 if(tail.includes("new MutationObserver(()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(cleanLegacy)}).observe(document.documentElement"))throw new Error('r249 official still attaches r248 state-binding observer');
 must(js,"window.__ctWebBuild='1.0.40';window.__ctOfficialVersion='1.0.40';",'1.0.40 build identity');
 must(js,"const REVISION='r249-official-1.0.40';",'r249 revision');
