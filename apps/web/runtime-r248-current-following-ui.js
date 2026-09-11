@@ -18,7 +18,8 @@ const num=v=>{const n=Number(v);return Number.isFinite(n)?n:0};
 const safeDate=v=>{const d=v instanceof Date?v:new Date(v||0);return Number.isFinite(d.getTime())?d:new Date(0)};
 const localDay=d=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
 
-/* Home: historical holes behind the current following frontier never make a show late. */
+/* Home: use only an actually-watched frontier. Current/next episode fields must never
+   hide a real new release. Historical holes behind the watched frontier remain unwatched. */
 function epPos(ep){
  if(!ep||typeof ep!=='object')return 0;
  const s=num(ep.season_number??ep.season??ep.s??ep.seasonNumber),e=num(ep.episode_number??ep.episode??ep.e??ep.episodeNumber);
@@ -27,41 +28,69 @@ function epPos(ep){
 function rowFrontier(row){
  const list=[
   {season_number:row?.last_season,episode_number:row?.last_episode},
-  {season_number:row?.current_season,episode_number:row?.current_episode},
   {season_number:row?.last_watched_season,episode_number:row?.last_watched_episode},
-  row?.last_watched_episode_data,row?.progress_episode,row?.current_episode_data
+  {season_number:row?.last_seen_season,episode_number:row?.last_seen_episode},
+  row?.last_watched_episode_data,row?.last_seen_episode_data,row?.progress_episode
  ];
  return list.reduce((m,x)=>Math.max(m,epPos(x)),0);
 }
 function historicalBehind(row,current){const f=rowFrontier(row),c=epPos(current);return f>0&&c>0&&c<=f}
+function forceCaughtUp(row){
+ const changed=row.home_bucket!=='caught_up'||row.is_caught_up!==true||row._ctHomeForceContinue===true;
+ row.home_bucket='caught_up';row.is_caught_up=true;row._ctHomeForceContinue=false;row._ctHomeState='caught_up';row._ct248HistoricalBacklogPreserved=true;
+ if(changed&&typeof route==='function'&&route()==='home'&&typeof ct175SchedulePaint==='function')ct175SchedulePaint();
+ return changed;
+}
+function forceContinue(row){
+ const changed=row.home_bucket!=='continue'||row.is_caught_up!==false||row._ctHomeForceContinue!==true;
+ row.home_bucket='continue';row.is_caught_up=false;row._ctHomeForceContinue=true;row._ctHomeState='continue';delete row._ct248HistoricalBacklogPreserved;
+ if(changed&&typeof route==='function'&&route()==='home'&&typeof ct175SchedulePaint==='function')ct175SchedulePaint();
+ return changed;
+}
 function applyFrontier(mediaId,current){
  try{
   const row=(homeCache?.series||[]).find(x=>num(x?.media_id||x?.mediaId)===num(mediaId));
   if(!row||!historicalBehind(row,current))return false;
-  const changed=row.home_bucket!=='caught_up'||row.is_caught_up!==true||row._ctHomeForceContinue===true;
-  row.home_bucket='caught_up';row.is_caught_up=true;row._ctHomeForceContinue=false;row._ctHomeState='caught_up';row._ct248HistoricalBacklogPreserved=true;
-  if(changed&&typeof route==='function'&&route()==='home'&&typeof ct175SchedulePaint==='function')ct175SchedulePaint();
-  return true;
+  return forceCaughtUp(row);
  }catch(_){return false}
+}
+function applyCandidate(row,current){
+ if(!row||!current)return false;
+ const frontier=rowFrontier(row),candidate=epPos(current);
+ if(frontier>0&&candidate>0)return candidate<=frontier?forceCaughtUp(row):forceContinue(row);
+ return false;
 }
 window.__ctR248HistoricalBehind=historicalBehind;
 window.__ctR248ApplyFrontier=applyFrontier;
+window.__ctR248Frontier=rowFrontier;
+window.__ctR248ApplyCandidate=applyCandidate;
 function reconcileHome(){
  try{
   for(const row of homeCache?.series||[]){
    const pair=typeof ct176CanonicalPair==='function'?ct176CanonicalPair(row):null;
-   if(pair?.current)applyFrontier(row?.media_id||row?.mediaId,pair.current);
+   if(pair?.current)applyCandidate(row,pair.current);
   }
  }catch(_){}
 }
+/* r245 marks every canonical missing episode as Continue. Correct that decision immediately
+   after its queue update so a historical hole cannot flash the row into Assistir a seguir. */
+try{
+ if(typeof ct176SetQueue==='function'){
+  const baseQueue248=ct176SetQueue;
+  ct176SetQueue=function(mediaId,queue){
+   const pair=baseQueue248.apply(this,arguments);
+   try{const row=(homeCache?.series||[]).find(x=>num(x?.media_id||x?.mediaId)===num(mediaId));if(row&&pair?.current)applyCandidate(row,pair.current)}catch(_){}
+   return pair;
+  };
+ }
+}catch(_){}
 function isSeriesEvent(row){const t=norm(row?.media_type||row?.content_type||row?.kind||row?.type);return ['series_event','sport_series','sports_series','event_series'].includes(t)||row?.is_sport_series===true}
 function reconcileSeriesEvents(){
  try{
   for(const row of homeCache?.series||[]){
    if(!isSeriesEvent(row))continue;
    const pair=typeof ct176CanonicalPair==='function'?ct176CanonicalPair(row):null;
-   if(pair?.current&&historicalBehind(row,pair.current))applyFrontier(row?.media_id||row?.mediaId,pair.current);
-   else if(pair?.current){row.home_bucket='continue';row.is_caught_up=false;row._ctHomeForceContinue=true}
+   if(pair?.current)applyCandidate(row,pair.current);
   }
  }catch(_){}
 }
@@ -70,9 +99,10 @@ if(basePaintHome)paintHome=function(){const out=basePaintHome.apply(this,argumen
 window.addEventListener('pageshow',()=>queueMicrotask(()=>{reconcileHome();reconcileSeriesEvents()}));
 document.addEventListener('cinetracker:data-changed',()=>queueMicrotask(()=>{reconcileHome();reconcileSeriesEvents()}));
 
-/* Discover: disable stale full-HTML snapshots but keep the canonical r240 exclusion/meta rules. */
-try{if(typeof rememberDiscover240==='function')rememberDiscover240=function(){}}catch(_){}
-try{if(typeof restoreDiscover240==='function')restoreDiscover240=async function(){return false}}catch(_){}
+/* Discover: r248 build neutralizes r240 full-HTML snapshots. Keep the canonical exclusion
+   and metadata rules active without repainting a stale snapshot over the current tab. */
+try{if(typeof rememberDiscover240==='function')rememberDiscover240=function(){return false}}catch(_){}
+try{if(typeof restoreDiscover240==='function')restoreDiscover240=function(){return false}}catch(_){}
 function stabilizeDiscover(){
  const root=q('#p-discover,[data-page="discover"],[data-discover]');if(!root)return;
  root.classList.add('ct248-discover-stable');
@@ -84,11 +114,11 @@ const baseDiscover=typeof renderDiscover==='function'?renderDiscover:null;
 if(baseDiscover)renderDiscover=async function(){const root=q('#p-discover,[data-page="discover"],[data-discover]');root?.classList.add('ct248-discover-loading');try{return await baseDiscover.apply(this,arguments)}finally{root?.classList.remove('ct248-discover-loading');requestAnimationFrame(stabilizeDiscover)}};
 window.__ctR248StabilizeDiscover=stabilizeDiscover;
 
-/* Sports: one tab authority. */
+/* Sports: one visible tab authority, bound to the canonical sportsState/r240 data filters. */
 const SPORT_TABS=[['next','Próximos'],['previous','Anteriores'],['favorites','Favoritos'],['watched','Assistidos']];
 let sportTab='next';
 const sportRoot=()=>q('#p-sports,[data-page="sports"],[data-sports]');
-function eventDate(e){return safeDate(e?.start_time||e?.start_at||e?.datetime||e?.event_date||e?.date||e?.utc_date)}
+function eventDate(e){return safeDate(e?.start_time||e?.starts_at||e?.start_at||e?.datetime||e?.event_date||e?.date||e?.utc_date)}
 function favoriteEvent(e){try{if(typeof teamFav==='function')return !!teamFav(e)}catch(_){}return !!(e?.favorite||e?.is_favorite||e?.team_favorite||e?.home_favorite||e?.away_favorite)}
 function watchedEvent(e){return !!(e?.watched||e?.is_watched||e?.seen||e?.viewed||num(e?.watch_count||e?.play_count)>0)}
 function filterSports(events,mode=sportTab,now=new Date()){
@@ -99,24 +129,26 @@ function filterSports(events,mode=sportTab,now=new Date()){
  return list.filter(e=>localDay(eventDate(e)).getTime()===today&&eventDate(e).getTime()>=now.getTime());
 }
 window.__ctR248SportFilter=filterSports;
+function bindSportState(key){sportTab=key;try{if(typeof sportsState!=='undefined'){sportsState.tab=key;sportsState.page=0}}catch(_){}}
 function ensureSportTabs(){
  const root=sportRoot();if(!root)return;
  let bar=q('.ct248-sports-tabs',root);if(!bar){bar=document.createElement('div');bar.className='ct248-sports-tabs';root.insertBefore(bar,root.firstChild)}
  bar.innerHTML=SPORT_TABS.map(([k,l])=>`<button type="button" class="pill ${sportTab===k?'active':''}" data-ct248-sport-tab="${k}">${l}</button>`).join('');
- for(const b of qa('[data-ct248-sport-tab]',bar))b.onclick=()=>{sportTab=b.dataset.ct248SportTab;syncSports();try{renderSports?.()}catch(_){}};
- for(const b of qa('button,.pill,.tab,a',root)){const t=norm(b.textContent).trim();if(t==='eventos'||t==='agenda')b.remove()}
+ for(const b of qa('[data-ct248-sport-tab]',bar))b.onclick=()=>{bindSportState(b.dataset.ct248SportTab);syncSports();try{void renderSports?.()}catch(_){}};
+ for(const b of qa('button,.pill,.tab,a',root)){const t=norm(b.textContent).trim();if(t==='eventos'||t==='agenda'||t==='ver eventos'||t==='ver agenda')b.remove()}
 }
 function syncSports(){
- const root=sportRoot();if(!root)return;ensureSportTabs();
+ const root=sportRoot();if(!root)return;try{if(typeof sportsState!=='undefined'&&SPORT_TABS.some(([k])=>k===sportsState.tab))sportTab=sportsState.tab}catch(_){}ensureSportTabs();
  for(const b of qa('[data-ct248-sport-tab]',root))b.classList.toggle('active',b.dataset.ct248SportTab===sportTab);
- for(const btn of qa('button,[role="button"]',root)){const t=norm(btn.textContent);if(t==='eventos'||t==='agenda'){btn.remove();continue}if(/assistido|visto|desmarcar/.test(t))btn.classList.add('ct248-watch-btn')}
+ for(const btn of qa('button,[role="button"]',root)){const t=norm(btn.textContent);if(t==='eventos'||t==='agenda'||t==='ver eventos'||t==='ver agenda'){btn.remove();continue}if(/assistido|visto|desmarcar/.test(t))btn.classList.add('ct248-watch-btn')}
 }
 document.addEventListener('click',e=>{const b=e.target?.closest?.('.ct248-watch-btn');if(!b)return;b.classList.remove('ct248-watch-pop');void b.offsetWidth;b.classList.add('ct248-watch-pop');setTimeout(()=>b.classList.remove('ct248-watch-pop'),430)},true);
 const baseSports=typeof renderSports==='function'?renderSports:null;
 if(baseSports)renderSports=async function(){const out=await baseSports.apply(this,arguments);requestAnimationFrame(()=>{syncSports();void renderF1()});return out};
 
-/* F1 Hub: real Jolpica data, six views, persistent collapse. */
-const F1_KEY='ct:f1hub:collapsed:r248';
+/* F1 Hub: Jolpica source, cached fallback, Brasília time, six requested views and a collapse
+   state that only changes from the user's own button. */
+const F1_KEY='ct:f1hub:collapsed:r248',F1_CACHE_KEY='ct:f1hub:data:r248';
 const F1_TABS=[['overview','Visão geral'],['calendar','Calendário'],['next','Próximo GP'],['drivers','Pilotos'],['constructors','Construtores'],['last','Último GP']];
 let f1Tab='overview',f1Cache={at:0,data:null};
 function f1Collapsed(){try{return localStorage.getItem(F1_KEY)==='1'}catch(_){return false}}
@@ -125,11 +157,14 @@ function syncF1Collapse(){const hub=q('.ct248-f1hub');if(!hub)return;const v=f1C
 async function f1Get(path){const r=await fetch(`https://api.jolpi.ca/ergast/f1/${path.replace(/^\/+/, '')}`,{headers:{accept:'application/json'}});if(!r.ok)throw new Error(`F1 ${r.status}`);return r.json()}
 const races=o=>o?.MRData?.RaceTable?.Races||[];
 const standings=o=>o?.MRData?.StandingsTable?.StandingsLists?.[0]||{};
+function readF1Fallback(){try{const x=JSON.parse(localStorage.getItem(F1_CACHE_KEY)||'null');return x?.data||null}catch(_){return null}}
+function writeF1Fallback(data){try{localStorage.setItem(F1_CACHE_KEY,JSON.stringify({at:Date.now(),data}))}catch(_){}}
 async function loadF1(){
  if(f1Cache.data&&Date.now()-f1Cache.at<300000)return f1Cache.data;
  const season=new Date().getFullYear();const p=await Promise.allSettled([f1Get(`${season}.json`),f1Get(`${season}/driverstandings.json`),f1Get(`${season}/constructorstandings.json`),f1Get(`${season}/last/results.json`),f1Get(`${season}/last/qualifying.json`)]);
  const schedule=races(p[0].status==='fulfilled'?p[0].value:{}),drivers=standings(p[1].status==='fulfilled'?p[1].value:{}).DriverStandings||[],constructors=standings(p[2].status==='fulfilled'?p[2].value:{}).ConstructorStandings||[],last=races(p[3].status==='fulfilled'?p[3].value:{})[0]||null,qual=races(p[4].status==='fulfilled'?p[4].value:{})[0]||null;
- const now=Date.now(),next=schedule.find(r=>safeDate(`${r.date||''}T${r.time||'00:00:00Z'}`).getTime()>=now)||null;return f1Cache={at:Date.now(),data:{season,schedule,drivers,constructors,last,qual,next}}.data;
+ if(!schedule.length&&!drivers.length&&!constructors.length&&!last){const fallback=readF1Fallback();if(fallback)return f1Cache={at:Date.now(),data:fallback}.data}
+ const now=Date.now(),next=schedule.find(r=>safeDate(`${r.date||''}T${r.time||'00:00:00Z'}`).getTime()>=now)||null,data={season,schedule,drivers,constructors,last,qual,next};writeF1Fallback(data);return f1Cache={at:Date.now(),data}.data;
 }
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function raceTime(r){const d=safeDate(`${r?.date||''}T${r?.time||'00:00:00Z'}`);try{return new Intl.DateTimeFormat('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}).format(d)}catch(_){return d.toLocaleString('pt-BR')}}
@@ -149,7 +184,7 @@ async function renderF1(){
  const root=sportRoot();if(!root)return;let hub=q('.ct248-f1hub',root);if(!hub){hub=document.createElement('section');hub.className='ct248-f1hub';root.insertBefore(hub,q('.sports-grid,.events-grid,.grid',root)||root.firstChild)}
  hub.innerHTML=`<header class="ct248-f1head"><div><span>F1 Hub</span><b>Temporada ${new Date().getFullYear()}</b></div><button type="button" data-ct248-f1collapse>${f1Collapsed()?'Expandir':'Minimizar'}</button></header><div class="ct248-f1body"><nav>${F1_TABS.map(([k,l])=>`<button type="button" class="${f1Tab===k?'active':''}" data-ct248-f1tab="${k}">${l}</button>`).join('')}</nav><div class="ct248-f1content"><div class="muted">Carregando F1…</div></div></div>`;
  q('[data-ct248-f1collapse]',hub).onclick=()=>setF1Collapsed(!f1Collapsed());for(const b of qa('[data-ct248-f1tab]',hub))b.onclick=()=>{f1Tab=b.dataset.ct248F1tab;void renderF1()};syncF1Collapse();if(f1Collapsed())return;
- let data=null;try{data=await loadF1()}catch(e){console.warn('r248 F1',e)}const c=q('.ct248-f1content',hub);if(c)c.innerHTML=f1Content(data,f1Tab);syncF1Collapse();markRails(hub);
+ let data=null;try{data=await loadF1()}catch(e){console.warn('r248 F1',e);data=readF1Fallback()}const c=q('.ct248-f1content',hub);if(c)c.innerHTML=f1Content(data,f1Tab);syncF1Collapse();markRails(hub);
 }
 window.__ctR248RenderF1=renderF1;window.__ctR248SetF1Collapsed=setF1Collapsed;
 
