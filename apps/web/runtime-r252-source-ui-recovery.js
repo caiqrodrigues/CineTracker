@@ -26,7 +26,7 @@ const mediaDate=x=>String(mediaType(x)==='movie'?(x?.release_date||x?.raw_tmdb?.
 const mediaYear=x=>n(mediaDate(x).slice(0,4));
 const mediaGenres=x=>[...(x?.genre_ids||x?.raw_tmdb?.genre_ids||[])].map(Number).filter(Boolean);
 const mediaKey=x=>`${mediaType(x)}:${mediaId(x)}`;
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 /* HOME — classify data before the existing Home painter. No Home HTML is replaced here. */
 function epPos(ep){if(!ep||typeof ep!=='object')return 0;const s=n(ep.season_number??ep.season??ep.s??ep.seasonNumber),e=n(ep.episode_number??ep.episode??ep.e??ep.episodeNumber);return s>0&&e>0?s*100000+e:0}
@@ -113,7 +113,7 @@ async function buildForYou252(){
  const daily=firstPick(pool.movies,x=>publicOk(x),used,shown);
  const watchRows=(dash||[]).filter(x=>known.watch.has(mediaKey(x))&&!known.seen.has(mediaKey(x))&&!known.blocked.has(mediaKey(x))&&eligiblePublic(x));
  const watchMovie=firstPick(watchRows,x=>mediaType(x)==='movie',used,shown),watchSeries=firstPick(watchRows,x=>mediaType(x)==='tv'&&!isAnime(x),used,shown),watchAnime=firstPick(watchRows,isAnime,used,shown);
- const fresh=(pool.newRows||[]).filter(publicOk),freshMovie=firstPick(fresh,x=>mediaType(x)==='movie',used,shown),freshSeries=firstPick(fresh,x=>mediaType(x)==='tv'&&!isAnime(x),used,shown),freshAnime=firstPick([...(pool.anime||[]),...fresh],x=>isAnime(x)&&publicOk(x),used,shown);
+ const fresh=(pool.newRows||[]).filter(publicOk),freshMovie=firstPick(fresh,x=>mediaType(x)==='movie',used,shown),freshSeries=firstPick(fresh,x=>mediaType(x)==='tv'&&!isAnime(x),used,shown),freshAnime=firstPick(fresh,x=>isAnime(x)&&publicOk(x),used,shown);
  const result={__ctR252ForYou:true,daily:[daily].filter(Boolean),watchlist:[watchMovie,watchSeries,watchAnime].filter(Boolean),fresh:[freshMovie,freshSeries,freshAnime].filter(Boolean)};
  await recordShown([...result.daily,...result.watchlist,...result.fresh]);return result;
 }
