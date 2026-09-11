@@ -6,26 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.37** | `r246-official-1.0.37` | produção validada por CI e smoke oficial |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r246 |
+| Web | **1.0.38** | `r247-official-1.0.38` | correção validada em CI; promoção ao `main` exige smoke e boot real em produção |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r247 |
 | Backend | produção compartilhada | Supabase | produção |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.37 / r246
+## Web 1.0.38 / r247
 
-A r246 consolida numa autoridade final os comportamentos que estavam sendo disputados por patches anteriores, sem alterar o Android.
+A r247 corrige a tela preta introduzida pela r246 e torna obrigatório validar o boot do bundle final completo antes da publicação.
 
-- Home força nova auditoria canônica de séries acompanhadas ao entrar/retomar a tela, usa 6 workers para episódios e reduz para 500 ms o fallback de metadados secundários de filmes;
-- séries/eventos acompanhados em estado caught-up ou manualmente em andamento entram na mesma regra genérica de episódio liberado e não assistido, sem hardcode de títulos;
-- Descobrir mantém as exclusões pessoais canônicas da r240 e as três seções reais de `Pra você` da r239, com geometria estável para evitar cards tremendo/pulando;
-- Esportes expõe somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, remove a ação `Eventos/Agenda` e anima o botão `Assistido` ao clique;
-- `Próximos` mostra somente o restante do dia atual; `Anteriores`, os três dias anteriores; `Favoritos`, apenas favoritos; `Assistidos`, o feed canônico de vistos;
-- F1 Hub mantém seis abas (`Visão geral`, `Calendário`, `Próximo GP`, `Pilotos`, `Construtores`, `Último GP`) e persiste o estado minimizar/expandir entre repaints;
-- Perfil passa a manter estatísticas de mídia e esporte em um único grupo `Estatísticas`, preservando a ordem principal 4+4+2;
-- a página continua com scroll vertical e sem overflow horizontal global; temporadas, relacionados/semelhantes, gráficos e demais trilhos largos ganham scrollbar horizontal local visível;
-- build oficial: `apps/web/build-r246.mjs`; invariantes: `apps/web/test-r246.mjs`; teste Chromium: `scripts/test-r246-complete-ui-browser.mjs`.
+- causa da tela preta identificada e reproduzida: a r246 injetava a antiga autoridade esportiva r240, que executava `sportsTabs = ...` em modo estrito mesmo quando `sportsTabs` já não existia no baseline atual; o `ReferenceError` acontecia antes de `boot()` e deixava `#app` vazio;
+- a r247 volta a compor a release sobre a r245 estável e não injeta mais `runtime-r240-sports-four-tabs.js`;
+- Esportes mantém `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, mas agora a integração usa somente hooks que existam realmente no bundle (`sportsPayload`/`sportsFiltered`) e a camada DOM própria, sem depender de identificadores removidos;
+- `Próximos` continua restrito ao restante do dia atual; `Anteriores`, aos três dias anteriores; `Favoritos`, aos favoritos; `Assistidos`, ao feed canônico legado;
+- a ação `Eventos/Agenda` continua removida e o botão `Assistido` mantém animação de confirmação;
+- Home preserva a autoridade canônica da r245, com 6 workers, lote prioritário de 24 séries e fallback secundário de filmes em 500 ms; a regressão Chromium continua cobrindo Lioness, Stuart e séries iniciadas genéricas;
+- Descobrir preserva as exclusões pessoais e a troca atômica da r240 sem reintroduzir a autoridade esportiva incompatível;
+- F1 Hub preserva as seis abas e o estado minimizar/expandir; Perfil mantém um único grupo `Estatísticas`; scroll vertical global e barras horizontais locais continuam preservados;
+- o pipeline agora executa `scripts/test-r247-exact-bundle-browser.mjs`, que carrega o `app-v247.js` final inteiro em Chromium, captura `error`/`unhandledrejection` e falha se `#app` permanecer vazio;
+- o smoke do `main` também abre a URL pública em Chrome headless e exige DOM renderizado, impedindo que apenas `release.json` e assets existentes sejam aceitos como prova de produção funcional.
 
 ## Funcionalidades consolidadas
 
@@ -51,6 +52,6 @@ A r246 consolida numa autoridade final os comportamentos que estavam sendo dispu
 
 ## Regra de validação
 
-Build, CI, deploy, APK, assinatura e teste real são evidências separadas. Teste real no navegador/aparelho prevalece sobre asserts de CI quando houver divergência.
+Build, CI, deploy, APK, assinatura e teste real são evidências separadas. O bundle final e a produção precisam renderizar conteúdo em navegador real; teste no navegador/aparelho prevalece sobre asserts estáticos quando houver divergência.
 
 Documentação canônica: `PROJECT_STATE.md`, `VERSIONS.md`, `CHANGELOG.md`, `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_RULES.md` e `docs/SECURITY.md`.
