@@ -6,27 +6,24 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.38** | `r247-official-1.0.38` | produção validada por CI, boot do bundle final e smoke em Chrome contra a URL pública |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r247 |
+| Web | **1.0.39** | `r248-official-1.0.39` | release validada por CI e Chromium; promoção ao `main` exige smoke público |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r248 |
 | Backend | produção compartilhada | Supabase | produção |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.38 / r247
+## Web 1.0.39 / r248
 
-A r247 corrige a tela preta introduzida pela r246 e torna obrigatório validar o boot do bundle final completo antes da publicação.
+A r248 consolida a correção completa de Home, Descobrir, Esportes, F1 Hub, Perfil e rolagem, eliminando autoridades antigas que voltavam a alterar o DOM depois do paint correto.
 
-- causa da tela preta identificada e reproduzida: a r246 injetava a antiga autoridade esportiva r240, que executava `sportsTabs = ...` em modo estrito mesmo quando `sportsTabs` já não existia no baseline atual; o `ReferenceError` acontecia antes de `boot()` e deixava `#app` vazio;
-- a r247 volta a compor a release sobre a r245 estável e não injeta mais `runtime-r240-sports-four-tabs.js`;
-- Esportes mantém `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, mas agora a integração usa somente hooks que existam realmente no bundle (`sportsPayload`/`sportsFiltered`) e a camada DOM própria, sem depender de identificadores removidos;
-- `Próximos` continua restrito ao restante do dia atual; `Anteriores`, aos três dias anteriores; `Favoritos`, aos favoritos; `Assistidos`, ao feed canônico legado;
-- a ação `Eventos/Agenda` continua removida e o botão `Assistido` mantém animação de confirmação;
-- Home preserva a autoridade canônica da r245, com 6 workers, lote prioritário de 24 séries e fallback secundário de filmes em 500 ms; a regressão Chromium continua cobrindo Lioness, Stuart e séries iniciadas genéricas;
-- Descobrir preserva as exclusões pessoais e a troca atômica da r240 sem reintroduzir a autoridade esportiva incompatível;
-- F1 Hub preserva as seis abas e o estado minimizar/expandir; Perfil mantém um único grupo `Estatísticas`; scroll vertical global e barras horizontais locais continuam preservados;
-- o pipeline agora executa `scripts/test-r247-exact-bundle-browser.mjs`, que carrega o `app-v247.js` final inteiro em Chromium, captura `error`/`unhandledrejection` e falha se `#app` permanecer vazio;
-- o smoke do `main` abre a URL pública em Chrome headless e exige DOM renderizado; a produção `1.0.38 / r247` passou essa validação, além dos checks de `release.json`, JS e CSS.
+- **Home:** a auditoria canônica passa a 8 workers, lote prioritário de 40 séries e fallback secundário em 250 ms. A regra distingue episódio novo à frente do ponto atual de buracos históricos não assistidos, preservando esses episódios como não vistos sem tirar uma série realmente em dia do estado correto. Lioness, Stuart e demais séries iniciadas continuam cobertas pela regra genérica sem hardcode; entidades modeladas como `sport_series`/`series_event` seguem a mesma lógica para F1 e Super Bowl.
+- **Descobrir:** snapshots antigos de HTML deixam de ser restaurados entre abas. As exclusões pessoais canônicas permanecem ativas em `Pra você`, impedindo recomendação de itens vistos, em andamento, Watchlist e demais estados bloqueados. Cards e trilhos deixam de disputar geometria durante hidratação.
+- **Esportes:** ficam somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`. `Próximos` mostra apenas jogos futuros do dia atual; `Anteriores`, D-1 a D-3; `Favoritos`, somente jogos ligados aos favoritos; `Assistidos`, os vistos. Controles `Eventos/Agenda` são removidos e `Assistido` mantém animação de confirmação.
+- **F1 Hub:** usa Jolpica para a temporada atual com `Visão geral`, `Calendário`, `Próximo GP`, `Pilotos`, `Construtores` e `Último GP`; mostra horário de Brasília, contagem regressiva, resultado da corrida e grid/qualificação. Minimizar/expandir persiste em `localStorage` e não volta a abrir por reconciliação antiga.
+- **Perfil:** `Estatísticas de esporte` é incorporado ao único grupo `Estatísticas`, com posição estável entre repaints.
+- **Rolagem:** a página mantém rolagem vertical e bloqueia overflow horizontal global. Temporadas, relacionados/semelhantes, gráficos, trilhos do Descobrir/F1 e outros conteúdos largos recebem scrollbar horizontal local visível.
+- **Validação:** o pipeline cobre regressões r239→r247, build/invariantes r248, comportamento Chromium completo e boot do bundle final. Android permanece explicitamente na baseline 1.0.20/10062.
 
 ## Funcionalidades consolidadas
 
