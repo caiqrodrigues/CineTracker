@@ -6,28 +6,23 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.43** | `r252-official-1.0.43` | recuperação da source UI aprovada + correções lógicas isoladas |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r252 |
-| Backend | produção compartilhada | Supabase | produção; inclui persistência `shown_recommendations` com RLS |
+| Web | **1.0.44** | `r253-official-1.0.44` | autoridade única nas telas críticas + dados vivos do Supabase |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r253 |
+| Backend | produção compartilhada | Supabase | produção; histórico canônico e persistência `shown_recommendations` com RLS |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.43 / r252
+## Web 1.0.44 / r253
 
-A r252 corrige a regressão visual da r251 sem redesenhar novamente a aplicação. O build volta a usar a **source UI** comprovada da r248 como autoridade estrutural e aplica somente correções de regra e de carregamento. As camadas r249/r250/r251 não são importadas na cadeia final da r252.
+A r253 corrige a regressão observada em vídeo após a r252. O problema não era apenas cache: múltiplas autoridades herdadas continuavam redesenhando partes da mesma tela. A r253 estabelece um único produtor final para Home, Descobrir e Esportes, preserva o Perfil aprovado e volta a buscar o estado atual diretamente das fontes canônicas.
 
-- **Home:** preserva a estrutura anterior e o Histórico escondido de filmes/séries. Série nunca iniciada permanece em `Não iniciada`; série iniciada sem episódio assistido há **30 dias** vai para `Juntando Poeira`; episódio recente liberado e não visto tem prioridade e coloca a série em `Continue assistindo`; quando não existe lançamento atual pendente, a série fica `Em dia`.
-- **Séries longas:** WWE Raw, WWE SmackDown, Fórmula 1 e Super Bowl ignoram backlog legado para classificação atual. Episódios antigos continuam não vistos no banco; não existe marcação retroativa artificial. Só um lançamento atual/recentemente liberado e não visto tira o item de `Em dia`.
-- **Descobrir:** volta a usar os cards e proporções nativos da interface anterior. Mantém nove sub-abas (`Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados`, `Calendário`) e os três blocos de `Pra você`: `Indicação do Dia`, `Da sua Watchlist` e `100% Novos`.
-- **Regras de recomendação:** TMDB >= 7,5, ano > 1990, exclusão de Drama/Documentário puro, vistos, em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio. `shown_recommendations` impede repetição por 7 dias; `Trocar` funciona sem reload global. `100% Novos` usa lançamentos dos últimos 30 dias também para Anime.
-- **Esportes:** preserva exatamente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, usando `cinetracker_sports_payload_v1`; o bundle não chama `cinetracker_sports_events_v0997`.
-- **F1 Hub:** volta ao padrão escuro da r248 com seis áreas e minimizar/expandir persistido pelo usuário, sem autoexpansão.
-- **Perfil:** volta à composição e ordem estabelecidas anteriormente, sem a reorganização visual da r251.
-- **Configurações:** a tela estável é montada imediatamente; a leitura opcional do nome de perfil ocorre em segundo plano, eliminando o loading bloqueante.
-- **Navegação:** os dois `MutationObserver` permanentes herdados da r248 são desativados no bundle final para evitar reconstruções concorrentes e custo repetido entre abas.
-- **Rolagem:** overflow horizontal global continua bloqueado; trilhos, temporadas, gráficos e demais áreas largas mantêm rolagem horizontal somente no próprio componente.
-- **Validação:** o CI exige que a r252 preserve marcadores/estrutura r248, não carregue a autoridade visual r251, passe regressões de Home/Descobrir/Configurações em lógica + Chromium e gere assets `app-v252` com identidade 1.0.43.
+- **Home:** recarrega `cinetracker_home_live_v0997_r3` ao entrar e mantém o renderer visual já aprovado. `Juntando Poeira` não é mais criado somente porque a última reprodução tem mais de 30 dias: uma série `is_caught_up`, sem episódios realmente faltantes, encerrada ou já no último episódio liberado permanece em `Em dia`/`Concluída`. Raw, SmackDown, Fórmula 1 e Super Bowl continuam sem transformar backlog histórico em pendência atual. O Histórico recente usa o payload vivo e preserva registros novos.
+- **Esportes:** deixa de combinar a navegação r248 com a navegação antiga. Existe um único renderer com exatamente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`. `Assistidos` vem de `watch_history` do `cinetracker_sports_payload_v1`, e a contagem/tempo usam `cinetracker_sport_stats_v1`; marcar/desmarcar usa `cinetracker_sport_mark_watched_v1`. O F1 Hub continua sendo o componente escuro da r248, com uma única instância.
+- **Descobrir:** as nove abas passam a usar seletores próprios da r253 e troca de conteúdo local, sem chamar o render global herdado. A aba ativa muda imediatamente, cada request recebe uma geração e respostas antigas são descartadas. `Pra você` usa pools de uma página em paralelo, cards nativos, três blocos obrigatórios, filtros TMDB/ano/gênero/WWE/estado pessoal e `shown_recommendations` de 7 dias.
+- **Perfil:** nenhuma reorganização visual é feita. A ordem física aprovada da r238 é mantida; depois do paint, o payload `cinetracker_profile_payload_v0997_r2` atualiza as estatísticas existentes e `cinetracker_sport_stats_v1` atualiza apenas os valores do painel `Esportes assistidos`.
+- **Conflitos legados:** o `MutationObserver` permanente da r239 é retirado do bundle final. Também são neutralizados os dois wrappers da r252 que reclassificavam Home pelo tempo desde o último episódio e podiam colocar séries em dia em `Juntando Poeira`.
+- **Validação:** build, invariantes estáticos, algoritmos e Chromium cobrem a regressão do vídeo: somente quatro abas esportivas, 48 itens simulados no histórico canônico, uma única instância do F1 Hub, nove abas do Descobrir clicáveis, corrida assíncrona entre abas, Perfil sem mudança de ordem, Home sem poeira falsa e Histórico recente posterior a Black Mirror.
 
 ## Funcionalidades consolidadas
 
