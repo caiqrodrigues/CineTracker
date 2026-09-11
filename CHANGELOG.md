@@ -2,6 +2,52 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.45 — 2026-09-11 — Web r254
+
+### Ground truth do vídeo / causa raiz
+- O vídeo posterior à r253 passou a ser a regressão principal desta release. Ele comprovou quatro falhas que a suíte anterior não cobria: ausência de scroll horizontal em conteúdos criados depois da navegação, Home com fronteira de episódios desatualizada, Descobrir apagando o conteúdo e ficando em `Carregando títulos...`, e F1 Hub sendo inserido antes da sidebar no grid externo de Esportes.
+- A r254 não importa a composição r253. O build volta diretamente à r252, último baseline visual alinhado, e injeta uma autoridade final específica para as falhas observadas.
+- Os observers permanentes r239 e r247 e os wrappers r252 que reclassificavam Home pela idade são removidos do bundle final. A r254 mantém somente um observer estreito de `childList` para marcar trilhos horizontais e garantir a posição interna do F1 Hub; ele não reexecuta renderizadores.
+
+### Home / Lioness / Stuart / Raw / SmackDown
+- `renderHome` pinta primeiro `cinetracker_home_live_v0997_r3`, sem bloquear a tela, e em seguida audita em paralelo séries normais iniciadas contra o TMDB atual.
+- Para séries normais, somente `last_episode_to_air` é considerado episódio realmente exibido. Se essa fronteira avançou além do último episódio assistido, a série muda para `Assistir a seguir`; isso cobre Lioness e Stuart mesmo quando o metadata persistido no banco está atrasado.
+- `next_episode_to_air` nunca é tratado como episódio já lançado. Essa diferença corrige o caso real do SmackDown em que o backend via S28E37 datado para o dia atual, embora o TMDB ainda o classificasse como próximo episódio, enquanto S28E36 já estava assistido.
+- Raw, SmackDown, Fórmula 1 e Super Bowl preservam semântica de acompanhamento: backlog histórico continua não visto, mas não força `Assistir a seguir`. Uma decisão canônica `Em dia` não é anulada por totais históricos.
+- Séries normais realmente atrasadas continuam em `Juntando Poeira`/`Assistir a seguir`; a correção não marca episódios antigos artificialmente como vistos.
+
+### Descobrir
+- Permanecem as nove abas: `Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário`.
+- O dashboard de estados pessoais/exclusões deixa de ser recarregado a cada troca de aba; ele é obtido uma vez e reutilizado em memória.
+- Ao clicar em outra aba, o conteúdo atual permanece visível enquanto a nova resposta é carregada. O DOM só é substituído quando o novo resultado está pronto, evitando a tela vazia/`Carregando títulos...` vista no vídeo.
+- Cada carga conserva geração própria e descarta respostas atrasadas. Consultas de usuário/TMDB passam a ter limites de tempo para não deixar a tela bloqueada indefinidamente.
+- `Pra você` preserva os três blocos, antirrepetição, filtros pessoais e `shown_recommendations`; gravação do histórico de recomendações não bloqueia o paint.
+
+### Esportes / F1
+- A tela mantém somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, usando `cinetracker_sports_payload_v1`; Assistidos usa o `watch_history` canônico completo e marcar/desmarcar continua em `cinetracker_sport_mark_watched_v1`.
+- A causa estrutural do vídeo foi localizada no F1 r248: `sportRoot()` podia resolver o `.app[data-page="sports"]` externo e `renderF1()` inseria o Hub como primeiro filho, antes da sidebar. Como `.app` é um grid de duas colunas, isso deslocava sidebar/main e tornava Esportes praticamente inutilizável.
+- A r254 deixa o componente F1 aprovado ser criado, mas o reloca imediatamente para dentro de `[data-ct254-sports]`, antes do próximo paint. Reexecuções internas do próprio Hub encontram a mesma instância já no local correto.
+- O card-resumo antigo de quantidade/status não é recriado pela autoridade r254.
+
+### Perfil / dados vivos
+- O Perfil mantém a composição visual aprovada.
+- `cinetracker_profile_payload_v0997_r2` atualiza o backing data e `cinetracker_sport_stats_v1` atualiza somente os valores do painel `Esportes assistidos`.
+- A investigação no backend confirmou 48 registros canônicos em `user_sport_watch_history`; a r254 continua usando essa fonte para evitar a contagem obsoleta mostrada anteriormente.
+
+### Scroll horizontal local
+- A r252 havia neutralizado os observers r248 que originalmente marcavam trilhos criados após navegação; por isso temporada/gráfico aberto posteriormente podia não receber nenhuma classe de overflow local.
+- A r254 reintroduz apenas a parte segura: um observer de `childList` identifica temporadas, relacionados/semelhantes, gráficos de episódio, trilhos de Descobrir e F1 assim que entram no DOM e aplica `.ct254-xrail`.
+- O documento inteiro continua com overflow horizontal bloqueado. Somente o componente largo recebe `overflow-x:auto`, scrollbar local, `-webkit-overflow-scrolling:touch` e `touch-action:pan-x pan-y`.
+
+### Build / validação
+- Web atualizada para `1.0.45 / r254-official-1.0.45`; Android permanece `1.0.20 / versionCode 10062`.
+- `package.json`, `apps/web/package.json`, `README.md` e `VERSIONS.md` foram alinhados à r254.
+- Build oficial: `apps/web/build-r254-official.mjs`; runtime: `apps/web/runtime-r254-video-ground-truth.js`.
+- `test-r254-algorithms.mjs` cobre Raw/SmackDown, backlog, 48 assistidos e filtros de recomendação.
+- `test-r254-browser.mjs` reproduz Lioness/Stuart com metadata persistido atrasado, SmackDown com `next_episode_to_air` futuro, F1 tentando nascer antes da sidebar, Descobrir com resposta lenta/race e temporadas/gráficos inseridos somente depois da navegação.
+- `scripts/test-r254-exact-bundle-browser.mjs` carrega o `app-v254.js` final inteiro, captura `error`/`unhandledrejection` e exige conteúdo real no `#app`.
+- `verify.yml` exige build, regras, Chromium guiado pelo vídeo, boot do bundle final, identidade final, Android inalterado e `production_smoke` 1.0.45/r254 após merge em `main`.
+
 ## 1.0.44 — 2026-09-11 — Web r253
 
 ### Causa raiz / autoridade única
@@ -151,7 +197,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - Testes de Chromium introduzem mutações atrasadas após 2 segundos para provar que a autoridade atual recupera estado correto sem polling ou guerra contínua de DOM.
 
 ### Home / episódios
-- Preservada a fronteira baseada no último episódio efetivamente acompanhado: backlog histórico continua não assistido, mas não remove Raw, SmackDown ou outras séries longas do estado `Em dia`.
+- Preservada a fronteira baseada no último episódio efetivamente acompanhado: backlog histórico continua não assistido, mas não remove Raw, SmackDown ou outras séries longas do estado correto `Em dia`.
 - Quando há backlog antigo e também episódio novo ao mesmo tempo, qualquer episódio liberado depois da fronteira acompanhada tem prioridade e força `Assistir a seguir`.
 - Lioness, Stuart e demais séries iniciadas continuam usando a mesma regra genérica, sem hardcode de título.
 - A ponte F1/Super Bowl deixa de chamar o RPC inexistente `cinetracker_sports_events_v0997` e passa a reutilizar somente o payload/estado esportivo canônico já carregado pela aplicação.

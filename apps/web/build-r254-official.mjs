@@ -1,0 +1,13 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r254.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [js,css,html,release]=await Promise.all([readFile(resolve(dist,'app-v254.js'),'utf8'),readFile(resolve(dist,'app-v254.css'),'utf8'),readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'release.json'),'utf8')]);
+for(const x of ["window.__ctR254='video-ground-truth-home-discover-sports-scroll'","window.__ctR254LegacyR239ObserverDisabled=true","window.__ctR254LegacyR247ObserverDisabled=true","window.__ctR254R252QueueClassifierDisabled=true","window.__ctR254R252PaintClassifierDisabled=true","cinetracker_sports_payload_v1","cinetracker_home_live_v0997_r3"])if(!js.includes(x))throw new Error('r254 official missing '+x);
+if(js.includes("window.__ctR253='single-authority-live-data'"))throw new Error('r253 renderer leaked into r254');
+if(js.includes('cinetracker_sports_events_v0997'))throw new Error('retired sports RPC leaked into r254');
+if(!css.includes('.ct254-xrail')||!css.includes('[data-ct254-sports]>.ct248-f1hub'))throw new Error('r254 local layout CSS missing');
+if(!html.includes('app-v254.js')||!html.includes('app-v254.css'))throw new Error('r254 HTML assets missing');
+if(!release.includes('r254-official-1.0.45'))throw new Error('r254 release identity missing');
+console.log('WEB_1_0_45_OFFICIAL r254 video-ground-truth=verified');

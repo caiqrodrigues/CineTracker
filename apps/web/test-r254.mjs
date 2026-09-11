@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+const runtime=await readFile(new URL('./runtime-r254-video-ground-truth.js',import.meta.url),'utf8');
+const build=await readFile(new URL('./build-r254.mjs',import.meta.url),'utf8');
+const pkg=JSON.parse(await readFile(new URL('./package.json',import.meta.url),'utf8'));
+const rootPkg=JSON.parse(await readFile(new URL('../../package.json',import.meta.url),'utf8'));
+const A=(c,m)=>{if(!c)throw new Error(m)};
+A(pkg.version==='1.0.45'&&rootPkg.version==='1.0.45','version 1.0.45');
+for(const x of ["window.__ctR254='video-ground-truth-home-discover-sports-scroll'","window.__ctR254Home='live-aired-frontier-nonlegacy+legacy-last-aired-only'","window.__ctR254Discover='atomic-tabs-cached-exclusions-time-bounded'","window.__ctR254Sports='inner-root-four-tabs-canonical-history'","window.__ctR254Horizontal='dynamic-local-rails-no-page-x'","next_episode_to_air is never","last_episode_to_air","data-ct254-sport-tab","data-ct254-discover-tab","ct254-xrail","relocateF1254","cinetracker_sports_payload_v1","cinetracker_profile_payload_v0997_r2","cinetracker_sport_stats_v1"])A(runtime.includes(x),'runtime marker '+x);
+A(!runtime.includes('data-sports-tab='),'no legacy sports selector in r254 renderer');
+A(!runtime.includes('data-discover-tab='),'no legacy discover selector in r254 renderer');
+for(const x of ['r239 perpetual observer','r247 perpetual observer','r252 queue classifier','r252 paint classifier',"await import('./build-r252-official.mjs')","r254-official-1.0.45","app-v254.js"])A(build.includes(x),'build guard '+x);
+console.log('R254_STATIC_PASS');
