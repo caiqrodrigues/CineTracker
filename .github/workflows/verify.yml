@@ -1,121 +1,62 @@
-name: Verify Web 1.0.40 r249 Single Authority
+name: Verify Web 1.0.41 r250 Deterministic UI
 
 on:
   push:
-    branches: [main, 'fix/r249-single-authority-ui']
+    branches: [main, 'fix/r250-current-ui-source']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_40_r249:
+  web_1_0_41_r250:
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax all authorities
+      - name: Syntax current release chain
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.40"' apps/web/package.json
-          node --check apps/web/runtime-r240-user-video-semantics.js
-          node --check apps/web/runtime-r243-home-interaction-catchup.js
-          node --check apps/web/runtime-r244-series-horizontal-overflow.js
-          node --check apps/web/runtime-r245-horizontal-home-authority.js
-          node --check apps/web/runtime-r247-black-screen-recovery.js
-          node --check apps/web/runtime-r248-current-following-ui.js
-          node --check apps/web/runtime-r248-state-binding.js
-          node --check apps/web/runtime-r248-following-sports-series.js
-          node --check apps/web/runtime-r248-discover-final.js
+          grep -Fq '"version": "1.0.41"' apps/web/package.json
           node --check apps/web/runtime-r249-single-authority.js
-          node --check apps/web/build-r249.mjs
-          node --check apps/web/build-r249-official.mjs
-          node --check apps/web/test-r249.mjs
-          node --check scripts/test-r249-authority-browser.mjs
-          node --check scripts/test-r249-exact-bundle-browser.mjs
-      - name: Chromium r239 production ground truth
-        run: node scripts/test-r239-video-ground-truth-browser.mjs
-      - name: Chromium r240 exclusions and atomic Discover
-        run: node scripts/test-r240-user-video-semantics-browser.mjs
-      - name: Build inherited r243
-        working-directory: apps/web
-        run: node build-r243.mjs
-      - name: Static inherited r243
-        working-directory: apps/web
-        run: node test-r243.mjs
-      - name: Chromium r243 Home
-        run: node scripts/test-r243-home-browser.mjs
-      - name: Build inherited r244
-        working-directory: apps/web
-        run: node build-r244.mjs
-      - name: Static inherited r244
-        working-directory: apps/web
-        run: node test-r244.mjs
-      - name: Chromium r244 overflow
-        run: node scripts/test-r244-series-overflow-browser.mjs
-      - name: Build inherited r245
-        working-directory: apps/web
-        run: node build-r245.mjs
-      - name: Static inherited r245
-        working-directory: apps/web
-        run: node test-r245.mjs
-      - name: Chromium r245 Home and drag
-        run: node scripts/test-r245-horizontal-home-browser.mjs
-      - name: Build inherited r247
-        working-directory: apps/web
-        run: node build-r247.mjs
-      - name: Static inherited r247
-        working-directory: apps/web
-        run: node test-r247.mjs
-      - name: Chromium inherited r247 sports
-        run: node scripts/test-r247-sports-browser.mjs
-      - name: Chromium inherited r247 exact boot
-        run: node scripts/test-r247-exact-bundle-browser.mjs
-      - name: Build inherited r248
-        working-directory: apps/web
-        run: node build-r248-official.mjs
-      - name: Static inherited r248
-        working-directory: apps/web
-        run: node test-r248.mjs
-      - name: Chromium inherited r248 complete UI
-        run: node scripts/test-r248-complete-ui-browser.mjs
-      - name: Chromium inherited r248 exact bundle boot
-        run: node scripts/test-r248-exact-bundle-browser.mjs
-      - name: Build official r249
+          node --check apps/web/runtime-r250-source-aligned.js
+          node --check apps/web/build-r250.mjs
+          node --check apps/web/build-r250-official.mjs
+          node --check apps/web/test-r250.mjs
+          node --check scripts/test-r250-regression-browser.mjs
+      - name: Inherited r249 exact bundle regression
         working-directory: apps/web
         run: node build-r249-official.mjs
-      - name: Static invariants r249
+      - name: Chromium inherited r249 exact boot
+        run: node scripts/test-r249-exact-bundle-browser.mjs
+      - name: Build official r250
         working-directory: apps/web
-        run: node test-r249.mjs
-      - name: Final bundle identity r249
+        run: node build-r250-official.mjs
+      - name: Static invariants r250
+        working-directory: apps/web
+        run: node test-r250.mjs
+      - name: Final bundle identity r250
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v249.js
-          grep -Fq "window.__ctWebBuild='1.0.40';window.__ctOfficialVersion='1.0.40';" dist/app-v249.js
-          grep -Fq "const REVISION='r249-official-1.0.40';" dist/app-v249.js
-          grep -Fq "window.__ctR249='single-authority-current-ui'" dist/app-v249.js
-          grep -Fq "window.__ctR249Following='watched-frontier-new-release-wins'" dist/app-v249.js
-          grep -Fq "window.__ctR249Discover='atomic-latest-request-generation'" dist/app-v249.js
-          grep -Fq "window.__ctR249Sports='canonical-four-tabs-no-legacy-rpc'" dist/app-v249.js
-          grep -Fq "window.__ctR249F1='persistent-collapse-event-driven'" dist/app-v249.js
-          grep -Fq "window.__ctR249Profile='single-statistics-owner'" dist/app-v249.js
-          grep -Fq "window.__ctR249Horizontal='local-x-only-global-x-clipped'" dist/app-v249.js
-          grep -Fq 'window.__ctR249LegacyCurrentObserverDisabled=true' dist/app-v249.js
-          grep -Fq 'window.__ctR249LegacyBindingObserverDisabled=true' dist/app-v249.js
-          ! grep -Fq 'cinetracker_sports_events_v0997' dist/app-v249.js
-          grep -Fq 'app-v249.js' dist/index.html
-          grep -Fq 'app-v249.css' dist/index.html
-          grep -Fq '"version": "1.0.40"' dist/release.json
-          grep -Fq '"revision": "r249-official-1.0.40"' dist/release.json
-          grep -Fq 'overflow-x:clip!important' dist/app-v249.css
-          grep -Fq '.ct249-xrail' dist/app-v249.css
-      - name: Chromium r249 delayed overwrite and race authority
-        run: node scripts/test-r249-authority-browser.mjs
-      - name: Chromium r249 exact final bundle boot
-        run: node scripts/test-r249-exact-bundle-browser.mjs
+          node --check dist/app-v250.js
+          grep -Fq "window.__ctWebBuild='1.0.41';window.__ctOfficialVersion='1.0.41';" dist/app-v250.js
+          grep -Fq "const REVISION='r250-official-1.0.41';" dist/app-v250.js
+          grep -Fq "window.__ctR250='source-aligned-deterministic-ui'" dist/app-v250.js
+          grep -Fq 'window.__ctR250LegacyR249EventsDisabled=true' dist/app-v250.js
+          grep -Fq 'cinetracker_sports_payload_v1' dist/app-v250.js
+          grep -Fq 'cinetracker_sport_mark_watched_v1' dist/app-v250.js
+          ! grep -Fq 'cinetracker_sports_events_v0997' dist/app-v250.js
+          grep -Fq 'app-v250.js' dist/index.html
+          grep -Fq 'app-v250.css' dist/index.html
+          grep -Fq '"version": "1.0.41"' dist/release.json
+          grep -Fq '"revision": "r250-official-1.0.41"' dist/release.json
+          grep -Fq 'overflow-x:clip!important' dist/app-v250.css
+          grep -Fq '.ct250-xrail' dist/app-v250.css
+      - name: Chromium r250 user-visible regressions
+        run: node scripts/test-r250-regression-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -130,21 +71,21 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_40_r249]
+    needs: [web_1_0_41_r250]
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 18
     steps:
-      - name: Official production serves and boots 1.0.40 r249
+      - name: Official production serves and boots 1.0.41 r250
         run: |
           set -euo pipefail
-          for i in $(seq 1 150); do
+          for i in $(seq 1 180); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.40"' <<<"$BODY" && grep -Fq '"revision": "r249-official-1.0.40"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v249.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v249.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.41"' <<<"$BODY" && grep -Fq '"revision": "r250-official-1.0.41"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v250.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v250.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR249='single-authority-current-ui'" <<<"$JS" && grep -Fq "window.__ctR249Discover='atomic-latest-request-generation'" <<<"$JS" && grep -Fq "window.__ctR249Sports='canonical-four-tabs-no-legacy-rpc'" <<<"$JS" && ! grep -Fq 'cinetracker_sports_events_v0997' <<<"$JS" && grep -Fq 'overflow-x:clip!important' <<<"$CSS" && grep -Fq 'app-v249.js' <<<"$HTML"; then
-                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=4500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
+              if grep -Fq "window.__ctR250='source-aligned-deterministic-ui'" <<<"$JS" && grep -Fq 'cinetracker_sports_payload_v1' <<<"$JS" && ! grep -Fq 'cinetracker_sports_events_v0997' <<<"$JS" && grep -Fq 'overflow-x:clip!important' <<<"$CSS" && grep -Fq 'app-v250.js' <<<"$HTML"; then
+                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
