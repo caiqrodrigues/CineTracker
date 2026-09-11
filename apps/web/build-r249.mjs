@@ -27,10 +27,9 @@ for(const m of [
  "window.__ctR249Horizontal='local-x-only-global-x-clipped'"
 ])must(authority,m,m);
 
-/* The r248 state binders were useful while old renderers were still active, but their
-   perpetual MutationObservers become competing owners after r249. Keep their one-shot
-   setup/listeners and explicitly do not attach the two perpetual observers. */
-const currentObserver='observer.observe(document.body,{subtree:true,childList:true});';
+/* Keep the useful one-shot r248 setup/listeners, but do not attach either perpetual
+   observer: r249 is the sole event-driven owner after its insertion. */
+const currentObserver='observer.observe(document.documentElement,{childList:true,subtree:true});';
 const bindingObserver="let raf=0;new MutationObserver(()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(cleanLegacy)}).observe(document.documentElement,{subtree:true,childList:true});";
 const r248At=js.indexOf("window.__ctR248='current-following-complete-ui-authority'");
 if(r248At<0)throw new Error('r249 cannot locate r248 authority');
@@ -41,8 +40,7 @@ must(after,bindingObserver,'r248 state-binding perpetual observer');
 after=after.replace(bindingObserver,"let raf=0;window.__ctR249LegacyBindingObserverDisabled=true;");
 js=before+after;
 
-/* Home sports-series bridge must use the already loaded canonical Sports payload/state.
-   The removed RPC never exists in the r249 bundle and therefore can never be invoked. */
+/* Home sports-series bridge reuses the canonical Sports payload/state. */
 const legacyRpc="typeof rpc==='function'?await rpc('cinetracker_sports_events_v0997',{p_scope:'month',p_limit:240,p_offset:0,p_favorite_only:false}):[]";
 must(js,legacyRpc,'legacy sports RPC');
 js=js.replace(legacyRpc,"typeof window.__ctR249SportsRows==='function'?await window.__ctR249SportsRows():[]");
