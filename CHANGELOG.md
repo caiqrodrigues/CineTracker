@@ -7,12 +7,14 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 ### Home / episódios
 - Auditoria canônica ampliada para 8 workers e lote prioritário de 40 séries, com liberação de metadados secundários em 250 ms.
 - A regra de acompanhamento passa a separar **episódio novo à frente do ponto atual** de buracos históricos não assistidos: episódios antigos continuam não vistos, mas não removem uma série realmente em dia do estado correto.
-- Lioness, Stuart e demais séries iniciadas continuam usando regra genérica de episódio liberado/não visto, sem hardcode por título.
-- Itens modelados como `sport_series`, `sports_series`, `series_event` ou `event_series` usam a mesma fronteira atual, cobrindo F1 e Super Bowl quando presentes nesse universo.
+- Em cenários mistos, com backlog histórico e episódio novo ao mesmo tempo, qualquer episódio liberado depois da fronteira acompanhada tem prioridade e força `Assistir a seguir`.
+- Raw, SmackDown e demais séries longas podem ficar `Em dia` sem marcar automaticamente episódios antigos que o usuário pretende assistir posteriormente.
+- Lioness, Stuart e demais séries iniciadas continuam usando a mesma regra genérica de episódio liberado/não visto, sem hardcode por título.
+- F1 e Super Bowl ganham ponte seriada baseada somente em eventos esportivos reais: evento liberado/não visto aparece como novo; próximo evento real mantém o acompanhamento atual sem inventar histórico ou resultado.
 
 ### Descobrir
 - Removida a restauração de snapshots antigos de HTML que podia recolocar conteúdo de uma aba anterior e provocar tremor/pulo visual.
-- Mantidas as exclusões pessoais canônicas do `Pra você`, evitando títulos já vistos, em andamento, na Watchlist e demais estados bloqueados.
+- Mantidas as exclusões pessoais canônicas do `Pra você` e demais faixas, evitando títulos já vistos, em andamento, na Watchlist e marcados `NotInterested`.
 - Cards e trilhos recebem estabilização pós-render sem reconstrução concorrente do shell.
 - `Novidades` preserva a regra estrita de lançamentos dos últimos 30 dias.
 
@@ -44,9 +46,9 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - Web atualizada para `1.0.39 / r248-official-1.0.39`.
 - Android permanece `1.0.20 / versionCode 10062`, sem alteração nesta release.
 - Build oficial: `apps/web/build-r248-official.mjs`.
-- Runtime final: `apps/web/runtime-r248-current-following-ui.js` + `runtime-r248-state-binding.js`.
+- Runtime final: `apps/web/runtime-r248-current-following-ui.js` + `runtime-r248-state-binding.js` + `runtime-r248-following-sports-series.js`.
 - Invariantes: `apps/web/test-r248.mjs`.
-- Chromium completo: `scripts/test-r248-complete-ui-browser.mjs`.
+- Chromium completo: `scripts/test-r248-complete-ui-browser.mjs`, incluindo backlog histórico, episódio novo posterior, cenário misto, F1/Super Bowl seriados, quatro abas esportivas, F1 persistente, Perfil único e trilhos locais.
 - Boot exato do bundle: `scripts/test-r248-exact-bundle-browser.mjs`.
 - Pipeline preserva regressões r239→r247, valida r248 e exige smoke público após promoção ao `main`.
 
