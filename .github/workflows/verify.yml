@@ -28,6 +28,7 @@ jobs:
           node --check apps/web/runtime-r248-current-following-ui.js
           node --check apps/web/runtime-r248-state-binding.js
           node --check apps/web/runtime-r248-following-sports-series.js
+          node --check apps/web/runtime-r248-discover-final.js
           node --check apps/web/build-r248.mjs
           node --check apps/web/build-r248-official.mjs
           node --check apps/web/test-r248.mjs
@@ -87,6 +88,7 @@ jobs:
           grep -Fq "window.__ctR248='current-following-complete-ui-authority'" dist/app-v248.js
           grep -Fq "window.__ctR248Binding='sports-f1-current-runtime-binding'" dist/app-v248.js
           grep -Fq "window.__ctR248Following='mixed-backlog-new-release-and-sports-series'" dist/app-v248.js
+          grep -Fq "window.__ctR248DiscoverFinal='content-only-tabs-stable-cards-personal-rules'" dist/app-v248.js
           grep -Fq 'const CT245_SERIES_MAX=8;' dist/app-v248.js
           grep -Fq 'const CT245_PRIORITY_BATCH=40;' dist/app-v248.js
           grep -Fq 'setTimeout(ct245ReleaseMovies,250)' dist/app-v248.js
@@ -130,7 +132,7 @@ jobs:
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v248.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v248.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR248='current-following-complete-ui-authority'" <<<"$JS" && grep -Fq "window.__ctR248Binding='sports-f1-current-runtime-binding'" <<<"$JS" && grep -Fq "window.__ctR248Following='mixed-backlog-new-release-and-sports-series'" <<<"$JS" && grep -Fq 'overflow-x:clip!important' <<<"$CSS" && grep -Fq 'app-v248.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR248='current-following-complete-ui-authority'" <<<"$JS" && grep -Fq "window.__ctR248Binding='sports-f1-current-runtime-binding'" <<<"$JS" && grep -Fq "window.__ctR248Following='mixed-backlog-new-release-and-sports-series'" <<<"$JS" && grep -Fq "window.__ctR248DiscoverFinal='content-only-tabs-stable-cards-personal-rules'" <<<"$JS" && grep -Fq 'overflow-x:clip!important' <<<"$CSS" && grep -Fq 'app-v248.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=4000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
