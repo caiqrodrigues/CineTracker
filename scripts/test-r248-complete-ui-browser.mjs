@@ -1,7 +1,7 @@
 import {readFile,writeFile,rm,mkdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
-const root=resolve(process.cwd()),runtime=(await readFile(resolve(root,'apps/web/runtime-r248-current-following-ui.js'),'utf8')).replaceAll('</script>','<\\/script>'),binding=(await readFile(resolve(root,'apps/web/runtime-r248-state-binding.js'),'utf8')).replaceAll('</script>','<\\/script>'),stability=(await readFile(resolve(root,'apps/web/runtime-r248-stability-guard.js'),'utf8')).replaceAll('</script>','<\\/script>'),css=await readFile(resolve(root,'apps/web/dist/app-v248.css'),'utf8');
+const root=resolve(process.cwd()),runtime=(await readFile(resolve(root,'apps/web/runtime-r248-current-following-ui.js'),'utf8')).replaceAll('</script>','<\\/script>'),binding=(await readFile(resolve(root,'apps/web/runtime-r248-state-binding.js'),'utf8')).replaceAll('</script>','<\\/script>'),css=await readFile(resolve(root,'apps/web/dist/app-v248.css'),'utf8');
 const dir='/tmp/ct-r248-ui';await mkdir(dir,{recursive:true});let bin='';for(const c of ['google-chrome','chromium','chromium-browser'])try{execFileSync('which',[c],{stdio:'ignore'});bin=c;break}catch{}if(!bin)throw new Error('Chromium unavailable');
 try{
  const html=resolve(dir,'index.html');
@@ -10,7 +10,7 @@ try{
  window.homeCache={series:[{media_id:1,title:'Long runner',last_season:33,last_episode:36,history_missing_episodes:400,home_bucket:'continue',is_caught_up:false},{media_id:2,title:'Current show',last_season:2,last_episode:7,home_bucket:'caught_up',is_caught_up:true},{media_id:3,title:'Motorsport season',content_type:'sport_series',last_season:2026,last_episode:5,home_bucket:'caught_up',is_caught_up:true}]};
  window.ct176CanonicalPair=r=>({current:r.media_id===1?{season_number:1,episode_number:1}:r.media_id===2?{season_number:2,episode_number:8}:{season_number:2026,episode_number:6}});window.route=()=> 'home';window.ct175SchedulePaint=()=>{};window.paintHome=()=>{};window.renderDiscover=async()=>{};window.renderSports=async()=>{};window.renderProfile=async()=>{};window.sportsState={tab:'next',page:0};
  window.fetch=async()=>new Response(JSON.stringify({MRData:{RaceTable:{Races:[]},StandingsTable:{StandingsLists:[]}}}),{status:200,headers:{'Content-Type':'application/json'}});
- </script><script>${runtime}</script><script>${binding}</script><script>${stability}</script><script>
+ </script><script>${runtime}</script><script>${binding}</script><script>
  setTimeout(async()=>{try{
   const raw=homeCache.series[0],cur=homeCache.series[1],sportSeries=homeCache.series[2];
   const now=new Date(2026,8,11,12,0,0),mk=(days,h,f=false,w=false)=>({date:new Date(2026,8,11+days,h).toISOString(),favorite:f,watched:w});
@@ -18,8 +18,9 @@ try{
   const lens=['next','previous','favorites','watched'].map(x=>__ctR248SportFilter(events,x,now).length).join(',');
   __ctR248SetF1Collapsed(true);await __ctR248RenderF1();
   const sportLabels=[...document.querySelectorAll('[data-ct248-sport-tab]')].map(x=>x.textContent.trim()).join('|');
+  const eventControl=[...document.querySelectorAll('#p-sports button,#p-sports a,#p-sports [role="button"]')].some(x=>['eventos','agenda','ver eventos','ver agenda'].includes(String(x.textContent||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().trim()));
   const stats=[...document.querySelectorAll('#p-profile h1,#p-profile h2,#p-profile h3')].filter(x=>x.textContent.includes('Estatísticas')).length;
-  document.body.dataset.done='1';document.body.dataset.raw=raw.home_bucket+':'+raw.is_caught_up+':'+raw.history_missing_episodes;document.body.dataset.current=cur.home_bucket+':'+cur.is_caught_up;document.body.dataset.seriesevent=sportSeries.home_bucket+':'+sportSeries.is_caught_up;document.body.dataset.filters=lens;document.body.dataset.tabs=sportLabels;document.body.dataset.eventos=String(document.body.textContent.includes('Eventos'));document.body.dataset.f1tabs=String(document.querySelectorAll('[data-ct248-f1tab]').length);document.body.dataset.f1hidden=String(document.querySelector('.ct248-f1body')?.hidden);document.body.dataset.stats=String(stats);document.body.dataset.sportstat=String(!!document.querySelector('.ct248-profile-grid #sport-stat'));document.body.dataset.rails=String(document.querySelectorAll('.ct248-xrail').length);document.body.dataset.errors=__errs.join('|');
+  document.body.dataset.done='1';document.body.dataset.raw=raw.home_bucket+':'+raw.is_caught_up+':'+raw.history_missing_episodes;document.body.dataset.current=cur.home_bucket+':'+cur.is_caught_up;document.body.dataset.seriesevent=sportSeries.home_bucket+':'+sportSeries.is_caught_up;document.body.dataset.filters=lens;document.body.dataset.tabs=sportLabels;document.body.dataset.eventos=String(eventControl);document.body.dataset.f1tabs=String(document.querySelectorAll('[data-ct248-f1tab]').length);document.body.dataset.f1hidden=String(document.querySelector('.ct248-f1body')?.hidden);document.body.dataset.stats=String(stats);document.body.dataset.sportstat=String(!!document.querySelector('.ct248-profile-grid #sport-stat'));document.body.dataset.rails=String(document.querySelectorAll('.ct248-xrail').length);document.body.dataset.errors=__errs.join('|');
  }catch(e){document.body.dataset.done='1';document.body.dataset.errors=String(e.stack||e)}},500);
  </script></body></html>`,'utf8');
  const out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking',`--user-data-dir=${resolve(dir,'profile')}`,'--virtual-time-budget=1600','--dump-dom','file://'+html],{encoding:'utf8',timeout:25000,stdio:['ignore','pipe','pipe']});
