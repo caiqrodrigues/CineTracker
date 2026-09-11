@@ -27,8 +27,7 @@ for(const m of [
  "window.__ctR249Horizontal='local-x-only-global-x-clipped'"
 ])must(authority,m,m);
 
-/* Keep the useful one-shot r248 setup/listeners, but do not attach either perpetual
-   observer: r249 is the sole event-driven owner after its insertion. */
+/* Keep the useful one-shot r248 setup/listeners, but do not attach either perpetual observer. */
 const currentObserver='observer.observe(document.documentElement,{childList:true,subtree:true});';
 const bindingObserver="let raf=0;new MutationObserver(()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(cleanLegacy)}).observe(document.documentElement,{subtree:true,childList:true});";
 const r248At=js.indexOf("window.__ctR248='current-following-complete-ui-authority'");
@@ -40,10 +39,22 @@ must(after,bindingObserver,'r248 state-binding perpetual observer');
 after=after.replace(bindingObserver,"let raf=0;window.__ctR249LegacyBindingObserverDisabled=true;");
 js=before+after;
 
-/* Home sports-series bridge reuses the canonical Sports payload/state. */
-const legacyRpc="typeof rpc==='function'?await rpc('cinetracker_sports_events_v0997',{p_scope:'month',p_limit:240,p_offset:0,p_favorite_only:false}):[]";
-must(js,legacyRpc,'legacy sports RPC');
-js=js.replace(legacyRpc,"typeof window.__ctR249SportsRows==='function'?await window.__ctR249SportsRows():[]");
+/* r247 captured the working pre-r247 Sports payload in legacyPayload247, but then replaced it
+   with calls to an RPC that does not exist in production. Reconnect r247 to that captured
+   canonical payload instead of renaming or hiding the invalid RPC. */
+const r247Payload=/async function payload247\(\)\{[\s\S]*?\n\}\nfunction filtered247\(rows\)\{/;
+if(!r247Payload.test(js))throw new Error('r249 cannot locate inherited r247 sports payload');
+js=js.replace(r247Payload,`async function payload247(){
+ let tab='next';try{tab=String(sportsState.tab||'next')}catch{}if(!sportKeys247.has(tab))tab='next';
+ const legacyKey=({next:'today',previous:'recent',favorites:'favorites',watched:legacyWatchedKey247})[tab]||tab;
+ return withLegacyPayload247(legacyKey);
+}
+function filtered247(rows){`);
+
+/* Home sports-series bridge consumes the same current Sports authority. */
+const followingRpc="typeof rpc==='function'?await rpc('cinetracker_sports_events_v0997',{p_scope:'month',p_limit:240,p_offset:0,p_favorite_only:false}):[]";
+must(js,followingRpc,'r248 following sports RPC');
+js=js.replace(followingRpc,"typeof window.__ctR249SportsRows==='function'?await window.__ctR249SportsRows():[]");
 if(js.includes('cinetracker_sports_events_v0997'))throw new Error('r249 legacy sports RPC survived');
 
 js=js.replace("const REVISION='r248-official-1.0.39';","const REVISION='r249-official-1.0.40';")
@@ -73,7 +84,7 @@ await Promise.all([
   version:'1.0.40',revision:'r249-official-1.0.40',base:'r248-official-1.0.39',scope:'web-single-current-ui-authority',
   home:'watched-frontier+new-release-wins+historical-backlog-stays-unwatched',
   discover:'latest-request-generation+tab-type-owner+canonical-personal-exclusions+30-day-new',
-  sports_tabs:['Próximos','Anteriores','Favoritos','Assistidos'],sports_rpc:'canonical-loaded-state-no-v0997-rpc',sports_next:'today-future-only',sports_previous:'D-1-through-D-3',sports_favorites:'favorite-only',sports_watched:'watched-only',
+  sports_tabs:['Próximos','Anteriores','Favoritos','Assistidos'],sports_rpc:'canonical-captured-payload-no-v0997-rpc',sports_next:'today-future-only',sports_previous:'D-1-through-D-3',sports_favorites:'favorite-only',sports_watched:'watched-only',
   f1:'six-tabs+Brasilia-time+persistent-user-collapse',profile:'single-statistics-owner',global_horizontal_scroll:'disabled',vertical_page_scroll:'preserved',local_horizontal_scrollbars:'visible',legacy_perpetual_observers:'disabled',android:'unchanged-1.0.20',generated_at:new Date().toISOString()
  },null,2),'utf8')
 ]);
