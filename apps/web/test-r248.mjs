@@ -1,0 +1,15 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [js,css,html,rel,runtime,binding]=await Promise.all([
+ readFile(resolve(dist,'app-v248.js'),'utf8'),readFile(resolve(dist,'app-v248.css'),'utf8'),readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r248-current-following-ui.js'),'utf8'),readFile(resolve(root,'runtime-r248-state-binding.js'),'utf8')
+]);
+const need=(s,x)=>{if(!s.includes(x))throw new Error('R248 missing '+x)};
+for(const x of ["const REVISION='r248-official-1.0.39';","window.__ctWebBuild='1.0.39';window.__ctOfficialVersion='1.0.39';","window.__ctR248='current-following-complete-ui-authority'","const CT245_SERIES_MAX=8;","const CT245_PRIORITY_BATCH=40;","setTimeout(ct245ReleaseMovies,250)","row._ct248HistoricalBacklogPreserved=true","function rememberDiscover240(){return false}","function restoreDiscover240(){return false}","window.__ctR248Binding='sports-f1-current-runtime-binding'"])need(js,x);
+for(const x of ["window.__ctR248Home='current-frontier-keeps-historical-backlog-unwatched'","window.__ctR248Discover='stable-canonical-rules-no-html-restore'","window.__ctR248Sports='four-tabs-today-d3-favorites-watched'","['next','Próximos']","['previous','Anteriores']","['favorites','Favoritos']","['watched','Assistidos']","window.__ctR248F1='jolpica-six-tabs-persistent-collapse'","['overview','Visão geral']","['calendar','Calendário']","['next','Próximo GP']","['drivers','Pilotos']","['constructors','Construtores']","['last','Último GP']","America/Sao_Paulo","driverstandings.json","constructorstandings.json","last/results.json","last/qualifying.json","window.__ctR248Profile='one-stable-statistics-group'","window.__ctR248Horizontal='dynamic-local-scrollbars-no-page-x'"])need(runtime,x);
+for(const x of ['data-ct248-sport-tab','sportsState.tab=key','.ct247-sport-tabs'])need(binding,x);
+for(const x of ['overflow-x:clip!important','.ct248-xrail','overflow-x:auto!important','scrollbar-width:thin!important','@keyframes ct248WatchPop','.ct248-f1hub','.ct248-profile-grid'])need(css,x);
+need(html,'app-v248.js');need(html,'app-v248.css');need(rel,'"version": "1.0.39"');need(rel,'"revision": "r248-official-1.0.39"');
+if(js.includes("function reconcile247(forceHome=false){if(reconciling247)return;reconciling247=true;try{home247(forceHome);discover247();sports247();applyF1247();profile247();horizontal247()"))throw new Error('r247 conflicting reconciler survived');
+console.log('R248_STATIC_OK version=1.0.39 frontier discover sports f1 profile local-scroll');
