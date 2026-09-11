@@ -8,22 +8,28 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - Home, Descobrir, Esportes/F1 e Perfil passam a assumir os renderizadores ativos antes do `boot()`, removendo a dependência da reconciliação tardia que permitiu às r249/r250 passarem no CI sem refletir corretamente a tela real.
 - A Home usa a fronteira efetivamente assistida: backlog histórico permanece preservado, mas só episódio liberado depois da fronteira atual volta para `Assistir a seguir`.
 - A auditoria canônica de episódios roda de forma concorrente e repinta a Home assim que o estado atual é confirmado.
+- F1 e Super Bowl usam uma ponte esportiva direta na Home: evento recente não assistido entra em `Assistir a seguir`, e o próximo evento real mantém a mídia em `Em dia`, sem inventar histórico legado.
+- Cards de filmes mantêm a nota TMDB visível, inclusive nas listas da Home, com título, temporada/data e ação de visto em proporções consistentes.
 
 ### Descobrir / recomendações
-- Recomendações exigem TMDB >= 7,5 e ano posterior a 1990, removem Drama/Documentário puro, vistos, em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio.
-- `Indicação do Dia`, `Da sua Watchlist` e `100% Novos` são blocos obrigatórios com antirrepetição; `Trocar` substitui o item elegível sem reload global.
+- Recomendações exigem TMDB >= 7,5 e ano posterior a 1990, removem Drama/Documentário puro sem eliminar obras de gênero misto, vistos, em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio.
+- As nove sub-abas — `Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` — permanecem clicáveis sob a mesma autoridade, com Top 10 por streaming preservado.
+- `Indicação do Dia`, `Da sua Watchlist` e `100% Novos` são blocos obrigatórios com antirrepetição; a janela de 7 dias vale para todos os itens exibidos nos três blocos, e `Trocar` substitui o item elegível sem reload global.
 - A migration `20260911175655_r251_shown_recommendations.sql` cria `shown_recommendations` com RLS e sustenta a janela de 7 dias sem repetir recomendações já exibidas.
+- A migration complementar `20260911192843_r251_shown_recommendations_policy_hardening.sql` remove privilégios desnecessários, restringe o acesso ao papel `authenticated` e usa `(select auth.uid())` nas policies para evitar avaliação por linha.
 
 ### Esportes / F1 / Perfil / layout
-- Esportes mantém somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, usando `cinetracker_sports_payload_v1` e `cinetracker_sport_mark_watched_v1`; o bundle r251 não chama `cinetracker_sports_events_v0997`.
-- O F1 Hub possui uma única instância e respeita o estado persistido de minimizar/expandir sem autoexpansão herdada.
+- Esportes mantém somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`: futuro de hoje, janela móvel anterior de 72 horas, entidades favoritas e histórico canônico de vistos, respectivamente.
+- A carga usa `cinetracker_sports_payload_v1`, reaproveita a sincronização autenticada quando o feed está vazio e marca/desmarca via `cinetracker_sport_mark_watched_v1`; o bundle r251 não chama `cinetracker_sports_events_v0997`.
+- O botão de visto possui microinteração de confirmação, e o F1 Hub mantém uma única instância, seis áreas e o estado persistido de minimizar/expandir sem autoexpansão herdada.
 - Perfil possui um único bloco expansível de `Estatísticas`, incluindo Esportes; Home, Perfil, Configurações e sidebar recebem polish de proporção e espaçamento.
 - Overflow horizontal global permanece bloqueado; temporadas, gráficos, trilhos, Descobrir e F1 usam scroll horizontal somente no componente local.
 
 ### Build / validação
 - Web atualizada para `1.0.42 / r251-official-1.0.42`; Android permanece `1.0.20 / versionCode 10062`.
+- Os manifests `package.json` da raiz e de `apps/web` ficam alinhados em `1.0.42`.
 - Build oficial: `apps/web/build-r251-official.mjs`; runtime final: `apps/web/runtime-r251-ground-truth.js`.
-- Pipeline preserva a regressão r250 e valida invariantes, lógica, Chromium ground-truth e identidade final do bundle r251 antes da promoção ao `main`.
+- Pipeline preserva a regressão r250 e valida invariantes, lógica, Chromium ground-truth — incluindo as nove sub-abas, histórico semanal da Watchlist e a ponte F1/Super Bowl — e identidade final do bundle r251 antes da promoção ao `main`.
 
 ## 1.0.41 — 2026-09-11 — Web r250
 
