@@ -1,7 +1,7 @@
 import {readFile,writeFile,rm,mkdir} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
-const root=resolve(process.cwd()),runtime=(await readFile(resolve(root,'apps/web/runtime-r248-current-following-ui.js'),'utf8')).replaceAll('</script>','<\\/script>'),binding=(await readFile(resolve(root,'apps/web/runtime-r248-state-binding.js'),'utf8')).replaceAll('</script>','<\\/script>'),css=await readFile(resolve(root,'apps/web/dist/app-v248.css'),'utf8');
+const root=resolve(process.cwd()),runtime=(await readFile(resolve(root,'apps/web/runtime-r248-current-following-ui.js'),'utf8')).replaceAll('</script>','<\\/script>'),binding=(await readFile(resolve(root,'apps/web/runtime-r248-state-binding.js'),'utf8')).replaceAll('</script>','<\\/script>'),stability=(await readFile(resolve(root,'apps/web/runtime-r248-stability-guard.js'),'utf8')).replaceAll('</script>','<\\/script>'),css=await readFile(resolve(root,'apps/web/dist/app-v248.css'),'utf8');
 const dir='/tmp/ct-r248-ui';await mkdir(dir,{recursive:true});let bin='';for(const c of ['google-chrome','chromium','chromium-browser'])try{execFileSync('which',[c],{stdio:'ignore'});bin=c;break}catch{}if(!bin)throw new Error('Chromium unavailable');
 try{
  const html=resolve(dir,'index.html');
@@ -10,7 +10,7 @@ try{
  window.homeCache={series:[{media_id:1,title:'Long runner',last_season:33,last_episode:36,history_missing_episodes:400,home_bucket:'continue',is_caught_up:false},{media_id:2,title:'Current show',last_season:2,last_episode:7,home_bucket:'caught_up',is_caught_up:true},{media_id:3,title:'Motorsport season',content_type:'sport_series',last_season:2026,last_episode:5,home_bucket:'caught_up',is_caught_up:true}]};
  window.ct176CanonicalPair=r=>({current:r.media_id===1?{season_number:1,episode_number:1}:r.media_id===2?{season_number:2,episode_number:8}:{season_number:2026,episode_number:6}});window.route=()=> 'home';window.ct175SchedulePaint=()=>{};window.paintHome=()=>{};window.renderDiscover=async()=>{};window.renderSports=async()=>{};window.renderProfile=async()=>{};window.sportsState={tab:'next',page:0};
  window.fetch=async()=>new Response(JSON.stringify({MRData:{RaceTable:{Races:[]},StandingsTable:{StandingsLists:[]}}}),{status:200,headers:{'Content-Type':'application/json'}});
- </script><script>${runtime}</script><script>${binding}</script><script>
+ </script><script>${runtime}</script><script>${binding}</script><script>${stability}</script><script>
  setTimeout(async()=>{try{
   const raw=homeCache.series[0],cur=homeCache.series[1],sportSeries=homeCache.series[2];
   const now=new Date(2026,8,11,12,0,0),mk=(days,h,f=false,w=false)=>({date:new Date(2026,8,11+days,h).toISOString(),favorite:f,watched:w});
