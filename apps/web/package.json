@@ -4,7 +4,7 @@
   "version": "1.0.44",
   "scripts": {
     "build": "node build-r253-official.mjs",
-    "verify": "node build-r253-official.mjs && node test-r253.mjs && node test-r253-algorithms.mjs && node test-r253-browser.mjs",
+    "verify": "node build-r253-official.mjs && node test-r253.mjs && node test-r253-algorithms.mjs && node test-r253-profile-backend-ground-truth.mjs && node test-r253-browser.mjs",
     "test:r248": "node test-r248.mjs",
     "test:r249": "node test-r249.mjs",
     "test:r250": "node test-r250.mjs",
@@ -12,6 +12,7 @@
     "test:r252": "node test-r252.mjs",
     "test:r253": "node test-r253.mjs",
     "test:r253:algorithms": "node test-r253-algorithms.mjs",
+    "test:r253:backend": "node test-r253-profile-backend-ground-truth.mjs",
     "test:r253:browser": "node test-r253-browser.mjs"
   },
   "engines": {
