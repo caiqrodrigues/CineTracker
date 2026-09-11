@@ -41,11 +41,11 @@ must(after,currentObserver,'r248 current-ui observer');after=after.replace(curre
 must(after,bindingObserver,'r248 binding observer');after=after.replace(bindingObserver,"let raf=0;window.__ctR252LegacyBindingObserverDisabled=true;");
 js=before+after;
 
-/* r248 Home sports-series helper can be present more than once in the composed historical
-   bundle. Replace every executable copy with the canonical r252 payload helper. */
-const oldSportsSeries="typeof rpc==='function'?await rpc('cinetracker_sports_events_v0997',{p_scope:'month',p_limit:240,p_offset:0,p_favorite_only:false}):[]";
-must(js,oldSportsSeries,'r248 sports-series RPC');
-js=js.replaceAll(oldSportsSeries,"typeof window.__ctR252SportsEvents==='function'?await window.__ctR252SportsEvents():[]");
+/* Historical composition can contain more than one call shape for the retired Sports RPC.
+   Every executable rpc(...) call is redirected to the single canonical r252 payload helper. */
+must(js,'cinetracker_sports_events_v0997','r248 sports-series RPC');
+const retiredSportsCall=/rpc\(\s*['"]cinetracker_sports_events_v0997['"]\s*,\s*\{[^{}]*\}\s*\)/g;
+js=js.replace(retiredSportsCall,"window.__ctR252SportsEvents()");
 if(js.includes('cinetracker_sports_events_v0997'))throw new Error('retired sports events RPC survived r252 build');
 
 js=js.replace("const REVISION='r248-official-1.0.39';","const REVISION='r252-official-1.0.43';")
