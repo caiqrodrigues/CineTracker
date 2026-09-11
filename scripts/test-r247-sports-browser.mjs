@@ -15,7 +15,7 @@ function renderProfile(){} function paintDiscover(){} function route(){return 's
 (async()=>{try{
  window.__ctR247SportsNormalize();const d=window.__ctR247Debug();document.body.dataset.payloadHook=String(d.sportsPayloadHook);document.body.dataset.filterHook=String(d.sportsFilterHook);document.body.dataset.tabs=[...document.querySelectorAll('[data-ct247-sport-tab]')].map(x=>x.textContent).join('|');document.body.dataset.events=String(!![...document.querySelectorAll('button')].find(x=>x.textContent==='Eventos'));
  document.body.dataset.next=window.__ctR247SportsFilter(sample,'next','2026-09-11T15:00:00').map(x=>x.id).join('|');document.body.dataset.previous=window.__ctR247SportsFilter(sample,'previous','2026-09-11T15:00:00').map(x=>x.id).join('|');
- const b=document.querySelector('[data-ct247-sport-tab="previous"]');b.click();await new Promise(r=>setTimeout(r,20));document.body.dataset.state=sportsState.tab;document.body.dataset.page=String(sportsState.page);
+ const b=document.querySelector('[data-sport-tab="previous"]');b.click();await new Promise(r=>setTimeout(r,20));document.body.dataset.state=sportsState.tab;document.body.dataset.page=String(sportsState.page);
  const w=document.getElementById('watch');w.click();document.body.dataset.pop=String(w.classList.contains('ct247-watch-pop'));document.body.dataset.done='1';
 }catch(e){document.body.dataset.err=String(e);document.body.dataset.done='1'}})();
 </script></body></html>`;await writeFile(file,html);
