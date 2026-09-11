@@ -2,6 +2,32 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.41 — 2026-09-11 — Web r250
+
+### Autoridade determinística / Home
+- A r250 desliga os disparos recorrentes da autoridade final r249 e assume como único reconciliador final das áreas corrigidas.
+- A fronteira de acompanhamento passa a considerar somente posições efetivamente vistas. Buracos históricos anteriores à fronteira permanecem não assistidos e ficam preservados para consumo futuro, mas deixam de inflar `Faltam` ou empurrar Raw/SmackDown para trás.
+- Episódios já lançados depois da fronteira sempre vencem e levam a série para `Assistir a seguir`; a regra é genérica para Lioness, Stuart e demais séries iniciadas.
+- Cards de Home recebem avaliação TMDB em nota + percentual e proporções alinhadas aos cards de Descobrir.
+
+### Descobrir
+- Clique de aba e tipo passa a ter ownership explícito, geração própria e bloqueio de resposta assíncrona atrasada.
+- O filtro final elimina itens vistos, em andamento, Watchlist e `NotInterested`, reaplicando o estado pessoal mesmo quando o renderer herdado devolve dados sem a filtragem esperada.
+- Slots `Sem item elegível` deixam de ocupar cards gigantes; trilhos e cards permanecem estáveis durante a troca de conteúdo.
+
+### Esportes / Supabase / F1
+- A Web r250 usa diretamente `cinetracker_sports_payload_v1` para carregar eventos e `cinetracker_sport_mark_watched_v1` para marcar/desmarcar assistido.
+- As únicas abas públicas são `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`; `Próximos` é futuro de hoje, `Anteriores` é D-1 a D-3, favoritos usam `has_favorite` e assistidos unem eventos atuais ao histórico canônico.
+- A função `cinetracker_sports_events_v0997` foi restaurada no backend somente como compatibilidade para bundles antigos/cacheados, eliminando o erro de schema-cache sem recolocar esse RPC no bundle r250.
+- O F1 Hub é deduplicado para uma única instância, preserva as seis áreas existentes e respeita minimizar/expandir persistido pelo usuário sem autoexpansão.
+
+### Perfil / rolagem / validação
+- Estatísticas esportivas são movidas para o mesmo grid do grupo `Estatísticas`; o painel separado é removido e todo o conjunto passa a seguir o mesmo estado de minimização.
+- A página mantém rolagem vertical, sem overflow horizontal global; temporadas, gráficos, relacionados/semelhantes, Descobrir, F1 e demais áreas largas usam scroll horizontal local.
+- Web atualizada para `1.0.41 / r250-official-1.0.41`; Android permanece `1.0.20 / versionCode 10062`.
+- Build oficial: `apps/web/build-r250-official.mjs`; runtime final: `apps/web/runtime-r250-source-aligned.js`.
+- Chromium cobre backlog histórico, episódio novo, corrida de Descobrir, quatro filtros esportivos, RPC de assistido, F1 duplicado/minimizado, Perfil unificado e overflow local/global.
+
 ## 1.0.40 — 2026-09-11 — Web r249
 
 ### Autoridade única / estabilidade
