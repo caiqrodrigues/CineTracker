@@ -3,20 +3,19 @@ import {resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
 
 const root=resolve(process.cwd()),web=resolve(root,'apps/web'),dist=resolve(web,'dist');
-const bundle=await readFile(resolve(dist,'app-v246.js'),'utf8');
+const bundle=(await readFile(resolve(dist,'app-v246.js'),'utf8')).replaceAll('</script>','<\\/script>');
 const dir='/tmp/ct-r246-exact';await mkdir(dir,{recursive:true});
 let bin='';for(const c of ['google-chrome','chromium','chromium-browser'])try{execFileSync('which',[c],{stdio:'ignore'});bin=c;break}catch{}
 if(!bin){await rm(dir,{recursive:true,force:true});throw new Error('Chromium unavailable')}
 try{
-  await writeFile(resolve(dir,'app-v246.js'),bundle,'utf8');
   const html=resolve(dir,'index.html');
   await writeFile(html,`<!doctype html><html><head><meta charset="utf-8"><style>body{background:#050b10;color:white}</style></head><body><div id="app"></div><script>
   window.__probeErrors=[];
-  addEventListener('error',e=>window.__probeErrors.push('error:'+String(e.message||e.error||e)));
+  addEventListener('error',e=>window.__probeErrors.push('error:'+String(e.message||e.error||e)+'@'+String(e.lineno||0)+':'+String(e.colno||0)));
   addEventListener('unhandledrejection',e=>window.__probeErrors.push('rejection:'+String(e.reason||e)));
   try{localStorage.clear();sessionStorage.clear()}catch{}
   window.fetch=async()=>new Response(JSON.stringify({}),{status:401,headers:{'Content-Type':'application/json'}});
-  </script><script src="./app-v246.js"></script><script>
+  </script><script>${bundle}</script><script>
   setTimeout(()=>{const a=document.getElementById('app');document.body.dataset.done='1';document.body.dataset.build=String(window.__ctWebBuild||'');document.body.dataset.marker=String(window.__ctR246||'');document.body.dataset.chars=String(a?.textContent?.trim().length||0);document.body.dataset.html=String(a?.innerHTML?.length||0);document.body.dataset.errors=window.__probeErrors.join(' | ')},1200);
   </script></body></html>`,'utf8');
   const out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--disable-component-update','--disable-sync','--no-first-run','--no-default-browser-check',`--user-data-dir=${resolve(dir,'profile')}`,'--virtual-time-budget=2200','--dump-dom','file://'+html],{encoding:'utf8',timeout:25000,stdio:['ignore','pipe','pipe']});
