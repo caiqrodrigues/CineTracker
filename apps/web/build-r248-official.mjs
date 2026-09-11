@@ -4,13 +4,9 @@ import {fileURLToPath} from 'node:url';
 await import('./build-r248.mjs');
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
 let js=await readFile(resolve(dist,'app-v248.js'),'utf8');
-const [binding,stability]=await Promise.all([
- readFile(resolve(root,'runtime-r248-state-binding.js'),'utf8'),
- readFile(resolve(root,'runtime-r248-stability-guard.js'),'utf8')
-]);
+const binding=await readFile(resolve(root,'runtime-r248-state-binding.js'),'utf8');
 if(!js.includes("window.__ctR248='current-following-complete-ui-authority'"))throw new Error('r248 authority missing before final binding');
-if(!stability.includes("window.__ctR248StabilityGuard='idempotent-sports-tabs-innerhtml'"))throw new Error('r248 stability guard missing');
 if(!js.includes('\nboot();'))throw new Error('r248 final boot insertion point missing');
-js=js.replace('\nboot();','\n'+binding+'\n'+stability+'\nboot();');
+js=js.replace('\nboot();','\n'+binding+'\nboot();');
 await writeFile(resolve(dist,'app-v248.js'),js,'utf8');
-console.log('WEB_1_0_39_OFFICIAL r248 state-binding+stability-guard=ready');
+console.log('WEB_1_0_39_OFFICIAL r248 state-binding=ready');
