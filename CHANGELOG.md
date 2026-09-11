@@ -2,6 +2,42 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.40 — 2026-09-11 — Web r249
+
+### Autoridade única / estabilidade
+- A camada final passa a operar como **single authority** de UI, orientada por eventos e reconciliações limitadas, em vez de manter observadores perpétuos disputando o DOM.
+- Os `MutationObserver` finais da r248 para current-ui e state-binding são neutralizados no bundle r249; seus hooks úteis permanecem, mas não podem voltar a reescrever a tela indefinidamente.
+- Testes de Chromium introduzem mutações atrasadas após 2 segundos para provar que a autoridade atual recupera estado correto sem polling ou guerra contínua de DOM.
+
+### Home / episódios
+- Preservada a fronteira baseada no último episódio efetivamente acompanhado: backlog histórico continua não assistido, mas não remove Raw, SmackDown ou outras séries longas do estado `Em dia`.
+- Quando há backlog antigo e também episódio realmente lançado depois da fronteira, o episódio novo continua vencendo e força `Assistir a seguir`.
+- Lioness, Stuart e demais séries iniciadas continuam usando a mesma regra genérica, sem hardcode de título.
+- A ponte F1/Super Bowl deixa de chamar o RPC inexistente `cinetracker_sports_events_v0997` e passa a reutilizar somente o payload/estado esportivo canônico já carregado pela aplicação.
+
+### Descobrir
+- Cada carregamento assíncrono recebe geração + aba + tipo; apenas a requisição mais recente que ainda pertence à aba/tipo atual pode executar `paintDiscover`.
+- Respostas atrasadas são descartadas antes de tocar no conteúdo, encerrando a regressão em que uma aba antiga voltava por cima da atual.
+- Permanecem as exclusões pessoais de visto, em andamento, Watchlist e `NotInterested`, metadados/geometry estáveis e a janela estrita de 30 dias de `Novidades`.
+
+### Esportes / F1
+- A navegação permanece restrita a `Próximos`, `Anteriores`, `Favoritos` e `Assistidos` sob um único dono de estado.
+- `Próximos`: apenas eventos futuros do dia atual; `Anteriores`: D-1 a D-3; `Favoritos`: favoritos; `Assistidos`: vistos.
+- `Eventos/Agenda` é removido também quando reaparece por renderização atrasada.
+- O bundle final não contém mais `cinetracker_sports_events_v0997`.
+- O F1 Hub preserva as seis áreas e o estado minimizar/expandir como decisão persistente do usuário; reconciliação herdada não pode reabri-lo.
+
+### Perfil / rolagem
+- O Perfil permanece com um único grupo `Estatísticas`; containers separados de estatísticas esportivas que reapareçam são descartados pela autoridade r249.
+- A página preserva rolagem vertical e bloqueia overflow horizontal global; temporadas, relacionados/semelhantes, gráficos, Descobrir, F1 e outros conteúdos largos usam somente scroll horizontal local.
+
+### Build / validação
+- Web atualizada para `1.0.40 / r249-official-1.0.40`.
+- Android permanece `1.0.20 / versionCode 10062`, sem alteração nesta release.
+- Build oficial: `apps/web/build-r249-official.mjs`; runtime final: `apps/web/runtime-r249-single-authority.js`.
+- Pipeline preserva regressões r239→r248 e adiciona `test-r249.mjs`, `test-r249-authority-browser.mjs` e `test-r249-exact-bundle-browser.mjs`.
+- Smoke público do `main` exige `release.json` 1.0.40/r249, assets `app-v249`, markers da single authority, ausência do RPC removido e DOM não vazio em Chromium.
+
 ## 1.0.39 — 2026-09-11 — Web r248
 
 ### Home / episódios

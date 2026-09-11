@@ -6,25 +6,25 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.39** | `r248-official-1.0.39` | release validada por CI e Chromium; promoção ao `main` exige smoke público |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r248 |
+| Web | **1.0.40** | `r249-official-1.0.40` | release com autoridade única de UI; promoção ao `main` exige CI, Chromium e smoke público |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r249 |
 | Backend | produção compartilhada | Supabase | produção |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.39 / r248
+## Web 1.0.40 / r249
 
-A r248 consolida a correção completa de Home, Descobrir, Esportes, F1 Hub, Perfil e rolagem, eliminando autoridades antigas que voltavam a alterar o DOM depois do paint correto.
+A r249 transforma a correção visual da r248 em uma **single authority** real: os reconciliadores finais deixam de depender de `MutationObserver` perpétuo e passam a reagir aos eventos de navegação/dados/render com reconciliação limitada. Isso impede renderizadores herdados de retomarem o DOM depois que a tela correta já foi pintada.
 
-- **Home:** a auditoria canônica passa a 8 workers, lote prioritário de 40 séries e fallback secundário em 250 ms. O estado de acompanhamento usa a **fronteira do último episódio efetivamente acompanhado**: buracos antigos continuam não vistos e disponíveis para depois, mas não tiram Raw, SmackDown ou outra série longa de `Em dia`. Se existir simultaneamente um episódio lançado depois dessa fronteira, o episódio novo sempre vence o backlog histórico e leva a série para `Assistir a seguir`. Lioness, Stuart e demais séries iniciadas seguem a mesma regra genérica, sem hardcode de título.
-- **F1 e Super Bowl na Home:** são tratados como acompanhamentos seriados a partir de **eventos esportivos reais**. Um evento liberado e não assistido entra como novo episódio/evento; quando só existe o próximo evento real, o acompanhamento permanece em dia com indicação do próximo. Eventos já vistos não são reapresentados como novos.
-- **Descobrir:** snapshots antigos de HTML deixam de ser restaurados entre abas. As exclusões pessoais canônicas permanecem ativas em `Pra você` e demais faixas de recomendação/ranking, impedindo recomendação de itens vistos, em andamento, Watchlist e `NotInterested`. Cards e trilhos deixam de disputar geometria durante hidratação; `Novidades` preserva a janela estrita de 30 dias.
-- **Esportes:** ficam somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`. `Próximos` mostra apenas jogos futuros do dia atual; `Anteriores`, D-1 a D-3; `Favoritos`, somente jogos ligados aos favoritos; `Assistidos`, os vistos. Controles `Eventos/Agenda` são removidos e `Assistido` mantém animação de confirmação.
-- **F1 Hub:** usa Jolpica para a temporada atual com `Visão geral`, `Calendário`, `Próximo GP`, `Pilotos`, `Construtores` e `Último GP`; mostra horário de Brasília, contagem regressiva, resultado da corrida e grid/qualificação. Minimizar/expandir persiste em `localStorage` e não volta a abrir por reconciliação antiga.
-- **Perfil:** `Estatísticas de esporte` é incorporado ao único grupo `Estatísticas`, com posição estável entre repaints.
-- **Rolagem:** a página mantém rolagem vertical e bloqueia overflow horizontal global. Temporadas, relacionados/semelhantes, gráficos, trilhos do Descobrir/F1 e outros conteúdos largos recebem scrollbar horizontal local visível.
-- **Validação:** o pipeline cobre regressões r239→r247, build/invariantes r248, casos Chromium de backlog histórico + episódio novo, F1/Super Bowl seriados, quatro abas esportivas, F1 persistente, Perfil unificado, scroll local e boot do bundle final. Android permanece explicitamente na baseline 1.0.20/10062.
+- **Home:** mantém a fronteira do último episódio efetivamente acompanhado. Buracos históricos continuam não assistidos, mas não empurram Raw, SmackDown ou outras séries longas para `Assistir a seguir`; quando existe episódio realmente novo depois da fronteira, ele sempre vence. A regra permanece genérica para Lioness, Stuart e demais séries iniciadas.
+- **Descobrir:** cada consulta recebe geração, aba e tipo. Só a requisição mais recente ainda dona da aba/tipo pode pintar; uma resposta atrasada é descartada antes de tocar no conteúdo. Continuam valendo as exclusões de visto, em andamento, Watchlist e `NotInterested`, a geometria estável dos cards e a janela estrita de 30 dias de `Novidades`.
+- **Esportes:** uma única autoridade mantém exatamente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`. `Próximos` é futuro do dia atual; `Anteriores`, D-1 a D-3; `Favoritos`, apenas favoritos; `Assistidos`, apenas vistos. `Eventos/Agenda` não volta a aparecer.
+- **RPC esportivo removido:** a chamada inexistente `cinetracker_sports_events_v0997` foi eliminada do bundle final. F1/Super Bowl na Home reutilizam o payload/estado esportivo canônico já carregado pela aplicação, sem disparar RPC legado paralelo.
+- **F1 Hub:** as seis áreas da r248 permanecem e minimizar/expandir continua sendo decisão persistente do usuário; reconciliação antiga não pode reabrir o Hub.
+- **Perfil:** permanece um único grupo `Estatísticas`; containers esportivos separados que reapareçam após navegação são descartados pela autoridade atual.
+- **Rolagem:** a página continua com rolagem vertical normal e sem overflow horizontal global. Temporadas, gráficos, relacionados/semelhantes, Descobrir, F1 e outros conteúdos largos recebem rolagem horizontal apenas local.
+- **Validação:** além de toda a regressão r239→r248, a r249 testa corrida assíncrona de Descobrir e reintrodução atrasada de `Agenda`, estatísticas esportivas duplicadas e expansão indevida do F1 Hub. O bundle exato também é iniciado em Chromium antes da promoção.
 
 ## Funcionalidades consolidadas
 
