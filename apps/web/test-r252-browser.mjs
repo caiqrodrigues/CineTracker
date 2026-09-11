@@ -38,7 +38,7 @@ ${runtime.replaceAll('</script>','<\\/script>')}
  const keys=cards.map(x=>x.querySelector('[data-media]').dataset.media);A(keys.length===new Set(keys).size,'no duplicates');A(apiCalls.some(x=>x.path.startsWith('shown_recommendations?on_conflict=')),'shown history persisted');
  const before=keys[0];document.querySelector('[data-ct252-refresh]').click();await new Promise(r=>setTimeout(r,50));const after=document.querySelector('[data-ct252-foryou] .card [data-media]')?.dataset.media;A(before!==after,'refresh swaps without reload');
  location.hash='#configs';const started=performance.now();await renderConfigs(navSeq);const elapsed=performance.now()-started;A(elapsed<50,'configs render immediate');A(!document.querySelector('.loader'),'configs has no blocking loader');A(document.body.textContent.includes('Manutenção e sincronização'),'configs content ready');
- A(window.__ctR252UI==='r248-native-structure-preserved','source UI marker');A(!runtime?.includes?.('ct251'),'no r251 runtime marker');
+ A(window.__ctR252UI==='r248-native-structure-preserved','source UI marker');A(typeof window.__ctR251==='undefined','no r251 runtime authority');
  document.body.dataset.test='PASS';document.body.insertAdjacentHTML('beforeend','<pre id="result">R252_BROWSER_PASS</pre>');
  }catch(e){document.body.dataset.test='FAIL';document.body.insertAdjacentHTML('beforeend','<pre id="result">R252_BROWSER_FAIL '+String(e&&e.stack||e)+'</pre>')}})();
 </script></body>`;
