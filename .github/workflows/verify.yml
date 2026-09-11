@@ -2,7 +2,7 @@ name: Verify Web 1.0.37 r246 Complete UI Authority
 
 on:
   push:
-    branches: [main, 'fix/r246-complete-ui-authority']
+    branches: [main, 'fix/r246-complete-ui-authority', 'fix/r247-black-screen']
   pull_request:
 
 permissions:
@@ -41,6 +41,7 @@ jobs:
           node --check apps/web/build-r246.mjs
           node --check apps/web/test-r246.mjs
           node --check scripts/test-r246-complete-ui-browser.mjs
+          node --check scripts/test-r246-exact-bundle-browser.mjs
       - name: Chromium r239 regression ground truth
         run: node scripts/test-r239-video-ground-truth-browser.mjs
       - name: Chromium r240 sports four-tab contract
@@ -102,6 +103,8 @@ jobs:
           grep -Fq 'overflow-x:clip!important' dist/app-v246.css
           grep -Fq 'touch-action:pan-x pan-y!important' dist/app-v246.css
           grep -Fq '@keyframes ct246WatchPop' dist/app-v246.css
+      - name: Chromium r246 exact final bundle boot
+        run: node scripts/test-r246-exact-bundle-browser.mjs
       - name: Chromium r246 complete UI behavior
         run: node scripts/test-r246-complete-ui-browser.mjs
 
