@@ -1,28 +1,26 @@
-name: Verify Web 1.0.37 r246 Complete UI Authority
+name: Verify Web 1.0.38 r247 Black Screen Recovery
 
 on:
   push:
-    branches: [main, 'fix/r246-complete-ui-authority', 'fix/r247-black-screen']
+    branches: [main, 'fix/r247-black-screen']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_37_complete_ui:
+  web_1_0_38_black_screen_recovery:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax inherited + restored r240 + r246
+      - name: Syntax inherited + r247
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.37"' apps/web/package.json
-          node --check apps/web/runtime-r240-sports-four-tabs.js
+          grep -Fq '"version": "1.0.38"' apps/web/package.json
           node --check apps/web/runtime-r240-user-video-semantics.js
-          node --check scripts/test-r240-sports-four-tabs-browser.mjs
           node --check scripts/test-r240-user-video-semantics-browser.mjs
           node --check apps/web/runtime-r243-home-interaction-catchup.js
           node --check apps/web/build-r243.mjs
@@ -37,16 +35,14 @@ jobs:
           node --check apps/web/build-r245.mjs
           node --check apps/web/test-r245.mjs
           node --check scripts/test-r245-horizontal-home-browser.mjs
-          node --check apps/web/runtime-r246-complete-ui-authority.js
-          node --check apps/web/build-r246.mjs
-          node --check apps/web/test-r246.mjs
-          node --check scripts/test-r246-complete-ui-browser.mjs
-          node --check scripts/test-r246-exact-bundle-browser.mjs
-      - name: Chromium r239 regression ground truth
+          node --check apps/web/runtime-r247-black-screen-recovery.js
+          node --check apps/web/build-r247.mjs
+          node --check apps/web/test-r247.mjs
+          node --check scripts/test-r247-sports-browser.mjs
+          node --check scripts/test-r247-exact-bundle-browser.mjs
+      - name: Chromium r239 production ground truth
         run: node scripts/test-r239-video-ground-truth-browser.mjs
-      - name: Chromium r240 sports four-tab contract
-        run: node scripts/test-r240-sports-four-tabs-browser.mjs
-      - name: Chromium r240 exclusions and atomic Discover contract
+      - name: Chromium r240 exclusions and atomic Discover
         run: node scripts/test-r240-user-video-semantics-browser.mjs
       - name: Build inherited r243
         working-directory: apps/web
@@ -54,7 +50,7 @@ jobs:
       - name: Static inherited r243
         working-directory: apps/web
         run: node test-r243.mjs
-      - name: Chromium r243 Home regression
+      - name: Chromium r243 Home
         run: node scripts/test-r243-home-browser.mjs
       - name: Build inherited r244
         working-directory: apps/web
@@ -62,7 +58,7 @@ jobs:
       - name: Static inherited r244
         working-directory: apps/web
         run: node test-r244.mjs
-      - name: Chromium r244 overflow regression
+      - name: Chromium r244 overflow
         run: node scripts/test-r244-series-overflow-browser.mjs
       - name: Build inherited r245
         working-directory: apps/web
@@ -70,43 +66,40 @@ jobs:
       - name: Static inherited r245
         working-directory: apps/web
         run: node test-r245.mjs
-      - name: Chromium r245 Home and drag regression
+      - name: Chromium r245 Home and drag
         run: node scripts/test-r245-horizontal-home-browser.mjs
-      - name: Build r246
+      - name: Build r247
         working-directory: apps/web
-        run: node build-r246.mjs
-      - name: Static invariants r246
+        run: node build-r247.mjs
+      - name: Static invariants r247
         working-directory: apps/web
-        run: node test-r246.mjs
-      - name: Final bundle identity r246
+        run: node test-r247.mjs
+      - name: Final bundle identity r247
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v246.js
-          grep -Fq "window.__ctWebBuild='1.0.37';window.__ctOfficialVersion='1.0.37';" dist/app-v246.js
-          grep -Fq "const REVISION='r246-official-1.0.37';" dist/app-v246.js
-          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v246.js
-          grep -Fq "window.__ctR240='sports-four-data-authority'" dist/app-v246.js
-          grep -Fq "window.__ctR240Semantic='user-video-semantic-authority'" dist/app-v246.js
-          grep -Fq "window.__ctR240Home='follow-first-history-hidden'" dist/app-v246.js
-          grep -Fq "window.__ctR240Discover='canonical-exclusions-atomic-switch'" dist/app-v246.js
-          grep -Fq "window.__ctR240SportsSearch='search-focus-caret-stable'" dist/app-v246.js
-          grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" dist/app-v246.js
-          grep -Fq "window.__ctR246='complete-ui-authority'" dist/app-v246.js
-          grep -Fq 'const CT245_SERIES_MAX=6;' dist/app-v246.js
-          grep -Fq 'const CT245_PRIORITY_BATCH=24;' dist/app-v246.js
-          grep -Fq 'setTimeout(ct245ReleaseMovies,500)' dist/app-v246.js
-          grep -Fq 'app-v246.js' dist/index.html
-          grep -Fq 'app-v246.css' dist/index.html
-          grep -Fq '"version": "1.0.37"' dist/release.json
-          grep -Fq '"revision": "r246-official-1.0.37"' dist/release.json
-          grep -Fq 'overflow-x:clip!important' dist/app-v246.css
-          grep -Fq 'touch-action:pan-x pan-y!important' dist/app-v246.css
-          grep -Fq '@keyframes ct246WatchPop' dist/app-v246.css
-      - name: Chromium r246 exact final bundle boot
-        run: node scripts/test-r246-exact-bundle-browser.mjs
-      - name: Chromium r246 complete UI behavior
-        run: node scripts/test-r246-complete-ui-browser.mjs
+          node --check dist/app-v247.js
+          grep -Fq "window.__ctWebBuild='1.0.38';window.__ctOfficialVersion='1.0.38';" dist/app-v247.js
+          grep -Fq "const REVISION='r247-official-1.0.38';" dist/app-v247.js
+          grep -Fq "window.__ctR239='production-video-ground-truth'" dist/app-v247.js
+          grep -Fq "window.__ctR240Semantic='user-video-semantic-authority'" dist/app-v247.js
+          grep -Fq "window.__ctR245='real-horizontal-drag-and-started-series-authority'" dist/app-v247.js
+          grep -Fq "window.__ctR247='black-screen-recovery-current-runtime-authority'" dist/app-v247.js
+          grep -Fq 'const CT245_SERIES_MAX=6;' dist/app-v247.js
+          grep -Fq 'const CT245_PRIORITY_BATCH=24;' dist/app-v247.js
+          grep -Fq 'setTimeout(ct245ReleaseMovies,500)' dist/app-v247.js
+          if grep -Fq "window.__ctR240='sports-four-data-authority'" dist/app-v247.js; then echo 'unsafe r240 sports runtime present'; exit 1; fi
+          grep -Fq 'app-v247.js' dist/index.html
+          grep -Fq 'app-v247.css' dist/index.html
+          grep -Fq '"version": "1.0.38"' dist/release.json
+          grep -Fq '"revision": "r247-official-1.0.38"' dist/release.json
+          grep -Fq 'overflow-x:clip!important' dist/app-v247.css
+          grep -Fq 'touch-action:pan-x pan-y!important' dist/app-v247.css
+          grep -Fq '@keyframes ct247WatchPop' dist/app-v247.css
+      - name: Chromium r247 sports behavior
+        run: node scripts/test-r247-sports-browser.mjs
+      - name: Chromium r247 exact final bundle boot
+        run: node scripts/test-r247-exact-bundle-browser.mjs
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -121,20 +114,23 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_37_complete_ui]
+    needs: [web_1_0_38_black_screen_recovery]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Official production serves 1.0.37 r246
+      - name: Official production serves and boots 1.0.38 r247
         run: |
           set -euo pipefail
           for i in $(seq 1 150); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.37"' <<<"$BODY" && grep -Fq '"revision": "r246-official-1.0.37"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v246.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v246.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.38"' <<<"$BODY" && grep -Fq '"revision": "r247-official-1.0.38"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v247.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v247.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR246='complete-ui-authority'" <<<"$JS" && grep -Fq "window.__ctR240='sports-four-data-authority'" <<<"$JS" && grep -Fq "window.__ctR240Semantic='user-video-semantic-authority'" <<<"$JS" && grep -Fq 'const CT245_SERIES_MAX=6;' <<<"$JS" && grep -Fq 'touch-action:pan-x pan-y!important' <<<"$CSS" && grep -Fq 'app-v246.js' <<<"$HTML" && grep -Fq 'app-v246.css' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR247='black-screen-recovery-current-runtime-authority'" <<<"$JS" && ! grep -Fq "window.__ctR240='sports-four-data-authority'" <<<"$JS" && grep -Fq 'touch-action:pan-x pan-y!important' <<<"$CSS" && grep -Fq 'app-v247.js' <<<"$HTML" && grep -Fq 'app-v247.css' <<<"$HTML"; then
+                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=3500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
+                if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
+              fi
             fi
             sleep 5
           done
