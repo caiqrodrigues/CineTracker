@@ -14,7 +14,7 @@ if(runtime.includes('new MutationObserver'))throw new Error('r249 runtime reintr
 for(const x of ["window.__ctWebBuild='1.0.40';window.__ctOfficialVersion='1.0.40';","const REVISION='r249-official-1.0.40';","window.__ctR249='single-authority-current-ui'","window.__ctR249LegacyCurrentObserverDisabled=true","window.__ctR249LegacyBindingObserverDisabled=true"])must(js,x,'bundle '+x);
 if(js.includes('cinetracker_sports_events_v0997'))throw new Error('r249 final bundle still contains removed sports RPC');
 const tail=js.slice(js.indexOf("window.__ctR248='current-following-complete-ui-authority'"));
-if(tail.includes('observer.observe(document.body,{subtree:true,childList:true});'))throw new Error('r249 final bundle still attaches r248 current observer');
+if(tail.includes('observer.observe(document.documentElement,{childList:true,subtree:true});'))throw new Error('r249 final bundle still attaches r248 current observer');
 if(tail.includes("new MutationObserver(()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(cleanLegacy)}).observe(document.documentElement"))throw new Error('r249 final bundle still attaches r248 binding observer');
 for(const x of ['overflow-x:clip!important','.ct249-xrail','overflow-x:auto!important','overflow-y:auto!important'])must(css,x,'css '+x);
 for(const x of ['app-v249.js','app-v249.css'])must(html,x,'html '+x);
