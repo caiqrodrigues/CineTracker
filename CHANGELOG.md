@@ -2,6 +2,47 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.43 — 2026-09-11 — Web r252
+
+### Recuperação da interface
+- A r252 remove a r251 como autoridade visual e volta a construir diretamente sobre a `r248-official-1.0.39`, último baseline com a estrutura aprovada antes da reconstrução de Home, Descobrir, F1 Hub e Perfil.
+- As camadas `build-r249.mjs`, `build-r250.mjs` e `build-r251.mjs` não são importadas pela cadeia r252; regras novas são aplicadas por `runtime-r252-source-ui-recovery.js` sem substituir os renderizadores principais de Home, Esportes ou Perfil.
+- O Histórico escondido de filmes/séries, tamanhos e proporções dos cards, composição escura do F1 Hub e ordem estabelecida do Perfil voltam a ser requisitos explícitos de regressão.
+- Os dois `MutationObserver` permanentes herdados da r248 são neutralizados no bundle final para impedir reconstruções concorrentes, custo contínuo de DOM e lentidão entre abas.
+
+### Home / séries
+- Série nunca iniciada permanece em `Não iniciada`.
+- Série iniciada sem episódio assistido há 30 dias entra em `Juntando Poeira`.
+- Episódio recente liberado e não visto tem prioridade sobre a regra de 30 dias e coloca a série em `Continue assistindo`.
+- WWE Raw, WWE SmackDown, Fórmula 1 e Super Bowl tratam backlog antigo como histórico legado: episódios antigos continuam não vistos no banco, mas não tiram a mídia de `Em dia` quando todos os lançamentos atuais foram assistidos.
+- Nenhum episódio antigo é marcado automaticamente como visto para produzir o estado `Em dia`.
+- A ponte esportiva da Home deixa de usar `cinetracker_sports_events_v0997` e passa a receber eventos pelo payload canônico `cinetracker_sports_payload_v1`, com cache curto para evitar consultas repetidas durante navegação.
+
+### Descobrir
+- Cards e trilhos voltam a usar `mediaCard()` e a geometria nativa da interface anterior; a r252 não introduz classes `ct251-*` de card/layout.
+- Permanecem nove sub-abas: `Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário`.
+- `Pra você` volta a ter exatamente três blocos: `Indicação do Dia`, `Da sua Watchlist` e `100% Novos`.
+- Recomendações exigem TMDB >= 7,5 e ano > 1990; removem Drama/Documentário puro, vistos, em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio; obras de gênero misto continuam elegíveis.
+- `shown_recommendations` é lido junto do histórico local para bloquear repetições por sete dias em todos os três blocos.
+- `Trocar` substitui a indicação elegível sem reload global e sem reconstruir o shell da página.
+- `100% Novos` usa a janela real dos últimos 30 dias também para Anime, em vez de recorrer a um pool genérico antigo.
+
+### Navegação / Esportes / F1 / Perfil / Configurações
+- Esportes preserva somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, com `Próximos` restrito ao dia atual e `Anteriores` à janela anterior de 72 horas; o feed canônico é `cinetracker_sports_payload_v1`.
+- F1 Hub volta ao padrão visual escuro da r248, mantém seis áreas e preserva minimizar/expandir como decisão persistida pelo usuário, sem autoexpansão.
+- Perfil volta à composição e ordem estabelecidas na autoridade r248, sem a reorganização criada pela r251.
+- Configurações deixa de bloquear a navegação com `Carregando Configurações...`: a estrutura estável é renderizada imediatamente e apenas o nome opcional do perfil é preenchido em segundo plano.
+- Overflow horizontal global continua bloqueado; temporadas, gráficos, trilhos e demais conteúdos largos mantêm rolagem horizontal somente no próprio componente.
+
+### Build / validação
+- Web atualizada para `1.0.43 / r252-official-1.0.43`; Android permanece `1.0.20 / versionCode 10062`.
+- `package.json` raiz e `apps/web/package.json` permanecem alinhados em `1.0.43`.
+- Build oficial: `apps/web/build-r252-official.mjs`; runtime de correções: `apps/web/runtime-r252-source-ui-recovery.js`.
+- `test-r252.mjs` exige a source UI r248, Histórico, ordem estabelecida do Perfil, F1 Hub r248, ausência da autoridade r251 e ausência do RPC esportivo aposentado.
+- `test-r252-algorithms.mjs` cobre Não iniciada, 30 dias/Juntando Poeira, prioridade de episódio novo, Raw/F1/SmackDown/Super Bowl sem backlog artificial e filtros rigorosos do Descobrir.
+- `test-r252-browser.mjs` valida nove sub-abas, três blocos, cards nativos, exclusões, antirrepetição, Trocar sem reload e Configurações sem loading bloqueante em Chromium.
+- `verify.yml` passa a promover somente a r252 e o smoke público do `main` exige `release.json` 1.0.43/r252, assets `app-v252`, autoridade estrutural r248 e DOM renderizado.
+
 ## 1.0.42 — 2026-09-11 — Web r251
 
 ### Autoridade direta / Home
@@ -66,7 +107,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 
 ### Home / episódios
 - Preservada a fronteira baseada no último episódio efetivamente acompanhado: backlog histórico continua não assistido, mas não remove Raw, SmackDown ou outras séries longas do estado `Em dia`.
-- Quando há backlog antigo e também episódio realmente lançado depois da fronteira, o episódio novo continua vencendo e força `Assistir a seguir`.
+- Quando há backlog antigo e também episódio novo ao mesmo tempo, qualquer episódio liberado depois da fronteira acompanhada tem prioridade e força `Assistir a seguir`.
 - Lioness, Stuart e demais séries iniciadas continuam usando a mesma regra genérica, sem hardcode de título.
 - A ponte F1/Super Bowl deixa de chamar o RPC inexistente `cinetracker_sports_events_v0997` e passa a reutilizar somente o payload/estado esportivo canônico já carregado pela aplicação.
 
@@ -252,7 +293,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - A resposta da Edge Function passa a informar `resolved_external` para contabilizar resoluções por identificador externo.
 - Edge Function publicada em produção como versão 7.
 
-### Build e validação
+### Build / validação
 - Web atualizada para `1.0.26`.
 - Build oficial: `apps/web/build-r234.mjs`.
 - Teste de regressão: `apps/web/test-r234.mjs`.

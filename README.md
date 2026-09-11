@@ -1,31 +1,33 @@
 # 🎬 CineTracker
 
-CineTracker é um companion pessoal multiplataforma para filmes, séries, animes e esportes. Web e Android compartilham conta, biblioteca, Watchlist, histórico/progresso, Perfil, Descobrir, configurações, importação/backup e sincronização pelo Supabase.
+CineTracker é um companion pessoal multiplataforma para filmes, séries, animes e esportes. Web e Android compartilham conta, biblioteca, Watchlist, Histórico/progresso, Perfil, Descobrir, Configurações, importação/backup e sincronização pelo Supabase.
 
 ## Versões atuais
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.42** | `r251-official-1.0.42` | release com renderizadores diretos e validação por Chromium + smoke público |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r251 |
+| Web | **1.0.43** | `r252-official-1.0.43` | recuperação da source UI aprovada + correções lógicas isoladas |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r252 |
 | Backend | produção compartilhada | Supabase | produção; inclui persistência `shown_recommendations` com RLS |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.42 / r251
+## Web 1.0.43 / r252
 
-A r251 troca a estratégia de reconciliação pós-render por autoridade direta nas telas críticas. Home, Descobrir, Esportes/F1 e Perfil passam a assumir os renderizadores ativos antes do `boot()`, evitando que camadas herdadas voltem a reconstruir a UI depois da tela correta.
+A r252 corrige a regressão visual da r251 sem redesenhar novamente a aplicação. O build volta a usar a **source UI** comprovada da r248 como autoridade estrutural e aplica somente correções de regra e de carregamento. As camadas r249/r250/r251 não são importadas na cadeia final da r252.
 
-- **Home:** a fronteira de acompanhamento considera somente o que foi efetivamente assistido. Backlog histórico continua preservado, mas não desloca a série para trás; episódio lançado depois da fronteira tem prioridade absoluta e volta para `Assistir a seguir`. A auditoria canônica é concorrente e reapinta a Home assim que o episódio atual é confirmado. F1 e Super Bowl entram pela ponte esportiva direta: evento recente não assistido aparece como novo, e o próximo evento real mantém o acompanhamento em dia. Cards de filmes preservam a nota TMDB visível.
-- **Descobrir:** recomendações exigem TMDB ≥ 7,5, ano posterior a 1990 e removem Drama/Documentário puro, vistos, itens em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio. As nove sub-abas (`Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados`, `Calendário`) permanecem funcionais sob a mesma autoridade. A r251 mantém três blocos obrigatórios (`Indicação do Dia`, `Da sua Watchlist`, `100% Novos`), antirrepetição e histórico persistente por 7 dias de todos os itens exibidos, inclusive os vindos da Watchlist, via `shown_recommendations`.
-- **Trocar recomendação:** troca o conteúdo elegível sem reload global e respeita as mesmas exclusões pessoais e a janela de 7 dias.
-- **Esportes:** permanecem somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, correspondendo ao futuro de hoje, às 72 horas anteriores, aos favoritos e ao histórico visto. A carga usa `cinetracker_sports_payload_v1`, reaproveita a sincronização autenticada quando o feed está vazio e marca/desmarca com microinteração via `cinetracker_sport_mark_watched_v1`. O bundle final não chama `cinetracker_sports_events_v0997`.
-- **F1 Hub:** existe uma única instância com minimizar/expandir persistido pelo usuário, sem autoexpansão por reconciliadores antigos.
-- **Perfil:** existe um único bloco expansível de `Estatísticas`, incluindo os dados esportivos, sem painel paralelo concorrente.
-- **Layout:** overflow horizontal global permanece bloqueado; temporadas, gráficos, trilhos, Descobrir e F1 usam somente scroll horizontal local. Home, Perfil, Configurações e sidebar receberam polish de proporção e espaçamento.
-- **Persistência:** migration `20260911175655_r251_shown_recommendations.sql` cria o histórico de recomendações exibidas com RLS para sustentar a regra de 7 dias; `20260911192843_r251_shown_recommendations_policy_hardening.sql` limita os privilégios ao cliente autenticado e otimiza as policies por usuário.
-- **Validação:** a pipeline preserva a regressão r250 e acrescenta invariantes r251, regressões de lógica, cenário Chromium para as nove sub-abas, histórico semanal da Watchlist, F1/Super Bowl e casos reportados pelo usuário, identidade do bundle final e alinhamento dos manifests raiz/Web em 1.0.42.
+- **Home:** preserva a estrutura anterior e o Histórico escondido de filmes/séries. Série nunca iniciada permanece em `Não iniciada`; série iniciada sem episódio assistido há **30 dias** vai para `Juntando Poeira`; episódio recente liberado e não visto tem prioridade e coloca a série em `Continue assistindo`; quando não existe lançamento atual pendente, a série fica `Em dia`.
+- **Séries longas:** WWE Raw, WWE SmackDown, Fórmula 1 e Super Bowl ignoram backlog legado para classificação atual. Episódios antigos continuam não vistos no banco; não existe marcação retroativa artificial. Só um lançamento atual/recentemente liberado e não visto tira o item de `Em dia`.
+- **Descobrir:** volta a usar os cards e proporções nativos da interface anterior. Mantém nove sub-abas (`Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados`, `Calendário`) e os três blocos de `Pra você`: `Indicação do Dia`, `Da sua Watchlist` e `100% Novos`.
+- **Regras de recomendação:** TMDB >= 7,5, ano > 1990, exclusão de Drama/Documentário puro, vistos, em andamento, `NotInterested`, WWE e Watchlist fora do bloco próprio. `shown_recommendations` impede repetição por 7 dias; `Trocar` funciona sem reload global. `100% Novos` usa lançamentos dos últimos 30 dias também para Anime.
+- **Esportes:** preserva exatamente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, usando `cinetracker_sports_payload_v1`; o bundle não chama `cinetracker_sports_events_v0997`.
+- **F1 Hub:** volta ao padrão escuro da r248 com seis áreas e minimizar/expandir persistido pelo usuário, sem autoexpansão.
+- **Perfil:** volta à composição e ordem estabelecidas anteriormente, sem a reorganização visual da r251.
+- **Configurações:** a tela estável é montada imediatamente; a leitura opcional do nome de perfil ocorre em segundo plano, eliminando o loading bloqueante.
+- **Navegação:** os dois `MutationObserver` permanentes herdados da r248 são desativados no bundle final para evitar reconstruções concorrentes e custo repetido entre abas.
+- **Rolagem:** overflow horizontal global continua bloqueado; trilhos, temporadas, gráficos e demais áreas largas mantêm rolagem horizontal somente no próprio componente.
+- **Validação:** o CI exige que a r252 preserve marcadores/estrutura r248, não carregue a autoridade visual r251, passe regressões de Home/Descobrir/Configurações em lógica + Chromium e gere assets `app-v252` com identidade 1.0.43.
 
 ## Funcionalidades consolidadas
 
@@ -34,7 +36,7 @@ A r251 troca a estratégia de reconciliação pós-render por autoridade direta 
 - exclusões pessoais para evitar recomendar itens vistos, em andamento, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
 - reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x`…;
-- detalhes ricos de filmes, séries, temporadas, episódios, elenco e pessoas;
+- detalhes ricos de filmes, séries, temporadas, episódios, avaliações e elenco;
 - Perfil com estatísticas, favoritos, atividade e tempos;
 - Sports integrado ao mesmo shell do CineTracker;
 - busca, importação, sincronização, manutenção e backup;
