@@ -6,34 +6,36 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.44** | `r253-official-1.0.44` | autoridade única nas telas críticas + dados vivos do Supabase |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r253 |
-| Backend | produção compartilhada | Supabase | produção; histórico canônico e persistência `shown_recommendations` com RLS |
+| Web | **1.0.45** | `r254-official-1.0.45` | correção guiada pelo vídeo: Home, Descobrir, Esportes/F1 e scroll local |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r254 |
+| Backend | produção compartilhada | Supabase | produção; histórico e estatísticas canônicos |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.44 / r253
+## Web 1.0.45 / r254
 
-A r253 corrige a regressão observada em vídeo após a r252. O problema não era apenas cache: múltiplas autoridades herdadas continuavam redesenhando partes da mesma tela. A r253 estabelece um único produtor final para Home, Descobrir e Esportes, preserva o Perfil aprovado e volta a buscar o estado atual diretamente das fontes canônicas.
+A r254 parte diretamente da r252, último baseline visual alinhado ao layout aprovado, em vez de importar a composição r253 que o vídeo de produção mostrou estar quebrada. O vídeo do usuário é a regressão principal desta release.
 
-- **Home:** recarrega `cinetracker_home_live_v0997_r3` ao entrar e mantém o renderer visual já aprovado. `Juntando Poeira` não é mais criado somente porque a última reprodução tem mais de 30 dias: uma série `is_caught_up`, sem episódios realmente faltantes, encerrada ou já no último episódio liberado permanece em `Em dia`/`Concluída`. Raw, SmackDown, Fórmula 1 e Super Bowl continuam sem transformar backlog histórico em pendência atual. O Histórico recente usa o payload vivo e preserva registros novos.
-- **Esportes:** deixa de combinar a navegação r248 com a navegação antiga. Existe um único renderer com exatamente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`. `Assistidos` vem de `watch_history` do `cinetracker_sports_payload_v1`, e a contagem/tempo usam `cinetracker_sport_stats_v1`; marcar/desmarcar usa `cinetracker_sport_mark_watched_v1`. O F1 Hub continua sendo o componente escuro da r248, com uma única instância.
-- **Descobrir:** as nove abas passam a usar seletores próprios da r253 e troca de conteúdo local, sem chamar o render global herdado. A aba ativa muda imediatamente, cada request recebe uma geração e respostas antigas são descartadas. `Pra você` usa pools de uma página em paralelo, cards nativos, três blocos obrigatórios, filtros TMDB/ano/gênero/WWE/estado pessoal e `shown_recommendations` de 7 dias.
-- **Perfil:** nenhuma reorganização visual é feita. A ordem física aprovada da r238 é mantida; depois do paint, o payload `cinetracker_profile_payload_v0997_r2` atualiza as estatísticas existentes e `cinetracker_sport_stats_v1` atualiza apenas os valores do painel `Esportes assistidos`.
-- **Conflitos legados:** o `MutationObserver` permanente da r239 é retirado do bundle final. Também são neutralizados os dois wrappers da r252 que reclassificavam Home pelo tempo desde o último episódio e podiam colocar séries em dia em `Juntando Poeira`.
-- **Validação:** build, invariantes estáticos, algoritmos e Chromium cobrem a regressão do vídeo: somente quatro abas esportivas, 48 itens simulados no histórico canônico, uma única instância do F1 Hub, nove abas do Descobrir clicáveis, corrida assíncrona entre abas, Perfil sem mudança de ordem, Home sem poeira falsa e Histórico recente posterior a Black Mirror.
+- **Home / fronteira de episódios:** o payload canônico é pintado imediatamente. Séries normais já iniciadas recebem em segundo plano uma checagem TMDB atual de `last_episode_to_air`; se existir episódio realmente exibido depois da fronteira assistida, a série vai para `Assistir a seguir`. `next_episode_to_air` nunca é tratado como episódio já lançado. Isso permite reconhecer episódios novos de Lioness/Stuart mesmo quando o metadata persistido no banco está atrasado.
+- **Raw / SmackDown / séries legadas:** backlog histórico continua não visto, mas não força `Assistir a seguir`. Para WWE Raw, WWE SmackDown, Fórmula 1 e Super Bowl a comparação usa somente a fronteira realmente exibida; uma ocorrência futura em `next_episode_to_air` não conta. Uma decisão canônica `Em dia` também não é anulada por milhares de episódios antigos.
+- **Descobrir:** as nove abas permanecem, mas a lista de estados pessoais/exclusões é carregada uma vez e reutilizada. Ao trocar de aba, o conteúdo atual permanece visível até o novo resultado ficar pronto; a troca do DOM é atômica, com geração para impedir resposta antiga de sobrescrever a aba atual e limites de tempo nas consultas.
+- **Esportes / F1:** existe somente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`, usando `cinetracker_sports_payload_v1`. O F1 Hub r248 é relocado para dentro do conteúdo de Esportes imediatamente após ser criado; ele não pode mais virar um filho direto do grid `.app` antes da sidebar, causa exata da tela esmagada mostrada no vídeo.
+- **Perfil:** o layout aprovado é preservado. Apenas os dados são atualizados por `cinetracker_profile_payload_v0997_r2` e `cinetracker_sport_stats_v1`, inclusive a contagem canônica de eventos assistidos.
+- **Scroll horizontal local:** temporadas, relacionados, semelhantes, gráficos de episódios, trilhos de Descobrir e F1 são marcados dinamicamente depois de cada render assíncrono. A página continua sem scroll horizontal global; somente o componente largo recebe `overflow-x: auto`, touch nativo e scrollbar local.
+- **Autoridades antigas:** os observers permanentes r239 e r247 e o classificador por idade da r252 são retirados do bundle final. A r254 mantém apenas um observer estreito de `childList` para aplicar scroll local e garantir a posição interna do F1 Hub; ele não reexecuta renderizadores.
+- **Validação:** testes estáticos, algoritmos, Chromium guiado pelos quadros do vídeo e boot do bundle final verificam Lioness/Stuart, Raw/SmackDown, quatro abas esportivas, F1 dentro da coluna correta, 48 assistidos simulados, nove abas do Descobrir sem tela vazia durante a troca, Perfil com contagem atual e rails de temporada/gráfico adicionados depois da navegação.
 
 ## Funcionalidades consolidadas
 
-- Home de séries e filmes com progresso, Assistir a seguir e estados de biblioteca;
+- Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira e estados de biblioteca;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
-- exclusões pessoais para evitar recomendar itens vistos, em andamento, na Watchlist ou marcados como não interessados;
+- exclusões pessoais para não recomendar itens vistos, em andamento, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
 - reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x`…;
 - detalhes ricos de filmes, séries, temporadas, episódios, avaliações e elenco;
 - Perfil com estatísticas, favoritos, atividade e tempos;
-- Sports integrado ao mesmo shell do CineTracker;
+- Sports integrado ao mesmo shell do CineTracker e F1 Hub;
 - busca, importação, sincronização, manutenção e backup;
 - Supabase como estado compartilhado entre Web e Android.
 
