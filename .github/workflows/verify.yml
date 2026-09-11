@@ -1,70 +1,74 @@
-name: Verify Web 1.0.43 r252 Source UI Recovery
+name: Verify Web 1.0.44 r253 Single Authority Live Data
 
 on:
   push:
-    branches: [main, 'fix/r252-source-ui-recovery']
+    branches: [main, 'fix/r253-single-authority-live-data']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_43_r252:
+  web_1_0_44_r253:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r252 release chain
+      - name: Syntax r253 release chain
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.43"' package.json
-          grep -Fq '"version": "1.0.43"' apps/web/package.json
-          node --check apps/web/runtime-r252-source-ui-recovery.js
-          node --check apps/web/build-r252.mjs
-          node --check apps/web/build-r252-official.mjs
-          node --check apps/web/test-r252.mjs
-          node --check apps/web/test-r252-algorithms.mjs
-          node --check apps/web/test-r252-browser.mjs
-      - name: Build official r252
+          grep -Fq '"version": "1.0.44"' package.json
+          grep -Fq '"version": "1.0.44"' apps/web/package.json
+          node --check apps/web/runtime-r253-single-authority-live-data.js
+          node --check apps/web/build-r253.mjs
+          node --check apps/web/build-r253-official.mjs
+          node --check apps/web/test-r253.mjs
+          node --check apps/web/test-r253-algorithms.mjs
+          node --check apps/web/test-r253-browser.mjs
+      - name: Build official r253
         working-directory: apps/web
-        run: node build-r252-official.mjs
-      - name: Static source-UI regression r252
+        run: node build-r253-official.mjs
+      - name: Static authority regression r253
         working-directory: apps/web
-        run: node test-r252.mjs
-      - name: Logic regressions r252
+        run: node test-r253.mjs
+      - name: Logic regressions r253
         working-directory: apps/web
-        run: node test-r252-algorithms.mjs
-      - name: Chromium native UI and navigation r252
+        run: node test-r253-algorithms.mjs
+      - name: Chromium single-authority behavior r253
         working-directory: apps/web
-        run: node test-r252-browser.mjs
-      - name: Final bundle identity r252
+        run: node test-r253-browser.mjs
+      - name: Final bundle identity r253
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v252.js
-          grep -Fq "window.__ctWebBuild='1.0.43';window.__ctOfficialVersion='1.0.43';" dist/app-v252.js
-          grep -Fq "const REVISION='r252-official-1.0.43';" dist/app-v252.js
-          grep -Fq "window.__ctR252='source-ui-recovery-logic-only'" dist/app-v252.js
-          grep -Fq "window.__ctR252UI='r248-native-structure-preserved'" dist/app-v252.js
-          grep -Fq "window.__ctR248='current-following-complete-ui-authority'" dist/app-v252.js
-          grep -Fq "window.__ctR248F1='jolpica-six-tabs-persistent-collapse'" dist/app-v252.js
-          grep -Fq "window.__ctR248Profile='one-stable-statistics-group'" dist/app-v252.js
-          grep -Fq 'shown_recommendations' dist/app-v252.js
-          grep -Fq 'cinetracker_sports_payload_v1' dist/app-v252.js
-          ! grep -Fq "window.__ctR251='video-ground-truth-direct-renderers'" dist/app-v252.js
-          ! grep -Fq 'cinetracker_sports_events_v0997' dist/app-v252.js
-          grep -Fq 'app-v252.js' dist/index.html
-          grep -Fq 'app-v252.css' dist/index.html
-          grep -Fq '"version": "1.0.43"' dist/release.json
-          grep -Fq '"revision": "r252-official-1.0.43"' dist/release.json
-          grep -Fq '"direct_renderer_replacement": false' dist/release.json
-          grep -Fq 'overflow-x:clip!important' dist/app-v252.css
-          grep -Fq '.ct248-f1hub' dist/app-v252.css
-          grep -Fq '.ct248-profile-grid' dist/app-v252.css
-          ! grep -Fq '.ct251-f1hub' dist/app-v252.css
-          ! grep -Fq '.ct251-profile-grid' dist/app-v252.css
+          node --check dist/app-v253.js
+          grep -Fq "window.__ctWebBuild='1.0.44';window.__ctOfficialVersion='1.0.44';" dist/app-v253.js
+          grep -Fq "const REVISION='r253-official-1.0.44';" dist/app-v253.js
+          grep -Fq "window.__ctR253='single-authority-live-data'" dist/app-v253.js
+          grep -Fq "window.__ctR253Home='live-payload-native-ui-no-age-only-dust'" dist/app-v253.js
+          grep -Fq "window.__ctR253Discover='single-renderer-nine-tabs-generation-safe'" dist/app-v253.js
+          grep -Fq "window.__ctR253Sports='single-renderer-four-tabs-canonical-history'" dist/app-v253.js
+          grep -Fq "window.__ctR253Profile='approved-layout-live-data-patch'" dist/app-v253.js
+          grep -Fq 'window.__ctR253LegacyR239ObserverDisabled=true' dist/app-v253.js
+          grep -Fq 'window.__ctR253R252QueueClassifierDisabled=true' dist/app-v253.js
+          grep -Fq 'window.__ctR253R252PaintClassifierDisabled=true' dist/app-v253.js
+          grep -Fq 'cinetracker_home_live_v0997_r3' dist/app-v253.js
+          grep -Fq 'cinetracker_sports_payload_v1' dist/app-v253.js
+          grep -Fq 'cinetracker_sport_mark_watched_v1' dist/app-v253.js
+          grep -Fq 'cinetracker_profile_payload_v0997_r2' dist/app-v253.js
+          grep -Fq 'cinetracker_sport_stats_v1' dist/app-v253.js
+          grep -Fq 'shown_recommendations' dist/app-v253.js
+          ! grep -Fq "new MutationObserver(queue239).observe(q('#app')" dist/app-v253.js
+          ! grep -Fq "window.__ctR251='video-ground-truth-direct-renderers'" dist/app-v253.js
+          ! grep -Fq 'cinetracker_sports_events_v0997' dist/app-v253.js
+          grep -Fq 'app-v253.js' dist/index.html
+          grep -Fq 'app-v253.css' dist/index.html
+          grep -Fq '"version": "1.0.44"' dist/release.json
+          grep -Fq '"revision": "r253-official-1.0.44"' dist/release.json
+          grep -Fq '.ct248-f1hub' dist/app-v253.css
+          grep -Fq 'overflow-x:clip!important' dist/app-v253.css
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -79,20 +83,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_43_r252]
+    needs: [web_1_0_44_r253]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.43 r252
+      - name: Official production serves and boots 1.0.44 r253
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.43"' <<<"$BODY" && grep -Fq '"revision": "r252-official-1.0.43"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v252.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v252.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.44"' <<<"$BODY" && grep -Fq '"revision": "r253-official-1.0.44"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v253.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v253.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR252='source-ui-recovery-logic-only'" <<<"$JS" && grep -Fq "window.__ctR248F1='jolpica-six-tabs-persistent-collapse'" <<<"$JS" && grep -Fq 'shown_recommendations' <<<"$JS" && grep -Fq 'cinetracker_sports_payload_v1' <<<"$JS" && ! grep -Fq "window.__ctR251='video-ground-truth-direct-renderers'" <<<"$JS" && ! grep -Fq 'cinetracker_sports_events_v0997' <<<"$JS" && grep -Fq 'overflow-x:clip!important' <<<"$CSS" && grep -Fq '.ct248-f1hub' <<<"$CSS" && grep -Fq 'app-v252.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR253='single-authority-live-data'" <<<"$JS" && grep -Fq "window.__ctR253Sports='single-renderer-four-tabs-canonical-history'" <<<"$JS" && grep -Fq "window.__ctR253Discover='single-renderer-nine-tabs-generation-safe'" <<<"$JS" && grep -Fq 'cinetracker_sports_payload_v1' <<<"$JS" && grep -Fq 'cinetracker_home_live_v0997_r3' <<<"$JS" && ! grep -Fq "new MutationObserver(queue239).observe(q('#app')" <<<"$JS" && ! grep -Fq 'cinetracker_sports_events_v0997' <<<"$JS" && grep -Fq '.ct248-f1hub' <<<"$CSS" && grep -Fq 'app-v253.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
