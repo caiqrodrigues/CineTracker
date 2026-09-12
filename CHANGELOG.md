@@ -2,6 +2,42 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.48 — 2026-09-12 — Web r257
+
+### Ground truth do vídeo / sequência real de episódios
+- O vídeo posterior à r256 confirmou que a geometria da Home melhorou, mas a semântica de séries longas ainda misturava backlog histórico com a sequência atual: SmackDown podia mostrar corretamente um episódio recente no card e, ao mesmo tempo, apontar `S01E01` de 1999 como próximo episódio.
+- A r257 usa `cinetracker_series_episode_state_v1` para obter o conjunto exato de episódios assistidos e define a fronteira pela maior posição realmente vista. O próximo episódio passa a ser o primeiro episódio já exibido, não assistido e estritamente posterior a essa fronteira.
+- Buracos históricos anteriores à fronteira permanecem intactos e não são marcados automaticamente como vistos, mas deixam de inflar o próximo episódio e a contagem corrente de `Faltam`.
+- A mesma regra cobre Lioness, Stuart e demais séries iniciadas: episódio realmente liberado depois da fronteira coloca a série em `Continue assistindo`; ausência de pendência posterior mantém `Em dia`/`Concluída` conforme o status.
+- `next_episode_to_air` continua proibido como evidência de episódio já lançado.
+
+### Descobrir / exclusões pessoais e pools completos
+- O vídeo comprovou que o tamanho dos cards estava correto, mas `Pra você` ainda podia exibir títulos já vistos, na Watchlist ou atualmente acompanhados, e abas públicas ficavam com poucos cards depois da filtragem.
+- A r257 valida dashboard pessoal + Watchlist completa antes de pintar recomendações. Vistos, concluídos, em andamento, em dia, Watchlist e `NotInterested` formam o conjunto de exclusão pessoal.
+- `Pra você` mantém os critérios estritos de recomendação — nota, ano, poster, gêneros e antirrepetição — e o bloco `Da sua Watchlist` usa somente itens elegíveis da própria Watchlist que ainda não foram vistos/concluídos/acompanhados.
+- Se dashboard ou Watchlist não puderem ser validados, o Descobrir falha fechado em vez de recomendar conteúdo potencialmente proibido.
+- As abas públicas consultam múltiplas páginas do TMDB, deduplicam e aplicam somente as exclusões pessoais. Elas não herdam os cortes de nota/ano do `Pra você`, evitando trilhos com apenas um ou poucos cards.
+
+### Scroll horizontal / gesto real no celular
+- O vídeo e os prints mostraram temporadas/episódios, gráfico, relacionados e cards/abas do Descobrir visivelmente ultrapassando a largura sem responder ao arrasto lateral.
+- A r257 mantém `overflow-x:auto` local e adiciona fallback de `pointer-drag`: o componente altera `scrollLeft` quando o movimento horizontal domina o vertical, preservando a rolagem vertical normal da página.
+- A autoridade cobre abas e cards do Descobrir, temporadas/episódios, gráficos, relacionados/semelhantes, atores/elenco, filtros esportivos e trilhos/tabelas do F1.
+- O observer permanece restrito a `childList` e marca também componentes criados tardiamente; o documento continua sem overflow horizontal global.
+
+### F1 / próximo fim de semana e grid anterior
+- As seis áreas aprovadas do F1 Hub permanecem: `Visão geral`, `Calendário`, `Classificações`, `Pilotos`, `Equipes` e `Circuitos`.
+- `Visão geral` passa a exibir as sessões disponíveis do próximo fim de semana em horário de `America/Sao_Paulo` — treinos, Sprint quando houver, classificação e corrida.
+- Depois que a classificação estiver disponível, o Hub mostra as 20 posições do grid provisório do próximo GP; antes disso, informa explicitamente que o grid ainda não foi definido.
+- O GP anterior passa a mostrar as 20 posições de largada e a posição final de cada piloto, com status e tempo/pontos, permitindo comparar `largou P… → chegou P…`.
+
+### Build / validação
+- Web atualizada para `1.0.48 / r257-official-1.0.48`; Android permanece `1.0.20 / versionCode 10062`.
+- Não existe migration de schema na r257; os RPCs atuais do Supabase já fornecem o estado necessário.
+- Build oficial: `apps/web/build-r257-official.mjs`; runtime: `apps/web/runtime-r257-sequence-scroll-discover-f1-grid.js`.
+- `test-r257-browser.mjs` reproduz SmackDown com buraco histórico S01 e sequência S28, exige próximo recente, valida Lioness/Stuart, bloqueia vistos/Watchlist/acompanhando no Descobrir, exige pelo menos 20 cards em `Em alta`, executa arrasto horizontal real em abas/cards e trilhos tardios e valida 20 posições no próximo grid e 20 no grid anterior.
+- `scripts/test-r257-exact-bundle-browser.mjs` carrega o `app-v257.js` final, captura `error`/`unhandledrejection`, exige os markers r257 e aplicação não vazia.
+- `verify.yml` exige versão, sintaxe, build, regras, algoritmos, Chromium guiado pelo vídeo, bundle final, identidade final, Android inalterado e `production_smoke` público da 1.0.48/r257 após merge em `main`.
+
 ## 1.0.47 — 2026-09-12 — Web r256
 
 ### Ground truth do vídeo / Home
