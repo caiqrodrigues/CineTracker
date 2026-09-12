@@ -6,28 +6,30 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.45** | revision `r254-official-1.0.45`, package `1.0.45` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r254 |
+| Web | **1.0.46** | revision `r255-official-1.0.46`, package `1.0.46` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r255 |
 | Backend / Supabase | produção compartilhada | RPCs/migrations atuais | produção |
 | Windows | — | — | não lançado |
 
-## Web 1.0.45 / r254
+## Web 1.0.46 / r255
 
-A r254 é uma correção Web baseada no vídeo de produção posterior à r253. A cadeia volta a partir da r252 como baseline visual e injeta uma autoridade final específica para os problemas observados:
+A r255 é a correção Web orientada pelo vídeo posterior à r254, com prioridade máxima para restaurar o Descobrir e preservar as regras de Home, Esportes/F1 e Perfil.
 
-- Home usa `cinetracker_home_live_v0997_r3` no paint inicial e checa `last_episode_to_air` vivo para séries normais iniciadas; `next_episode_to_air` nunca conta como episódio já exibido;
-- Raw, SmackDown, Fórmula 1 e Super Bowl usam a fronteira realmente exibida e ignoram backlog histórico para decidir `Em dia`/`Assistir a seguir`;
-- Descobrir mantém as nove abas, reutiliza as exclusões pessoais carregadas uma vez e troca conteúdo de forma atômica sem apagar os cards enquanto a nova aba carrega;
-- Esportes mantém quatro abas e histórico canônico; o F1 Hub é contido dentro do conteúdo esportivo e não pode ocupar uma coluna do grid externo antes da sidebar;
-- Perfil preserva o layout e recebe estatísticas atuais, incluindo `cinetracker_sport_stats_v1`;
-- temporadas, gráficos, relacionados e trilhos largos recuperam scroll horizontal local dinâmico, enquanto o documento continua sem scroll lateral global;
-- observers legados r239/r247 e o classificador Home por idade da r252 são neutralizados no bundle final.
+- Descobrir mantém nove abas e renderiza cards completos com poster, título, ano, gêneros e nota; `Da sua Watchlist` usa `cinetracker_watchlist_full_v119`, trabalhando com a Watchlist integral;
+- troca de aba no Descobrir mantém o conteúdo anterior até o novo resultado ficar pronto, descarta respostas atrasadas e não aplica a janela de `shown_recommendations` às abas públicas;
+- Home mantém `Em dia` separado de `Continue assistindo`; somente um `last_episode_to_air` realmente posterior à fronteira vista pode reabrir uma série acompanhada;
+- Raw, SmackDown, Fórmula 1 e Super Bowl ignoram backlog histórico e `next_episode_to_air` para decidir a pendência atual;
+- filmes da Home exibem poster, nome, ano, gêneros, nota e duração, hidratando metadata ausente de forma assíncrona;
+- Esportes possui cinco filtros públicos — `Próximos`, `Ao vivo`, `Anteriores`, `Favoritos`, `Assistidos` — com visual escuro/azulado e histórico canônico;
+- F1 Hub permanece abaixo dos filtros esportivos com `Visão geral`, `Calendário`, `Classificações`, `Pilotos`, `Equipes` e `Circuitos`;
+- Perfil preserva o layout aprovado e atualiza estatísticas esportivas pela fonte canônica, atualmente 48 eventos e 6.300 minutos (105h00);
+- overflow horizontal global continua bloqueado; temporadas, gráficos, relacionados, Descobrir e F1 usam somente scroll horizontal local.
 
-Assets oficiais: `app-v254.js` / `app-v254.css`; build: `apps/web/build-r254-official.mjs`; runtime: `apps/web/runtime-r254-video-ground-truth.js`.
+Assets oficiais: `app-v255.js` / `app-v255.css`; build: `apps/web/build-r255-official.mjs`; runtime: `apps/web/runtime-r255-discover-cards-home-sports-profile.js`.
 
 ## Android 1.0.20
 
-A r254 não altera Android. A identidade preservada é:
+A r255 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
