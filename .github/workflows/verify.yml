@@ -1,78 +1,77 @@
-name: Verify Web 1.0.50 r259 Fast Home Discover
+name: Verify Web 1.0.51 r260 Discover Home Modal Scroll
 
 on:
   push:
-    branches: [main, 'fix/r259-fast-home-discover-no-observers']
+    branches: [main, 'fix/r260-discover-home-modal-scroll']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_50_r259:
+  web_1_0_51_r260:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r259
+      - name: Version identity r260
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.50"' package.json
-          grep -Fq '"version": "1.0.50"' apps/web/package.json
-      - name: Syntax r259 runtime
-        run: node --check apps/web/runtime-r259-fast-home-discover.js
-      - name: Syntax r259 builders
+          grep -Fq '"version": "1.0.51"' package.json
+          grep -Fq '"version": "1.0.51"' apps/web/package.json
+          grep -Fq '## 1.0.51 — 2026-09-12 — Web r260' CHANGELOG.md
+          grep -Fq '1.0.51' README.md
+          grep -Fq '1.0.51' VERSIONS.md
+      - name: Syntax r260 runtime
+        run: node --check apps/web/runtime-r260-ux-recovery.js
+      - name: Syntax r260 builders
         run: |
-          node --check apps/web/build-r259.mjs
-          node --check apps/web/build-r259-official.mjs
-      - name: Syntax r259 tests
+          node --check apps/web/build-r260.mjs
+          node --check apps/web/build-r260-official.mjs
+      - name: Syntax r260 tests
         run: |
-          node --check apps/web/test-r259.mjs
-          node --check apps/web/test-r259-algorithms.mjs
-          node --check apps/web/test-r259-browser.mjs
-          node --check scripts/test-r259-exact-bundle-browser.mjs
-      - name: Build official r259
+          node --check apps/web/test-r260.mjs
+          node --check apps/web/test-r260-browser.mjs
+          node --check scripts/test-r260-exact-bundle-browser.mjs
+      - name: Build official r260
         working-directory: apps/web
-        run: node build-r259-official.mjs
-      - name: Static regression r259
+        run: node build-r260-official.mjs
+      - name: Static regression r260
         working-directory: apps/web
-        run: node test-r259.mjs
-      - name: Logic regressions r259
+        run: node test-r260.mjs
+      - name: Chromium mobile and desktop r260
         working-directory: apps/web
-        run: node test-r259-algorithms.mjs
-      - name: Chromium latest-video performance behavior r259
-        working-directory: apps/web
-        run: node test-r259-browser.mjs
-      - name: Exact final bundle boot r259
-        run: node scripts/test-r259-exact-bundle-browser.mjs
-      - name: Final bundle identity r259
+        run: node test-r260-browser.mjs
+      - name: Exact final bundle boot r260
+        run: node scripts/test-r260-exact-bundle-browser.mjs
+      - name: Final bundle identity r260
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v259.js
-          grep -Fq "window.__ctWebBuild='1.0.50';window.__ctOfficialVersion='1.0.50';" dist/app-v259.js
-          grep -Fq "const REVISION='r259-official-1.0.50';" dist/app-v259.js
-          grep -Fq "window.__ctR259='fast-home-discover-no-observers'" dist/app-v259.js
-          grep -Fq "window.__ctR259Home='r5-first-paint+weekly-priority-only+no-dom-repair'" dist/app-v259.js
-          grep -Fq "window.__ctR259Discover='v108-fast-state+staged-first-page+never-global-blank'" dist/app-v259.js
-          grep -Fq "window.__ctR259Horizontal='css-native-pan-x-no-mutation-observer'" dist/app-v259.js
-          grep -Fq "window.__ctR259Frozen='sports-profile-configs-r257-unchanged'" dist/app-v259.js
-          grep -Fq "window.__ctR257F1='weekend-sessions+next-qualifying-grid+previous-start-finish-grid'" dist/app-v259.js
-          grep -Fq 'cinetracker_profile_home_payload_v0997_r5' dist/app-v259.js
-          grep -Fq 'cinetracker_recommendation_state_v108' dist/app-v259.js
-          grep -Fq 'if(false&&root256&&window.MutationObserver)' dist/app-v259.js
-          grep -Fq 'if(false&&app257&&window.MutationObserver)' dist/app-v259.js
-          grep -Fq "if(e.pointerType==='touch')return;" dist/app-v259.js
-          ! grep -Fq "window.__ctR258='account-ground-truth-home-discover-native-scroll'" dist/app-v259.js
-          grep -Fq 'app-v259.js' dist/index.html
-          grep -Fq 'app-v259.css' dist/index.html
-          grep -Fq '"version": "1.0.50"' dist/release.json
-          grep -Fq '"revision": "r259-official-1.0.50"' dist/release.json
-          grep -Fq '.ct259-media-card' dist/app-v259.css
-          grep -Fq 'touch-action:pan-x pan-y!important' dist/app-v259.css
-          grep -Fq 'overflow-x:clip!important' dist/app-v259.css
+          node --check dist/app-v260.js
+          grep -Fq "window.__ctWebBuild='1.0.51';window.__ctOfficialVersion='1.0.51';" dist/app-v260.js
+          grep -Fq "const REVISION='r260-official-1.0.51';" dist/app-v260.js
+          grep -Fq "window.__ctR260='discover-standard-cards+home-first-page-cache+isolated-modal-rails'" dist/app-v260.js
+          grep -Fq "window.__ctR260Discover='standard-2x3-176-desktop-154-mobile'" dist/app-v260.js
+          grep -Fq "window.__ctR260Home='persistent-first-page+background-refresh+metadata-cache+skeleton'" dist/app-v260.js
+          grep -Fq "window.__ctR260Horizontal='isolated-modal-rails+native-touch+delegated-mouse-drag'" dist/app-v260.js
+          grep -Fq "window.__ctR260Frozen='sports-profile-configs-f1-r259-unchanged'" dist/app-v260.js
+          grep -Fq 'ct-home-first-page-v260' dist/app-v260.js
+          grep -Fq 'ct-tmdb-meta-v260:' dist/app-v260.js
+          grep -Fq 'app-v260.js' dist/index.html
+          grep -Fq 'app-v260.css' dist/index.html
+          grep -Fq '"version": "1.0.51"' dist/release.json
+          grep -Fq '"revision": "r260-official-1.0.51"' dist/release.json
+          grep -Fq '.ct259-media-card{flex:0 0 176px!important' dist/app-v260.css
+          grep -Fq 'aspect-ratio:2/3!important' dist/app-v260.css
+          grep -Fq 'flex-basis:154px!important' dist/app-v260.css
+          grep -Fq '[data-ct260-x].overflow-x-auto{overflow-x:auto!important' dist/app-v260.css
+          grep -Fq '[data-ct260-x].scrollbar-thin' dist/app-v260.css
+          grep -Fq '[data-ct260-x].touch-pan-x' dist/app-v260.css
+          grep -Fq '[data-ct260-x].flex-nowrap' dist/app-v260.css
+          grep -Fq 'html,body,#app{max-width:100%!important;overflow-x:clip!important}' dist/app-v260.css
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -87,20 +86,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_50_r259]
+    needs: [web_1_0_51_r260]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.50 r259
+      - name: Official production serves and boots 1.0.51 r260
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.50"' <<<"$BODY" && grep -Fq '"revision": "r259-official-1.0.50"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v259.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v259.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.51"' <<<"$BODY" && grep -Fq '"revision": "r260-official-1.0.51"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v260.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v260.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR259='fast-home-discover-no-observers'" <<<"$JS" && grep -Fq "window.__ctR259Home='r5-first-paint+weekly-priority-only+no-dom-repair'" <<<"$JS" && grep -Fq "window.__ctR259Discover='v108-fast-state+staged-first-page+never-global-blank'" <<<"$JS" && grep -Fq "window.__ctR259Horizontal='css-native-pan-x-no-mutation-observer'" <<<"$JS" && grep -Fq "window.__ctR259Frozen='sports-profile-configs-r257-unchanged'" <<<"$JS" && grep -Fq 'cinetracker_profile_home_payload_v0997_r5' <<<"$JS" && grep -Fq 'cinetracker_recommendation_state_v108' <<<"$JS" && grep -Fq 'if(false&&root256&&window.MutationObserver)' <<<"$JS" && grep -Fq 'if(false&&app257&&window.MutationObserver)' <<<"$JS" && ! grep -Fq "window.__ctR258='account-ground-truth-home-discover-native-scroll'" <<<"$JS" && grep -Fq '.ct259-media-card' <<<"$CSS" && grep -Fq 'touch-action:pan-x pan-y!important' <<<"$CSS" && grep -Fq 'app-v259.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR260='discover-standard-cards+home-first-page-cache+isolated-modal-rails'" <<<"$JS" && grep -Fq "window.__ctR260Home='persistent-first-page+background-refresh+metadata-cache+skeleton'" <<<"$JS" && grep -Fq "window.__ctR260Horizontal='isolated-modal-rails+native-touch+delegated-mouse-drag'" <<<"$JS" && grep -Fq 'ct-home-first-page-v260' <<<"$JS" && grep -Fq '.ct259-media-card{flex:0 0 176px!important' <<<"$CSS" && grep -Fq 'aspect-ratio:2/3!important' <<<"$CSS" && grep -Fq '[data-ct260-x].overflow-x-auto{overflow-x:auto!important' <<<"$CSS" && grep -Fq 'app-v260.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
