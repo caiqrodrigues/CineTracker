@@ -6,23 +6,24 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.48** | `r257-official-1.0.48` | sequência real de episódios, Descobrir pessoal, scroll por arrasto e F1 completo |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r257 |
+| Web | **1.0.49** | `r258-official-1.0.49` | Home orientada ao estado real da conta, Pra você resiliente e scroll horizontal nativo |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r258 |
 | Backend | produção compartilhada | Supabase | histórico, Watchlist e progresso canônicos |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.48 / r257
+## Web 1.0.49 / r258
 
-A r257 usa o vídeo posterior à r256 como ground truth. A geometria aprovada permanece e as correções se concentram na semântica da sequência assistida, nas exclusões pessoais do Descobrir, no gesto horizontal real e nas informações de fim de semana da Fórmula 1.
+A r258 usa o vídeo real posterior à r257 como ground truth e congela **Esportes, Perfil e Configurações**, que o usuário confirmou estarem corretos. O escopo é Home, Descobrir/Pra você e rolagem horizontal.
 
-- **Home / próximo episódio real:** a fronteira passa a vir do conjunto exato de episódios assistidos de `cinetracker_series_episode_state_v1`. Buracos históricos anteriores à fronteira permanecem não vistos, mas nunca voltam a ser escolhidos como “próximo episódio”. Em séries longas como SmackDown, o próximo é o primeiro episódio já exibido depois da sequência recente acompanhada, e `Faltam` passa a contar somente pendências posteriores a essa fronteira. A mesma regra mantém Lioness e Stuart em `Continue assistindo` quando existe lançamento realmente pendente.
-- **Descobrir / regras pessoais:** `Pra você` e as abas públicas validam dashboard pessoal + Watchlist completa antes de pintar. Vistos, concluídos, em andamento, em dia, Watchlist e `NotInterested` ficam fora das recomendações; o bloco `Da sua Watchlist` continua mostrando somente itens elegíveis da própria Watchlist. Se o estado pessoal não puder ser validado, a tela falha fechada em vez de recomendar títulos proibidos.
-- **Descobrir / conteúdo completo:** as abas públicas consultam múltiplas páginas do TMDB, deduplicam e só então aplicam as exclusões pessoais. Elas não herdam os limites de nota/ano do `Pra você`, evitando trilhos com apenas um ou poucos cards depois da filtragem.
-- **Scroll horizontal por arrasto:** abas e cards do Descobrir, temporadas/episódios, gráficos, relacionados/semelhantes, atores/elenco e trilhos do F1/Esportes recebem overflow local e fallback de `pointer-drag`. O gesto só é capturado quando o deslocamento horizontal domina o vertical, preservando a rolagem normal da página no celular.
-- **F1 Hub:** mantém as seis áreas aprovadas e amplia `Visão geral` com todas as sessões disponíveis do próximo fim de semana em horário de São Paulo, grid de largada do próximo GP quando a classificação estiver disponível e o GP anterior com posição de largada → posição de chegada, status e tempo/pontos.
-- **Validação:** o Chromium reproduz SmackDown com S01 histórico não visto e sequência S28 atual, exige que o próximo nunca volte para 1999, valida Lioness/Stuart, bloqueia Breaking Bad/Duna/título acompanhado no Descobrir, exige pelo menos 20 cards em `Em alta`, arrasta horizontalmente abas/cards e trilhos tardios de detalhes e valida 20 posições no grid seguinte e 20 no grid anterior.
+- **Home / Stuart e Lioness:** a própria diferença `released_episodes - watched_episodes` passa a ser aplicada antes do primeiro paint. Se já há episódio liberado e a linha veio contraditoriamente como `Em dia`, ela vai imediatamente para `Assistir a seguir`/`Juntando poeira`, sem esperar uma auditoria remota em fila.
+- **Home / Raw e SmackDown:** backlog histórico deixa de participar da pendência corrente. A auditoria prioritária usa o conjunto exato de episódios assistidos de `cinetracker_series_episode_state_v1`, encontra a maior fronteira realmente vista e procura somente episódios já exibidos depois dela. Assim, S01E14/S01E01 não podem reaparecer como “próximo” quando a sequência acompanhada está em S34/S28. A contagem visível de `Faltam` também representa somente pendências posteriores à fronteira atual; episódios antigos continuam preservados como não vistos no banco.
+- **Descobrir / Pra você:** uma falha individual de hidratação TMDB deixa de derrubar toda a página. Cada item da Watchlist é enriquecido isoladamente; um `TMDB 404` é descartado e os demais blocos continuam renderizando. `Pra você` mantém `Indicação do Dia`, `Da sua Watchlist` e `100% Novos`.
+- **Descobrir / exclusões pessoais:** dashboard, Watchlist completa e `NotInterested` formam a autoridade pessoal antes de recomendar. Vistos/concluídos, em andamento, em dia, Watchlist e não interessados ficam fora das recomendações; Watchlist é permitida somente dentro do bloco próprio. As abas públicas também aplicam exclusões pessoais e usam pools amplos para não ficarem vazias.
+- **Scroll horizontal no mobile:** o navegador volta a ser a autoridade do gesto de toque com `overflow-x:auto`, `-webkit-overflow-scrolling:touch` e `touch-action:pan-x pan-y`. A captura manual de pointer da r257 é desativada para `pointerType=touch`; mouse/pen continuam com fallback de drag. Isso vale para abas/cards do Descobrir e para temporadas, episódios, gráficos, relacionados e elenco criados posteriormente.
+- **Áreas aprovadas congeladas:** a r258 não substitui `renderSports`, `renderProfile` nem `renderConfigs`; o F1 r257 permanece no bundle sem alteração funcional.
+- **Validação:** o Chromium reproduz os dados visíveis no vídeo: Raw começando em S01E14/1495 faltantes e terminando em S34E36/1 pendente, SmackDown S01E01 → S28E37, Stuart/Lioness saindo de `Em dia`, Watchlist com um item que lança `TMDB 404` sem quebrar `Pra você`, pelo menos 20 cards em `Em alta`, `pan-x` nativo e trilhos tardios de detalhes.
 
 ## Funcionalidades consolidadas
 
