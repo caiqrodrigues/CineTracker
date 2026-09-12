@@ -6,10 +6,10 @@ const r259=await readFile(new URL('./runtime-r259-fast-home-discover.js',import.
 const r260=await readFile(new URL('./runtime-r260-ux-recovery.js',import.meta.url),'utf8');
 const css=await readFile(new URL('./dist/app-v260.css',import.meta.url),'utf8');
 const tiny='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function page(width){
 return `<!doctype html><meta charset="utf-8"><style>${css.replaceAll('</style>','<\\/style>')}#app,.content{width:${width-28}px!important;max-width:${width-28}px!important}</style><body><div id="app"></div><script>
 let currentRoute='home',navSeq=1,homeCache=null,renderHome=async()=>{},renderDiscover=async()=>{};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function route(){return currentRoute} function loading(s){return '<div class="loader">'+s+'</div>'} function fail(s){return '<div class="error">'+s+'</div>'}
 function shell(t,s,r,b){return '<div class="app" data-page="'+r+'"><main class="content"><h1>'+t+'</h1>'+b+'</main></div>'}
 function setApp(h){document.querySelector('#app').innerHTML=h}
@@ -46,4 +46,4 @@ ${r260.replaceAll('</script>','<\\/script>')}
 }catch(e){document.body.dataset.test='FAIL';document.body.insertAdjacentHTML('beforeend','<pre id="r260-result">R260_BROWSER_FAIL '+String(e&&e.stack||e)+'</pre>')}})();
 </script></body>`}
 let chrome=process.env.CHROME_BIN||'';if(!chrome){for(const c of['google-chrome','chromium','chromium-browser'])try{execFileSync('which',[c],{stdio:'ignore'});chrome=c;break}catch{}}if(!chrome)throw new Error('Chromium unavailable');
-for(const width of [420,1200]){const dir=await mkdtemp(join(tmpdir(),'ct-r260-browser-')),html=join(dir,'index.html');try{await writeFile(html,page(width),'utf8');const out=execFileSync(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--disable-component-update','--disable-sync','--no-first-run','--no-default-browser-check',`--user-data-dir=${join(dir,'profile')}`,`--window-size=${width},1500`,'--virtual-time-budget=5200','--dump-dom','file://'+html],{encoding:'utf8',timeout:35000,stdio:['ignore','pipe','pipe']});const result=(out.match(/<pre id="r260-result">([^<]*)<\/pre>/)||[])[1]||'';if(!out.includes('data-test="PASS"'))throw new Error(result||('R260 browser did not pass width '+width));console.log(result||('R260_BROWSER_PASS width='+width))}finally{await rm(dir,{recursive:true,force:true})}}
+for(const width of [420,1200]){const dir=await mkdtemp(join(tmpdir(),'ct-r260-browser-')),html=join(dir,'index.html');try{await writeFile(html,page(width),'utf8');const out=execFileSync(chrome,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--disable-component-update','--disable-sync','--no-first-run','--no-default-browser-check',`--user-data-dir=${join(dir,'profile')}`,`--window-size=${width},1500`,'--virtual-time-budget=5200','--dump-dom','file://'+html],{encoding:'utf8',timeout:35000,stdio:['ignore','pipe','pipe']});const results=[...out.matchAll(/<pre id="r260-result">([^<]*)<\/pre>/g)].map(m=>m[1]),result=results.at(-1)||'';if(!out.includes('data-test="PASS"'))throw new Error(result||('R260 browser did not pass width '+width));console.log(result||('R260_BROWSER_PASS width='+width))}finally{await rm(dir,{recursive:true,force:true})}}
