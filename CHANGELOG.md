@@ -2,6 +2,35 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+
+## 1.0.51 — 2026-09-12 — Web r260
+
+### Descobrir / dimensões dos cards
+- O vídeo posterior à r259 comprovou que a redução para 154 px no desktop e 138 px no mobile deixou os cards do Descobrir menores que o padrão aprovado.
+- A r260 restaura 176 px no desktop e 154 px no mobile para todos os cards de filmes, séries e animes do Descobrir.
+- O poster fica protegido por `aspect-ratio: 2/3`, `width:100%`, `height:auto` e `object-fit:cover`, evitando encolhimento e distorção.
+
+### Home / carregamento inicial
+- Um first-page cache compacto e paginado por bucket é persistido em `sessionStorage` e restaurado antes da chamada canônica, permitindo que `Assistir a seguir` apareça imediatamente em retornos e reloads da aba.
+- `cinetracker_profile_home_payload_v0997_r5` continua sendo a autoridade e revalida o snapshot em segundo plano.
+- Cold start sem cache mostra skeleton loaders leves em vez de painel vazio ou congelado.
+- A primeira página usa 18 itens por bucket e expande progressivamente por `IntersectionObserver`, evitando renderização inicial desnecessária de listas longas.
+- Metadados TMDB de série/temporada usados pela reconciliação da Home recebem cache de seis horas.
+- A auditoria semanal de Raw/SmackDown é deslocada de 80 ms para 900 ms após o paint inicial, para não competir com a primeira renderização.
+
+### Scroll horizontal isolado em detalhes
+- Temporadas, episódios, gráficos, elenco/atores e títulos relacionados/semelhantes/recomendados recebem as classes `flex overflow-x-auto scrollbar-thin whitespace-nowrap touch-pan-x flex-nowrap`.
+- Toque usa pan horizontal nativo; mouse/caneta usam drag delegado que altera apenas `scrollLeft` do trilho.
+- Não é introduzido `MutationObserver` permanente. Os trilhos são armados somente após render/navegação por rescans finitos e fallback semântico.
+- `html`, `body` e `#app` continuam sem overflow horizontal global; o scroll fica estritamente dentro do container marcado.
+
+### Build / validação
+- Web atualizada para `1.0.51 / r260-official-1.0.51`; Android permanece `1.0.20 / versionCode 10062`.
+- Build oficial: `apps/web/build-r260-official.mjs`; runtime: `apps/web/runtime-r260-ux-recovery.js`.
+- `test-r260-browser.mjs` executa em 420 px e 1200 px, mede os cards/ratio 2:3, valida cold-start skeleton + first-page cache, testa Temporadas, gráfico, Elenco e Relacionados com overflow local, impede overflow do body e executa drag real por mouse.
+- `scripts/test-r260-exact-bundle-browser.mjs` carrega o bundle final completo e falha em erro, rejeição ou app vazio.
+- `verify.yml` exige build, regressões estáticas, Chromium mobile/desktop, bundle exato, Android inalterado e `production_smoke` público da 1.0.51/r260 após promoção ao `main`.
+
 ## 1.0.49 — 2026-09-12 — Web r258
 
 ### Ground truth do vídeo / Home da conta real
