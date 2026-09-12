@@ -4,8 +4,37 @@ on:
   push:
     branches: ['fix/r260-discover-home-modal-scroll']
 
+permissions:
+  contents: write
+
 jobs:
-  probe:
+  prepend_changelog:
     runs-on: ubuntu-latest
     steps:
-      - run: echo R260_WORKFLOW_OK
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/r260-discover-home-modal-scroll
+      - name: Prepend r260 release notes once
+        env:
+          R260_SECTION_B64: IyMgMS4wLjUxIOKAlCAyMDI2LTA5LTEyIOKAlCBXZWIgcjI2MAoKIyMjIERlc2NvYnJpciAvIGRpbWVuc8O1ZXMgZG9zIGNhcmRzCi0gTyB2w61kZW8gcG9zdGVyaW9yIMOgIHIyNTkgY29tcHJvdm91IHF1ZSBhIHJlZHXDp8OjbyBwYXJhIDE1NCBweCBubyBkZXNrdG9wIGUgMTM4IHB4IG5vIG1vYmlsZSBkZWl4b3Ugb3MgY2FyZHMgZG8gRGVzY29icmlyIG1lbm9yZXMgcXVlIG8gcGFkcsOjbyBhcHJvdmFkby4KLSBBIHIyNjAgcmVzdGF1cmEgMTc2IHB4IG5vIGRlc2t0b3AgZSAxNTQgcHggbm8gbW9iaWxlIHBhcmEgdG9kb3Mgb3MgY2FyZHMgZGUgZmlsbWVzLCBzw6lyaWVzIGUgYW5pbWVzIGRvIERlc2NvYnJpci4KLSBPIHBvc3RlciBmaWNhIHByb3RlZ2lkbyBwb3IgYGFzcGVjdC1yYXRpbzogMi8zYCwgYHdpZHRoOjEwMCVgLCBgaGVpZ2h0OmF1dG9gIGUgYG9iamVjdC1maXQ6Y292ZXJgLCBldml0YW5kbyBlbmNvbGhpbWVudG8gZSBkaXN0b3LDp8Ojby4KCiMjIyBIb21lIC8gY2FycmVnYW1lbnRvIGluaWNpYWwKLSBVbSBmaXJzdC1wYWdlIGNhY2hlIGNvbXBhY3RvIGUgcGFnaW5hZG8gcG9yIGJ1Y2tldCDDqSBwZXJzaXN0aWRvIGVtIGBzZXNzaW9uU3RvcmFnZWAgZSByZXN0YXVyYWRvIGFudGVzIGRhIGNoYW1hZGEgY2Fuw7RuaWNhLCBwZXJtaXRpbmRvIHF1ZSBgQXNzaXN0aXIgYSBzZWd1aXJgIGFwYXJlw6dhIGltZWRpYXRhbWVudGUgZW0gcmV0b3Jub3MgZSByZWxvYWRzIGRhIGFiYS4KLSBgY2luZXRyYWNrZXJfcHJvZmlsZV9ob21lX3BheWxvYWRfdjA5OTdfcjVgIGNvbnRpbnVhIHNlbmRvIGEgYXV0b3JpZGFkZSBlIHJldmFsaWRhIG8gc25hcHNob3QgZW0gc2VndW5kbyBwbGFuby4KLSBDb2xkIHN0YXJ0IHNlbSBjYWNoZSBtb3N0cmEgc2tlbGV0b24gbG9hZGVycyBsZXZlcyBlbSB2ZXogZGUgcGFpbmVsIHZhemlvIG91IGNvbmdlbGFkby4KLSBBIHByaW1laXJhIHDDoWdpbmEgdXNhIDE4IGl0ZW5zIHBvciBidWNrZXQgZSBleHBhbmRlIHByb2dyZXNzaXZhbWVudGUgcG9yIGBJbnRlcnNlY3Rpb25PYnNlcnZlcmAsIGV2aXRhbmRvIHJlbmRlcml6YcOnw6NvIGluaWNpYWwgZGVzbmVjZXNzw6FyaWEgZGUgbGlzdGFzIGxvbmdhcy4KLSBNZXRhZGFkb3MgVE1EQiBkZSBzw6lyaWUvdGVtcG9yYWRhIHVzYWRvcyBwZWxhIHJlY29uY2lsaWHDp8OjbyBkYSBIb21lIHJlY2ViZW0gY2FjaGUgZGUgc2VpcyBob3Jhcy4KLSBBIGF1ZGl0b3JpYSBzZW1hbmFsIGRlIFJhdy9TbWFja0Rvd24gw6kgZGVzbG9jYWRhIGRlIDgwIG1zIHBhcmEgOTAwIG1zIGFww7NzIG8gcGFpbnQgaW5pY2lhbCwgcGFyYSBuw6NvIGNvbXBldGlyIGNvbSBhIHByaW1laXJhIHJlbmRlcml6YcOnw6NvLgoKIyMjIFNjcm9sbCBob3Jpem9udGFsIGlzb2xhZG8gZW0gZGV0YWxoZXMKLSBUZW1wb3JhZGFzLCBlcGlzw7NkaW9zLCBncsOhZmljb3MsIGVsZW5jby9hdG9yZXMgZSB0w610dWxvcyByZWxhY2lvbmFkb3Mvc2VtZWxoYW50ZXMvcmVjb21lbmRhZG9zIHJlY2ViZW0gYXMgY2xhc3NlcyBgZmxleCBvdmVyZmxvdy14LWF1dG8gc2Nyb2xsYmFyLXRoaW4gd2hpdGVzcGFjZS1ub3dyYXAgdG91Y2gtcGFuLXggZmxleC1ub3dyYXBgLgotIFRvcXVlIHVzYSBwYW4gaG9yaXpvbnRhbCBuYXRpdm87IG1vdXNlL2NhbmV0YSB1c2FtIGRyYWcgZGVsZWdhZG8gcXVlIGFsdGVyYSBhcGVuYXMgYHNjcm9sbExlZnRgIGRvIHRyaWxoby4KLSBOw6NvIMOpIGludHJvZHV6aWRvIGBNdXRhdGlvbk9ic2VydmVyYCBwZXJtYW5lbnRlLiBPcyB0cmlsaG9zIHPDo28gYXJtYWRvcyBzb21lbnRlIGFww7NzIHJlbmRlci9uYXZlZ2HDp8OjbyBwb3IgcmVzY2FucyBmaW5pdG9zIGUgZmFsbGJhY2sgc2Vtw6JudGljby4KLSBgaHRtbGAsIGBib2R5YCBlIGAjYXBwYCBjb250aW51YW0gc2VtIG92ZXJmbG93IGhvcml6b250YWwgZ2xvYmFsOyBvIHNjcm9sbCBmaWNhIGVzdHJpdGFtZW50ZSBkZW50cm8gZG8gY29udGFpbmVyIG1hcmNhZG8uCgojIyMgQnVpbGQgLyB2YWxpZGHDp8OjbwotIFdlYiBhdHVhbGl6YWRhIHBhcmEgYDEuMC41MSAvIHIyNjAtb2ZmaWNpYWwtMS4wLjUxYDsgQW5kcm9pZCBwZXJtYW5lY2UgYDEuMC4yMCAvIHZlcnNpb25Db2RlIDEwMDYyYC4KLSBCdWlsZCBvZmljaWFsOiBgYXBwcy93ZWIvYnVpbGQtcjI2MC1vZmZpY2lhbC5tanNgOyBydW50aW1lOiBgYXBwcy93ZWIvcnVudGltZS1yMjYwLXV4LXJlY292ZXJ5LmpzYC4KLSBgdGVzdC1yMjYwLWJyb3dzZXIubWpzYCBleGVjdXRhIGVtIDQyMCBweCBlIDEyMDAgcHgsIG1lZGUgb3MgY2FyZHMvcmF0aW8gMjozLCB2YWxpZGEgY29sZC1zdGFydCBza2VsZXRvbiArIGZpcnN0LXBhZ2UgY2FjaGUsIHRlc3RhIFRlbXBvcmFkYXMsIGdyw6FmaWNvLCBFbGVuY28gZSBSZWxhY2lvbmFkb3MgY29tIG92ZXJmbG93IGxvY2FsLCBpbXBlZGUgb3ZlcmZsb3cgZG8gYm9keSBlIGV4ZWN1dGEgZHJhZyByZWFsIHBvciBtb3VzZS4KLSBgc2NyaXB0cy90ZXN0LXIyNjAtZXhhY3QtYnVuZGxlLWJyb3dzZXIubWpzYCBjYXJyZWdhIG8gYnVuZGxlIGZpbmFsIGNvbXBsZXRvIGUgZmFsaGEgZW0gZXJybywgcmVqZWnDp8OjbyBvdSBhcHAgdmF6aW8uCi0gYHZlcmlmeS55bWxgIGV4aWdlIGJ1aWxkLCByZWdyZXNzw7VlcyBlc3TDoXRpY2FzLCBDaHJvbWl1bSBtb2JpbGUvZGVza3RvcCwgYnVuZGxlIGV4YXRvLCBBbmRyb2lkIGluYWx0ZXJhZG8gZSBgcHJvZHVjdGlvbl9zbW9rZWAgcMO6YmxpY28gZGEgMS4wLjUxL3IyNjAgYXDDs3MgcHJvbW/Dp8OjbyBhbyBgbWFpbmAuCgo=
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, os
+          p=Path('CHANGELOG.md')
+          text=p.read_text(encoding='utf-8')
+          marker='## 1.0.51 — 2026-09-12 — Web r260'
+          if marker not in text:
+              section=base64.b64decode(os.environ['R260_SECTION_B64']).decode('utf-8')
+              anchor=text.find('\n## ')
+              if anchor < 0:
+                  raise SystemExit('CHANGELOG anchor not found')
+              text=text[:anchor+1]+'\n'+section+text[anchor+1:]
+              p.write_text(text,encoding='utf-8')
+          PY
+          if git diff --quiet -- CHANGELOG.md; then exit 0; fi
+          git config user.name 'Caique Rodrigues'
+          git config user.email '73994301+caiqrodrigues@users.noreply.github.com'
+          git add CHANGELOG.md
+          git commit -m 'docs: add Web 1.0.51 r260 changelog'
+          git push origin HEAD:fix/r260-discover-home-modal-scroll
