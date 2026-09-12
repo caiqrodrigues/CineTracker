@@ -6,30 +6,32 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.51** | revision `r260-official-1.0.51`, package `1.0.51` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r260 |
-| Backend / Supabase | produção compartilhada | RPCs/migrations atuais | produção |
+| Web | **1.0.52** | revision `r261-official-1.0.52`, package `1.0.52` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r261 |
+| Backend / Supabase | produção compartilhada | `cinetracker_imported_series_state_v1` + RPCs/migrations atuais | produção |
 | Windows | — | — | não lançado |
 
-## Web 1.0.51 / r260
+## Web 1.0.52 / r261
 
-A r260 é uma correção orientada pelo vídeo real posterior à r259 e limita o escopo a Descobrir, carregamento inicial da Home e rolagem horizontal em detalhes/modais.
+A r261 é guiada pelos vídeos reais do CineTracker e do Binglers e corrige a divergência entre o modelo importado e a interface.
 
-- Descobrir restaura cards padrão 2:3 com largura 176 px desktop / 154 px mobile;
-- Home restaura um first-page cache paginado por bucket em `sessionStorage` antes da revalidação canônica, com skeleton em cold start e expansão progressiva por `IntersectionObserver`;
-- metadados TMDB de série/temporada usados pela Home têm cache de 6 h;
-- auditoria semanal de Raw/SmackDown é diferida para fora do primeiro paint;
-- temporadas, gráficos, elenco/atores e relacionados recebem scroll horizontal local isolado;
-- toque usa pan-x nativo e mouse/caneta usam drag delegado;
-- nenhum `MutationObserver` permanente é introduzido;
-- Esportes, Perfil, Configurações e F1 permanecem congelados na implementação aprovada;
+- Raw e SmackDown usam a maior fronteira realmente assistida; backlog histórico anterior não pode voltar como próximo episódio nem inflar `Faltam`;
+- o estado antigo S01 é neutralizado antes do primeiro paint e a auditoria posterior considera somente episódios já exibidos depois da fronteira;
+- Formula 1 e NFL Super Bowl passam a ser expostos como séries importadas de primeira classe, com temporadas, episódios e progresso, sem associação TMDB insegura;
+- Formula 1 usa temporadas anuais e sessões do fim de semana como episódios; datas usam `air_date` e horário de São Paulo;
+- Super Bowl preserva Temporada 1 em `60/62` e uma temporada separada para Halftime Shows;
+- `cinetracker_imported_series_state_v1(p_media_id)` lê o progresso importado real por `media_id`;
+- Descobrir corrige a geometria do `<button>` interno além do card, com poster 176×264 desktop e 154×231 mobile, copy visível e scroll lateral local;
+- a chave de cache TMDB inclui parâmetros, impedindo uma consulta simples da Home de deixar `/series/1549` sem os dados ricos de detalhe;
+- Home mantém cache visual persistente da primeira página e revalidação canônica em background;
+- Esportes/F1 Hub, Perfil e Configurações permanecem sem reconstrução nesta release;
 - Android permanece `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v260.js` / `app-v260.css`; build: `apps/web/build-r260-official.mjs`; runtime: `apps/web/runtime-r260-ux-recovery.js`.
+Assets oficiais: `app-v261.js` / `app-v261.css`; build: `apps/web/build-r261-official.mjs`; runtime: `apps/web/runtime-r261-video-ground-truth-series.js`; migration: `supabase/migrations/20260912105000_r261_imported_series_state.sql`.
 
 ## Android 1.0.20
 
-A r260 não altera Android. A identidade preservada é:
+A r261 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
