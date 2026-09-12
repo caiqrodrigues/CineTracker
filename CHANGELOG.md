@@ -3,6 +3,33 @@
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
 
+## 1.0.52 — 2026-09-12 — Web r261
+
+### Ground truth dos vídeos / Raw e SmackDown
+- O vídeo real posterior à r260 confirmou que Raw ainda podia reaparecer como `S01E14 / Faltam 1495` e SmackDown podia voltar a buracos da primeira temporada. A r261 neutraliza o backlog histórico antes do primeiro paint e usa `cinetracker_series_episode_state_v1` para obter a maior fronteira realmente assistida.
+- Somente episódios já exibidos e estritamente posteriores à fronteira atual podem formar `Faltam` ou `Próximo`. Buracos antigos continuam não assistidos no banco e não são marcados artificialmente.
+- O teste Chromium começa exatamente com Raw em S01E14/1495 faltantes e SmackDown em S01, proíbe qualquer flash desses episódios e exige convergência para a sequência atual.
+
+### Formula 1 e NFL Super Bowl como séries
+- O vídeo de referência do Binglers confirmou que Formula 1 e NFL Super Bowl devem ser tratados como séries, não como atalhos esportivos. As duas mídias importadas já existem no CineTracker como `media_type=tv` e `media_kind=series` e passam a ser expostas dessa forma na interface.
+- Formula 1 usa temporadas anuais desde 1950; treinos, Sprint/Sprint Qualifying, classificação e corrida são episódios sequenciais. O progresso importado real é preservado e datas são lidas de `air_date` em horário de São Paulo.
+- NFL Super Bowl usa Temporada 1 para a sequência de Super Bowls desde 1967 e preserva o progresso importado real `60/62`; a segunda temporada representa Halftime Shows.
+- A migration `20260912105000_r261_imported_series_state.sql` cria `cinetracker_imported_series_state_v1(p_media_id)`, permitindo ler o progresso das séries importadas por `media_id` sem inventar uma identidade TMDB para itens cuja reconciliação permanece ambígua.
+
+### Descobrir / detalhe / desempenho
+- O vídeo comprovou que corrigir apenas o card externo não bastava: o `<button>` interno herdava altura comprimida e esmagava o poster. A r261 reseta card, botão, poster e copy; desktop usa poster 176×264 e mobile 154×231, sempre 2:3, com título e metadados visíveis.
+- Abas e carrosséis do Descobrir recebem scroll horizontal local nativo e drag de mouse/caneta, sem liberar overflow horizontal no documento.
+- O detalhe vazio de `/series/1549` foi associado ao cache TMDB da r260, cuja chave considerava apenas o path. A r261 inclui parâmetros ordenados na chave; uma consulta simples da Home não pode mais contaminar a chamada rica com `credits/recommendations/seasons`.
+- A primeira página da Home ganha também cache visual persistente em `localStorage`; ele é apenas visual e continua sendo revalidado pelo payload canônico em segundo plano.
+
+### Build / validação
+- Web atualizada para `1.0.52 / r261-official-1.0.52`; Android permanece `1.0.20 / versionCode 10062`.
+- Runtime: `apps/web/runtime-r261-video-ground-truth-series.js`; build oficial: `apps/web/build-r261-official.mjs`.
+- `test-r261-browser.mjs` roda em 420 px e 1200 px e reproduz backlog S01 de Raw/SmackDown, F1/Super Bowl como séries, progresso `60/62` do Super Bowl, datas de episódios F1, geometria real do botão/poster/copy no Descobrir, drag horizontal e separação de cache da tela de detalhes.
+- `scripts/test-r261-exact-bundle-browser.mjs` carrega o bundle final completo e falha em erro, rejeição ou aplicação vazia.
+- Esportes/F1 Hub, Perfil e Configurações não são reconstruídos nesta release.
+
+
 ## 1.0.51 — 2026-09-12 — Web r260
 
 ### Descobrir / dimensões dos cards

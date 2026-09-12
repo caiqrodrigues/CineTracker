@@ -6,25 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.51** | `r260-official-1.0.51` | cards padronizados no Descobrir, Home com first-page cache/skeleton e scroll horizontal isolado em detalhes |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r260 |
-| Backend | produção compartilhada | Supabase | histórico, Watchlist, progresso e estado de recomendação canônicos |
+| Web | **1.0.52** | `r261-official-1.0.52` | ground truth dos vídeos: Raw/SmackDown, F1/Super Bowl como séries, Descobrir e detalhes |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r261 |
+| Backend | produção compartilhada | Supabase | progresso importado + `cinetracker_imported_series_state_v1` |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.51 / r260
+## Web 1.0.52 / r261
 
-A r260 corrige regressões visuais e de interação confirmadas no vídeo real posterior à r259, sem alterar Esportes, Perfil, Configurações ou F1.
+A r261 usa os dois vídeos reais como autoridade: o vídeo do CineTracker mostrou Raw ainda preso ao backlog histórico, cards do Descobrir comprimidos e o detalhe do SmackDown vazio; o vídeo de referência mostrou Formula 1 e NFL Super Bowl tratados como séries com temporadas, episódios e progresso.
 
-- **Descobrir:** cards de filmes, séries e animes voltam ao footprint aprovado, com 176 px no desktop e 154 px no mobile, poster sempre em `aspect-ratio: 2/3`, sem encolhimento herdado.
-- **Home:** um primeiro lote paginado e compacto por bucket é persistido em `sessionStorage` (sobrevive a reloads da aba sem misturar cache entre sessões do navegador) e restaurado antes da chamada canônica, fazendo `Assistir a seguir` reaparecer imediatamente em retornos/reloads. A resposta `r5` continua canônica e atualiza o cache em segundo plano.
-- **Cold start:** quando ainda não existe first-page cache, a tela mostra skeletons leves em vez de painel vazio/congelado.
-- **TMDB:** metadados de detalhe/temporada usados pela reconciliação da Home possuem cache de 6 h e a auditoria semanal de Raw/SmackDown é adiada para fora do primeiro paint.
-- **Scroll de detalhes:** Temporadas, gráficos de temporada/episódio, elenco/atores e títulos relacionados/semelhantes recebem trilho local com `flex overflow-x-auto scrollbar-thin whitespace-nowrap touch-pan-x flex-nowrap`.
-- **Touch/mouse:** toque usa scroll nativo; mouse/caneta usam drag delegado por `scrollLeft`, sem `MutationObserver` permanente.
-- **Isolamento:** `html/body/#app` continuam sem overflow horizontal global. Somente o container local pode rolar lateralmente.
-- **Validação:** Chromium roda em viewport mobile e desktop e mede proporção/tamanho dos cards, skeleton/cache da Home, overflow local, ausência de overflow global e drag real por mouse.
+- **Raw / SmackDown:** buracos históricos anteriores à maior fronteira realmente assistida deixam de virar `Faltam` ou próximo episódio. Antes da auditoria terminar, o estado histórico é neutralizado para não piscar `S01E14`/`S01E01`; depois, somente episódios já exibidos e posteriores à fronteira atual entram em `Assistir a seguir`.
+- **Formula 1 como série:** a mídia importada `Formula 1` permanece `tv/series`, com temporadas anuais desde 1950. Treinos, Sprint/Sprint Qualifying, classificação e corrida viram episódios sequenciais da temporada; o progresso já importado é preservado e nenhum episódio histórico é marcado artificialmente.
+- **NFL Super Bowl como série:** a mídia importada permanece `tv/series`, com Temporada 1 contendo a sequência de Super Bowls desde 1967 e progresso real `60/62`; a segunda temporada representa Halftime Shows, preservando o histórico importado.
+- **Backend:** `cinetracker_imported_series_state_v1(p_media_id)` lê progresso de séries importadas sem identidade TMDB segura diretamente por `media_id`. Formula 1 e Super Bowl continuam sem associação TMDB inventada.
+- **Descobrir:** além do card externo, o próprio `<button>` interno recebe reset de altura/layout. Desktop usa 176×264 de poster e mobile 154×231, sempre 2:3, com título/metadados visíveis. Abas e trilhos são armados para scroll horizontal nativo e drag de mouse/caneta.
+- **Detalhes:** o cache TMDB passa a incluir os parâmetros da chamada na chave. Uma consulta simples da Home para `/tv/1549` não pode mais contaminar a consulta rica da tela de detalhes com credits/recommendations/seasons.
+- **Home rápida:** a primeira página compacta também possui cache visual em `localStorage`, além do cache da sessão, e é revalidada pelo payload canônico em segundo plano.
+- **Escopo preservado:** Esportes/F1 Hub, Perfil e Configurações não são reconstruídos pela r261. Android permanece inalterado.
+- **Validação:** Chromium mobile e desktop reproduz Raw/SmackDown com backlog S01, abre F1/Super Bowl como séries, mede o botão/poster/copy real do Descobrir, executa drag horizontal e comprova a separação do cache TMDB do detalhe.
 
 ## Funcionalidades consolidadas
 
@@ -34,6 +35,7 @@ A r260 corrige regressões visuais e de interação confirmadas no vídeo real p
 - Watchlist completa com ordenação e navegação para detalhes;
 - reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x...`;
 - detalhes ricos de filmes, séries, temporadas, episódios, avaliações e elenco;
+- Formula 1 e NFL Super Bowl importados tratados como séries, sem perder a área esportiva/F1 Hub;
 - Perfil com estatísticas, favoritos, atividade e tempos;
 - Sports integrado ao mesmo shell do CineTracker e F1 Hub;
 - busca, importação, sincronização, manutenção e backup;
