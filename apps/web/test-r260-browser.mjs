@@ -9,7 +9,7 @@ const tiny='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function page(width){
 return `<!doctype html><meta charset="utf-8"><style>${css.replaceAll('</style>','<\\/style>')}#app,.content{width:${width-28}px!important;max-width:${width-28}px!important}</style><body><div id="app"></div><script>
-let currentRoute='home',navSeq=1,homeCache=null;
+let currentRoute='home',navSeq=1,homeCache=null,renderHome=async()=>{},renderDiscover=async()=>{};
 function route(){return currentRoute} function loading(s){return '<div class="loader">'+s+'</div>'} function fail(s){return '<div class="error">'+s+'</div>'}
 function shell(t,s,r,b){return '<div class="app" data-page="'+r+'"><main class="content"><h1>'+t+'</h1>'+b+'</main></div>'}
 function setApp(h){document.querySelector('#app').innerHTML=h}
