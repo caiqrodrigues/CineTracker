@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r255.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [js,css,html,release]=await Promise.all([readFile(resolve(dist,'app-v255.js'),'utf8'),readFile(resolve(dist,'app-v255.css'),'utf8'),readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'release.json'),'utf8')]);
+for(const x of ["window.__ctR255='discover-cards-home-buckets-sports-f1-profile-live'","window.__ctR255Discover='poster-first-nine-tabs-full-watchlist-atomic'","window.__ctR255Sports='five-tabs-dark-cards-f1-six-approved-tabs'","window.__ctR255Profile='approved-layout-canonical-sports-values'","const REVISION='r255-official-1.0.46';"])if(!js.includes(x))throw new Error('r255 official missing '+x);
+if(!js.includes('cinetracker_watchlist_full_v119')||!js.includes('cinetracker_sport_stats_v1'))throw new Error('r255 canonical live data missing');
+if(js.includes("window.__ctR253='single-authority-live-data'")||js.includes("window.__ctR254='video-ground-truth-r252-baseline'"))throw new Error('r253/r254 authority leaked into r255');
+if(!css.includes('.ct255-media-poster')||!css.includes('.ct255-f1-tab.active')||!css.includes('overflow-x:clip!important'))throw new Error('r255 visual CSS missing');
+if(!html.includes('app-v255.js')||!html.includes('app-v255.css')||!release.includes('r255-official-1.0.46'))throw new Error('r255 assets/release mismatch');
+console.log('WEB_1_0_46_OFFICIAL r255 verified');

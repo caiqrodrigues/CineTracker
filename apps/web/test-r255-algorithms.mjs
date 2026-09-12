@@ -1,0 +1,18 @@
+import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
+const runtime=await readFile(new URL('./runtime-r255-discover-cards-home-sports-profile.js',import.meta.url),'utf8');
+const noop=()=>{};
+const document={querySelector:()=>null,querySelectorAll:()=>[],addEventListener:noop,dispatchEvent:noop};
+const ctx={console,setTimeout,clearTimeout,Promise,Map,Set,Date,Intl,URL,document,location:{pathname:'/home'},localStorage:{getItem:()=>null,setItem:noop},CustomEvent:function(){},IntersectionObserver:undefined,MutationObserver:undefined,requestAnimationFrame:fn=>fn(),window:null,homeCache:{series:[]},profileCache:{},navSeq:1,renderHome:noop,renderDiscover:noop,renderSports:noop,renderProfile:async()=>{},render:async()=>{},paintHome:noop,route:()=> 'home',setApp:noop,shell:()=>'',loading:()=>'',fail:()=>'',rpc:async()=>({}),api:async()=>[],tmdb:async()=>({}),safeTmdb:async()=>({results:[]}),img:p=>'img:'+p,toast:noop,user:{}};ctx.window=ctx;vm.createContext(ctx);vm.runInContext(runtime,ctx);
+const T=ctx.__ctR255Test,A=(c,m)=>{if(!c)throw new Error('R255_ALGO '+m)};
+let caught={title:'Caught',watched_episodes:2,is_caught_up:true,home_bucket:'continue',status:'Returning Series'};T.normalizeHome255(caught);A(caught.home_bucket==='up_to_date','caught-up must return to Em dia');
+let ended={title:'Ended',watched_episodes:8,is_caught_up:true,home_bucket:'continue',status:'Ended'};T.normalizeHome255(ended);A(ended.home_bucket==='completed','ended caught-up must be completed');
+let raw={title:'Raw',watched_episodes:30,home_bucket:'continue',latest_released_season_number:34,latest_released_episode_number:35,last_watched_season:34,last_watched_episode:35};T.normalizeHome255(raw);A(raw.home_bucket==='up_to_date','Raw latest watched must be Em dia');
+let normal={title:'Normal',watched_episodes:5,home_bucket:'up_to_date',latest_released_season_number:2,latest_released_episode_number:4,last_watched_season:1,last_watched_episode:1};T.normalizeHome255(normal);A(normal.home_bucket==='up_to_date','incomplete watched frontier alone must not create Continue');
+A(T.releasedFrontier255({latest_released_season_number:3,latest_released_episode_number:6})===300006,'released frontier');
+A(T.watchedFrontier255({last_watched_season:3,last_watched_episode:5})===300005,'watched frontier');
+A(T.fmtSports255(6300)==='105h 00min','sports time must use complete total');
+A(T.genres255({genre_ids:[28,12,878]}).join('|')==='Ação|Aventura|Ficção científica','genre labels');
+const card=T.mediaCard255({id:1,tmdb_id:1,media_type:'movie',title:'Poster Film',poster_path:'/p.jpg',release_date:'2026-01-01',vote_average:8.4,genre_ids:[28]});A(card.includes('ct255-media-poster')&&card.includes('<img')&&card.includes('Poster Film')&&card.includes('★ 8.4'),'poster-first card');
+const now=Date.now(),p={events:[{id:1,status:'live',starts_at:new Date(now-1000).toISOString(),sport_slug:'soccer'},{id:2,status:'scheduled',starts_at:new Date(now+3600000).toISOString(),sport_slug:'soccer'},{id:3,status:'finished',starts_at:new Date(now-3600000).toISOString(),sport_slug:'soccer',has_favorite:true}],watch_history:Array.from({length:48},(_,i)=>({id:100+i,sport_slug:'soccer'}))};A(T.sportRows255(p,'live').length===1,'live filter');A(T.sportRows255(p,'next').length===1,'next filter');A(T.sportRows255(p,'previous').length===1,'previous excludes live and stays within 72h');A(T.sportRows255(p,'favorites').length===1,'favorites filter');A(T.sportRows255(p,'watched').length===48,'watched uses full canonical history');
+console.log('R255_ALGORITHMS_PASS');

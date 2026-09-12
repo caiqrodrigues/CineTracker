@@ -2,6 +2,45 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.46 — 2026-09-11 — Web r255
+
+### Descobrir / cards e Watchlist completa
+- O vídeo posterior à r254 comprovou que as abas do Descobrir mudavam, mas o conteúdo permanecia visualmente quebrado: poucos itens, blocos comprimidos de texto, sem poster e sem a composição aprovada dos cards.
+- A r255 torna o Descobrir a prioridade desta release e passa a renderizar os resultados com card explícito contendo poster 2:3, título, ano, até três gêneros e nota, com trilho horizontal local.
+- Permanecem nove abas: `Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário`.
+- `Da sua Watchlist` deixa de depender do dashboard resumido e passa a consultar `cinetracker_watchlist_full_v119`, usando a Watchlist integral do usuário.
+- A janela de `shown_recommendations` continua protegendo recomendações pessoais, mas deixa de eliminar resultados das abas públicas do Descobrir.
+- Ao trocar de aba, o conteúdo anterior permanece visível até o novo resultado estar pronto; respostas atrasadas são descartadas e apenas a geração mais recente pode substituir o DOM.
+
+### Home / Em dia / Continue assistindo
+- `Em dia` volta a ser preservado como bucket separado. Uma série não pode ser empurrada para `Continue assistindo` apenas porque a fronteira assistida recuperada por uma camada secundária está incompleta.
+- O payload canônico continua sendo a primeira autoridade; uma série só sai de `Em dia` quando a auditoria viva comprova que `last_episode_to_air` avançou além do último episódio realmente acompanhado.
+- Raw, SmackDown, Fórmula 1 e Super Bowl continuam ignorando backlog histórico e nunca usam `next_episode_to_air` como pendência atual.
+- Lioness, Stuart e demais séries normais continuam retornando a `Continue assistindo` quando existe episódio realmente exibido posterior à fronteira assistida.
+
+### Home / filmes ricos
+- Cards de filmes na Home passam a exibir poster, nome, ano, gêneros, nota e duração.
+- Metadados ausentes são hidratados pelo TMDB de forma assíncrona, sem bloquear o primeiro paint nem desmontar a geometria do card.
+
+### Esportes / F1
+- A navegação de Esportes passa a ter cinco filtros públicos: `Próximos`, `Ao vivo`, `Anteriores`, `Favoritos` e `Assistidos`.
+- O visual volta ao padrão escuro/azulado do CineTracker; os filtros ficam acima do F1 Hub e deixam de usar a aparência cinza regressiva observada no vídeo.
+- Eventos assistidos continuam vindo do `watch_history` canônico de `cinetracker_sports_payload_v1`; marcar/desmarcar usa `cinetracker_sport_mark_watched_v1` e favoritos usam `cinetracker_sport_toggle_favorite_v1`.
+- O F1 Hub fica abaixo dos filtros esportivos e passa a expor exatamente `Visão geral`, `Calendário`, `Classificações`, `Pilotos`, `Equipes` e `Circuitos`, no mesmo padrão escuro/azulado.
+
+### Perfil / estatísticas esportivas
+- O Perfil não é redesenhado.
+- A atualização esportiva deixa de depender de um painel específico e passa a localizar os cards de estatística já renderizados, atualizando contagem e tempo pela resposta de `cinetracker_sport_stats_v1`.
+- A fonte canônica confirmada contém 48 eventos assistidos e 6.300 minutos, equivalentes a 105h00.
+
+### Scroll / build / validação
+- Overflow horizontal global continua bloqueado; temporadas, gráficos, relacionados/semelhantes, Descobrir e F1 mantêm scroll horizontal apenas dentro do próprio componente.
+- Web atualizada para `1.0.46 / r255-official-1.0.46`; Android permanece `1.0.20 / versionCode 10062`.
+- Build oficial: `apps/web/build-r255-official.mjs`; runtime: `apps/web/runtime-r255-discover-cards-home-sports-profile.js`.
+- `test-r255-browser.mjs` exige posters reais no Descobrir, Watchlist completa, abas públicas povoadas, `Em dia` preservado, cinco filtros esportivos, seis abas F1 corretas e Perfil em 48/105h.
+- `scripts/test-r255-exact-bundle-browser.mjs` carrega o `app-v255.js` final inteiro e falha em qualquer `error`, `unhandledrejection` ou app vazio.
+- `verify.yml` exige build, regras, algoritmos, Chromium guiado pelo vídeo, bundle final, Android inalterado e `production_smoke` da 1.0.46/r255 após merge em `main`.
+
 ## 1.0.45 — 2026-09-11 — Web r254
 
 ### Ground truth do vídeo / causa raiz
