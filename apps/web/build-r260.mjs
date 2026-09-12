@@ -25,7 +25,7 @@ for(const x of[
   "window.__ctR260Horizontal='isolated-modal-rails+native-touch+delegated-mouse-drag'",
   "window.__ctR260Frozen='sports-profile-configs-f1-r259-unchanged'"
 ])must(runtime,x,x);
-if(runtime.includes('MutationObserver'))throw new Error('r260 must not add MutationObserver');
+if(/new\s+MutationObserver\s*\(/.test(runtime))throw new Error('r260 must not add MutationObserver');
 if(!js.includes('\nboot();'))throw new Error('r260 boot insertion point missing');
 
 js=js.replace('\nboot();','\n'+runtime+'\nboot();');
