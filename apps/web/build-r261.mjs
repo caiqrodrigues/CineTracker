@@ -19,16 +19,21 @@ for(const x of[
 ])must(js,x,x);
 for(const x of[
   "window.__ctR261='video-ground-truth-series-discover-detail'",
-  "window.__ctR261Home='raw-smackdown-exact-frontier+synthetic-series-semantic-cards'",
+  "window.__ctR261Home='raw-smackdown-exact-frontier+special-series+persistent-home-cache'",
   "window.__ctR261Series='formula1-and-superbowl-first-class-imported-series'",
-  "window.__ctR261Discover='button-height-reset+poster-2x3-readable-copy'",
-  "window.__ctR261Detail='tmdb-cache-key-includes-params+nonblank-detail'"
+  "window.__ctR261Discover='button-height-reset+poster-2x3+native-drag-rails'",
+  "window.__ctR261Detail='tmdb-cache-key-includes-params+nonblank-detail'",
+  "window.__ctR261Horizontal='special-series+discover+native-detail-rails'",
+  "ct-home-first-page-v261",
+  "cinetracker_imported_series_state_v1",
+  "const d=String(x?.air_date||x?.date||'').slice(0,10)",
+  "function provisionalWeekly261(row)",
+  "function armDiscover261()"
 ])must(runtime,x,x);
 if(!js.includes('\nboot();'))throw new Error('r261 boot insertion point missing');
 
-/* r260 accidentally keyed TV metadata by path only. A bare Home request could therefore
-   poison a richer detail request for the same /tv/:id. Keep cache entries distinct by params;
-   the old path-only entries become unreachable without destructive storage cleanup. */
+/* r260 keyed TV metadata only by path. Home could poison a richer series detail request.
+   Distinguish cache entries by sorted params without destructive storage cleanup. */
 js=js.replace('const key=META260+String(path);',"const key=META260+String(path)+'?'+Object.keys(params||{}).sort().map(k=>encodeURIComponent(k)+'='+encodeURIComponent(String(params[k]??''))).join('&');");
 js=js.replace('\nboot();','\n'+runtime+'\nboot();');
 js=js.replace("const REVISION='r260-official-1.0.51';","const REVISION='r261-official-1.0.52';")
@@ -40,8 +45,8 @@ css+=`
 /* CineTracker Web 1.0.52 r261 — real-device ground truth. */
 html,body,#app{max-width:100%!important;overflow-x:clip!important}
 
-/* Discover: inherited button sizing was the real reason posters collapsed into 30px strips.
-   Reset the complete button box, not only the outer article. */
+/* Discover: reset the full button box. The r260 video proved the inherited button height
+   was still crushing the 2:3 poster into a narrow strip. */
 .ct259-media-rail{align-items:flex-start!important;min-height:350px!important}
 .ct259-media-card{display:block!important;flex:0 0 176px!important;width:176px!important;min-width:176px!important;max-width:176px!important;height:auto!important;min-height:344px!important;max-height:none!important;overflow:visible!important}
 .ct259-media-card>button{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;width:100%!important;height:auto!important;min-height:344px!important;max-height:none!important;overflow:visible!important;padding:0!important;white-space:normal!important;line-height:normal!important}
@@ -58,7 +63,7 @@ html,body,#app{max-width:100%!important;overflow-x:clip!important}
  .ct259-media-copy{min-height:75px!important}
 }
 
-/* Formula 1 / Super Bowl are media-series details, separate from the Sports Hub. */
+/* Formula 1 / Super Bowl are media-series details, separate from Sports Hub. */
 .ct261-special-series{display:grid!important;gap:14px!important;min-width:0!important;max-width:100%!important}
 .ct261-back{justify-self:start!important}
 .ct261-series-hero{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:18px!important}
@@ -91,9 +96,9 @@ await Promise.all([
  writeFile(resolve(dist,'release.json'),JSON.stringify({
   version:'1.0.52',revision:'r261-official-1.0.52',base:'r260-official-1.0.51',
   scope:'video-ground-truth-raw-f1-superbowl-discover-detail',
-  home:'raw-smackdown-exact-frontier+synthetic-series-semantic-cards',
+  home:'raw-smackdown-exact-frontier+special-series+persistent-home-cache',
   series:'formula1-and-superbowl-first-class-imported-series',
-  discover:'button-height-reset+poster-2x3-readable-copy',
+  discover:'button-height-reset+poster-2x3+native-drag-rails',
   detail:'tmdb-cache-key-includes-params+nonblank-detail',
   android:'unchanged-1.0.20',generated_at:new Date().toISOString()
  },null,2),'utf8')
