@@ -6,24 +6,24 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.49** | `r258-official-1.0.49` | Home orientada ao estado real da conta, Pra você resiliente e scroll horizontal nativo |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r258 |
-| Backend | produção compartilhada | Supabase | histórico, Watchlist e progresso canônicos |
+| Web | **1.0.50** | `r259-official-1.0.50` | recuperação de Home/Descobrir e remoção dos gargalos observados no vídeo real |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r259 |
+| Backend | produção compartilhada | Supabase | histórico, Watchlist, progresso e estado de recomendação canônicos |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.49 / r258
+## Web 1.0.50 / r259
 
-A r258 usa o vídeo real posterior à r257 como ground truth e congela **Esportes, Perfil e Configurações**, que o usuário confirmou estarem corretos. O escopo é Home, Descobrir/Pra você e rolagem horizontal.
+A r259 parte do vídeo real posterior à r258, que comprovou três regressões: Home lenta e corrompida durante a reconciliação, Descobrir terminando em `Não foi possível validar sua biblioteca pessoal` e navegação geral mais pesada. A r259 não compõe sobre a r258; volta à r257 e aplica uma autoridade pequena somente para Home/Descobrir e desempenho. **Esportes, Perfil, Configurações e F1 permanecem congelados.**
 
-- **Home / Stuart e Lioness:** a própria diferença `released_episodes - watched_episodes` passa a ser aplicada antes do primeiro paint. Se já há episódio liberado e a linha veio contraditoriamente como `Em dia`, ela vai imediatamente para `Assistir a seguir`/`Juntando poeira`, sem esperar uma auditoria remota em fila.
-- **Home / Raw e SmackDown:** backlog histórico deixa de participar da pendência corrente. A auditoria prioritária usa o conjunto exato de episódios assistidos de `cinetracker_series_episode_state_v1`, encontra a maior fronteira realmente vista e procura somente episódios já exibidos depois dela. Assim, S01E14/S01E01 não podem reaparecer como “próximo” quando a sequência acompanhada está em S34/S28. A contagem visível de `Faltam` também representa somente pendências posteriores à fronteira atual; episódios antigos continuam preservados como não vistos no banco.
-- **Descobrir / Pra você:** uma falha individual de hidratação TMDB deixa de derrubar toda a página. Cada item da Watchlist é enriquecido isoladamente; um `TMDB 404` é descartado e os demais blocos continuam renderizando. `Pra você` mantém `Indicação do Dia`, `Da sua Watchlist` e `100% Novos`.
-- **Descobrir / exclusões pessoais:** dashboard, Watchlist completa e `NotInterested` formam a autoridade pessoal antes de recomendar. Vistos/concluídos, em andamento, em dia, Watchlist e não interessados ficam fora das recomendações; Watchlist é permitida somente dentro do bloco próprio. As abas públicas também aplicam exclusões pessoais e usam pools amplos para não ficarem vazias.
-- **Scroll horizontal no mobile:** o navegador volta a ser a autoridade do gesto de toque com `overflow-x:auto`, `-webkit-overflow-scrolling:touch` e `touch-action:pan-x pan-y`. A captura manual de pointer da r257 é desativada para `pointerType=touch`; mouse/pen continuam com fallback de drag. Isso vale para abas/cards do Descobrir e para temporadas, episódios, gráficos, relacionados e elenco criados posteriormente.
-- **Áreas aprovadas congeladas:** a r258 não substitui `renderSports`, `renderProfile` nem `renderConfigs`; o F1 r257 permanece no bundle sem alteração funcional.
-- **Validação:** o Chromium reproduz os dados visíveis no vídeo: Raw começando em S01E14/1495 faltantes e terminando em S34E36/1 pendente, SmackDown S01E01 → S28E37, Stuart/Lioness saindo de `Em dia`, Watchlist com um item que lança `TMDB 404` sem quebrar `Pra você`, pelo menos 20 cards em `Em alta`, `pan-x` nativo e trilhos tardios de detalhes.
+- **Home sem reparo de DOM:** a r259 não move cards já renderizados entre seções nem reescreve a árvore da Home. O primeiro estado vem de `cinetracker_profile_home_payload_v0997_r5`, é normalizado em memória e é pintado uma única vez.
+- **Raw/SmackDown sem flash histórico:** antes do primeiro paint, backlog S01 é neutralizado visualmente e a série fica provisoriamente `Em dia`. Em segundo plano somente Raw/SmackDown consultam o conjunto exato assistido e o TMDB atual; apenas episódios já exibidos depois da maior fronteira assistida podem virar pendência. Séries normais não fazem auditoria TMDB individual.
+- **Lioness/Stuart e séries normais:** quando o próprio payload já comprova episódios liberados faltantes, a classificação `Continue assistindo`/`Juntando poeira` é calculada antes do primeiro paint, sem esperar rede adicional.
+- **Descobrir rápido:** o caminho crítico deixa de chamar `cinetracker_profile_media_dashboard_v0991` + `cinetracker_watchlist_full_v119`. O novo `cinetracker_recommendation_state_v108` retorna somente exclusões necessárias e candidatos úteis da Watchlist; no diagnóstico da conta real, sua execução no banco ficou em aproximadamente 33 ms.
+- **Pra você em etapas:** `Indicação do Dia`, `Da sua Watchlist` e `100% Novos` aparecem imediatamente. Estado pessoal e primeira página dos pools públicos carregam em paralelo. Um erro externo não apaga mais toda a tela; existe fallback dentro dos próprios blocos e botão de recarga.
+- **Menos trabalho contínuo:** os `MutationObserver` permanentes herdados das r256/r257 ficam desativados no bundle r259. Temporadas, episódios, gráficos, relacionados, elenco e Descobrir recebem `overflow-x:auto` e `pan-x pan-y` diretamente por CSS, sem varrer o `#app` a cada mutação. Touch não é capturado pelo drag JavaScript herdado.
+- **Validação guiada pelo vídeo:** Chromium exige Home sem `S01E14/S01E01` nem no primeiro frame, Raw → S34E36 e SmackDown → S28E37 após a auditoria prioritária, exatamente duas consultas de estado de episódio, zero auditoria TMDB por Lioness/Stuart/série já em dia, `Pra você` com três blocos imediatos, abas públicas povoadas e scroll horizontal nativo sem observer.
 
 ## Funcionalidades consolidadas
 
