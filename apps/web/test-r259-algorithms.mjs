@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+const n=v=>{const x=Number(v);return Number.isFinite(x)?x:0};
+const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const ep=(s,e)=>n(s)>0&&n(e)>0?n(s)*100000+n(e):0;
+const weekly=r=>/(^| )raw( |$)|smackdown/.test(norm(r.title));
+const frontier=r=>Math.max(ep(r.last_season_number,r.last_episode_number),ep(r.last_watched_season,r.last_watched_episode));
+function provisional(r){const p=frontier(r),s=Math.floor(p/100000),e=p%100000;r.home_bucket='up_to_date';r.is_caught_up=true;r.history_missing_episodes=0;r.released_episodes=n(r.watched_episodes);r.next_season_number=null;r.next_episode_number=null;if(s&&e){r.latest_released_season_number=s;r.latest_released_episode_number=e}return r}
+function normal(r,now=Date.parse('2026-09-12T12:00:00Z')){const missing=Math.max(n(r.history_missing_episodes),Math.max(0,n(r.released_episodes)-n(r.watched_episodes)));if(missing>0){r.history_missing_episodes=missing;r.is_caught_up=false;const t=Date.parse(r.last_watched_at||0);r.home_bucket=Number.isFinite(t)&&now-t<=30*86400000?'continue':'dust'}return r}
+function currentPending(watched,aired){const set=new Set(watched.map(x=>ep(x.s,x.e))),f=Math.max(...set);return aired.filter(x=>ep(x.s,x.e)>f&&!set.has(ep(x.s,x.e))&&x.air<='2026-09-12').sort((a,b)=>ep(a.s,a.e)-ep(b.s,b.e))}
+let raw={title:'WWE Raw',watched_episodes:245,released_episodes:1743,history_missing_episodes:1495,last_season_number:34,last_episode_number:35,next_season_number:1,next_episode_number:14};assert(weekly(raw));provisional(raw);assert.equal(raw.home_bucket,'up_to_date');assert.equal(raw.history_missing_episodes,0);assert.equal(raw.released_episodes,245);assert.equal(raw.next_episode_number,null);assert.equal(raw.latest_released_season_number,34);
+let smack={title:'WWE Friday Night SmackDown',watched_episodes:232,history_missing_episodes:1182,last_season_number:28,last_episode_number:36,next_season_number:1,next_episode_number:1};provisional(smack);assert.equal(smack.next_episode_number,null);assert.equal(smack.history_missing_episodes,0);
+const p=currentPending([{s:1,e:1},{s:34,e:35}],[{s:1,e:2,air:'1993-01-01'},{s:34,e:36,air:'2026-09-11'}]);assert.deepEqual(p.map(x=>[x.s,x.e]),[[34,36]],'historical hole must not become current pending');
+let stuart={title:'Stuart Não Consegue Salvar o Universo',watched_episodes:6,released_episodes:8,history_missing_episodes:2,is_caught_up:true,home_bucket:'up_to_date',last_watched_at:'2026-09-10T12:00:00Z'};normal(stuart);assert.equal(stuart.home_bucket,'continue');assert.equal(stuart.is_caught_up,false);
+let old={title:'Série atrasada',watched_episodes:2,released_episodes:4,history_missing_episodes:2,is_caught_up:true,home_bucket:'up_to_date',last_watched_at:'2026-07-01T12:00:00Z'};normal(old);assert.equal(old.home_bucket,'dust');
+const keys=a=>new Set(a.map(x=>`${x.media_type}:${x.tmdb_id}`));const personal={hard:keys([{media_type:'tv',tmdb_id:10}]),fresh:keys([{media_type:'tv',tmdb_id:10},{media_type:'movie',tmdb_id:20}])};assert(personal.hard.has('tv:10'));assert(!personal.hard.has('movie:20'));assert(personal.fresh.has('movie:20'));
+console.log('R259_ALGORITHMS_PASS');
