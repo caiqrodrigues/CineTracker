@@ -2,6 +2,39 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.49 — 2026-09-12 — Web r258
+
+### Ground truth do vídeo / Home da conta real
+- O vídeo posterior à r257 confirmou que a correção anterior ainda chegava tarde à conta real: SmackDown começava a convergir para a sequência atual, mas Raw continuava exibindo `S01E14` de 1993 e `Faltam 1495`; Stuart/Lioness permaneciam em `Em dia` mesmo quando o próprio payload mostrava episódios já liberados e não vistos.
+- A causa foi separada em duas: séries normais aguardavam uma auditoria remota geral desnecessária apesar de o payload já conter a diferença liberado/assistido, enquanto Raw/SmackDown competiam com uma fila de auditoria de todas as séries antes de substituir o backlog histórico.
+- Para séries normais, `released_episodes - watched_episodes` e demais campos de pendência são aplicados antes do primeiro paint. Se a série veio `is_caught_up=true`/`Em dia` mas há episódio liberado faltante, ela entra imediatamente em `Assistir a seguir` ou `Juntando poeira`, conforme recência.
+- Para Raw e SmackDown, a r258 usa uma auditoria prioritária própria: `cinetracker_series_episode_state_v1` fornece o conjunto exato de episódios vistos, a maior posição assistida vira a fronteira, e somente episódios já exibidos e estritamente posteriores a ela podem compor a pendência corrente.
+- Buracos históricos continuam preservados como não vistos no banco. Eles não são marcados automaticamente e deixam de inflar `Faltam` ou de reaparecer como “próximo episódio”.
+- Os disparos gerais dos auditores Home r256/r257 são neutralizados no bundle final para evitar disputa de autoridade e cauda de latência após o paint.
+
+### Descobrir / Pra você resiliente
+- O mesmo vídeo mostrou `Pra você` terminando em `TMDB 404`. A causa era um único item da Watchlist cuja hidratação rejeitava o `Promise.all` inteiro.
+- Na r258, cada consulta TMDB é isolada; uma mídia inválida/indisponível retorna `null` e é descartada individualmente sem apagar os outros candidatos nem derrubar os três blocos de `Pra você`.
+- Permanecem `Indicação do Dia`, `Da sua Watchlist` e `100% Novos`. O bloco da Watchlist conserva somente itens válidos que ainda não foram vistos/concluídos/acompanhados.
+- O estado pessoal passa a combinar `cinetracker_profile_media_dashboard_v0991`, `cinetracker_watchlist_full_v119` e a leitura de `NotInterested`. Vistos/concluídos, em andamento, em dia, Watchlist e não interessados ficam fora das recomendações; Watchlist só é admitida no bloco próprio.
+- Abas públicas continuam usando pools amplos, deduplicados e com cache curto, aplicando as exclusões pessoais sem herdar o filtro estrito de nota/ano do recomendador.
+
+### Scroll horizontal nativo no celular
+- A r257 usava `touch-action:pan-y` e capturava o pointer já no `pointerdown`. No navegador Android do vídeo isso bloqueava o gesto horizontal nativo e deixava o carrossel dependente de um fallback JS que não respondia ao dedo.
+- A r258 devolve o toque ao navegador com `overflow-x:auto`, `-webkit-overflow-scrolling:touch` e `touch-action:pan-x pan-y`.
+- O handler herdado da r257 é transformado no build para ignorar `pointerType=touch` antes de `setPointerCapture`. Mouse e caneta continuam com drag de fallback.
+- A mesma autoridade cobre abas e cards do Descobrir, temporadas, episódios, gráficos, relacionados/semelhantes e atores/elenco, inclusive quando criados assincronamente após a abertura do detalhe.
+- O documento mantém overflow horizontal global bloqueado; somente o componente largo rola lateralmente.
+
+### Escopo congelado / build / validação
+- Esportes, Perfil e Configurações foram explicitamente congelados porque o usuário os aprovou no vídeo. A r258 não substitui `renderSports`, `renderProfile` nem `renderConfigs`; o F1 r257 permanece intacto.
+- Web atualizada para `1.0.49 / r258-official-1.0.49`; Android permanece `1.0.20 / versionCode 10062`.
+- Não existe migration Supabase nesta release; os RPCs atuais já fornecem os dados necessários.
+- Build oficial: `apps/web/build-r258-official.mjs`; runtime: `apps/web/runtime-r258-account-ground-truth.js`.
+- `test-r258-browser.mjs` reproduz Raw começando em S01E14/1495 faltantes e terminando em S34E36/1 pendente, SmackDown S01E01 → S28E37, Stuart/Lioness saindo de `Em dia` antes da auditoria remota, Watchlist com um item que lança `TMDB 404` sem quebrar `Pra você`, pelo menos 20 cards em `Em alta`, `pan-x` nativo e trilhos tardios de detalhes.
+- `scripts/test-r258-exact-bundle-browser.mjs` carrega o `app-v258.js` final, captura `error`/`unhandledrejection`, exige markers r258, preservação do F1 r257 e aplicação não vazia.
+- `verify.yml` exige versão, sintaxe, build, regras, algoritmos, Chromium guiado pelo vídeo, bundle final, identidade final, Android inalterado e `production_smoke` público da 1.0.49/r258 após merge em `main`.
+
 ## 1.0.48 — 2026-09-12 — Web r257
 
 ### Ground truth do vídeo / sequência real de episódios
@@ -72,7 +105,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - Web atualizada para `1.0.47 / r256-official-1.0.47`; Android permanece `1.0.20 / versionCode 10062`.
 - Build oficial: `apps/web/build-r256-official.mjs`; runtime: `apps/web/runtime-r256-video-ground-truth-scroll-cache.js`.
 - `test-r256-algorithms.mjs` cobre Lioness/Stuart com `is_caught_up` contraditório, série realmente atrasada e backlog histórico de Raw/SmackDown.
-- `test-r256-browser.mjs` mede os cards do Descobrir, exige F1 fisicamente antes dos filtros, recolhimento único no Perfil, retorno Home sem segundo RPC e cria episódios/gráfico/relacionados/elenco somente após 5,3 segundos para provar que o scroll local continua ativo.
+- `test-r256-browser.mjs` mede os cards do Descobrir, exige F1 fisicamente antes dos filtros, recolhimento único no Perfil, retorno Home sem segundo RPC e cria episódios/gráfico/relacionados/elenco depois de 5,3 segundos para provar que o scroll local continua ativo.
 - `scripts/test-r256-exact-bundle-browser.mjs` carrega o `app-v256.js` final, captura `error`/`unhandledrejection` e exige aplicação não vazia e observer r256 ativo.
 - `verify.yml` exige build, regras, algoritmos, Chromium guiado pelo vídeo, identidade final, Android inalterado e `production_smoke` público da 1.0.47/r256 após merge em `main`.
 
@@ -120,7 +153,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 ### Ground truth do vídeo / causa raiz
 - O vídeo posterior à r253 passou a ser a regressão principal desta release. Ele comprovou quatro falhas que a suíte anterior não cobria: ausência de scroll horizontal em conteúdos criados depois da navegação, Home com fronteira de episódios desatualizada, Descobrir apagando o conteúdo e ficando em `Carregando títulos...`, e F1 Hub sendo inserido antes da sidebar no grid externo de Esportes.
 - A r254 não importa a composição r253. O build volta diretamente à r252, último baseline visual alinhado, e injeta uma autoridade final específica para as falhas observadas.
-- Os observers permanentes r239 e r247 e os wrappers r252 que reclassificavam Home pela idade são removidos do bundle final. A r254 mantém somente um observer estreito de `childList` para marcar trilhos horizontais e garantir a posição interna do F1 Hub; ele não reexecuta renderizadores.
+- Os observers permanentes r239 e r247 e os wrappers r252 que reclassificavam Home pelo tempo são removidos do bundle final. A r254 mantém somente um observer estreito de `childList` para marcar trilhos horizontais e garantir a posição interna do F1 Hub; ele não reexecuta renderizadores.
 
 ### Home / Lioness / Stuart / Raw / SmackDown
 - `renderHome` pinta primeiro `cinetracker_home_live_v0997_r3`, sem bloquear a tela, e em seguida audita em paralelo séries normais iniciadas contra o TMDB atual.

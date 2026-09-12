@@ -6,29 +6,30 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.48** | revision `r257-official-1.0.48`, package `1.0.48` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r257 |
+| Web | **1.0.49** | revision `r258-official-1.0.49`, package `1.0.49` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r258 |
 | Backend / Supabase | produção compartilhada | RPCs/migrations atuais | produção |
 | Windows | — | — | não lançado |
 
-## Web 1.0.48 / r257
+## Web 1.0.49 / r258
 
-A r257 corrige as divergências comprovadas pelo vídeo posterior à r256 sem mudar a geometria visual já aprovada:
+A r258 corrige somente as áreas que o vídeo posterior à r257 ainda comprovou como erradas. Esportes, Perfil e Configurações permanecem congelados na implementação aprovada.
 
-- o próximo episódio da Home passa a ser calculado a partir do conjunto exato de episódios assistidos retornado por `cinetracker_series_episode_state_v1`; buracos antigos anteriores à fronteira recente deixam de aparecer como próximo episódio e não são marcados artificialmente como vistos;
-- SmackDown/Raw e demais séries longas usam o primeiro episódio já exibido depois da sequência recente acompanhada; `Faltam` conta somente pendências posteriores à fronteira. Lioness e Stuart seguem a mesma lógica para episódios realmente pendentes;
-- o Descobrir valida estados vistos/concluídos, em andamento, em dia, Watchlist e `NotInterested` antes de pintar recomendações; `Pra você` mantém suas regras estritas e as abas públicas aplicam apenas exclusões pessoais;
-- abas públicas do Descobrir consultam múltiplas páginas do TMDB, deduplicam e preservam um conjunto amplo de resultados após as exclusões, em vez de herdar os cortes de nota/ano do recomendador;
-- abas/cards do Descobrir, temporadas/episódios, gráficos, relacionados/semelhantes, atores/elenco e F1 usam scroll horizontal local com fallback real de arrasto por ponteiro, sem criar overflow horizontal no documento;
-- `Visão geral` do F1 Hub exibe sessões do próximo fim de semana, grid de largada quando a classificação estiver disponível e o GP anterior com posição de largada → posição final, status e tempo/pontos;
-- não existe migration de schema na r257; o backend atual já oferece os RPCs necessários;
-- a suíte Chromium reproduz o caso SmackDown com backlog de 1999 + sequência atual, exclusões pessoais do Descobrir, trilhos horizontais do vídeo e os grids seguinte/anterior da F1.
+- Stuart/Lioness deixam `Em dia` antes do primeiro paint quando o próprio payload já comprova `released_episodes > watched_episodes`, sem depender da fila remota de auditoria;
+- Raw/SmackDown usam auditoria prioritária separada: a maior posição efetivamente assistida é a fronteira e o próximo episódio é o primeiro **já exibido** depois dela; buracos S01 históricos continuam não vistos no banco, mas não entram em `Faltam` nem podem virar próximo episódio;
+- os antigos auditores gerais r256/r257 deixam de ser disparados na release final para não disputar a Home nem fazer Raw/Stuart aguardarem dezenas de consultas de outras séries;
+- `Pra você` isola falhas de hidratação: um item com `TMDB 404` é descartado individualmente em vez de rejeitar o `Promise.all` e derrubar a aba;
+- as exclusões pessoais combinam dashboard, Watchlist integral e `NotInterested`; vistos/concluídos, em andamento, em dia e Watchlist não aparecem fora do bloco próprio;
+- Descobrir mantém os nove filtros e pools públicos amplos, com cache curto por aba;
+- o scroll horizontal no toque passa a ser nativo (`pan-x pan-y` + `overflow-x:auto`); a captura manual da r257 não intercepta mais `pointerType=touch`, enquanto mouse/pen mantêm drag de fallback;
+- o observer local continua cobrindo temporadas, episódios, gráficos, relacionados/semelhantes e atores/elenco criados assincronamente;
+- não existe migration de schema na r258; os RPCs existentes já contêm os dados necessários.
 
-Assets oficiais: `app-v257.js` / `app-v257.css`; build: `apps/web/build-r257-official.mjs`; runtime: `apps/web/runtime-r257-sequence-scroll-discover-f1-grid.js`.
+Assets oficiais: `app-v258.js` / `app-v258.css`; build: `apps/web/build-r258-official.mjs`; runtime: `apps/web/runtime-r258-account-ground-truth.js`.
 
 ## Android 1.0.20
 
-A r257 não altera Android. A identidade preservada é:
+A r258 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
