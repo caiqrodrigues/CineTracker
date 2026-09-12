@@ -2,6 +2,44 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.47 — 2026-09-12 — Web r256
+
+### Ground truth do vídeo / Home
+- O vídeo posterior à r255 confirma que a Home está estruturalmente correta, mas Lioness e Stuart continuam no bucket errado: os próprios cards exibem episódios faltantes e ação de marcar assistido enquanto aparecem em `Em dia`.
+- A causa é uma contradição possível no payload: `is_caught_up=true` pode coexistir com `history_missing_episodes>0` ou com uma fronteira liberada posterior à assistida. Na r256, para séries normais, a pendência comprovável vence esse flag contraditório.
+- A auditoria viva compara `last_episode_to_air` diretamente com a fronteira realmente assistida. `next_episode_to_air` continua fora do universo de lançamentos.
+- Raw, SmackDown, Fórmula 1 e Super Bowl preservam a exceção de acompanhamento: backlog histórico continua não assistido, mas não cria pendência atual quando a fronteira efetivamente exibida já foi acompanhada.
+- O retorno para Home usa snapshot/cache recente e stale-while-revalidate: abrir uma série e voltar não desmonta a Home, não mostra novamente `Sincronizando Home...` e não repete o RPC canônico enquanto o estado ainda está fresco.
+
+### Scroll horizontal local em detalhes
+- A r255 deixava o observer de trilhos expirar depois de aproximadamente cinco segundos; detalhes criados mais tarde perdiam a classe de overflow local.
+- A r256 usa um observer permanente e estreito de `childList`, sem polling e sem reexecutar renderizadores.
+- Episódios da temporada, temporadas, gráficos de temporadas/episódios, filmes e séries relacionados/semelhantes e atores/elenco recebem `.ct256-local-x` quando aparecem no DOM, inclusive após renderização assíncrona tardia.
+- O documento continua com overflow horizontal global bloqueado; somente o componente largo recebe rolagem horizontal por mouse/toque e scrollbar própria.
+
+### Descobrir / geometria visual
+- A r255 já possuía markup de poster/título/metadados, mas o vídeo prova que estilos herdados comprimiam os cards carregados em faixas horizontais, tornando impossível identificar o conteúdo.
+- A r256 preserva a autoridade de dados e os nove filtros da r255, mas protege explicitamente a geometria final: poster completo 2:3, área de título/metadados e largura fixa do trilho.
+- O teste de regressão deixa de apenas contar elementos e passa a carregar o CSS final em Chromium e medir altura real do card, do poster e da área de metadados.
+
+### Esportes / F1
+- O vídeo confirma que a ordem da r255 está invertida em relação à regra aprovada.
+- A r256 coloca o F1 Hub como primeiro bloco da tela. Somente abaixo dele aparecem os cinco filtros globais `Próximos`, `Ao vivo`, `Anteriores`, `Favoritos`, `Assistidos`, depois os filtros por modalidade e então o feed de eventos.
+- A correção é estrutural no DOM e é reaplicada após repaints de filtros; não depende de `position`, margem ou deslocamento visual.
+
+### Perfil / recolhimento único
+- O botão já existente `Recolher/Expandir` do painel `Estatísticas` passa a controlar também o painel `Esportes assistidos`.
+- Estatísticas de filmes/séries e estatísticas esportivas se comportam como uma única seção lógica sem alterar os valores canônicos de 48 eventos e 6.300 minutos (105h00).
+
+### Navegação / cache / validação
+- Home, Descobrir, Esportes e Perfil preservam snapshots recentes do DOM para retorno imediato entre telas. Mudanças de dados invalidam os snapshots; atualização vencida acontece em segundo plano sem apagar conteúdo pronto.
+- Web atualizada para `1.0.47 / r256-official-1.0.47`; Android permanece `1.0.20 / versionCode 10062`.
+- Build oficial: `apps/web/build-r256-official.mjs`; runtime: `apps/web/runtime-r256-video-ground-truth-scroll-cache.js`.
+- `test-r256-algorithms.mjs` cobre Lioness/Stuart com `is_caught_up` contraditório, série realmente atrasada e backlog histórico de Raw/SmackDown.
+- `test-r256-browser.mjs` mede os cards do Descobrir, exige F1 fisicamente antes dos filtros, recolhimento único no Perfil, retorno Home sem segundo RPC e cria episódios/gráfico/relacionados/elenco somente após 5,3 segundos para provar que o scroll local continua ativo.
+- `scripts/test-r256-exact-bundle-browser.mjs` carrega o `app-v256.js` final, captura `error`/`unhandledrejection` e exige aplicação não vazia e observer r256 ativo.
+- `verify.yml` exige build, regras, algoritmos, Chromium guiado pelo vídeo, identidade final, Android inalterado e `production_smoke` público da 1.0.47/r256 após merge em `main`.
+
 ## 1.0.46 — 2026-09-11 — Web r255
 
 ### Descobrir / cards e Watchlist completa
