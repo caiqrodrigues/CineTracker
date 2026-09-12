@@ -1,82 +1,76 @@
-name: Verify Web 1.0.46 r255 Discover Home Sports Profile
+name: Verify Web 1.0.47 r256 Video Ground Truth
 
 on:
   push:
-    branches: [main, 'fix/r255-discover-cards-home-sports-profile']
+    branches: [main, 'fix/r256-video-ground-truth-scroll-discover-order-cache']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_46_r255:
+  web_1_0_47_r256:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r255 release chain
+      - name: Syntax r256 release chain
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.46"' package.json
-          grep -Fq '"version": "1.0.46"' apps/web/package.json
-          node --check apps/web/runtime-r255-discover-cards-home-sports-profile.js
-          node --check apps/web/build-r255.mjs
-          node --check apps/web/build-r255-official.mjs
-          node --check apps/web/test-r255.mjs
-          node --check apps/web/test-r255-algorithms.mjs
-          node --check apps/web/test-r255-browser.mjs
-          node --check scripts/test-r255-exact-bundle-browser.mjs
-      - name: Build official r255
+          grep -Fq '"version": "1.0.47"' package.json
+          grep -Fq '"version": "1.0.47"' apps/web/package.json
+          node --check apps/web/runtime-r256-video-ground-truth-scroll-cache.js
+          node --check apps/web/build-r256.mjs
+          node --check apps/web/build-r256-official.mjs
+          node --check apps/web/test-r256.mjs
+          node --check apps/web/test-r256-algorithms.mjs
+          node --check apps/web/test-r256-browser.mjs
+          node --check scripts/test-r256-exact-bundle-browser.mjs
+      - name: Build official r256
         working-directory: apps/web
-        run: node build-r255-official.mjs
-      - name: Static authority regression r255
+        run: node build-r256-official.mjs
+      - name: Static authority regression r256
         working-directory: apps/web
-        run: node test-r255.mjs
-      - name: Logic regressions r255
+        run: node test-r256.mjs
+      - name: Logic regressions r256
         working-directory: apps/web
-        run: node test-r255-algorithms.mjs
-      - name: Chromium user-video behavior r255
+        run: node test-r256-algorithms.mjs
+      - name: Chromium user-video behavior r256
         working-directory: apps/web
-        run: node test-r255-browser.mjs
-      - name: Exact final bundle boot r255
-        run: node scripts/test-r255-exact-bundle-browser.mjs
-      - name: Final bundle identity r255
+        run: node test-r256-browser.mjs
+      - name: Exact final bundle boot r256
+        run: node scripts/test-r256-exact-bundle-browser.mjs
+      - name: Final bundle identity r256
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v255.js
-          grep -Fq "window.__ctWebBuild='1.0.46';window.__ctOfficialVersion='1.0.46';" dist/app-v255.js
-          grep -Fq "const REVISION='r255-official-1.0.46';" dist/app-v255.js
-          grep -Fq "window.__ctR255='discover-cards-home-buckets-sports-f1-profile-live'" dist/app-v255.js
-          grep -Fq "window.__ctR255Home='backend-buckets-conservative-live-release+rich-movies'" dist/app-v255.js
-          grep -Fq "window.__ctR255Discover='poster-first-nine-tabs-full-watchlist-atomic'" dist/app-v255.js
-          grep -Fq "window.__ctR255Sports='five-tabs-dark-cards-f1-six-approved-tabs'" dist/app-v255.js
-          grep -Fq "window.__ctR255Profile='approved-layout-canonical-sports-values'" dist/app-v255.js
-          grep -Fq 'window.__ctR255LegacyR239ObserverDisabled=true' dist/app-v255.js
-          grep -Fq 'window.__ctR255R252QueueClassifierDisabled=true' dist/app-v255.js
-          grep -Fq 'window.__ctR255R252PaintClassifierDisabled=true' dist/app-v255.js
-          grep -Fq 'cinetracker_watchlist_full_v119' dist/app-v255.js
-          grep -Fq 'cinetracker_sports_payload_v1' dist/app-v255.js
-          grep -Fq 'cinetracker_sport_mark_watched_v1' dist/app-v255.js
-          grep -Fq 'cinetracker_sport_toggle_favorite_v1' dist/app-v255.js
-          grep -Fq 'cinetracker_sport_stats_v1' dist/app-v255.js
-          grep -Fq 'last_episode_to_air' dist/app-v255.js
-          ! grep -Fq 'next_episode_to_air' dist/app-v255.js
-          ! grep -Fq "window.__ctR253='single-authority-live-data'" dist/app-v255.js
-          ! grep -Fq "window.__ctR254='video-ground-truth-r252-baseline'" dist/app-v255.js
-          ! grep -Fq "new MutationObserver(queue239).observe(q('#app')" dist/app-v255.js
-          ! grep -Fq 'cinetracker_sports_events_v0997' dist/app-v255.js
-          grep -Fq 'if(val.textContent!==next)' dist/app-v255.js
-          grep -Fq 'app-v255.js' dist/index.html
-          grep -Fq 'app-v255.css' dist/index.html
-          grep -Fq '"version": "1.0.46"' dist/release.json
-          grep -Fq '"revision": "r255-official-1.0.46"' dist/release.json
-          grep -Fq '.ct255-media-poster' dist/app-v255.css
-          grep -Fq '.ct255-f1-tab.active' dist/app-v255.css
-          grep -Fq '.ct255-sports-tab.active' dist/app-v255.css
-          grep -Fq 'overflow-x:clip!important' dist/app-v255.css
+          node --check dist/app-v256.js
+          grep -Fq "window.__ctWebBuild='1.0.47';window.__ctOfficialVersion='1.0.47';" dist/app-v256.js
+          grep -Fq "const REVISION='r256-official-1.0.47';" dist/app-v256.js
+          grep -Fq "window.__ctR256='video-ground-truth-scroll-discover-sports-profile-cache'" dist/app-v256.js
+          grep -Fq "window.__ctR256Home='missing-wins-caught-up+live-frontier+stale-while-revalidate'" dist/app-v256.js
+          grep -Fq "window.__ctR256Discover='r255-data+forced-visible-card-geometry+route-snapshot'" dist/app-v256.js
+          grep -Fq "window.__ctR256Sports='f1-first-then-global-filters+route-snapshot'" dist/app-v256.js
+          grep -Fq "window.__ctR256Profile='single-collapse-media-and-sports+route-snapshot'" dist/app-v256.js
+          grep -Fq "window.__ctR256Horizontal='persistent-childlist-episode-season-chart-related-cast'" dist/app-v256.js
+          grep -Fq "window.__ctR256Navigation='instant-top-page-snapshots+home-stale-while-revalidate'" dist/app-v256.js
+          grep -Fq 'window.__ctR256RailObserverActive=true' dist/app-v256.js
+          grep -Fq 'history_missing_episodes' dist/app-v256.js
+          grep -Fq 'last_episode_to_air' dist/app-v256.js
+          grep -Fq 'cinetracker_home_live_v0997_r3' dist/app-v256.js
+          grep -Fq 'cinetracker_watchlist_full_v119' dist/app-v256.js
+          grep -Fq 'cinetracker_sports_payload_v1' dist/app-v256.js
+          ! grep -Fq 'cinetracker_sports_events_v0997' dist/app-v256.js
+          grep -Fq 'app-v256.js' dist/index.html
+          grep -Fq 'app-v256.css' dist/index.html
+          grep -Fq '"version": "1.0.47"' dist/release.json
+          grep -Fq '"revision": "r256-official-1.0.47"' dist/release.json
+          grep -Fq '.ct256-local-x' dist/app-v256.css
+          grep -Fq 'min-height:344px!important' dist/app-v256.css
+          grep -Fq '[data-ct256-profile-sports].ct256-stats-collapsed' dist/app-v256.css
+          grep -Fq 'overflow-x:clip!important' dist/app-v256.css
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -91,20 +85,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_46_r255]
+    needs: [web_1_0_47_r256]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.46 r255
+      - name: Official production serves and boots 1.0.47 r256
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.46"' <<<"$BODY" && grep -Fq '"revision": "r255-official-1.0.46"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v255.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v255.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.47"' <<<"$BODY" && grep -Fq '"revision": "r256-official-1.0.47"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v256.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v256.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR255='discover-cards-home-buckets-sports-f1-profile-live'" <<<"$JS" && grep -Fq "window.__ctR255Discover='poster-first-nine-tabs-full-watchlist-atomic'" <<<"$JS" && grep -Fq "window.__ctR255Sports='five-tabs-dark-cards-f1-six-approved-tabs'" <<<"$JS" && grep -Fq 'cinetracker_watchlist_full_v119' <<<"$JS" && grep -Fq 'cinetracker_sport_stats_v1' <<<"$JS" && ! grep -Fq "window.__ctR254='video-ground-truth-r252-baseline'" <<<"$JS" && ! grep -Fq 'cinetracker_sports_events_v0997' <<<"$JS" && grep -Fq '.ct255-media-poster' <<<"$CSS" && grep -Fq '.ct255-f1-tab.active' <<<"$CSS" && grep -Fq 'app-v255.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR256='video-ground-truth-scroll-discover-sports-profile-cache'" <<<"$JS" && grep -Fq "window.__ctR256Home='missing-wins-caught-up+live-frontier+stale-while-revalidate'" <<<"$JS" && grep -Fq "window.__ctR256Horizontal='persistent-childlist-episode-season-chart-related-cast'" <<<"$JS" && grep -Fq "window.__ctR256Navigation='instant-top-page-snapshots+home-stale-while-revalidate'" <<<"$JS" && grep -Fq 'window.__ctR256RailObserverActive=true' <<<"$JS" && ! grep -Fq 'cinetracker_sports_events_v0997' <<<"$JS" && grep -Fq '.ct256-local-x' <<<"$CSS" && grep -Fq 'min-height:344px!important' <<<"$CSS" && grep -Fq 'app-v256.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi

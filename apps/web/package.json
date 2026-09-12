@@ -1,10 +1,10 @@
 {
   "name": "cinetracker-web-entry",
   "private": true,
-  "version": "1.0.46",
+  "version": "1.0.47",
   "scripts": {
-    "build": "node build-r255-official.mjs",
-    "verify": "node build-r255-official.mjs && node test-r255.mjs && node test-r255-algorithms.mjs && node test-r255-browser.mjs",
+    "build": "node build-r256-official.mjs",
+    "verify": "node build-r256-official.mjs && node test-r256.mjs && node test-r256-algorithms.mjs && node test-r256-browser.mjs",
     "test:r248": "node test-r248.mjs",
     "test:r249": "node test-r249.mjs",
     "test:r250": "node test-r250.mjs",
@@ -14,7 +14,10 @@
     "test:r254": "node test-r254.mjs",
     "test:r255": "node test-r255.mjs",
     "test:r255:algorithms": "node test-r255-algorithms.mjs",
-    "test:r255:browser": "node test-r255-browser.mjs"
+    "test:r255:browser": "node test-r255-browser.mjs",
+    "test:r256": "node test-r256.mjs",
+    "test:r256:algorithms": "node test-r256-algorithms.mjs",
+    "test:r256:browser": "node test-r256-browser.mjs"
   },
   "engines": {
     "node": ">=20"
