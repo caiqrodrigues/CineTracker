@@ -1,77 +1,80 @@
-name: Verify Web 1.0.51 r260 Discover Home Modal Scroll
+name: Verify Web 1.0.52 r261 Video Ground Truth Series
 
 on:
   push:
-    branches: [main, 'fix/r260-discover-home-modal-scroll']
+    branches: [main, 'fix/r261-video-ground-truth-series-discover-detail']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_51_r260:
+  web_1_0_52_r261:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r260
+      - name: Version identity r261
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.51"' package.json
-          grep -Fq '"version": "1.0.51"' apps/web/package.json
-          grep -Fq '## 1.0.51 — 2026-09-12 — Web r260' CHANGELOG.md
-          grep -Fq '1.0.51' README.md
-          grep -Fq '1.0.51' VERSIONS.md
-      - name: Syntax r260 runtime
-        run: node --check apps/web/runtime-r260-ux-recovery.js
-      - name: Syntax r260 builders
+          grep -Fq '"version": "1.0.52"' package.json
+          grep -Fq '"version": "1.0.52"' apps/web/package.json
+          grep -Fq '## 1.0.52 — 2026-09-12 — Web r261' CHANGELOG.md
+          grep -Fq '1.0.52' README.md
+          grep -Fq '1.0.52' VERSIONS.md
+          test -f supabase/migrations/20260912105000_r261_imported_series_state.sql
+      - name: Syntax r261 release chain
         run: |
-          node --check apps/web/build-r260.mjs
-          node --check apps/web/build-r260-official.mjs
-      - name: Syntax r260 tests
-        run: |
-          node --check apps/web/test-r260.mjs
-          node --check apps/web/test-r260-browser.mjs
-          node --check scripts/test-r260-exact-bundle-browser.mjs
-      - name: Build official r260
+          set -euo pipefail
+          node --check apps/web/runtime-r261-video-ground-truth-series.js
+          node --check apps/web/build-r261.mjs
+          node --check apps/web/build-r261-official.mjs
+          node --check apps/web/test-r261.mjs
+          node --check apps/web/test-r261-algorithms.mjs
+          node --check apps/web/test-r261-browser.mjs
+          node --check scripts/test-r261-exact-bundle-browser.mjs
+      - name: Build official r261
         working-directory: apps/web
-        run: node build-r260-official.mjs
-      - name: Static regression r260
+        run: node build-r261-official.mjs
+      - name: Static authority regression r261
         working-directory: apps/web
-        run: node test-r260.mjs
-      - name: Chromium mobile and desktop r260
+        run: node test-r261.mjs
+      - name: Logic regressions r261
         working-directory: apps/web
-        run: node test-r260-browser.mjs
-      - name: Exact final bundle boot r260
-        run: node scripts/test-r260-exact-bundle-browser.mjs
-      - name: Final bundle identity r260
+        run: node test-r261-algorithms.mjs
+      - name: Chromium video-ground-truth mobile and desktop r261
+        working-directory: apps/web
+        run: node test-r261-browser.mjs
+      - name: Exact final bundle boot r261
+        run: node scripts/test-r261-exact-bundle-browser.mjs
+      - name: Final bundle identity r261
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v260.js
-          grep -Fq "window.__ctWebBuild='1.0.51';window.__ctOfficialVersion='1.0.51';" dist/app-v260.js
-          grep -Fq "const REVISION='r260-official-1.0.51';" dist/app-v260.js
-          grep -Fq "window.__ctR260='discover-standard-cards+home-first-page-cache+isolated-modal-rails'" dist/app-v260.js
-          grep -Fq "window.__ctR260Discover='standard-2x3-176-desktop-154-mobile'" dist/app-v260.js
-          grep -Fq "window.__ctR260Home='persistent-first-page+background-refresh+metadata-cache+skeleton'" dist/app-v260.js
-          grep -Fq "window.__ctR260Horizontal='isolated-modal-rails+native-touch+delegated-mouse-drag'" dist/app-v260.js
-          grep -Fq "window.__ctR260Frozen='sports-profile-configs-f1-r259-unchanged'" dist/app-v260.js
-          grep -Fq 'ct-home-first-page-v260' dist/app-v260.js
-          grep -Fq 'ct-tmdb-meta-v260:' dist/app-v260.js
-          grep -Fq 'app-v260.js' dist/index.html
-          grep -Fq 'app-v260.css' dist/index.html
-          grep -Fq '"version": "1.0.51"' dist/release.json
-          grep -Fq '"revision": "r260-official-1.0.51"' dist/release.json
-          grep -Fq '.ct259-media-card{flex:0 0 176px!important' dist/app-v260.css
-          grep -Fq 'aspect-ratio:2/3!important' dist/app-v260.css
-          grep -Fq 'flex-basis:154px!important' dist/app-v260.css
-          grep -Fq '[data-ct260-x].overflow-x-auto{overflow-x:auto!important' dist/app-v260.css
-          grep -Fq '[data-ct260-x].scrollbar-thin' dist/app-v260.css
-          grep -Fq '[data-ct260-x].touch-pan-x' dist/app-v260.css
-          grep -Fq '[data-ct260-x].flex-nowrap' dist/app-v260.css
-          grep -Fq 'html,body,#app{max-width:100%!important;overflow-x:clip!important}' dist/app-v260.css
+          node --check dist/app-v261.js
+          grep -Fq "window.__ctWebBuild='1.0.52';window.__ctOfficialVersion='1.0.52';" dist/app-v261.js
+          grep -Fq "const REVISION='r261-official-1.0.52';" dist/app-v261.js
+          grep -Fq "window.__ctR261='video-ground-truth-series-discover-detail'" dist/app-v261.js
+          grep -Fq "window.__ctR261Home='raw-smackdown-exact-frontier+special-series+persistent-home-cache'" dist/app-v261.js
+          grep -Fq "window.__ctR261Series='formula1-and-superbowl-first-class-imported-series'" dist/app-v261.js
+          grep -Fq "window.__ctR261Discover='button-height-reset+poster-2x3+native-drag-rails'" dist/app-v261.js
+          grep -Fq "window.__ctR261Detail='tmdb-cache-key-includes-params+nonblank-detail'" dist/app-v261.js
+          grep -Fq "window.__ctR261Horizontal='special-series+discover+native-detail-rails'" dist/app-v261.js
+          grep -Fq 'ct-home-first-page-v261' dist/app-v261.js
+          grep -Fq 'cinetracker_imported_series_state_v1' dist/app-v261.js
+          grep -Fq 'Object.keys(params||{}).sort()' dist/app-v261.js
+          grep -Fq 'app-v261.js' dist/index.html
+          grep -Fq 'app-v261.css' dist/index.html
+          grep -Fq '"version": "1.0.52"' dist/release.json
+          grep -Fq '"revision": "r261-official-1.0.52"' dist/release.json
+          grep -Fq '.ct259-media-card>button{display:flex!important' dist/app-v261.css
+          grep -Fq 'height:264px!important' dist/app-v261.css
+          grep -Fq 'height:231px!important' dist/app-v261.css
+          grep -Fq '.ct261-season-rail,.ct261-episode-list' dist/app-v261.css
+          grep -Fq 'html,body,#app{max-width:100%!important;overflow-x:clip!important}' dist/app-v261.css
+          grep -Fq "const CACHE='ct-web-1.0.52-r261';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -86,20 +89,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_51_r260]
+    needs: [web_1_0_52_r261]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.51 r260
+      - name: Official production serves and boots 1.0.52 r261
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.51"' <<<"$BODY" && grep -Fq '"revision": "r260-official-1.0.51"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v260.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v260.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.52"' <<<"$BODY" && grep -Fq '"revision": "r261-official-1.0.52"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v261.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v261.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR260='discover-standard-cards+home-first-page-cache+isolated-modal-rails'" <<<"$JS" && grep -Fq "window.__ctR260Home='persistent-first-page+background-refresh+metadata-cache+skeleton'" <<<"$JS" && grep -Fq "window.__ctR260Horizontal='isolated-modal-rails+native-touch+delegated-mouse-drag'" <<<"$JS" && grep -Fq 'ct-home-first-page-v260' <<<"$JS" && grep -Fq '.ct259-media-card{flex:0 0 176px!important' <<<"$CSS" && grep -Fq 'aspect-ratio:2/3!important' <<<"$CSS" && grep -Fq '[data-ct260-x].overflow-x-auto{overflow-x:auto!important' <<<"$CSS" && grep -Fq 'app-v260.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR261='video-ground-truth-series-discover-detail'" <<<"$JS" && grep -Fq "window.__ctR261Home='raw-smackdown-exact-frontier+special-series+persistent-home-cache'" <<<"$JS" && grep -Fq "window.__ctR261Series='formula1-and-superbowl-first-class-imported-series'" <<<"$JS" && grep -Fq "window.__ctR261Discover='button-height-reset+poster-2x3+native-drag-rails'" <<<"$JS" && grep -Fq "window.__ctR261Detail='tmdb-cache-key-includes-params+nonblank-detail'" <<<"$JS" && grep -Fq 'ct-home-first-page-v261' <<<"$JS" && grep -Fq '.ct259-media-card>button{display:flex!important' <<<"$CSS" && grep -Fq '.ct261-season-rail,.ct261-episode-list' <<<"$CSS" && grep -Fq 'app-v261.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
