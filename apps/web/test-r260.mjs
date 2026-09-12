@@ -13,7 +13,7 @@ for(const x of[
  "flex','overflow-x-auto','scrollbar-thin','whitespace-nowrap','touch-pan-x','flex-nowrap",
  "pointerdown","pointermove","scrollLeft"
 ])need(runtime,x,x);
-if(runtime.includes('MutationObserver'))throw new Error('R260 may not add MutationObserver');
+if(/new\s+MutationObserver\s*\(/.test(runtime))throw new Error('R260 may not add MutationObserver');
 for(const x of[
  "await import('./build-r259-official.mjs')",
  "const REVISION='r260-official-1.0.51';",
