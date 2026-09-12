@@ -16,14 +16,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Syntax r257 release chain
+      - name: Version identity r257
         run: |
           set -euo pipefail
           grep -Fq '"version": "1.0.48"' package.json
           grep -Fq '"version": "1.0.48"' apps/web/package.json
-          node --check apps/web/runtime-r257-sequence-scroll-discover-f1-grid.js
+      - name: Syntax r257 runtime
+        run: node --check apps/web/runtime-r257-sequence-scroll-discover-f1-grid.js
+      - name: Syntax r257 builders
+        run: |
           node --check apps/web/build-r257.mjs
           node --check apps/web/build-r257-official.mjs
+      - name: Syntax r257 tests
+        run: |
           node --check apps/web/test-r257.mjs
           node --check apps/web/test-r257-algorithms.mjs
           node --check apps/web/test-r257-browser.mjs
