@@ -6,30 +6,29 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.47** | `r256-official-1.0.47` | correção guiada pelo vídeo: Home, detalhes/scroll, Descobrir, Esportes/F1, Perfil e navegação |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r256 |
-| Backend | produção compartilhada | Supabase | histórico, Watchlist e estatísticas canônicos |
+| Web | **1.0.48** | `r257-official-1.0.48` | sequência real de episódios, Descobrir pessoal, scroll por arrasto e F1 completo |
+| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r257 |
+| Backend | produção compartilhada | Supabase | histórico, Watchlist e progresso canônicos |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.47 / r256
+## Web 1.0.48 / r257
 
-A r256 usa o vídeo posterior à r255 como ground truth e corrige os pontos que ainda divergiam do uso real, sem reconstruir as áreas que já estavam aprovadas.
+A r257 usa o vídeo posterior à r256 como ground truth. A geometria aprovada permanece e as correções se concentram na semântica da sequência assistida, nas exclusões pessoais do Descobrir, no gesto horizontal real e nas informações de fim de semana da Fórmula 1.
 
-- **Home / Lioness e Stuart:** uma pendência real (`history_missing_episodes` ou fronteira liberada maior que a assistida) passa a vencer um `is_caught_up=true` contraditório em séries normais. A auditoria viva compara somente `last_episode_to_air` com a fronteira realmente assistida. Raw, SmackDown, Fórmula 1 e Super Bowl continuam ignorando backlog histórico e nunca tratam `next_episode_to_air` como já lançado.
-- **Navegação e cache:** Home, Descobrir, Esportes e Perfil preservam snapshots recentes do DOM. Ao abrir um detalhe e voltar, a tela carregada anteriormente reaparece imediatamente; a Home não volta para `Sincronizando Home...` nem repete o RPC canônico enquanto o snapshot/cache ainda é válido. Atualizações vencidas acontecem em segundo plano sem apagar conteúdo já visível.
-- **Scroll horizontal local:** episódios da temporada, temporadas, gráficos, relacionados/semelhantes e atores/elenco recebem rolagem horizontal no próprio componente mesmo quando entram no DOM vários segundos depois da navegação. O observer é permanente, restrito a `childList`, não reexecuta renderizadores e o documento continua sem overflow horizontal global.
-- **Descobrir:** a regra de dados da r255 é preservada, mas a geometria do card passa a ser explicitamente protegida contra estilos compactos herdados: poster 2:3 visível, título, ano, gêneros e nota ocupam uma altura real verificável. O teste Chromium mede card, poster e área de metadados, em vez de apenas contar nós no DOM.
-- **Esportes / F1:** o F1 Hub é o primeiro bloco da página. Abaixo dele ficam `Próximos`, `Ao vivo`, `Anteriores`, `Favoritos` e `Assistidos`, depois os filtros por esporte e então o feed. A ordem é reparada estruturalmente após qualquer repaint, não por posicionamento visual artificial.
-- **Perfil:** o controle já existente `Recolher/Expandir` do bloco `Estatísticas` passa a controlar também `Esportes assistidos`, fazendo mídia e esporte se comportarem como uma única seção lógica.
-- **Validação:** além de regras estáticas e algoritmos, a r256 reproduz em Chromium Lioness/Stuart no bucket correto, mede a geometria real do Descobrir, testa a ordem física F1 → filtros → feed, testa o recolhimento único do Perfil, cria episódios/gráfico/relacionados/elenco depois de 5,3 segundos e exige que todos ainda recebam scroll local, e confirma retorno imediato à Home sem segundo RPC.
+- **Home / próximo episódio real:** a fronteira passa a vir do conjunto exato de episódios assistidos de `cinetracker_series_episode_state_v1`. Buracos históricos anteriores à fronteira permanecem não vistos, mas nunca voltam a ser escolhidos como “próximo episódio”. Em séries longas como SmackDown, o próximo é o primeiro episódio já exibido depois da sequência recente acompanhada, e `Faltam` passa a contar somente pendências posteriores a essa fronteira. A mesma regra mantém Lioness e Stuart em `Continue assistindo` quando existe lançamento realmente pendente.
+- **Descobrir / regras pessoais:** `Pra você` e as abas públicas validam dashboard pessoal + Watchlist completa antes de pintar. Vistos, concluídos, em andamento, em dia, Watchlist e `NotInterested` ficam fora das recomendações; o bloco `Da sua Watchlist` continua mostrando somente itens elegíveis da própria Watchlist. Se o estado pessoal não puder ser validado, a tela falha fechada em vez de recomendar títulos proibidos.
+- **Descobrir / conteúdo completo:** as abas públicas consultam múltiplas páginas do TMDB, deduplicam e só então aplicam as exclusões pessoais. Elas não herdam os limites de nota/ano do `Pra você`, evitando trilhos com apenas um ou poucos cards depois da filtragem.
+- **Scroll horizontal por arrasto:** abas e cards do Descobrir, temporadas/episódios, gráficos, relacionados/semelhantes, atores/elenco e trilhos do F1/Esportes recebem overflow local e fallback de `pointer-drag`. O gesto só é capturado quando o deslocamento horizontal domina o vertical, preservando a rolagem normal da página no celular.
+- **F1 Hub:** mantém as seis áreas aprovadas e amplia `Visão geral` com todas as sessões disponíveis do próximo fim de semana em horário de São Paulo, grid de largada do próximo GP quando a classificação estiver disponível e o GP anterior com posição de largada → posição de chegada, status e tempo/pontos.
+- **Validação:** o Chromium reproduz SmackDown com S01 histórico não visto e sequência S28 atual, exige que o próximo nunca volte para 1999, valida Lioness/Stuart, bloqueia Breaking Bad/Duna/título acompanhado no Descobrir, exige pelo menos 20 cards em `Em alta`, arrasta horizontalmente abas/cards e trilhos tardios de detalhes e valida 20 posições no grid seguinte e 20 no grid anterior.
 
 ## Funcionalidades consolidadas
 
 - Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira e estados de biblioteca;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
-- exclusões pessoais para não recomendar itens vistos, em andamento, na Watchlist ou marcados como não interessados;
+- exclusões pessoais para não recomendar itens vistos, em andamento, em dia, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
 - reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x`…;
 - detalhes ricos de filmes, séries, temporadas, episódios, avaliações e elenco;
