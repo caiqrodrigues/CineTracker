@@ -6,30 +6,30 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.49** | revision `r258-official-1.0.49`, package `1.0.49` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r258 |
+| Web | **1.0.50** | revision `r259-official-1.0.50`, package `1.0.50` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r259 |
 | Backend / Supabase | produção compartilhada | RPCs/migrations atuais | produção |
 | Windows | — | — | não lançado |
 
-## Web 1.0.49 / r258
+## Web 1.0.50 / r259
 
-A r258 corrige somente as áreas que o vídeo posterior à r257 ainda comprovou como erradas. Esportes, Perfil e Configurações permanecem congelados na implementação aprovada.
+A r259 responde diretamente ao vídeo posterior à r258, que mostrou Home quebrada/lenta, Descobrir ainda mais quebrado e navegação geral mais pesada. Ela não usa a r258 como base: compõe da r257, desativa as autoridades contínuas que causavam trabalho de DOM e substitui somente Home e Descobrir.
 
-- Stuart/Lioness deixam `Em dia` antes do primeiro paint quando o próprio payload já comprova `released_episodes > watched_episodes`, sem depender da fila remota de auditoria;
-- Raw/SmackDown usam auditoria prioritária separada: a maior posição efetivamente assistida é a fronteira e o próximo episódio é o primeiro **já exibido** depois dela; buracos S01 históricos continuam não vistos no banco, mas não entram em `Faltam` nem podem virar próximo episódio;
-- os antigos auditores gerais r256/r257 deixam de ser disparados na release final para não disputar a Home nem fazer Raw/Stuart aguardarem dezenas de consultas de outras séries;
-- `Pra você` isola falhas de hidratação: um item com `TMDB 404` é descartado individualmente em vez de rejeitar o `Promise.all` e derrubar a aba;
-- as exclusões pessoais combinam dashboard, Watchlist integral e `NotInterested`; vistos/concluídos, em andamento, em dia e Watchlist não aparecem fora do bloco próprio;
-- Descobrir mantém os nove filtros e pools públicos amplos, com cache curto por aba;
-- o scroll horizontal no toque passa a ser nativo (`pan-x pan-y` + `overflow-x:auto`); a captura manual da r257 não intercepta mais `pointerType=touch`, enquanto mouse/pen mantêm drag de fallback;
-- o observer local continua cobrindo temporadas, episódios, gráficos, relacionados/semelhantes e atores/elenco criados assincronamente;
-- não existe migration de schema na r258; os RPCs existentes já contêm os dados necessários.
+- Home usa `cinetracker_profile_home_payload_v0997_r5`, normaliza o payload em memória e não move cards pelo DOM;
+- Raw/SmackDown nunca exibem backlog S01 como próximo episódio no primeiro paint; apenas essas duas séries recebem auditoria assíncrona prioritária pela fronteira realmente assistida;
+- Lioness/Stuart e séries normais usam a pendência já conhecida no payload, sem chamada TMDB individual por série;
+- o Descobrir usa `cinetracker_recommendation_state_v108` para exclusões e candidatos da Watchlist, removendo `cinetracker_profile_media_dashboard_v0991` e `cinetracker_watchlist_full_v119` do caminho crítico r259;
+- o novo RPC v108 foi medido em aproximadamente 33 ms no banco durante o diagnóstico e tem acesso restrito a `authenticated`/`service_role`;
+- `Pra você` exibe seus três blocos imediatamente e carrega estado pessoal + primeira página TMDB em paralelo; falha externa fica contida no bloco, sem transformar a tela inteira em erro;
+- os observers permanentes r256/r257 são desativados no bundle r259; scroll horizontal passa a depender de CSS nativo (`overflow-x:auto` + `pan-x pan-y`) e o drag JS herdado ignora toque;
+- Esportes, Perfil, Configurações e F1 continuam congelados na implementação aprovada da r257;
+- migration da release: `20260912111000_r259_recommendation_state_v108.sql`.
 
-Assets oficiais: `app-v258.js` / `app-v258.css`; build: `apps/web/build-r258-official.mjs`; runtime: `apps/web/runtime-r258-account-ground-truth.js`.
+Assets oficiais: `app-v259.js` / `app-v259.css`; build: `apps/web/build-r259-official.mjs`; runtime: `apps/web/runtime-r259-fast-home-discover.js`.
 
 ## Android 1.0.20
 
-A r258 não altera Android. A identidade preservada é:
+A r259 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
