@@ -1,0 +1,16 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import vm from 'node:vm';
+const root=dirname(fileURLToPath(import.meta.url)),runtime=await readFile(resolve(root,'runtime-r264-home-watched-discover-sports-detail-scroll.js'),'utf8');
+const noop=()=>{};
+const document={querySelector:()=>null,querySelectorAll:()=>[],addEventListener:noop,createElement:()=>({className:'',dataset:{},appendChild:noop,insertAdjacentHTML:noop}),documentElement:{}};
+const window={addEventListener:noop,dispatchEvent:noop,__ctR264:null};
+const context={window,document,console,Intl,Date,Map,Set,Promise,Number,String,Array,Math,RegExp,setTimeout:()=>0,clearTimeout:noop,cancelAnimationFrame:noop,requestAnimationFrame:fn=>{fn();return 1},queueMicrotask:fn=>fn(),CustomEvent:function(){},route:()=>'',paintHome:noop,renderDiscover:async()=>{},renderSports:async()=>{},rpc:async()=>({}),ensureMedia:async()=>({id:1}),homeCache:{series:[]}};
+vm.createContext(context);vm.runInContext(runtime,context,{filename:'runtime-r264-home-watched-discover-sports-detail-scroll.js'});
+const t=context.window.__ctR264Test;if(!t)throw new Error('R264_ALGO test API missing');
+let ep=t.pendingEpisode264({_ct255NewRelease:{season_number:4,episode_number:7}});if(ep?.season_number!==4||ep?.episode_number!==7)throw new Error('R264_ALGO fallback pending episode');
+context.ct176CanonicalPair=()=>({current:{season_number:9,episode_number:3}});ep=t.pendingEpisode264({next_unwatched_episode:{season_number:1,episode_number:1}});if(ep?.season_number!==9||ep?.episode_number!==3)throw new Error('R264_ALGO canonical current must win');
+context.ct176CanonicalPair=()=>({current:{season_number:0,episode_number:0}});ep=t.pendingEpisode264({latest_released_episode:{season_number:2,episode_number:6}});if(ep!==null)throw new Error('R264_ALGO invalid canonical episode must not manufacture watched target');
+for(const name of['applyHomeTab264','cleanDiscover264','reorderSports264','markRails264','semanticRails264'])if(typeof t[name]!=='function')throw new Error('R264_ALGO missing '+name);
+console.log('R264_ALGORITHMS_OK canonical episode target and generic authorities');
