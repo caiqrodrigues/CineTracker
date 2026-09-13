@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r263.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v263.js','app-v263.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r263 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.54';window.__ctOfficialVersion='1.0.54';","const REVISION='r263-official-1.0.54';","window.__ctR263='user-ground-truth-home-list-detail-discover-sports-f1'","window.__ctR263Home='vertical-list-only-no-carousel'","window.__ctR263Detail='local-x-seasons-season-graphs-similar-only'","window.__ctR263Discover='all-tabs-local-x-standard-2x3'","window.__ctR263Sports='canonical-watch-rpc+fresh-f1-jolpica-sync'","p_event_id:id"])must(js,x);
+if(js.includes("p_provider:provider,p_provider_event_id:id"))throw new Error('r263 legacy sport watch rpc still present');
+for(const x of['.ct263-home-list','.ct263-discover-card','.ct263-discover-rail','Home is a vertical list','.ct262-season-rail'])must(css,x);
+must(html,'app-v263.js');must(html,'app-v263.css');must(release,'"version": "1.0.54"');must(release,'"revision": "r263-official-1.0.54"');must(sw,"const CACHE='ct-web-1.0.54-r263';");
+console.log('WEB_1_0_54_OFFICIAL_OK r263');
