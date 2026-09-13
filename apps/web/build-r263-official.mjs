@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r263.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v263.js','app-v263.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r263 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.54';window.__ctOfficialVersion='1.0.54';","const REVISION='r263-official-1.0.54';","window.__ctR263='approved-home-list-discover-intelligence-f1-watched'","window.__ctR263Home='vertical-list+hidden-history+no-home-carousel'","window.__ctR263Discover='nine-tabs-local-rails+personal-exclusions+top10-streaming'","window.__ctR263Sports='f1-db-events+mark-unmark-watched'","window.__ctR263Horizontal='document-fixed+component-local-only'","function armHome262(){return;}","cinetracker_sport_mark_watched_v1","watch/providers"])must(js,x);
+for(const x of['[data-home] .home-section .stack','.ct263-media-rail','.ct263-streaming','.ct263-f1-watch-panel','.ct263-f1-watch-btn','overflow-x:hidden!important'])must(css,x);
+must(html,'app-v263.js');must(html,'app-v263.css');must(release,'"version": "1.0.54"');must(release,'"revision": "r263-official-1.0.54"');must(sw,"const CACHE='ct-web-1.0.54-r263';");
+console.log('WEB_1_0_54_OFFICIAL_OK r263');
