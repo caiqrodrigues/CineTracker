@@ -25,6 +25,7 @@ function recentActivity262(value,days=30){const t=Date.parse(value||'');return N
 function clearNext262(row){for(const k of['next_season_number','next_episode_number','next_episode_title','next_episode_air_date','next_episode','next_episode_to_watch','next_unwatched_episode'])try{delete row[k]}catch{row[k]=null}}
 function sanitizeWeekly262(row){
  if(!row||!weekly262(row)||n262(row?.watched_episodes)<=0)return row;
+ if(row?._ct262ExactAuthority)return row;
  row._ct262Weekly=true;row._ct261Weekly=true;row._ct261Provisional=false;row._ct262RecentPending=[];
  row.home_bucket='up_to_date';row.is_caught_up=true;row.history_missing_episodes=0;
  row.released_episodes=Math.max(0,n262(row.watched_episodes));clearNext262(row);return row;
@@ -50,7 +51,9 @@ async function exactWeekly262(row){
  return{detail,episodes};
 }
 function applyWeekly262(row,exact){
- if(!row||!exact)return false;const before=[row.home_bucket,row.history_missing_episodes,row.next_season_number,row.next_episode_number].join('|');
+ if(!row||!exact)return false;
+ row._ct262ExactAuthority=true;
+ const before=[row.home_bucket,row.history_missing_episodes,row.next_season_number,row.next_episode_number].join('|');
  const calc=computeWeekly262(row,exact.episodes,exact.detail?.status);const next=calc.next;
  row._ct262Weekly=true;row._ct261Weekly=true;row._ct262RecentPending=calc.pending;row.history_missing_episodes=calc.pending.length;row.home_bucket=calc.bucket;row.is_caught_up=!next;
  row.released_episodes=n262(row.watched_episodes)+calc.pending.length;
