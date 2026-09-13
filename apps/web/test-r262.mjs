@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [js,css,html,release,sw,runtime]=await Promise.all([readFile(resolve(dist,'app-v262.js'),'utf8'),readFile(resolve(dist,'app-v262.css'),'utf8'),readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(root,'runtime-r262-real-video-regressions.js'),'utf8')]);
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r262 static missing '+x)};
+for(const x of["window.__ctR262='real-video-regressions-horizontal-series-sports'","window.__ctR262Home='local-horizontal-buckets+recent-weekly-frontier'","window.__ctR262Discover='standard-2x3-local-rails+resilient-personal-state'","window.__ctR262Sports='page-x-contained+local-match-f1-rails'","window.__ctR262Detail='nonblank-series-recovery'","window.__ctR262Horizontal='page-fixed-component-local-x'",'function sanitizeWeekly262(row)','function computeWeekly262(row,episodes','function recoverSeriesDetail262(id)'])must(js,x);
+for(const x of['.ct262-home-rail','.ct262-media-rail','.ct262-sports-root','.ct262-series-detail','html,body{width:100%!important;max-width:100%!important;overflow-x:hidden!important}','aspect-ratio:2/3!important'])must(css,x);
+for(const x of['function armHome262()','function armDiscover262()','function armSports262()','MutationObserver','queueReconcile262'])must(runtime,x);
+must(html,'app-v262.js');must(html,'app-v262.css');if(html.includes('app-v261.js')||html.includes('app-v261.css'))throw new Error('r262 html still references r261 assets');
+must(release,'"version": "1.0.53"');must(release,'"revision": "r262-official-1.0.53"');must(sw,"const CACHE='ct-web-1.0.53-r262';");
+console.log('R262_STATIC_OK');
