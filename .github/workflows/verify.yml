@@ -1,80 +1,82 @@
-name: Verify Web 1.0.52 r261 Video Ground Truth Series
+name: Verify Web 1.0.53 r262 Real Video Regressions
 
 on:
   push:
-    branches: [main, 'fix/r261-video-ground-truth-series-discover-detail']
+    branches: [main, 'fix/r262-real-video-regressions']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_52_r261:
+  web_1_0_53_r262:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r261
+      - name: Version identity r262
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.52"' package.json
-          grep -Fq '"version": "1.0.52"' apps/web/package.json
-          grep -Fq '## 1.0.52 — 2026-09-12 — Web r261' CHANGELOG.md
-          grep -Fq '1.0.52' README.md
-          grep -Fq '1.0.52' VERSIONS.md
-          test -f supabase/migrations/20260912105000_r261_imported_series_state.sql
-      - name: Syntax r261 release chain
+          grep -Fq '"version": "1.0.53"' package.json
+          grep -Fq '"version": "1.0.53"' apps/web/package.json
+          test -f apps/web/runtime-r262-real-video-regressions.js
+          test -f apps/web/build-r262.mjs
+          test -f apps/web/build-r262-official.mjs
+          test -f apps/web/test-r262.mjs
+          test -f apps/web/test-r262-algorithms.mjs
+          test -f apps/web/test-r262-browser.mjs
+          test -f scripts/test-r262-exact-bundle-browser.mjs
+      - name: Syntax r262 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r261-video-ground-truth-series.js
-          node --check apps/web/build-r261.mjs
-          node --check apps/web/build-r261-official.mjs
-          node --check apps/web/test-r261.mjs
-          node --check apps/web/test-r261-algorithms.mjs
-          node --check apps/web/test-r261-browser.mjs
-          node --check scripts/test-r261-exact-bundle-browser.mjs
-      - name: Build official r261
+          node --check apps/web/runtime-r262-real-video-regressions.js
+          node --check apps/web/build-r262.mjs
+          node --check apps/web/build-r262-official.mjs
+          node --check apps/web/test-r262.mjs
+          node --check apps/web/test-r262-algorithms.mjs
+          node --check apps/web/test-r262-browser.mjs
+          node --check scripts/test-r262-exact-bundle-browser.mjs
+      - name: Build official r262
         working-directory: apps/web
-        run: node build-r261-official.mjs
-      - name: Static authority regression r261
+        run: node build-r262-official.mjs
+      - name: Static authority regression r262
         working-directory: apps/web
-        run: node test-r261.mjs
-      - name: Logic regressions r261
+        run: node test-r262.mjs
+      - name: Logic regressions r262
         working-directory: apps/web
-        run: node test-r261-algorithms.mjs
-      - name: Chromium video-ground-truth mobile and desktop r261
+        run: node test-r262-algorithms.mjs
+      - name: Chromium user-video structures mobile r262
         working-directory: apps/web
-        run: node test-r261-browser.mjs
-      - name: Exact final bundle boot r261
-        run: node scripts/test-r261-exact-bundle-browser.mjs
-      - name: Final bundle identity r261
+        run: node test-r262-browser.mjs
+      - name: Exact final bundle boot r262
+        run: node scripts/test-r262-exact-bundle-browser.mjs
+      - name: Final bundle identity r262
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v261.js
-          grep -Fq "window.__ctWebBuild='1.0.52';window.__ctOfficialVersion='1.0.52';" dist/app-v261.js
-          grep -Fq "const REVISION='r261-official-1.0.52';" dist/app-v261.js
-          grep -Fq "window.__ctR261='video-ground-truth-series-discover-detail'" dist/app-v261.js
-          grep -Fq "window.__ctR261Home='raw-smackdown-exact-frontier+special-series+persistent-home-cache'" dist/app-v261.js
-          grep -Fq "window.__ctR261Series='formula1-and-superbowl-first-class-imported-series'" dist/app-v261.js
-          grep -Fq "window.__ctR261Discover='button-height-reset+poster-2x3+native-drag-rails'" dist/app-v261.js
-          grep -Fq "window.__ctR261Detail='tmdb-cache-key-includes-params+nonblank-detail'" dist/app-v261.js
-          grep -Fq "window.__ctR261Horizontal='special-series+discover+native-detail-rails'" dist/app-v261.js
-          grep -Fq 'ct-home-first-page-v261' dist/app-v261.js
-          grep -Fq 'cinetracker_imported_series_state_v1' dist/app-v261.js
-          grep -Fq 'Object.keys(params||{}).sort()' dist/app-v261.js
-          grep -Fq 'app-v261.js' dist/index.html
-          grep -Fq 'app-v261.css' dist/index.html
-          grep -Fq '"version": "1.0.52"' dist/release.json
-          grep -Fq '"revision": "r261-official-1.0.52"' dist/release.json
-          grep -Fq '.ct259-media-card>button{display:flex!important' dist/app-v261.css
-          grep -Fq 'height:264px!important' dist/app-v261.css
-          grep -Fq 'height:231px!important' dist/app-v261.css
-          grep -Fq '.ct261-season-rail,.ct261-episode-list' dist/app-v261.css
-          grep -Fq 'html,body,#app{max-width:100%!important;overflow-x:clip!important}' dist/app-v261.css
-          grep -Fq "const CACHE='ct-web-1.0.52-r261';" dist/service-worker.js
+          node --check dist/app-v262.js
+          grep -Fq "window.__ctWebBuild='1.0.53';window.__ctOfficialVersion='1.0.53';" dist/app-v262.js
+          grep -Fq "const REVISION='r262-official-1.0.53';" dist/app-v262.js
+          grep -Fq "window.__ctR262='real-video-regressions-horizontal-series-sports'" dist/app-v262.js
+          grep -Fq "window.__ctR262Home='local-horizontal-buckets+recent-weekly-frontier'" dist/app-v262.js
+          grep -Fq "window.__ctR262Discover='standard-2x3-local-rails+resilient-personal-state'" dist/app-v262.js
+          grep -Fq "window.__ctR262Sports='page-x-contained+local-match-f1-rails'" dist/app-v262.js
+          grep -Fq "window.__ctR262Detail='nonblank-series-recovery'" dist/app-v262.js
+          grep -Fq "window.__ctR262Horizontal='page-fixed-component-local-x'" dist/app-v262.js
+          grep -Fq 'function sanitizeWeekly262(row)' dist/app-v262.js
+          grep -Fq 'function recoverSeriesDetail262(id)' dist/app-v262.js
+          grep -Fq '.ct262-home-rail' dist/app-v262.css
+          grep -Fq '.ct262-media-rail' dist/app-v262.css
+          grep -Fq '.ct262-sports-root' dist/app-v262.css
+          grep -Fq '.ct262-series-detail' dist/app-v262.css
+          grep -Fq 'app-v262.js' dist/index.html
+          grep -Fq 'app-v262.css' dist/index.html
+          ! grep -Fq 'app-v261.js' dist/index.html
+          grep -Fq '"version": "1.0.53"' dist/release.json
+          grep -Fq '"revision": "r262-official-1.0.53"' dist/release.json
+          grep -Fq "const CACHE='ct-web-1.0.53-r262';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -89,20 +91,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_52_r261]
+    needs: [web_1_0_53_r262]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.52 r261
+      - name: Official production serves and boots 1.0.53 r262
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.52"' <<<"$BODY" && grep -Fq '"revision": "r261-official-1.0.52"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v261.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v261.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.53"' <<<"$BODY" && grep -Fq '"revision": "r262-official-1.0.53"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v262.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v262.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR261='video-ground-truth-series-discover-detail'" <<<"$JS" && grep -Fq "window.__ctR261Home='raw-smackdown-exact-frontier+special-series+persistent-home-cache'" <<<"$JS" && grep -Fq "window.__ctR261Series='formula1-and-superbowl-first-class-imported-series'" <<<"$JS" && grep -Fq "window.__ctR261Discover='button-height-reset+poster-2x3+native-drag-rails'" <<<"$JS" && grep -Fq "window.__ctR261Detail='tmdb-cache-key-includes-params+nonblank-detail'" <<<"$JS" && grep -Fq 'ct-home-first-page-v261' <<<"$JS" && grep -Fq '.ct259-media-card>button{display:flex!important' <<<"$CSS" && grep -Fq '.ct261-season-rail,.ct261-episode-list' <<<"$CSS" && grep -Fq 'app-v261.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR262='real-video-regressions-horizontal-series-sports'" <<<"$JS" && grep -Fq "window.__ctR262Home='local-horizontal-buckets+recent-weekly-frontier'" <<<"$JS" && grep -Fq "window.__ctR262Discover='standard-2x3-local-rails+resilient-personal-state'" <<<"$JS" && grep -Fq "window.__ctR262Sports='page-x-contained+local-match-f1-rails'" <<<"$JS" && grep -Fq '.ct262-home-rail' <<<"$CSS" && grep -Fq '.ct262-series-detail' <<<"$CSS" && grep -Fq 'app-v262.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
