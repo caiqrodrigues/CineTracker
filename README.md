@@ -6,7 +6,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.69** | `r278-official-1.0.69` | Home com ação de assistido por TMDB efetivo, abas Séries/Filmes sticky, Histórico acima da viewport e sidebar desktop fixa |
+| Web | **1.0.69** | `r278-official-1.0.69` | Home com ação de assistido por TMDB efetivo, abas Séries/Filmes fixas no topo, Histórico acima da viewport e sidebar desktop fixa |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r278 |
 | Backend | produção compartilhada | Supabase | Home no payload r6 limitado; `cinetracker_home_series_watch_state_v1` consolida progresso por TMDB efetivo |
 | Windows | — | — | não lançado |
@@ -19,7 +19,7 @@ A r278 corrige o caso real mostrado em vídeo no qual o card tinha identidade TM
 
 - **Marcar como assistido:** episódios de `Assistir a seguir` e `Juntando poeira` passam a usar a mesma identidade TMDB efetiva usada pelo card (`ct275Tmdb/mediaTmdb`). Se o atributo enriquecido ainda estiver vazio, o runtime usa `data-media="tv:<id>"` como fallback. Filmes em `Assistir a seguir / Watchlist` usam a mesma regra efetiva.
 - **Ação sempre visível:** o `✓` permanece dentro do próprio card, com host relativo e posicionamento explícito à direita; `display`, `visibility` e `opacity` são protegidos contra regras legadas.
-- **Séries / Filmes sempre acessíveis:** a barra de abas da Home usa `position: sticky; top: 0`, permanecendo no topo enquanto o conteúdo é rolado para cima ou para baixo.
+- **Séries / Filmes permanentemente no topo:** a barra de abas da Home usa `position: fixed` e fica presa ao topo da viewport, independente de o usuário rolar para cima ou para baixo. No desktop ela começa depois da sidebar; no mobile ocupa a largura da viewport.
 - **Sidebar desktop fixa:** logo, navegação, usuário e Sair continuam presos à viewport inteira; somente a coluna de conteúdo rola.
 - **Histórico:** permanece renderizado acima do ponto inicial da Home, sem botão de abrir/fechar; ao subir a página ele aparece naturalmente.
 - **Cards de séries:** `Continuar assistindo`, `Juntando poeira` e `Em dia` preservam metadados ricos de episódio da r276.
