@@ -1,0 +1,21 @@
+import {readFile,writeFile,rm,mkdir} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {execFileSync} from 'node:child_process';
+const dist=resolve('dist'),js=await readFile(resolve(dist,'app-v268.js'),'utf8'),css=await readFile(resolve(dist,'app-v268.css'),'utf8');
+const runtime=js.match(/\/\* CT268_HOME_FIX_START \*\/[\s\S]*?\/\* CT268_HOME_FIX_END \*\//)?.[0]||'';
+if(!runtime)throw new Error('R268 browser missing Home fix runtime');
+let bin='';for(const c of['google-chrome','chromium','chromium-browser'])try{execFileSync('which',[c],{stdio:'ignore'});bin=c;break}catch{}if(!bin)throw new Error('Chromium unavailable');
+const dir='/tmp/ct-r268-browser';await rm(dir,{recursive:true,force:true});await mkdir(dir,{recursive:true});const file=resolve(dir,'index.html');
+const safe=s=>s.replaceAll('</script>','<\\/script>');
+await writeFile(file,`<!doctype html><html><head><meta charset="utf-8"><style>${css.replaceAll('</style>','<\\/style>')}</style></head><body>
+<div data-home>
+ <section class="home-section" id="normal"><div class="panel-head"><h3>Assistir a seguir</h3></div><div class="stack"></div></section>
+ <section class="home-section" id="histE"><div class="panel-head"><h3>Histórico recente</h3></div><div class="stack"><div class="empty">Nenhum episódio recente.</div></div></section>
+ <section class="home-section" id="histM"><div class="panel-head"><h3>Filmes vistos</h3></div><div class="stack"><div class="empty">Nenhum filme recente.</div></div></section>
+ <div class="media-row ct266-home-watch-host" id="row"><div class="thumb"></div><div><b>Episódio atual</b><small>S02 E04</small></div><span class="ct266-watch-action" data-ct266-watch="episode">✓</span></div>
+</div>
+<script>window.__errs=[];addEventListener('error',e=>__errs.push(String(e.message||e.error)));let homeCache={__ctHistoryAuthoritative:false};let paintHome=()=>{};</script>
+<script>${safe(runtime)}</script>
+<script>paintHome();setTimeout(()=>{const row=document.querySelector('#row'),a=row.querySelector(':scope > .ct266-watch-action'),rr=row.getBoundingClientRect(),ar=a.getBoundingClientRect(),rs=getComputedStyle(row),as=getComputedStyle(a);document.body.dataset.done='1';document.body.dataset.historyHidden=String([...document.querySelectorAll('#histE,#histM')].filter(x=>x.hidden).length);document.body.dataset.normalVisible=String(!document.querySelector('#normal').hidden);document.body.dataset.watchParent=String(a.parentElement===row);document.body.dataset.watchInline=String(row.dataset.ct268WatchInline==='1');document.body.dataset.watchPosition=as.position;document.body.dataset.watchInside=String(ar.left>=rr.left&&ar.right<=rr.right&&ar.top>=rr.top&&ar.bottom<=rr.bottom);document.body.dataset.watchRight=String(Math.abs((rr.right-ar.right)-10)<2.5);document.body.dataset.watchCentered=String(Math.abs(((ar.top+ar.bottom)/2)-((rr.top+rr.bottom)/2))<2.5);document.body.dataset.rowRelative=String(rs.position==='relative');document.body.dataset.rowPadding=String(parseFloat(rs.paddingRight)>=48);document.body.dataset.errors=__errs.join('|')},80)</script>
+</body></html>`,'utf8');
+try{const out=execFileSync(bin,['--headless','--no-sandbox','--disable-gpu','--disable-background-networking','--disable-component-update','--disable-sync','--no-first-run','--no-default-browser-check',`--user-data-dir=${resolve(dir,'profile')}`,'--window-size=420,900','--virtual-time-budget=2000','--dump-dom','file://'+file],{encoding:'utf8',timeout:30000,maxBuffer:10*1024*1024,stdio:['ignore','pipe','pipe']});for(const x of['data-done="1"','data-history-hidden="2"','data-normal-visible="true"','data-watch-parent="true"','data-watch-inline="true"','data-watch-position="absolute"','data-watch-inside="true"','data-watch-right="true"','data-watch-centered="true"','data-row-relative="true"','data-row-padding="true"'])if(!out.includes(x))throw new Error('R268 browser missing '+x);const errors=(out.match(/data-errors="([^"]*)"/)||[])[1]||'';if(errors)throw new Error('R268 browser errors '+errors);console.log('R268_BROWSER_OK cached-history-gated watch-same-row-right');}finally{await rm(dir,{recursive:true,force:true})}
