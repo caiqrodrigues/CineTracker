@@ -28,7 +28,7 @@ const ct269State={history:null,historyAt:0,historyToken:0,queued:false};
 function ct269Norm(v){return String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
 function ct269Section(view,title){return [...(view?.querySelectorAll?.('.home-section')||[])].find(sec=>ct269Norm(sec.querySelector('.panel-head h2,.panel-head h3,h2,h3')?.textContent)===title)||null}
 function ct269HistoryRows(pack){return {episodes:Array.isArray(pack?.history_episodes)?pack.history_episodes:[],movies:Array.isArray(pack?.history_movies)?pack.history_movies:[]}}
-function ct269HistoryEpisodeHtml(x){const s=Number(x?.season_number||0),e=Number(x?.episode_number||0),row={...x,media_type:'tv',tmdb_id:x?.tmdb_id||x?.source_tmdb_id||x?.raw_tmdb?.source_tmdb_id};return typeof mediaRow==='function'?mediaRow(row,`S${String(s).padStart(2,'0')} E${String(e).padStart(2,'0')}`):''}
+function ct269HistoryEpisodeHtml(x){const s=Number(x?.season_number||0),e=Number(x?.episode_number||0),row={...x,media_type:'tv',tmdb_id:x?.tmdb_id||x?.source_tmdb_id||x?.raw_tmdb?.source_tmdb_id};return typeof mediaRow==='function'?mediaRow(row,'S'+String(s).padStart(2,'0')+' E'+String(e).padStart(2,'0')):''}
 function ct269HistoryMovieHtml(x){const row={...x,media_type:'movie'};if(typeof movieRow255==='function')return movieRow255(row);return typeof mediaRow==='function'?mediaRow(row,x?.watched_at?new Date(x.watched_at).toLocaleString('pt-BR'):'Visto'):''}
 function ct269PaintHistory(){
  const root=document.querySelector('[data-home]'),hist=ct269State.history;if(!root||!hist)return false;
