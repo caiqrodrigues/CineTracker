@@ -1,0 +1,31 @@
+name: Patch r275 detail badge browser harness
+
+on:
+  push:
+    branches:
+      - fix/r275-history-rewatch-episode-dedupe
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/r275-history-rewatch-episode-dedupe
+      - name: Patch test harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -c 'from pathlib import Path; p=Path("apps/web/test-r275-browser.mjs"); s=p.read_text(encoding="utf-8"); old="await ct171RewatchMovie(20,detailBtn);document.body.dataset.detailBadge="; new="await ct171RewatchMovie(20,detailBtn);ct275DecorateDetailButton(detailBtn);document.body.dataset.detailBadge="; assert old in s; p.write_text(s.replace(old,new,1),encoding="utf-8")'
+      - name: Commit patched test
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'CineTracker Validation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add apps/web/test-r275-browser.mjs
+          git commit -m 'test: validate r275 detail multiplier decorator'
+          git push origin HEAD:fix/r275-history-rewatch-episode-dedupe
