@@ -2,6 +2,24 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.74 — 2026-09-14 — Web r283
+
+### Histórico / ações isoladas
+- `↻ Reassistir` e `↶ Desfazer visto` passam a ser interceptados em `window` capture phase, antes do handler genérico de `data-media`; executar uma dessas ações não abre mais a tela da série ou do filme.
+- Os writers canônicos e os multiplicadores de Reassistir permanecem preservados; a mudança é de ownership do evento, não de persistência.
+
+### Home / episódios disponíveis
+- A quantidade de episódios disponíveis deixa de ficar artificialmente presa em `1` quando a reconciliação fresca encontra mais de um episódio lançado.
+- A contagem usa a fronteira fresca `last_episode_to_air` e a estrutura de temporadas do TMDB, descontando as chaves canônicas realmente assistidas e ignorando temporada 0.
+- Lioness e Magnatas do Crime passam a refletir corretamente lançamentos semanais e temporadas liberadas em lote.
+- Raw e SmackDown preservam todo o backlog histórico não assistido na contagem disponível, mas o próximo episódio é escolhido somente depois da maior fronteira realmente assistida; buracos antigos de S01 não voltam a ser o episódio atual.
+- O Histórico reutiliza a mesma disponibilidade fresca dos cards ativos.
+
+### Build / validação
+- Web atualizada para `1.0.74 / r283-official-1.0.74`; Android permanece `1.0.20 / versionCode 10062`.
+- Chromium em 420 px e 1200 px cobre Reassistir/Desfazer sem navegação, Lioness com 2 disponíveis, Magnatas com 8, Raw/SmackDown com backlog superior a mil e próximo episódio posterior à fronteira atual.
+- Bundle final exato, identidade da release e `production_smoke` público são obrigatórios antes de considerar a r283 concluída.
+
 ## 1.0.66 — 2026-09-14 — Web r275
 
 ### Home / Histórico retrátil
@@ -218,7 +236,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - Build oficial: `apps/web/build-r257-official.mjs`; runtime: `apps/web/runtime-r257-sequence-scroll-discover-f1-grid.js`.
 - `test-r257-browser.mjs` reproduz SmackDown com buraco histórico S01 e sequência S28, exige próximo recente, valida Lioness/Stuart, bloqueia vistos/Watchlist/acompanhando no Descobrir, exige pelo menos 20 cards em `Em alta`, executa arrasto horizontal real em abas/cards e trilhos tardios e valida 20 posições no próximo grid e 20 no grid anterior.
 - `scripts/test-r257-exact-bundle-browser.mjs` carrega o `app-v257.js` final, captura `error`/`unhandledrejection`, exige os markers r257 e aplicação não vazia.
-- `verify.yml` exige versão, sintaxe, build, regras, algoritmos, Chromium guiado pelo vídeo, bundle final, identidade final, Android inalterado e `production_smoke` público da 1.0.48/r257 após merge em `main`.
+- `verify.yml` exige versão, sintaxe, build, regras, algoritmos, Chromium guiado pelo vídeo, identidade final, Android inalterado e `production_smoke` público da 1.0.48/r257 após merge em `main`.
 
 ## 1.0.47 — 2026-09-12 — Web r256
 

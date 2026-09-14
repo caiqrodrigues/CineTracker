@@ -6,29 +6,31 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.73** | `r282-official-1.0.73` | Séries ordenadas por última visualização dentro do bucket final; `✓` continua isolado e Home permanece estável |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r282 |
-| Backend | produção compartilhada | Supabase | Home no payload r6 limitado; `cinetracker_home_series_watch_state_v1` consolida progresso por TMDB efetivo |
+| Web | **1.0.74** | `r283-official-1.0.74` | Reassistir/Desfazer isolados da navegação; contagem fresca de episódios disponíveis e sequência atual de Raw/SmackDown |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r283 |
+| Backend | produção compartilhada | Supabase | Home no payload r6 limitado; estado canônico por TMDB efetivo e writer de Histórico preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.73 / r282
+## Web 1.0.74 / r283
 
-A r282 corrige a ordenação observada depois de marcar Lioness como assistido. O payload r6 já devolve `last_watched_at`, mas a reconciliação fresca de episódios pode mudar uma série de bucket depois dessa ordenação inicial; a lista final agora volta a ordenar cada bucket pela última visualização real.
+A r283 corrige o ground truth do vídeo posterior à r282: ações do Histórico não podem abrir o card da série/filme, e a quantidade de episódios disponíveis deve refletir todos os episódios já lançados ainda não vistos, mesmo quando o metadata persistido do payload r6 está atrasado.
 
-- **Última série assistida primeiro:** dentro de `Assistir a seguir`, `Juntando poeira`, `Em dia` e `Concluídas`, séries com `last_watched_at` mais recente ficam acima das demais.
-- **Bucket final continua soberano:** se a marcação deixa a série `Em dia` ou `Concluída`, ela não é forçada para `Assistir a seguir`; entra no bucket correto e é ordenada apenas dentro dele.
-- **Ordenação depois da reconciliação:** quando o TMDB corrige o próximo episódio e muda `home_bucket`, a seção final não herda a posição antiga do array canônico.
-- **Ordem estável sem data:** séries sem `last_watched_at` preservam a ordem anterior entre si.
-- **Escopo preservado:** clique isolado da r281, check minimalista, abas Séries/Filmes fixas, sidebar fixa, Histórico acima da viewport, metadados ricos, deduplicação, Reassistir, Descobrir, detalhes, Sports/F1 e Android permanecem preservados.
+- **Reassistir/Desfazer sem navegação:** `↻` e `↶` são capturados no `window` antes do handler genérico de `data-media`; a ação é executada no próprio Histórico e não abre `/series/...` ou `/movie/...`.
+- **Disponibilidade fresca:** a reconciliação usa a fronteira `last_episode_to_air` e a estrutura de temporadas do TMDB para recalcular episódios já lançados, descontando as chaves canônicas realmente assistidas.
+- **Lioness e Magnatas do Crime:** a mesma regra cobre lançamentos semanais e temporadas liberadas em lote; o contador não fica mais artificialmente travado em `1` quando existem vários episódios disponíveis.
+- **Raw/SmackDown:** backlog histórico continua preservado e contado como disponível, mas não volta a ser escolhido como “próximo episódio”. O próximo card usa somente episódio lançado depois da maior fronteira realmente assistida.
+- **Histórico consistente:** a quantidade exibida dentro do Histórico usa a mesma disponibilidade fresca calculada para os cards ativos.
+- **Escopo preservado:** ordem por última visualização da r282, clique isolado do `✓` da r281, Histórico acima da viewport, metadados ricos, deduplicação, Descobrir, detalhes, Sports/F1 e Android permanecem preservados.
 
 ## Funcionalidades consolidadas
 
 - Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira, Histórico recente e estados de biblioteca;
-- Histórico de episódios e filmes cronológico, acessível acima da viewport inicial, com Reassistir e desfazer marcação de visto;
+- Histórico de episódios e filmes cronológico, acessível acima da viewport inicial, com Reassistir e desfazer marcação de visto sem navegar para detalhes;
 - reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x...`;
-- detecção do primeiro episódio lançado não visto com consolidação por TMDB efetivo;
+- detecção do primeiro episódio lançado não visto com consolidação por TMDB efetivo e exceção de fronteira atual para séries recorrentes antigas;
+- contagem fresca de todos os episódios já lançados ainda disponíveis para ver;
 - próximo episódio anunciado para séries em dia;
 - metadados ricos de episódios e filmes nos cards da Home;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
@@ -50,7 +52,7 @@ A r282 corrige a ordenação observada depois de marcar Lioness como assistido. 
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r282 herda integralmente a r281 e altera somente a ordenação final dos cards de séries após classificação/reconciliação.
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r283 herda integralmente a r282 e altera somente a autoridade das ações do Histórico e a reconciliação/contagem de episódios disponíveis na Home.
 
 ## Regra de validação
 

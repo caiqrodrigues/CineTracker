@@ -1,78 +1,79 @@
-name: Verify Web 1.0.73 r282 Series Recency Order
+name: Verify Web 1.0.74 r283 History Actions and Availability
 
 on:
   push:
-    branches: [main, 'fix/r282-series-recency-order']
+    branches: [main, 'fix/r283-history-actions-availability']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_73_r282:
+  web_1_0_74_r283:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r282
+      - name: Version identity r283
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.73"' package.json
-          grep -Fq '"version": "1.0.73"' apps/web/package.json
-          grep -Fq 'build-r282-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r282-series-recency-order.js
-          test -f apps/web/build-r282.mjs
-          test -f apps/web/build-r282-official.mjs
-          test -f apps/web/test-r282.mjs
-          test -f apps/web/test-r282-browser.mjs
-          test -f scripts/test-r282-exact-bundle-browser.mjs
-      - name: Syntax r282 release chain
+          grep -Fq '"version": "1.0.74"' package.json
+          grep -Fq '"version": "1.0.74"' apps/web/package.json
+          grep -Fq 'build-r283-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r283-history-actions-availability.js
+          test -f apps/web/build-r283.mjs
+          test -f apps/web/build-r283-official.mjs
+          test -f apps/web/test-r283.mjs
+          test -f apps/web/test-r283-browser.mjs
+          test -f scripts/test-r283-exact-bundle-browser.mjs
+      - name: Syntax r283 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r282-series-recency-order.js
-          node --check apps/web/build-r282.mjs
-          node --check apps/web/build-r282-official.mjs
-          node --check apps/web/test-r282.mjs
-          node --check apps/web/test-r282-browser.mjs
-          node --check scripts/test-r282-exact-bundle-browser.mjs
-      - name: Build official r282
+          node --check apps/web/runtime-r283-history-actions-availability.js
+          node --check apps/web/build-r283.mjs
+          node --check apps/web/build-r283-official.mjs
+          node --check apps/web/test-r283.mjs
+          node --check apps/web/test-r283-browser.mjs
+          node --check scripts/test-r283-exact-bundle-browser.mjs
+      - name: Build official r283
         working-directory: apps/web
-        run: node build-r282-official.mjs
-      - name: Static regressions r282
+        run: node build-r283-official.mjs
+      - name: Static regressions r283
         working-directory: apps/web
-        run: node test-r282.mjs
-      - name: Chromium latest watched first r282
+        run: node test-r283.mjs
+      - name: Chromium History actions and availability r283
         working-directory: apps/web
-        run: node test-r282-browser.mjs
-      - name: Exact final bundle boot r282
-        run: node scripts/test-r282-exact-bundle-browser.mjs
-      - name: Final bundle identity r282
+        run: node test-r283-browser.mjs
+      - name: Exact final bundle boot r283
+        run: node scripts/test-r283-exact-bundle-browser.mjs
+      - name: Final bundle identity r283
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v282.js
-          grep -Fq "window.__ctWebBuild='1.0.73';window.__ctOfficialVersion='1.0.73';" dist/app-v282.js
-          grep -Fq "const REVISION='r282-official-1.0.73';" dist/app-v282.js
-          grep -Fq "window.__ctR281='watch-click-isolation+single-owner-refresh'" dist/app-v282.js
-          grep -Fq "window.__ctR282='series-recency-order+bucket-authority'" dist/app-v282.js
-          grep -Fq "window.__ctR282Series='last-watched-desc-inside-final-bucket'" dist/app-v282.js
-          grep -Fq "window.__ctR282Rule='latest-watch-first-unless-bucket-changes'" dist/app-v282.js
-          grep -Fq 'ct275SeriesSection=ct282SeriesSection;' dist/app-v282.js
-          grep -Fq 'app-v282.js' dist/index.html
-          grep -Fq 'app-v282.css' dist/index.html
-          grep -Fq '"version": "1.0.73"' dist/release.json
-          grep -Fq '"revision": "r282-official-1.0.73"' dist/release.json
-          grep -Fq '"home_series_order": "last-watched-desc-inside-final-bucket"' dist/release.json
-          grep -Fq '"home_series_order_after_reconciliation": true' dist/release.json
+          node --check dist/app-v283.js
+          grep -Fq "window.__ctWebBuild='1.0.74';window.__ctOfficialVersion='1.0.74';" dist/app-v283.js
+          grep -Fq "const REVISION='r283-official-1.0.74';" dist/app-v283.js
+          grep -Fq "window.__ctR282='series-recency-order+bucket-authority'" dist/app-v283.js
+          grep -Fq "window.__ctR283='history-action-isolation+fresh-availability+legacy-frontier-next'" dist/app-v283.js
+          grep -Fq "window.__ctR283History='window-capture-rewatch+undo-no-navigation'" dist/app-v283.js
+          grep -Fq "window.__ctR283Availability='fresh-released-minus-canonical-watched'" dist/app-v283.js
+          grep -Fq "window.__ctR283Legacy='raw+smackdown-frontier-next+backlog-count'" dist/app-v283.js
+          grep -Fq "window.addEventListener('click',ct283CaptureHistoryClick,true);" dist/app-v283.js
+          grep -Fq 'ct274AvailableText=ct283AvailableText;' dist/app-v283.js
+          grep -Fq 'app-v283.js' dist/index.html
+          grep -Fq 'app-v283.css' dist/index.html
+          grep -Fq '"version": "1.0.74"' dist/release.json
+          grep -Fq '"revision": "r283-official-1.0.74"' dist/release.json
+          grep -Fq '"home_history_action_owner": "window-capture-r283"' dist/release.json
+          grep -Fq '"home_history_action_navigation_blocked": true' dist/release.json
+          grep -Fq '"home_fresh_available_episodes": true' dist/release.json
+          grep -Fq '"home_legacy_next_episode": "watched-frontier-only"' dist/release.json
+          grep -Fq '"home_legacy_backlog_count_preserved": true' dist/release.json
           grep -Fq '"home_series_latest_watch_first": true' dist/release.json
-          grep -Fq '"home_series_bucket_authority": true' dist/release.json
-          grep -Fq '"home_watch_card_navigation_blocked": true' dist/release.json
-          grep -Fq '"home_tabs_fixed": true' dist/release.json
-          grep -Fq '"sidebar_fixed": true' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.73-r282';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.74-r283';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -87,19 +88,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_73_r282]
+    needs: [web_1_0_74_r283]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.73 r282
+      - name: Official production serves and boots 1.0.74 r283
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.73"' <<<"$BODY" && grep -Fq '"revision": "r282-official-1.0.73"' <<<"$BODY" && grep -Fq '"home_series_order": "last-watched-desc-inside-final-bucket"' <<<"$BODY" && grep -Fq '"home_series_latest_watch_first": true' <<<"$BODY" && grep -Fq '"home_series_bucket_authority": true' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v282.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.74"' <<<"$BODY" && grep -Fq '"revision": "r283-official-1.0.74"' <<<"$BODY" && grep -Fq '"home_history_action_navigation_blocked": true' <<<"$BODY" && grep -Fq '"home_fresh_available_episodes": true' <<<"$BODY" && grep -Fq '"home_legacy_next_episode": "watched-frontier-only"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v283.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR282='series-recency-order+bucket-authority'" <<<"$JS" && grep -Fq 'ct275SeriesSection=ct282SeriesSection;' <<<"$JS" && grep -Fq 'app-v282.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR283='history-action-isolation+fresh-availability+legacy-frontier-next'" <<<"$JS" && grep -Fq "window.addEventListener('click',ct283CaptureHistoryClick,true);" <<<"$JS" && grep -Fq 'app-v283.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
