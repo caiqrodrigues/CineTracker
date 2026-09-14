@@ -10,9 +10,9 @@ for(const x of['tmdbId','sourceTmdbId','progress_status','home_bucket','is_caugh
 const transition=js.match(/\/\* CT267_DISCOVER_TRANSITION_START \*\/[\s\S]*?\/\* CT267_DISCOVER_TRANSITION_END \*\//)?.[0]||'';
 need(transition,'ct267PrimeDiscover');need(transition,"h.setAttribute('aria-busy','true')");
 if(/h\.innerHTML=['\"]<div class=\\?['\"]ct263-loading/.test(transition.replace(/else if\(h&&!h\.children\.length\)[\s\S]*?;void forYou263/,'void forYou263')))throw new Error('R267 browse transition still blanks host');
-for(const x of['ct169-season-row ct267-detail-x','ct169-season-chart-carousel ct267-detail-x','ct169-cast-row ct267-detail-x','ct169-related-row ct267-detail-x','ct267ArmDetailRails(h)'])need(js,x);
-for(const x of['.ct267-detail-section','.ct267-detail-x','overflow-x:auto!important','max-width:calc(100vw - 192px)!important','.ct266-watch-action{border:0!important;background:transparent!important'])need(css,x);
+for(const x of['ct169-season-row ct267-detail-x','ct169-season-chart-carousel ct267-detail-x','ct169-cast-row ct267-detail-x','ct169-related-row ct267-detail-x','ct267ArmDetailRails(h)','ct169-chart-scroll ct267-detail-x','style="width:${W}px;max-width:none"'])need(js,x);
+for(const x of['.ct267-detail-section','.ct267-detail-x','overflow-x:auto!important','max-width:calc(100vw - 192px)!important','.ct266-watch-action{border:0!important;background:transparent!important','.ct169-chart-scroll.ct267-detail-x>svg{min-width:690px!important;max-width:none!important;flex:none!important'])need(css,x);
 const fy=js.match(/function paintForYou263\(\)\{[\s\S]*?\}\nasync function loadBrowse263/)?.[0]||'';if(!fy||fy.includes('Da sua Watchlist'))throw new Error('R267 Watchlist recommendation block remains');
 for(const bad of['ct265AfterF1Paint','ct266AfterF1Paint','ct267AfterF1Paint'])if(js.includes(bad))throw new Error('R267 forbidden Sports callback '+bad);
 need(html,'app-v267.js');need(html,'app-v267.css');need(release,'"version": "1.0.58"');need(release,'"revision": "r267-official-1.0.58"');
-console.log('R267_STATIC_OK personal envelopes + atomic Discover + rich r169 rails + glyph watch + Sports safe');
+console.log('R267_STATIC_OK personal envelopes + atomic Discover + rich r169 rails + graph width + glyph watch + Sports safe');
