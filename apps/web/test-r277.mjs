@@ -1,0 +1,10 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r277-official.mjs');
+const dist=resolve('dist');
+const [js,css,release]=await Promise.all([readFile(resolve(dist,'app-v277.js'),'utf8'),readFile(resolve(dist,'app-v277.css'),'utf8'),readFile(resolve(dist,'release.json'),'utf8')]);
+const must=(s,x)=>{if(!s.includes(x))throw new Error('R277_STATIC missing '+x)};
+for(const x of["window.__ctR277='watch-action-host+fixed-sidebar'","window.__ctR277Watch='continue+dust+movie-watchlist-visible-right'","window.__ctR277Sidebar='desktop-fixed-full-height'",'function ct277EnsureWatchActions(root=document)',"context==='continue'||context==='dust'",'card.classList.add(\'ct266-home-watch-host\')','ct275PaintHome=ct277PaintHome;','paintHome=ct277PaintHome;',"window.__ctR276='history-above-initial-viewport+episode-card-parity'"])must(js,x);
+for(const x of['.ct274-media-card.ct266-home-watch-host{position:relative!important;padding-right:44px!important}','@media(min-width:701px){','.sidebar{position:fixed!important;left:0!important;top:0!important;bottom:0!important;width:136px!important;height:100vh!important','.content{grid-column:2!important;min-width:0!important}'])must(css,x);
+const meta=JSON.parse(release);if(meta.version!=='1.0.68'||meta.revision!=='r277-official-1.0.68'||meta.home_watch_action_host_fixed!==true||meta.sidebar_fixed!==true||meta.sidebar_mode!=='fixed-desktop-full-height'||meta.android!=='1.0.20/10062')throw new Error('R277_STATIC release flags');
+console.log('R277_STATIC_OK watched-actions-hosted sidebar-fixed r276-preserved');
