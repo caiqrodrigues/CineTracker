@@ -29,7 +29,7 @@ for(const x of[
  "window.__ctR278='effective-tmdb-watch-action+fixed-home-tabs'"
 ])must(js,x);
 for(const x of[
- '[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button{position:static!important',
+ '[data-home] button.ct266-watch-action.ct279-watch-button[data-ct266-watch]{position:static!important',
  'min-width:82px!important',
  'visibility:visible!important;opacity:1!important',
  '[data-home] .home-tabs{position:fixed!important;top:0!important;left:136px!important;right:0!important',
