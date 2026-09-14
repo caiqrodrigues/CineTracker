@@ -1,76 +1,73 @@
-name: Verify Web 1.0.58 r267 Video Ground Truth
+name: Verify Web 1.0.59 r268 Home History Authority
 
 on:
   push:
-    branches: [main, 'fix/r267-video-ground-truth']
+    branches: [main, 'fix/r268-home-history-inline-watch']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_58_r267:
+  web_1_0_59_r268:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r267
+      - name: Version identity r268
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.58"' package.json
-          grep -Fq '"version": "1.0.58"' apps/web/package.json
-          grep -Fq 'build-r267-official.mjs' apps/web/package.json
-          test -f apps/web/build-r267.mjs
-          test -f apps/web/build-r267-official.mjs
-          test -f apps/web/test-r267.mjs
-          test -f apps/web/test-r267-browser.mjs
-          test -f scripts/test-r267-exact-bundle-browser.mjs
-      - name: Syntax r267 release chain
+          grep -Fq '"version": "1.0.59"' package.json
+          grep -Fq '"version": "1.0.59"' apps/web/package.json
+          grep -Fq 'build-r268-official.mjs' apps/web/package.json
+          test -f apps/web/build-r268.mjs
+          test -f apps/web/build-r268-official.mjs
+          test -f apps/web/test-r268.mjs
+          test -f apps/web/test-r268-browser.mjs
+          test -f scripts/test-r268-exact-bundle-browser.mjs
+      - name: Syntax r268 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/build-r267.mjs
-          node --check apps/web/build-r267-official.mjs
-          node --check apps/web/test-r267.mjs
-          node --check apps/web/test-r267-browser.mjs
-          node --check scripts/test-r267-exact-bundle-browser.mjs
-      - name: Build official r267
+          node --check apps/web/build-r268.mjs
+          node --check apps/web/build-r268-official.mjs
+          node --check apps/web/test-r268.mjs
+          node --check apps/web/test-r268-browser.mjs
+          node --check scripts/test-r268-exact-bundle-browser.mjs
+      - name: Build official r268
         working-directory: apps/web
-        run: node build-r267-official.mjs
-      - name: Static regressions r267
+        run: node build-r268-official.mjs
+      - name: Static regressions r268
         working-directory: apps/web
-        run: node test-r267.mjs
-      - name: Chromium video-ground-truth regressions r267
+        run: node test-r268.mjs
+      - name: Chromium Home regressions r268
         working-directory: apps/web
-        run: node test-r267-browser.mjs
-      - name: Exact final bundle boot r267
-        run: node scripts/test-r267-exact-bundle-browser.mjs
-      - name: Final bundle identity r267
+        run: node test-r268-browser.mjs
+      - name: Exact final bundle boot r268
+        run: node scripts/test-r268-exact-bundle-browser.mjs
+      - name: Final bundle identity r268
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v267.js
-          grep -Fq "window.__ctWebBuild='1.0.58';window.__ctOfficialVersion='1.0.58';" dist/app-v267.js
-          grep -Fq "const REVISION='r267-official-1.0.58';" dist/app-v267.js
-          grep -Fq "window.__ctR267='video-ground-truth-discover-detail-home'" dist/app-v267.js
-          grep -Fq "window.__ctR267Discover='atomic-tabs+recursive-personal-exclusions'" dist/app-v267.js
-          grep -Fq "window.__ctR267Detail='r169-rich-producer-local-x'" dist/app-v267.js
-          grep -Fq 'ct169-season-row ct267-detail-x' dist/app-v267.js
-          grep -Fq 'ct169-season-chart-carousel ct267-detail-x' dist/app-v267.js
-          grep -Fq 'ct169-cast-row ct267-detail-x' dist/app-v267.js
-          grep -Fq 'ct169-related-row ct267-detail-x' dist/app-v267.js
-          grep -Fq '.ct267-detail-section' dist/app-v267.css
-          grep -Fq '.ct266-watch-action{border:0!important;background:transparent!important' dist/app-v267.css
-          ! grep -Fq 'ct265AfterF1Paint' dist/app-v267.js
-          ! grep -Fq 'ct266AfterF1Paint' dist/app-v267.js
-          ! grep -Fq 'ct267AfterF1Paint' dist/app-v267.js
-          grep -Fq 'app-v267.js' dist/index.html
-          grep -Fq 'app-v267.css' dist/index.html
-          ! grep -Fq 'app-v266.js' dist/index.html
-          grep -Fq '"version": "1.0.58"' dist/release.json
-          grep -Fq '"revision": "r267-official-1.0.58"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.58-r267';" dist/service-worker.js
+          node --check dist/app-v268.js
+          grep -Fq "window.__ctWebBuild='1.0.59';window.__ctOfficialVersion='1.0.59';" dist/app-v268.js
+          grep -Fq "const REVISION='r268-official-1.0.59';" dist/app-v268.js
+          grep -Fq "window.__ctR268='home-history-authority+inline-right-watch'" dist/app-v268.js
+          grep -Fq '__ctHistoryAuthoritative=false' dist/app-v268.js
+          grep -Fq '__ctHistoryAuthoritative=true' dist/app-v268.js
+          grep -Fq "window.__ctR267Discover='atomic-tabs+recursive-personal-exclusions'" dist/app-v268.js
+          grep -Fq "window.__ctR267Detail='r169-rich-producer-local-x'" dist/app-v268.js
+          grep -Fq "window.__ctR267Sports='r266-stable-preserved'" dist/app-v268.js
+          grep -Fq '[data-home] .media-row.ct266-home-watch-host>.ct266-watch-action{position:absolute!important;right:10px!important' dist/app-v268.css
+          ! grep -Eq 'ct26[5-8]AfterF1Paint' dist/app-v268.js
+          grep -Fq 'app-v268.js' dist/index.html
+          grep -Fq 'app-v268.css' dist/index.html
+          ! grep -Fq 'app-v267.js' dist/index.html
+          grep -Fq '"version": "1.0.59"' dist/release.json
+          grep -Fq '"revision": "r268-official-1.0.59"' dist/release.json
+          grep -Fq '"android": "1.0.20/10062"' dist/release.json
+          grep -Fq "const CACHE='ct-web-1.0.59-r268';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -85,20 +82,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_58_r267]
+    needs: [web_1_0_59_r268]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.58 r267
+      - name: Official production serves and boots 1.0.59 r268
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.58"' <<<"$BODY" && grep -Fq '"revision": "r267-official-1.0.58"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v267.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v267.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.59"' <<<"$BODY" && grep -Fq '"revision": "r268-official-1.0.59"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v268.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v268.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR267='video-ground-truth-discover-detail-home'" <<<"$JS" && grep -Fq 'ct169-season-row ct267-detail-x' <<<"$JS" && ! grep -Fq 'ct265AfterF1Paint' <<<"$JS" && grep -Fq '.ct267-detail-section' <<<"$CSS" && grep -Fq '.ct266-watch-action{border:0!important;background:transparent!important' <<<"$CSS" && grep -Fq 'app-v267.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR268='home-history-authority+inline-right-watch'" <<<"$JS" && grep -Fq '__ctHistoryAuthoritative=false' <<<"$JS" && grep -Fq '__ctHistoryAuthoritative=true' <<<"$JS" && grep -Fq "window.__ctR267Sports='r266-stable-preserved'" <<<"$JS" && ! grep -Eq 'ct26[5-8]AfterF1Paint' <<<"$JS" && grep -Fq '[data-home] .media-row.ct266-home-watch-host>.ct266-watch-action{position:absolute!important;right:10px!important' <<<"$CSS" && grep -Fq 'app-v268.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
