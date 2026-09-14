@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r271-official.mjs');
+const dist=resolve('dist'),js=await readFile(resolve(dist,'app-v271.js'),'utf8'),release=JSON.parse(await readFile(resolve(dist,'release.json'),'utf8'));
+const must=x=>{if(!js.includes(x))throw new Error('R271 missing '+x)};
+must("window.__ctR271='home-no-persistent-observer+history-idempotent'");
+must('function ct271HistorySig(hist)');
+must("if(ct270State.historySig===sig&&ct269State?.history){ct270ShowHistoryShell();return false}");
+must('persistent Home MutationObserver removed');
+if(js.includes('new MutationObserver(ct270Schedule).observe(document.documentElement,{childList:true,subtree:true});'))throw new Error('R271 persistent Home observer regression');
+if(release.home_persistent_observer!==false||release.home_history_idempotent!==true)throw new Error('R271 release freeze flags');
+console.log('R271_STATIC_OK no persistent Home observer; canonical history idempotent');
