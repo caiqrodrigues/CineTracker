@@ -1,82 +1,79 @@
-name: Verify Web 1.0.70 r279 Explicit Watched Buttons
+name: Verify Web 1.0.71 r280 Minimal Watched Check
 
 on:
   push:
-    branches: [main, 'fix/r279-explicit-watched-buttons']
+    branches: [main, 'fix/r280-minimal-watch-check']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_70_r279:
+  web_1_0_71_r280:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r279
+      - name: Version identity r280
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.70"' package.json
-          grep -Fq '"version": "1.0.70"' apps/web/package.json
-          grep -Fq 'build-r279-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r279-explicit-watched-buttons.js
-          test -f apps/web/build-r279.mjs
-          test -f apps/web/build-r279-official.mjs
-          test -f apps/web/test-r279.mjs
-          test -f apps/web/test-r279-browser.mjs
-          test -f scripts/test-r279-exact-bundle-browser.mjs
-      - name: Syntax r279 release chain
+          grep -Fq '"version": "1.0.71"' package.json
+          grep -Fq '"version": "1.0.71"' apps/web/package.json
+          grep -Fq 'build-r280-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r280-minimal-watch-check.js
+          test -f apps/web/build-r280.mjs
+          test -f apps/web/build-r280-official.mjs
+          test -f apps/web/test-r280.mjs
+          test -f apps/web/test-r280-browser.mjs
+          test -f scripts/test-r280-exact-bundle-browser.mjs
+      - name: Syntax r280 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r279-explicit-watched-buttons.js
-          node --check apps/web/build-r279.mjs
-          node --check apps/web/build-r279-official.mjs
-          node --check apps/web/test-r279.mjs
-          node --check apps/web/test-r279-browser.mjs
-          node --check scripts/test-r279-exact-bundle-browser.mjs
-      - name: Build official r279
+          node --check apps/web/runtime-r280-minimal-watch-check.js
+          node --check apps/web/build-r280.mjs
+          node --check apps/web/build-r280-official.mjs
+          node --check apps/web/test-r280.mjs
+          node --check apps/web/test-r280-browser.mjs
+          node --check scripts/test-r280-exact-bundle-browser.mjs
+      - name: Build official r280
         working-directory: apps/web
-        run: node build-r279-official.mjs
-      - name: Static regressions r279
+        run: node build-r280-official.mjs
+      - name: Static regressions r280
         working-directory: apps/web
-        run: node test-r279.mjs
-      - name: Chromium real episode and movie watched buttons r279
+        run: node test-r280.mjs
+      - name: Chromium minimal watched check r280
         working-directory: apps/web
-        run: node test-r279-browser.mjs
-      - name: Exact final bundle boot r279
-        run: node scripts/test-r279-exact-bundle-browser.mjs
-      - name: Final bundle identity r279
+        run: node test-r280-browser.mjs
+      - name: Exact final bundle boot r280
+        run: node scripts/test-r280-exact-bundle-browser.mjs
+      - name: Final bundle identity r280
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v279.js
-          grep -Fq "window.__ctWebBuild='1.0.70';window.__ctOfficialVersion='1.0.70';" dist/app-v279.js
-          grep -Fq "const REVISION='r279-official-1.0.70';" dist/app-v279.js
-          grep -Fq "window.__ctR278='effective-tmdb-watch-action+fixed-home-tabs'" dist/app-v279.js
-          grep -Fq "window.__ctR279='explicit-watched-buttons+canonical-r6-refresh'" dist/app-v279.js
-          grep -Fq "window.__ctR279Watch='real-button+episode+movie+finite-reconcile'" dist/app-v279.js
-          grep -Fq 'data-ct279-watch=' dist/app-v279.js
-          grep -Fq "action.dataset.ct279Watch" dist/app-v279.js
-          grep -Fq "closest?.('[data-ct279-watch]')" dist/app-v279.js
-          grep -Fq 'if(ct279BaseEpisodeWatchAction)ct274EpisodeWatchAction=ct279EpisodeWatchAction;' dist/app-v279.js
-          grep -Fq 'if(ct279BaseMovieWatchAction)ct274MovieWatchAction=ct279MovieWatchAction;' dist/app-v279.js
-          grep -Fq 'if(ct279BaseRow)ct274Row=ct279Row;' dist/app-v279.js
-          grep -Fq 'app-v279.js' dist/index.html
-          grep -Fq 'app-v279.css' dist/index.html
-          grep -Fq '"version": "1.0.70"' dist/release.json
-          grep -Fq '"revision": "r279-official-1.0.70"' dist/release.json
-          grep -Fq '"home_watch_action_control": "button"' dist/release.json
-          grep -Fq '"home_watch_action_episode": true' dist/release.json
-          grep -Fq '"home_watch_action_movie": true' dist/release.json
-          grep -Fq '"home_watch_action_event_owner": "r279"' dist/release.json
-          grep -Fq '"home_watch_action_refresh": "canonical-r6"' dist/release.json
+          node --check dist/app-v280.js
+          grep -Fq "window.__ctWebBuild='1.0.71';window.__ctOfficialVersion='1.0.71';" dist/app-v280.js
+          grep -Fq "const REVISION='r280-official-1.0.71';" dist/app-v280.js
+          grep -Fq "window.__ctR279='explicit-watched-buttons+canonical-r6-refresh'" dist/app-v280.js
+          grep -Fq "window.__ctR280='minimal-watch-check+green-active'" dist/app-v280.js
+          grep -Fq "window.__ctR280Watch='check-only+muted-idle+green-on-click'" dist/app-v280.js
+          grep -Fq 'class="ct266-watch-action ct279-watch-button ct280-watch-button"' dist/app-v280.js
+          grep -Fq 'ct279ExplicitWatchAction=ct280MinimalWatchAction;' dist/app-v280.js
+          grep -Fq 'ct279MarkWatched=ct280MarkWatched;' dist/app-v280.js
+          grep -Fq 'app-v280.js' dist/index.html
+          grep -Fq 'app-v280.css' dist/index.html
+          grep -Fq '"version": "1.0.71"' dist/release.json
+          grep -Fq '"revision": "r280-official-1.0.71"' dist/release.json
+          grep -Fq '"home_watch_action_control": "minimal-check"' dist/release.json
+          grep -Fq '"home_watch_action_text": false' dist/release.json
+          grep -Fq '"home_watch_action_size_px": 40' dist/release.json
+          grep -Fq '"home_watch_action_idle": "muted"' dist/release.json
+          grep -Fq '"home_watch_action_click_feedback": "green"' dist/release.json
           grep -Fq '"home_tabs_fixed": true' dist/release.json
           grep -Fq '"sidebar_fixed": true' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.70-r279';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.71-r280';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -91,20 +88,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_70_r279]
+    needs: [web_1_0_71_r280]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.70 r279
+      - name: Official production serves and boots 1.0.71 r280
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.70"' <<<"$BODY" && grep -Fq '"revision": "r279-official-1.0.70"' <<<"$BODY" && grep -Fq '"home_watch_action_control": "button"' <<<"$BODY" && grep -Fq '"home_watch_action_episode": true' <<<"$BODY" && grep -Fq '"home_watch_action_movie": true' <<<"$BODY" && grep -Fq '"home_watch_action_event_owner": "r279"' <<<"$BODY" && grep -Fq '"home_tabs_fixed": true' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v279.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v279.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.71"' <<<"$BODY" && grep -Fq '"revision": "r280-official-1.0.71"' <<<"$BODY" && grep -Fq '"home_watch_action_control": "minimal-check"' <<<"$BODY" && grep -Fq '"home_watch_action_text": false' <<<"$BODY" && grep -Fq '"home_watch_action_idle": "muted"' <<<"$BODY" && grep -Fq '"home_watch_action_click_feedback": "green"' <<<"$BODY" && grep -Fq '"home_tabs_fixed": true' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v280.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v280.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR279='explicit-watched-buttons+canonical-r6-refresh'" <<<"$JS" && grep -Fq 'button.ct266-watch-action.ct279-watch-button[data-ct279-watch]{position:static!important' <<<"$CSS" && grep -Fq 'app-v279.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR280='minimal-watch-check+green-active'" <<<"$JS" && grep -Fq 'button.ct266-watch-action.ct279-watch-button.ct280-watch-button[data-ct279-watch]{position:static!important' <<<"$CSS" && grep -Fq 'app-v280.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
