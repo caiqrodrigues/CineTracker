@@ -1,81 +1,73 @@
-name: Verify Web 1.0.55 r264 Home Watched Discover Sports Detail Scroll
+name: Verify Web 1.0.56 r265 Producer Owned UI
 
 on:
   push:
-    branches: [main, 'fix/r264-home-watched-discover-sports-detail-scroll']
+    branches: [main, 'fix/r265-producer-owned-ui']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_55_r264:
+  web_1_0_56_r265:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r264
+      - name: Version identity r265
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.55"' package.json
-          grep -Fq '"version": "1.0.55"' apps/web/package.json
-          test -f apps/web/runtime-r264-home-watched-discover-sports-detail-scroll.js
-          test -f apps/web/build-r264.mjs
-          test -f apps/web/build-r264-official.mjs
-          test -f apps/web/test-r264.mjs
-          test -f apps/web/test-r264-algorithms.mjs
-          test -f apps/web/test-r264-browser.mjs
-          test -f scripts/test-r264-exact-bundle-browser.mjs
-      - name: Syntax r264 release chain
+          grep -Fq '"version": "1.0.56"' package.json
+          grep -Fq '"version": "1.0.56"' apps/web/package.json
+          test -f apps/web/build-r265.mjs
+          test -f apps/web/build-r265-official.mjs
+          test -f apps/web/test-r265.mjs
+          test -f apps/web/test-r265-browser.mjs
+          test -f scripts/test-r265-exact-bundle-browser.mjs
+      - name: Syntax r265 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r264-home-watched-discover-sports-detail-scroll.js
-          node --check apps/web/build-r264.mjs
-          node --check apps/web/build-r264-official.mjs
-          node --check apps/web/test-r264.mjs
-          node --check apps/web/test-r264-algorithms.mjs
-          node --check apps/web/test-r264-browser.mjs
-          node --check scripts/test-r264-exact-bundle-browser.mjs
-      - name: Build official r264
+          node --check apps/web/build-r265.mjs
+          node --check apps/web/build-r265-official.mjs
+          node --check apps/web/test-r265.mjs
+          node --check apps/web/test-r265-browser.mjs
+          node --check scripts/test-r265-exact-bundle-browser.mjs
+      - name: Build official r265
         working-directory: apps/web
-        run: node build-r264-official.mjs
-      - name: Static authority regression r264
+        run: node build-r265-official.mjs
+      - name: Producer authority regressions r265
         working-directory: apps/web
-        run: node test-r264.mjs
-      - name: Logic regressions r264
+        run: node test-r265.mjs
+      - name: Chromium account-video regressions r265
         working-directory: apps/web
-        run: node test-r264-algorithms.mjs
-      - name: Chromium video regressions mobile r264
-        working-directory: apps/web
-        run: node test-r264-browser.mjs
-      - name: Exact final bundle boot r264
-        run: node scripts/test-r264-exact-bundle-browser.mjs
-      - name: Final bundle identity r264
+        run: node test-r265-browser.mjs
+      - name: Exact final bundle boot r265
+        run: node scripts/test-r265-exact-bundle-browser.mjs
+      - name: Final bundle identity r265
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v264.js
-          grep -Fq "window.__ctWebBuild='1.0.55';window.__ctOfficialVersion='1.0.55';" dist/app-v264.js
-          grep -Fq "const REVISION='r264-official-1.0.55';" dist/app-v264.js
-          grep -Fq "window.__ctR264='home-watched-stable-discover-single-sports-order-detail-rails'" dist/app-v264.js
-          grep -Fq "window.__ctR264Home='stable-tab+side-watched-episode-movie+canonical-mark-watch'" dist/app-v264.js
-          grep -Fq "window.__ctR264Discover='single-nine-tabs+canonical-exclusions+local-rails+top10-streaming'" dist/app-v264.js
-          grep -Fq "window.__ctR264Sports='f1-first-synchronous-order+watched-panel-persistent'" dist/app-v264.js
-          grep -Fq "window.__ctR264Detail='generic-season-episode-chart-related-similar-cast-local-x'" dist/app-v264.js
-          grep -Fq 'cinetracker_mark_watch_v0994' dist/app-v264.js
-          grep -Fq 'cinetracker_profile_media_dashboard_v0991' dist/app-v264.js
-          grep -Fq 'cinetracker_watchlist_full_v119' dist/app-v264.js
-          grep -Fq 'window.__ctR263EnhanceF1Watch=enhanceF1Watch263' dist/app-v264.js
-          grep -Fq '.ct264-home-action-row' dist/app-v264.css
-          grep -Fq '.ct264-local-x' dist/app-v264.css
-          grep -Fq 'app-v264.js' dist/index.html
-          grep -Fq 'app-v264.css' dist/index.html
-          ! grep -Fq 'app-v263.js' dist/index.html
-          grep -Fq '"version": "1.0.55"' dist/release.json
-          grep -Fq '"revision": "r264-official-1.0.55"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.55-r264';" dist/service-worker.js
+          node --check dist/app-v265.js
+          grep -Fq "window.__ctWebBuild='1.0.56';window.__ctOfficialVersion='1.0.56';" dist/app-v265.js
+          grep -Fq "const REVISION='r265-official-1.0.56';" dist/app-v265.js
+          grep -Fq "window.__ctR265='producer-owned-home-discover-sports-detail'" dist/app-v265.js
+          grep -Fq "window.__ctR265Home='paint-owned-tab+side-watch-actions'" dist/app-v265.js
+          grep -Fq "window.__ctR265Discover='single-nine-tab-producer+personal-authority'" dist/app-v265.js
+          grep -Fq "window.__ctR265Sports='producer-f1-tabs-filters-feed+direct-f1-watch'" dist/app-v265.js
+          grep -Fq "window.__ctR265Detail='producer-markup+nowrap-local-x'" dist/app-v265.js
+          ! grep -Fq '__ctR264' dist/app-v265.js
+          ! grep -Fq 'ct264-' dist/app-v265.js
+          grep -Fq 'cinetracker_mark_watch_v0994' dist/app-v265.js
+          grep -Fq 'cinetracker_profile_media_dashboard_v0991' dist/app-v265.js
+          grep -Fq '.ct265-home-action-row' dist/app-v265.css
+          grep -Fq '.ct265-detail-x' dist/app-v265.css
+          grep -Fq 'app-v265.js' dist/index.html
+          grep -Fq 'app-v265.css' dist/index.html
+          grep -Fq '"version": "1.0.56"' dist/release.json
+          grep -Fq '"revision": "r265-official-1.0.56"' dist/release.json
+          grep -Fq "const CACHE='ct-web-1.0.56-r265';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -90,20 +82,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_55_r264]
+    needs: [web_1_0_56_r265]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.55 r264
+      - name: Official production serves and boots 1.0.56 r265
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.55"' <<<"$BODY" && grep -Fq '"revision": "r264-official-1.0.55"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v264.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v264.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.56"' <<<"$BODY" && grep -Fq '"revision": "r265-official-1.0.56"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v265.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v265.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR264='home-watched-stable-discover-single-sports-order-detail-rails'" <<<"$JS" && grep -Fq "window.__ctR264Home='stable-tab+side-watched-episode-movie+canonical-mark-watch'" <<<"$JS" && grep -Fq "window.__ctR264Discover='single-nine-tabs+canonical-exclusions+local-rails+top10-streaming'" <<<"$JS" && grep -Fq "window.__ctR264Sports='f1-first-synchronous-order+watched-panel-persistent'" <<<"$JS" && grep -Fq '.ct264-home-action-row' <<<"$CSS" && grep -Fq '.ct264-local-x' <<<"$CSS" && grep -Fq 'app-v264.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR265='producer-owned-home-discover-sports-detail'" <<<"$JS" && ! grep -Fq '__ctR264' <<<"$JS" && grep -Fq '.ct265-home-action-row' <<<"$CSS" && grep -Fq '.ct265-detail-x' <<<"$CSS" && grep -Fq 'app-v265.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
