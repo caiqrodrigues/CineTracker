@@ -2,6 +2,33 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.57 — 2026-09-14 — Web r266
+
+### Reconstrução segura sobre a r263
+- A r266 é reconstruída diretamente sobre a `r263-official-1.0.54`, última base aprovada antes das regressões r264/r265. As autoridades r264/r265 não entram na cadeia de build ativa.
+- Web passa a `1.0.57 / r266-official-1.0.57`; Android permanece intocado em `1.0.20 / versionCode 10062`.
+
+### Home
+- O controle de assistido volta a ser apenas o símbolo discreto `✓`, inserido dentro do próprio item e ancorado à direita. O item não é reparentado nem transformado em grid auxiliar, impedindo o botão de cair abaixo do card.
+- A marcação continua usando `cinetracker_mark_watch_v0994` e preserva a aba ativa Séries/Filmes durante o repaint.
+
+### Descobrir
+- `Da sua Watchlist` deixa de existir como bloco de recomendação. Watchlist passa a ser exclusivamente um conjunto de exclusão.
+- O conjunto pessoal combina `cinetracker_recommendation_state_v108`, `cinetracker_profile_media_dashboard_v0991` e `cinetracker_watchlist_full_v119`; vistos/concluídos, em andamento, em dia, Watchlist e `NotInterested` são removidos antes da pintura tanto no Pra Você quanto nas abas públicas.
+- `Pra você` mantém somente `Indicação do Dia` e `100% Novos`, sem admitir itens da Watchlist.
+
+### Detalhes de séries / scroll
+- Temporadas, episódios/notas, gráficos por temporada, atores/elenco e relacionados/semelhantes mantêm `overflow-x:auto` no próprio componente, `flex-wrap:nowrap` e gesto nativo `pan-x pan-y`.
+- `html`, `body` e `#app` permanecem com overflow horizontal bloqueado; a página pode rolar verticalmente, mas não lateralmente.
+
+### Esportes
+- Removida a regressão da r265 que chamava `ct265AfterF1Paint()` fora do escopo em que a função existia. A r266 preserva o produtor Sports/F1 aprovado da r263 e não injeta callback release-local cruzando escopos.
+
+### Build / validação
+- Build oficial: `apps/web/build-r266-official.mjs`; regressões: `test-r266.mjs`, `test-r266-browser.mjs` e `scripts/test-r266-exact-bundle-browser.mjs`.
+- O CI exige geometria do `✓` à direita, exclusões do Descobrir, trilhos locais com overflow real, documento sem scroll X, ausência de r264/r265 no bundle ativo, ausência de callback Sports cruzado e Android inalterado.
+
+
 
 ## 1.0.52 — 2026-09-12 — Web r261
 
