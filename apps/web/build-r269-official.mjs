@@ -19,7 +19,9 @@ for(const x of[
 ])must(js,x);
 for(const x of[
  '[data-home-view="series"] .media-row.ct269-inline-watch-host{position:relative!important;padding-right:52px!important',
- '>.ct269-inline-watch-action{position:absolute!important;right:12px!important'
+ '[data-home-view="series"] .media-row.ct269-inline-watch-host>.ct269-inline-watch-action,',
+ '[data-home-view="series"] .media-row.ct269-inline-watch-host>.ct266-watch-action{position:absolute!important;right:12px!important',
+ 'transform:translateY(-50%)!important'
 ])must(css,x);
 if(/ct26[5-9]AfterF1Paint/.test(js))throw new Error('r269 contains forbidden Sports callback');
 must(html,'app-v269.js');must(html,'app-v269.css');if(/app-v268\.(?:js|css)/.test(html))throw new Error('r269 html references r268 assets');
