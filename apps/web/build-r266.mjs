@@ -46,7 +46,7 @@ const personal266=`async function personal263(force=false){
 function strictEligible263`;
 js=js.replace(personalRx,personal266);
 
-const forYouRx=/async function forYou263\(gen,force=false\)\{[\s\S]*?\n\}\nfunction paintForYou263\(\)\{[\s\S]*?\n\}\nasync function loadBrowse263/;
+const forYouRx=/async function forYou263\(gen,force=false\)\{[\s\S]*?\n\}\nfunction paintForYou263\(\)\{[\s\S]*?\}\nasync function loadBrowse263/;
 if(!forYouRx.test(js))throw new Error('r266 cannot locate active Pra Você producer');
 const forYou266=`async function forYou263(gen,force=false){
  try{
@@ -97,15 +97,13 @@ must(js,oldHomeWrap,'r263 Home wrappers');
 const newHomeWrap="const paintHome263Base=typeof paintHome==='function'?paintHome:null;\nif(paintHome263Base)paintHome=function(...args){const keep=ct266CurrentHomeTab();const out=paintHome263Base.apply(this,args);restoreHomeList263();ct266HomeTab=keep;ct266ApplyHomeTab(keep);ct266EnhanceHome();return out};\nconst renderHome263Base=typeof renderHome==='function'?renderHome:null;\nif(renderHome263Base)renderHome=async function(...args){const out=await renderHome263Base.apply(this,args);if(String(typeof route==='function'?route():'')==='home'){restoreHomeList263();ct266ApplyHomeTab(ct266HomeTab);ct266EnhanceHome()}return out};";
 js=js.replace(oldHomeWrap,newHomeWrap);
 
-/* Detail rails are owned by the existing detail producer markup/classes. No observer or page-level
-   horizontal scrolling is introduced. */
+/* Detail rails are owned by the existing detail producer markup/classes. No observer or page-level horizontal scrolling is introduced. */
 const castAnchor='<div class="row">${cast.map(a=>',seasonAnchor='<div class="row">${(d.seasons||[]).filter(s=>s.season_number>0).map(s=>';
 must(js,castAnchor,'detail cast producer');must(js,seasonAnchor,'detail season producer');
 js=js.replace(castAnchor,'<div class="row ct266-detail-x ct266-card-rail" data-ct266-detail-rail="cast">${cast.map(a=>');
 js=js.replace(seasonAnchor,'<div class="row ct266-detail-x ct266-card-rail" data-ct266-detail-rail="seasons">${(d.seasons||[]).filter(s=>s.season_number>0).map(s=>');
 
-/* Sports intentionally stays on the approved r263 producer/schedule. This is the r265 crash fix:
-   no ct265AfterF1Paint/ct266AfterF1Paint call is emitted into paintSports255. */
+/* Sports intentionally stays on the approved r263 producer/schedule. This is the r265 crash fix: no release-local callback is emitted into paintSports255. */
 if(js.includes('ct265AfterF1Paint')||js.includes('ct266AfterF1Paint'))throw new Error('r266 contains forbidden cross-scope Sports callback');
 
 const observerCountAfter=(js.match(/new MutationObserver/g)||[]).length;
