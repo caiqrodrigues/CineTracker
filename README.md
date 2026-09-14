@@ -6,36 +6,39 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.65** | `r274-official-1.0.65` | Home limitada/indexada, Histórico cronológico, metadados completos e Reassistir |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r274 |
-| Backend | produção compartilhada | Supabase | `cinetracker_profile_home_payload_v0997_r6` é a autoridade limitada da Home |
+| Web | **1.0.66** | `r275-official-1.0.66` | Histórico retrátil, Reassistir com multiplicador, próximo episódio e deduplicação canônica |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r275 |
+| Backend | produção compartilhada | Supabase | Home continua no payload r6 limitado; `cinetracker_home_series_watch_state_v1` consolida progresso por TMDB efetivo |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.65 / r274
+## Web 1.0.66 / r275
 
-A r274 corrige o `statement timeout` da Home na fonte, reduzindo o conjunto de trabalho do Supabase e restaurando a riqueza visual e as ações do Histórico sem voltar a consultas globais pesadas.
+A r275 corrige as regressões reais vistas na Home sem reintroduzir o `statement timeout` eliminado na r274.
 
-- **Home sem timeout:** o renderer final usa `cinetracker_profile_home_payload_v0997_r6`, com limites explícitos de 20 itens de Histórico, 120 séries e 120 filmes. O backend seleciona somente candidatos relevantes e usa índices parciais próprios para episódios/filmes recentes e para estados da biblioteca.
-- **Validação real de desempenho:** a consulta r6 foi executada contra o volume real da conta em produção e concluiu em aproximadamente 410 ms, muito abaixo do limite de statement timeout que derrubava a r5.
-- **Histórico do mais antigo para o mais recente:** o backend seleciona os 20 registros recentes por índice e os devolve em `watched_at ASC`; a UI preserva essa ordem, abre o trilho no final e deixa os registros mais recentes embaixo. Ao rolar para cima aparecem os mais antigos.
-- **Metadados de episódios:** cards de Histórico e `Assistir a seguir` exibem `SXXEYY • Ep: Título • ⭐ Nota • Data`. Metadados ausentes no payload são hidratados pelo proxy TMDB com cache por temporada e concorrência limitada. Séries também exibem quantos episódios já lançados ainda estão disponíveis para assistir.
-- **Metadados de filmes:** Histórico e `Assistir a seguir / Watchlist` voltam a mostrar `Ano • Duração min • Gêneros • ⭐ Nota`, com hidratação apenas quando algum dado estiver ausente.
-- **Assistido e Reassistir:** `✓` permanece fixo à extrema direita dos cards de `Assistir a seguir`. Cada item do Histórico possui `↻` para registrar uma nova visualização e `↶` para desfazer a marcação. `cinetracker_rewatch_history_v1` reaproveita o writer canônico e mantém o contador `2x`, `3x`, `4x...` consistente.
-- **Estado em tempo real:** Reassistir ou desfazer recarrega o payload r6, repinta contagens/ordem/metadados e mantém a aba de Séries/Filmes ativa.
-- **Layout estrito:** cards continuam `display:flex`, `flex-direction:row`, `flex-wrap:nowrap`; ações de 40×40 px nunca podem cair para baixo, em 420 px ou desktop.
-- **Escopo preservado:** Descobrir, detalhes/scroll, Sports/F1 e Android continuam na autoridade anterior e não são reconstruídos pela r274.
+- **Histórico retrátil e no lugar correto:** `Histórico recente` e `Filmes vistos` permanecem acima de `Assistir a seguir`, mas iniciam recolhidos. `Ver Histórico ˅` / `Ocultar Histórico ^` alterna o conteúdo com transição suave de altura/opacidade e preserva o estado aberto durante Reassistir/Desfazer.
+- **Reassistir com multiplicador:** os itens do Histórico continuam com `↻` e `↶`; ao registrar nova visualização, um badge animado passa a mostrar `2x`, `3x`, `4x...`. Os handlers de Reassistir dos detalhes também são decorados com o mesmo multiplicador após a ação.
+- **Deduplicação estrita de séries:** a Home agrupa por TMDB efetivo antes de construir os buckets. Registros internos duplicados do mesmo título não geram cards repetidos; o novo RPC consolida os episódios vistos entre todos os `media_id` equivalentes e seleciona um `canonical_media_id`.
+- **Detecção fresca de episódios novos:** para séries ativas (`Assistir a seguir`, `Juntando poeira`, `Em dia`), a Web consulta o TMDB com cache e concorrência limitada, cruza a temporada atual com as chaves canônicas de episódios vistos e encontra o primeiro episódio já lançado que ainda não foi assistido. Uma série marcada como `Em dia` que ganhou episódio novo é promovida para `Assistir a seguir`.
+- **Caso Lioness:** o estado canônico une o progresso existente e detecta o primeiro episódio lançado não visto da 3ª temporada, impedindo que a série permaneça falsamente em `Em dia`.
+- **Séries Em Dia:** quando não existe episódio lançado pendente, o card exibe o próximo episódio anunciado pelo TMDB no formato `Próximo: SXXEYY - Nome • DD/MM/AAAA`.
+- **Caso Reacher:** IDs internos diferentes com o mesmo TMDB são consolidados antes da renderização; o progresso não é descartado e apenas um card canônico é exibido por seção.
+- **Botões de Assistido:** `✓` continua como ação fixa à extrema direita dos cards de filmes/episódios em `Assistir a seguir`, preservando o layout `flex-row nowrap` da r274.
+- **Performance preservada:** o payload principal continua `cinetracker_profile_home_payload_v0997_r6` com limites 20/120/120. A reconciliação nova usa uma única RPC compacta de estado e chamadas TMDB em concorrência limitada, sem voltar a varrer todo o histórico.
+- **Escopo preservado:** Descobrir, Sports/F1 e Android permanecem congelados. Detalhes mantêm o renderer anterior, recebendo somente o badge de multiplicador depois da ação de Reassistir.
 
 ## Funcionalidades consolidadas
 
 - Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira, Histórico recente e estados de biblioteca;
-- Histórico de episódios e filmes ordenado cronologicamente, com Reassistir e opção de desfazer marcação de visto;
+- Histórico de episódios e filmes cronológico, retrátil, com Reassistir e opção de desfazer marcação de visto;
+- reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x...`;
+- detecção do primeiro episódio lançado não visto com consolidação por TMDB efetivo;
+- próximo episódio anunciado para séries em dia;
 - metadados ricos de episódios e filmes nos cards da Home;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
 - exclusões pessoais para não recomendar itens vistos, em andamento, em dia, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
-- reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x...`;
 - detalhes ricos de filmes, séries, temporadas, episódios, avaliações e elenco;
 - Formula 1 e NFL Super Bowl importados tratados como séries, sem perder a área esportiva/F1 Hub;
 - Perfil com estatísticas, favoritos, atividade e tempos;
@@ -52,7 +55,7 @@ A r274 corrige o `statement timeout` da Home na fonte, reduzindo o conjunto de t
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r274 mantém a composição horizontal aprovada da r273, mas troca a autoridade da Home pelo payload r6 limitado e indexado e adiciona hidratação leve de metadados somente nos cards que precisam dela.
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r275 herda o payload r6 limitado da r274 e adiciona uma camada finita de reconciliação por TMDB efetivo, sem `MutationObserver` permanente na Home.
 
 ## Regra de validação
 

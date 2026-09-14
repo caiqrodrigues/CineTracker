@@ -1,0 +1,8 @@
+/* r275 detail rewatch badge fallback: decoration is independent of legacy function binding shape. */
+window.__ctR275DetailBadge='delegated-post-action+direct-global-wrapper';
+function ct275DetailPlayCount(btn){if(!btn)return 0;const direct=Number(btn.dataset?.plays||0);if(direct>=2)return direct;const text=String(btn.textContent||''),m=text.match(/(\d+)x/i);return Number(m?.[1]||0)}
+function ct275DecorateDetailButton(btn){if(!btn)return;const n=ct275DetailPlayCount(btn);if(n<2)return;let badge=btn.nextElementSibling?.classList?.contains('ct275-detail-plays-badge')?btn.nextElementSibling:null;if(!badge){badge=document.createElement('span');badge.className='ct275-detail-plays-badge';btn.insertAdjacentElement('afterend',badge)}badge.textContent=n+'x';badge.classList.remove('ct275-bump');void badge.offsetWidth;badge.classList.add('ct275-bump')}
+function ct275DecorateDetailLater(btn){for(const delay of [0,80,220,500])setTimeout(()=>ct275DecorateDetailButton(btn),delay)}
+try{if(typeof globalThis.ct171RewatchMovie==='function'){const base=globalThis.ct171RewatchMovie;globalThis.ct171RewatchMovie=async function(id,btn){const out=await base.call(this,id,btn);ct275DecorateDetailButton(btn);return out}}}catch{}
+try{if(typeof globalThis.ct171RewatchEpisode==='function'){const base=globalThis.ct171RewatchEpisode;globalThis.ct171RewatchEpisode=async function(sn,en,btn){const out=await base.call(this,sn,en,btn);ct275DecorateDetailButton(btn);return out}}}catch{}
+document.addEventListener('click',e=>{const btn=e.target?.closest?.('[data-ct171-rewatch-media],[data-ct171-rewatch-episode],.ct199-rewatch');if(!btn)return;ct275DecorateDetailLater(btn)},true);
