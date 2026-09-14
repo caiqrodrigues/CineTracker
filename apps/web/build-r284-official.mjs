@@ -5,7 +5,7 @@ const dist=resolve('dist');
 const [html,js,css,release,sw]=await Promise.all(['index.html','app-v284.js','app-v284.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
 const must=(s,x)=>{if(!s.includes(x))throw new Error('r284 official missing '+x)};
 for(const x of["window.__ctWebBuild='1.0.75';window.__ctOfficialVersion='1.0.75';","const REVISION='r284-official-1.0.75';","window.__ctR283='history-action-isolation+fresh-availability+legacy-frontier-next'","window.__ctR284='stable-home-episodes+imported-covers+episode-watch+f1-season-switch'","window.__ctR284Home='fresh-before-episode-meta+no-stale-flash'",'ct276EpisodeCard=function(row)','async function ct284Mark(btn)','async function ct284RenderF1(st,year)'])must(js,x);
-must(html,'app-v284.js');must(html,'app-v284.css');must(css,'.ct284-poster-f1');must(css,'.ct284-watch');
+must(html,'app-v284.js');must(html,'app-v284.css');must(css,'.ct284-poster{');must(css,'.ct284-poster-superbowl');must(css,'.ct284-watch');
 const m=JSON.parse(release);if(m.version!=='1.0.75'||m.revision!=='r284-official-1.0.75'||m.home_episode_stale_flash_blocked!==true||m.imported_series_episode_watch_actions!==true||m.formula_1_season_switch!==true||m.formula_1_season_race_guard!==true||m.super_bowl_season_switch!==true||m.android!=='1.0.20/10062')throw new Error('r284 release identity');
 must(sw,"const CACHE='ct-web-1.0.75-r284';");
 console.log('WEB_1_0_75_OFFICIAL_OK r284 stable Home + imported series');
