@@ -19,7 +19,7 @@ function ct276AnchorHome(){if(route()!=='home')return false;const target=ct276An
 const ct276BaseHistorySection=ct275HistorySection,ct276BaseSeriesSection=ct275SeriesSection,ct276BasePaintHome=ct275PaintHome,ct276BaseRenderHome=ct275RenderHome;
 ct275HistorySection=ct276HistorySection;
 ct275SeriesSection=ct276SeriesSection;
-function ct276PaintHome(){const beforeTarget=ct276AnchorTarget(),before=beforeTarget?.getBoundingClientRect?.().top??null;ct276BasePaintHome();requestAnimationFrame(()=>{if(ct276NeedsInitialAnchor){ct276NeedsInitialAnchor=false;ct276AnchorHome();setTimeout(()=>ct276AnchorHome(),80);return}if(before!==null){const afterTarget=ct276AnchorTarget();if(afterTarget){const after=afterTarget.getBoundingClientRect().top,delta=after-before;if(Math.abs(delta)>1)window.scrollBy({top:delta,left:0,behavior:'auto'})}}})}
+function ct276PaintHome(){const beforeTarget=ct276AnchorTarget(),before=beforeTarget?.getBoundingClientRect?.().top??null;ct276BasePaintHome();if(ct276NeedsInitialAnchor){ct276NeedsInitialAnchor=false;ct276AnchorHome();setTimeout(()=>ct276AnchorHome(),80);return}if(before!==null){const afterTarget=ct276AnchorTarget();if(afterTarget){const after=afterTarget.getBoundingClientRect().top,delta=after-before;if(Math.abs(delta)>1)window.scrollBy({top:delta,left:0,behavior:'auto'})}}}
 async function ct276RenderHome(seq){ct276NeedsInitialAnchor=true;return ct276BaseRenderHome(seq)}
 ct275PaintHome=ct276PaintHome;paintHome=ct276PaintHome;renderHome=ct276RenderHome;
 document.addEventListener('click',e=>{if(!e.target?.closest?.('[data-home-tab]'))return;setTimeout(()=>ct276AnchorHome(),0)},false);
