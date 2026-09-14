@@ -1,0 +1,14 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r277.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v277.js','app-v277.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r277 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.68';window.__ctOfficialVersion='1.0.68';","const REVISION='r277-official-1.0.68';","window.__ctR276='history-above-initial-viewport+episode-card-parity'","window.__ctR277='watch-action-host+fixed-sidebar'","window.__ctR277Watch='continue+dust+movie-watchlist-visible-right'","window.__ctR277Sidebar='desktop-fixed-full-height'",'function ct277EnsureWatchActions(root=document)','ct275PaintHome=ct277PaintHome;','paintHome=ct277PaintHome;'])must(js,x);
+for(const x of['.ct274-media-card.ct266-home-watch-host{position:relative!important;padding-right:44px!important}','@media(min-width:701px){','.sidebar{position:fixed!important;left:0!important;top:0!important;bottom:0!important;width:136px!important;height:100vh!important','.content{grid-column:2!important;'])must(css,x);
+must(html,'app-v277.js');must(html,'app-v277.css');if(/app-v276\.(?:js|css)/.test(html))throw new Error('r277 html references r276 assets');
+const meta=JSON.parse(release);if(meta.version!=='1.0.68'||meta.revision!=='r277-official-1.0.68'||meta.home_watch_action_host_fixed!==true||meta.sidebar_fixed!==true||meta.sidebar_mode!=='fixed-desktop-full-height')throw new Error('r277 release identity');
+if(meta.android!=='1.0.20/10062')throw new Error('r277 Android changed');
+must(sw,"const CACHE='ct-web-1.0.68-r277';");must(sw,'app-v277.js');must(sw,'app-v277.css');
+console.log('WEB_1_0_68_OFFICIAL_OK r277 watch-action-visible sidebar-fixed');
