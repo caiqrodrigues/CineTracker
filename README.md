@@ -6,30 +6,28 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.52** | `r261-official-1.0.52` | ground truth dos vídeos: Raw/SmackDown, F1/Super Bowl como séries, Descobrir e detalhes |
-| Android | **1.0.20** | `versionCode 10062` | produção, sem alteração na r261 |
-| Backend | produção compartilhada | Supabase | progresso importado + `cinetracker_imported_series_state_v1` |
+| Web | **1.0.64** | `r273-official-1.0.64` | Histórico da Home restaurado diretamente do payload r5 e cards com layout horizontal estrito |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r273 |
+| Backend | produção compartilhada | Supabase | `cinetracker_profile_home_payload_v0997_r5` é a autoridade da Home |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.52 / r261
+## Web 1.0.64 / r273
 
-A r261 usa os dois vídeos reais como autoridade: o vídeo do CineTracker mostrou Raw ainda preso ao backlog histórico, cards do Descobrir comprimidos e o detalhe do SmackDown vazio; o vídeo de referência mostrou Formula 1 e NFL Super Bowl tratados como séries com temporadas, episódios e progresso.
+A r273 remove a dependência da cadeia de reparos pós-render para o Histórico da Home e torna a consulta canônica do Supabase parte explícita do renderer final.
 
-- **Raw / SmackDown:** buracos históricos anteriores à maior fronteira realmente assistida deixam de virar `Faltam` ou próximo episódio. Antes da auditoria terminar, o estado histórico é neutralizado para não piscar `S01E14`/`S01E01`; depois, somente episódios já exibidos e posteriores à fronteira atual entram em `Assistir a seguir`.
-- **Formula 1 como série:** a mídia importada `Formula 1` permanece `tv/series`, com temporadas anuais desde 1950. Treinos, Sprint/Sprint Qualifying, classificação e corrida viram episódios sequenciais da temporada; o progresso já importado é preservado e nenhum episódio histórico é marcado artificialmente.
-- **NFL Super Bowl como série:** a mídia importada permanece `tv/series`, com Temporada 1 contendo a sequência de Super Bowls desde 1967 e progresso real `60/62`; a segunda temporada representa Halftime Shows, preservando o histórico importado.
-- **Backend:** `cinetracker_imported_series_state_v1(p_media_id)` lê progresso de séries importadas sem identidade TMDB segura diretamente por `media_id`. Formula 1 e Super Bowl continuam sem associação TMDB inventada.
-- **Descobrir:** além do card externo, o próprio `<button>` interno recebe reset de altura/layout. Desktop usa 176×264 de poster e mobile 154×231, sempre 2:3, com título/metadados visíveis. Abas e trilhos são armados para scroll horizontal nativo e drag de mouse/caneta.
-- **Detalhes:** o cache TMDB passa a incluir os parâmetros da chamada na chave. Uma consulta simples da Home para `/tv/1549` não pode mais contaminar a consulta rica da tela de detalhes com credits/recommendations/seasons.
-- **Home rápida:** a primeira página compacta também possui cache visual em `localStorage`, além do cache da sessão, e é revalidada pelo payload canônico em segundo plano.
-- **Escopo preservado:** Esportes/F1 Hub, Perfil e Configurações não são reconstruídos pela r261. Android permanece inalterado.
-- **Validação:** Chromium mobile e desktop reproduz Raw/SmackDown com backlog S01, abre F1/Super Bowl como séries, mede o botão/poster/copy real do Descobrir, executa drag horizontal e comprova a separação do cache TMDB do detalhe.
+- **Histórico real da Home:** `renderHome` consulta diretamente `cinetracker_profile_home_payload_v0997_r5(p_today)`, valida `series`, `movie_watchlist`, `history_episodes` e `history_movies` antes do paint e só considera o Histórico autoritativo depois dessa resposta. Um payload incompleto não pode mais virar falso estado vazio.
+- **Histórico primeiro:** `Histórico recente` é a primeira seção de Séries e `Filmes vistos` é a primeira seção de Filmes. O estado de carregamento usa `Carregando histórico…`; somente uma resposta canônica válida e realmente vazia pode mostrar `Nenhum episódio no histórico` ou `Nenhum filme no histórico`.
+- **Desfazer visto:** cada item do Histórico recebe uma ação própria. Episódios usam `cinetracker_unmark_episode_v1`; filmes usam `cinetracker_unmark_media_seen_v1`. Após a alteração, a Home recarrega o payload r5 e repinta a partir do estado real do banco.
+- **Cards horizontais estritos:** cards da Home usam `display:flex`, `flex-direction:row`, `flex-wrap:nowrap`, conteúdo esquerdo com `min-width:0; flex:1` e ação fixa de 40×40 px à extrema direita. O botão `✓` usa posicionamento estático no flex e não pode cair para uma linha inferior em mobile ou desktop.
+- **Escopo preservado:** Descobrir, detalhes/scroll, Sports/F1 e Android continuam na autoridade anterior e não são reconstruídos pela r273.
+- **Validação:** Chromium cobre 420 px e 1200 px, Histórico real nas duas abas, ausência de falso vazio, desfazer episódio/filme, geometria do `✓`, `flex-wrap:nowrap`, mutações de DOM e responsividade. O bundle final também é inicializado integralmente antes da promoção.
 
 ## Funcionalidades consolidadas
 
-- Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira e estados de biblioteca;
+- Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira, Histórico recente e estados de biblioteca;
+- Histórico de episódios e filmes com opção de desfazer marcação de visto;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
 - exclusões pessoais para não recomendar itens vistos, em andamento, em dia, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
@@ -49,6 +47,8 @@ A r261 usa os dois vídeos reais como autoridade: o vídeo do CineTracker mostro
 - `scripts` — preparação e validação dos bundles;
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
+
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r273 implementa no runtime final a mesma regra estrutural solicitada para um componente React/Tailwind: linha flex horizontal sem wrap, conteúdo esquerdo flexível e ação fixa à direita.
 
 ## Regra de validação
 

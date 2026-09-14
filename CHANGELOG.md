@@ -2,6 +2,24 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.64 — 2026-09-14 — Web r273
+
+### Home / Histórico restaurado
+- `renderHome` passa a consultar diretamente `cinetracker_profile_home_payload_v0997_r5(p_today)` e valida `series`, `movie_watchlist`, `history_episodes` e `history_movies` antes de aceitar o estado como autoritativo. Payload incompleto deixa de ser interpretado como Histórico vazio.
+- `Histórico recente` volta a ser a primeira seção de Séries e `Filmes vistos` a primeira seção de Filmes. Durante a consulta, a UI exibe `Carregando histórico…`; os estados vazios só podem aparecer depois de uma resposta canônica válida do Supabase.
+- Cada item do Histórico recebe ação de desfazer: episódios usam `cinetracker_unmark_episode_v1` e filmes usam `cinetracker_unmark_media_seen_v1`; a Home recarrega o r5 após a alteração.
+- O payload r5 foi conferido diretamente no Supabase com dados reais de Histórico disponíveis nas duas coleções.
+
+### Home / layout horizontal estrito
+- Cards da Home passam a usar `display:flex`, `flex-direction:row`, `flex-wrap:nowrap`, conteúdo esquerdo com `min-width:0`/`flex:1` e ação fixa de 40×40 px à extrema direita.
+- O `✓` passa a ser um `<button>` real dentro da própria linha, com `flex:0 0 40px` e `position:static`, impedindo quebra para baixo em mobile ou desktop.
+
+### Build / validação
+- Web atualizada para `1.0.64 / r273-official-1.0.64`; Android permanece `1.0.20 / versionCode 10062`.
+- Build oficial: `apps/web/build-r273-official.mjs`; regressões: `test-r273.mjs`, `test-r273-browser.mjs` e `scripts/test-r273-exact-bundle-browser.mjs`.
+- Chromium valida 420 px e 1200 px, Histórico real, ausência de falso vazio, desfazer episódio/filme, `flex-row` sem wrap, botão 40×40 à direita, 500 mutações e 100 cliques sem congelamento.
+- Descobrir, detalhes/scroll e Sports/F1 permanecem preservados da r272.
+
 ## 1.0.57 — 2026-09-14 — Web r266
 
 ### Reconstrução segura sobre a r263
