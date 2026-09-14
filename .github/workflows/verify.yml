@@ -23,6 +23,8 @@ jobs:
           grep -Fq '"version": "1.0.63"' apps/web/package.json
           grep -Fq 'build-r272-official.mjs' apps/web/package.json
           test -f apps/web/build-r272.mjs
+          test -f apps/web/build-r272-r5-final.mjs
+          test -f apps/web/build-r272-testhooks-final.mjs
           test -f apps/web/build-r272-official.mjs
           test -f apps/web/test-r272.mjs
           test -f apps/web/test-r272-browser.mjs
@@ -31,6 +33,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check apps/web/build-r272.mjs
+          node --check apps/web/build-r272-r5-final.mjs
+          node --check apps/web/build-r272-testhooks-final.mjs
           node --check apps/web/build-r272-official.mjs
           node --check apps/web/test-r272.mjs
           node --check apps/web/test-r272-browser.mjs
@@ -57,8 +61,10 @@ jobs:
           grep -Fq 'function ct272HistoryReady(p,histE,histM)' dist/app-v272.js
           grep -Fq 'data-ct272-history="episodes"' dist/app-v272.js
           grep -Fq 'data-ct272-history="movies"' dist/app-v272.js
-          grep -Fq "homeCache=await rpc('cinetracker_profile_home_payload_v0997_r5'" dist/app-v272.js
-          ! grep -Fq "homeCache=await rpc('cinetracker_home_live_v0997_r3'" dist/app-v272.js
+          grep -Fq "rpc('cinetracker_profile_home_payload_v0997_r5'" dist/app-v272.js
+          ! grep -Fq "rpc('cinetracker_home_live_v0997_r3'" dist/app-v272.js
+          grep -Fq 'setHomeCache:(v,pending=false)=>{homeCache=v' dist/app-v272.js
+          grep -Fq "attachWatch:(el,kind,tmdb,s=0,e=0,title='')=>ct266AttachWatch" dist/app-v272.js
           ! grep -Fq 'if(ct269PaintHomeBase)paintHome=function' dist/app-v272.js
           ! grep -Fq 'if(ct270PaintHomeBase)paintHome=function' dist/app-v272.js
           ! grep -Fq 'new MutationObserver(ct270Schedule).observe' dist/app-v272.js
@@ -101,7 +107,7 @@ jobs:
             if grep -Fq '"version": "1.0.63"' <<<"$BODY" && grep -Fq '"revision": "r272-official-1.0.63"' <<<"$BODY" && grep -Fq '"home_history_in_producer": true' <<<"$BODY" && grep -Fq '"home_mark_watched_refresh": "r5"' <<<"$BODY" && grep -Fq '"home_post_render_repair": false' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v272.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR272='canonical-home-producer+r5-history+direct-watch'" <<<"$JS" && grep -Fq 'data-ct272-history="episodes"' <<<"$JS" && grep -Fq "homeCache=await rpc('cinetracker_profile_home_payload_v0997_r5'" <<<"$JS" && ! grep -Fq "homeCache=await rpc('cinetracker_home_live_v0997_r3'" <<<"$JS" && grep -Fq 'app-v272.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR272='canonical-home-producer+r5-history+direct-watch'" <<<"$JS" && grep -Fq 'data-ct272-history="episodes"' <<<"$JS" && grep -Fq "rpc('cinetracker_profile_home_payload_v0997_r5'" <<<"$JS" && ! grep -Fq "rpc('cinetracker_home_live_v0997_r3'" <<<"$JS" && grep -Fq 'app-v272.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
