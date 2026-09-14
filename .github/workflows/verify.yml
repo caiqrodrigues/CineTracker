@@ -1,73 +1,86 @@
-name: Verify Web 1.0.62 r271 Home Responsiveness
+name: Verify Web 1.0.63 r272 Canonical Home Producer
 
 on:
   push:
-    branches: [main, 'fix/r271-home-freeze']
+    branches: [main, 'fix/r272-home-canonical-renderer']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_62_r271:
+  web_1_0_63_r272:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r271
+      - name: Version identity r272
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.62"' package.json
-          grep -Fq '"version": "1.0.62"' apps/web/package.json
-          grep -Fq 'build-r271-official.mjs' apps/web/package.json
-          test -f apps/web/build-r271.mjs
-          test -f apps/web/build-r271-official.mjs
-          test -f apps/web/test-r271.mjs
-          test -f apps/web/test-r271-browser.mjs
-          test -f scripts/test-r271-exact-bundle-browser.mjs
-      - name: Syntax r271 release chain
+          grep -Fq '"version": "1.0.63"' package.json
+          grep -Fq '"version": "1.0.63"' apps/web/package.json
+          grep -Fq 'build-r272-official.mjs' apps/web/package.json
+          test -f apps/web/build-r272.mjs
+          test -f apps/web/build-r272-r5-final.mjs
+          test -f apps/web/build-r272-testhooks-final.mjs
+          test -f apps/web/build-r272-official.mjs
+          test -f apps/web/test-r272.mjs
+          test -f apps/web/test-r272-browser.mjs
+          test -f scripts/test-r272-exact-bundle-browser.mjs
+      - name: Syntax r272 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/build-r271.mjs
-          node --check apps/web/build-r271-official.mjs
-          node --check apps/web/test-r271.mjs
-          node --check apps/web/test-r271-browser.mjs
-          node --check scripts/test-r271-exact-bundle-browser.mjs
-      - name: Build official r271
+          node --check apps/web/build-r272.mjs
+          node --check apps/web/build-r272-r5-final.mjs
+          node --check apps/web/build-r272-testhooks-final.mjs
+          node --check apps/web/build-r272-official.mjs
+          node --check apps/web/test-r272.mjs
+          node --check apps/web/test-r272-browser.mjs
+          node --check scripts/test-r272-exact-bundle-browser.mjs
+      - name: Build official r272
         working-directory: apps/web
-        run: node build-r271-official.mjs
-      - name: Static regressions r271
+        run: node build-r272-official.mjs
+      - name: Static regressions r272
         working-directory: apps/web
-        run: node test-r271.mjs
-      - name: Chromium freeze regression r271
+        run: node test-r272.mjs
+      - name: Chromium Home producer regression r272
         working-directory: apps/web
-        run: node test-r271-browser.mjs
-      - name: Exact final bundle boot r271
-        run: node scripts/test-r271-exact-bundle-browser.mjs
-      - name: Final bundle identity r271
+        run: node test-r272-browser.mjs
+      - name: Exact final bundle boot r272
+        run: node scripts/test-r272-exact-bundle-browser.mjs
+      - name: Final bundle identity r272
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v271.js
-          grep -Fq "window.__ctWebBuild='1.0.62';window.__ctOfficialVersion='1.0.62';" dist/app-v271.js
-          grep -Fq "const REVISION='r271-official-1.0.62';" dist/app-v271.js
-          grep -Fq "window.__ctR271='home-no-persistent-observer+history-idempotent'" dist/app-v271.js
-          grep -Fq 'function ct271HistorySig(hist)' dist/app-v271.js
-          ! grep -Fq 'new MutationObserver(ct270Schedule).observe(document.documentElement,{childList:true,subtree:true});' dist/app-v271.js
-          grep -Fq "const p=await rpc('cinetracker_profile_home_payload_v0997_r5'" dist/app-v271.js
-          grep -Fq "window.__ctR267Discover='atomic-tabs+recursive-personal-exclusions'" dist/app-v271.js
-          grep -Fq "window.__ctR267Detail='r169-rich-producer-local-x'" dist/app-v271.js
-          grep -Fq "window.__ctR267Sports='r266-stable-preserved'" dist/app-v271.js
-          grep -Fq 'app-v271.js' dist/index.html
-          grep -Fq 'app-v271.css' dist/index.html
-          grep -Fq '"version": "1.0.62"' dist/release.json
-          grep -Fq '"revision": "r271-official-1.0.62"' dist/release.json
-          grep -Fq '"home_persistent_observer": false' dist/release.json
-          grep -Fq '"home_history_idempotent": true' dist/release.json
+          node --check dist/app-v272.js
+          grep -Fq "window.__ctWebBuild='1.0.63';window.__ctOfficialVersion='1.0.63';" dist/app-v272.js
+          grep -Fq "const REVISION='r272-official-1.0.63';" dist/app-v272.js
+          grep -Fq "window.__ctR272='canonical-home-producer+r5-history+direct-watch'" dist/app-v272.js
+          grep -Fq 'function ct272HistoryReady(p,histE,histM)' dist/app-v272.js
+          grep -Fq 'data-ct272-history="episodes"' dist/app-v272.js
+          grep -Fq 'data-ct272-history="movies"' dist/app-v272.js
+          grep -Fq "rpc('cinetracker_profile_home_payload_v0997_r5'" dist/app-v272.js
+          ! grep -Fq "rpc('cinetracker_home_live_v0997_r3'" dist/app-v272.js
+          grep -Fq 'setHomeCache:(v,pending=false)=>{homeCache=v' dist/app-v272.js
+          grep -Fq "attachWatch:(el,kind,tmdb,s=0,e=0,title='')=>ct266AttachWatch" dist/app-v272.js
+          ! grep -Fq 'if(ct269PaintHomeBase)paintHome=function' dist/app-v272.js
+          ! grep -Fq 'if(ct270PaintHomeBase)paintHome=function' dist/app-v272.js
+          ! grep -Fq 'new MutationObserver(ct270Schedule).observe' dist/app-v272.js
+          grep -Fq "window.__ctR267Discover='atomic-tabs+recursive-personal-exclusions'" dist/app-v272.js
+          grep -Fq "window.__ctR267Detail='r169-rich-producer-local-x'" dist/app-v272.js
+          grep -Fq "window.__ctR267Sports='r266-stable-preserved'" dist/app-v272.js
+          grep -Fq 'app-v272.js' dist/index.html
+          grep -Fq 'app-v272.css' dist/index.html
+          grep -Fq '"version": "1.0.63"' dist/release.json
+          grep -Fq '"revision": "r272-official-1.0.63"' dist/release.json
+          grep -Fq '"home_history_in_producer": true' dist/release.json
+          grep -Fq '"home_history_first": true' dist/release.json
+          grep -Fq '"home_mark_watched_refresh": "r5"' dist/release.json
+          grep -Fq '"home_post_render_repair": false' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.62-r271';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.63-r272';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -82,19 +95,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_62_r271]
+    needs: [web_1_0_63_r272]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.62 r271
+      - name: Official production serves and boots 1.0.63 r272
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.62"' <<<"$BODY" && grep -Fq '"revision": "r271-official-1.0.62"' <<<"$BODY" && grep -Fq '"home_persistent_observer": false' <<<"$BODY" && grep -Fq '"home_history_idempotent": true' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v271.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.63"' <<<"$BODY" && grep -Fq '"revision": "r272-official-1.0.63"' <<<"$BODY" && grep -Fq '"home_history_in_producer": true' <<<"$BODY" && grep -Fq '"home_mark_watched_refresh": "r5"' <<<"$BODY" && grep -Fq '"home_post_render_repair": false' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v272.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR271='home-no-persistent-observer+history-idempotent'" <<<"$JS" && ! grep -Fq 'new MutationObserver(ct270Schedule).observe(document.documentElement,{childList:true,subtree:true});' <<<"$JS" && grep -Fq 'app-v271.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR272='canonical-home-producer+r5-history+direct-watch'" <<<"$JS" && grep -Fq 'data-ct272-history="episodes"' <<<"$JS" && grep -Fq "rpc('cinetracker_profile_home_payload_v0997_r5'" <<<"$JS" && ! grep -Fq "rpc('cinetracker_home_live_v0997_r3'" <<<"$JS" && grep -Fq 'app-v272.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi

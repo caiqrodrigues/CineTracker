@@ -1,0 +1,12 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r272-r5-final.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),file=resolve(root,'dist','app-v272.js');
+let js=await readFile(file,'utf8');
+const old="window.__ctR272Test={historyReady:ct272HistoryReady,historyStack:ct272HistoryStack};";
+const next="window.__ctR272Test={historyReady:ct272HistoryReady,historyStack:ct272HistoryStack,paintHome:()=>paintHome(),setHomeCache:(v,pending=false)=>{homeCache=v;window.__ctHomeHistoryPending=!!pending;return homeCache},attachWatch:(el,kind,tmdb,s=0,e=0,title='')=>ct266AttachWatch(el,kind,tmdb,s,e,title)};";
+const i=js.indexOf(old);if(i<0)throw new Error('r272 test hooks marker missing');if(js.indexOf(old,i+old.length)>=0)throw new Error('r272 test hooks marker ambiguous');
+js=js.slice(0,i)+next+js.slice(i+old.length);
+await writeFile(file,js,'utf8');
+console.log('WEB_R272_TEST_HOOKS_READY shipped-bundle-hooks');
