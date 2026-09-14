@@ -53,7 +53,8 @@ jobs:
           node --check dist/app-v268.js
           grep -Fq "window.__ctWebBuild='1.0.59';window.__ctOfficialVersion='1.0.59';" dist/app-v268.js
           grep -Fq "const REVISION='r268-official-1.0.59';" dist/app-v268.js
-          grep -Fq "window.__ctR268='home-history-authority+inline-right-watch'" dist/app-v268.js
+          grep -Fq "window.__ctR268='home-history-authority+history-first+inline-right-watch'" dist/app-v268.js
+          grep -Fq 'function ct268PinHistoryFirst(sec)' dist/app-v268.js
           grep -Fq '__ctHistoryAuthoritative=false' dist/app-v268.js
           grep -Fq '__ctHistoryAuthoritative=true' dist/app-v268.js
           grep -Fq "window.__ctR267Discover='atomic-tabs+recursive-personal-exclusions'" dist/app-v268.js
@@ -66,6 +67,7 @@ jobs:
           ! grep -Fq 'app-v267.js' dist/index.html
           grep -Fq '"version": "1.0.59"' dist/release.json
           grep -Fq '"revision": "r268-official-1.0.59"' dist/release.json
+          grep -Fq '"home_history_first": true' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
           grep -Fq "const CACHE='ct-web-1.0.59-r268';" dist/service-worker.js
 
@@ -91,11 +93,11 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.59"' <<<"$BODY" && grep -Fq '"revision": "r268-official-1.0.59"' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.59"' <<<"$BODY" && grep -Fq '"revision": "r268-official-1.0.59"' <<<"$BODY" && grep -Fq '"home_history_first": true' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v268.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v268.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR268='home-history-authority+inline-right-watch'" <<<"$JS" && grep -Fq '__ctHistoryAuthoritative=false' <<<"$JS" && grep -Fq '__ctHistoryAuthoritative=true' <<<"$JS" && grep -Fq "window.__ctR267Sports='r266-stable-preserved'" <<<"$JS" && ! grep -Eq 'ct26[5-8]AfterF1Paint' <<<"$JS" && grep -Fq '[data-home] .media-row.ct266-home-watch-host>.ct266-watch-action{position:absolute!important;right:10px!important' <<<"$CSS" && grep -Fq 'app-v268.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR268='home-history-authority+history-first+inline-right-watch'" <<<"$JS" && grep -Fq 'function ct268PinHistoryFirst(sec)' <<<"$JS" && grep -Fq '__ctHistoryAuthoritative=false' <<<"$JS" && grep -Fq '__ctHistoryAuthoritative=true' <<<"$JS" && grep -Fq "window.__ctR267Sports='r266-stable-preserved'" <<<"$JS" && ! grep -Eq 'ct26[5-8]AfterF1Paint' <<<"$JS" && grep -Fq '[data-home] .media-row.ct266-home-watch-host>.ct266-watch-action{position:absolute!important;right:10px!important' <<<"$CSS" && grep -Fq 'app-v268.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
