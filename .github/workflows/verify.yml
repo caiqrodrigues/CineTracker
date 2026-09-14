@@ -1,84 +1,81 @@
-name: Verify Web 1.0.54 r263 Home Discover F1
+name: Verify Web 1.0.57 r266 Rebuilt From r263
 
 on:
   push:
-    branches: [main, 'fix/r263-home-list-discover-f1-watched']
+    branches: [main, 'fix/r266-web-1057-home-discover-series-sports']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_54_r263:
+  web_1_0_57_r266:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r263
+      - name: Version identity r266
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.54"' package.json
-          grep -Fq '"version": "1.0.54"' apps/web/package.json
-          test -f apps/web/runtime-r263-home-list-discover-f1-watched.js
-          test -f apps/web/build-r263.mjs
+          grep -Fq '"version": "1.0.57"' package.json
+          grep -Fq '"version": "1.0.57"' apps/web/package.json
           test -f apps/web/build-r263-official.mjs
-          test -f apps/web/test-r263.mjs
-          test -f apps/web/test-r263-algorithms.mjs
-          test -f apps/web/test-r263-browser.mjs
-          test -f scripts/test-r263-exact-bundle-browser.mjs
-      - name: Syntax r263 release chain
+          test -f apps/web/build-r266.mjs
+          test -f apps/web/build-r266-official.mjs
+          test -f apps/web/test-r266.mjs
+          test -f apps/web/test-r266-browser.mjs
+          test -f scripts/test-r266-exact-bundle-browser.mjs
+      - name: Syntax r266 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r263-home-list-discover-f1-watched.js
-          node --check apps/web/build-r263.mjs
-          node --check apps/web/build-r263-official.mjs
-          node --check apps/web/test-r263.mjs
-          node --check apps/web/test-r263-algorithms.mjs
-          node --check apps/web/test-r263-browser.mjs
-          node --check scripts/test-r263-exact-bundle-browser.mjs
-      - name: Build official r263
+          node --check apps/web/build-r266.mjs
+          node --check apps/web/build-r266-official.mjs
+          node --check apps/web/test-r266.mjs
+          node --check apps/web/test-r266-browser.mjs
+          node --check scripts/test-r266-exact-bundle-browser.mjs
+      - name: Build official r266
         working-directory: apps/web
-        run: node build-r263-official.mjs
-      - name: Static authority regression r263
+        run: node build-r266-official.mjs
+      - name: Static regressions r266
         working-directory: apps/web
-        run: node test-r263.mjs
-      - name: Logic regressions r263
+        run: node test-r266.mjs
+      - name: Chromium account-video regressions r266
         working-directory: apps/web
-        run: node test-r263-algorithms.mjs
-      - name: Chromium video regressions mobile r263
-        working-directory: apps/web
-        run: node test-r263-browser.mjs
-      - name: Exact final bundle boot r263
-        run: node scripts/test-r263-exact-bundle-browser.mjs
-      - name: Final bundle identity r263
+        run: node test-r266-browser.mjs
+      - name: Exact final bundle boot r266
+        run: node scripts/test-r266-exact-bundle-browser.mjs
+      - name: Final bundle identity r266
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v263.js
-          grep -Fq "window.__ctWebBuild='1.0.54';window.__ctOfficialVersion='1.0.54';" dist/app-v263.js
-          grep -Fq "const REVISION='r263-official-1.0.54';" dist/app-v263.js
-          grep -Fq "window.__ctR263='approved-home-list-discover-intelligence-f1-watched'" dist/app-v263.js
-          grep -Fq "window.__ctR263Home='vertical-list+hidden-history+no-home-carousel'" dist/app-v263.js
-          grep -Fq "window.__ctR263Discover='nine-tabs-local-rails+personal-exclusions+top10-streaming'" dist/app-v263.js
-          grep -Fq "window.__ctR263Sports='f1-db-events+mark-unmark-watched'" dist/app-v263.js
-          grep -Fq "window.__ctR263Horizontal='document-fixed+component-local-only'" dist/app-v263.js
-          grep -Fq 'function armHome262(){return;}' dist/app-v263.js
-          grep -Fq 'function sanitizeWeekly262(row)' dist/app-v263.js
-          grep -Fq 'function recoverSeriesDetail262(id)' dist/app-v263.js
-          grep -Fq 'cinetracker_sport_mark_watched_v1' dist/app-v263.js
-          grep -Fq 'watch/providers' dist/app-v263.js
-          grep -Fq '[data-home] .home-section .stack' dist/app-v263.css
-          grep -Fq '.ct263-media-rail' dist/app-v263.css
-          grep -Fq '.ct263-streaming' dist/app-v263.css
-          grep -Fq '.ct263-f1-watch-panel' dist/app-v263.css
-          grep -Fq 'app-v263.js' dist/index.html
-          grep -Fq 'app-v263.css' dist/index.html
-          ! grep -Fq 'app-v262.js' dist/index.html
-          grep -Fq '"version": "1.0.54"' dist/release.json
-          grep -Fq '"revision": "r263-official-1.0.54"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.54-r263';" dist/service-worker.js
+          node --check dist/app-v266.js
+          grep -Fq "window.__ctWebBuild='1.0.57';window.__ctOfficialVersion='1.0.57';" dist/app-v266.js
+          grep -Fq "const REVISION='r266-official-1.0.57';" dist/app-v266.js
+          grep -Fq "window.__ctR266='r263-rebuilt-home-discover-detail-sports-safe'" dist/app-v266.js
+          grep -Fq "window.__ctR266Home='approved-list+inside-right-minimal-watch'" dist/app-v266.js
+          grep -Fq "window.__ctR266Discover='watchlist-is-exclusion+complete-personal-authority'" dist/app-v266.js
+          grep -Fq "window.__ctR266Sports='r263-stable-no-cross-scope-runtime-call'" dist/app-v266.js
+          grep -Fq "window.__ctR266Detail='producer-rails+local-horizontal-only'" dist/app-v266.js
+          ! grep -Fq '__ctR264' dist/app-v266.js
+          ! grep -Fq '__ctR265' dist/app-v266.js
+          ! grep -Fq 'ct265AfterF1Paint' dist/app-v266.js
+          ! grep -Fq 'ct266AfterF1Paint' dist/app-v266.js
+          grep -Fq 'cinetracker_mark_watch_v0994' dist/app-v266.js
+          grep -Fq 'cinetracker_profile_media_dashboard_v0991' dist/app-v266.js
+          grep -Fq 'cinetracker_watchlist_full_v119' dist/app-v266.js
+          grep -Fq '.ct266-home-watch-host' dist/app-v266.css
+          grep -Fq '.ct266-watch-action' dist/app-v266.css
+          grep -Fq '.ct266-detail-x' dist/app-v266.css
+          grep -Fq 'app-v266.js' dist/index.html
+          grep -Fq 'app-v266.css' dist/index.html
+          ! grep -Fq 'app-v265.js' dist/index.html
+          grep -Fq '"version": "1.0.57"' dist/release.json
+          grep -Fq '"revision": "r266-official-1.0.57"' dist/release.json
+          grep -Fq '"r264": "rejected"' dist/release.json
+          grep -Fq '"r265": "rejected"' dist/release.json
+          grep -Fq "const CACHE='ct-web-1.0.57-r266';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -93,20 +90,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_54_r263]
+    needs: [web_1_0_57_r266]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.54 r263
+      - name: Official production serves and boots 1.0.57 r266
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.54"' <<<"$BODY" && grep -Fq '"revision": "r263-official-1.0.54"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v263.js?ct=$(date +%s%N)" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v263.css?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.57"' <<<"$BODY" && grep -Fq '"revision": "r266-official-1.0.57"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v266.js?ct=$(date +%s%N)" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v266.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR263='approved-home-list-discover-intelligence-f1-watched'" <<<"$JS" && grep -Fq "window.__ctR263Home='vertical-list+hidden-history+no-home-carousel'" <<<"$JS" && grep -Fq "window.__ctR263Discover='nine-tabs-local-rails+personal-exclusions+top10-streaming'" <<<"$JS" && grep -Fq "window.__ctR263Sports='f1-db-events+mark-unmark-watched'" <<<"$JS" && grep -Fq 'function armHome262(){return;}' <<<"$JS" && grep -Fq '.ct263-media-rail' <<<"$CSS" && grep -Fq '.ct263-f1-watch-panel' <<<"$CSS" && grep -Fq 'app-v263.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR266='r263-rebuilt-home-discover-detail-sports-safe'" <<<"$JS" && ! grep -Fq 'ct265AfterF1Paint' <<<"$JS" && ! grep -Fq 'ct266AfterF1Paint' <<<"$JS" && grep -Fq '.ct266-home-watch-host' <<<"$CSS" && grep -Fq '.ct266-detail-x' <<<"$CSS" && grep -Fq 'app-v266.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
