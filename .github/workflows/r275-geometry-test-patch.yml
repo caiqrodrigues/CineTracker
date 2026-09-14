@@ -1,0 +1,39 @@
+name: Patch r275 live geometry harness
+
+on:
+  push:
+    branches:
+      - fix/r275-history-rewatch-episode-dedupe
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/r275-history-rewatch-episode-dedupe
+      - name: Patch stale-node geometry check
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('apps/web/test-r275-browser.mjs')
+          s=p.read_text(encoding='utf-8')
+          old="const reach=cards.find(x=>x.textContent.includes('Reacher')),watchBtn=reach?.querySelector('[data-ct266-watch]'),rr=reach?.getBoundingClientRect(),wr=watchBtn?.getBoundingClientRect();document.body.dataset.watchRight=String(!!rr&&!!wr&&wr.right<=rr.right+1&&rr.right-wr.right<18&&Math.round(wr.width)===40);"
+          new="const liveContinue=[...document.querySelector('[data-home-view=\"series\"]')?.querySelectorAll(':scope > .home-section')||[]].find(x=>x.querySelector('h3')?.textContent==='Assistir a seguir'),reach=[...liveContinue?.querySelectorAll('.ct274-media-card')||[]].find(x=>x.textContent.includes('Reacher')),watchBtn=reach?.querySelector('[data-ct266-watch]'),rr=reach?.getBoundingClientRect(),wr=watchBtn?.getBoundingClientRect();document.body.dataset.watchRight=String(!!rr&&!!wr&&wr.right<=rr.right+1&&rr.right-wr.right<18&&Math.round(wr.width)===40);"
+          if old not in s: raise SystemExit('geometry target not found')
+          p.write_text(s.replace(old,new,1),encoding='utf-8')
+          PY
+      - name: Commit patched harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'CineTracker Validation'
+          git config user.email 'actions@users.noreply.github.com'
+          git add apps/web/test-r275-browser.mjs
+          git commit -m 'test: measure r275 watch action on live Home DOM'
+          git push origin HEAD:fix/r275-history-rewatch-episode-dedupe
