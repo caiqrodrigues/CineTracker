@@ -23,7 +23,7 @@ for(const x of[
  'ct275PaintHome=ct279PaintHome;',
  'paintHome=ct279PaintHome;'
 ])must(js,x);
-for(const x of['[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button{position:static!important','min-width:82px!important','[data-home] .home-tabs{position:fixed!important;top:0!important;left:136px!important;right:0!important','.sidebar{position:fixed!important;left:0!important;top:0!important'])must(css,x);
+for(const x of['[data-home] button.ct266-watch-action.ct279-watch-button[data-ct266-watch]{position:static!important','min-width:82px!important','[data-home] .home-tabs{position:fixed!important;top:0!important;left:136px!important;right:0!important','.sidebar{position:fixed!important;left:0!important;top:0!important'])must(css,x);
 must(html,'app-v279.js');must(html,'app-v279.css');if(/app-v278\.(?:js|css)/.test(html))throw new Error('r279 html references r278 assets');
 const meta=JSON.parse(release);if(meta.version!=='1.0.70'||meta.revision!=='r279-official-1.0.70'||meta.home_watch_action_control!=='button'||meta.home_watch_action_episode!==true||meta.home_watch_action_movie!==true||meta.home_watch_action_reconcile!=='finite'||meta.home_watch_action_refresh!=='canonical-r6'||meta.home_tabs_fixed!==true||meta.home_tabs_mode!=='fixed-top'||meta.sidebar_fixed!==true)throw new Error('r279 release identity');
 if(meta.android!=='1.0.20/10062')throw new Error('r279 Android changed');
