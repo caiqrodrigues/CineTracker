@@ -17,7 +17,7 @@ for(const x of[
  'ct279MarkWatched=ct280MarkWatched;'
 ])must(js,x);
 for(const x of[
- '[data-home] button.ct280-watch-button[data-ct279-watch]{position:static!important',
+ '[data-home] button.ct266-watch-action.ct279-watch-button.ct280-watch-button[data-ct279-watch]{position:static!important',
  'width:40px!important;min-width:40px!important;max-width:40px!important',
  'opacity:.64!important',
  'background:rgba(16,185,129,.20)!important',
