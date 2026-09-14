@@ -1,0 +1,18 @@
+import {readFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+const [js,css,html,release]=await Promise.all(['app-v267.js','app-v267.css','index.html','release.json'].map(f=>readFile(resolve(dist,f),'utf8')));
+const need=(s,x)=>{if(!s.includes(x))throw new Error('R267 missing '+x)};
+need(js,"window.__ctR267='video-ground-truth-discover-detail-home'");
+need(js,'function ct267Rows(v,depth=0)');
+for(const x of['tmdbId','sourceTmdbId','progress_status','home_bucket','is_caught_up','is_up_to_date','is_not_interested'])need(js,x);
+const transition=js.match(/\/\* CT267_DISCOVER_TRANSITION_START \*\/[\s\S]*?\/\* CT267_DISCOVER_TRANSITION_END \*\//)?.[0]||'';
+need(transition,'ct267PrimeDiscover');need(transition,"h.setAttribute('aria-busy','true')");
+if(/h\.innerHTML=['\"]<div class=\\?['\"]ct263-loading/.test(transition.replace(/else if\(h&&!h\.children\.length\)[\s\S]*?;void forYou263/,'void forYou263')))throw new Error('R267 browse transition still blanks host');
+for(const x of['ct169-season-row ct267-detail-x','ct169-season-chart-carousel ct267-detail-x','ct169-cast-row ct267-detail-x','ct169-related-row ct267-detail-x','ct267ArmDetailRails(h)'])need(js,x);
+for(const x of['.ct267-detail-section','.ct267-detail-x','overflow-x:auto!important','max-width:calc(100vw - 192px)!important','.ct266-watch-action{border:0!important;background:transparent!important'])need(css,x);
+const fy=js.match(/function paintForYou263\(\)\{[\s\S]*?\}\nasync function loadBrowse263/)?.[0]||'';if(!fy||fy.includes('Da sua Watchlist'))throw new Error('R267 Watchlist recommendation block remains');
+for(const bad of['ct265AfterF1Paint','ct266AfterF1Paint','ct267AfterF1Paint'])if(js.includes(bad))throw new Error('R267 forbidden Sports callback '+bad);
+need(html,'app-v267.js');need(html,'app-v267.css');need(release,'"version": "1.0.58"');need(release,'"revision": "r267-official-1.0.58"');
+console.log('R267_STATIC_OK personal envelopes + atomic Discover + rich r169 rails + glyph watch + Sports safe');
