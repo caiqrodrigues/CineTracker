@@ -58,11 +58,12 @@ jobs:
           grep -Fq "window.__ctR278='effective-tmdb-watch-action+fixed-home-tabs'" dist/app-v279.js
           grep -Fq "window.__ctR279='explicit-watched-buttons+canonical-r6-refresh'" dist/app-v279.js
           grep -Fq "window.__ctR279Watch='real-button+episode+movie+finite-reconcile'" dist/app-v279.js
-          grep -Fq 'ct266WatchAction=ct279ExplicitWatchAction;' dist/app-v279.js
-          grep -Fq 'ct274EpisodeWatchAction=ct279EpisodeWatchAction;' dist/app-v279.js
-          grep -Fq 'ct274MovieWatchAction=ct279MovieWatchAction;' dist/app-v279.js
-          grep -Fq 'ct274Row=ct279Row;' dist/app-v279.js
-          grep -Fq 'ct266MarkWatched=ct279MarkWatched;' dist/app-v279.js
+          grep -Fq 'data-ct279-watch=' dist/app-v279.js
+          grep -Fq "action.dataset.ct279Watch" dist/app-v279.js
+          grep -Fq "closest?.('[data-ct279-watch]')" dist/app-v279.js
+          grep -Fq 'if(ct279BaseEpisodeWatchAction)ct274EpisodeWatchAction=ct279EpisodeWatchAction;' dist/app-v279.js
+          grep -Fq 'if(ct279BaseMovieWatchAction)ct274MovieWatchAction=ct279MovieWatchAction;' dist/app-v279.js
+          grep -Fq 'if(ct279BaseRow)ct274Row=ct279Row;' dist/app-v279.js
           grep -Fq 'app-v279.js' dist/index.html
           grep -Fq 'app-v279.css' dist/index.html
           grep -Fq '"version": "1.0.70"' dist/release.json
@@ -70,6 +71,7 @@ jobs:
           grep -Fq '"home_watch_action_control": "button"' dist/release.json
           grep -Fq '"home_watch_action_episode": true' dist/release.json
           grep -Fq '"home_watch_action_movie": true' dist/release.json
+          grep -Fq '"home_watch_action_event_owner": "r279"' dist/release.json
           grep -Fq '"home_watch_action_refresh": "canonical-r6"' dist/release.json
           grep -Fq '"home_tabs_fixed": true' dist/release.json
           grep -Fq '"sidebar_fixed": true' dist/release.json
@@ -98,11 +100,11 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.70"' <<<"$BODY" && grep -Fq '"revision": "r279-official-1.0.70"' <<<"$BODY" && grep -Fq '"home_watch_action_control": "button"' <<<"$BODY" && grep -Fq '"home_watch_action_episode": true' <<<"$BODY" && grep -Fq '"home_watch_action_movie": true' <<<"$BODY" && grep -Fq '"home_tabs_fixed": true' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.70"' <<<"$BODY" && grep -Fq '"revision": "r279-official-1.0.70"' <<<"$BODY" && grep -Fq '"home_watch_action_control": "button"' <<<"$BODY" && grep -Fq '"home_watch_action_episode": true' <<<"$BODY" && grep -Fq '"home_watch_action_movie": true' <<<"$BODY" && grep -Fq '"home_watch_action_event_owner": "r279"' <<<"$BODY" && grep -Fq '"home_tabs_fixed": true' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v279.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v279.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR279='explicit-watched-buttons+canonical-r6-refresh'" <<<"$JS" && grep -Fq 'button.ct266-watch-action.ct279-watch-button[data-ct266-watch]{position:static!important' <<<"$CSS" && grep -Fq 'app-v279.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR279='explicit-watched-buttons+canonical-r6-refresh'" <<<"$JS" && grep -Fq 'button.ct266-watch-action.ct279-watch-button[data-ct279-watch]{position:static!important' <<<"$CSS" && grep -Fq 'app-v279.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
