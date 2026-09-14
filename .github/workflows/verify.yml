@@ -102,7 +102,7 @@ jobs:
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v279.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v279.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR279='explicit-watched-buttons+canonical-r6-refresh'" <<<"$JS" && grep -Fq '.ct279-watch-button{position:static!important' <<<"$CSS" && grep -Fq 'app-v279.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR279='explicit-watched-buttons+canonical-r6-refresh'" <<<"$JS" && grep -Fq 'button.ct266-watch-action.ct279-watch-button[data-ct266-watch]{position:static!important' <<<"$CSS" && grep -Fq 'app-v279.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
