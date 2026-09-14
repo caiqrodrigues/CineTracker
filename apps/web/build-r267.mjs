@@ -102,6 +102,9 @@ for(const [a,b] of [
  ['<div class="ct169-cast-row">','<div class="ct169-cast-row ct267-detail-x">'],
  ['<div class="ct169-related-row">','<div class="ct169-related-row ct267-detail-x">']
 ]){must(js,a,a);js=js.replaceAll(a,b)}
+const chartSvg='<div class="ct169-chart-scroll"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Notas da temporada">';
+must(js,chartSvg,'r169 episode chart svg');
+js=js.replace(chartSvg,'<div class="ct169-chart-scroll ct267-detail-x"><svg style="width:${W}px;max-width:none" viewBox="0 0 ${W} ${H}" role="img" aria-label="Notas da temporada">');
 const graphCall="if(tmdbKind==='tv')void ct169LoadSeasonGraphs(Number(id),seasons,seq);";must(js,graphCall,'rich detail graph call');
 js=js.replace(graphCall,"ct267ArmDetailRails(h);if(tmdbKind==='tv')void ct169LoadSeasonGraphs(Number(id),seasons,seq).finally(()=>ct267ArmDetailRails(h));");
 
@@ -119,7 +122,7 @@ css+=`\n/* CineTracker Web 1.0.58 r267 — video ground truth */
 .ct267-detail-section{box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow-x:hidden!important}
 .ct267-detail-x{box-sizing:border-box!important;display:flex!important;flex-wrap:nowrap!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;overscroll-behavior-x:contain!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-x pan-y!important;scrollbar-width:thin!important;scrollbar-gutter:stable!important}
 .ct267-detail-x>*{flex-shrink:0!important}.ct169-season-row.ct267-detail-x>*{flex-basis:120px!important}.ct169-cast-row.ct267-detail-x>*{flex-basis:126px!important}.ct169-related-row.ct267-detail-x>*{flex-basis:145px!important}.ct169-season-chart-carousel.ct267-detail-x>.ct169-season-chart-card{flex:0 0 min(760px,88vw)!important}
-.ct169-chart-scroll.ct267-detail-x{display:block!important}.ct169-chart-scroll.ct267-detail-x>svg{min-width:690px!important}
+.ct169-chart-scroll.ct267-detail-x{display:block!important}.ct169-chart-scroll.ct267-detail-x>svg{min-width:690px!important;max-width:none!important;flex:none!important}
 .ct267-detail-x::-webkit-scrollbar{height:8px!important}
 @media(min-width:901px){.ct267-detail-scope,.ct267-detail-section{max-width:calc(100vw - 192px)!important}}
 @media(min-width:701px) and (max-width:900px){.ct267-detail-scope,.ct267-detail-section{max-width:calc(100vw - 172px)!important}}
