@@ -6,24 +6,23 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.71** | `r280-official-1.0.71` | Home com `✓` minimalista para marcar episódios/filmes, abas Séries/Filmes fixas, Histórico acima da viewport e sidebar desktop fixa |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r280 |
+| Web | **1.0.72** | `r281-official-1.0.72` | Home com `✓` isolado do clique do card, atualização canônica única e layout estável após marcar assistido |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r281 |
 | Backend | produção compartilhada | Supabase | Home no payload r6 limitado; `cinetracker_home_series_watch_state_v1` consolida progresso por TMDB efetivo |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.71 / r280
+## Web 1.0.72 / r281
 
-A r280 refina visualmente o controle de **Marcar como assistido** criado na r279, sem alterar o writer canônico nem a lógica de episódios/filmes.
+A r281 corrige o comportamento reproduzido no vídeo após tocar no `✓` de Lioness: o clique de **Marcar como assistido** não pode mais cair no handler genérico do card, abrir `/series/...` nem disparar repaints concorrentes da Home.
 
-- **Check minimalista:** o botão deixa de exibir o texto `Marcar` e passa a mostrar apenas `✓`, em um controle 40×40 px no mesmo padrão compacto das ações do Histórico.
-- **Estado apagado por padrão:** borda e fundo ficam discretos e o check usa opacidade reduzida enquanto o item ainda não foi marcado.
-- **Feedback verde ao clicar:** no instante do clique o próprio botão ganha o estado ativo verde, com fundo/borda/check destacados durante a gravação.
-- **Writer preservado:** episódios continuam sendo gravados com temporada/episódio corretos e filmes continuam usando o mesmo fluxo canônico `cinetracker_mark_watch_v0994` da r279.
-- **TMDB efetivo preservado:** cards cujo `tmdb_id` direto é vazio/zero continuam usando a identidade efetiva/fallback de `data-media`.
-- **Séries / Filmes permanentemente no topo:** a barra da Home continua `fixed` e não acompanha o scroll vertical.
-- **Escopo preservado:** Histórico acima da viewport inicial, cards ricos de episódios, deduplicação por TMDB, Reassistir `2x/3x/4x...`, sidebar fixa, Descobrir, detalhes, Sports/F1 e Android permanecem preservados.
+- **Clique isolado antes do card:** o `✓` é interceptado no `window` em capture phase, antes do listener genérico de `data-media` no `document`. O evento é consumido exclusivamente pela ação de assistido e não navega para detalhes.
+- **Atualização canônica única:** após gravar episódio/filme, a Home usa apenas `ct275ReloadHome`/payload r6 e não emite o broadcast legado `cinetracker:data-changed`, eliminando a troca entre produtores antigos e novos que fazia a tela pular/tremular.
+- **Layout estável:** qualquer card ativo que precise do `✓` recebe host flex em linha, inclusive fallback `.media-row` legado; controles antigos `data-ct266-watch` duplicados são removidos e o check fica 40×40 px na extrema direita, sem cair para a linha de baixo.
+- **Reconciliação finita e idempotente:** a correção mantém somente uma janela curta de reconciliação sem `MutationObserver` persistente e sem reescrever controles já corretos.
+- **Writer preservado:** episódios e filmes continuam usando `cinetracker_mark_watch_v0994`, TMDB efetivo e temporada/episódio corretos.
+- **Escopo preservado:** check minimalista da r280, abas Séries/Filmes fixas, sidebar fixa, Histórico acima da viewport, metadados ricos, deduplicação, Reassistir, Descobrir, detalhes, Sports/F1 e Android permanecem preservados.
 
 ## Funcionalidades consolidadas
 
@@ -52,7 +51,7 @@ A r280 refina visualmente o controle de **Marcar como assistido** criado na r279
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r280 herda integralmente a r279 e altera somente a apresentação/feedback do controle de assistido.
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r281 herda a r280 e corrige exclusivamente o ownership do clique/refresh do controle de assistido e sua estabilidade de layout.
 
 ## Regra de validação
 

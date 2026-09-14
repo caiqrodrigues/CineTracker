@@ -1,37 +1,35 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-09-12
+**Atualizado em:** 2026-09-14
 
 ## Matriz oficial
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.52** | revision `r261-official-1.0.52`, package `1.0.52` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, inalterado pela r261 |
-| Backend / Supabase | produção compartilhada | `cinetracker_imported_series_state_v1` + RPCs/migrations atuais | produção |
+| Web | **1.0.72** | revision `r281-official-1.0.72`, package `1.0.72` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r281 |
+| Backend / Supabase | produção compartilhada | payload Home r6 + `cinetracker_home_series_watch_state_v1` + writers canônicos | produção |
 | Windows | — | — | não lançado |
 
-## Web 1.0.52 / r261
+## Web 1.0.72 / r281
 
-A r261 é guiada pelos vídeos reais do CineTracker e do Binglers e corrige a divergência entre o modelo importado e a interface.
+A r281 corrige o ground truth do vídeo posterior à r280: tocar no `✓` de Marcar como assistido não pode abrir o card de série/filme nem iniciar uma disputa entre renderers da Home.
 
-- Raw e SmackDown usam a maior fronteira realmente assistida; backlog histórico anterior não pode voltar como próximo episódio nem inflar `Faltam`;
-- o estado antigo S01 é neutralizado antes do primeiro paint e a auditoria posterior considera somente episódios já exibidos depois da fronteira;
-- Formula 1 e NFL Super Bowl passam a ser expostos como séries importadas de primeira classe, com temporadas, episódios e progresso, sem associação TMDB insegura;
-- Formula 1 usa temporadas anuais e sessões do fim de semana como episódios; datas usam `air_date` e horário de São Paulo;
-- Super Bowl preserva Temporada 1 em `60/62` e uma temporada separada para Halftime Shows;
-- `cinetracker_imported_series_state_v1(p_media_id)` lê o progresso importado real por `media_id`;
-- Descobrir corrige a geometria do `<button>` interno além do card, com poster 176×264 desktop e 154×231 mobile, copy visível e scroll lateral local;
-- a chave de cache TMDB inclui parâmetros, impedindo uma consulta simples da Home de deixar `/series/1549` sem os dados ricos de detalhe;
-- Home mantém cache visual persistente da primeira página e revalidação canônica em background;
-- Esportes/F1 Hub, Perfil e Configurações permanecem sem reconstrução nesta release;
+- o clique do `✓` é capturado no `window` antes do handler genérico de `data-media` do `document`;
+- a ação consome o evento e permanece na Home;
+- episódios/filmes continuam sendo gravados pelo writer `cinetracker_mark_watch_v0994`;
+- após a gravação existe uma única recarga canônica do payload r6;
+- o fluxo não emite `cinetracker:data-changed`, removendo o repaint legado concorrente observado no vídeo;
+- o `✓` permanece 40×40 px na direita em `.ct274-media-card` e em fallback `.media-row`, sem cair para uma segunda linha;
+- controles antigos duplicados são removidos e a reconciliação é finita/idempotente;
+- Séries/Filmes fixo, sidebar fixa, Histórico acima da viewport, metadados, deduplicação, Reassistir, Descobrir, detalhes e Sports/F1 são preservados;
 - Android permanece `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v261.js` / `app-v261.css`; build: `apps/web/build-r261-official.mjs`; runtime: `apps/web/runtime-r261-video-ground-truth-series.js`; migration: `supabase/migrations/20260912105000_r261_imported_series_state.sql`.
+Assets oficiais: `app-v281.js` / `app-v281.css`; build: `apps/web/build-r281-official.mjs`; runtime: `apps/web/runtime-r281-watch-click-isolation.js`.
 
 ## Android 1.0.20
 
-A r261 não altera Android. A identidade preservada é:
+A r281 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
