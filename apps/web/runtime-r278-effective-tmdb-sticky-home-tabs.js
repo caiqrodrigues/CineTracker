@@ -1,7 +1,7 @@
-/* CineTracker Web 1.0.69 / r278 — effective TMDB watched actions and permanently sticky Home media tabs. */
-window.__ctR278='effective-tmdb-watch-action+sticky-home-tabs';
+/* CineTracker Web 1.0.69 / r278 — effective TMDB watched actions and permanently fixed Home media tabs. */
+window.__ctR278='effective-tmdb-watch-action+fixed-home-tabs';
 window.__ctR278Watch='effective-tmdb+data-media-fallback+continue+dust+movie-watchlist';
-window.__ctR278Tabs='series-movies-sticky-top';
+window.__ctR278Tabs='series-movies-fixed-top';
 window.__ctR278Frozen='r277-sidebar+r276-history+episode-meta+dedupe+rewatch+discover+detail+sports+android-preserved';
 const ct278BaseEpisodeWatchAction=ct274EpisodeWatchAction;
 const ct278BaseEpisodeAttrs=ct274EpisodeAttrs;
