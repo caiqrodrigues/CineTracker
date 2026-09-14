@@ -33,18 +33,36 @@ js=replaceOnce(js,'homeCache=prepareHome259(d||{});','homeCache=prepareHome259(d
 
 js+=String.raw`
 /* CT268_HOME_FIX_START */
-window.__ctR268='home-history-authority+inline-right-watch';
-window.__ctR268Home='canonical-history+same-row-right-watch';
+window.__ctR268='home-history-authority+history-first+inline-right-watch';
+window.__ctR268Home='canonical-history+history-first+same-row-right-watch';
 window.__ctR268Frozen='discover+detail+sports+android-r267-preserved';
 function ct268Norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase()}
+function ct268HistoryTitle(sec){return ct268Norm(sec?.querySelector('.panel-head h2,.panel-head h3,h2,h3')?.textContent)}
+function ct268IsHistorySection(sec){const title=ct268HistoryTitle(sec);return title==='historico recente'||title==='filmes vistos'}
+function ct268PinHistoryFirst(sec){
+  const parent=sec?.parentElement;
+  if(!parent)return false;
+  const sections=[...parent.children].filter(el=>el instanceof Element&&el.matches('.home-section'));
+  const secIndex=sections.indexOf(sec);
+  const firstNonHistory=sections.find(el=>!ct268IsHistorySection(el));
+  const firstNonHistoryIndex=sections.indexOf(firstNonHistory);
+  if(secIndex<0||firstNonHistoryIndex<0||secIndex<firstNonHistoryIndex){
+    sec.dataset.ct268HistoryFirst='1';
+    return false;
+  }
+  parent.insertBefore(sec,firstNonHistory);
+  sec.dataset.ct268HistoryFirst='1';
+  return true;
+}
 function ct268ApplyHomeFix(){
   const root=document.querySelector('[data-home]');
   if(!root)return false;
   const pending=window.__ctHomeHistoryPending===true;
   let changed=false;
   for(const sec of root.querySelectorAll('.home-section')){
-    const title=ct268Norm(sec.querySelector('.panel-head h2,.panel-head h3,h2,h3')?.textContent);
+    const title=ct268HistoryTitle(sec);
     if(title!=='historico recente'&&title!=='filmes vistos')continue;
+    if(ct268PinHistoryFirst(sec))changed=true;
     if(pending){
       if(!sec.hidden||sec.dataset.ct268HistoryPending!=='1')changed=true;
       sec.hidden=true;
@@ -81,7 +99,7 @@ css+='\n/* r268: cached Home history is hidden until canonical r5 payload; watch
 html=html.replaceAll('app-v267.js','app-v268.js').replaceAll('app-v267.css','app-v268.css');
 sw=sw.replaceAll('ct-web-1.0.58-r267','ct-web-1.0.59-r268').replaceAll('app-v267.js','app-v268.js').replaceAll('app-v267.css','app-v268.css');
 
-const release={version:'1.0.59',revision:'r268-official-1.0.59',base:'r267-production',home_history_authority:true,home_watch_inline_right:true,discover:'r267-preserved',detail:'r267-preserved',sports:'r267-preserved',r264:'rejected',r265:'rejected',android:'1.0.20/10062',generated_at:new Date().toISOString()};
+const release={version:'1.0.59',revision:'r268-official-1.0.59',base:'r267-production',home_history_authority:true,home_history_first:true,home_watch_inline_right:true,discover:'r267-preserved',detail:'r267-preserved',sports:'r267-preserved',r264:'rejected',r265:'rejected',android:'1.0.20/10062',generated_at:new Date().toISOString()};
 await Promise.all([
   writeFile(resolve(dist,'index.html'),html,'utf8'),
   writeFile(resolve(dist,'app-v268.js'),js,'utf8'),
@@ -90,4 +108,4 @@ await Promise.all([
   writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v267.js'),{force:true}),rm(resolve(dist,'app-v267.css'),{force:true})]);
-console.log('WEB_R268_READY home-history=canonical-only home-watch=same-row-right frozen=r267');
+console.log('WEB_R268_READY home-history=canonical-first home-watch=same-row-right frozen=r267');
