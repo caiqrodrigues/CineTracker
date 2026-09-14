@@ -13,9 +13,9 @@ let [html,js,css,sw,patch]=await Promise.all([
 const once=(s,a,b,l)=>{const i=s.indexOf(a);if(i<0)throw new Error('r278 missing '+l);if(s.indexOf(a,i+a.length)>=0)throw new Error('r278 ambiguous '+l);return s.slice(0,i)+b+s.slice(i+a.length)};
 const must=(s,x)=>{if(!s.includes(x))throw new Error('r278 missing '+x)};
 for(const x of[
- "window.__ctR278='effective-tmdb-watch-action+sticky-home-tabs';",
+ "window.__ctR278='effective-tmdb-watch-action+fixed-home-tabs';",
  "window.__ctR278Watch='effective-tmdb+data-media-fallback+continue+dust+movie-watchlist';",
- "window.__ctR278Tabs='series-movies-sticky-top';",
+ "window.__ctR278Tabs='series-movies-fixed-top';",
  'function ct278EffectiveTmdb(x)',
  'function ct278EpisodeWatchAction(x)',
  'function ct278EpisodeAttrs(x,context)',
@@ -30,17 +30,18 @@ js=once(js,"const REVISION='r277-official-1.0.68';","const REVISION='r278-offici
 must(js,"window.__ctR277='watch-action-host+fixed-sidebar'");
 js=once(js,'\nboot();','\n'+patch+'\nboot();','runtime insertion');
 css+=String.raw`
-/* CineTracker Web 1.0.69 r278 — effective TMDB watch action; Séries/Filmes always visible while Home scrolls. */
-[data-home] .home-tabs{position:sticky!important;top:0!important;z-index:40!important;box-sizing:border-box!important;background:var(--bg,#06131b)!important;padding-top:8px!important;padding-bottom:8px!important;margin-top:-8px!important}
+/* CineTracker Web 1.0.69 r278 — effective TMDB watch action; Séries/Filmes fixed to viewport while Home scrolls. */
+[data-home]{padding-top:58px!important}
+[data-home] .home-tabs{position:fixed!important;top:0!important;left:136px!important;right:0!important;z-index:80!important;box-sizing:border-box!important;min-height:52px!important;background:var(--bg,#06131b)!important;padding:8px 16px!important;margin:0!important;border-bottom:1px solid rgba(148,163,184,.12)!important;box-shadow:0 4px 14px rgba(0,0,0,.18)!important}
 [data-home] .ct274-media-card.ct266-home-watch-host{position:relative!important;padding-right:48px!important}
 [data-home] .ct274-media-card.ct266-home-watch-host>[data-ct266-watch]{position:absolute!important;right:8px!important;top:50%!important;transform:translateY(-50%)!important;display:grid!important;place-items:center!important;visibility:visible!important;opacity:1!important;z-index:20!important;width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important}
-@media(max-width:700px){[data-home] .home-tabs{top:0!important;z-index:50!important}[data-home] .ct274-media-card.ct266-home-watch-host{padding-right:44px!important}[data-home] .ct274-media-card.ct266-home-watch-host>[data-ct266-watch]{right:6px!important;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important}}
+@media(max-width:700px){[data-home]{padding-top:56px!important}[data-home] .home-tabs{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:90!important;min-height:50px!important;padding:7px 12px!important}[data-home] .ct274-media-card.ct266-home-watch-host{padding-right:44px!important}[data-home] .ct274-media-card.ct266-home-watch-host>[data-ct266-watch]{right:6px!important;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important}}
 `;
 html=html.replaceAll('app-v277.js','app-v278.js').replaceAll('app-v277.css','app-v278.css').replaceAll('CineTracker • v1.0.68','CineTracker • v1.0.69');
 sw=sw.replaceAll('ct-web-1.0.68-r277','ct-web-1.0.69-r278').replaceAll('app-v277.js','app-v278.js').replaceAll('app-v277.css','app-v278.css');
-const release={version:'1.0.69',revision:'r278-official-1.0.69',status:'official',base:'r277-production',home_history_mode:'above-initial-viewport',home_history_toggle:false,home_history_initial_anchor:'continue',home_series_card_parity:['continue','dust','up_to_date'],home_watch_action_visible:['continue','dust','movie_watchlist'],home_watch_action_tmdb_source:'effective',home_watch_action_data_media_fallback:true,home_tabs_sticky:true,home_tabs_sticky_items:['series','movies'],sidebar_mode:'fixed-desktop-full-height',sidebar_fixed:true,discover:'r277-preserved',detail:'r277-preserved',sports:'r277-preserved',android:'1.0.20/10062'};
+const release={version:'1.0.69',revision:'r278-official-1.0.69',status:'official',base:'r277-production',home_history_mode:'above-initial-viewport',home_history_toggle:false,home_history_initial_anchor:'continue',home_series_card_parity:['continue','dust','up_to_date'],home_watch_action_visible:['continue','dust','movie_watchlist'],home_watch_action_tmdb_source:'effective',home_watch_action_data_media_fallback:true,home_tabs_fixed:true,home_tabs_mode:'fixed-top',home_tabs_fixed_items:['series','movies'],sidebar_mode:'fixed-desktop-full-height',sidebar_fixed:true,discover:'r277-preserved',detail:'r277-preserved',sports:'r277-preserved',android:'1.0.20/10062'};
 await Promise.all([
  writeFile(resolve(dist,'app-v278.js'),js,'utf8'),writeFile(resolve(dist,'app-v278.css'),css,'utf8'),writeFile(resolve(dist,'index.html'),html,'utf8'),writeFile(resolve(dist,'service-worker.js'),sw,'utf8'),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v277.js'),{force:true}),rm(resolve(dist,'app-v277.css'),{force:true})]);
-console.log('WEB_R278_READY watch-action=effective-tmdb home-tabs=sticky');
+console.log('WEB_R278_READY watch-action=effective-tmdb home-tabs=fixed-top');
