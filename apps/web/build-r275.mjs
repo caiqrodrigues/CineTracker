@@ -3,12 +3,13 @@ import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 await import('./build-r274-official.mjs');
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
-let [html,js,css,sw,patch]=await Promise.all([
+let [html,js,css,sw,patch,detailPatch]=await Promise.all([
  readFile(resolve(dist,'index.html'),'utf8'),
  readFile(resolve(dist,'app-v274.js'),'utf8'),
  readFile(resolve(dist,'app-v274.css'),'utf8'),
  readFile(resolve(dist,'service-worker.js'),'utf8'),
- readFile(resolve(root,'runtime-r275-history-rewatch-episode-dedupe.js'),'utf8')
+ readFile(resolve(root,'runtime-r275-history-rewatch-episode-dedupe.js'),'utf8'),
+ readFile(resolve(root,'runtime-r275-detail-rewatch-badge.js'),'utf8')
 ]);
 const once=(source,from,to,label)=>{const i=source.indexOf(from);if(i<0)throw new Error('r275 missing '+label);if(source.indexOf(from,i+from.length)>=0)throw new Error('r275 ambiguous '+label);return source.slice(0,i)+to+source.slice(i+from.length)};
 const must=(source,needle,label=needle)=>{if(!source.includes(needle))throw new Error('r275 missing '+label)};
@@ -24,10 +25,11 @@ for(const x of[
  'data-ct275-history-toggle',
  'ct275-plays-badge'
 ])must(patch,x);
+for(const x of["window.__ctR275DetailBadge='delegated-post-action+direct-global-wrapper';",'function ct275DecorateDetailButton(btn)','globalThis.ct171RewatchMovie','globalThis.ct171RewatchEpisode'])must(detailPatch,x);
 js=once(js,"window.__ctWebBuild='1.0.65';window.__ctOfficialVersion='1.0.65';","window.__ctWebBuild='1.0.66';window.__ctOfficialVersion='1.0.66';",'web version');
 js=once(js,"const REVISION='r274-official-1.0.65';","const REVISION='r275-official-1.0.66';",'revision');
 must(js,"window.__ctR274='home-r6-fast+ascending-history+rich-meta+rewatch'",'r274 baseline');
-js=once(js,'\nboot();','\n'+patch+'\nboot();','runtime insertion');
+js=once(js,'\nboot();','\n'+patch+'\n'+detailPatch+'\nboot();','runtime insertion');
 css+=String.raw`
 /* CineTracker Web 1.0.66 r275 — collapsible History, rewatch multipliers, fresh next episode and strict dedupe. */
 [data-home] .ct275-history{overflow:hidden!important}
