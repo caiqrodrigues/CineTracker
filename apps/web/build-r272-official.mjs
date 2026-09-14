@@ -1,7 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
-await import('./build-r272-r5-final.mjs');
+await import('./build-r272-testhooks-final.mjs');
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
 const [html,js,css,release,sw]=await Promise.all(['index.html','app-v272.js','app-v272.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
 const must=(s,x)=>{if(!s.includes(x))throw new Error('r272 official missing '+x)};
@@ -16,6 +16,8 @@ for(const x of[
  'data-ct272-history="episodes"',
  'data-ct272-history="movies"',
  "rpc('cinetracker_profile_home_payload_v0997_r5'",
+ 'setHomeCache:(v,pending=false)=>{homeCache=v',
+ "attachWatch:(el,kind,tmdb,s=0,e=0,title='')=>ct266AttachWatch",
  'r272: r269 paint wrapper retired',
  'r272: r270 paint repair wrapper retired',
  "window.__ctR267Discover='atomic-tabs+recursive-personal-exclusions'",
@@ -34,4 +36,4 @@ const meta=JSON.parse(release);if(meta.version!=='1.0.63'||meta.revision!=='r272
 if(meta.home_history_source!=='cinetracker_profile_home_payload_v0997_r5'||meta.home_history_in_producer!==true||meta.home_history_first!==true||meta.home_fast_cache_never_empty_history!==true||meta.home_mark_watched_refresh!=='r5'||meta.home_post_render_repair!==false||meta.home_series_watch_direct_child!==true)throw new Error('r272 Home release flags');
 if(meta.discover!=='r271-preserved'||meta.detail!=='r271-preserved'||meta.sports!=='r271-preserved'||meta.android!=='1.0.20/10062')throw new Error('r272 frozen surfaces');
 must(sw,"const CACHE='ct-web-1.0.63-r272';");must(sw,'app-v272.js');must(sw,'app-v272.css');
-console.log('WEB_1_0_63_OFFICIAL_OK r272 producer-history r5-only direct-watch no-post-repair');
+console.log('WEB_1_0_63_OFFICIAL_OK r272 producer-history r5-only direct-watch no-post-repair shipped-hooks');
