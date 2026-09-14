@@ -17,16 +17,17 @@ for(const x of[
  "window.__ctR279Watch='real-button+episode+movie+finite-reconcile';",
  "window.__ctR279Tabs='r278-fixed-home-tabs-preserved';",
  'function ct279ExplicitWatchAction(kind,tmdb,s=0,e=0,title=',
+ 'data-ct279-watch=',
  'function ct279Row(x,opts={})',
  'function ct279ReconcileWatchButtons(root=document)',
+ 'function ct279ScheduleReconcile()',
  'async function ct279MarkWatched(action)',
- 'ct266WatchAction=ct279ExplicitWatchAction;',
- 'ct274EpisodeWatchAction=ct279EpisodeWatchAction;',
- 'ct274MovieWatchAction=ct279MovieWatchAction;',
- 'ct274Row=ct279Row;',
- 'ct266MarkWatched=ct279MarkWatched;',
- 'ct275PaintHome=ct279PaintHome;',
- 'paintHome=ct279PaintHome;'
+ "action.dataset.ct279Watch",
+ "document.addEventListener('click',e=>{const action=e.target?.closest?.('[data-ct279-watch]')",
+ 'if(ct279BaseEpisodeWatchAction)ct274EpisodeWatchAction=ct279EpisodeWatchAction;',
+ 'if(ct279BaseMovieWatchAction)ct274MovieWatchAction=ct279MovieWatchAction;',
+ 'if(ct279BaseRow)ct274Row=ct279Row;',
+ 'if(ct279BasePaintHome){ct275PaintHome=ct279PaintHome;'
 ])must(patch,x);
 js=once(js,"window.__ctWebBuild='1.0.69';window.__ctOfficialVersion='1.0.69';","window.__ctWebBuild='1.0.70';window.__ctOfficialVersion='1.0.70';",'version');
 js=once(js,"const REVISION='r278-official-1.0.69';","const REVISION='r279-official-1.0.70';",'revision');
@@ -37,16 +38,16 @@ css+=String.raw`
 [data-home] .ct274-media-card.ct279-watch-host{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;box-sizing:border-box!important;min-width:0!important;width:100%!important;padding-right:12px!important;overflow:hidden!important}
 [data-home] .ct274-media-card.ct279-watch-host>.ct274-row-left{min-width:0!important;flex:1 1 auto!important}
 [data-home] .ct274-media-card.ct279-watch-host>.badge{flex:0 0 auto!important}
-[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct266-watch]{position:static!important;inset:auto!important;right:auto!important;left:auto!important;top:auto!important;bottom:auto!important;transform:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;visibility:visible!important;opacity:1!important;box-sizing:border-box!important;width:auto!important;min-width:82px!important;max-width:none!important;height:36px!important;min-height:36px!important;max-height:36px!important;flex:0 0 auto!important;margin:0 0 0 10px!important;padding:0 11px!important;border:1px solid rgba(52,211,153,.46)!important;border-radius:11px!important;background:rgba(16,185,129,.16)!important;color:#86efac!important;font:inherit!important;font-size:12px!important;font-weight:800!important;line-height:1!important;white-space:nowrap!important;cursor:pointer!important;z-index:22!important}
-[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button:hover,[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button:focus-visible,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct266-watch]:hover,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct266-watch]:focus-visible{background:rgba(16,185,129,.28)!important;border-color:rgba(52,211,153,.72)!important;outline:none!important}
-[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button[aria-disabled="true"],[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button:disabled,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct266-watch][aria-disabled="true"],[data-home] button.ct266-watch-action.ct279-watch-button[data-ct266-watch]:disabled{opacity:.55!important;cursor:wait!important;pointer-events:none!important}
+[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct279-watch]{position:static!important;inset:auto!important;right:auto!important;left:auto!important;top:auto!important;bottom:auto!important;transform:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;visibility:visible!important;opacity:1!important;box-sizing:border-box!important;width:auto!important;min-width:82px!important;max-width:none!important;height:36px!important;min-height:36px!important;max-height:36px!important;flex:0 0 auto!important;margin:0 0 0 10px!important;padding:0 11px!important;border:1px solid rgba(52,211,153,.46)!important;border-radius:11px!important;background:rgba(16,185,129,.16)!important;color:#86efac!important;font:inherit!important;font-size:12px!important;font-weight:800!important;line-height:1!important;white-space:nowrap!important;cursor:pointer!important;z-index:22!important}
+[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button:hover,[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button:focus-visible,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct279-watch]:hover,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct279-watch]:focus-visible{background:rgba(16,185,129,.28)!important;border-color:rgba(52,211,153,.72)!important;outline:none!important}
+[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button[aria-disabled="true"],[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button:disabled,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct279-watch][aria-disabled="true"],[data-home] button.ct266-watch-action.ct279-watch-button[data-ct279-watch]:disabled{opacity:.55!important;cursor:wait!important;pointer-events:none!important}
 [data-home] .ct279-watch-check{font-size:14px!important;line-height:1!important}
 [data-home] .ct279-watch-label{display:inline!important;line-height:1!important}
-@media(max-width:700px){[data-home] .ct274-media-card.ct279-watch-host{padding-right:9px!important}[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct266-watch]{min-width:74px!important;height:34px!important;min-height:34px!important;max-height:34px!important;margin-left:7px!important;padding:0 9px!important;font-size:11px!important;border-radius:10px!important}[data-home] .ct279-watch-check{font-size:13px!important}}
+@media(max-width:700px){[data-home] .ct274-media-card.ct279-watch-host{padding-right:9px!important}[data-home] .ct274-media-card.ct279-watch-host>.ct279-watch-button,[data-home] button.ct266-watch-action.ct279-watch-button[data-ct279-watch]{min-width:74px!important;height:34px!important;min-height:34px!important;max-height:34px!important;margin-left:7px!important;padding:0 9px!important;font-size:11px!important;border-radius:10px!important}[data-home] .ct279-watch-check{font-size:13px!important}}
 `;
 html=html.replaceAll('app-v278.js','app-v279.js').replaceAll('app-v278.css','app-v279.css').replaceAll('CineTracker • v1.0.69','CineTracker • v1.0.70');
 sw=sw.replaceAll('ct-web-1.0.69-r278','ct-web-1.0.70-r279').replaceAll('app-v278.js','app-v279.js').replaceAll('app-v278.css','app-v279.css');
-const release={version:'1.0.70',revision:'r279-official-1.0.70',status:'official',base:'r278-production',home_history_mode:'above-initial-viewport',home_history_toggle:false,home_history_initial_anchor:'continue',home_series_card_parity:['continue','dust','up_to_date'],home_watch_action_visible:['continue','dust','movie_watchlist'],home_watch_action_control:'button',home_watch_action_label:'Marcar',home_watch_action_episode:true,home_watch_action_movie:true,home_watch_action_reconcile:'finite',home_watch_action_refresh:'canonical-r6',home_watch_action_tmdb_source:'effective+data-media',home_tabs_fixed:true,home_tabs_mode:'fixed-top',home_tabs_fixed_items:['series','movies'],sidebar_mode:'fixed-desktop-full-height',sidebar_fixed:true,discover:'r278-preserved',detail:'r278-preserved',sports:'r278-preserved',android:'1.0.20/10062'};
+const release={version:'1.0.70',revision:'r279-official-1.0.70',status:'official',base:'r278-production',home_history_mode:'above-initial-viewport',home_history_toggle:false,home_history_initial_anchor:'continue',home_series_card_parity:['continue','dust','up_to_date'],home_watch_action_visible:['continue','dust','movie_watchlist'],home_watch_action_control:'button',home_watch_action_label:'Marcar',home_watch_action_episode:true,home_watch_action_movie:true,home_watch_action_event_owner:'r279',home_watch_action_reconcile:'finite',home_watch_action_refresh:'canonical-r6',home_watch_action_tmdb_source:'effective+data-media',home_tabs_fixed:true,home_tabs_mode:'fixed-top',home_tabs_fixed_items:['series','movies'],sidebar_mode:'fixed-desktop-full-height',sidebar_fixed:true,discover:'r278-preserved',detail:'r278-preserved',sports:'r278-preserved',android:'1.0.20/10062'};
 await Promise.all([
  writeFile(resolve(dist,'app-v279.js'),js,'utf8'),writeFile(resolve(dist,'app-v279.css'),css,'utf8'),writeFile(resolve(dist,'index.html'),html,'utf8'),writeFile(resolve(dist,'service-worker.js'),sw,'utf8'),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2),'utf8')
 ]);
