@@ -6,23 +6,22 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.72** | `r281-official-1.0.72` | Home com `✓` isolado do clique do card, atualização canônica única e layout estável após marcar assistido |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r281 |
+| Web | **1.0.73** | `r282-official-1.0.73` | Séries ordenadas por última visualização dentro do bucket final; `✓` continua isolado e Home permanece estável |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r282 |
 | Backend | produção compartilhada | Supabase | Home no payload r6 limitado; `cinetracker_home_series_watch_state_v1` consolida progresso por TMDB efetivo |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.72 / r281
+## Web 1.0.73 / r282
 
-A r281 corrige o comportamento reproduzido no vídeo após tocar no `✓` de Lioness: o clique de **Marcar como assistido** não pode mais cair no handler genérico do card, abrir `/series/...` nem disparar repaints concorrentes da Home.
+A r282 corrige a ordenação observada depois de marcar Lioness como assistido. O payload r6 já devolve `last_watched_at`, mas a reconciliação fresca de episódios pode mudar uma série de bucket depois dessa ordenação inicial; a lista final agora volta a ordenar cada bucket pela última visualização real.
 
-- **Clique isolado antes do card:** o `✓` é interceptado no `window` em capture phase, antes do listener genérico de `data-media` no `document`. O evento é consumido exclusivamente pela ação de assistido e não navega para detalhes.
-- **Atualização canônica única:** após gravar episódio/filme, a Home usa apenas `ct275ReloadHome`/payload r6 e não emite o broadcast legado `cinetracker:data-changed`, eliminando a troca entre produtores antigos e novos que fazia a tela pular/tremular.
-- **Layout estável:** qualquer card ativo que precise do `✓` recebe host flex em linha, inclusive fallback `.media-row` legado; controles antigos `data-ct266-watch` duplicados são removidos e o check fica 40×40 px na extrema direita, sem cair para a linha de baixo.
-- **Reconciliação finita e idempotente:** a correção mantém somente uma janela curta de reconciliação sem `MutationObserver` persistente e sem reescrever controles já corretos.
-- **Writer preservado:** episódios e filmes continuam usando `cinetracker_mark_watch_v0994`, TMDB efetivo e temporada/episódio corretos.
-- **Escopo preservado:** check minimalista da r280, abas Séries/Filmes fixas, sidebar fixa, Histórico acima da viewport, metadados ricos, deduplicação, Reassistir, Descobrir, detalhes, Sports/F1 e Android permanecem preservados.
+- **Última série assistida primeiro:** dentro de `Assistir a seguir`, `Juntando poeira`, `Em dia` e `Concluídas`, séries com `last_watched_at` mais recente ficam acima das demais.
+- **Bucket final continua soberano:** se a marcação deixa a série `Em dia` ou `Concluída`, ela não é forçada para `Assistir a seguir`; entra no bucket correto e é ordenada apenas dentro dele.
+- **Ordenação depois da reconciliação:** quando o TMDB corrige o próximo episódio e muda `home_bucket`, a seção final não herda a posição antiga do array canônico.
+- **Ordem estável sem data:** séries sem `last_watched_at` preservam a ordem anterior entre si.
+- **Escopo preservado:** clique isolado da r281, check minimalista, abas Séries/Filmes fixas, sidebar fixa, Histórico acima da viewport, metadados ricos, deduplicação, Reassistir, Descobrir, detalhes, Sports/F1 e Android permanecem preservados.
 
 ## Funcionalidades consolidadas
 
@@ -51,7 +50,7 @@ A r281 corrige o comportamento reproduzido no vídeo após tocar no `✓` de Lio
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r281 herda a r280 e corrige exclusivamente o ownership do clique/refresh do controle de assistido e sua estabilidade de layout.
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r282 herda integralmente a r281 e altera somente a ordenação final dos cards de séries após classificação/reconciliação.
 
 ## Regra de validação
 
