@@ -1,0 +1,12 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r272.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),file=resolve(root,'dist','app-v272.js');
+let js=await readFile(file,'utf8');
+const legacy="rpc('cinetracker_home_live_v0997_r3'",canonical="rpc('cinetracker_profile_home_payload_v0997_r5'";
+const count=js.split(legacy).length-1;if(count<1)throw new Error('r272 expected at least one inherited r3 Home RPC to retire');
+js=js.replaceAll(legacy,canonical);
+if(js.includes(legacy))throw new Error('r272 failed to retire every r3 Home RPC');
+await writeFile(file,js,'utf8');
+console.log('WEB_R272_R5_ONLY retired-r3-home-rpc='+count);
