@@ -21,11 +21,11 @@ let homeCache=null;window.__ctHomeHistoryPending=true;
 try{
  const probe=document.querySelector('#probe'),churn=document.querySelector('#churn');let clicks=0;probe.addEventListener('click',()=>clicks++);
  homeCache={__ctHistoryAuthoritative:false,__ctFastHomeCache:true,series:[{tmdb_id:1,media_type:'tv',title:'Reacher',home_bucket:'continue',watched_episodes:4,released_episodes:5,total_episodes:5}],movie_watchlist:[{tmdb_id:7,media_type:'movie',title:'Filme futuro',release_year:2026}],history_episodes:[],history_movies:[]};window.__ctHomeHistoryPending=true;paintHome();
- let series=document.querySelector('[data-home-view="series"]'),movies=document.querySelector('[data-home-view="movies"]');
+ let series=document.querySelector('[data-home-view="series"]'),movies=document.querySelector('[data-home-view="movies"]'),pendingHistE=series?.querySelector('[data-ct272-history="episodes"]'),pendingHistM=movies?.querySelector('[data-ct272-history="movies"]');
  document.body.dataset.pendingSeriesFirst=String(series?.querySelector(':scope > .home-section')?.dataset.ct272History==='episodes');
  document.body.dataset.pendingMoviesFirst=String(movies?.querySelector(':scope > .home-section')?.dataset.ct272History==='movies');
  document.body.dataset.pendingLoading=String(document.querySelectorAll('[data-ct272-history-loading]').length===2);
- document.body.dataset.pendingNoFalseEmpty=String(!document.body.textContent.includes('Nenhum episódio recente.')&&!document.body.textContent.includes('Nenhum filme recente.'));
+ document.body.dataset.pendingNoFalseEmpty=String(!pendingHistE?.textContent.includes('Nenhum episódio recente.')&&!pendingHistM?.textContent.includes('Nenhum filme recente.'));
  homeCache={__ctHistoryAuthoritative:true,__ctFastHomeCache:false,series:[{tmdb_id:1,media_type:'tv',title:'Reacher',home_bucket:'continue',watched_episodes:4,released_episodes:5,total_episodes:5}],movie_watchlist:[{tmdb_id:7,media_type:'movie',title:'Filme futuro',release_year:2026}],history_episodes:[{id:11,tmdb_id:1,media_title:'Reacher visto',title:'Episódio visto',season_number:3,episode_number:7,watched_at:'2026-09-14T12:00:00Z'}],history_movies:[{id:22,tmdb_id:99,media_title:'Harry Potter visto',title:'Harry Potter visto',watched_at:'2026-09-14T11:00:00Z'}]};window.__ctHomeHistoryPending=false;paintHome();
  series=document.querySelector('[data-home-view="series"]');movies=document.querySelector('[data-home-view="movies"]');
  const continueSec=[...(series?.querySelectorAll(':scope > .home-section')||[])].find(x=>x.querySelector('h3')?.textContent==='Assistir a seguir'),row=continueSec?.querySelector('.media-row');
