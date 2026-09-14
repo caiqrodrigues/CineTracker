@@ -6,30 +6,27 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.72** | revision `r281-official-1.0.72`, package `1.0.72` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r281 |
+| Web | **1.0.73** | revision `r282-official-1.0.73`, package `1.0.73` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r282 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `cinetracker_home_series_watch_state_v1` + writers canônicos | produção |
 | Windows | — | — | não lançado |
 
-## Web 1.0.72 / r281
+## Web 1.0.73 / r282
 
-A r281 corrige o ground truth do vídeo posterior à r280: tocar no `✓` de Marcar como assistido não pode abrir o card de série/filme nem iniciar uma disputa entre renderers da Home.
+A r282 corrige o ground truth do vídeo posterior à r281: quando uma série continua pendente após marcar o episódio atual, a série assistida mais recentemente precisa ocupar a primeira posição do bucket final.
 
-- o clique do `✓` é capturado no `window` antes do handler genérico de `data-media` do `document`;
-- a ação consome o evento e permanece na Home;
-- episódios/filmes continuam sendo gravados pelo writer `cinetracker_mark_watch_v0994`;
-- após a gravação existe uma única recarga canônica do payload r6;
-- o fluxo não emite `cinetracker:data-changed`, removendo o repaint legado concorrente observado no vídeo;
-- o `✓` permanece 40×40 px na direita em `.ct274-media-card` e em fallback `.media-row`, sem cair para uma segunda linha;
-- controles antigos duplicados são removidos e a reconciliação é finita/idempotente;
-- Séries/Filmes fixo, sidebar fixa, Histórico acima da viewport, metadados, deduplicação, Reassistir, Descobrir, detalhes e Sports/F1 são preservados;
+- cada seção de séries é ordenada por `last_watched_at DESC` no momento final de renderização;
+- a ordenação acontece depois da reconciliação fresca do TMDB, então uma série que mudou de `Em dia` para `Assistir a seguir` não mantém a posição antiga do array;
+- se a marcação deixa a série `Em dia` ou `Concluída`, o bucket final continua soberano e a mídia é ordenada somente dentro dele;
+- séries sem data de última visualização mantêm ordem estável entre si;
+- o clique isolado do `✓`, writer canônico, recarga única r6, check minimalista, abas fixas, sidebar, Histórico, metadados, deduplicação, Reassistir, Descobrir, detalhes e Sports/F1 permanecem preservados;
 - Android permanece `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v281.js` / `app-v281.css`; build: `apps/web/build-r281-official.mjs`; runtime: `apps/web/runtime-r281-watch-click-isolation.js`.
+Assets oficiais: `app-v282.js` / `app-v282.css`; build: `apps/web/build-r282-official.mjs`; runtime: `apps/web/runtime-r282-series-recency-order.js`.
 
 ## Android 1.0.20
 
-A r281 não altera Android. A identidade preservada é:
+A r282 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
