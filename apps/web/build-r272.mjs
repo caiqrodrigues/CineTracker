@@ -23,8 +23,8 @@ js=replaceOnce(js,"const REVISION='r271-official-1.0.62';","const REVISION='r272
 /* Canonical producer fix: History is part of paintHome itself and is always the first section.
    Fast cache may provide series/watchlist immediately, but it is never allowed to claim an empty
    History. Canonical r5 repaints the same producer once its real watch_history arrays arrive. */
-const paintRx=/function paintHome\(\)\{[\s\S]*?\n\}\nfunction profileRows/;
-if(!paintRx.test(js))throw new Error('r272 cannot locate canonical paintHome producer');
+const paintStart=js.indexOf('function paintHome(){'),paintEnd=js.indexOf('function profileRows(',paintStart);
+if(paintStart<0||paintEnd<0||paintEnd<=paintStart)throw new Error('r272 cannot locate canonical paintHome producer');
 const paint272=String.raw`function ct272HistoryReady(p,histE,histM){return p?.__ctHistoryAuthoritative===true||(!p?.__ctFastHomeCache&&window.__ctHomeHistoryPending!==true&&(histE.length>0||histM.length>0))}
 function ct272HistoryStack(rows,kind,ready){
  if(!ready)return '<div class="empty" data-ct272-history-loading>Carregando histórico…</div>';
@@ -42,8 +42,8 @@ function paintHome(){
  h.innerHTML='<div class="home-tabs"><button class="chip active" data-home-tab="series">Séries</button><button class="chip" data-home-tab="movies">Filmes</button></div><div data-home-view="series" class="home-list">'+historyEpisodes+seriesSections+'</div><div data-home-view="movies" class="home-list hidden">'+historyMovies+movieWatch+'</div>';
  h.dataset.ct272Producer='canonical-history-first';
 }
-function profileRows`;
-js=js.replace(paintRx,paint272);
+`;
+js=js.slice(0,paintStart)+paint272+js.slice(paintEnd);
 
 /* Mark-watched must refresh through the same r5 authority. r3 can never overwrite Home again. */
 const markR3="homeCache=await rpc('cinetracker_home_live_v0997_r3',{p_today:typeof localDay==='function'?localDay():new Date().toISOString().slice(0,10)});";
