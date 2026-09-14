@@ -26,31 +26,7 @@ jobs:
           header='# Changelog\n\nMudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.\n\n'
           if not s.startswith(header):
               raise SystemExit('unexpected CHANGELOG header')
-          entry='''## 1.0.65 — 2026-09-14 — Web r274
-
-### Home / statement timeout
-- A Home deixa de usar o payload r5 que agregava o universo inteiro de `watch_history`, `episode_progress` e estados da biblioteca a cada entrada. A nova autoridade `cinetracker_profile_home_payload_v0997_r6` limita explicitamente o conjunto de trabalho a 20 registros de Histórico, 120 séries e 120 filmes.
-- Índices parciais cobrem os acessos recentes de episódios e filmes por `profile_id + watched_at`, e um índice adicional cobre os estados mais usados da biblioteca.
-- A consulta r6 foi medida contra os dados reais de produção em aproximadamente 410 ms, abaixo do timeout que atingia a r5.
-
-### Histórico / ordenação e ações
-- O banco seleciona os registros recentes usando o índice em ordem decrescente e, antes de montar o payload, devolve o lote em `watched_at ASC`: itens mais antigos ficam no topo e os mais recentes no final.
-- O trilho de Histórico é vertical e local, abre posicionado no fim e permite subir para consultar os itens mais antigos sem deslocar a página horizontalmente.
-- Cada item mantém `↶` para desfazer e ganha `↻` para Reassistir. O novo `cinetracker_rewatch_history_v1` registra outra visualização pelo writer canônico e atualiza `2x`, `3x`, `4x...` sem desmontar o estado da série.
-
-### Metadados restaurados
-- Séries em `Assistir a seguir` e no Histórico exibem `SXXEYY • Ep: Título • ⭐ Nota • Data` e a quantidade de episódios já lançados ainda disponível para ver.
-- Metadados de episódio ausentes no payload são hidratados pelo TMDB com cache por temporada e concorrência limitada, evitando uma nova tempestade de requisições.
-- Filmes em `Assistir a seguir / Watchlist` e Histórico exibem `Ano • Duração min • Gêneros • ⭐ Nota`; hidratação remota só ocorre quando o banco não possui algum campo.
-- O botão `✓` continua como filho direto do card, 40×40 px, no mesmo `flex-row nowrap`, sempre à extrema direita em mobile e desktop.
-
-### Build / validação
-- Web atualizada para `1.0.65 / r274-official-1.0.65`; Android permanece `1.0.20 / versionCode 10062`.
-- Build oficial: `apps/web/build-r274-official.mjs`; regressões: `test-r274.mjs`, `test-r274-browser.mjs` e `scripts/test-r274-exact-bundle-browser.mjs`.
-- Chromium valida 420 px e 1200 px, ordem antigo→recente, scroll inicial no final, metadados de episódio/filme, contador de episódios disponíveis, Reassistir, desfazer e geometria horizontal do `✓`.
-- Descobrir, detalhes/scroll e Sports/F1 permanecem preservados da r273.
-
-'''
+          entry='## 1.0.65 — 2026-09-14 — Web r274\n\n### Home / statement timeout\n- A Home deixa de usar o payload r5 que agregava o universo inteiro de `watch_history`, `episode_progress` e estados da biblioteca a cada entrada. A nova autoridade `cinetracker_profile_home_payload_v0997_r6` limita explicitamente o conjunto de trabalho a 20 registros de Histórico, 120 séries e 120 filmes.\n- Índices parciais cobrem os acessos recentes de episódios e filmes por `profile_id + watched_at`, e um índice adicional cobre os estados mais usados da biblioteca.\n- A consulta r6 foi medida contra os dados reais de produção em aproximadamente 410 ms, abaixo do timeout que atingia a r5.\n\n### Histórico / ordenação e ações\n- O banco seleciona os registros recentes usando o índice em ordem decrescente e, antes de montar o payload, devolve o lote em `watched_at ASC`: itens mais antigos ficam no topo e os mais recentes no final.\n- O trilho de Histórico é vertical e local, abre posicionado no fim e permite subir para consultar os itens mais antigos sem deslocar a página horizontalmente.\n- Cada item mantém `↶` para desfazer e ganha `↻` para Reassistir. O novo `cinetracker_rewatch_history_v1` registra outra visualização pelo writer canônico e atualiza `2x`, `3x`, `4x...` sem desmontar o estado da série.\n\n### Metadados restaurados\n- Séries em `Assistir a seguir` e no Histórico exibem `SXXEYY • Ep: Título • ⭐ Nota • Data` e a quantidade de episódios já lançados ainda disponível para ver.\n- Metadados de episódio ausentes no payload são hidratados pelo TMDB com cache por temporada e concorrência limitada, evitando uma nova tempestade de requisições.\n- Filmes em `Assistir a seguir / Watchlist` e Histórico exibem `Ano • Duração min • Gêneros • ⭐ Nota`; hidratação remota só ocorre quando o banco não possui algum campo.\n- O botão `✓` continua como filho direto do card, 40×40 px, no mesmo `flex-row nowrap`, sempre à extrema direita em mobile e desktop.\n\n### Build / validação\n- Web atualizada para `1.0.65 / r274-official-1.0.65`; Android permanece `1.0.20 / versionCode 10062`.\n- Build oficial: `apps/web/build-r274-official.mjs`; regressões: `test-r274.mjs`, `test-r274-browser.mjs` e `scripts/test-r274-exact-bundle-browser.mjs`.\n- Chromium valida 420 px e 1200 px, ordem antigo→recente, scroll inicial no final, metadados de episódio/filme, contador de episódios disponíveis, Reassistir, desfazer e geometria horizontal do `✓`.\n- Descobrir, detalhes/scroll e Sports/F1 permanecem preservados da r273.\n\n'
           p.write_text(header+entry+s[len(header):],encoding='utf-8')
           PY
       - name: Commit materialized changelog
