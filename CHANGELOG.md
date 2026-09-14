@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.66 — 2026-09-14 — Web r275
+
+### Home / Histórico retrátil
+- `Histórico recente` e `Filmes vistos` permanecem antes de `Assistir a seguir`, mas iniciam recolhidos por padrão.
+- `Ver Histórico ˅` / `Ocultar Histórico ^` alterna a lista com transição de altura e opacidade; o estado aberto é preservado durante Reassistir/Desfazer.
+
+### Reassistir / multiplicadores
+- O Histórico mantém `↻` para registrar uma nova visualização e `↶` para desfazer; visualizações repetidas recebem badge animado `2x`, `3x`, `4x...`.
+- Os handlers de Reassistir dos detalhes preservados da r199/r274 passam a receber o mesmo badge após a ação, sem reconstruir o renderer de detalhes.
+
+### Séries / episódios novos e deduplicação
+- A Home deduplica séries por TMDB efetivo antes de montar os buckets. IDs internos duplicados do mesmo título são consolidados e apenas um card canônico é exibido.
+- `cinetracker_home_series_watch_state_v1` une as chaves de episódios vistos de todos os `media_id` equivalentes e escolhe um `canonical_media_id`, evitando perda de progresso ao eliminar duplicatas.
+- Séries ativas são reconciliadas com TMDB em concorrência limitada. O primeiro episódio já lançado e não visto passa a ser a autoridade do próximo card; uma série falsamente `Em dia` volta para `Assistir a seguir`.
+- O caso real de Lioness é coberto pelo teste: T3 vista até E05 e E06/E07 já lançados deve resultar em S03E06 como próximo episódio.
+- O caso real de Reacher é coberto com dois registros internos do mesmo TMDB e progresso dividido; a UI exige exatamente um card.
+- Séries realmente `Em dia` exibem `Próximo: SXXEYY - Nome • DD/MM/AAAA` usando `next_episode_to_air` fresco do TMDB.
+
+### Build / validação
+- Web atualizada para `1.0.66 / r275-official-1.0.66`; Android permanece `1.0.20 / versionCode 10062`.
+- Chromium cobre 420 px e 1200 px: Histórico recolhido no topo, toggle suave, Reassistir `2x→3x`, badge nos detalhes, Lioness promovida ao primeiro não visto, Reacher sem duplicação e `✓` preservado à direita.
+- O payload principal continua no r6 limitado 20/120/120, evitando regressão do `statement timeout`; a reconciliação nova usa uma RPC compacta de estado por TMDB.
+- Descobrir e Sports/F1 permanecem congelados da r274.
+
 ## 1.0.65 — 2026-09-14 — Web r274
 
 ### Home / statement timeout
