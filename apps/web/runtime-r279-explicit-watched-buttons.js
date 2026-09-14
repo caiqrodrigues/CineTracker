@@ -4,12 +4,10 @@ window.__ctR279Watch='real-button+episode+movie+finite-reconcile';
 window.__ctR279Tabs='r278-fixed-home-tabs-preserved';
 window.__ctR279Frozen='r278-fixed-tabs+r277-sidebar+r276-history+episode-meta+dedupe+rewatch+discover+detail+sports+android-preserved';
 
-const ct279BaseRow=ct274Row;
-const ct279BaseEpisodeWatchAction=ct274EpisodeWatchAction;
-const ct279BaseMovieWatchAction=ct274MovieWatchAction;
-const ct279BasePaintHome=ct275PaintHome;
-const ct279BaseMarkWatched=ct266MarkWatched;
-const ct279BaseWatchAction=ct266WatchAction;
+const ct279BaseRow=typeof ct274Row==='function'?ct274Row:null;
+const ct279BaseEpisodeWatchAction=typeof ct274EpisodeWatchAction==='function'?ct274EpisodeWatchAction:null;
+const ct279BaseMovieWatchAction=typeof ct274MovieWatchAction==='function'?ct274MovieWatchAction:null;
+const ct279BasePaintHome=typeof ct275PaintHome==='function'?ct275PaintHome:null;
 let ct279WatchBusy=false,ct279ReconcileToken=0;
 
 function ct279Attr(v){return String(v??'').replace(/[&<>"']/g,c=>c==='&'?'&amp;':c==='<'?'&lt;':c==='>'?'&gt;':c==='"'?'&quot;':'&#39;')}
@@ -25,7 +23,7 @@ function ct279ExplicitWatchAction(kind,tmdb,s=0,e=0,title=''){
  const k=kind==='episode'?'episode':'movie',id=Number(tmdb||0),sn=Number(s||0),en=Number(e||0);
  if(!(id>0)||(k==='episode'&&(!(sn>0)||!(en>0))))return'';
  const aria=k==='episode'?'Marcar episódio como assistido':'Marcar filme como assistido';
- return '<button type="button" class="ct266-watch-action ct279-watch-button" aria-label="'+aria+'" title="'+aria+'" data-ct266-watch="'+k+'" data-tmdb="'+id+'"'+(sn?' data-season="'+sn+'"':'')+(en?' data-episode="'+en+'"':'')+(title?' data-title="'+ct279Attr(title)+'"':'')+'><span class="ct279-watch-check" aria-hidden="true">✓</span><span class="ct279-watch-label">Marcar</span></button>'
+ return '<button type="button" class="ct266-watch-action ct279-watch-button" aria-label="'+aria+'" title="'+aria+'" data-ct279-watch="'+k+'" data-tmdb="'+id+'"'+(sn?' data-season="'+sn+'"':'')+(en?' data-episode="'+en+'"':'')+(title?' data-title="'+ct279Attr(title)+'"':'')+'><span class="ct279-watch-check" aria-hidden="true">✓</span><span class="ct279-watch-label">Marcar</span></button>'
 }
 function ct279EpisodeWatchAction(x){
  const tmdb=ct279EffectiveTmdb(x),s=Number(x?.next_season_number??x?.season_number??0),e=Number(x?.next_episode_number??x?.episode_number??0);
@@ -35,12 +33,13 @@ function ct279MovieWatchAction(x){return ct279ExplicitWatchAction('movie',ct279E
 
 function ct279ContextFromAttrs(attrs){const m=String(attrs||'').match(/data-ct274-context="([^"]+)"/);return m?.[1]||''}
 function ct279Row(x,opts={}){
- const next={...opts};let action=String(next.action||''),context=ct279ContextFromAttrs(next.attrs);
- if(!action&&(context==='continue'||context==='dust'))action=ct279ExplicitWatchAction('episode',ct279EffectiveTmdb(x),Number(x?.season_number??x?.next_season_number??0),Number(x?.episode_number??x?.next_episode_number??0),x?.episode_title||x?.next_episode_title||x?.cached_episode_title||'');
- if(!action&&String(x?.media_type||'').toLowerCase()==='movie'&&!x?.watched_at&&!x?.last_watched_at)action=ct279MovieWatchAction(x);
+ if(!ct279BaseRow)return'';
+ const next={...opts},context=ct279ContextFromAttrs(next.attrs);let action=String(next.action||'');
+ if(context==='continue'||context==='dust')action=ct279ExplicitWatchAction('episode',ct279EffectiveTmdb(x),Number(x?.season_number??x?.next_season_number??0),Number(x?.episode_number??x?.next_episode_number??0),x?.episode_title||x?.next_episode_title||x?.cached_episode_title||'')||action;
+ if(String(x?.media_type||'').toLowerCase()==='movie'&&!x?.watched_at&&!x?.last_watched_at)action=ct279MovieWatchAction(x)||action;
  next.action=action;
  let html=ct279BaseRow(x,next);
- if(action.includes('data-ct266-watch'))html=html.replace('class="media-row ct274-media-card"','class="media-row ct274-media-card ct266-home-watch-host ct279-watch-host"');
+ if(action.includes('data-ct279-watch'))html=html.replace('class="media-row ct274-media-card"','class="media-row ct274-media-card ct279-watch-host"');
  return html
 }
 
@@ -64,9 +63,9 @@ function ct279EpisodeCoords(card,row){
 }
 function ct279Mount(card,kind,tmdb,s=0,e=0,title=''){
  if(!card||!(Number(tmdb)>0))return false;const html=ct279ExplicitWatchAction(kind,tmdb,s,e,title);if(!html)return false;
- let action=card.querySelector(':scope > [data-ct266-watch]');
- if(action){if(action.tagName==='BUTTON'&&action.classList.contains('ct279-watch-button')&&Number(action.dataset.tmdb||0)===Number(tmdb)&&Number(action.dataset.season||0)===Number(s||0)&&Number(action.dataset.episode||0)===Number(e||0)){card.classList.add('ct266-home-watch-host','ct279-watch-host');card.dataset.ct279WatchReady='1';return false}action.outerHTML=html}else card.insertAdjacentHTML('beforeend',html);
- card.classList.add('ct266-home-watch-host','ct279-watch-host');card.dataset.ct279WatchReady='1';return true
+ let action=card.querySelector(':scope > [data-ct279-watch],:scope > [data-ct266-watch]');
+ if(action){if(action.matches('[data-ct279-watch]')&&action.tagName==='BUTTON'&&action.classList.contains('ct279-watch-button')&&Number(action.dataset.tmdb||0)===Number(tmdb)&&Number(action.dataset.season||0)===Number(s||0)&&Number(action.dataset.episode||0)===Number(e||0)){card.classList.add('ct279-watch-host');card.dataset.ct279WatchReady='1';return false}action.outerHTML=html}else card.insertAdjacentHTML('beforeend',html);
+ card.classList.add('ct279-watch-host');card.dataset.ct279WatchReady='1';return true
 }
 function ct279ReconcileWatchButtons(root=document){
  const home=root?.matches?.('[data-home]')?root:root?.querySelector?.('[data-home]');if(!home)return 0;let changed=0;
@@ -83,27 +82,30 @@ function ct279ReconcileWatchButtons(root=document){
  }
  return changed
 }
-function ct279ScheduleReconcile(){const token=++ct279ReconcileToken;for(const ms of [0,60,180,520])setTimeout(()=>{if(token===ct279ReconcileToken&&typeof route==='function'&&route()==='home')ct279ReconcileWatchButtons(document)},ms)}
-function ct279PaintHome(...args){const out=ct279BasePaintHome.apply(this,args);ct279ReconcileWatchButtons(document);ct279ScheduleReconcile();return out}
+function ct279ScheduleReconcile(){const token=++ct279ReconcileToken;for(const ms of [0,80,220,520,1000,1800,3200,5000])setTimeout(()=>{if(token===ct279ReconcileToken&&document.querySelector('[data-home]'))ct279ReconcileWatchButtons(document)},ms)}
+function ct279PaintHome(...args){if(!ct279BasePaintHome)return;const out=ct279BasePaintHome.apply(this,args);ct279ReconcileWatchButtons(document);ct279ScheduleReconcile();return out}
+function ct279CurrentHomeTab(){const root=document.querySelector('[data-home]');const active=root?.querySelector('[data-home-tab].active');if(active?.dataset?.homeTab==='movies')return'movies';if(active?.dataset?.homeTab==='series')return'series';const movies=root?.querySelector('[data-home-view="movies"]');return movies&&!movies.hidden&&!movies.classList.contains('hidden')?'movies':'series'}
+function ct279ApplyHomeTab(tab){const root=document.querySelector('[data-home]');if(!root)return;const keep=tab==='movies'?'movies':'series';root.querySelectorAll('[data-home-tab]').forEach(b=>{const on=b.dataset.homeTab===keep;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});root.querySelectorAll('[data-home-view]').forEach(v=>{const on=v.dataset.homeView===keep;v.classList.toggle('hidden',!on);v.hidden=!on})}
 
 async function ct279MarkWatched(action){
- if(!action||ct279WatchBusy)return;const kind=action.dataset.ct266Watch,tmdbId=Number(action.dataset.tmdb||0),s=Number(action.dataset.season||0),e=Number(action.dataset.episode||0);
+ if(!action||ct279WatchBusy)return;const kind=action.dataset.ct279Watch,tmdbId=Number(action.dataset.tmdb||0),s=Number(action.dataset.season||0),e=Number(action.dataset.episode||0);
  if(!(tmdbId>0)||!['movie','episode'].includes(kind)||(kind==='episode'&&(!(s>0)||!(e>0))))return;
- const keep=typeof ct266CurrentHomeTab==='function'?ct266CurrentHomeTab():'series';ct279WatchBusy=true;action.disabled=true;action.setAttribute('aria-busy','true');action.setAttribute('aria-disabled','true');
+ const keep=ct279CurrentHomeTab();ct279WatchBusy=true;action.disabled=true;action.setAttribute('aria-busy','true');action.setAttribute('aria-disabled','true');
  try{
+  if(typeof ensureMedia!=='function'||typeof rpc!=='function')throw new Error('Writer de assistidos indisponível');
   const media=await ensureMedia(kind==='episode'?'tv':'movie',tmdbId);
   await rpc('cinetracker_mark_watch_v0994',{p_media_id:Number(media.id),p_item_type:kind,p_season_number:kind==='episode'?s:null,p_episode_number:kind==='episode'?e:null,p_title:action.dataset.title||media.title||null,p_runtime_minutes:Number(media.runtime_minutes||0)||null,p_released_episodes:null,p_watched_at:new Date().toISOString()});
-  if(typeof ct275ReloadHome==='function')await ct275ReloadHome('r279-watch');else if(typeof ct274FetchHome==='function'){homeCache=await ct274FetchHome();if(typeof paintHome==='function'&&typeof route==='function'&&route()==='home')paintHome()}
-  if(typeof ct266ApplyHomeTab==='function')ct266ApplyHomeTab(keep);try{profileCache=null;discoverCache?.clear?.()}catch{};try{window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'r279-watch',at:Date.now()}}))}catch{};try{toast(kind==='episode'?'Episódio marcado como assistido':'Filme marcado como assistido')}catch{}
+  if(typeof ct275ReloadHome==='function')await ct275ReloadHome('r279-watch');else if(typeof renderHome==='function')await renderHome();else if(typeof ct274FetchHome==='function'){try{homeCache=await ct274FetchHome()}catch{};if(typeof paintHome==='function')paintHome()}
+  ct279ApplyHomeTab(keep);ct279ScheduleReconcile();try{profileCache=null;discoverCache?.clear?.()}catch{};try{window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'r279-watch',at:Date.now()}}))}catch{};try{toast(kind==='episode'?'Episódio marcado como assistido':'Filme marcado como assistido')}catch{}
  }catch(err){action.disabled=false;action.removeAttribute('aria-busy');action.removeAttribute('aria-disabled');try{toast(err?.message||String(err))}catch{}}
  finally{ct279WatchBusy=false}
 }
 
-ct266WatchAction=ct279ExplicitWatchAction;
-ct274EpisodeWatchAction=ct279EpisodeWatchAction;
-ct274MovieWatchAction=ct279MovieWatchAction;
-ct274Row=ct279Row;
-ct266MarkWatched=ct279MarkWatched;
-ct275PaintHome=ct279PaintHome;
-paintHome=ct279PaintHome;
-window.__ctR279Test={explicitWatchAction:ct279ExplicitWatchAction,effectiveTmdb:ct279EffectiveTmdb,row:ct279Row,cardTmdb:ct279CardTmdb,episodeCoords:ct279EpisodeCoords,reconcile:ct279ReconcileWatchButtons,markWatched:ct279MarkWatched,baseRow:ct279BaseRow,baseEpisodeWatchAction:ct279BaseEpisodeWatchAction,baseMovieWatchAction:ct279BaseMovieWatchAction,basePaintHome:ct279BasePaintHome,baseMarkWatched:ct279BaseMarkWatched,baseWatchAction:ct279BaseWatchAction};
+if(ct279BaseEpisodeWatchAction)ct274EpisodeWatchAction=ct279EpisodeWatchAction;
+if(ct279BaseMovieWatchAction)ct274MovieWatchAction=ct279MovieWatchAction;
+if(ct279BaseRow)ct274Row=ct279Row;
+if(ct279BasePaintHome){ct275PaintHome=ct279PaintHome;if(typeof paintHome==='function')paintHome=ct279PaintHome}
+document.addEventListener('click',e=>{const action=e.target?.closest?.('[data-ct279-watch]');if(action){e.preventDefault();e.stopImmediatePropagation();void ct279MarkWatched(action);return}ct279ScheduleReconcile()},true);
+document.addEventListener('keydown',e=>{const action=e.target?.closest?.('[data-ct279-watch]');if(action&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.stopImmediatePropagation();void ct279MarkWatched(action)}},true);
+ct279ScheduleReconcile();
+window.__ctR279Test={explicitWatchAction:ct279ExplicitWatchAction,effectiveTmdb:ct279EffectiveTmdb,row:ct279Row,cardTmdb:ct279CardTmdb,episodeCoords:ct279EpisodeCoords,reconcile:ct279ReconcileWatchButtons,markWatched:ct279MarkWatched,currentHomeTab:ct279CurrentHomeTab,applyHomeTab:ct279ApplyHomeTab,baseRow:ct279BaseRow,baseEpisodeWatchAction:ct279BaseEpisodeWatchAction,baseMovieWatchAction:ct279BaseMovieWatchAction,basePaintHome:ct279BasePaintHome};
