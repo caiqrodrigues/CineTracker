@@ -1,4 +1,4 @@
-name: Verify Web 1.0.69 r278 Effective TMDB Sticky Home Tabs
+name: Verify Web 1.0.69 r278 Effective TMDB Fixed Home Tabs
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
       - name: Static regressions r278
         working-directory: apps/web
         run: node test-r278.mjs
-      - name: Chromium effective TMDB action and sticky Home tabs r278
+      - name: Chromium effective TMDB action and fixed Home tabs r278
         working-directory: apps/web
         run: node test-r278-browser.mjs
       - name: Exact final bundle boot r278
@@ -58,8 +58,8 @@ jobs:
           grep -Fq "window.__ctWebBuild='1.0.69';window.__ctOfficialVersion='1.0.69';" dist/app-v278.js
           grep -Fq "const REVISION='r278-official-1.0.69';" dist/app-v278.js
           grep -Fq "window.__ctR277='watch-action-host+fixed-sidebar'" dist/app-v278.js
-          grep -Fq "window.__ctR278='effective-tmdb-watch-action+sticky-home-tabs'" dist/app-v278.js
-          grep -Fq "window.__ctR278Tabs='series-movies-sticky-top'" dist/app-v278.js
+          grep -Fq "window.__ctR278='effective-tmdb-watch-action+fixed-home-tabs'" dist/app-v278.js
+          grep -Fq "window.__ctR278Tabs='series-movies-fixed-top'" dist/app-v278.js
           grep -Fq 'ct274EpisodeWatchAction=ct278EpisodeWatchAction;' dist/app-v278.js
           grep -Fq 'ct274EpisodeAttrs=ct278EpisodeAttrs;' dist/app-v278.js
           grep -Fq 'app-v278.js' dist/index.html
@@ -68,7 +68,8 @@ jobs:
           grep -Fq '"revision": "r278-official-1.0.69"' dist/release.json
           grep -Fq '"home_watch_action_tmdb_source": "effective"' dist/release.json
           grep -Fq '"home_watch_action_data_media_fallback": true' dist/release.json
-          grep -Fq '"home_tabs_sticky": true' dist/release.json
+          grep -Fq '"home_tabs_fixed": true' dist/release.json
+          grep -Fq '"home_tabs_mode": "fixed-top"' dist/release.json
           grep -Fq '"sidebar_fixed": true' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
           grep -Fq "const CACHE='ct-web-1.0.69-r278';" dist/service-worker.js
@@ -95,11 +96,11 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.69"' <<<"$BODY" && grep -Fq '"revision": "r278-official-1.0.69"' <<<"$BODY" && grep -Fq '"home_watch_action_tmdb_source": "effective"' <<<"$BODY" && grep -Fq '"home_watch_action_data_media_fallback": true' <<<"$BODY" && grep -Fq '"home_tabs_sticky": true' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.69"' <<<"$BODY" && grep -Fq '"revision": "r278-official-1.0.69"' <<<"$BODY" && grep -Fq '"home_watch_action_tmdb_source": "effective"' <<<"$BODY" && grep -Fq '"home_watch_action_data_media_fallback": true' <<<"$BODY" && grep -Fq '"home_tabs_fixed": true' <<<"$BODY" && grep -Fq '"home_tabs_mode": "fixed-top"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v278.js?ct=$(date +%s%N)" || true)"
               CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v278.css?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR278='effective-tmdb-watch-action+sticky-home-tabs'" <<<"$JS" && grep -Fq '[data-home] .home-tabs{position:sticky!important' <<<"$CSS" && grep -Fq 'app-v278.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR278='effective-tmdb-watch-action+fixed-home-tabs'" <<<"$JS" && grep -Fq '[data-home] .home-tabs{position:fixed!important' <<<"$CSS" && grep -Fq 'app-v278.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
