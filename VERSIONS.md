@@ -6,27 +6,29 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.73** | revision `r282-official-1.0.73`, package `1.0.73` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r282 |
+| Web | **1.0.74** | revision `r283-official-1.0.74`, package `1.0.74` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r283 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `cinetracker_home_series_watch_state_v1` + writers canônicos | produção |
 | Windows | — | — | não lançado |
 
-## Web 1.0.73 / r282
+## Web 1.0.74 / r283
 
-A r282 corrige o ground truth do vídeo posterior à r281: quando uma série continua pendente após marcar o episódio atual, a série assistida mais recentemente precisa ocupar a primeira posição do bucket final.
+A r283 corrige duas regressões visíveis no vídeo posterior à r282: `Reassistir`/`Desfazer visto` executavam a ação mas também abriam a mídia, e a reconciliação fresca encontrava novos episódios sem recalcular a quantidade total disponível.
 
-- cada seção de séries é ordenada por `last_watched_at DESC` no momento final de renderização;
-- a ordenação acontece depois da reconciliação fresca do TMDB, então uma série que mudou de `Em dia` para `Assistir a seguir` não mantém a posição antiga do array;
-- se a marcação deixa a série `Em dia` ou `Concluída`, o bucket final continua soberano e a mídia é ordenada somente dentro dele;
-- séries sem data de última visualização mantêm ordem estável entre si;
-- o clique isolado do `✓`, writer canônico, recarga única r6, check minimalista, abas fixas, sidebar, Histórico, metadados, deduplicação, Reassistir, Descobrir, detalhes e Sports/F1 permanecem preservados;
+- `↻ Reassistir` e `↶ Desfazer visto` passam a ter ownership em `window` capture phase, antes do clique genérico do card; nenhuma das duas ações navega para detalhes;
+- episódios disponíveis passam a ser recalculados a partir da fronteira fresca de lançamento do TMDB menos as chaves canônicas assistidas;
+- temporadas liberadas em lote, como Magnatas do Crime, deixam de ficar presas em `1 episódio disponível`;
+- Lioness usa a mesma conta fresca e mostra todos os episódios já liberados depois do progresso atual;
+- Raw e SmackDown mantêm o backlog histórico não assistido na contagem disponível, mas o “próximo episódio” usa somente a sequência posterior à maior fronteira realmente assistida, bloqueando o retorno a S01;
+- o Histórico reutiliza a mesma contagem fresca dos cards da Home;
+- ordem de recência r282, `✓` isolado r281, Histórico acima da viewport, deduplicação, Reassistir, Descobrir, detalhes e Sports/F1 permanecem preservados;
 - Android permanece `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v282.js` / `app-v282.css`; build: `apps/web/build-r282-official.mjs`; runtime: `apps/web/runtime-r282-series-recency-order.js`.
+Assets oficiais: `app-v283.js` / `app-v283.css`; build: `apps/web/build-r283-official.mjs`; runtime: `apps/web/runtime-r283-history-actions-availability.js`.
 
 ## Android 1.0.20
 
-A r282 não altera Android. A identidade preservada é:
+A r283 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
