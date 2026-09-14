@@ -16,7 +16,8 @@ has(js,"if(el.matches?.('[data-ct266-watch],.ct266-watch-action,[aria-label*=\"a
 has(js,"if(action.parentElement!==row)row.appendChild(action);",'watched action reparented into row');
 has(js,"row.classList.add('ct269-inline-watch-host')",'row inline host marker');
 has(css,'[data-home-view="series"] .media-row.ct269-inline-watch-host{position:relative!important;padding-right:52px!important','series row reserves right action space');
-has(css,'>.ct269-inline-watch-action{position:absolute!important;right:12px!important','watch action anchored right');
+has(css,'[data-home-view="series"] .media-row.ct269-inline-watch-host>.ct269-inline-watch-action,','inline action selector');
+has(css,'[data-home-view="series"] .media-row.ct269-inline-watch-host>.ct266-watch-action{position:absolute!important;right:12px!important','watch action anchored right');
 has(css,'top:50%!important','watch action vertically centered');
 has(css,'transform:translateY(-50%)!important','watch action center transform');
 for(const x of[
