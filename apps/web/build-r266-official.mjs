@@ -22,7 +22,7 @@ for(const x of[
 for(const x of['.ct266-home-watch-host','.ct266-watch-action','.ct266-detail-x','flex-wrap:nowrap!important','overflow-x:auto!important','html,body,#app'])must(css,x);
 if(js.includes('__ctR264')||js.includes('__ctR265')||js.includes('ct264-')||js.includes('ct265-'))throw new Error('r266 official contains rejected r264/r265 authority');
 if(js.includes('ct265AfterF1Paint')||js.includes('ct266AfterF1Paint'))throw new Error('r266 official contains cross-scope Sports callback');
-const fy=js.match(/function paintForYou263\(\)\{[\s\S]*?\n\}/)?.[0]||'';if(!fy||fy.includes('Da sua Watchlist'))throw new Error('r266 active Pra Você still renders Watchlist recommendations');
+const fy=js.match(/function paintForYou263\(\)\{[\s\S]*?\}\nasync function loadBrowse263/)?.[0]||'';if(!fy||fy.includes('Da sua Watchlist'))throw new Error('r266 active Pra Você still renders Watchlist recommendations');
 must(html,'app-v266.js');must(html,'app-v266.css');if(/app-v26[345]\.js/.test(html))throw new Error('r266 html references stale JS');
 must(release,'"version": "1.0.57"');must(release,'"revision": "r266-official-1.0.57"');must(release,'"r264": "rejected"');must(release,'"r265": "rejected"');
 must(sw,"const CACHE='ct-web-1.0.57-r266';");
