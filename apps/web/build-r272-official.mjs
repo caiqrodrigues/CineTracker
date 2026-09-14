@@ -1,7 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
-await import('./build-r272.mjs');
+await import('./build-r272-r5-final.mjs');
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
 const [html,js,css,release,sw]=await Promise.all(['index.html','app-v272.js','app-v272.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
 const must=(s,x)=>{if(!s.includes(x))throw new Error('r272 official missing '+x)};
@@ -15,14 +15,14 @@ for(const x of[
  'function ct272HistoryStack(rows,kind,ready)',
  'data-ct272-history="episodes"',
  'data-ct272-history="movies"',
- "homeCache=await rpc('cinetracker_profile_home_payload_v0997_r5'",
+ "rpc('cinetracker_profile_home_payload_v0997_r5'",
  'r272: r269 paint wrapper retired',
  'r272: r270 paint repair wrapper retired',
  "window.__ctR267Discover='atomic-tabs+recursive-personal-exclusions'",
  "window.__ctR267Detail='r169-rich-producer-local-x'",
  "window.__ctR267Sports='r266-stable-preserved'"
 ])must(js,x);
-if(js.includes("homeCache=await rpc('cinetracker_home_live_v0997_r3'"))throw new Error('r272 still refreshes Home from r3 after watched action');
+if(js.includes("rpc('cinetracker_home_live_v0997_r3'"))throw new Error('r272 still contains a legacy r3 Home RPC');
 if(js.includes("if(ct269PaintHomeBase)paintHome=function"))throw new Error('r272 keeps r269 paint wrapper active');
 if(js.includes("if(ct270PaintHomeBase)paintHome=function"))throw new Error('r272 keeps r270 paint wrapper active');
 if(js.includes("if(ct269RenderHomeBase)renderHome=async function"))throw new Error('r272 keeps r269 render wrapper active');
