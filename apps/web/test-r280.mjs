@@ -22,13 +22,14 @@ for(const x of[
 ])must(js,x);
 if(js.includes('<span class="ct279-watch-label">Marcar</span></button>')&&js.lastIndexOf('<span class="ct279-watch-label">Marcar</span></button>')>js.indexOf("window.__ctR280='minimal-watch-check+green-active'"))throw new Error('R280_STATIC label leaked into r280 runtime');
 for(const x of[
+ '[data-home] button.ct266-watch-action.ct279-watch-button.ct280-watch-button[data-ct279-watch]{position:static!important',
  'width:40px!important;min-width:40px!important;max-width:40px!important',
  'height:40px!important;min-height:40px!important;max-height:40px!important',
  'opacity:.64!important',
  'color:rgba(203,213,225,.58)!important',
  'background:rgba(16,185,129,.20)!important',
  'border-color:rgba(16,185,129,.40)!important',
- '[data-home] button.ct280-watch-button[data-ct279-watch] .ct279-watch-label{display:none!important}'
+ '[data-home] button.ct266-watch-action.ct279-watch-button.ct280-watch-button[data-ct279-watch] .ct279-watch-label{display:none!important}'
 ])must(css,x);
 if((runtime.match(/new MutationObserver/g)||[]).length)throw new Error('R280_STATIC persistent observer introduced');
 const meta=JSON.parse(release);if(meta.version!=='1.0.71'||meta.revision!=='r280-official-1.0.71'||meta.home_watch_action_control!=='minimal-check'||meta.home_watch_action_text!==false||meta.home_watch_action_idle!=='muted'||meta.home_watch_action_click_feedback!=='green'||meta.home_tabs_fixed!==true||meta.android!=='1.0.20/10062')throw new Error('R280_STATIC release flags');
