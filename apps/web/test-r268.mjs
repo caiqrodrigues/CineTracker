@@ -11,10 +11,13 @@ has(js,"window.__ctR268Home='canonical-history+same-row-right-watch'",'Home mark
 has(js,'CT268_HOME_FIX_START','Home fix runtime start');
 has(js,'CT268_HOME_FIX_END','Home fix runtime end');
 ok((js.match(/__ctHistoryAuthoritative=false/g)||[]).length>=2,'both restored fast caches are non-authoritative');
-has(js,'pack.data.__ctHistoryAuthoritative=false;pack.data.__ctFastHomeCache=true;return pack.data;','restored fast-cache authority flag');
-has(js,'homeCache=prepareHome259(d||{});if(homeCache)homeCache.__ctHistoryAuthoritative=true;','canonical r5 authority flag');
-has(js,"title==='historico recente'||title==='filmes vistos'",'cached history sections gated');
+ok((js.match(/window\.__ctHomeHistoryPending=true/g)||[]).length>=2,'both restored fast caches arm history gate');
+has(js,'pack.data.__ctHistoryAuthoritative=false;pack.data.__ctFastHomeCache=true;window.__ctHomeHistoryPending=true;return pack.data;','restored fast-cache authority flag');
+has(js,'homeCache=prepareHome259(d||{});if(homeCache)homeCache.__ctHistoryAuthoritative=true;window.__ctHomeHistoryPending=false;','canonical r5 authority flag');
+has(js,"if(title!=='historico recente'&&title!=='filmes vistos')continue;",'cached history sections identified');
+has(js,"new MutationObserver(ct268Schedule).observe(document.documentElement,{childList:true,subtree:true});",'DOM authority reconciler');
 has(js,"row.querySelector(':scope > .ct266-watch-action')",'watch action remains direct child of row');
+ok(!js.includes('const ct268PaintHomeBase=paintHome'),'r268 does not depend on private paintHome scope');
 has(css,'[data-home] .media-row.ct266-home-watch-host{position:relative!important;padding-right:48px!important}','row reserves right-side watch space');
 has(css,'[data-home] .media-row.ct266-home-watch-host>.ct266-watch-action{position:absolute!important;right:10px!important','watch glyph absolute inside row at right');
 has(css,'top:50%!important','watch glyph vertically centered');

@@ -21,7 +21,7 @@ const patchRestore=(name)=>{
   const re=new RegExp('function '+name+'\\(\\)\\{[\\s\\S]*?\\n\\}');
   const block=js.match(re)?.[0]||'';
   if(!block)throw new Error('r268 missing '+name);
-  const patched=replaceOnce(block,'return pack.data;','pack.data.__ctHistoryAuthoritative=false;pack.data.__ctFastHomeCache=true;return pack.data;',name+' return');
+  const patched=replaceOnce(block,'return pack.data;','pack.data.__ctHistoryAuthoritative=false;pack.data.__ctFastHomeCache=true;window.__ctHomeHistoryPending=true;return pack.data;',name+' return');
   js=js.replace(block,patched);
 };
 
@@ -29,7 +29,7 @@ js=replaceOnce(js,"window.__ctWebBuild='1.0.58';window.__ctOfficialVersion='1.0.
 js=replaceOnce(js,"const REVISION='r267-official-1.0.58';","const REVISION='r268-official-1.0.59';",'revision');
 patchRestore('restoreHome260');
 patchRestore('restoreHome261');
-js=replaceOnce(js,'homeCache=prepareHome259(d||{});','homeCache=prepareHome259(d||{});if(homeCache)homeCache.__ctHistoryAuthoritative=true;','canonical r5 home assignment');
+js=replaceOnce(js,'homeCache=prepareHome259(d||{});','homeCache=prepareHome259(d||{});if(homeCache)homeCache.__ctHistoryAuthoritative=true;window.__ctHomeHistoryPending=false;','canonical r5 home assignment');
 
 js+=String.raw`
 /* CT268_HOME_FIX_START */
@@ -37,38 +37,43 @@ window.__ctR268='home-history-authority+inline-right-watch';
 window.__ctR268Home='canonical-history+same-row-right-watch';
 window.__ctR268Frozen='discover+detail+sports+android-r267-preserved';
 function ct268Norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase()}
-function ct268GuardFastHistory(){
+function ct268ApplyHomeFix(){
   const root=document.querySelector('[data-home]');
-  if(!root||homeCache?.__ctHistoryAuthoritative!==false)return false;
+  if(!root)return false;
+  const pending=window.__ctHomeHistoryPending===true;
   let changed=false;
   for(const sec of root.querySelectorAll('.home-section')){
     const title=ct268Norm(sec.querySelector('.panel-head h2,.panel-head h3,h2,h3')?.textContent);
-    if(title==='historico recente'||title==='filmes vistos'){
+    if(title!=='historico recente'&&title!=='filmes vistos')continue;
+    if(pending){
+      if(!sec.hidden||sec.dataset.ct268HistoryPending!=='1')changed=true;
       sec.hidden=true;
       sec.classList.add('hidden');
       sec.dataset.ct268HistoryPending='1';
+    }else if(sec.dataset.ct268HistoryPending==='1'){
+      sec.hidden=false;
+      sec.classList.remove('hidden');
+      delete sec.dataset.ct268HistoryPending;
       changed=true;
     }
   }
-  return changed;
-}
-function ct268FixWatchRows(){
-  let changed=false;
-  for(const row of document.querySelectorAll('[data-home] .media-row.ct266-home-watch-host')){
+  for(const row of root.querySelectorAll('.media-row.ct266-home-watch-host')){
     const action=row.querySelector(':scope > .ct266-watch-action');
     if(!action)continue;
+    if(row.dataset.ct268WatchInline!=='1')changed=true;
     row.dataset.ct268WatchInline='1';
-    changed=true;
   }
   return changed;
 }
-const ct268PaintHomeBase=paintHome;
-paintHome=function(...args){
-  const out=ct268PaintHomeBase(...args);
-  ct268GuardFastHistory();
-  ct268FixWatchRows();
-  return out;
-};
+let ct268Queued=false;
+function ct268Schedule(){
+  if(ct268Queued)return;
+  ct268Queued=true;
+  queueMicrotask(()=>{ct268Queued=false;ct268ApplyHomeFix()});
+}
+new MutationObserver(ct268Schedule).observe(document.documentElement,{childList:true,subtree:true});
+window.addEventListener('hashchange',ct268Schedule,{passive:true});
+ct268Schedule();
 /* CT268_HOME_FIX_END */
 `;
 
