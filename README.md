@@ -6,24 +6,24 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.69** | `r278-official-1.0.69` | Home com ação de assistido por TMDB efetivo, abas Séries/Filmes fixas no topo, Histórico acima da viewport e sidebar desktop fixa |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r278 |
+| Web | **1.0.71** | `r280-official-1.0.71` | Home com `✓` minimalista para marcar episódios/filmes, abas Séries/Filmes fixas, Histórico acima da viewport e sidebar desktop fixa |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r280 |
 | Backend | produção compartilhada | Supabase | Home no payload r6 limitado; `cinetracker_home_series_watch_state_v1` consolida progresso por TMDB efetivo |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.69 / r278
+## Web 1.0.71 / r280
 
-A r278 corrige o caso real mostrado em vídeo no qual o card tinha identidade TMDB válida para navegação, mas `tmdb_id` direto vinha vazio/zero e impedia a criação do `✓` de **Marcar como assistido**.
+A r280 refina visualmente o controle de **Marcar como assistido** criado na r279, sem alterar o writer canônico nem a lógica de episódios/filmes.
 
-- **Marcar como assistido:** episódios de `Assistir a seguir` e `Juntando poeira` passam a usar a mesma identidade TMDB efetiva usada pelo card (`ct275Tmdb/mediaTmdb`). Se o atributo enriquecido ainda estiver vazio, o runtime usa `data-media="tv:<id>"` como fallback. Filmes em `Assistir a seguir / Watchlist` usam a mesma regra efetiva.
-- **Ação sempre visível:** o `✓` permanece dentro do próprio card, com host relativo e posicionamento explícito à direita; `display`, `visibility` e `opacity` são protegidos contra regras legadas.
-- **Séries / Filmes permanentemente no topo:** a barra de abas da Home usa `position: fixed` e fica presa ao topo da viewport, independente de o usuário rolar para cima ou para baixo. No desktop ela começa depois da sidebar; no mobile ocupa a largura da viewport.
-- **Sidebar desktop fixa:** logo, navegação, usuário e Sair continuam presos à viewport inteira; somente a coluna de conteúdo rola.
-- **Histórico:** permanece renderizado acima do ponto inicial da Home, sem botão de abrir/fechar; ao subir a página ele aparece naturalmente.
-- **Cards de séries:** `Continuar assistindo`, `Juntando poeira` e `Em dia` preservam metadados ricos de episódio da r276.
-- **Escopo preservado:** deduplicação por TMDB, Reassistir `2x/3x/4x...`, Descobrir, detalhes, Sports/F1 e Android permanecem preservados.
+- **Check minimalista:** o botão deixa de exibir o texto `Marcar` e passa a mostrar apenas `✓`, em um controle 40×40 px no mesmo padrão compacto das ações do Histórico.
+- **Estado apagado por padrão:** borda e fundo ficam discretos e o check usa opacidade reduzida enquanto o item ainda não foi marcado.
+- **Feedback verde ao clicar:** no instante do clique o próprio botão ganha o estado ativo verde, com fundo/borda/check destacados durante a gravação.
+- **Writer preservado:** episódios continuam sendo gravados com temporada/episódio corretos e filmes continuam usando o mesmo fluxo canônico `cinetracker_mark_watch_v0994` da r279.
+- **TMDB efetivo preservado:** cards cujo `tmdb_id` direto é vazio/zero continuam usando a identidade efetiva/fallback de `data-media`.
+- **Séries / Filmes permanentemente no topo:** a barra da Home continua `fixed` e não acompanha o scroll vertical.
+- **Escopo preservado:** Histórico acima da viewport inicial, cards ricos de episódios, deduplicação por TMDB, Reassistir `2x/3x/4x...`, sidebar fixa, Descobrir, detalhes, Sports/F1 e Android permanecem preservados.
 
 ## Funcionalidades consolidadas
 
@@ -52,7 +52,7 @@ A r278 corrige o caso real mostrado em vídeo no qual o card tinha identidade TM
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r278 herda r277/r276 e corrige a identidade usada pela ação de assistido sem reconstruir as demais superfícies.
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r280 herda integralmente a r279 e altera somente a apresentação/feedback do controle de assistido.
 
 ## Regra de validação
 
