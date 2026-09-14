@@ -6,28 +6,32 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.64** | `r273-official-1.0.64` | Histórico da Home restaurado diretamente do payload r5 e cards com layout horizontal estrito |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r273 |
-| Backend | produção compartilhada | Supabase | `cinetracker_profile_home_payload_v0997_r5` é a autoridade da Home |
+| Web | **1.0.65** | `r274-official-1.0.65` | Home limitada/indexada, Histórico cronológico, metadados completos e Reassistir |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r274 |
+| Backend | produção compartilhada | Supabase | `cinetracker_profile_home_payload_v0997_r6` é a autoridade limitada da Home |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.64 / r273
+## Web 1.0.65 / r274
 
-A r273 remove a dependência da cadeia de reparos pós-render para o Histórico da Home e torna a consulta canônica do Supabase parte explícita do renderer final.
+A r274 corrige o `statement timeout` da Home na fonte, reduzindo o conjunto de trabalho do Supabase e restaurando a riqueza visual e as ações do Histórico sem voltar a consultas globais pesadas.
 
-- **Histórico real da Home:** `renderHome` consulta diretamente `cinetracker_profile_home_payload_v0997_r5(p_today)`, valida `series`, `movie_watchlist`, `history_episodes` e `history_movies` antes do paint e só considera o Histórico autoritativo depois dessa resposta. Um payload incompleto não pode mais virar falso estado vazio.
-- **Histórico primeiro:** `Histórico recente` é a primeira seção de Séries e `Filmes vistos` é a primeira seção de Filmes. O estado de carregamento usa `Carregando histórico…`; somente uma resposta canônica válida e realmente vazia pode mostrar `Nenhum episódio no histórico` ou `Nenhum filme no histórico`.
-- **Desfazer visto:** cada item do Histórico recebe uma ação própria. Episódios usam `cinetracker_unmark_episode_v1`; filmes usam `cinetracker_unmark_media_seen_v1`. Após a alteração, a Home recarrega o payload r5 e repinta a partir do estado real do banco.
-- **Cards horizontais estritos:** cards da Home usam `display:flex`, `flex-direction:row`, `flex-wrap:nowrap`, conteúdo esquerdo com `min-width:0; flex:1` e ação fixa de 40×40 px à extrema direita. O botão `✓` usa posicionamento estático no flex e não pode cair para uma linha inferior em mobile ou desktop.
-- **Escopo preservado:** Descobrir, detalhes/scroll, Sports/F1 e Android continuam na autoridade anterior e não são reconstruídos pela r273.
-- **Validação:** Chromium cobre 420 px e 1200 px, Histórico real nas duas abas, ausência de falso vazio, desfazer episódio/filme, geometria do `✓`, `flex-wrap:nowrap`, mutações de DOM e responsividade. O bundle final também é inicializado integralmente antes da promoção.
+- **Home sem timeout:** o renderer final usa `cinetracker_profile_home_payload_v0997_r6`, com limites explícitos de 20 itens de Histórico, 120 séries e 120 filmes. O backend seleciona somente candidatos relevantes e usa índices parciais próprios para episódios/filmes recentes e para estados da biblioteca.
+- **Validação real de desempenho:** a consulta r6 foi executada contra o volume real da conta em produção e concluiu em aproximadamente 410 ms, muito abaixo do limite de statement timeout que derrubava a r5.
+- **Histórico do mais antigo para o mais recente:** o backend seleciona os 20 registros recentes por índice e os devolve em `watched_at ASC`; a UI preserva essa ordem, abre o trilho no final e deixa os registros mais recentes embaixo. Ao rolar para cima aparecem os mais antigos.
+- **Metadados de episódios:** cards de Histórico e `Assistir a seguir` exibem `SXXEYY • Ep: Título • ⭐ Nota • Data`. Metadados ausentes no payload são hidratados pelo proxy TMDB com cache por temporada e concorrência limitada. Séries também exibem quantos episódios já lançados ainda estão disponíveis para assistir.
+- **Metadados de filmes:** Histórico e `Assistir a seguir / Watchlist` voltam a mostrar `Ano • Duração min • Gêneros • ⭐ Nota`, com hidratação apenas quando algum dado estiver ausente.
+- **Assistido e Reassistir:** `✓` permanece fixo à extrema direita dos cards de `Assistir a seguir`. Cada item do Histórico possui `↻` para registrar uma nova visualização e `↶` para desfazer a marcação. `cinetracker_rewatch_history_v1` reaproveita o writer canônico e mantém o contador `2x`, `3x`, `4x...` consistente.
+- **Estado em tempo real:** Reassistir ou desfazer recarrega o payload r6, repinta contagens/ordem/metadados e mantém a aba de Séries/Filmes ativa.
+- **Layout estrito:** cards continuam `display:flex`, `flex-direction:row`, `flex-wrap:nowrap`; ações de 40×40 px nunca podem cair para baixo, em 420 px ou desktop.
+- **Escopo preservado:** Descobrir, detalhes/scroll, Sports/F1 e Android continuam na autoridade anterior e não são reconstruídos pela r274.
 
 ## Funcionalidades consolidadas
 
 - Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira, Histórico recente e estados de biblioteca;
-- Histórico de episódios e filmes com opção de desfazer marcação de visto;
+- Histórico de episódios e filmes ordenado cronologicamente, com Reassistir e opção de desfazer marcação de visto;
+- metadados ricos de episódios e filmes nos cards da Home;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
 - exclusões pessoais para não recomendar itens vistos, em andamento, em dia, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
@@ -48,7 +52,7 @@ A r273 remove a dependência da cadeia de reparos pós-render para o Histórico 
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r273 implementa no runtime final a mesma regra estrutural solicitada para um componente React/Tailwind: linha flex horizontal sem wrap, conteúdo esquerdo flexível e ação fixa à direita.
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r274 mantém a composição horizontal aprovada da r273, mas troca a autoridade da Home pelo payload r6 limitado e indexado e adiciona hidratação leve de metadados somente nos cards que precisam dela.
 
 ## Regra de validação
 
