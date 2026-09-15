@@ -6,28 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.84** | `r293-official-1.0.84` | Descobrir autorizado, Pra Você novo para o usuário e ações relacionadas estabilizadas |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r293 |
+| Web | **1.0.85** | `r294-official-1.0.85` | Descobrir mais compacto, Top 10 com 10 cards na referência desktop e ações acima do scroll |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r294 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.84 / r293
+## Web 1.0.85 / r294
 
-A r293 corrige regressões da r292 em **Descobrir > Pra Você** e nos **Títulos Relacionados/Semelhantes**, sem alterar a baseline Android.
+A r294 corrige a densidade visual do **Descobrir** observada em vídeo, sem alterar a baseline Android.
 
-- **Navegação autorizada:** remove a aba `Lançamentos` introduzida indevidamente e impede que reconciliadores antigos a recriem; sessões antigas nessa aba retornam para `Novidades`.
-- **Da sua Watchlist:** usa o estado canônico do usuário, exclui itens já vistos e só renderiza mídia válida com identidade e pôster.
-- **100% Novos:** significa novo para o usuário, não lançamento recente. Usa qualquer título já lançado até hoje com TMDB >= 7,5, ano > 1990, sem WWE/Raw/SmackDown, fora da Watchlist, fora de vistos/histórico e sem repetição semanal.
-- **Filme, Série e Anime:** pools independentes por categoria; slots sem candidato real ficam ocultos, sem card cinza `Indisponível`.
-- **Trocar seguro:** remove o item atual do pool da sessão, registra a exibição da semana e avança apenas para outro candidato válido.
-- **Relacionados/semelhantes:** pôster/título mantêm a abertura da mídia correta; Watchlist/Visto usam o tipo + TMDB do próprio card e ficam numa faixa de ações própria, sem sobreposição ou vazamento para outras áreas.
-- **Ações do Pra Você:** Playlist fica à esquerda e `↻ Trocar` à direita em footer estável.
-- **Cards compactos:** geometria, truncamento em uma linha, coração sobreposto e scroll horizontal somente nos trilhos permanecem preservados.
+- **Cards desktop:** passam de 176x264 para 158x237; mobile Web preserva 154x231.
+- **Top 10:** a referência desktop de 1920px passa a comportar os 10 cards completos na linha; em larguras menores o scroll continua local ao trilho.
+- **Texto compacto:** o bloco de título/metadados cai de 80px para 52px no desktop, mantendo uma linha e reticências.
+- **Ações antes do scroll:** Playlist/Trocar ficam contidos na altura efetiva do card/slot e aparecem antes da barra horizontal, sem vazamento para baixo.
+- **Controles menores:** rodapé de 28px, gap de 4px e margem superior de 2px.
+- **Trilhos mais densos:** gap horizontal de 8px e padding inferior de 6px, aproximando texto, ações e scrollbar.
+- **Relacionados/semelhantes:** a faixa de Watchlist/Visto recebe a mesma compactação sem alterar a autoridade de clique/ID consolidada até a r293.
 - **Android preservado:** `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v293.js` / `app-v293.css`; build: `apps/web/build-r293-official.mjs`; runtime: `apps/web/runtime-r293-discover-foryou-actions-authority.js`.
+Assets oficiais: `app-v294.js` / `app-v294.css`; build: `apps/web/build-r294-official.mjs`; runtime: `apps/web/runtime-r294-discover-density-scroll-order.js`.
 
 ## Funcionalidades consolidadas
 
@@ -54,7 +53,7 @@ Assets oficiais: `app-v293.js` / `app-v293.css`; build: `apps/web/build-r293-off
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r293 herda a geometria e ações consolidadas até r292 e assume autoridade final sobre a navegação autorizada do Descobrir, os pools do Pra Você e o posicionamento das ações relacionadas, mantendo a baseline Android.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r294 herda toda a autoridade funcional da r293 e altera somente a geometria/densidade do Descobrir Web, mantendo navegação, recomendações, ações e baseline Android.
 
 ## Regra de validação
 
