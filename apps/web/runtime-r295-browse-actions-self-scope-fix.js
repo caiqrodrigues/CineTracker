@@ -6,12 +6,19 @@ if(!R||typeof R.decorateBrowseActions!=='function'){
  window.__ctR295BrowseSelfScopeFix='authority-unavailable';
  return;
 }
+function discoverHost(){
+ try{
+  return window.__ctR288R263?.discoverHost263?.()||
+   (typeof discoverHost263==='function'?discoverHost263():null)||
+   document.querySelector('[data-ct263-discover-content]');
+ }catch{return document.querySelector('[data-ct263-discover-content]')}
+}
 function wrap(base){
  if(typeof base!=='function'||base.__ctR295BrowseSelfScopeWrapped)return base;
  const wrapped=function(rows,tab){
   const out=base.apply(this,arguments);
   if(['trending','popular','new','anticipated','top'].includes(String(tab||''))){
-   const host=window.__ctR288R263?.discoverHost263?.()||document.querySelector('[data-ct263-discover-content]');
+   const host=discoverHost();
    if(host?.matches?.('[data-ct295-browse]'))R.decorateBrowseActions(document);
   }
   return out;
