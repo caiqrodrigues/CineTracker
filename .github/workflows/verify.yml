@@ -1,71 +1,76 @@
-name: Verify Web 1.0.76 r285 Atomic Home Imported Actions
+name: Verify Web 1.0.77 r286 Related Title Actions
 
 on:
   push:
-    branches: [main, 'fix/r285-atomic-home-imported-actions']
+    branches: [main, 'fix/r286-related-actions']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_76_r285:
+  web_1_0_77_r286:
     runs-on: ubuntu-latest
     timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r285
+      - name: Version identity r286
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.76"' package.json
-          grep -Fq '"version": "1.0.76"' apps/web/package.json
-          grep -Fq 'build-r285-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r285-atomic-home-imported-actions.js
-          test -f apps/web/build-r285.mjs
-          test -f apps/web/build-r285-official.mjs
-          test -f apps/web/test-r285.mjs
-          test -f apps/web/test-r285-browser.mjs
-          test -f scripts/test-r285-exact-bundle-browser.mjs
-      - name: Syntax r285 release chain
+          grep -Fq '"version": "1.0.77"' package.json
+          grep -Fq '"version": "1.0.77"' apps/web/package.json
+          grep -Fq 'build-r286-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r286-related-actions.js
+          test -f apps/web/build-r286.mjs
+          test -f apps/web/build-r286-official.mjs
+          test -f apps/web/test-r286.mjs
+          test -f apps/web/test-r286-browser.mjs
+          test -f scripts/test-r286-exact-bundle-browser.mjs
+      - name: Syntax r286 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r285-atomic-home-imported-actions.js
-          node --check apps/web/build-r285.mjs
-          node --check apps/web/build-r285-official.mjs
-          node --check apps/web/test-r285.mjs
-          node --check apps/web/test-r285-browser.mjs
-          node --check scripts/test-r285-exact-bundle-browser.mjs
-      - name: Build official r285
+          node --check apps/web/runtime-r286-related-actions.js
+          node --check apps/web/build-r286.mjs
+          node --check apps/web/build-r286-official.mjs
+          node --check apps/web/test-r286.mjs
+          node --check apps/web/test-r286-browser.mjs
+          node --check scripts/test-r286-exact-bundle-browser.mjs
+      - name: Build official r286
         working-directory: apps/web
-        run: node build-r285-official.mjs
-      - name: Static regressions r285
+        run: node build-r286-official.mjs
+      - name: Static regressions r286
         working-directory: apps/web
-        run: node test-r285.mjs
-      - name: Chromium atomic Home and F1 controls r285
+        run: node test-r286.mjs
+      - name: Chromium inherited r285 regressions
         working-directory: apps/web
         run: node test-r285-browser.mjs
-      - name: Exact final bundle boot r285
-        run: node scripts/test-r285-exact-bundle-browser.mjs
-      - name: Final bundle identity r285
+      - name: Chromium related title interactions r286
+        working-directory: apps/web
+        run: node test-r286-browser.mjs
+      - name: Exact final bundle boot r286
+        run: node scripts/test-r286-exact-bundle-browser.mjs
+      - name: Final bundle identity r286
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v285.js
-          grep -Fq "window.__ctWebBuild='1.0.76';window.__ctOfficialVersion='1.0.76';" dist/app-v285.js
-          grep -Fq "const REVISION='r285-official-1.0.76';" dist/app-v285.js
-          grep -Fq "window.__ctR284='stable-home-episodes+imported-covers+episode-watch+f1-season-switch'" dist/app-v285.js
-          grep -Fq "window.__ctR285='atomic-home+real-photo-covers+reliable-imported-actions'" dist/app-v285.js
-          grep -Fq 'ct284Open=ct285Open;' dist/app-v285.js
-          grep -Fq 'app-v285.js' dist/index.html
-          grep -Fq 'app-v285.css' dist/index.html
-          grep -Fq '"home_render_commit": "atomic-after-full-reconciliation"' dist/release.json
-          grep -Fq '"home_intermediate_series_swap": false' dist/release.json
-          grep -Fq '"formula_1_season_controls": "r285-owned"' dist/release.json
-          grep -Fq '"formula_1_watch_action": "r285-owned"' dist/release.json
+          node --check dist/app-v286.js
+          grep -Fq "window.__ctWebBuild='1.0.77';window.__ctOfficialVersion='1.0.77';" dist/app-v286.js
+          grep -Fq "const REVISION='r286-official-1.0.77';" dist/app-v286.js
+          grep -Fq "window.__ctR285='atomic-home+real-photo-covers+reliable-imported-actions'" dist/app-v286.js
+          grep -Fq "window.__ctR286='related-open-watchlist-seen-window-capture'" dist/app-v286.js
+          grep -Fq "window.__ctR286Detail='related-open+watchlist+seen-r286-owned'" dist/app-v286.js
+          grep -Fq 'await addWatchlist(spec.type,spec.id)' dist/app-v286.js
+          grep -Fq 'await markSeen(spec.type,spec.id)' dist/app-v286.js
+          grep -Fq 'app-v286.js' dist/index.html
+          grep -Fq 'app-v286.css' dist/index.html
+          grep -Fq '"related_titles_open": "r286-window-capture"' dist/release.json
+          grep -Fq '"related_titles_watchlist": "r286-window-capture"' dist/release.json
+          grep -Fq '"related_titles_seen": "r286-window-capture"' dist/release.json
+          grep -Fq '"related_titles_pointer_click_dedup": true' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.76-r285';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.77-r286';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -80,19 +85,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_76_r285]
+    needs: [web_1_0_77_r286]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.76 r285
+      - name: Official production serves and boots 1.0.77 r286
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.76"' <<<"$BODY" && grep -Fq '"revision": "r285-official-1.0.76"' <<<"$BODY" && grep -Fq '"home_intermediate_series_swap": false' <<<"$BODY" && grep -Fq '"formula_1_season_controls": "r285-owned"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v285.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.77"' <<<"$BODY" && grep -Fq '"revision": "r286-official-1.0.77"' <<<"$BODY" && grep -Fq '"related_titles_open": "r286-window-capture"' <<<"$BODY" && grep -Fq '"related_titles_watchlist": "r286-window-capture"' <<<"$BODY" && grep -Fq '"related_titles_seen": "r286-window-capture"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v286.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR285='atomic-home+real-photo-covers+reliable-imported-actions'" <<<"$JS" && grep -Fq 'ct284Open=ct285Open;' <<<"$JS" && grep -Fq 'app-v285.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR285='atomic-home+real-photo-covers+reliable-imported-actions'" <<<"$JS" && grep -Fq "window.__ctR286='related-open-watchlist-seen-window-capture'" <<<"$JS" && grep -Fq 'await addWatchlist(spec.type,spec.id)' <<<"$JS" && grep -Fq 'await markSeen(spec.type,spec.id)' <<<"$JS" && grep -Fq 'app-v286.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
