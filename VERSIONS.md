@@ -1,34 +1,36 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-09-14
+**Atualizado em:** 2026-09-15
 
 ## Matriz oficial
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.74** | revision `r283-official-1.0.74`, package `1.0.74` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r283 |
+| Web | **1.0.79** | revision `r288-official-1.0.79`, package `1.0.79` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r288 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `cinetracker_home_series_watch_state_v1` + writers canônicos | produção |
 | Windows | — | — | não lançado |
 
-## Web 1.0.74 / r283
+## Web 1.0.79 / r288
 
-A r283 corrige duas regressões visíveis no vídeo posterior à r282: `Reassistir`/`Desfazer visto` executavam a ação mas também abriam a mídia, e a reconciliação fresca encontrava novos episódios sem recalcular a quantidade total disponível.
+A r288 altera somente a Web e usa como ground truth o comportamento funcional do Descobrir Android 1.0.20 mostrado no vídeo de referência.
 
-- `↻ Reassistir` e `↶ Desfazer visto` passam a ter ownership em `window` capture phase, antes do clique genérico do card; nenhuma das duas ações navega para detalhes;
-- episódios disponíveis passam a ser recalculados a partir da fronteira fresca de lançamento do TMDB menos as chaves canônicas assistidas;
-- temporadas liberadas em lote, como Magnatas do Crime, deixam de ficar presas em `1 episódio disponível`;
-- Lioness usa a mesma conta fresca e mostra todos os episódios já liberados depois do progresso atual;
-- Raw e SmackDown mantêm o backlog histórico não assistido na contagem disponível, mas o “próximo episódio” usa somente a sequência posterior à maior fronteira realmente assistida, bloqueando o retorno a S01;
-- o Histórico reutiliza a mesma contagem fresca dos cards da Home;
-- ordem de recência r282, `✓` isolado r281, Histórico acima da viewport, deduplicação, Reassistir, Descobrir, detalhes e Sports/F1 permanecem preservados;
-- Android permanece `1.0.20 / versionCode 10062`.
+- o Descobrir mantém as nove abas aprovadas em um trilho horizontal estável: `Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário`;
+- trocar de aba atualiza somente a área de conteúdo, sem reconstruir o shell inteiro da tela;
+- `Pra você` volta a exibir `Da sua Watchlist` e `100% novos` em três slots independentes — Filme, Série e Anime — cada um com seu próprio `Trocar`;
+- `Top 10` volta a ser calculado por streaming disponível no Brasil e possui trilhos separados de `Top 10 Séries` e `Top 10 Filmes`;
+- as abas públicas usam cards 2:3 em trilhos horizontais locais, ação de Watchlist e `Ver mais` sem liberar scroll horizontal no documento;
+- o filtro `Todos / Filmes / Séries` fica recolhido atrás do controle compacto e não aparece em `Pra você`/`Top 10`;
+- `Calendário` agrupa os títulos por data de lançamento;
+- a implementação Web reutiliza as autoridades canônicas já existentes para biblioteca, TMDB, streaming e abertura de detalhes; hacks de toque específicos do WebView Android não foram copiados;
+- Home r287, ações de relacionados r286, detalhes, Sports/F1 e demais áreas permanecem preservados;
+- Android permanece inalterado em `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v283.js` / `app-v283.css`; build: `apps/web/build-r283-official.mjs`; runtime: `apps/web/runtime-r283-history-actions-availability.js`.
+Assets oficiais: `app-v288.js` / `app-v288.css`; build: `apps/web/build-r288-official.mjs`; runtime: `apps/web/runtime-r288-discover-android-parity.js`.
 
 ## Android 1.0.20
 
-A r283 não altera Android. A identidade preservada é:
+A r288 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
