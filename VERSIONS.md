@@ -15,13 +15,12 @@
 
 A r289 altera somente o layout dos cards do Descobrir na Web. Toda a lógica funcional da r288 permanece preservada.
 
-- cards do Descobrir voltam ao tamanho histórico compacto do CineTracker, com largura responsiva limitada a **128–152 px**;
-- pôsteres permanecem em **2:3**;
+- os cards do Descobrir voltam ao padrão aprovado: **154×231 px no mobile** e **176×264 px no desktop**, sempre em **2:3**;
 - `Da sua Watchlist` e `100% novos` deixam de esticar Filme/Série/Anime para ocupar um terço inteiro da página no desktop;
 - os três slots usam largura fixa de card e, quando necessário, rolagem horizontal somente dentro do componente;
-- cards de `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` usam o mesmo padrão compacto;
-- `Top 10` também deixa de ampliar os cards no desktop;
-- `Ver mais` pode quebrar em várias linhas, mas mantém cada card no mesmo tamanho padrão em vez de esticá-lo para preencher a largura disponível;
+- cards de `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` usam o mesmo padrão 154/176;
+- `Top 10` segue o mesmo padrão de tamanho;
+- `Ver mais` pode quebrar em várias linhas, mas mantém cada card no tamanho aprovado em vez de esticá-lo para preencher a largura disponível;
 - as nove abas, troca de conteúdo sem reconstruir a tela, Top 10 por streaming, filtros, Calendário e as ações da r288 permanecem intactos;
 - Android permanece inalterado em `1.0.20 / versionCode 10062`.
 
