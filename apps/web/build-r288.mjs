@@ -16,6 +16,7 @@ for(const x of[
  "window.__ctR288ForYou='movie-series-anime-independent-swap';",
  "window.__ctR288Calendar='grouped-by-release-date';",
  'paintForYou263=function()',
+ 'paintBrowse263=function(rows,tab)',
  'loadDiscover263=function(',
  'renderDiscover=async function(seq)',
  'ct171TopRows(Number(provider))',
@@ -25,17 +26,34 @@ for(const x of[
 must(js,"window.__ctR287='home-interaction-liveness+available-episode-priority'");
 js=once(js,"window.__ctWebBuild='1.0.78';window.__ctOfficialVersion='1.0.78';","window.__ctWebBuild='1.0.79';window.__ctOfficialVersion='1.0.79';",'version');
 js=once(js,"const REVISION='r287-official-1.0.78';","const REVISION='r288-official-1.0.79';",'revision');
-const bridge=`\n/* r288 final-bundle binding bridge: some historical build stages no longer expose these r263 owners as lexical globals. */\nif(typeof globalThis.paintForYou263!=='function')globalThis.paintForYou263=function(){};\nif(typeof globalThis.paintBrowse263!=='function')globalThis.paintBrowse263=function(){};\nif(typeof globalThis.loadDiscover263!=='function')globalThis.loadDiscover263=function(){};\nif(typeof globalThis.renderDiscover!=='function')globalThis.renderDiscover=async function(){};\n`;
-js=once(js,'\nboot();',bridge+patch+'\nboot();','runtime insertion');
+
+/* r263 intentionally keeps its Discover state/functions inside its IIFE. Export the exact
+   live owners, then make the three local paint/load functions delegate to r288. This is what
+   makes existing r263 tab/type click handlers drive the new Web parity renderer instead of a
+   disconnected set of globals. */
+const r263Test="window.__ctR263Test={shift263,strictEligible263,browseEligible263,pickProviders263,f1Rows263,sportEventKey263,restoreHomeList263};";
+const r263Bridge=r263Test+"\nwindow.__ctR288R263={q263,qa263,n263,esc263,type263,id263,title263,poster263,year263,score263,image263,discover263,discoverHost263,block263,armDiscoverRails263,syncDiscover263,forYou263,loadBrowse263,DTABS263};";
+js=once(js,r263Test,r263Bridge,'r263 live bridge');
+js=once(js,'function paintForYou263(){','function paintForYou263(){if(typeof window.__ctR288PaintForYou===\'function\')return window.__ctR288PaintForYou();','r263 foryou delegate');
+js=once(js,'function paintBrowse263(rows,tab){','function paintBrowse263(rows,tab){if(typeof window.__ctR288PaintBrowse===\'function\')return window.__ctR288PaintBrowse(rows,tab);','r263 browse delegate');
+js=once(js,'function loadDiscover263(tab=discover263.tab,force=false){','function loadDiscover263(tab=discover263.tab,force=false){if(typeof window.__ctR288LoadDiscover===\'function\')return window.__ctR288LoadDiscover(tab,force);','r263 load delegate');
+
+const r288Prelude=`\n/* r288 binds to the real r263 IIFE owners exported above; global fallback exists only for the isolated runtime harness. */\nconst ct288R263=window.__ctR288R263||globalThis;\nconst {q263,qa263,n263,esc263,type263,id263,title263,poster263,year263,score263,image263,discover263,discoverHost263,block263,armDiscoverRails263,syncDiscover263,forYou263,loadBrowse263,DTABS263}=ct288R263;\nif(!discover263||typeof discoverHost263!=='function'||typeof forYou263!=='function'||typeof loadBrowse263!=='function')throw new Error('r288 missing live r263 Discover bridge');\n`;
+patch=patch.replace('paintForYou263=function(){','window.__ctR288PaintForYou=function(){')
+ .replace('paintBrowse263=function(rows,tab){','window.__ctR288PaintBrowse=function(rows,tab){')
+ .replace('loadDiscover263=function(tab=discover263.tab,force=false){','window.__ctR288LoadDiscover=function(tab=discover263.tab,force=false){')
+ .replace('ct288State[bucket][kind]++;paintForYou263()','ct288State[bucket][kind]++;window.__ctR288PaintForYou()');
+patch=r288Prelude+patch;
+js=once(js,'\nboot();','\n'+patch+'\nboot();','runtime insertion');
 css+=String.raw`
 /* CineTracker Web 1.0.79 r288 — Descobrir parity is injected by the final runtime; document X remains locked. */
 html,body,#app{max-width:100%;overflow-x:hidden}
 `;
 html=html.replaceAll('app-v287.js','app-v288.js').replaceAll('app-v287.css','app-v288.css').replaceAll('CineTracker • v1.0.78','CineTracker • v1.0.79');
 sw=sw.replaceAll('ct-web-1.0.78-r287','ct-web-1.0.79-r288').replaceAll('app-v287.js','app-v288.js').replaceAll('app-v287.css','app-v288.css');
-const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.79',revision:'r288-official-1.0.79',base:'r287-production',scope:'discover-android-parity-web-only',discover_owner:'r288-stable-shell',discover_tabs:9,discover_tab_switch:'content-only-no-shell-rebuild',discover_foryou:'movie-series-anime-independent-swap',discover_watchlist_section:true,discover_fresh_section:true,discover_top10:'provider-specific-series-and-movies',discover_filter:'compact-all-movie-tv',discover_calendar:'grouped-by-release-date',discover_horizontal_scroll:'local-only',android:'1.0.20/10062'};
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.79',revision:'r288-official-1.0.79',base:'r287-production',scope:'discover-android-parity-web-only',discover_owner:'r288-live-r263-bridge',discover_tabs:9,discover_tab_switch:'content-only-no-shell-rebuild',discover_foryou:'movie-series-anime-independent-swap',discover_watchlist_section:true,discover_fresh_section:true,discover_top10:'provider-specific-series-and-movies',discover_filter:'compact-all-movie-tv',discover_calendar:'grouped-by-release-date',discover_horizontal_scroll:'local-only',discover_live_owner_bridge:true,android:'1.0.20/10062'};
 await Promise.all([
  writeFile(resolve(dist,'app-v288.js'),js,'utf8'),writeFile(resolve(dist,'app-v288.css'),css,'utf8'),writeFile(resolve(dist,'index.html'),html,'utf8'),writeFile(resolve(dist,'service-worker.js'),sw,'utf8'),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v287.js'),{force:true}),rm(resolve(dist,'app-v287.css'),{force:true})]);
-console.log('WEB_R288_READY discover=android-parity web-only android=preserved');
+console.log('WEB_R288_READY discover=android-parity live-r263-bridge web-only android=preserved');
