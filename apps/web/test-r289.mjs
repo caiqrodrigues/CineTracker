@@ -5,10 +5,11 @@ const [js,runtime,release,html,sw]=await Promise.all([
 const must=(s,x)=>{if(!s.includes(x))throw new Error('r289 missing '+x)};
 for(const x of[
  "window.__ctR289='discover-standard-card-size'",
- "window.__ctR289Cards='legacy-standard-128-152px-2x3'",
+ "window.__ctR289Cards='standard-154-mobile-176-desktop-2x3'",
  "window.__ctR289Scope='discover-layout-only'",
  "window.__ctR289Android='preserved-1.0.20-10062'",
- '--ct289-card-w:clamp(128px,14vw,152px)',
+ '[data-ct288-discover]{--ct289-card-w:154px}',
+ '@media(min-width:1100px){[data-ct288-discover]{--ct289-card-w:176px}}',
  'grid-auto-columns:var(--ct289-card-w)!important',
  'grid-template-columns:repeat(auto-fill,var(--ct289-card-w))!important',
  'aspect-ratio:2/3!important',
@@ -26,5 +27,5 @@ if(runtime.includes('touchstart')||runtime.includes('touchmove')||runtime.includ
 if(runtime.includes('apps/android')||runtime.includes('versionCode 10063'))throw new Error('r289 Android mutation marker forbidden');
 must(html,'app-v289.js');must(html,'app-v289.css');must(sw,"const CACHE='ct-web-1.0.80-r289';");
 const m=JSON.parse(release);
-if(m.version!=='1.0.80'||m.revision!=='r289-official-1.0.80'||m.discover_owner!=='r288-live-r263-bridge'||m.discover_tabs!==9||m.discover_card_size!=='legacy-standard-128-152px'||m.discover_card_ratio!=='2:3'||m.discover_card_layout!=='fixed-local-rail-no-stretch'||m.discover_card_slots!=='fixed-width-local-scroll'||m.android!=='1.0.20/10062')throw new Error('bad r289 release identity');
-console.log('R289_STATIC_OK discover cards=128-152px ratio=2:3 fixed-no-stretch r288-behavior=preserved android=preserved');
+if(m.version!=='1.0.80'||m.revision!=='r289-official-1.0.80'||m.discover_owner!=='r288-live-r263-bridge'||m.discover_tabs!==9||m.discover_card_size!=='standard-154-mobile-176-desktop'||m.discover_card_mobile!=='154x231'||m.discover_card_desktop!=='176x264'||m.discover_card_ratio!=='2:3'||m.discover_card_layout!=='fixed-local-rail-no-stretch'||m.discover_card_slots!=='fixed-width-local-scroll'||m.android!=='1.0.20/10062')throw new Error('bad r289 release identity');
+console.log('R289_STATIC_OK discover mobile=154x231 desktop=176x264 ratio=2:3 fixed-no-stretch r288-behavior=preserved android=preserved');
