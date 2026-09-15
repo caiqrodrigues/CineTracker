@@ -23,7 +23,7 @@ A r296 altera somente a Web e o backend compartilhado necessário para persistê
 - Home, Perfil, Configurações e sidebar recebem polimento visual restrito à Web;
 - a r295 permanece como base para exclusões canônicas, ações Playlist/Visto e filtros combináveis do Calendário.
 
-Assets oficiais: `app-v296.js` / `app-v296.css`; build: `apps/web/build-r296-official.mjs`; runtime: `apps/web/runtime-r296-recommendations-sports-stadium.js`; migration: `supabase/migrations/20260915143000_r296_recommendations_sports_stadium.sql`.
+Assets oficiais: `app-v296.js` / `app-v296.css`; build: `apps/web/build-r296-official.mjs`; runtime: `apps/web/runtime-r296-recommendations-sports-stadium.js`; migration: `supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql`.
 
 ## Web 1.0.80 / r289
 
