@@ -28,7 +28,7 @@ jobs:
           test -f apps/web/build-r296-official.mjs
           test -f apps/web/test-r296.mjs
           test -f apps/web/test-r296-browser.mjs
-          test -f supabase/migrations/20260915143000_r296_recommendations_sports_stadium.sql
+          test -f supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
       - name: Syntax r296 release chain
         run: |
           set -euo pipefail
@@ -61,7 +61,8 @@ jobs:
       - name: Migration contract r296
         run: |
           set -euo pipefail
-          F=supabase/migrations/20260915143000_r296_recommendations_sports_stadium.sql
+          F=supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
+          grep -Fq 'alter table public.user_sport_watch_history' "$F"
           grep -Fq 'attended_in_person boolean not null default false' "$F"
           grep -Fq 'stadium_name text' "$F"
           grep -Fq 'cinetracker_shown_recommendations_recent_v296' "$F"
@@ -69,6 +70,7 @@ jobs:
           grep -Fq 'cinetracker_sports_watch_set_v296' "$F"
           grep -Fq 'cinetracker_sports_stadium_summary_v296' "$F"
           grep -Fq "interval '7 days'" "$F"
+          grep -Fq 'security invoker' "$F"
       - name: Final bundle identity r296
         working-directory: apps/web
         run: |
