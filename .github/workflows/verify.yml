@@ -1,84 +1,80 @@
-name: Verify Web 1.0.83 r292 Related ForYou Compact
+name: Verify Web 1.0.84 r293 Discover ForYou Actions
 
 on:
   push:
-    branches: [main, 'fix/web-r292-related-foryou-compact']
+    branches: [main, 'fix/web-r293-discover-foryou-actions']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_83_r292:
+  web_1_0_84_r293:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r292
+      - name: Version identity r293
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.83"' package.json
-          grep -Fq '"version": "1.0.83"' apps/web/package.json
-          grep -Fq 'build-r292-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r292-related-foryou-compact.js
-          test -f apps/web/build-r292.mjs
-          test -f apps/web/build-r292-official.mjs
-          test -f apps/web/test-r292.mjs
-          test -f apps/web/test-r292-browser.mjs
-          test -f scripts/test-r292-exact-bundle-browser.mjs
-      - name: Syntax r292 release chain
+          grep -Fq '"version": "1.0.84"' package.json
+          grep -Fq '"version": "1.0.84"' apps/web/package.json
+          grep -Fq 'build-r293-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r293-discover-foryou-actions-authority.js
+          test -f apps/web/build-r293.mjs
+          test -f apps/web/build-r293-official.mjs
+          test -f apps/web/test-r293.mjs
+          test -f apps/web/test-r293-browser.mjs
+      - name: Syntax r293 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r292-related-foryou-compact.js
-          node --check apps/web/build-r292.mjs
-          node --check apps/web/build-r292-official.mjs
-          node --check apps/web/test-r292.mjs
-          node --check apps/web/test-r292-browser.mjs
-          node --check scripts/test-r292-exact-bundle-browser.mjs
-      - name: Build official r292
+          node --check apps/web/runtime-r293-discover-foryou-actions-authority.js
+          node --check apps/web/build-r293.mjs
+          node --check apps/web/build-r293-official.mjs
+          node --check apps/web/test-r293.mjs
+          node --check apps/web/test-r293-browser.mjs
+      - name: Build official r293
         working-directory: apps/web
-        run: node build-r292-official.mjs
-      - name: Static regressions r292
+        run: node build-r293-official.mjs
+      - name: Static regressions r293
         working-directory: apps/web
-        run: node test-r292.mjs
+        run: node test-r293.mjs
       - name: Chromium inherited r286 related interactions
         working-directory: apps/web
         run: node test-r286-browser.mjs
-      - name: Chromium inherited r288 Discover Android parity
-        working-directory: apps/web
-        run: node test-r288-browser.mjs
       - name: Chromium inherited r290 universal card geometry
         working-directory: apps/web
         run: node test-r290-browser.mjs
       - name: Chromium inherited r291 actions favorites scroll
         working-directory: apps/web
         run: node test-r291-browser.mjs
-      - name: Chromium r292 related Pra Você compact
+      - name: Chromium r293 authorized navigation Pra Você actions
         working-directory: apps/web
-        run: node test-r292-browser.mjs
-      - name: Exact final bundle boot r292
-        run: node scripts/test-r292-exact-bundle-browser.mjs
-      - name: Final bundle identity r292
+        run: node test-r293-browser.mjs
+      - name: Final bundle identity r293
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v292.js
-          grep -Fq "window.__ctWebBuild='1.0.83';window.__ctOfficialVersion='1.0.83';" dist/app-v292.js
-          grep -Fq "const REVISION='r292-official-1.0.83';" dist/app-v292.js
-          grep -Fq "window.__ctR286='related-open-watchlist-seen-window-capture'" dist/app-v292.js
-          grep -Fq "window.__ctR291='discover-actions-favorites-horizontal-scroll'" dist/app-v292.js
-          grep -Fq "window.__ctR292='related-actions-foryou-authority-compact-cards'" dist/app-v292.js
-          grep -Fq 'cinetracker_recommendation_state_v108' dist/app-v292.js
-          grep -Fq "with_original_language:'ja'" dist/app-v292.js
-          grep -Fq -- '-webkit-line-clamp:1!important' dist/app-v292.js
-          grep -Fq 'app-v292.js' dist/index.html
-          grep -Fq 'app-v292.css' dist/index.html
-          grep -Fq '"discover_foryou_watchlist": "canonical-personal-state-unwatched-only"' dist/release.json
-          grep -Fq '"discover_swap": "valid-pool-index-no-empty-regression"' dist/release.json
+          node --check dist/app-v293.js
+          grep -Fq "window.__ctWebBuild='1.0.84';window.__ctOfficialVersion='1.0.84';" dist/app-v293.js
+          grep -Fq "const REVISION='r293-official-1.0.84';" dist/app-v293.js
+          grep -Fq "window.__ctR286='related-open-watchlist-seen-window-capture'" dist/app-v293.js
+          grep -Fq "window.__ctR291='discover-actions-favorites-horizontal-scroll'" dist/app-v293.js
+          grep -Fq "window.__ctR292='related-actions-foryou-authority-compact-cards'" dist/app-v293.js
+          grep -Fq "window.__ctR293='discover-navigation-foryou-actions-authority'" dist/app-v293.js
+          grep -Fq "window.__ctR293Navigation='remove-unauthorized-releases-tab-no-recreation'" dist/app-v293.js
+          grep -Fq "window.__ctR293ForYou='new-to-user-not-release-recency+weekly-no-repeat'" dist/app-v293.js
+          grep -Fq "window.__ctR293Actions='scoped-related-action-row+stable-slot-footer'" dist/app-v293.js
+          grep -Fq 'app-v293.js' dist/index.html
+          grep -Fq 'app-v293.css' dist/index.html
+          grep -Fq '"discover_tabs": "remove-unauthorized-releases-no-recreation"' dist/release.json
+          grep -Fq '"discover_foryou_fresh": "new-to-user-not-release-recency-tmdb-7.5-year-gt-1990-no-wwe-no-weekly-repeat"' dist/release.json
+          grep -Fq '"discover_empty_slots": "hidden-instead-of-gray-placeholder"' dist/release.json
+          grep -Fq '"related_actions": "scoped-bottom-action-row-correct-media-authority-preserved"' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.83-r292';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.84-r293';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -93,19 +89,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_83_r292]
+    needs: [web_1_0_84_r293]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.83 r292
+      - name: Official production serves and boots 1.0.84 r293
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.83"' <<<"$BODY" && grep -Fq '"revision": "r292-official-1.0.83"' <<<"$BODY" && grep -Fq '"discover_foryou_watchlist": "canonical-personal-state-unwatched-only"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v292.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.84"' <<<"$BODY" && grep -Fq '"revision": "r293-official-1.0.84"' <<<"$BODY" && grep -Fq '"discover_tabs": "remove-unauthorized-releases-no-recreation"' <<<"$BODY" && grep -Fq '"discover_foryou_fresh": "new-to-user-not-release-recency-tmdb-7.5-year-gt-1990-no-wwe-no-weekly-repeat"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v293.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR292='related-actions-foryou-authority-compact-cards'" <<<"$JS" && grep -Fq 'app-v292.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR293='discover-navigation-foryou-actions-authority'" <<<"$JS" && grep -Fq 'app-v293.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
