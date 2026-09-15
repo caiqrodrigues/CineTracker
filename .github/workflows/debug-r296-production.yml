@@ -1,0 +1,38 @@
+name: Debug r296 production alias
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose_r296_production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Inspect public production alias
+        run: |
+          set +e
+          TS="$(date +%s%N)"
+          echo '=== release.json ==='
+          curl -sS -D /tmp/release.headers -o /tmp/release.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$TS"
+          echo "release_curl_exit=$?"
+          cat /tmp/release.headers || true
+          echo '--- release body ---'
+          head -c 5000 /tmp/release.body || true
+          echo
+          echo '=== index.html ==='
+          curl -sS -D /tmp/html.headers -o /tmp/html.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$TS"
+          echo "html_curl_exit=$?"
+          cat /tmp/html.headers || true
+          echo '--- asset refs ---'
+          grep -Eo 'app-v[0-9]+\.(js|css)' /tmp/html.body | sort -u || true
+          echo '=== app-v296.js ==='
+          curl -sS -D /tmp/js.headers -o /tmp/js.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v296.js?ct=$TS"
+          echo "js_curl_exit=$?"
+          cat /tmp/js.headers || true
+          echo '--- r296 markers ---'
+          grep -F "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" /tmp/js.body | head -c 500 || true
+          echo
