@@ -1,7 +1,7 @@
 {
   "name": "cinetracker",
   "private": true,
-  "version": "1.0.78",
+  "version": "1.0.79",
   "scripts": {
     "build": "cd apps/web && npm run build",
     "verify": "cd apps/web && npm run verify"
