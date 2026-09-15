@@ -13,16 +13,18 @@
 
 ## Web 1.0.88 / r297
 
-A r297 é um hotfix exclusivamente Web para o boot do bundle herdado. O escopo funcional da r296 permanece inalterado e o Android continua intocado.
+A r297 é um hotfix exclusivamente Web para recuperar o boot público da r296 e reconectar as autoridades do Descobrir aos renderers que realmente estão ativos desde a r288. O escopo funcional da r296 permanece inalterado e o Android continua intocado.
 
-- corrige a ordem de inicialização do `runtime-r295-browse-actions-self-scope-fix.js`: o patch não exige mais `paintBrowse263` antes de `boot()`;
-- o self-scope r295 fica pendente durante a fase pré-boot e é instalado assim que `__ctR295Test.decorateBrowseActions` e `paintBrowse263` passam a existir, usando reconciliação finita;
-- elimina a exceção fatal `r295 browse self-scope fix missing r295 authority` que interrompia o bundle antes de `boot()` e produzia tela preta/vazia em produção;
-- adiciona teste Chromium do bundle final completo `app-v297.js`, exigindo passagem por `boot()`, `#app` renderizado e self-scope r295 efetivamente instalado;
-- mantém integralmente as regras da r296 para `Pra Você`, anti-repetição de 7 dias, quatro abas de Esportes, presença no estádio e polimento Web;
+- corrige a tela preta/vazia causada pelo `runtime-r295-browse-actions-self-scope-fix.js`, que podia lançar `r295 browse self-scope fix missing r295 authority` antes de `boot()`;
+- corrige a causa arquitetural encontrada na validação do bundle final: desde a r288 os donos vivos do Descobrir são `window.__ctR288PaintBrowse`, `window.__ctR288PaintForYou` e `window.__ctR288LoadDiscover`, enquanto patches r295/r296 ainda tentavam interceptar nomes legados;
+- a r297 liga explicitamente as exclusões pessoais, ações de cards, Calendário e regras rígidas do `Pra Você` aos donos reais r288, mantendo fallback compatível para as regressões históricas;
+- o bridge r297 garante filtragem de vistos/Watchlist nas abas públicas, composição rígida do `Pra Você` e carregamento autorizado sem reconstruir a página inteira;
+- adiciona regressão Chromium específica usando os mesmos nomes `window.__ctR288...` do bundle oficial, além do teste do bundle final completo `app-v297.js`;
+- o teste de bundle exige passagem por `boot()`, `#app` renderizado, ausência de page error e os três hooks r297 efetivamente conectados aos donos r288;
+- mantém integralmente as regras da r296 para TMDB >= 7,5, ano > 1990, bloqueio WWE, anti-repetição de 7 dias, três blocos de recomendações, quatro abas de Esportes, presença no estádio e polimento Web;
 - Android permanece `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v297.js` / `app-v297.css`; build: `apps/web/build-r297-official.mjs`; regressão de bundle completo: `apps/web/test-r297-browser.mjs`.
+Assets oficiais: `app-v297.js` / `app-v297.css`; build: `apps/web/build-r297-official.mjs`; bridge: `apps/web/runtime-r297-live-discover-owner-bridge.js`; regressões: `apps/web/test-r297-discover-live-browser.mjs` e `apps/web/test-r297-browser.mjs`.
 
 ## Web 1.0.87 / r296
 
