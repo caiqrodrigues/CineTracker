@@ -1,16 +1,34 @@
 (()=>{
 'use strict';
 if(window.__ctR295BrowseSelfScopeFix)return;
+const R=window.__ctR295Test;
+if(!R||typeof R.decorateBrowseActions!=='function'){
+ window.__ctR295BrowseSelfScopeFix='authority-unavailable';
+ return;
+}
+function discoverHost(){
+ try{
+  return window.__ctR288R263?.discoverHost263?.()||
+   (typeof discoverHost263==='function'?discoverHost263():null)||
+   document.querySelector('[data-ct263-discover-content]');
+ }catch{return document.querySelector('[data-ct263-discover-content]')}
+}
+function wrap(base){
+ if(typeof base!=='function'||base.__ctR295BrowseSelfScopeWrapped)return base;
+ const wrapped=function(rows,tab){
+  const out=base.apply(this,arguments);
+  if(['trending','popular','new','anticipated','top'].includes(String(tab||''))){
+   const host=discoverHost();
+   if(host?.matches?.('[data-ct295-browse]'))R.decorateBrowseActions(document);
+  }
+  return out;
+ };
+ wrapped.__ctR295BrowseSelfScopeWrapped=true;
+ return wrapped;
+}
+if(typeof window.__ctR288PaintBrowse==='function')window.__ctR288PaintBrowse=wrap(window.__ctR288PaintBrowse);
+else if(typeof paintBrowse263==='function')paintBrowse263=wrap(paintBrowse263);
 window.__ctR295BrowseSelfScopeFix='decorate-browse-host-self-and-descendants';
-if(!window.__ctR295Test||typeof paintBrowse263!=='function')throw new Error('r295 browse self-scope fix missing r295 authority');
-const base=paintBrowse263;
-paintBrowse263=function(rows,tab){
- const out=base.apply(this,arguments);
- if(['trending','popular','new','anticipated','top'].includes(String(tab||''))){
-  const host=typeof discoverHost263==='function'?discoverHost263():document.querySelector('[data-ct263-discover-content]');
-  if(host?.matches?.('[data-ct295-browse]'))window.__ctR295Test.decorateBrowseActions(document);
- }
- return out;
-};
-window.__ctR295BrowseSelfScopeTest={decorate:()=>window.__ctR295Test.decorateBrowseActions(document)};
+window.__ctR295BrowseSelfScopeTest={decorate:()=>R.decorateBrowseActions(document)};
+queueMicrotask(()=>R.decorateBrowseActions(document));
 })();

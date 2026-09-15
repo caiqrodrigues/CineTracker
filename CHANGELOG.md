@@ -2,6 +2,26 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.88 — 2026-09-15 — Web r297
+
+### Boot / tela preta
+- Corrige a tela preta/vazia pública introduzida no bundle da r296: `runtime-r295-browse-actions-self-scope-fix.js` podia lançar `r295 browse self-scope fix missing r295 authority` antes de `boot()`, interrompendo a aplicação com `#app` vazio.
+- A proteção r295 deixa de derrubar o bundle durante a inicialização legítima e mantém fallback compatível com as regressões históricas.
+
+### Descobrir / donos reais de execução
+- A validação do bundle final identificou a causa arquitetural complementar: desde a r288 os renderers/carregador vivos do Descobrir são `window.__ctR288PaintBrowse`, `window.__ctR288PaintForYou` e `window.__ctR288LoadDiscover`; r295/r296 ainda interceptavam nomes legados que não eram os donos efetivos em produção.
+- Adiciona `runtime-r297-live-discover-owner-bridge.js`, conectando a autoridade pessoal da r295 e as regras rígidas da r296 diretamente aos três donos reais r288.
+- `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` passam pela exclusão canônica de vistos/Watchlist no renderer efetivamente usado pela página e recebem as ações r295 no mesmo caminho.
+- `Pra Você` executa sanitização pessoal + composição rígida r296 antes da pintura real, preservando nota >= 7,5, ano > 1990, exclusões de Drama/Documentário-only e WWE, zero duplicatas e anti-repetição de 7 dias.
+- O carregador vivo passa a aguardar a autoridade pessoal nos fluxos públicos/Calendário/Pra Você sem reconstruir a página inteira.
+
+### Build / validação
+- Web atualizada para `1.0.88 / r297-official-1.0.88`; Android permanece `1.0.20 / versionCode 10062` sem alteração.
+- Adiciona regressão Chromium específica com os mesmos nomes `window.__ctR288...` do bundle oficial, cobrindo exclusão de vistos/Watchlist, ações, `Pra Você` rígido e chamada ao carregador autorizado.
+- Adiciona regressão Chromium do bundle final completo `app-v297.js`, exigindo `boot()` real, `#app` preenchido, ausência de page error e os três hooks r297 conectados.
+- O `production_smoke` valida identidade r297, assets públicos e DOM renderizado antes de considerar a release concluída.
+- Todo o escopo funcional da r296 permanece preservado: quatro abas de Esportes, presença no estádio, métrica do Perfil e polimento Web.
+
 ## 1.0.87 — 2026-09-15 — Web r296
 
 ### Pra Você / autoridade rígida

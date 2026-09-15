@@ -1,48 +1,52 @@
-name: Verify Web 1.0.87 r296 Recommendations Sports Stadium
+name: Verify Web 1.0.88 r297 Live Discover Boot Hotfix
 
 on:
   push:
-    branches: [main, 'release/web-r296']
+    branches: [main, 'fix/r297-r295-boot-authority']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_87_r296:
+  web_1_0_88_r297:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r296
+      - name: Version identity r297
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.87"' package.json
-          grep -Fq '"version": "1.0.87"' apps/web/package.json
-          grep -Fq 'build-r296-official.mjs' apps/web/package.json
+          grep -Fq '"version": "1.0.88"' package.json
+          grep -Fq '"version": "1.0.88"' apps/web/package.json
+          grep -Fq 'build-r297-official.mjs' apps/web/package.json
+          test -f apps/web/build-r297.mjs
+          test -f apps/web/build-r297-official.mjs
+          test -f apps/web/runtime-r297-live-discover-owner-bridge.js
+          test -f apps/web/test-r297.mjs
+          test -f apps/web/test-r297-browser.mjs
+          test -f apps/web/test-r297-discover-live-browser.mjs
+          test -f apps/web/runtime-r295-browse-actions-self-scope-fix.js
           test -f apps/web/runtime-r296-recommendations-sports-stadium.js
-          test -f apps/web/r296-web-polish.css
-          test -f apps/web/build-r296.mjs
-          test -f apps/web/build-r296-official.mjs
-          test -f apps/web/test-r296.mjs
-          test -f apps/web/test-r296-browser.mjs
-          test -f supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
-      - name: Syntax r296 release chain
+          test -f supabase/migrations/20260915183834_r296_recommendations-sports-stadium.sql || test -f supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
+      - name: Syntax r297 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r296-recommendations-sports-stadium.js
-          node --check apps/web/build-r296.mjs
-          node --check apps/web/build-r296-official.mjs
-          node --check apps/web/test-r296.mjs
-          node --check apps/web/test-r296-browser.mjs
-      - name: Build official r296
+          node --check apps/web/runtime-r295-browse-actions-self-scope-fix.js
+          node --check apps/web/runtime-r297-live-discover-owner-bridge.js
+          node --check apps/web/build-r297.mjs
+          node --check apps/web/build-r297-official.mjs
+          node --check apps/web/test-r297.mjs
+          node --check apps/web/test-r297-browser.mjs
+          node --check apps/web/test-r297-discover-live-browser.mjs
+      - name: Build official r297
         working-directory: apps/web
-        run: node build-r296-official.mjs
-      - name: Static regressions r296
+        run: node build-r297-official.mjs
+      - name: Static regression r297 live owner bridge
         working-directory: apps/web
-        run: node test-r296.mjs
+        run: node test-r297.mjs
       - name: Chromium inherited r286 related interactions
         working-directory: apps/web
         run: node test-r286-browser.mjs
@@ -55,10 +59,16 @@ jobs:
       - name: Chromium inherited r295 personal calendar daily
         working-directory: apps/web
         run: node test-r295-browser.mjs
-      - name: Chromium r296 recommendations sports stadium
+      - name: Chromium inherited r296 recommendations sports stadium
         working-directory: apps/web
         run: node test-r296-browser.mjs
-      - name: Migration contract r296
+      - name: Chromium r297 real r288 Discover owner behavior
+        working-directory: apps/web
+        run: node test-r297-discover-live-browser.mjs
+      - name: Chromium exact full bundle r297 boot
+        working-directory: apps/web
+        run: node test-r297-browser.mjs
+      - name: Migration contract inherited r296
         run: |
           set -euo pipefail
           F=supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
@@ -71,24 +81,33 @@ jobs:
           grep -Fq 'cinetracker_sports_stadium_summary_v296' "$F"
           grep -Fq "interval '7 days'" "$F"
           grep -Fq 'security invoker' "$F"
-      - name: Final bundle identity r296
+      - name: Final bundle identity r297
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v296.js
-          grep -Fq "window.__ctWebBuild='1.0.87';window.__ctOfficialVersion='1.0.87';" dist/app-v296.js
-          grep -Fq "const REVISION='r296-official-1.0.87';" dist/app-v296.js
-          grep -Fq "window.__ctR295='discover-personal-authority-calendar-daily-actions'" dist/app-v296.js
-          grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" dist/app-v296.js
-          grep -Fq "window.__ctR296ForYou='score-7.5+year-1990+genre+wwe+seven-day+exact-slots+zero-duplicates'" dist/app-v296.js
-          grep -Fq "window.__ctR296Sports='today+72h+favorites+watched+stadium'" dist/app-v296.js
-          grep -Fq 'app-v296.js' dist/index.html
-          grep -Fq 'app-v296.css' dist/index.html
+          node --check dist/app-v297.js
+          grep -Fq "window.__ctWebBuild='1.0.88';window.__ctOfficialVersion='1.0.88';" dist/app-v297.js
+          grep -Fq "const REVISION='r297-official-1.0.88';" dist/app-v297.js
+          grep -Fq "window.__ctR295='discover-personal-authority-calendar-daily-actions'" dist/app-v297.js
+          grep -Fq "window.__ctR295BrowseSelfScopeFix='decorate-browse-host-self-and-descendants'" dist/app-v297.js
+          grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" dist/app-v297.js
+          grep -Fq "window.__ctR297DiscoverBridge='r288-live-owners+r295-personal+r296-strict'" dist/app-v297.js
+          grep -Fq 'liveBrowse.__ctR297R295Browse=true;' dist/app-v297.js
+          grep -Fq 'liveForYou.__ctR297R295R296ForYou=true;' dist/app-v297.js
+          grep -Fq 'liveLoad.__ctR297R295Load=true;' dist/app-v297.js
+          grep -Fq "window.__ctR297='r288-live-owner-hotfix-full-bundle'" dist/app-v297.js
+          ! grep -Fq "throw new Error('r295 browse self-scope fix missing r295 authority')" dist/app-v297.js
+          grep -Fq 'app-v297.js' dist/index.html
+          grep -Fq 'app-v297.css' dist/index.html
+          grep -Fq '"version": "1.0.88"' dist/release.json
+          grep -Fq '"revision": "r297-official-1.0.88"' dist/release.json
+          grep -Fq '"boot_hotfix": "r295-scope-no-fatal-preboot+r288-live-owner-bridge"' dist/release.json
+          grep -Fq '"discover_live_owner_bridge": "r295-personal+r296-strict-on-r288-live-owners"' dist/release.json
           grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' dist/release.json
           grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' dist/release.json
           grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.87-r296';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.88-r297';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -103,20 +122,20 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_87_r296, android_current_source]
+    needs: [web_1_0_88_r297, android_current_source]
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.87 r296
+      - name: Official production serves and boots 1.0.88 r297
         run: |
           set -euo pipefail
-          for i in $(seq 1 200); do
+          for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.87"' <<<"$BODY" && grep -Fq '"revision": "r296-official-1.0.87"' <<<"$BODY" && grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' <<<"$BODY" && grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' <<<"$BODY" && grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v296.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.88"' <<<"$BODY" && grep -Fq '"revision": "r297-official-1.0.88"' <<<"$BODY" && grep -Fq '"boot_hotfix": "r295-scope-no-fatal-preboot+r288-live-owner-bridge"' <<<"$BODY" && grep -Fq '"discover_live_owner_bridge": "r295-personal+r296-strict-on-r288-live-owners"' <<<"$BODY" && grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' <<<"$BODY" && grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' <<<"$BODY" && grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v297.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" <<<"$JS" && grep -Fq 'app-v296.js' <<<"$HTML"; then
-                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
+              if grep -Fq "window.__ctR297='r288-live-owner-hotfix-full-bundle'" <<<"$JS" && grep -Fq "window.__ctR297DiscoverBridge='r288-live-owners+r295-personal+r296-strict'" <<<"$JS" && ! grep -Fq "throw new Error('r295 browse self-scope fix missing r295 authority')" <<<"$JS" && grep -Fq 'app-v297.js' <<<"$HTML"; then
+                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
