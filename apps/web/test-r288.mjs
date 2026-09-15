@@ -22,7 +22,14 @@ for(const x of[
  'data-ct288-filter',
  'data-ct288-tab-prev',
  'data-ct288-tab-next',
- 'data-ct288-calendar'
+ 'data-ct288-calendar',
+ 'window.__ctR288R263={q263,qa263,n263,esc263,type263,id263,title263,poster263,year263,score263,image263,discover263,discoverHost263,block263,armDiscoverRails263,syncDiscover263,forYou263,loadBrowse263,DTABS263}',
+ "function paintForYou263(){if(typeof window.__ctR288PaintForYou==='function')return window.__ctR288PaintForYou();",
+ "function paintBrowse263(rows,tab){if(typeof window.__ctR288PaintBrowse==='function')return window.__ctR288PaintBrowse(rows,tab);",
+ "function loadDiscover263(tab=discover263.tab,force=false){if(typeof window.__ctR288LoadDiscover==='function')return window.__ctR288LoadDiscover(tab,force);",
+ 'window.__ctR288PaintForYou=function(){',
+ 'window.__ctR288PaintBrowse=function(rows,tab){',
+ 'window.__ctR288LoadDiscover=function(tab=discover263.tab,force=false){'
 ])must(js,x);
 for(const label of ['Pra você','Top 10','Em alta','Populares','Novidades','Lançamentos','Mais Aguardados','Mais bem avaliados','Calendário'])must(js,label);
 for(const inherited of ["window.__ctR286='related-open-watchlist-seen-window-capture'","window.__ctR287='home-interaction-liveness+available-episode-priority'",'ct285PrepareHome=ct287PrepareHome;'])must(js,inherited);
@@ -30,5 +37,5 @@ if(runtime.includes('touchstart')||runtime.includes('touchmove'))throw new Error
 if(runtime.includes('setInterval(')||runtime.includes('MutationObserver'))throw new Error('r288 persistent polling/observer forbidden');
 if(runtime.includes('apps/android')||runtime.includes('versionCode 10063'))throw new Error('r288 Android mutation marker forbidden');
 must(html,'app-v288.js');must(html,'app-v288.css');must(sw,"const CACHE='ct-web-1.0.79-r288';");
-const m=JSON.parse(release);if(m.version!=='1.0.79'||m.revision!=='r288-official-1.0.79'||m.discover_tabs!==9||m.discover_tab_switch!=='content-only-no-shell-rebuild'||m.discover_top10!=='provider-specific-series-and-movies'||m.discover_foryou!=='movie-series-anime-independent-swap'||m.discover_filter!=='compact-all-movie-tv'||m.discover_calendar!=='grouped-by-release-date'||m.android!=='1.0.20/10062')throw new Error('bad r288 release identity');
-console.log('R288_STATIC_OK discover=android-parity tabs=9 stable-shell top10=provider foryou=3-slots calendar=grouped android=preserved');
+const m=JSON.parse(release);if(m.version!=='1.0.79'||m.revision!=='r288-official-1.0.79'||m.discover_tabs!==9||m.discover_tab_switch!=='content-only-no-shell-rebuild'||m.discover_top10!=='provider-specific-series-and-movies'||m.discover_foryou!=='movie-series-anime-independent-swap'||m.discover_filter!=='compact-all-movie-tv'||m.discover_calendar!=='grouped-by-release-date'||m.discover_live_owner_bridge!==true||m.discover_owner!=='r288-live-r263-bridge'||m.android!=='1.0.20/10062')throw new Error('bad r288 release identity');
+console.log('R288_STATIC_OK discover=android-parity live-owner tabs=9 stable-shell top10=provider foryou=3-slots calendar=grouped android=preserved');
