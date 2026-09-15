@@ -68,7 +68,7 @@ jobs:
           grep -Fq "window.__ctR295Renderer='single-owner-stable-shell-no-mid-session-rebuild'" dist/app-v295.js
           grep -Fq "window.__ctR295Switch='cache-first-no-loading-reset'" dist/app-v295.js
           ! grep -Fq "['releases','Lançamentos']" dist/app-v295.js
-          ! grep -Fq "observer.observe(document.documentElement,{subtree:true,childList:true});" dist/app-v295.js
+          grep -Fq "/* r295: global r293 DOM observer retired */" dist/app-v295.js
           ! grep -Fq "setTimeout(()=>void refresh(true),180" dist/app-v295.js
           grep -Fq 'app-v295.js' dist/index.html
           grep -Fq 'app-v295.css' dist/index.html
