@@ -1,82 +1,87 @@
-name: Verify Web 1.0.78 r287 Home Liveness
+name: Verify Web 1.0.79 r288 Discover Android Parity
 
 on:
   push:
-    branches: [main, 'fix/r287-home-liveness-continue']
+    branches: [main, 'fix/r288-discover-android-parity']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_78_r287:
+  web_1_0_79_r288:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 65
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r287
+      - name: Version identity r288
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.78"' package.json
-          grep -Fq '"version": "1.0.78"' apps/web/package.json
-          grep -Fq 'build-r287-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r287-home-liveness-continue.js
-          test -f apps/web/build-r287.mjs
-          test -f apps/web/build-r287-official.mjs
-          test -f apps/web/test-r287.mjs
-          test -f apps/web/test-r287-browser.mjs
-          test -f scripts/test-r287-exact-bundle-browser.mjs
-      - name: Syntax r287 release chain
+          grep -Fq '"version": "1.0.79"' package.json
+          grep -Fq '"version": "1.0.79"' apps/web/package.json
+          grep -Fq 'build-r288-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r288-discover-android-parity.js
+          test -f apps/web/build-r288.mjs
+          test -f apps/web/build-r288-official.mjs
+          test -f apps/web/test-r288.mjs
+          test -f apps/web/test-r288-browser.mjs
+          test -f scripts/test-r288-exact-bundle-browser.mjs
+      - name: Syntax r288 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r287-home-liveness-continue.js
-          node --check apps/web/build-r287.mjs
-          node --check apps/web/build-r287-official.mjs
-          node --check apps/web/test-r287.mjs
-          node --check apps/web/test-r287-browser.mjs
-          node --check scripts/test-r287-exact-bundle-browser.mjs
-      - name: Build official r287
+          node --check apps/web/runtime-r288-discover-android-parity.js
+          node --check apps/web/build-r288.mjs
+          node --check apps/web/build-r288-official.mjs
+          node --check apps/web/test-r288.mjs
+          node --check apps/web/test-r288-browser.mjs
+          node --check scripts/test-r288-exact-bundle-browser.mjs
+      - name: Build official r288
         working-directory: apps/web
-        run: node build-r287-official.mjs
-      - name: Static regressions r287
+        run: node build-r288-official.mjs
+      - name: Static regressions r288
         working-directory: apps/web
-        run: node test-r287.mjs
+        run: node test-r288.mjs
       - name: Chromium inherited r285 regressions
         working-directory: apps/web
         run: node test-r285-browser.mjs
       - name: Chromium inherited r286 related interactions
         working-directory: apps/web
         run: node test-r286-browser.mjs
-      - name: Chromium r287 Home liveness and Continue
+      - name: Chromium inherited r287 Home liveness and Continue
         working-directory: apps/web
         run: node test-r287-browser.mjs
-      - name: Exact final bundle boot r287
-        run: node scripts/test-r287-exact-bundle-browser.mjs
-      - name: Final bundle identity r287
+      - name: Chromium r288 Discover Android parity
+        working-directory: apps/web
+        run: node test-r288-browser.mjs
+      - name: Exact final bundle boot r288
+        run: node scripts/test-r288-exact-bundle-browser.mjs
+      - name: Final bundle identity r288
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v287.js
-          grep -Fq "window.__ctWebBuild='1.0.78';window.__ctOfficialVersion='1.0.78';" dist/app-v287.js
-          grep -Fq "const REVISION='r287-official-1.0.78';" dist/app-v287.js
-          grep -Fq "window.__ctR286='related-open-watchlist-seen-window-capture'" dist/app-v287.js
-          grep -Fq "window.__ctR287='home-interaction-liveness+available-episode-priority'" dist/app-v287.js
-          grep -Fq "window.__ctR287Home='pointer-click-authority+overlay-hit-test'" dist/app-v287.js
-          grep -Fq "window.__ctR287Series='urgent-availability-before-budget'" dist/app-v287.js
-          grep -Fq 'ct285PrepareHome=ct287PrepareHome;' dist/app-v287.js
-          grep -Fq 'document.elementsFromPoint' dist/app-v287.js
-          grep -Fq 'await addWatchlist(spec.type,spec.id)' dist/app-v287.js
-          grep -Fq 'await markSeen(spec.type,spec.id)' dist/app-v287.js
-          grep -Fq 'app-v287.js' dist/index.html
-          grep -Fq 'app-v287.css' dist/index.html
-          grep -Fq '"home_tabs_liveness": true' dist/release.json
-          grep -Fq '"home_media_open_liveness": true' dist/release.json
-          grep -Fq '"home_available_series_forced_reconcile": true' dist/release.json
-          grep -Fq '"related_titles": "r286-preserved"' dist/release.json
+          node --check dist/app-v288.js
+          grep -Fq "window.__ctWebBuild='1.0.79';window.__ctOfficialVersion='1.0.79';" dist/app-v288.js
+          grep -Fq "const REVISION='r288-official-1.0.79';" dist/app-v288.js
+          grep -Fq "window.__ctR287='home-interaction-liveness+available-episode-priority'" dist/app-v288.js
+          grep -Fq "window.__ctR288='discover-android-parity-web-only'" dist/app-v288.js
+          grep -Fq "window.__ctR288Discover='nine-tabs+stable-shell+provider-top10+three-slot-foryou'" dist/app-v288.js
+          grep -Fq "window.__ctR288Top10='provider-specific-series+movies-real-rails'" dist/app-v288.js
+          grep -Fq "window.__ctR288ForYou='movie-series-anime-independent-swap'" dist/app-v288.js
+          grep -Fq 'ct171TopRows(Number(provider))' dist/app-v288.js
+          grep -Fq 'data-ct288-provider' dist/app-v288.js
+          grep -Fq 'data-ct288-filter' dist/app-v288.js
+          grep -Fq 'data-ct288-calendar' dist/app-v288.js
+          grep -Fq 'app-v288.js' dist/index.html
+          grep -Fq 'app-v288.css' dist/index.html
+          grep -Fq '"discover_tabs": 9' dist/release.json
+          grep -Fq '"discover_tab_switch": "content-only-no-shell-rebuild"' dist/release.json
+          grep -Fq '"discover_foryou": "movie-series-anime-independent-swap"' dist/release.json
+          grep -Fq '"discover_top10": "provider-specific-series-and-movies"' dist/release.json
+          grep -Fq '"discover_calendar": "grouped-by-release-date"' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.78-r287';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.79-r288';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -91,19 +96,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_78_r287]
+    needs: [web_1_0_79_r288]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.78 r287
+      - name: Official production serves and boots 1.0.79 r288
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.78"' <<<"$BODY" && grep -Fq '"revision": "r287-official-1.0.78"' <<<"$BODY" && grep -Fq '"home_tabs_liveness": true' <<<"$BODY" && grep -Fq '"home_media_open_liveness": true' <<<"$BODY" && grep -Fq '"home_available_series_forced_reconcile": true' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v287.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.79"' <<<"$BODY" && grep -Fq '"revision": "r288-official-1.0.79"' <<<"$BODY" && grep -Fq '"discover_tabs": 9' <<<"$BODY" && grep -Fq '"discover_top10": "provider-specific-series-and-movies"' <<<"$BODY" && grep -Fq '"discover_foryou": "movie-series-anime-independent-swap"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v288.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR286='related-open-watchlist-seen-window-capture'" <<<"$JS" && grep -Fq "window.__ctR287='home-interaction-liveness+available-episode-priority'" <<<"$JS" && grep -Fq 'ct285PrepareHome=ct287PrepareHome;' <<<"$JS" && grep -Fq 'await addWatchlist(spec.type,spec.id)' <<<"$JS" && grep -Fq 'await markSeen(spec.type,spec.id)' <<<"$JS" && grep -Fq 'app-v287.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR287='home-interaction-liveness+available-episode-priority'" <<<"$JS" && grep -Fq "window.__ctR288='discover-android-parity-web-only'" <<<"$JS" && grep -Fq 'ct171TopRows(Number(provider))' <<<"$JS" && grep -Fq 'data-ct288-filter' <<<"$JS" && grep -Fq 'app-v288.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
