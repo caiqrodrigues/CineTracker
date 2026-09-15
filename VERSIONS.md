@@ -15,10 +15,10 @@
 
 A r297 é um hotfix exclusivamente Web para o boot do bundle herdado. O escopo funcional da r296 permanece inalterado e o Android continua intocado.
 
-- corrige o guard herdado da r295 que encerrava a inicialização apenas porque `window.__ctR295` já existia, mesmo quando `window.__ctR295Test` ainda não tinha a autoridade completa;
-- o early-return da r295 agora só é permitido quando `mediaKey`, `alreadyKnown`, `suppressBrowseCards`, `browseCard` e `decorateBrowseActions` já existem;
-- elimina a exceção `r295 browse self-scope fix missing r295 authority` que interrompia o bundle antes de `boot()` e produzia tela preta/vazia em produção;
-- adiciona teste Chromium do bundle final completo `app-v297.js`, exigindo passagem por `boot()` e `#app` renderizado;
+- corrige a ordem de inicialização do `runtime-r295-browse-actions-self-scope-fix.js`: o patch não exige mais `paintBrowse263` antes de `boot()`;
+- o self-scope r295 fica pendente durante a fase pré-boot e é instalado assim que `__ctR295Test.decorateBrowseActions` e `paintBrowse263` passam a existir, usando reconciliação finita;
+- elimina a exceção fatal `r295 browse self-scope fix missing r295 authority` que interrompia o bundle antes de `boot()` e produzia tela preta/vazia em produção;
+- adiciona teste Chromium do bundle final completo `app-v297.js`, exigindo passagem por `boot()`, `#app` renderizado e self-scope r295 efetivamente instalado;
 - mantém integralmente as regras da r296 para `Pra Você`, anti-repetição de 7 dias, quatro abas de Esportes, presença no estádio e polimento Web;
 - Android permanece `1.0.20 / versionCode 10062`.
 
