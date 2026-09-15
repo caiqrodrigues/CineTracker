@@ -1,0 +1,7 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r293.mjs');
+const dist=resolve('dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v293.js','app-v293.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8'))),must=(s,x)=>{if(!s.includes(x))throw new Error('r293 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.84';window.__ctOfficialVersion='1.0.84';","const REVISION='r293-official-1.0.84';","window.__ctR286='related-open-watchlist-seen-window-capture'","window.__ctR291='discover-actions-favorites-horizontal-scroll'","window.__ctR292='related-actions-foryou-authority-compact-cards'","window.__ctR293='discover-navigation-foryou-actions-authority'","remove-unauthorized-releases-tab-no-recreation","new-to-user-not-release-recency+weekly-no-repeat","ct293-related-actions"])must(js,x);
+must(html,'app-v293.js');must(html,'app-v293.css');must(css,'overflow-x:hidden');const m=JSON.parse(release);if(m.version!=='1.0.84'||m.revision!=='r293-official-1.0.84'||m.discover_tabs!=='remove-unauthorized-releases-no-recreation'||m.discover_foryou_fresh!=='new-to-user-not-release-recency-tmdb-7.5-year-gt-1990-no-wwe-no-weekly-repeat'||m.discover_empty_slots!=='hidden-instead-of-gray-placeholder'||m.android!=='1.0.20/10062')throw new Error('r293 release identity');must(sw,"const CACHE='ct-web-1.0.84-r293';");console.log('WEB_1_0_84_OFFICIAL_OK r293 authorized Discover + Pra Você new-to-user + stable actions; Android preserved');
