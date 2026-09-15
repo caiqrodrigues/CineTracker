@@ -22,23 +22,27 @@ function ct286Spec(control){
  return type&&id>0?{type,id}:null;
 }
 function ct286Stop(e){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation()}
-function ct286UpdateCount(card){
- const section=card?.closest?.('.ct169-detail-section,section');if(!section)return;
+function ct286UpdateCount(section){
+ if(!section)return;
  const count=section.querySelector('.ct169-section-head>span,.panel-head>span,.panel-head>small');
  const remaining=section.querySelectorAll('.ct169-related-card,.ct170-related-card').length;
  if(count)count.textContent=String(remaining);
  const rail=section.querySelector('.ct169-related-row');
  if(rail&&remaining===0&&!rail.querySelector('.empty'))rail.innerHTML='<div class="empty">Nenhum título relacionado elegível fora do histórico e da Watchlist.</div>';
 }
+function ct286RemoveCard(button){
+ const card=ct286RelatedCard(button),section=card?.closest?.('.ct169-detail-section,section')||null;
+ if(card?.isConnected)card.remove();ct286UpdateCount(section);
+}
 async function ct286Watchlist(button,spec){
  if(ct286Busy.has(button))return;ct286Busy.add(button);const old=button.textContent;button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='Adicionando...';
- try{if(typeof addWatchlist!=='function')throw new Error('Ação de Watchlist indisponível');await addWatchlist(spec.type,spec.id);const card=ct286RelatedCard(button);if(card?.isConnected){card.remove();ct286UpdateCount(card)}}
+ try{if(typeof addWatchlist!=='function')throw new Error('Ação de Watchlist indisponível');await addWatchlist(spec.type,spec.id);ct286RemoveCard(button)}
  catch(err){if(button.isConnected){button.disabled=false;button.removeAttribute('aria-busy');button.textContent=old}try{toast(err?.message||String(err))}catch{}}
  finally{ct286Busy.delete(button)}
 }
 async function ct286Seen(button,spec){
  if(ct286Busy.has(button))return;ct286Busy.add(button);const old=button.textContent;button.disabled=true;button.setAttribute('aria-busy','true');button.textContent='Marcando...';
- try{if(typeof markSeen!=='function')throw new Error('Ação de visto indisponível');await markSeen(spec.type,spec.id);const card=ct286RelatedCard(button);if(card?.isConnected){card.remove();ct286UpdateCount(card)}}
+ try{if(typeof markSeen!=='function')throw new Error('Ação de visto indisponível');await markSeen(spec.type,spec.id);ct286RemoveCard(button)}
  catch(err){if(button.isConnected){button.disabled=false;button.removeAttribute('aria-busy');button.textContent=old}try{toast(err?.message||String(err))}catch{}}
  finally{ct286Busy.delete(button)}
 }
@@ -57,5 +61,5 @@ window.addEventListener('pointerup',e=>{const control=ct286Control(e.target);if(
 window.addEventListener('click',e=>{const control=ct286Control(e.target);if(!control)return;if(ct286LastPointer?.el===control&&Date.now()-ct286LastPointer.at<800){ct286Stop(e);return}ct286Activate(e,control)},true);
 window.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&ct286Control(e.target))ct286Activate(e)},true);
 
-window.__ctR286Test={relatedCard:ct286RelatedCard,control:ct286Control,spec:ct286Spec,activate:ct286Activate,open:ct286Open,watchlist:ct286Watchlist,seen:ct286Seen};
+window.__ctR286Test={relatedCard:ct286RelatedCard,control:ct286Control,spec:ct286Spec,activate:ct286Activate,open:ct286Open,watchlist:ct286Watchlist,seen:ct286Seen,removeCard:ct286RemoveCard};
 })();
