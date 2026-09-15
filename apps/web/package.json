@@ -1,12 +1,12 @@
 {
   "name": "cinetracker-web",
-  "version": "1.0.77",
+  "version": "1.0.78",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node build-r286-official.mjs",
-    "test:r286": "node test-r286.mjs",
-    "test:r286:browser": "node test-r286-browser.mjs",
-    "verify": "npm run build && npm run test:r286 && npm run test:r286:browser"
+    "build": "node build-r287-official.mjs",
+    "test:r287": "node test-r287.mjs",
+    "test:r287:browser": "node test-r287-browser.mjs",
+    "verify": "npm run build && npm run test:r287 && npm run test:r287:browser"
   }
 }
