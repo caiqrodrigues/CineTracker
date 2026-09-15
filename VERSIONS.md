@@ -6,10 +6,23 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.87** | revision `r296-official-1.0.87`, package `1.0.87` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r296 |
+| Web | **1.0.88** | revision `r297-official-1.0.88`, package `1.0.88` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r297 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.88 / r297
+
+A r297 é um hotfix exclusivamente Web para o boot do bundle herdado. O escopo funcional da r296 permanece inalterado e o Android continua intocado.
+
+- corrige o guard herdado da r295 que encerrava a inicialização apenas porque `window.__ctR295` já existia, mesmo quando `window.__ctR295Test` ainda não tinha a autoridade completa;
+- o early-return da r295 agora só é permitido quando `mediaKey`, `alreadyKnown`, `suppressBrowseCards`, `browseCard` e `decorateBrowseActions` já existem;
+- elimina a exceção `r295 browse self-scope fix missing r295 authority` que interrompia o bundle antes de `boot()` e produzia tela preta/vazia em produção;
+- adiciona teste Chromium do bundle final completo `app-v297.js`, exigindo passagem por `boot()` e `#app` renderizado;
+- mantém integralmente as regras da r296 para `Pra Você`, anti-repetição de 7 dias, quatro abas de Esportes, presença no estádio e polimento Web;
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v297.js` / `app-v297.css`; build: `apps/web/build-r297-official.mjs`; regressão de bundle completo: `apps/web/test-r297-browser.mjs`.
 
 ## Web 1.0.87 / r296
 
@@ -59,7 +72,7 @@ Assets oficiais: `app-v288.js` / `app-v288.css`; build: `apps/web/build-r288-off
 
 ## Android 1.0.20
 
-A r296 não altera Android. A identidade preservada é:
+A r297 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
