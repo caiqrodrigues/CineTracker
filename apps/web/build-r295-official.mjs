@@ -1,0 +1,7 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r295.mjs');
+const dist=resolve('dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v295.js','app-v295.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8'))),must=(s,x)=>{if(!s.includes(x))throw new Error('r295 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.86';window.__ctOfficialVersion='1.0.86';","const REVISION='r295-official-1.0.86';","window.__ctR294='discover-density-scroll-order-top10-ten-up'","window.__ctR295='discover-personal-authority-calendar-daily-actions'","recommendation+profile+list-snapshot-union","all-movie-tv-axis+independent-watchlist-toggle","canonical-unwatched-unwatchlisted+daily-fresh-pick-no-blur"])must(js,x);
+must(html,'app-v295.js');must(html,'app-v295.css');must(css,'overflow-x:hidden');const m=JSON.parse(release);if(m.version!=='1.0.86'||m.revision!=='r295-official-1.0.86'||m.discover_personal_authority!=='recommendation+profile+list-snapshot-union'||m.discover_browse_exclusions!=='seen+watchlist'||m.discover_browse_actions!=='playlist+seen'||m.discover_calendar_combination!=='series+watchlist-supported'||m.discover_daily_pick!=='fresh-pool-only+no-blur'||m.android!=='1.0.20/10062')throw new Error('r295 release identity');must(sw,"const CACHE='ct-web-1.0.86-r295';");console.log('WEB_1_0_86_OFFICIAL_OK r295 personal authority + calendar combinations + fresh daily recommendation; Android preserved');
