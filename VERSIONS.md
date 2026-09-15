@@ -6,10 +6,26 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.79** | revision `r288-official-1.0.79`, package `1.0.79` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r288 |
+| Web | **1.0.80** | revision `r289-official-1.0.80`, package `1.0.80` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r289 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `cinetracker_home_series_watch_state_v1` + writers canônicos | produção |
 | Windows | — | — | não lançado |
+
+## Web 1.0.80 / r289
+
+A r289 altera somente o layout dos cards do Descobrir na Web. Toda a lógica funcional da r288 permanece preservada.
+
+- cards do Descobrir voltam ao tamanho histórico compacto do CineTracker, com largura responsiva limitada a **128–152 px**;
+- pôsteres permanecem em **2:3**;
+- `Da sua Watchlist` e `100% novos` deixam de esticar Filme/Série/Anime para ocupar um terço inteiro da página no desktop;
+- os três slots usam largura fixa de card e, quando necessário, rolagem horizontal somente dentro do componente;
+- cards de `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` usam o mesmo padrão compacto;
+- `Top 10` também deixa de ampliar os cards no desktop;
+- `Ver mais` pode quebrar em várias linhas, mas mantém cada card no mesmo tamanho padrão em vez de esticá-lo para preencher a largura disponível;
+- as nove abas, troca de conteúdo sem reconstruir a tela, Top 10 por streaming, filtros, Calendário e as ações da r288 permanecem intactos;
+- Android permanece inalterado em `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v289.js` / `app-v289.css`; build: `apps/web/build-r289-official.mjs`; runtime: `apps/web/runtime-r289-discover-standard-card-size.js`.
 
 ## Web 1.0.79 / r288
 
@@ -30,7 +46,7 @@ Assets oficiais: `app-v288.js` / `app-v288.css`; build: `apps/web/build-r288-off
 
 ## Android 1.0.20
 
-A r288 não altera Android. A identidade preservada é:
+A r289 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
