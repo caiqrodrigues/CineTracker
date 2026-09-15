@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r298.mjs');
+const dist=resolve('dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v298.js','app-v298.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r298 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.89';window.__ctOfficialVersion='1.0.89';","const REVISION='r298-official-1.0.89';","window.__ctR298='stadium-real-controls+exact-foryou-live-pipeline'","window.__ctR298Sports='ct255-real-watch-button+tv-or-stadium+watched-badge'","window.__ctR298Profile='stadium-stat-inside-sports-assisted-only'","window.__ctR298ForYou='1-daily+3-watchlist+3-new+bounded-no-spinner'",'data-ct298-choice="stadium"','data-ct298-stadium-stat','buildForYou298'])must(js,x);
+must(html,'app-v298.js');must(html,'app-v298.css');must(css,'r298 — stadium choice');
+const m=JSON.parse(release);if(m.version!=='1.0.89'||m.revision!=='r298-official-1.0.89'||m.sports_stadium_ui!=='real-ct255-watch-button-tv-or-stadium'||m.profile_stadium_metric!=='inside-esportes-assistidos'||m.discover_foryou_no_infinite_loading!==true||m.android!=='1.0.20/10062')throw new Error('r298 release identity');
+must(sw,"const CACHE='ct-web-1.0.89-r298';");
+console.log('WEB_1_0_89_OFFICIAL_OK r298 stadium + Sports profile metric + complete Pra Você; Android preserved');
