@@ -11,9 +11,10 @@ const once=(s,a,b,l)=>{const i=s.indexOf(a);if(i<0)throw new Error('r289 missing
 const must=(s,x)=>{if(!s.includes(x))throw new Error('r289 missing '+x)};
 for(const x of[
  "window.__ctR289='discover-standard-card-size';",
- "window.__ctR289Cards='legacy-standard-128-152px-2x3';",
+ "window.__ctR289Cards='standard-154-mobile-176-desktop-2x3';",
  "window.__ctR289Scope='discover-layout-only';",
- '--ct289-card-w:clamp(128px,14vw,152px)',
+ '[data-ct288-discover]{--ct289-card-w:154px}',
+ '@media(min-width:1100px){[data-ct288-discover]{--ct289-card-w:176px}}',
  'grid-auto-columns:var(--ct289-card-w)!important',
  'grid-template-columns:repeat(auto-fill,var(--ct289-card-w))!important',
  'aspect-ratio:2/3!important'
@@ -34,9 +35,9 @@ html,body,#app{max-width:100%;overflow-x:hidden}
 `;
 html=html.replaceAll('app-v288.js','app-v289.js').replaceAll('app-v288.css','app-v289.css').replaceAll('CineTracker • v1.0.79','CineTracker • v1.0.80');
 sw=sw.replaceAll('ct-web-1.0.79-r288','ct-web-1.0.80-r289').replaceAll('app-v288.js','app-v289.js').replaceAll('app-v288.css','app-v289.css');
-const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.80',revision:'r289-official-1.0.80',base:'r288-production',scope:'discover-standard-card-size-web-only',discover_card_size:'legacy-standard-128-152px',discover_card_ratio:'2:3',discover_card_layout:'fixed-local-rail-no-stretch',discover_card_slots:'fixed-width-local-scroll',android:'1.0.20/10062'};
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.80',revision:'r289-official-1.0.80',base:'r288-production',scope:'discover-standard-card-size-web-only',discover_card_size:'standard-154-mobile-176-desktop',discover_card_mobile:'154x231',discover_card_desktop:'176x264',discover_card_ratio:'2:3',discover_card_layout:'fixed-local-rail-no-stretch',discover_card_slots:'fixed-width-local-scroll',android:'1.0.20/10062'};
 await Promise.all([
  writeFile(resolve(dist,'app-v289.js'),js,'utf8'),writeFile(resolve(dist,'app-v289.css'),css,'utf8'),writeFile(resolve(dist,'index.html'),html,'utf8'),writeFile(resolve(dist,'service-worker.js'),sw,'utf8'),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2),'utf8')
 ]);
 await Promise.all([rm(resolve(dist,'app-v288.js'),{force:true}),rm(resolve(dist,'app-v288.css'),{force:true})]);
-console.log('WEB_R289_READY discover=standard-card-size 128-152px ratio=2:3 android=preserved');
+console.log('WEB_R289_READY discover=standard-card-size mobile=154x231 desktop=176x264 ratio=2:3 android=preserved');
