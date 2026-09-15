@@ -6,34 +6,37 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.76** | `r285-official-1.0.76` | Home atômica; capas reais e controles próprios para Formula 1/Super Bowl |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r285 |
+| Web | **1.0.81** | `r290-official-1.0.81` | cards de mídia padronizados pela geometria da Indicação do Dia |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r290 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.76 / r285
+## Web 1.0.81 / r290
 
-A r285 corrige o vídeo real posterior à r284: a Home não pode exibir uma versão provisória e trocar séries/episódios durante a reconciliação; Formula 1 e Super Bowl precisam de fotografias reais; e os controles de temporada/assistido da F1 precisam responder de forma confiável.
+A r290 transforma o card da **Indicação do Dia** na referência dimensional única para cards de filmes, séries e animes na Web.
 
-- **Home sem troca intermediária:** o payload é reconciliado integralmente em memória e apenas o snapshot completo é publicado. A visão anterior fica intacta enquanto a atualização está em andamento.
-- **Formula 1 e Super Bowl com fotos reais:** as artes sintéticas da r284 foram substituídas por fotografias da Wikimedia Commons, com crédito/licença registrados em `docs/releases/web-1.0.76-r285.md`.
-- **Temporadas da F1:** a seleção muda imediatamente para o ano escolhido e usa token de geração; uma resposta atrasada de outro ano não pode sobrescrever a seleção atual.
-- **Marcar episódio assistido:** F1 e Super Bowl usam controles próprios r285, ativação por `pointerup`/`click` deduplicada e o writer canônico `cinetracker_mark_watch_v0994`.
-- **Compatibilidade com o handler legado:** o opener da r284 é redirecionado para o renderer r285, enquanto os novos controles usam `data-ct285-*` para não serem capturados pelos handlers antigos.
-- **Stuart:** mantém poster real via TMDB efetivo 287620.
-- **Escopo preservado:** disponibilidade fresca da r283, ordenação da r282, isolamento de ações da r281, Histórico acima da viewport, abas/sidebar fixas, Descobrir, detalhes, Perfil, Sports/F1 Hub e Android permanecem preservados.
+- **Geometria única:** pôster 2:3 travado em **176×264 px no desktop** e **154×231 px no mobile**, igual à Indicação do Dia.
+- **Container imutável:** card e área clicável usam altura fixa derivada da mesma referência; texto longo não aumenta, comprime ou estica o card.
+- **Texto previsível:** título limitado a duas linhas; ano, gêneros, tipo e nota ficam em uma linha truncada; o bloco de texto possui altura fixa de **80 px no desktop** e **75 px no mobile**.
+- **Descobrir inteiro:** `Da sua Watchlist`, `100% Novos`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` usam exclusivamente cards verticais uniformes.
+- **Top 10 sem banner legado:** o fallback de faixa larga é substituído pelo mesmo card vertical padronizado.
+- **Restante da Web:** cards de mídia poster-based são normalizados pela classe compartilhada `ct-media-card-lock`, inclusive conteúdo criado depois do primeiro paint.
+- **Layout local:** grids e carrosséis preservam a largura fixa dos cards; quando não há espaço, o overflow fica no componente, nunca expandindo o card ou a página.
+- **Android preservado:** continua em `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v290.js` / `app-v290.css`; build: `apps/web/build-r290-official.mjs`; runtime compartilhado: `apps/web/runtime-r290-universal-media-card-lock.js`.
 
 ## Funcionalidades consolidadas
 
 - Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira, Histórico recente e estados de biblioteca;
-- Histórico de episódios e filmes cronológico, acessível acima da viewport inicial, com Reassistir e desfazer marcação de visto sem navegar para detalhes;
+- Histórico de episódios e filmes cronológico, com Reassistir e desfazer marcação de visto sem navegar para detalhes;
 - reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x...`;
 - detecção do primeiro episódio lançado não visto com consolidação por TMDB efetivo e exceção de fronteira atual para séries recorrentes antigas;
 - contagem fresca de todos os episódios já lançados ainda disponíveis para ver;
 - próximo episódio anunciado para séries em dia;
-- metadados ricos de episódios e filmes nos cards da Home;
+- metadados ricos de episódios e filmes;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
 - exclusões pessoais para não recomendar itens vistos, em andamento, em dia, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
@@ -53,7 +56,7 @@ A r285 corrige o vídeo real posterior à r284: a Home não pode exibir uma vers
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r285 herda integralmente a r284 e altera somente a publicação da Home e a apresentação/interação das séries importadas Formula 1/Super Bowl.
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r290 herda integralmente a r289 e acrescenta uma autoridade compartilhada de geometria de cards, sem alterar a baseline Android.
 
 ## Regra de validação
 

@@ -1,48 +1,48 @@
-name: Verify Web 1.0.80 r289 Discover Standard Card Size
+name: Verify Web 1.0.81 r290 Universal Media Card Lock
 
 on:
   push:
-    branches: [main, 'fix/web-r289-discover-standard-card-size']
+    branches: [main, 'fix/web-r290-universal-media-card-lock']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_80_r289:
+  web_1_0_81_r290:
     runs-on: ubuntu-latest
-    timeout-minutes: 70
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r289
+      - name: Version identity r290
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.80"' package.json
-          grep -Fq '"version": "1.0.80"' apps/web/package.json
-          grep -Fq 'build-r289-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r289-discover-standard-card-size.js
-          test -f apps/web/build-r289.mjs
-          test -f apps/web/build-r289-official.mjs
-          test -f apps/web/test-r289.mjs
-          test -f apps/web/test-r289-browser.mjs
-          test -f scripts/test-r289-exact-bundle-browser.mjs
-      - name: Syntax r289 release chain
+          grep -Fq '"version": "1.0.81"' package.json
+          grep -Fq '"version": "1.0.81"' apps/web/package.json
+          grep -Fq 'build-r290-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r290-universal-media-card-lock.js
+          test -f apps/web/build-r290.mjs
+          test -f apps/web/build-r290-official.mjs
+          test -f apps/web/test-r290.mjs
+          test -f apps/web/test-r290-browser.mjs
+          test -f scripts/test-r290-exact-bundle-browser.mjs
+      - name: Syntax r290 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r289-discover-standard-card-size.js
-          node --check apps/web/build-r289.mjs
-          node --check apps/web/build-r289-official.mjs
-          node --check apps/web/test-r289.mjs
-          node --check apps/web/test-r289-browser.mjs
-          node --check scripts/test-r289-exact-bundle-browser.mjs
-      - name: Build official r289
+          node --check apps/web/runtime-r290-universal-media-card-lock.js
+          node --check apps/web/build-r290.mjs
+          node --check apps/web/build-r290-official.mjs
+          node --check apps/web/test-r290.mjs
+          node --check apps/web/test-r290-browser.mjs
+          node --check scripts/test-r290-exact-bundle-browser.mjs
+      - name: Build official r290
         working-directory: apps/web
-        run: node build-r289-official.mjs
-      - name: Static regressions r289
+        run: node build-r290-official.mjs
+      - name: Static regressions r290
         working-directory: apps/web
-        run: node test-r289.mjs
+        run: node test-r290.mjs
       - name: Chromium inherited r285 regressions
         working-directory: apps/web
         run: node test-r285-browser.mjs
@@ -55,38 +55,38 @@ jobs:
       - name: Chromium inherited r288 Discover Android parity
         working-directory: apps/web
         run: node test-r288-browser.mjs
-      - name: Chromium r289 Discover standard card geometry
+      - name: Chromium inherited r289 Discover geometry
         working-directory: apps/web
         run: node test-r289-browser.mjs
-      - name: Exact final bundle boot r289
-        run: node scripts/test-r289-exact-bundle-browser.mjs
-      - name: Final bundle identity r289
+      - name: Chromium r290 all media cards and every Discover section
+        working-directory: apps/web
+        run: node test-r290-browser.mjs
+      - name: Exact final bundle boot r290
+        run: node scripts/test-r290-exact-bundle-browser.mjs
+      - name: Final bundle identity r290
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v289.js
-          grep -Fq "window.__ctWebBuild='1.0.80';window.__ctOfficialVersion='1.0.80';" dist/app-v289.js
-          grep -Fq "const REVISION='r289-official-1.0.80';" dist/app-v289.js
-          grep -Fq "window.__ctR287='home-interaction-liveness+available-episode-priority'" dist/app-v289.js
-          grep -Fq "window.__ctR288='discover-android-parity-web-only'" dist/app-v289.js
-          grep -Fq "window.__ctR288Discover='nine-tabs+stable-shell+provider-top10+three-slot-foryou'" dist/app-v289.js
-          grep -Fq "window.__ctR289='discover-standard-card-size'" dist/app-v289.js
-          grep -Fq "window.__ctR289Cards='standard-154-mobile-176-desktop-2x3'" dist/app-v289.js
-          grep -Fq -- '[data-ct288-discover]{--ct289-card-w:154px}' dist/app-v289.js
-          grep -Fq -- '@media(min-width:1100px){[data-ct288-discover]{--ct289-card-w:176px}}' dist/app-v289.js
-          grep -Fq 'grid-auto-columns:var(--ct289-card-w)!important' dist/app-v289.js
-          grep -Fq 'grid-template-columns:repeat(auto-fill,var(--ct289-card-w))!important' dist/app-v289.js
-          grep -Fq 'app-v289.js' dist/index.html
-          grep -Fq 'app-v289.css' dist/index.html
-          grep -Fq '"discover_tabs": 9' dist/release.json
-          grep -Fq '"discover_tab_switch": "content-only-no-shell-rebuild"' dist/release.json
-          grep -Fq '"discover_card_size": "standard-154-mobile-176-desktop"' dist/release.json
-          grep -Fq '"discover_card_mobile": "154x231"' dist/release.json
-          grep -Fq '"discover_card_desktop": "176x264"' dist/release.json
-          grep -Fq '"discover_card_ratio": "2:3"' dist/release.json
-          grep -Fq '"discover_card_layout": "fixed-local-rail-no-stretch"' dist/release.json
+          node --check dist/app-v290.js
+          grep -Fq "window.__ctWebBuild='1.0.81';window.__ctOfficialVersion='1.0.81';" dist/app-v290.js
+          grep -Fq "const REVISION='r290-official-1.0.81';" dist/app-v290.js
+          grep -Fq "window.__ctR288='discover-android-parity-web-only'" dist/app-v290.js
+          grep -Fq "window.__ctR289='discover-standard-card-size'" dist/app-v290.js
+          grep -Fq "window.__ctR290='universal-media-card-lock'" dist/app-v290.js
+          grep -Fq "window.__ctR290Cards='indication-of-day-exact-154x231-mobile-176x264-desktop'" dist/app-v290.js
+          grep -Fq -- '--ct-media-card-w:176px' dist/app-v290.js
+          grep -Fq -- '--ct-media-poster-h:264px' dist/app-v290.js
+          grep -Fq -- '--ct-media-card-w:154px' dist/app-v290.js
+          grep -Fq -- '--ct-media-poster-h:231px' dist/app-v290.js
+          grep -Fq 'window.ct171TopCard=standardTopCard' dist/app-v290.js
+          grep -Fq -- '-webkit-line-clamp:2!important' dist/app-v290.js
+          grep -Fq 'app-v290.js' dist/index.html
+          grep -Fq 'app-v290.css' dist/index.html
+          grep -Fq '"media_card_reference": "indicacao-do-dia"' dist/release.json
+          grep -Fq '"discover_cards": "all-nine-tabs-vertical-uniform"' dist/release.json
+          grep -Fq '"discover_top10": "vertical-standard-card-no-banner-fallback"' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.80-r289';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.81-r290';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -101,19 +101,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_80_r289]
+    needs: [web_1_0_81_r290]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.80 r289
+      - name: Official production serves and boots 1.0.81 r290
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.80"' <<<"$BODY" && grep -Fq '"revision": "r289-official-1.0.80"' <<<"$BODY" && grep -Fq '"discover_tabs": 9' <<<"$BODY" && grep -Fq '"discover_card_size": "standard-154-mobile-176-desktop"' <<<"$BODY" && grep -Fq '"discover_card_mobile": "154x231"' <<<"$BODY" && grep -Fq '"discover_card_desktop": "176x264"' <<<"$BODY" && grep -Fq '"discover_card_ratio": "2:3"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v289.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.81"' <<<"$BODY" && grep -Fq '"revision": "r290-official-1.0.81"' <<<"$BODY" && grep -Fq '"media_card_reference": "indicacao-do-dia"' <<<"$BODY" && grep -Fq '"discover_cards": "all-nine-tabs-vertical-uniform"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v290.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR288='discover-android-parity-web-only'" <<<"$JS" && grep -Fq "window.__ctR289='discover-standard-card-size'" <<<"$JS" && grep -Fq -- '[data-ct288-discover]{--ct289-card-w:154px}' <<<"$JS" && grep -Fq -- '@media(min-width:1100px){[data-ct288-discover]{--ct289-card-w:176px}}' <<<"$JS" && grep -Fq 'app-v289.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR290='universal-media-card-lock'" <<<"$JS" && grep -Fq -- '--ct-media-card-w:176px' <<<"$JS" && grep -Fq 'app-v290.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
