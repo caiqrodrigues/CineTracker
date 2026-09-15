@@ -2,7 +2,8 @@ name: Prepare r290 changelog
 
 on:
   push:
-    branches: ['fix/web-r290-universal-media-card-lock']
+    branches:
+      - fix/web-r290-universal-media-card-lock
 
 permissions:
   contents: write
@@ -16,8 +17,8 @@ jobs:
         with:
           ref: fix/web-r290-universal-media-card-lock
       - name: Prepend r290 changelog
-        shell: python
         run: |
+          python - <<'PY'
           from pathlib import Path
           p=Path('CHANGELOG.md')
           old=p.read_text(encoding='utf-8')
@@ -48,6 +49,7 @@ jobs:
 
 '''
               p.write_text(section+old,encoding='utf-8')
+          PY
       - name: Commit changelog preparation
         run: |
           set -euo pipefail
