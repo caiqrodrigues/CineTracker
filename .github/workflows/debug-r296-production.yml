@@ -21,7 +21,7 @@ jobs:
       - name: Capture public production runtime errors
         working-directory: apps/web
         run: |
-          cat > /tmp/r296-probe.mjs <<'NODE'
+          cat > .r296-probe.mjs <<'NODE'
           import { chromium } from 'playwright';
           const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/google-chrome',args:['--no-sandbox','--disable-gpu','--disable-background-networking']});
           const page=await browser.newPage();
@@ -40,4 +40,5 @@ jobs:
           console.log('MARKERS',await page.evaluate(()=>({r296:window.__ctR296||null,web:window.__ctWebBuild||null,official:window.__ctOfficialVersion||null})));
           await browser.close();
           NODE
-          node /tmp/r296-probe.mjs
+          node ./.r296-probe.mjs
+          rm -f .r296-probe.mjs
