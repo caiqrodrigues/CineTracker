@@ -6,45 +6,40 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.82** | `r291-official-1.0.82` | Descobrir com ações no footer, favorito por coração e carrosséis horizontais locais |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r291 |
+| Web | **1.0.83** | `r292-official-1.0.83` | Relacionados com ações próprias, Pra Você canônico e cards compactos |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r292 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.82 / r291
+## Web 1.0.83 / r292
 
-A r291 refina a experiência da aba **Descobrir** sem alterar a baseline Android.
+A r292 fecha os fluxos de **Títulos Relacionados/Semelhantes** e **Descobrir > Pra Você** sem alterar a baseline Android.
 
-- **Ações sem sobreposição:** nos blocos `Da sua Watchlist` e `100% Novos`, `+ Playlist` / `✓ Salvo` ficam no footer, ao lado de `↻ Trocar`, em linha e sem ocupar a área de título/metadados.
-- **Texto limpo:** título e metadados ficam isolados dos controles, com uma linha, `line-clamp-1` e truncamento por reticências.
-- **Favorito no pôster:** cada mídia recebe coração minimalista sobre a capa, com estado inativo em contorno e ativo preenchido em rosa, além de feedback otimista imediato.
-- **Persistência canônica:** favoritos usam `media_overrides.state = 'Liked'`; filmes aparecem em Favoritos de Filmes e itens `tv` em Favoritos de Séries pelo mesmo dashboard canônico do Perfil.
-- **Scroll horizontal local:** `Em Alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados`, Top 10 e blocos do Pra Você usam carrosséis locais com `overflow-x:auto`, snap, gesto `pan-x` e arraste por ponteiro, sem criar scroll horizontal na janela.
-- **Classes de carrossel:** os trilhos recebem `flex overflow-x-auto scrollbar-thin space-x-4 pb-4 snap-x touch-pan-x` e retenção de overscroll no próprio componente.
-- **Geometria preservada:** os pôsteres continuam no padrão da Indicação do Dia definido pela r290.
-- **Android preservado:** continua em `1.0.20 / versionCode 10062`.
+- **Relacionados/semelhantes:** pôster e título abrem a mídia correta; Watchlist usa o ID/tipo do próprio card, é assíncrona e não fecha o modal.
+- **Da sua Watchlist:** candidatos vêm do estado canônico do Supabase e itens já vistos são removidos antes da renderização.
+- **100% Novos:** pools independentes para Filme, Série e Anime respeitam TMDB >= 7.5, ano > 1990, sem WWE/Raw/SmackDown, fora da Watchlist e sem repetição semanal.
+- **Trocar seguro:** cada categoria troca apenas dentro do próprio pool válido, com índice normalizado para impedir slots cinzas por posição inválida.
+- **Cards compactos:** título/metadados em uma linha com truncamento; ações de 30px; coração continua sobre o pôster; pôsteres permanecem em 154x231 mobile e 176x264 desktop.
+- **Scroll:** somente trilhos próprios podem rolar horizontalmente; documento continua travado no eixo X.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v291.js` / `app-v291.css`; build: `apps/web/build-r291-official.mjs`; runtime: `apps/web/runtime-r291-discover-actions-favorites-scroll.js`.
+Assets oficiais: `app-v292.js` / `app-v292.css`; build: `apps/web/build-r292-official.mjs`; runtime: `apps/web/runtime-r292-related-foryou-compact.js`.
 
 ## Funcionalidades consolidadas
 
 - Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira, Histórico recente e estados de biblioteca;
 - Histórico de episódios e filmes cronológico, com Reassistir e desfazer marcação de visto sem navegar para detalhes;
 - reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x...`;
-- detecção do primeiro episódio lançado não visto com consolidação por TMDB efetivo e exceção de fronteira atual para séries recorrentes antigas;
-- contagem fresca de todos os episódios já lançados ainda disponíveis para ver;
-- próximo episódio anunciado para séries em dia;
-- metadados ricos de episódios e filmes;
+- detecção do primeiro episódio lançado não visto e tratamento específico para séries recorrentes antigas;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
 - favoritos de filmes e séries sincronizados por estado `Liked`, com ação direta pelo coração no Descobrir;
 - exclusões pessoais para não recomendar itens vistos, em andamento, em dia, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
-- detalhes ricos de filmes, séries, temporadas, episódios, avaliações e elenco;
+- detalhes ricos de filmes, séries, temporadas, episódios, avaliações, elenco e títulos relacionados;
 - Formula 1 e NFL Super Bowl importados tratados como séries, sem perder a área esportiva/F1 Hub;
 - Perfil com estatísticas, favoritos, atividade e tempos;
-- Sports integrado ao mesmo shell do CineTracker e F1 Hub;
 - busca, importação, sincronização, manutenção e backup;
 - Supabase como estado compartilhado entre Web e Android.
 
@@ -57,7 +52,7 @@ Assets oficiais: `app-v291.js` / `app-v291.css`; build: `apps/web/build-r291-off
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r291 herda integralmente a r290 e acrescenta uma autoridade específica do Descobrir para footers de ação, favoritos por coração e carrosséis horizontais locais, sem alterar a baseline Android.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r292 herda r291 e acrescenta autoridade específica para relacionados e para os pools do Pra Você, mantendo a baseline Android.
 
 ## Regra de validação
 

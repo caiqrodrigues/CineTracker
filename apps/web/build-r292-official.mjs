@@ -1,0 +1,7 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r292.mjs');
+const dist=resolve('dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v292.js','app-v292.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8'))),must=(s,x)=>{if(!s.includes(x))throw new Error('r292 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.83';window.__ctOfficialVersion='1.0.83';","const REVISION='r292-official-1.0.83';","window.__ctR286='related-open-watchlist-seen-window-capture'","window.__ctR291='discover-actions-favorites-horizontal-scroll'","window.__ctR292='related-actions-foryou-authority-compact-cards'","cinetracker_recommendation_state_v108","with_original_language:'ja'","await addWatchlist(s.type,s.id)","-webkit-line-clamp:1!important"])must(js,x);
+must(html,'app-v292.js');must(html,'app-v292.css');must(css,'overflow-x:hidden');const m=JSON.parse(release);if(m.version!=='1.0.83'||m.revision!=='r292-official-1.0.83'||m.related_titles_open!=='window-capture-poster-title-correct-id'||m.discover_foryou_watchlist!=='canonical-personal-state-unwatched-only'||m.discover_swap!=='valid-pool-index-no-empty-regression'||m.android!=='1.0.20/10062')throw new Error('r292 release identity');must(sw,"const CACHE='ct-web-1.0.83-r292';");console.log('WEB_1_0_83_OFFICIAL_OK r292 related actions + Pra Você authority + compact cards; Android preserved');
