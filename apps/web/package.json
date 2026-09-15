@@ -10,7 +10,8 @@
     "test:browser": "node test-r297-browser.mjs",
     "test:r297": "node test-r297.mjs",
     "test:r297:browser": "node test-r297-browser.mjs",
-    "verify": "npm run build && npm run test && npm run test:browser"
+    "test:r297:discover-live": "node test-r297-discover-live-browser.mjs",
+    "verify": "npm run build && npm run test && npm run test:r297:discover-live && npm run test:browser"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
