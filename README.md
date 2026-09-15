@@ -6,27 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.85** | `r294-official-1.0.85` | Descobrir mais compacto, Top 10 com 10 cards na referência desktop e ações acima do scroll |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r294 |
+| Web | **1.0.86** | `r295-official-1.0.86` | Descobrir com exclusão canônica de vistos/Watchlist, Calendário combinável e Indicação do Dia corrigida |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r295 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.85 / r294
+## Web 1.0.86 / r295
 
-A r294 corrige a densidade visual do **Descobrir** observada em vídeo, sem alterar a baseline Android.
+A r295 corrige o **Descobrir** usando uma autoridade pessoal unificada e mantém integralmente a baseline Android.
 
-- **Cards desktop:** passam de 176x264 para 158x237; mobile Web preserva 154x231.
-- **Top 10:** a referência desktop de 1920px passa a comportar os 10 cards completos na linha; em larguras menores o scroll continua local ao trilho.
-- **Texto compacto:** o bloco de título/metadados cai de 80px para 52px no desktop, mantendo uma linha e reticências.
-- **Ações antes do scroll:** Playlist/Trocar ficam contidos na altura efetiva do card/slot e aparecem antes da barra horizontal, sem vazamento para baixo.
-- **Controles menores:** rodapé de 28px, gap de 4px e margem superior de 2px.
-- **Trilhos mais densos:** gap horizontal de 8px e padding inferior de 6px, aproximando texto, ações e scrollbar.
-- **Relacionados/semelhantes:** a faixa de Watchlist/Visto recebe a mesma compactação sem alterar a autoridade de clique/ID consolidada até a r293.
+- **Em alta / Populares / Novidades / Mais Aguardados / Mais bem avaliados:** não exibem títulos já vistos nem presentes na Watchlist.
+- **Ações dos cards:** cada card dessas cinco áreas mantém `+ Playlist` e recebe `✓ Visto`; ao concluir a ação, o título sai imediatamente da seleção atual.
+- **Autoridade pessoal:** a Web une recomendações, painel do Perfil e snapshot da biblioteca para evitar vazamentos quando uma fonte isolada estiver incompleta.
+- **Calendário:** `Todos / Filmes / Séries` formam um eixo exclusivo e `Watchlist` funciona como filtro independente; combinações como `Séries + Watchlist` são suportadas.
+- **Calendário/Watchlist:** a Watchlist é aplicada depois da coleta do calendário, sem ser descartada prematuramente pela exclusão geral do Descobrir.
+- **Pra Você / 100% Novos:** candidatos são novamente filtrados contra a união canônica de vistos + Watchlist antes de cada pintura.
+- **Indicação do Dia:** passa a sair apenas do pool válido de `100% Novos`, de forma determinística por dia, e remove blur/filtros herdados do card/imagem.
 - **Android preservado:** `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v294.js` / `app-v294.css`; build: `apps/web/build-r294-official.mjs`; runtime: `apps/web/runtime-r294-discover-density-scroll-order.js`.
+Assets oficiais: `app-v295.js` / `app-v295.css`; build: `apps/web/build-r295-official.mjs`; runtime: `apps/web/runtime-r295-discover-personal-calendar-daily.js`.
 
 ## Funcionalidades consolidadas
 
@@ -53,7 +53,7 @@ Assets oficiais: `app-v294.js` / `app-v294.css`; build: `apps/web/build-r294-off
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r294 herda toda a autoridade funcional da r293 e altera somente a geometria/densidade do Descobrir Web, mantendo navegação, recomendações, ações e baseline Android.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r295 herda a geometria/densidade da r294 e adiciona uma autoridade tardia para regras pessoais do Descobrir, filtros combináveis do Calendário e a recomendação diária, sem alterar o Android.
 
 ## Regra de validação
 
