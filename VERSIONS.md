@@ -6,10 +6,25 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.88** | revision `r297-official-1.0.88`, package `1.0.88` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r297 |
+| Web | **1.0.89** | revision `r298-official-1.0.89`, package `1.0.89` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r298 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.89 / r298
+
+A r298 corrige as divergências observadas em vídeo após a r297, usando o DOM efetivamente servido como ground truth.
+
+- o botão real de Esportes (`data-ct255-watch`) passa a ser interceptado antes do handler legado e abre a escolha `📺 Assistido na TV / Tela` ou `🏟️ Fui ao Estádio (In Loco)`;
+- a opção presencial persiste por `cinetracker_sports_watch_set_v296`, incluindo `attended_in_person` e `stadium_name`, e registros presenciais recebem `🏟️ No Estádio`;
+- `Jogos no Estádio` deixa de ser injetado na primeira grade genérica do Perfil e passa a existir somente dentro do painel semântico `Esportes assistidos`;
+- `Pra Você` recebe pipeline finito próprio sobre os donos r288: aguarda autoridade pessoal e memória de 7 dias, hidrata Watchlist, busca pools suficientes e monta `Indicação do Dia` (1 Filme), `Da sua Watchlist` (Filme + Série + Anime) e `100% Novos` (Filme + Série + Anime), sem duplicações;
+- se uma categoria realmente não possuir candidato elegível, a interface mostra estado explícito em vez de permanecer indefinidamente em `Carregando…`;
+- preserva TMDB >= 7,5, ano > 1990, exclusões de Drama/Documentário-only, WWE e biblioteca pessoal, além do anti-repeat de 7 dias;
+- adiciona regressões Chromium específicas para o botão esportivo real, posicionamento da métrica no Perfil e composição 1+3+3 do `Pra Você` sem spinner residual;
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v298.js` / `app-v298.css`; build: `apps/web/build-r298-official.mjs`; runtime: `apps/web/runtime-r298-stadium-foryou-completion.js`; regressões: `apps/web/test-r298-foryou-browser.mjs` e `apps/web/test-r298-browser.mjs`.
 
 ## Web 1.0.88 / r297
 
@@ -74,7 +89,7 @@ Assets oficiais: `app-v288.js` / `app-v288.css`; build: `apps/web/build-r288-off
 
 ## Android 1.0.20
 
-A r297 não altera Android. A identidade preservada é:
+A r298 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
