@@ -16,23 +16,27 @@ jobs:
         run: |
           set +e
           TS="$(date +%s%N)"
-          echo '=== release.json ==='
           curl -sS -D /tmp/release.headers -o /tmp/release.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$TS"
-          echo "release_curl_exit=$?"
-          cat /tmp/release.headers || true
-          echo '--- release body ---'
-          head -c 5000 /tmp/release.body || true
-          echo
-          echo '=== index.html ==='
           curl -sS -D /tmp/html.headers -o /tmp/html.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$TS"
-          echo "html_curl_exit=$?"
-          cat /tmp/html.headers || true
-          echo '--- asset refs ---'
-          grep -Eo 'app-v[0-9]+\.(js|css)' /tmp/html.body | sort -u || true
-          echo '=== app-v296.js ==='
           curl -sS -D /tmp/js.headers -o /tmp/js.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v296.js?ct=$TS"
-          echo "js_curl_exit=$?"
-          cat /tmp/js.headers || true
-          echo '--- r296 markers ---'
-          grep -F "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" /tmp/js.body | head -c 500 || true
+          echo '=== smoke predicates ==='
+          for needle in \
+            '"version": "1.0.87"' \
+            '"revision": "r296-official-1.0.87"' \
+            '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' \
+            '"sports_tabs": "next-today+previous-72h+favorites+watched"' \
+            '"sports_attendance": "attended_in_person+stadium_name+profile-total"'; do
+            if grep -Fq "$needle" /tmp/release.body; then echo "PASS release: $needle"; else echo "FAIL release: $needle"; fi
+          done
+          if grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" /tmp/js.body; then echo 'PASS js marker'; else echo 'FAIL js marker'; fi
+          if grep -Fq 'app-v296.js' /tmp/html.body; then echo 'PASS html asset'; else echo 'FAIL html asset'; fi
+          echo '=== chromium DOM ==='
+          google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$TS" >/tmp/dom.body 2>/tmp/chrome.err
+          echo "chrome_exit=$?"
+          if grep -Fq 'CineTracker' /tmp/dom.body; then echo 'PASS DOM CineTracker'; else echo 'FAIL DOM CineTracker'; fi
+          if grep -Fq '<div id="app"></div>' /tmp/dom.body; then echo 'FAIL DOM empty app'; else echo 'PASS DOM app rendered'; fi
+          echo '--- chrome stderr tail ---'
+          tail -n 30 /tmp/chrome.err || true
+          echo '--- DOM head ---'
+          head -c 1500 /tmp/dom.body || true
           echo
