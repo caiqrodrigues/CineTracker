@@ -2,6 +2,27 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.85 — 2026-09-15 — Web r294
+
+### Descobrir / densidade visual
+- Corrige a composição mostrada no vídeo de validação: texto, ações e barra horizontal deixam de ficar excessivamente afastados e passam a formar um bloco vertical compacto.
+- Cards Web desktop passam de 176x264 para 158x237; mobile Web preserva 154x231.
+- O bloco de texto cai de 80px para 52px no desktop, mantendo título e metadados em uma linha com reticências.
+- Gap horizontal dos trilhos cai de 16px para 8px e a reserva inferior do scroll de 16px para 6px.
+
+### Top 10
+- A geometria desktop passa a permitir 10 cards completos em uma linha na referência de 1920px usada no vídeo, em vez de exibir apenas 9 antes do scroll.
+- O trilho continua com scroll horizontal local para viewports menores, sem reintroduzir overflow horizontal no documento.
+
+### Ações / barra de rolagem
+- Rodapé de Playlist/Trocar passa a fazer parte da altura efetiva do card/slot; os botões ficam acima da barra horizontal em vez de vazarem para a área inferior do scroller.
+- Altura dos controles cai para 28px, com gap de 4px e margem superior de 2px.
+- A faixa de ações de Títulos Relacionados/Semelhantes recebe a mesma compactação, preservando a autoridade de clique/ID da r286/r292/r293.
+
+### Build / validação
+- Web atualizada para `1.0.85 / r294-official-1.0.85`; Android permanece `1.0.20 / versionCode 10062` sem alteração.
+- A r294 adiciona teste Chromium em viewport 1920x1032 para validar 10 cards no Top 10, 158x237, texto de 52px, footer contido no card e ordem conteúdo -> ações -> scrollbar.
+
 ## 1.0.84 — 2026-09-15 — Web r293
 
 ### Descobrir / navegação
