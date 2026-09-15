@@ -1,4 +1,4 @@
-name: Verify Web 1.0.88 r297 Boot Authority Hotfix
+name: Verify Web 1.0.88 r297 Live Discover Boot Hotfix
 
 on:
   push:
@@ -24,23 +24,27 @@ jobs:
           grep -Fq 'build-r297-official.mjs' apps/web/package.json
           test -f apps/web/build-r297.mjs
           test -f apps/web/build-r297-official.mjs
+          test -f apps/web/runtime-r297-live-discover-owner-bridge.js
           test -f apps/web/test-r297.mjs
           test -f apps/web/test-r297-browser.mjs
+          test -f apps/web/test-r297-discover-live-browser.mjs
           test -f apps/web/runtime-r295-browse-actions-self-scope-fix.js
           test -f apps/web/runtime-r296-recommendations-sports-stadium.js
-          test -f supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
+          test -f supabase/migrations/20260915183834_r296_recommendations-sports-stadium.sql || test -f supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
       - name: Syntax r297 release chain
         run: |
           set -euo pipefail
           node --check apps/web/runtime-r295-browse-actions-self-scope-fix.js
+          node --check apps/web/runtime-r297-live-discover-owner-bridge.js
           node --check apps/web/build-r297.mjs
           node --check apps/web/build-r297-official.mjs
           node --check apps/web/test-r297.mjs
           node --check apps/web/test-r297-browser.mjs
+          node --check apps/web/test-r297-discover-live-browser.mjs
       - name: Build official r297
         working-directory: apps/web
         run: node build-r297-official.mjs
-      - name: Static regression r297 boot authority
+      - name: Static regression r297 live owner bridge
         working-directory: apps/web
         run: node test-r297.mjs
       - name: Chromium inherited r286 related interactions
@@ -58,6 +62,9 @@ jobs:
       - name: Chromium inherited r296 recommendations sports stadium
         working-directory: apps/web
         run: node test-r296-browser.mjs
+      - name: Chromium r297 real r288 Discover owner behavior
+        working-directory: apps/web
+        run: node test-r297-discover-live-browser.mjs
       - name: Chromium exact full bundle r297 boot
         working-directory: apps/web
         run: node test-r297-browser.mjs
@@ -82,16 +89,20 @@ jobs:
           grep -Fq "window.__ctWebBuild='1.0.88';window.__ctOfficialVersion='1.0.88';" dist/app-v297.js
           grep -Fq "const REVISION='r297-official-1.0.88';" dist/app-v297.js
           grep -Fq "window.__ctR295='discover-personal-authority-calendar-daily-actions'" dist/app-v297.js
-          grep -Fq "window.__ctR295BrowseSelfScopeFix='pending-post-boot-authority'" dist/app-v297.js
-          grep -Fq "if(!install())queueMicrotask(retry);" dist/app-v297.js
+          grep -Fq "window.__ctR295BrowseSelfScopeFix='decorate-browse-host-self-and-descendants'" dist/app-v297.js
           grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" dist/app-v297.js
-          grep -Fq "window.__ctR297='r295-scope-post-boot-hotfix-full-bundle'" dist/app-v297.js
+          grep -Fq "window.__ctR297DiscoverBridge='r288-live-owners+r295-personal+r296-strict'" dist/app-v297.js
+          grep -Fq 'liveBrowse.__ctR297R295Browse=true;' dist/app-v297.js
+          grep -Fq 'liveForYou.__ctR297R295R296ForYou=true;' dist/app-v297.js
+          grep -Fq 'liveLoad.__ctR297R295Load=true;' dist/app-v297.js
+          grep -Fq "window.__ctR297='r288-live-owner-hotfix-full-bundle'" dist/app-v297.js
           ! grep -Fq "throw new Error('r295 browse self-scope fix missing r295 authority')" dist/app-v297.js
           grep -Fq 'app-v297.js' dist/index.html
           grep -Fq 'app-v297.css' dist/index.html
           grep -Fq '"version": "1.0.88"' dist/release.json
           grep -Fq '"revision": "r297-official-1.0.88"' dist/release.json
-          grep -Fq '"boot_hotfix": "r295-browse-scope-deferred-until-paint-authority-exists"' dist/release.json
+          grep -Fq '"boot_hotfix": "r295-scope-no-fatal-preboot+r288-live-owner-bridge"' dist/release.json
+          grep -Fq '"discover_live_owner_bridge": "r295-personal+r296-strict-on-r288-live-owners"' dist/release.json
           grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' dist/release.json
           grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' dist/release.json
           grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' dist/release.json
@@ -120,10 +131,10 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.88"' <<<"$BODY" && grep -Fq '"revision": "r297-official-1.0.88"' <<<"$BODY" && grep -Fq '"boot_hotfix": "r295-browse-scope-deferred-until-paint-authority-exists"' <<<"$BODY" && grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' <<<"$BODY" && grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' <<<"$BODY" && grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.88"' <<<"$BODY" && grep -Fq '"revision": "r297-official-1.0.88"' <<<"$BODY" && grep -Fq '"boot_hotfix": "r295-scope-no-fatal-preboot+r288-live-owner-bridge"' <<<"$BODY" && grep -Fq '"discover_live_owner_bridge": "r295-personal+r296-strict-on-r288-live-owners"' <<<"$BODY" && grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' <<<"$BODY" && grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' <<<"$BODY" && grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v297.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR297='r295-scope-post-boot-hotfix-full-bundle'" <<<"$JS" && grep -Fq "window.__ctR295BrowseSelfScopeFix='pending-post-boot-authority'" <<<"$JS" && ! grep -Fq "throw new Error('r295 browse self-scope fix missing r295 authority')" <<<"$JS" && grep -Fq 'app-v297.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR297='r288-live-owner-hotfix-full-bundle'" <<<"$JS" && grep -Fq "window.__ctR297DiscoverBridge='r288-live-owners+r295-personal+r296-strict'" <<<"$JS" && ! grep -Fq "throw new Error('r295 browse self-scope fix missing r295 authority')" <<<"$JS" && grep -Fq 'app-v297.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
