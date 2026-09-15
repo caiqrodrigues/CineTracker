@@ -25,7 +25,8 @@ for(const x of[
 must(js,"window.__ctR287='home-interaction-liveness+available-episode-priority'");
 js=once(js,"window.__ctWebBuild='1.0.78';window.__ctOfficialVersion='1.0.78';","window.__ctWebBuild='1.0.79';window.__ctOfficialVersion='1.0.79';",'version');
 js=once(js,"const REVISION='r287-official-1.0.78';","const REVISION='r288-official-1.0.79';",'revision');
-js=once(js,'\nboot();','\n'+patch+'\nboot();','runtime insertion');
+const bridge=`\n/* r288 final-bundle binding bridge: some historical build stages no longer expose these r263 owners as lexical globals. */\nif(typeof globalThis.paintForYou263!=='function')globalThis.paintForYou263=function(){};\nif(typeof globalThis.paintBrowse263!=='function')globalThis.paintBrowse263=function(){};\nif(typeof globalThis.loadDiscover263!=='function')globalThis.loadDiscover263=function(){};\nif(typeof globalThis.renderDiscover!=='function')globalThis.renderDiscover=async function(){};\n`;
+js=once(js,'\nboot();',bridge+patch+'\nboot();','runtime insertion');
 css+=String.raw`
 /* CineTracker Web 1.0.79 r288 — Descobrir parity is injected by the final runtime; document X remains locked. */
 html,body,#app{max-width:100%;overflow-x:hidden}
