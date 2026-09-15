@@ -26,11 +26,13 @@ jobs:
           test -f apps/web/build-r297-official.mjs
           test -f apps/web/test-r297.mjs
           test -f apps/web/test-r297-browser.mjs
+          test -f apps/web/runtime-r295-browse-actions-self-scope-fix.js
           test -f apps/web/runtime-r296-recommendations-sports-stadium.js
           test -f supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
       - name: Syntax r297 release chain
         run: |
           set -euo pipefail
+          node --check apps/web/runtime-r295-browse-actions-self-scope-fix.js
           node --check apps/web/build-r297.mjs
           node --check apps/web/build-r297-official.mjs
           node --check apps/web/test-r297.mjs
@@ -80,15 +82,16 @@ jobs:
           grep -Fq "window.__ctWebBuild='1.0.88';window.__ctOfficialVersion='1.0.88';" dist/app-v297.js
           grep -Fq "const REVISION='r297-official-1.0.88';" dist/app-v297.js
           grep -Fq "window.__ctR295='discover-personal-authority-calendar-daily-actions'" dist/app-v297.js
+          grep -Fq "window.__ctR295BrowseSelfScopeFix='pending-post-boot-authority'" dist/app-v297.js
+          grep -Fq "if(!install())queueMicrotask(retry);" dist/app-v297.js
           grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" dist/app-v297.js
-          grep -Fq "window.__ctR297='r295-boot-authority-hotfix-full-bundle'" dist/app-v297.js
-          grep -Fq "typeof window.__ctR295Test.decorateBrowseActions==='function'" dist/app-v297.js
-          ! grep -Fq 'if(window.__ctR295)return;' dist/app-v297.js
+          grep -Fq "window.__ctR297='r295-scope-post-boot-hotfix-full-bundle'" dist/app-v297.js
+          ! grep -Fq "throw new Error('r295 browse self-scope fix missing r295 authority')" dist/app-v297.js
           grep -Fq 'app-v297.js' dist/index.html
           grep -Fq 'app-v297.css' dist/index.html
           grep -Fq '"version": "1.0.88"' dist/release.json
           grep -Fq '"revision": "r297-official-1.0.88"' dist/release.json
-          grep -Fq '"boot_hotfix": "r295-marker-requires-complete-authority-before-early-return"' dist/release.json
+          grep -Fq '"boot_hotfix": "r295-browse-scope-deferred-until-paint-authority-exists"' dist/release.json
           grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' dist/release.json
           grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' dist/release.json
           grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' dist/release.json
@@ -117,10 +120,10 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.88"' <<<"$BODY" && grep -Fq '"revision": "r297-official-1.0.88"' <<<"$BODY" && grep -Fq '"boot_hotfix": "r295-marker-requires-complete-authority-before-early-return"' <<<"$BODY" && grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' <<<"$BODY" && grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' <<<"$BODY" && grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.88"' <<<"$BODY" && grep -Fq '"revision": "r297-official-1.0.88"' <<<"$BODY" && grep -Fq '"boot_hotfix": "r295-browse-scope-deferred-until-paint-authority-exists"' <<<"$BODY" && grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' <<<"$BODY" && grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' <<<"$BODY" && grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v297.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR297='r295-boot-authority-hotfix-full-bundle'" <<<"$JS" && grep -Fq 'app-v297.js' <<<"$HTML" && ! grep -Fq 'if(window.__ctR295)return;' <<<"$JS"; then
+              if grep -Fq "window.__ctR297='r295-scope-post-boot-hotfix-full-bundle'" <<<"$JS" && grep -Fq "window.__ctR295BrowseSelfScopeFix='pending-post-boot-authority'" <<<"$JS" && ! grep -Fq "throw new Error('r295 browse self-scope fix missing r295 authority')" <<<"$JS" && grep -Fq 'app-v297.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
