@@ -10,33 +10,34 @@ permissions:
 jobs:
   diagnose_r296_production:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
-      - name: Inspect public production alias
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Install browser probe dependency
+        working-directory: apps/web
+        run: npm install --no-package-lock --ignore-scripts
+      - name: Capture public production runtime errors
+        working-directory: apps/web
         run: |
-          set +e
-          TS="$(date +%s%N)"
-          curl -sS -D /tmp/release.headers -o /tmp/release.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$TS"
-          curl -sS -D /tmp/html.headers -o /tmp/html.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$TS"
-          curl -sS -D /tmp/js.headers -o /tmp/js.body -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v296.js?ct=$TS"
-          echo '=== smoke predicates ==='
-          for needle in \
-            '"version": "1.0.87"' \
-            '"revision": "r296-official-1.0.87"' \
-            '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' \
-            '"sports_tabs": "next-today+previous-72h+favorites+watched"' \
-            '"sports_attendance": "attended_in_person+stadium_name+profile-total"'; do
-            if grep -Fq "$needle" /tmp/release.body; then echo "PASS release: $needle"; else echo "FAIL release: $needle"; fi
-          done
-          if grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" /tmp/js.body; then echo 'PASS js marker'; else echo 'FAIL js marker'; fi
-          if grep -Fq 'app-v296.js' /tmp/html.body; then echo 'PASS html asset'; else echo 'FAIL html asset'; fi
-          echo '=== chromium DOM ==='
-          google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$TS" >/tmp/dom.body 2>/tmp/chrome.err
-          echo "chrome_exit=$?"
-          if grep -Fq 'CineTracker' /tmp/dom.body; then echo 'PASS DOM CineTracker'; else echo 'FAIL DOM CineTracker'; fi
-          if grep -Fq '<div id="app"></div>' /tmp/dom.body; then echo 'FAIL DOM empty app'; else echo 'PASS DOM app rendered'; fi
-          echo '--- chrome stderr tail ---'
-          tail -n 30 /tmp/chrome.err || true
-          echo '--- DOM head ---'
-          head -c 1500 /tmp/dom.body || true
-          echo
+          cat > /tmp/r296-probe.mjs <<'NODE'
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/google-chrome',args:['--no-sandbox','--disable-gpu','--disable-background-networking']});
+          const page=await browser.newPage();
+          const pageErrors=[]; const consoleErrors=[]; const failed=[];
+          page.on('pageerror',e=>pageErrors.push(String(e.stack||e.message||e)));
+          page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+          page.on('requestfailed',r=>failed.push(`${r.url()} :: ${r.failure()?.errorText||'failed'}`));
+          const url=`https://mycinetracker.vercel.app/?ct=${Date.now()}`;
+          const res=await page.goto(url,{waitUntil:'domcontentloaded',timeout:30000});
+          await page.waitForTimeout(8000);
+          console.log('HTTP',res?.status());
+          console.log('PAGE_ERRORS',JSON.stringify(pageErrors,null,2));
+          console.log('CONSOLE_ERRORS',JSON.stringify(consoleErrors,null,2));
+          console.log('REQUEST_FAILED',JSON.stringify(failed,null,2));
+          console.log('APP_HTML',JSON.stringify(await page.locator('#app').innerHTML().catch(()=>null)));
+          console.log('MARKERS',await page.evaluate(()=>({r296:window.__ctR296||null,web:window.__ctWebBuild||null,official:window.__ctOfficialVersion||null})));
+          await browser.close();
+          NODE
+          node /tmp/r296-probe.mjs
