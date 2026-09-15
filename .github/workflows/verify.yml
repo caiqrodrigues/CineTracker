@@ -71,15 +71,18 @@ jobs:
           grep -Fq "window.__ctR288='discover-android-parity-web-only'" dist/app-v289.js
           grep -Fq "window.__ctR288Discover='nine-tabs+stable-shell+provider-top10+three-slot-foryou'" dist/app-v289.js
           grep -Fq "window.__ctR289='discover-standard-card-size'" dist/app-v289.js
-          grep -Fq "window.__ctR289Cards='legacy-standard-128-152px-2x3'" dist/app-v289.js
-          grep -Fq -- '--ct289-card-w:clamp(128px,14vw,152px)' dist/app-v289.js
+          grep -Fq "window.__ctR289Cards='standard-154-mobile-176-desktop-2x3'" dist/app-v289.js
+          grep -Fq -- '[data-ct288-discover]{--ct289-card-w:154px}' dist/app-v289.js
+          grep -Fq -- '@media(min-width:1100px){[data-ct288-discover]{--ct289-card-w:176px}}' dist/app-v289.js
           grep -Fq 'grid-auto-columns:var(--ct289-card-w)!important' dist/app-v289.js
           grep -Fq 'grid-template-columns:repeat(auto-fill,var(--ct289-card-w))!important' dist/app-v289.js
           grep -Fq 'app-v289.js' dist/index.html
           grep -Fq 'app-v289.css' dist/index.html
           grep -Fq '"discover_tabs": 9' dist/release.json
           grep -Fq '"discover_tab_switch": "content-only-no-shell-rebuild"' dist/release.json
-          grep -Fq '"discover_card_size": "legacy-standard-128-152px"' dist/release.json
+          grep -Fq '"discover_card_size": "standard-154-mobile-176-desktop"' dist/release.json
+          grep -Fq '"discover_card_mobile": "154x231"' dist/release.json
+          grep -Fq '"discover_card_desktop": "176x264"' dist/release.json
           grep -Fq '"discover_card_ratio": "2:3"' dist/release.json
           grep -Fq '"discover_card_layout": "fixed-local-rail-no-stretch"' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
@@ -107,10 +110,10 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.80"' <<<"$BODY" && grep -Fq '"revision": "r289-official-1.0.80"' <<<"$BODY" && grep -Fq '"discover_tabs": 9' <<<"$BODY" && grep -Fq '"discover_card_size": "legacy-standard-128-152px"' <<<"$BODY" && grep -Fq '"discover_card_ratio": "2:3"' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.80"' <<<"$BODY" && grep -Fq '"revision": "r289-official-1.0.80"' <<<"$BODY" && grep -Fq '"discover_tabs": 9' <<<"$BODY" && grep -Fq '"discover_card_size": "standard-154-mobile-176-desktop"' <<<"$BODY" && grep -Fq '"discover_card_mobile": "154x231"' <<<"$BODY" && grep -Fq '"discover_card_desktop": "176x264"' <<<"$BODY" && grep -Fq '"discover_card_ratio": "2:3"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v289.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR288='discover-android-parity-web-only'" <<<"$JS" && grep -Fq "window.__ctR289='discover-standard-card-size'" <<<"$JS" && grep -Fq -- '--ct289-card-w:clamp(128px,14vw,152px)' <<<"$JS" && grep -Fq 'app-v289.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR288='discover-android-parity-web-only'" <<<"$JS" && grep -Fq "window.__ctR289='discover-standard-card-size'" <<<"$JS" && grep -Fq -- '[data-ct288-discover]{--ct289-card-w:154px}' <<<"$JS" && grep -Fq -- '@media(min-width:1100px){[data-ct288-discover]{--ct289-card-w:176px}}' <<<"$JS" && grep -Fq 'app-v289.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
