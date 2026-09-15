@@ -5,14 +5,14 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 ## 1.0.88 — 2026-09-15 — Web r297
 
 ### Boot / tela preta
-- Corrige o boot herdado da r295 que encerrava a inicialização ao encontrar apenas o marcador `window.__ctR295`, mesmo quando a autoridade `window.__ctR295Test` ainda não estava pronta.
-- O early-return da r295 passa a exigir a autoridade completa (`mediaKey`, `alreadyKnown`, `suppressBrowseCards`, `browseCard` e `decorateBrowseActions`) antes de pular a inicialização.
-- Elimina a exceção `r295 browse self-scope fix missing r295 authority`, que interrompia o bundle antes de `boot()` e deixava `#app` vazio na produção.
+- Corrige a causa real da tela preta herdada da r295: `runtime-r295-browse-actions-self-scope-fix.js` era executado antes de `boot()` e tratava a ausência temporária de `paintBrowse263` como erro fatal.
+- O self-scope r295 passa a iniciar em estado pendente e instalar sua decoração somente quando `__ctR295Test.decorateBrowseActions` e `paintBrowse263` estiverem disponíveis, com reconciliação finita após o boot.
+- Remove a exceção fatal `r295 browse self-scope fix missing r295 authority`; a proteção continua existindo, mas não derruba mais o bundle durante a fase legítima em que a autoridade de pintura ainda não foi criada.
 
 ### Build / validação
 - Web atualizada para `1.0.88 / r297-official-1.0.88`; Android permanece `1.0.20 / versionCode 10062` sem alteração.
-- Adiciona regressão Chromium sobre o bundle final completo `app-v297.js`, exigindo passagem real por `boot()`, ausência do erro herdado r295 e `#app` renderizado.
-- O `production_smoke` passa a validar a identidade r297, o guard seguro da r295 e a renderização pública antes de considerar a release concluída.
+- Adiciona regressão Chromium sobre o bundle final completo `app-v297.js`, exigindo passagem real por `boot()`, `#app` renderizado e self-scope r295 efetivamente instalado depois que a autoridade fica disponível.
+- O `production_smoke` passa a validar a identidade r297, a ausência da exceção fatal pré-boot e a renderização pública antes de considerar a release concluída.
 - Todo o escopo funcional da r296 permanece preservado: regras rígidas do `Pra Você`, anti-repetição de 7 dias, quatro abas de Esportes, presença no estádio e polimento Web.
 
 ## 1.0.87 — 2026-09-15 — Web r296
