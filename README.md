@@ -6,27 +6,28 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.85** | `r294-official-1.0.85` | Descobrir mais compacto, Top 10 com 10 cards na referência desktop e ações acima do scroll |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r294 |
+| Web | **1.0.86** | `r295-official-1.0.86` | Descobrir com 8 abas canônicas, renderer único e troca cache-first sem reconstrução no meio da sessão |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r295 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.85 / r294
+## Web 1.0.86 / r295
 
-A r294 corrige a densidade visual do **Descobrir** observada em vídeo, sem alterar a baseline Android.
+A r295 corrige a lentidão e a troca de estrutura do **Descobrir** observadas no vídeo, preservando a geometria aprovada na r294 e sem alterar o Android.
 
-- **Cards desktop:** passam de 176x264 para 158x237; mobile Web preserva 154x231.
-- **Top 10:** a referência desktop de 1920px passa a comportar os 10 cards completos na linha; em larguras menores o scroll continua local ao trilho.
-- **Texto compacto:** o bloco de título/metadados cai de 80px para 52px no desktop, mantendo uma linha e reticências.
-- **Ações antes do scroll:** Playlist/Trocar ficam contidos na altura efetiva do card/slot e aparecem antes da barra horizontal, sem vazamento para baixo.
-- **Controles menores:** rodapé de 28px, gap de 4px e margem superior de 2px.
-- **Trilhos mais densos:** gap horizontal de 8px e padding inferior de 6px, aproximando texto, ações e scrollbar.
-- **Relacionados/semelhantes:** a faixa de Watchlist/Visto recebe a mesma compactação sem alterar a autoridade de clique/ID consolidada até a r293.
+- **Oito abas canônicas:** `Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` passam a ser a única fonte de navegação.
+- **Lançamentos removido na fonte:** a definição histórica `releases / Lançamentos` é retirada do `DTABS263`, do mapa de labels e do source legado; não depende mais de esconder/remover a aba depois que outro renderer a recria.
+- **Renderer único:** `renderDiscover` final mantém o shell existente durante a sessão e não permite que repaints assíncronos antigos reconstruam a navegação no meio do uso.
+- **Troca cache-first:** ao voltar a uma aba já carregada, o conteúdo é restaurado imediatamente por snapshot/cache de sessão, sem zerar o painel para `Carregando títulos…`.
+- **Pra Você mais leve:** o refresh forçado 180 ms após cada clique é retirado; a autoridade r293 passa a atualizar em idle, coalescida e no máximo uma vez por janela de cinco minutos.
+- **Menos chamadas pesadas:** pools de Filme/Série/Anime da autoridade r293 passam de cinco para três páginas TMDB por categoria na atualização de fundo.
+- **Observer global aposentado:** o `MutationObserver` da r293 que acompanhava toda alteração do documento deixa de ser conectado, reduzindo trabalho em Home, Descobrir, Esportes e Perfil.
+- **Visual r294 preservado:** cards desktop 158x237, Top 10 com 10 cards na referência 1920px e ações acima da barra horizontal continuam intactos.
 - **Android preservado:** `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v294.js` / `app-v294.css`; build: `apps/web/build-r294-official.mjs`; runtime: `apps/web/runtime-r294-discover-density-scroll-order.js`.
+Assets oficiais: `app-v295.js` / `app-v295.css`; build: `apps/web/build-r295-official.mjs`; runtime: `apps/web/runtime-r295-discover-single-owner-fast-tabs.js`.
 
 ## Funcionalidades consolidadas
 
@@ -53,7 +54,7 @@ Assets oficiais: `app-v294.js` / `app-v294.css`; build: `apps/web/build-r294-off
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r294 herda toda a autoridade funcional da r293 e altera somente a geometria/densidade do Descobrir Web, mantendo navegação, recomendações, ações e baseline Android.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r295 herda a autoridade funcional da r294, elimina a concorrência de renderers do Descobrir e reduz trabalho reativo/global sem alterar a baseline Android.
 
 ## Regra de validação
 

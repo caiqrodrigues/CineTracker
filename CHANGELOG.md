@@ -2,6 +2,26 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.86 — 2026-09-15 — Web r295
+
+### Descobrir / autoridade única
+- Corrige a troca de estrutura observada no vídeo: o Descobrir deixa de alternar entre renderers históricos durante a sessão.
+- A navegação passa a ter exatamente oito abas canônicas: `Pra você`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário`.
+- `Lançamentos` é removida da fonte `DTABS263`, do mapa de labels e do source legado, em vez de ser criada e removida depois por saneamento de DOM.
+- O renderer final mantém o shell já montado; chamadas tardias deixam de reconstruir a tela e de duplicar `Top 10`/`Lançamentos` no final da barra.
+
+### Desempenho / troca de abas
+- Conteúdo já visitado passa a ser restaurado por snapshot/cache de sessão antes de qualquer atualização, evitando apagar o painel para `Carregando títulos…` em cada retorno.
+- O clique de aba é capturado antes dos handlers antigos e atualiza o estado visual imediatamente.
+- O `MutationObserver` global da r293 deixa de ser conectado, eliminando reconciliação em toda mutação do documento também fora do Descobrir.
+- O refresh forçado de `Pra você` 180 ms após cada clique é aposentado; a autoridade r293 passa a atualizar em idle, coalescida e com janela de cinco minutos.
+- A atualização de fundo do `100% Novos` cai de cinco para três páginas TMDB por categoria, reduzindo rajadas paralelas sem remover os filtros de elegibilidade existentes.
+
+### Compatibilidade / validação
+- A geometria da r294 permanece: desktop 158x237, Top 10 com 10 cards na referência 1920x1032, ações acima da scrollbar e Android intacto.
+- Web atualizada para `1.0.86 / r295-official-1.0.86`; Android permanece `1.0.20 / versionCode 10062`.
+- A r295 adiciona teste Chromium que força a recriação de `Lançamentos` + Top 10 duplicado e exige saneamento para as oito abas, troca cache-first sem loader e shell estável sem `setApp` durante repaints.
+
 ## 1.0.85 — 2026-09-15 — Web r294
 
 ### Descobrir / densidade visual
