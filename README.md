@@ -6,27 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.81** | `r290-official-1.0.81` | cards de mídia padronizados pela geometria da Indicação do Dia |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r290 |
+| Web | **1.0.82** | `r291-official-1.0.82` | Descobrir com ações no footer, favorito por coração e carrosséis horizontais locais |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r291 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.81 / r290
+## Web 1.0.82 / r291
 
-A r290 transforma o card da **Indicação do Dia** na referência dimensional única para cards de filmes, séries e animes na Web.
+A r291 refina a experiência da aba **Descobrir** sem alterar a baseline Android.
 
-- **Geometria única:** pôster 2:3 travado em **176×264 px no desktop** e **154×231 px no mobile**, igual à Indicação do Dia.
-- **Container imutável:** card e área clicável usam altura fixa derivada da mesma referência; texto longo não aumenta, comprime ou estica o card.
-- **Texto previsível:** título limitado a duas linhas; ano, gêneros, tipo e nota ficam em uma linha truncada; o bloco de texto possui altura fixa de **80 px no desktop** e **75 px no mobile**.
-- **Descobrir inteiro:** `Da sua Watchlist`, `100% Novos`, `Top 10`, `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` usam exclusivamente cards verticais uniformes.
-- **Top 10 sem banner legado:** o fallback de faixa larga é substituído pelo mesmo card vertical padronizado.
-- **Restante da Web:** cards de mídia poster-based são normalizados pela classe compartilhada `ct-media-card-lock`, inclusive conteúdo criado depois do primeiro paint.
-- **Layout local:** grids e carrosséis preservam a largura fixa dos cards; quando não há espaço, o overflow fica no componente, nunca expandindo o card ou a página.
+- **Ações sem sobreposição:** nos blocos `Da sua Watchlist` e `100% Novos`, `+ Playlist` / `✓ Salvo` ficam no footer, ao lado de `↻ Trocar`, em linha e sem ocupar a área de título/metadados.
+- **Texto limpo:** título e metadados ficam isolados dos controles, com uma linha, `line-clamp-1` e truncamento por reticências.
+- **Favorito no pôster:** cada mídia recebe coração minimalista sobre a capa, com estado inativo em contorno e ativo preenchido em rosa, além de feedback otimista imediato.
+- **Persistência canônica:** favoritos usam `media_overrides.state = 'Liked'`; filmes aparecem em Favoritos de Filmes e itens `tv` em Favoritos de Séries pelo mesmo dashboard canônico do Perfil.
+- **Scroll horizontal local:** `Em Alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados`, `Mais bem avaliados`, Top 10 e blocos do Pra Você usam carrosséis locais com `overflow-x:auto`, snap, gesto `pan-x` e arraste por ponteiro, sem criar scroll horizontal na janela.
+- **Classes de carrossel:** os trilhos recebem `flex overflow-x-auto scrollbar-thin space-x-4 pb-4 snap-x touch-pan-x` e retenção de overscroll no próprio componente.
+- **Geometria preservada:** os pôsteres continuam no padrão da Indicação do Dia definido pela r290.
 - **Android preservado:** continua em `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v290.js` / `app-v290.css`; build: `apps/web/build-r290-official.mjs`; runtime compartilhado: `apps/web/runtime-r290-universal-media-card-lock.js`.
+Assets oficiais: `app-v291.js` / `app-v291.css`; build: `apps/web/build-r291-official.mjs`; runtime: `apps/web/runtime-r291-discover-actions-favorites-scroll.js`.
 
 ## Funcionalidades consolidadas
 
@@ -38,6 +38,7 @@ Assets oficiais: `app-v290.js` / `app-v290.css`; build: `apps/web/build-r290-off
 - próximo episódio anunciado para séries em dia;
 - metadados ricos de episódios e filmes;
 - Descobrir/Pra Você, Top 10, tendências, novidades, lançamentos, aguardados, mais bem avaliados e calendário;
+- favoritos de filmes e séries sincronizados por estado `Liked`, com ação direta pelo coração no Descobrir;
 - exclusões pessoais para não recomendar itens vistos, em andamento, em dia, na Watchlist ou marcados como não interessados;
 - Watchlist completa com ordenação e navegação para detalhes;
 - detalhes ricos de filmes, séries, temporadas, episódios, avaliações e elenco;
@@ -56,7 +57,7 @@ Assets oficiais: `app-v290.js` / `app-v290.css`; build: `apps/web/build-r290-off
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r290 herda integralmente a r289 e acrescenta uma autoridade compartilhada de geometria de cards, sem alterar a baseline Android.
+A Web atual é uma aplicação JavaScript/PWA construída por uma cadeia incremental de build. A r291 herda integralmente a r290 e acrescenta uma autoridade específica do Descobrir para footers de ação, favoritos por coração e carrosséis horizontais locais, sem alterar a baseline Android.
 
 ## Regra de validação
 

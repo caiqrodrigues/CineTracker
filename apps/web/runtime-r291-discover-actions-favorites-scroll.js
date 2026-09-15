@@ -1,0 +1,92 @@
+(()=>{
+'use strict';
+window.__ctR291='discover-actions-favorites-horizontal-scroll';
+window.__ctR291Actions='footer-row-beside-swap-no-text-overlay';
+window.__ctR291Favorites='liked-state-optimistic-heart-overlay';
+window.__ctR291Scroll='local-drag-horizontal-carousels';
+window.__ctR291Android='preserved-1.0.20-10062';
+
+const ct291R263=window.__ctR288R263||globalThis;
+const {esc263,type263,id263,title263,poster263,year263,discover263}=ct291R263;
+if(typeof esc263!=='function'||typeof type263!=='function'||typeof id263!=='function'||typeof title263!=='function'||!discover263)throw new Error('r291 missing live r263 Discover bridge');
+
+const CT291_RAIL_CLASSES=['flex','overflow-x-auto','scrollbar-thin','space-x-4','pb-4','snap-x','touch-pan-x'];
+const ct291Favorites=new Set();
+const ct291Media=new Map();
+let ct291FavoritesPromise=null,ct291SeededUser='';
+
+const ct291Key=(type,id)=>`${type==='movie'?'movie':'tv'}:${Number(id||0)}`;
+const ct291Parse=key=>{const [type,idRaw]=String(key||'').split(':');const id=Number(idRaw||0);return {type:type==='movie'?'movie':'tv',id};};
+function ct291Remember(x){if(!x)return'';const type=type263(x),id=id263(x);if(!id)return'';const key=ct291Key(type,id);ct291Media.set(key,x);return key;}
+function ct291HeartSvg(on){return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" fill="${on?'currentColor':'none'}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>`}
+function ct291Heart(key){const on=ct291Favorites.has(key);return `<button type="button" class="ct291-favorite bg-black/40 backdrop-blur-md p-1.5 rounded-full hover:scale-110 transition-all${on?' is-favorite':''}" data-ct291-favorite="${esc263(key)}" aria-label="${on?'Remover dos favoritos':'Adicionar aos favoritos'}" aria-pressed="${on}">${ct291HeartSvg(on)}</button>`}
+function ct291Playlist(key,saved=false){return saved?'<button type="button" class="ct291-playlist is-saved" disabled aria-label="Na Watchlist">✓ Salvo</button>':`<button type="button" class="ct291-playlist" data-ct288-add="${esc263(key)}" aria-label="Adicionar à Watchlist">+ Playlist</button>`}
+function ct291Card(x,{rank=0,watch=false,add=true,slot=false}={}){
+ if(!x)return '<div class="ct288-empty-card"><div class="ct288-empty-poster"></div><b class="line-clamp-1 truncate">Sem item elegível</b><small class="line-clamp-1 truncate">Tente novamente mais tarde</small></div>';
+ const key=ct291Remember(x),withFooter=!slot&&(watch||add),footer=withFooter?`<div class="ct291-card-footer flex flex-row items-center justify-between gap-2">${ct291Playlist(key,watch)}</div>`:'';
+ return `<article class="ct288-card ct291-card${withFooter?' ct291-has-footer':' ct291-no-footer'}" data-ct288-card="${esc263(key)}">${rank?`<span class="ct288-rank">${Number(rank)}</span>`:''}<button type="button" class="ct288-open ct-media-primary" data-media="${esc263(key)}">${ct288Poster(x)}<span class="ct288-copy ct-media-copy-lock"><b class="ct-media-title-lock line-clamp-1 truncate">${esc263(title263(x))}</b><small class="ct-media-meta-lock line-clamp-1 truncate">${esc263(ct288Meta(x)||'—')}</small></span></button>${ct291Heart(key)}${footer}</article>`;
+}
+ct288Card=ct291Card;
+ct288BrowseCard=x=>ct291Card(x,{add:true});
+ct288TopCard=(x,i)=>ct291Card(x,{rank:Number(i||0)+1,add:false});
+ct288Slot=function(title,kind,rows,bucket,watch){
+ const list=rows||[],idx=Number(ct288State[bucket][kind]||0),item=list.length?list[idx%list.length]:null,key=item?ct291Remember(item):'';
+ return `<section class="ct288-slot" data-ct288-slot="${bucket}:${kind}"><div class="ct288-slot-head"><h3>${esc263(title)}</h3></div>${ct291Card(item,{watch,add:false,slot:true})}<div class="ct291-slot-footer flex flex-row items-center justify-between gap-2">${item?ct291Playlist(key,watch):'<button type="button" class="ct291-playlist" disabled>Indisponível</button>'}<button type="button" class="ct288-swap" data-ct288-swap="${bucket}:${kind}" ${list.length<2?'disabled':''}>↻ Trocar</button></div></section>`;
+};
+ct288ForYouGrid=function(title,groups,bucket,watch){return `<section class="panel ct288-foryou-block"><div class="panel-head"><h2>${title}</h2></div><div class="ct288-slot-grid flex overflow-x-auto scrollbar-thin space-x-4 pb-4 snap-x touch-pan-x ct291-carousel">${ct288Slot('Filme','movie',groups.movie,bucket,watch)}${ct288Slot('Série','series',groups.series,bucket,watch)}${ct288Slot('Anime','anime',groups.anime,bucket,watch)}</div></section>`};
+ct288Rail=function(rows,name=''){return `<div class="ct288-rail${ct288State.expanded.has(name)?' ct288-expanded':''} flex overflow-x-auto scrollbar-thin space-x-4 pb-4 snap-x touch-pan-x ct291-carousel" data-ct288-rail="${esc263(name)}">${(rows||[]).map(ct288BrowseCard).join('')||'<div class="empty">Nenhum item elegível no momento.</div>'}</div>`};
+
+function ct291SetHeart(btn,on,pulse=false){if(!btn)return;btn.classList.toggle('is-favorite',!!on);btn.setAttribute('aria-pressed',String(!!on));btn.setAttribute('aria-label',on?'Remover dos favoritos':'Adicionar aos favoritos');btn.innerHTML=ct291HeartSvg(!!on);if(pulse&&on){btn.classList.remove('ct291-pulse');void btn.offsetWidth;btn.classList.add('ct291-pulse');setTimeout(()=>btn.classList.remove('ct291-pulse'),420)}}
+function ct291SyncHearts(){for(const b of document.querySelectorAll('[data-ct291-favorite]'))ct291SetHeart(b,ct291Favorites.has(String(b.dataset.ct291Favorite||'')),false)}
+function ct291SeedLocal(){const uid=String(user?.id||'');if(!uid||uid===ct291SeededUser)return;ct291SeededUser=uid;try{const a=JSON.parse(localStorage.getItem(`ct291:favorites:${uid}`)||'[]');for(const k of Array.isArray(a)?a:[])ct291Favorites.add(String(k))}catch{}ct291SyncHearts()}
+function ct291Persist(){try{if(user?.id)localStorage.setItem(`ct291:favorites:${user.id}`,JSON.stringify([...ct291Favorites]))}catch{}}
+async function ct291LoadFavorites(force=false){ct291SeedLocal();if(ct291FavoritesPromise&&!force)return ct291FavoritesPromise;ct291FavoritesPromise=(async()=>{try{const rows=await rpc('cinetracker_profile_media_dashboard_v0997_fast',{});const next=new Set();for(const x of Array.isArray(rows)?rows:[])if(x?.is_favorite&&Number(x?.tmdb_id||0)>0)next.add(ct291Key(x.media_type,Number(x.tmdb_id)));ct291Favorites.clear();for(const k of next)ct291Favorites.add(k);ct291Persist();ct291SyncHearts()}catch{}finally{ct291FavoritesPromise=null}})();return ct291FavoritesPromise}
+function ct291Raw(x){return {title:x?.title,name:x?.name,original_title:x?.original_title,original_name:x?.original_name,poster_path:poster263(x)||null,release_date:x?.release_date||null,first_air_date:x?.first_air_date||null,vote_average:Number(x?.vote_average||x?.raw_tmdb?.vote_average||0)||0,genre_ids:Array.isArray(x?.genre_ids)?x.genre_ids:[],original_language:x?.original_language||x?.raw_tmdb?.original_language||null,origin_country:x?.origin_country||x?.raw_tmdb?.origin_country||[]}}
+async function ct291EnsureMedia(key){
+ const {type,id}=ct291Parse(key);if(!id)throw new Error('Mídia inválida');let x=ct291Media.get(key)||null;
+ const title=x?title263(x):null,original=x?.original_title||x?.original_name||x?.raw_tmdb?.original_title||x?.raw_tmdb?.original_name||null,yr=x?Number(year263(x)||0)||null:null;
+ let state=await rpc('cinetracker_media_state_v1',{p_media_type:type,p_tmdb_id:id,p_title:title,p_original_title:original,p_release_year:yr});let matched=Array.isArray(state?.matched_media_ids)?state.matched_media_ids.map(Number).filter(Boolean):[];
+ if(!matched.length){if(!x){try{x=await tmdb(`/${type}/${id}`);if(x)ct291Media.set(key,x)}catch{}}const mediaId=Number(await rpc('cinetracker_upsert_media',{p_tmdb_id:id,p_media_type:type,p_media_kind:type==='movie'?'movie':(typeof ct288Anime==='function'&&ct288Anime(x)?'anime':'series'),p_title:title263(x||{})||`TMDB ${id}`,p_release_year:Number(year263(x||{})||0)||null,p_poster_path:poster263(x||{})||null,p_genres:Array.isArray(x?.genres)?x.genres:(Array.isArray(x?.raw_tmdb?.genres)?x.raw_tmdb.genres:[]),p_raw_tmdb:ct291Raw(x||{})}))||0;if(mediaId)matched=[mediaId]}
+ return {type,id,x,state,matched};
+}
+async function ct291ToggleFavorite(btn){
+ if(!btn||btn.disabled)return;const key=String(btn.dataset.ct291Favorite||'');if(!key)return;ct291SeedLocal();const was=ct291Favorites.has(key),next=!was;if(next)ct291Favorites.add(key);else ct291Favorites.delete(key);ct291Persist();for(const b of document.querySelectorAll(`[data-ct291-favorite="${CSS.escape(key)}"]`))ct291SetHeart(b,next,true);btn.disabled=true;btn.classList.add('is-busy');
+ try{const resolved=await ct291EnsureMedia(key);if(!user?.id)throw new Error('Sessão necessária');if(next){const mediaId=Number(resolved.matched[0]||0);if(!mediaId)throw new Error('Não foi possível resolver a mídia');await rpc('cinetracker_upsert_override',{p_profile_id:user.id,p_media_id:mediaId,p_state:'Liked',p_origin:'manual',p_source_import_id:null})}else{for(const mediaId of resolved.matched)await api(`media_overrides?profile_id=eq.${encodeURIComponent(user.id)}&media_id=eq.${encodeURIComponent(String(mediaId))}&state=eq.Liked`,{method:'DELETE'})}profileCache=null;homeCache=null;try{discover263.personal=null;discover263.personalAt=0}catch{}}
+ catch(e){if(was)ct291Favorites.add(key);else ct291Favorites.delete(key);ct291Persist();for(const b of document.querySelectorAll(`[data-ct291-favorite="${CSS.escape(key)}"]`))ct291SetHeart(b,was,false);try{toast(e?.message||e)}catch{}}
+ finally{btn.disabled=false;btn.classList.remove('is-busy')}
+}
+ct288Add=async function(btn){if(!btn||btn.disabled)return;const [type,idRaw]=String(btn.dataset.ct288Add||'').split(':'),id=Number(idRaw);if(!id||!['movie','tv'].includes(type))return;btn.disabled=true;btn.textContent='…';try{await addWatchlist(type,id);btn.textContent='✓ Salvo';btn.classList.add('is-saved');delete btn.dataset.ct288Add;btn.setAttribute('aria-label','Na Watchlist');discover263.personal=null;discover263.personalAt=0;discover263.forYou=null;discover263.cache.clear()}catch(e){btn.disabled=false;btn.textContent='+ Playlist';try{toast(e?.message||e)}catch{}}};
+
+function ct291ArmRail(rail){if(!rail||rail.dataset.ct291Drag==='1')return;rail.dataset.ct291Drag='1';for(const c of CT291_RAIL_CLASSES)rail.classList.add(c);rail.classList.add('ct291-carousel');let active=false,startX=0,startScroll=0,moved=false;rail.addEventListener('pointerdown',e=>{if(e.button!==0||e.target.closest('button,a,input,select,textarea,[role="button"]'))return;active=true;moved=false;startX=e.clientX;startScroll=rail.scrollLeft;rail.classList.add('is-dragging');try{rail.setPointerCapture(e.pointerId)}catch{}});rail.addEventListener('pointermove',e=>{if(!active)return;const dx=e.clientX-startX;if(Math.abs(dx)>3)moved=true;rail.scrollLeft=startScroll-dx;if(moved)e.preventDefault()},{passive:false});const stop=e=>{if(!active)return;active=false;rail.classList.remove('is-dragging');try{rail.releasePointerCapture(e.pointerId)}catch{}};rail.addEventListener('pointerup',stop);rail.addEventListener('pointercancel',stop);rail.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false}},true)}
+function ct291Decorate(root=document){
+ const host=root?.querySelectorAll?root:document;for(const rail of host.querySelectorAll('.ct288-rail,.ct288-top-row,.ct288-slot-grid,.ct263-media-rail'))ct291ArmRail(rail);
+ for(const trigger of host.querySelectorAll('[data-ct288-discover] [data-media], [data-ct288-foryou] [data-media]')){const key=String(trigger.getAttribute('data-media')||'');if(!/^(movie|tv):\d+$/.test(key))continue;const card=trigger.closest('.ct288-card,.ct263-media-card,.ct-media-card-lock,.card');if(!card||card.querySelector('[data-ct291-favorite]'))continue;card.classList.add('ct291-favorite-host');card.insertAdjacentHTML('beforeend',ct291Heart(key))}
+ ct291SeedLocal();ct291SyncHearts();if(user?.id)void ct291LoadFavorites(false);
+}
+const ct291OldForYou=window.__ctR288PaintForYou;window.__ctR288PaintForYou=function(){const r=typeof ct291OldForYou==='function'?ct291OldForYou.apply(this,arguments):undefined;ct291Decorate(document);return r};
+const ct291OldBrowse=window.__ctR288PaintBrowse;window.__ctR288PaintBrowse=function(){const r=typeof ct291OldBrowse==='function'?ct291OldBrowse.apply(this,arguments):undefined;ct291Decorate(document);return r};
+const ct291OldTop=ct288PaintTop;ct288PaintTop=async function(){const r=await ct291OldTop.apply(this,arguments);ct291Decorate(document);return r};
+
+document.addEventListener('click',e=>{const fav=e.target?.closest?.('[data-ct291-favorite]');if(!fav)return;e.preventDefault();e.stopImmediatePropagation();void ct291ToggleFavorite(fav)},true);
+const ct291Observer=new MutationObserver(ms=>{let hit=false;for(const m of ms)for(const n of m.addedNodes)if(n.nodeType===1&&(n.matches?.('[data-ct288-discover],.ct288-card,.ct263-media-card,.ct288-rail,.ct288-top-row,.ct288-slot-grid')||n.querySelector?.('[data-media],.ct288-rail,.ct288-top-row,.ct288-slot-grid'))){hit=true;break}if(hit)queueMicrotask(()=>ct291Decorate(document))});ct291Observer.observe(document.documentElement,{subtree:true,childList:true});
+
+const ct291Style=document.createElement('style');ct291Style.id='ct-web-r291-discover-actions-favorites-scroll';ct291Style.textContent=`
+html,body,#app{max-width:100%;overflow-x:hidden!important}
+[data-ct288-discover]{min-width:0;max-width:100%;overflow-x:hidden!important}
+.ct291-favorite-host,.ct291-card{position:relative!important}
+.ct291-favorite{position:absolute;z-index:12;top:8px;right:8px;width:34px;height:34px;padding:6px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(0,0,0,.40);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:rgba(255,255,255,.70);display:grid;place-items:center;cursor:pointer;transition:transform .16s ease,color .16s ease,background .16s ease,border-color .16s ease}
+.ct291-favorite:hover{transform:scale(1.10);color:#fb7185;background:rgba(0,0,0,.55)}.ct291-favorite.is-favorite{color:#f43f5e;border-color:rgba(244,63,94,.55)}.ct291-favorite svg{width:20px;height:20px;display:block}.ct291-favorite.is-busy{opacity:.7}.ct291-favorite.ct291-pulse{animation:ct291Pulse .38s ease-out 1}@keyframes ct291Pulse{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
+.ct288-copy b,.ct288-copy small,.ct-media-title-lock,.ct-media-meta-lock{display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;-webkit-line-clamp:1!important;line-clamp:1!important;max-width:100%!important}.ct288-copy b,.ct-media-title-lock{line-height:1.25!important;max-height:1.25em!important}
+.ct288-state{position:static!important;inset:auto!important}
+.ct291-card-footer,.ct291-slot-footer{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;width:100%!important;min-width:0!important}.ct291-card-footer{height:34px;margin-top:6px}.ct291-slot-footer{margin-top:8px}
+.ct291-playlist,.ct291-slot-footer .ct288-swap{position:static!important;flex:1 1 0!important;width:auto!important;min-width:0!important;min-height:32px!important;margin:0!important;padding:6px 8px!important;border:1px solid var(--line,#2d3748)!important;border-radius:10px!important;background:transparent!important;color:inherit!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;cursor:pointer!important}.ct291-playlist.is-saved,.ct291-playlist:disabled{opacity:.72;cursor:default!important}.ct291-slot-footer .ct288-swap:disabled{opacity:.4;cursor:default!important}
+.ct291-card.ct291-has-footer{height:calc(var(--ct-media-card-h) + 40px)!important;min-height:calc(var(--ct-media-card-h) + 40px)!important;max-height:calc(var(--ct-media-card-h) + 40px)!important;overflow:visible!important}.ct291-card.ct291-no-footer{height:var(--ct-media-card-h)!important;min-height:var(--ct-media-card-h)!important;max-height:var(--ct-media-card-h)!important}
+.ct288-slot-grid{display:flex!important;flex-flow:row nowrap!important;align-items:flex-start!important;gap:16px!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;padding:2px 1px 16px!important}.ct288-slot-grid>.ct288-slot{flex:0 0 var(--ct-media-card-w)!important;width:var(--ct-media-card-w)!important;min-width:var(--ct-media-card-w)!important;max-width:var(--ct-media-card-w)!important;scroll-snap-align:start!important}
+.ct291-carousel,.ct288-rail,.ct288-top-row,.ct263-media-rail{display:flex!important;flex-flow:row nowrap!important;align-items:flex-start!important;gap:16px!important;width:100%!important;min-width:0!important;max-width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;padding-bottom:16px!important;scroll-snap-type:x proximity!important;overscroll-behavior-x:contain!important;touch-action:pan-x!important;scrollbar-width:thin!important;-webkit-overflow-scrolling:touch!important}.ct291-carousel>*{scroll-snap-align:start}.ct291-carousel.is-dragging{cursor:grabbing!important;user-select:none!important}.ct291-carousel:not(.is-dragging){cursor:grab}
+.ct288-rail.ct288-expanded{display:flex!important;flex-flow:row nowrap!important;overflow-x:auto!important;overflow-y:hidden!important}.ct288-rail.ct288-expanded>.ct288-card{flex:0 0 var(--ct-media-card-w)!important;width:var(--ct-media-card-w)!important;min-width:var(--ct-media-card-w)!important;max-width:var(--ct-media-card-w)!important}
+@media(max-width:700px){.ct291-favorite{top:6px;right:6px;width:32px;height:32px;padding:6px}.ct291-card-footer{height:32px}.ct291-playlist,.ct291-slot-footer .ct288-swap{font-size:10px;min-height:30px!important}.ct291-card.ct291-has-footer{height:calc(var(--ct-media-card-h) + 38px)!important;min-height:calc(var(--ct-media-card-h) + 38px)!important;max-height:calc(var(--ct-media-card-h) + 38px)!important}}
+`;
+document.getElementById(ct291Style.id)?.remove();document.head.appendChild(ct291Style);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>ct291Decorate(document),{once:true});else ct291Decorate(document);
+window.__ctR291Test={favorites:ct291Favorites,media:ct291Media,decorate:ct291Decorate,loadFavorites:ct291LoadFavorites,toggleFavorite:ct291ToggleFavorite,ensureMedia:ct291EnsureMedia,armRail:ct291ArmRail,card:ct291Card};
+})();
