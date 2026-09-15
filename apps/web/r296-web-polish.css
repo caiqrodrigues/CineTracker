@@ -1,0 +1,23 @@
+/* CineTracker Web 1.0.87 r296 — restrained Web-only polish. */
+html,body,#app{max-width:100%;overflow-x:hidden}
+.sidebar,#sidebar,[data-sidebar]{border-right:1px solid rgba(255,255,255,.10)!important;background:rgba(0,0,0,.40)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important}
+[data-home] .ct264-home-action-row{display:flex!important;align-items:center!important;gap:10px!important;padding:12px 14px!important}
+[data-home] .ct264-home-action-row>.media-row,[data-home] .ct264-home-action-row>.ct255-home-movie-card{margin:0!important;min-width:0!important;flex:1 1 auto!important}
+[data-home] .media-row b,[data-home] .media-row strong,[data-home] .ct255-home-movie-card b,[data-home] .ct255-home-movie-card strong{font-weight:600!important;color:#fff!important}
+[data-home] .media-row small,[data-home] .ct255-home-movie-card small{font-size:.82rem!important;color:rgba(226,232,240,.80)!important}
+[data-home] .ct264-watch-btn{width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;padding:0!important;border-radius:12px!important;display:inline-grid!important;place-items:center!important;border:1px solid rgba(16,185,129,.24)!important;background:rgba(255,255,255,.06)!important;color:#a7f3d0!important;transition:background .18s ease,border-color .18s ease,transform .18s ease!important}
+[data-home] .ct264-watch-btn:hover{background:rgba(16,185,129,.14)!important;border-color:rgba(16,185,129,.55)!important;transform:translateY(-1px)}
+[data-profile] .stat,[data-profile] [data-stat],[data-profile] .stat-card,[data-profile] .ct296-profile-stat{background:rgba(255,255,255,.02)!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:16px!important;padding:16px!important}
+[data-profile] img{border-radius:12px!important;box-shadow:0 12px 30px rgba(0,0,0,.50)!important;transition:transform .18s ease,box-shadow .18s ease!important}
+[data-profile] img:hover{transform:translateY(-2px)!important;box-shadow:0 14px 34px rgba(6,182,212,.16)!important}
+[data-settings] input,[data-settings] select,[data-settings] textarea,[data-config] input,[data-config] select,[data-config] textarea{background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:12px!important;padding:8px 16px!important;color:#fff!important;outline:none!important;transition:border-color .18s ease,background .18s ease!important}
+[data-settings] input:focus,[data-settings] select:focus,[data-settings] textarea:focus,[data-config] input:focus,[data-config] select:focus,[data-config] textarea:focus{border-color:rgba(6,182,212,.50)!important}
+[data-settings] button,[data-config] button{border-radius:12px!important;padding:9px 14px!important;transition:background .18s ease,border-color .18s ease,transform .18s ease!important}
+.ct296-watch-popover{position:absolute!important;z-index:40!important;right:10px!important;bottom:54px!important;display:grid!important;gap:7px!important;min-width:240px!important;padding:10px!important;border:1px solid rgba(255,255,255,.13)!important;border-radius:14px!important;background:rgba(9,12,18,.96)!important;box-shadow:0 16px 40px rgba(0,0,0,.48)!important;backdrop-filter:blur(14px)!important}
+.ct255-sport-card{position:relative!important}
+.ct296-choice,.ct296-stadium-form button{min-height:36px!important;border-radius:10px!important;border:1px solid rgba(255,255,255,.10)!important;background:rgba(255,255,255,.05)!important;color:#fff!important;text-align:left!important;padding:8px 10px!important}
+.ct296-stadium-form{display:grid!important;gap:7px!important}
+.ct296-stadium-form[hidden]{display:none!important}
+.ct296-stadium-form input{min-height:36px!important;border-radius:10px!important;border:1px solid rgba(255,255,255,.12)!important;background:rgba(255,255,255,.04)!important;color:#fff!important;padding:8px 10px!important;outline:none!important}
+.ct296-close{position:absolute!important;right:5px!important;top:3px!important;width:24px!important;height:24px!important;border:0!important;background:transparent!important;color:rgba(255,255,255,.65)!important}
+.ct296-stadium-badge{display:inline-flex!important;align-items:center!important;gap:5px!important;width:max-content!important;margin-top:8px!important;padding:4px 8px!important;border:1px solid rgba(245,158,11,.42)!important;border-radius:999px!important;background:rgba(245,158,11,.12)!important;color:#fbbf24!important;font-size:.76rem!important;font-weight:600!important}
