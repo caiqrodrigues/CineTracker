@@ -1,46 +1,48 @@
-name: Verify Web 1.0.86 r295 Discover Personal Calendar Daily
+name: Verify Web 1.0.87 r296 Recommendations Sports Stadium
 
 on:
   push:
-    branches: [main, 'fix/web-r295-discover-personal-calendar']
+    branches: [main, 'release/web-r296']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_86_r295:
+  web_1_0_87_r296:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r295
+      - name: Version identity r296
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.86"' package.json
-          grep -Fq '"version": "1.0.86"' apps/web/package.json
-          grep -Fq 'build-r295-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r295-discover-personal-calendar-daily.js
-          test -f apps/web/build-r295.mjs
-          test -f apps/web/build-r295-official.mjs
-          test -f apps/web/test-r295.mjs
-          test -f apps/web/test-r295-browser.mjs
-      - name: Syntax r295 release chain
+          grep -Fq '"version": "1.0.87"' package.json
+          grep -Fq '"version": "1.0.87"' apps/web/package.json
+          grep -Fq 'build-r296-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r296-recommendations-sports-stadium.js
+          test -f apps/web/r296-web-polish.css
+          test -f apps/web/build-r296.mjs
+          test -f apps/web/build-r296-official.mjs
+          test -f apps/web/test-r296.mjs
+          test -f apps/web/test-r296-browser.mjs
+          test -f supabase/migrations/20260915143000_r296_recommendations_sports_stadium.sql
+      - name: Syntax r296 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r295-discover-personal-calendar-daily.js
-          node --check apps/web/build-r295.mjs
-          node --check apps/web/build-r295-official.mjs
-          node --check apps/web/test-r295.mjs
-          node --check apps/web/test-r295-browser.mjs
-      - name: Build official r295
+          node --check apps/web/runtime-r296-recommendations-sports-stadium.js
+          node --check apps/web/build-r296.mjs
+          node --check apps/web/build-r296-official.mjs
+          node --check apps/web/test-r296.mjs
+          node --check apps/web/test-r296-browser.mjs
+      - name: Build official r296
         working-directory: apps/web
-        run: node build-r295-official.mjs
-      - name: Static regressions r295
+        run: node build-r296-official.mjs
+      - name: Static regressions r296
         working-directory: apps/web
-        run: node test-r295.mjs
+        run: node test-r296.mjs
       - name: Chromium inherited r286 related interactions
         working-directory: apps/web
         run: node test-r286-browser.mjs
@@ -50,28 +52,41 @@ jobs:
       - name: Chromium inherited r294 density scroll order
         working-directory: apps/web
         run: node test-r294-browser.mjs
-      - name: Chromium r295 personal calendar daily
+      - name: Chromium inherited r295 personal calendar daily
         working-directory: apps/web
         run: node test-r295-browser.mjs
-      - name: Final bundle identity r295
+      - name: Chromium r296 recommendations sports stadium
+        working-directory: apps/web
+        run: node test-r296-browser.mjs
+      - name: Migration contract r296
+        run: |
+          set -euo pipefail
+          F=supabase/migrations/20260915143000_r296_recommendations_sports_stadium.sql
+          grep -Fq 'attended_in_person boolean not null default false' "$F"
+          grep -Fq 'stadium_name text' "$F"
+          grep -Fq 'cinetracker_shown_recommendations_recent_v296' "$F"
+          grep -Fq 'cinetracker_shown_recommendations_record_v296' "$F"
+          grep -Fq 'cinetracker_sports_watch_set_v296' "$F"
+          grep -Fq 'cinetracker_sports_stadium_summary_v296' "$F"
+          grep -Fq "interval '7 days'" "$F"
+      - name: Final bundle identity r296
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check dist/app-v295.js
-          grep -Fq "window.__ctWebBuild='1.0.86';window.__ctOfficialVersion='1.0.86';" dist/app-v295.js
-          grep -Fq "const REVISION='r295-official-1.0.86';" dist/app-v295.js
-          grep -Fq "window.__ctR293='discover-navigation-foryou-actions-authority'" dist/app-v295.js
-          grep -Fq "window.__ctR294='discover-density-scroll-order-top10-ten-up'" dist/app-v295.js
-          grep -Fq "window.__ctR295='discover-personal-authority-calendar-daily-actions'" dist/app-v295.js
-          grep -Fq "window.__ctR295Personal='recommendation+profile+list-snapshot-union'" dist/app-v295.js
-          grep -Fq "window.__ctR295Calendar='all-movie-tv-axis+independent-watchlist-toggle'" dist/app-v295.js
-          grep -Fq 'app-v295.js' dist/index.html
-          grep -Fq 'app-v295.css' dist/index.html
-          grep -Fq '"discover_browse_exclusions": "seen+watchlist"' dist/release.json
-          grep -Fq '"discover_calendar_combination": "series+watchlist-supported"' dist/release.json
-          grep -Fq '"discover_daily_pick": "fresh-pool-only+no-blur"' dist/release.json
+          node --check dist/app-v296.js
+          grep -Fq "window.__ctWebBuild='1.0.87';window.__ctOfficialVersion='1.0.87';" dist/app-v296.js
+          grep -Fq "const REVISION='r296-official-1.0.87';" dist/app-v296.js
+          grep -Fq "window.__ctR295='discover-personal-authority-calendar-daily-actions'" dist/app-v296.js
+          grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" dist/app-v296.js
+          grep -Fq "window.__ctR296ForYou='score-7.5+year-1990+genre+wwe+seven-day+exact-slots+zero-duplicates'" dist/app-v296.js
+          grep -Fq "window.__ctR296Sports='today+72h+favorites+watched+stadium'" dist/app-v296.js
+          grep -Fq 'app-v296.js' dist/index.html
+          grep -Fq 'app-v296.css' dist/index.html
+          grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' dist/release.json
+          grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' dist/release.json
+          grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.86-r295';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.87-r296';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -86,19 +101,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_86_r295]
+    needs: [web_1_0_87_r296, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Official production serves and boots 1.0.86 r295
+      - name: Official production serves and boots 1.0.87 r296
         run: |
           set -euo pipefail
           for i in $(seq 1 200); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.86"' <<<"$BODY" && grep -Fq '"revision": "r295-official-1.0.86"' <<<"$BODY" && grep -Fq '"discover_browse_exclusions": "seen+watchlist"' <<<"$BODY" && grep -Fq '"discover_calendar_combination": "series+watchlist-supported"' <<<"$BODY" && grep -Fq '"discover_daily_pick": "fresh-pool-only+no-blur"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v295.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.87"' <<<"$BODY" && grep -Fq '"revision": "r296-official-1.0.87"' <<<"$BODY" && grep -Fq '"discover_foryou_repeat_window": "7-days-shown_recommendations+local-fallback"' <<<"$BODY" && grep -Fq '"sports_tabs": "next-today+previous-72h+favorites+watched"' <<<"$BODY" && grep -Fq '"sports_attendance": "attended_in_person+stadium_name+profile-total"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v296.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR295='discover-personal-authority-calendar-daily-actions'" <<<"$JS" && grep -Fq 'app-v295.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR296='strict-foryou-four-sports-stadium-web-polish'" <<<"$JS" && grep -Fq 'app-v296.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=5500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
