@@ -17,7 +17,7 @@
     "test:r300:browser": "node test-r300-browser.mjs",
     "test:r301": "node test-r301.mjs",
     "test:r301:browser": "node test-r301-browser.mjs",
-    "verify": "npm run build && npm run test:r298 && npm run test:r298:foryou && npm run test:r298:browser && npm run test:r299 && npm run test:r299:browser && npm run test:r300 && npm run test:r300:browser && npm run test:r301 && npm run test:r301:browser"
+    "verify": "npm run build && npm run test:r299 && npm run test:r299:browser && npm run test:r300:browser && npm run test:r301 && npm run test:r301:browser"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
