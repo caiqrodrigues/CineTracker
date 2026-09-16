@@ -1,101 +1,71 @@
-name: Verify Web 1.0.91 r300 Discover Sports Profile
+name: Verify Web 1.0.92 r301 F1 Sports Discover Profile
 
 on:
   push:
-    branches: [main, 'fix/r300-discover-sports-profile-watchlist']
+    branches: [main, 'fix/r301-profile-sports-f1-order']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_91_r300:
+  web_1_0_92_r301:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r300
+      - name: Version identity r301
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.91"' package.json
-          grep -Fq '"version": "1.0.91"' apps/web/package.json
-          grep -Fq 'build-r300-official.mjs' apps/web/package.json
-          test -f apps/web/build-r300.mjs
-          test -f apps/web/build-r300-official.mjs
-          test -f apps/web/runtime-r300-discover-sports-profile-watchlist.js
-          test -f apps/web/test-r300.mjs
-          test -f apps/web/test-r300-browser.mjs
-      - name: Syntax r300 release chain
+          grep -Fq '"version": "1.0.92"' package.json
+          grep -Fq '"version": "1.0.92"' apps/web/package.json
+          grep -Fq 'build-r301-official.mjs' apps/web/package.json
+          test -f apps/web/build-r301.mjs
+          test -f apps/web/build-r301-official.mjs
+          test -f apps/web/runtime-r301-profile-sports-f1-order.js
+          test -f apps/web/test-r301.mjs
+          test -f apps/web/test-r301-browser.mjs
+      - name: Syntax r301 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r300-discover-sports-profile-watchlist.js
-          node --check apps/web/build-r300.mjs
-          node --check apps/web/build-r300-official.mjs
-          node --check apps/web/test-r300.mjs
-          node --check apps/web/test-r300-browser.mjs
-      - name: Chromium inherited r286 related interactions
+          node --check apps/web/runtime-r301-profile-sports-f1-order.js
+          node --check apps/web/build-r301.mjs
+          node --check apps/web/build-r301-official.mjs
+          node --check apps/web/test-r301.mjs
+          node --check apps/web/test-r301-browser.mjs
+      - name: Regression suite r301
         working-directory: apps/web
-        run: node test-r286-browser.mjs
-      - name: Chromium inherited r293 Pra Você authority
-        working-directory: apps/web
-        run: node test-r293-browser.mjs
-      - name: Chromium inherited r294 density scroll order
-        working-directory: apps/web
-        run: node test-r294-browser.mjs
-      - name: Chromium inherited r295 personal calendar daily
-        working-directory: apps/web
-        run: node test-r295-browser.mjs
-      - name: Chromium inherited r296 recommendations sports stadium
-        working-directory: apps/web
-        run: node test-r296-browser.mjs
-      - name: Chromium inherited r297 full bundle boot
-        working-directory: apps/web
-        run: node test-r297-browser.mjs
-      - name: Static inherited r298 completion contract
-        working-directory: apps/web
-        run: node test-r298.mjs
-      - name: Chromium inherited r298 exact Pra Você pipeline
-        working-directory: apps/web
-        run: node test-r298-foryou-browser.mjs
-      - name: Chromium inherited r298 real Sports control and Profile placement
-        working-directory: apps/web
-        run: node test-r298-browser.mjs
-      - name: Static inherited r299 sports history contract
-        working-directory: apps/web
-        run: node test-r299.mjs
-      - name: Chromium inherited r299 clickable Sports history
-        working-directory: apps/web
-        run: node test-r299-browser.mjs
-      - name: Static r300 video-ground-truth contract
-        working-directory: apps/web
-        run: node test-r300.mjs
-      - name: Chromium r300 Watchlist style Sports tabs Discover watchdog
-        working-directory: apps/web
-        run: node test-r300-browser.mjs
-      - name: Final bundle identity r300
+        run: npm run verify
+      - name: Final bundle identity r301
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r300-official.mjs
-          node --check dist/app-v300.js
-          grep -Fq "window.__ctWebBuild='1.0.91';window.__ctOfficialVersion='1.0.91';" dist/app-v300.js
-          grep -Fq "const REVISION='r300-official-1.0.91';" dist/app-v300.js
-          grep -Fq "window.__ctR300='discover-bounded-recovery+four-sports-tabs+watchlist-stat-style'" dist/app-v300.js
-          grep -Fq "window.__ctR300Sports='next+previous+watched+favorites-no-live'" dist/app-v300.js
-          grep -Fq "window.__ctR300Discover='browse-tabs-no-infinite-loading'" dist/app-v300.js
-          grep -Fq "window.__ctR300Profile='series-watchlist+movies-watchlist-match-clickable-style'" dist/app-v300.js
-          grep -Fq 'app-v300.js' dist/index.html
-          grep -Fq 'app-v300.css' dist/index.html
-          grep -Fq '"version": "1.0.91"' dist/release.json
-          grep -Fq '"revision": "r300-official-1.0.91"' dist/release.json
+          node build-r301-official.mjs
+          node --check dist/app-v301.js
+          grep -Fq "window.__ctWebBuild='1.0.92';window.__ctOfficialVersion='1.0.92';" dist/app-v301.js
+          grep -Fq "const REVISION='r301-official-1.0.92';" dist/app-v301.js
+          grep -Fq "window.__ctR301='f1-calendar-interactive+sports-next-wide+discover-fast-1-3-3+profile-stable'" dist/app-v301.js
+          grep -Fq "window.__ctR301F1='no-drivers-tab+calendar-detail+canonical-watch'" dist/app-v301.js
+          grep -Fq "window.__ctR301Sports='f1-first+next-120d+four-tabs'" dist/app-v301.js
+          grep -Fq "window.__ctR301Discover='fast-exact-1+3+3+stable-watchlist-actions'" dist/app-v301.js
+          grep -Fq "window.__ctR301Profile='stable-stats+watchlist-match-stadium-style'" dist/app-v301.js
+          grep -Fq 'app-v301.js' dist/index.html
+          grep -Fq 'app-v301.css' dist/index.html
+          grep -Fq '"version": "1.0.92"' dist/release.json
+          grep -Fq '"revision": "r301-official-1.0.92"' dist/release.json
           grep -Fq '"sports_tabs": "next+previous+watched+favorites"' dist/release.json
-          grep -Fq '"sports_live_tab": false' dist/release.json
-          grep -Fq '"discover_browse_guard": true' dist/release.json
-          grep -Fq '"profile_watchlist_stat_style": "matches-clickable-sports"' dist/release.json
+          grep -Fq '"sports_next_days": 120' dist/release.json
+          grep -Fq '"f1_drivers_tab": false' dist/release.json
+          grep -Fq '"f1_calendar_interactive": true' dist/release.json
+          grep -Fq '"f1_watch_profile_sync": true' dist/release.json
+          grep -Fq '"discover_for_you": "1+3+3"' dist/release.json
+          grep -Fq '"discover_fast_pipeline": true' dist/release.json
+          grep -Fq '"discover_watchlist_action_stable": true' dist/release.json
+          grep -Fq '"profile_stats_stable": true' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.91-r300';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.92-r301';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -110,19 +80,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_91_r300, android_current_source]
+    needs: [web_1_0_92_r301, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.91 r300
+      - name: Official production serves and boots 1.0.92 r301
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.91"' <<<"$BODY" && grep -Fq '"revision": "r300-official-1.0.91"' <<<"$BODY" && grep -Fq '"sports_tabs": "next+previous+watched+favorites"' <<<"$BODY" && grep -Fq '"sports_live_tab": false' <<<"$BODY" && grep -Fq '"discover_browse_guard": true' <<<"$BODY" && grep -Fq '"profile_watchlist_stat_style": "matches-clickable-sports"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v300.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.92"' <<<"$BODY" && grep -Fq '"revision": "r301-official-1.0.92"' <<<"$BODY" && grep -Fq '"sports_tabs": "next+previous+watched+favorites"' <<<"$BODY" && grep -Fq '"sports_next_days": 120' <<<"$BODY" && grep -Fq '"f1_drivers_tab": false' <<<"$BODY" && grep -Fq '"f1_calendar_interactive": true' <<<"$BODY" && grep -Fq '"discover_for_you": "1+3+3"' <<<"$BODY" && grep -Fq '"profile_stats_stable": true' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v301.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR300='discover-bounded-recovery+four-sports-tabs+watchlist-stat-style'" <<<"$JS" && grep -Fq 'SPORTS_ORDER' <<<"$JS" && grep -Fq 'buildBrowse300' <<<"$JS" && grep -Fq 'app-v300.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR301='f1-calendar-interactive+sports-next-wide+discover-fast-1-3-3+profile-stable'" <<<"$JS" && grep -Fq 'buildForYou301' <<<"$JS" && grep -Fq 'f1CalendarHtml301' <<<"$JS" && grep -Fq 'app-v301.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
