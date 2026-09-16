@@ -1,15 +1,31 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-09-15
+**Atualizado em:** 2026-09-16
 
 ## Matriz oficial
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.89** | revision `r298-official-1.0.89`, package `1.0.89` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r298 |
+| Web | **1.0.90** | revision `r299-official-1.0.90`, package `1.0.90` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r299 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.90 / r299
+
+A r299 simplifica a presença presencial em Esportes e torna o histórico esportivo do Perfil navegável, sem alterar o Android.
+
+- `Eventos assistidos`, dentro de `Esportes assistidos`, passa a ser clicável e abre o histórico retornado por `cinetracker_sports_watch_history_v296`;
+- `Jogos no Estádio` também passa a ser clicável e abre somente os registros com `attended_in_person = true`;
+- as listas mostram evento, competição e data quando disponíveis e não exibem `stadium_name`;
+- a marcação de evento mantém somente `📺 Assistido na TV / Tela` e `🏟️ Fui ao Estádio`, sem formulário para informar local;
+- `Fui ao Estádio` persiste diretamente com `p_attended_in_person = true` e `p_stadium_name = null`;
+- o campo legado da r298 fica oculto no bundle r299 e o handler r299 é registrado antes da captura r298, impedindo que o formulário antigo assuma o clique real;
+- badges presenciais mostram apenas `🏟️ No Estádio`, sem o nome do local;
+- `Pra Você` 1+3+3 e as demais correções da r298 permanecem preservadas;
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v299.js` / `app-v299.css`; build: `apps/web/build-r299-official.mjs`; runtime: `apps/web/runtime-r299-profile-sports-history.js`; regressões: `apps/web/test-r299.mjs` e `apps/web/test-r299-browser.mjs`.
 
 ## Web 1.0.89 / r298
 
@@ -45,7 +61,7 @@ Assets oficiais: `app-v297.js` / `app-v297.css`; build: `apps/web/build-r297-off
 
 A r296 altera somente a Web e o backend compartilhado necessário para persistência dos novos metadados; o Android permanece intocado.
 
-- `Pra Você` exige TMDB >= 7,5, ano > 1990, exclui títulos exclusivamente Drama/Documentário e bloqueia WWE/Raw/SmackDown/NXT e eventos WWE relacionados;
+- `Pra Você` exige TMDB >= 7,5 e ano > 1990, exclui títulos exclusivamente Drama/Documentário e bloqueia WWE/Raw/SmackDown/NXT e eventos WWE relacionados;
 - recomendações exibidas ficam bloqueadas por 7 dias por usuário via `shown_recommendations`, com fallback local, e não podem se repetir na mesma tela;
 - a composição aprovada fica em `Indicação do Dia` (1 Filme), `Da sua Watchlist` (Filme + Série + Anime) e `100% Novos` (Filme + Série + Anime);
 - Esportes fica com exatamente `Próximos`, `Anteriores`, `Favoritos` e `Assistidos`; próximos = hoje, anteriores = últimas 72h;
@@ -89,7 +105,7 @@ Assets oficiais: `app-v288.js` / `app-v288.css`; build: `apps/web/build-r288-off
 
 ## Android 1.0.20
 
-A r298 não altera Android. A identidade preservada é:
+A r299 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
