@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r299.mjs');
+const dist=resolve('dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v299.js','app-v299.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r299 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.90';window.__ctOfficialVersion='1.0.90';","const REVISION='r299-official-1.0.90';","window.__ctR299='profile-sports-history-clickable+stadium-presence-only'","window.__ctR299Profile='eventos-assistidos+jogos-no-estadio-clickable-history'","window.__ctR299Sports='tv-or-stadium-no-stadium-name'",'data-ct299-choice="stadium"','data-ct299-history','p_stadium_name:null',"window.__ctR298ForYou='1-daily+3-watchlist+3-new+bounded-no-spinner'"])must(js,x);
+must(html,'app-v299.js');must(html,'app-v299.css');must(css,'r299 — clickable sports history');must(css,'input[data-ct298-stadium]{display:none!important}');
+const m=JSON.parse(release);if(m.version!=='1.0.90'||m.revision!=='r299-official-1.0.90'||m.sports_stadium_ui!=='tv-or-stadium-no-name-input'||m.sports_stadium_name_capture!==false||m.profile_sports_history!=='eventos-assistidos+jogos-no-estadio-clickable'||m.android!=='1.0.20/10062')throw new Error('r299 release identity');
+must(sw,"const CACHE='ct-web-1.0.90-r299';");
+console.log('WEB_1_0_90_OFFICIAL_OK r299 clickable Sports history + stadium presence only; Android preserved');

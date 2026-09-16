@@ -1,43 +1,41 @@
-name: Verify Web 1.0.89 r298 Stadium and Pra Você Completion
+name: Verify Web 1.0.90 r299 Sports Profile History
 
 on:
   push:
-    branches: [main, 'fix/r298-stadium-foryou-completion']
+    branches: [main, 'fix/r299-profile-sports-history-stadium-simple']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_89_r298:
+  web_1_0_90_r299:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r298
+      - name: Version identity r299
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.89"' package.json
-          grep -Fq '"version": "1.0.89"' apps/web/package.json
-          grep -Fq 'build-r298-official.mjs' apps/web/package.json
-          test -f apps/web/build-r298.mjs
-          test -f apps/web/build-r298-official.mjs
-          test -f apps/web/runtime-r298-stadium-foryou-completion.js
-          test -f apps/web/test-r298.mjs
-          test -f apps/web/test-r298-browser.mjs
-          test -f apps/web/test-r298-foryou-browser.mjs
+          grep -Fq '"version": "1.0.90"' package.json
+          grep -Fq '"version": "1.0.90"' apps/web/package.json
+          grep -Fq 'build-r299-official.mjs' apps/web/package.json
+          test -f apps/web/build-r299.mjs
+          test -f apps/web/build-r299-official.mjs
+          test -f apps/web/runtime-r299-profile-sports-history.js
+          test -f apps/web/test-r299.mjs
+          test -f apps/web/test-r299-browser.mjs
           test -f supabase/migrations/20260915183834_r296_recommendations_sports_stadium.sql
-      - name: Syntax r298 release chain
+      - name: Syntax r299 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r298-stadium-foryou-completion.js
-          node --check apps/web/build-r298.mjs
-          node --check apps/web/build-r298-official.mjs
-          node --check apps/web/test-r298.mjs
-          node --check apps/web/test-r298-browser.mjs
-          node --check apps/web/test-r298-foryou-browser.mjs
+          node --check apps/web/runtime-r299-profile-sports-history.js
+          node --check apps/web/build-r299.mjs
+          node --check apps/web/build-r299-official.mjs
+          node --check apps/web/test-r299.mjs
+          node --check apps/web/test-r299-browser.mjs
       - name: Chromium inherited r286 related interactions
         working-directory: apps/web
         run: node test-r286-browser.mjs
@@ -56,15 +54,21 @@ jobs:
       - name: Chromium inherited r297 full bundle boot
         working-directory: apps/web
         run: node test-r297-browser.mjs
-      - name: Static r298 completion contract
+      - name: Static inherited r298 completion contract
         working-directory: apps/web
         run: node test-r298.mjs
-      - name: Chromium r298 exact Pra Você pipeline
+      - name: Chromium inherited r298 exact Pra Você pipeline
         working-directory: apps/web
         run: node test-r298-foryou-browser.mjs
-      - name: Chromium r298 real Sports control and Profile placement
+      - name: Chromium inherited r298 real Sports control and Profile placement
         working-directory: apps/web
         run: node test-r298-browser.mjs
+      - name: Static r299 profile sports history contract
+        working-directory: apps/web
+        run: node test-r299.mjs
+      - name: Chromium r299 clickable Profile history and simple stadium flow
+        working-directory: apps/web
+        run: node test-r299-browser.mjs
       - name: Migration contract inherited r296
         run: |
           set -euo pipefail
@@ -72,29 +76,32 @@ jobs:
           grep -Fq 'alter table public.user_sport_watch_history' "$F"
           grep -Fq 'attended_in_person boolean not null default false' "$F"
           grep -Fq 'stadium_name text' "$F"
+          grep -Fq 'cinetracker_sports_watch_history_v296' "$F"
           grep -Fq 'cinetracker_sports_watch_set_v296' "$F"
           grep -Fq 'cinetracker_sports_stadium_summary_v296' "$F"
-      - name: Final bundle identity r298
+      - name: Final bundle identity r299
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r298-official.mjs
-          node --check dist/app-v298.js
-          grep -Fq "window.__ctWebBuild='1.0.89';window.__ctOfficialVersion='1.0.89';" dist/app-v298.js
-          grep -Fq "const REVISION='r298-official-1.0.89';" dist/app-v298.js
-          grep -Fq "window.__ctR298='stadium-real-controls+exact-foryou-live-pipeline'" dist/app-v298.js
-          grep -Fq "window.__ctR298Sports='ct255-real-watch-button+tv-or-stadium+watched-badge'" dist/app-v298.js
-          grep -Fq "window.__ctR298Profile='stadium-stat-inside-sports-assisted-only'" dist/app-v298.js
-          grep -Fq "window.__ctR298ForYou='1-daily+3-watchlist+3-new+bounded-no-spinner'" dist/app-v298.js
-          grep -Fq 'app-v298.js' dist/index.html
-          grep -Fq 'app-v298.css' dist/index.html
-          grep -Fq '"version": "1.0.89"' dist/release.json
-          grep -Fq '"revision": "r298-official-1.0.89"' dist/release.json
-          grep -Fq '"sports_stadium_ui": "real-ct255-watch-button-tv-or-stadium"' dist/release.json
-          grep -Fq '"profile_stadium_metric": "inside-esportes-assistidos"' dist/release.json
-          grep -Fq '"discover_foryou_no_infinite_loading": true' dist/release.json
+          node build-r299-official.mjs
+          node --check dist/app-v299.js
+          grep -Fq "window.__ctWebBuild='1.0.90';window.__ctOfficialVersion='1.0.90';" dist/app-v299.js
+          grep -Fq "const REVISION='r299-official-1.0.90';" dist/app-v299.js
+          grep -Fq "window.__ctR299='profile-sports-history-clickable+stadium-presence-only'" dist/app-v299.js
+          grep -Fq "window.__ctR299Profile='eventos-assistidos+jogos-no-estadio-clickable-history'" dist/app-v299.js
+          grep -Fq "window.__ctR299Sports='tv-or-stadium-no-stadium-name'" dist/app-v299.js
+          grep -Fq 'data-ct299-history' dist/app-v299.js
+          grep -Fq 'data-ct299-choice="stadium"' dist/app-v299.js
+          grep -Fq 'p_stadium_name:null' dist/app-v299.js
+          grep -Fq 'app-v299.js' dist/index.html
+          grep -Fq 'app-v299.css' dist/index.html
+          grep -Fq '"version": "1.0.90"' dist/release.json
+          grep -Fq '"revision": "r299-official-1.0.90"' dist/release.json
+          grep -Fq '"sports_stadium_ui": "tv-or-stadium-no-name-input"' dist/release.json
+          grep -Fq '"sports_stadium_name_capture": false' dist/release.json
+          grep -Fq '"profile_sports_history": "eventos-assistidos+jogos-no-estadio-clickable"' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.89-r298';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.90-r299';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -109,19 +116,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_89_r298, android_current_source]
+    needs: [web_1_0_90_r299, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.89 r298
+      - name: Official production serves and boots 1.0.90 r299
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.89"' <<<"$BODY" && grep -Fq '"revision": "r298-official-1.0.89"' <<<"$BODY" && grep -Fq '"sports_stadium_ui": "real-ct255-watch-button-tv-or-stadium"' <<<"$BODY" && grep -Fq '"profile_stadium_metric": "inside-esportes-assistidos"' <<<"$BODY" && grep -Fq '"discover_foryou_no_infinite_loading": true' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v298.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.90"' <<<"$BODY" && grep -Fq '"revision": "r299-official-1.0.90"' <<<"$BODY" && grep -Fq '"sports_stadium_ui": "tv-or-stadium-no-name-input"' <<<"$BODY" && grep -Fq '"sports_stadium_name_capture": false' <<<"$BODY" && grep -Fq '"profile_sports_history": "eventos-assistidos+jogos-no-estadio-clickable"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v299.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR298='stadium-real-controls+exact-foryou-live-pipeline'" <<<"$JS" && grep -Fq 'data-ct298-choice="stadium"' <<<"$JS" && grep -Fq 'buildForYou298' <<<"$JS" && grep -Fq 'app-v298.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR299='profile-sports-history-clickable+stadium-presence-only'" <<<"$JS" && grep -Fq 'data-ct299-history' <<<"$JS" && grep -Fq 'data-ct299-choice="stadium"' <<<"$JS" && grep -Fq 'p_stadium_name:null' <<<"$JS" && grep -Fq 'app-v299.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
