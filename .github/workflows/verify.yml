@@ -44,10 +44,14 @@ jobs:
           node --check dist/app-v302.js
           grep -Fq "window.__ctWebBuild='1.0.93';window.__ctOfficialVersion='1.0.93';" dist/app-v302.js
           grep -Fq "const REVISION='r302-official-1.0.93';" dist/app-v302.js
-          grep -Fq "window.__ctR302='discover-watched-watchlist-block+foryou-authority+no-r301-dom-observer'" dist/app-v302.js
+          grep -Fq "window.__ctR302='discover-watched-watchlist-block+foryou-authority+finite-sports-profile'" dist/app-v302.js
           grep -Fq "window.__ctR302Discover='watched+watchlist-excluded+canonical-add'" dist/app-v302.js
+          grep -Fq "window.__ctR302Sports='filters-restored+365d-coverage+finite-repair'" dist/app-v302.js
+          grep -Fq "window.__ctR302F1='no-drivers+clickable-calendar+complete-detail-modal'" dist/app-v302.js
           grep -Fq 'M302.blocked=blocked302' dist/app-v302.js
           grep -Fq 'data-ct288-add' dist/app-v302.js
+          grep -Fq 'ensureSportsFilters302' dist/app-v302.js
+          grep -Fq 'enrichF1Modal302' dist/app-v302.js
           ! grep -Fq 'obsQueued301' dist/app-v302.js
           ! grep -Fq '.observe(app301,{subtree:true,childList:true})' dist/app-v302.js
           grep -Fq 'app-v302.js' dist/index.html
@@ -59,6 +63,11 @@ jobs:
           grep -Fq '"discover_add_watchlist": true' dist/release.json
           grep -Fq '"discover_for_you_fixed": true' dist/release.json
           grep -Fq '"sports_profile_global_observer": false' dist/release.json
+          grep -Fq '"sports_filters_restored": true' dist/release.json
+          grep -Fq '"sports_next_days": 365' dist/release.json
+          grep -Fq '"f1_drivers_tab": false' dist/release.json
+          grep -Fq '"f1_calendar_interactive": true' dist/release.json
+          grep -Fq '"f1_calendar_detail_complete": true' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
           grep -Fq "const CACHE='ct-web-1.0.93-r302';" dist/service-worker.js
 
@@ -84,10 +93,10 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.93"' <<<"$BODY" && grep -Fq '"revision": "r302-official-1.0.93"' <<<"$BODY" && grep -Fq '"discover_seen_excluded": true' <<<"$BODY" && grep -Fq '"discover_watchlist_excluded": true' <<<"$BODY" && grep -Fq '"discover_add_watchlist": true' <<<"$BODY" && grep -Fq '"discover_for_you_fixed": true' <<<"$BODY" && grep -Fq '"sports_profile_global_observer": false' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.93"' <<<"$BODY" && grep -Fq '"revision": "r302-official-1.0.93"' <<<"$BODY" && grep -Fq '"discover_seen_excluded": true' <<<"$BODY" && grep -Fq '"discover_watchlist_excluded": true' <<<"$BODY" && grep -Fq '"discover_add_watchlist": true' <<<"$BODY" && grep -Fq '"discover_for_you_fixed": true' <<<"$BODY" && grep -Fq '"sports_profile_global_observer": false' <<<"$BODY" && grep -Fq '"sports_filters_restored": true' <<<"$BODY" && grep -Fq '"sports_next_days": 365' <<<"$BODY" && grep -Fq '"f1_drivers_tab": false' <<<"$BODY" && grep -Fq '"f1_calendar_interactive": true' <<<"$BODY" && grep -Fq '"f1_calendar_detail_complete": true' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v302.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR302='discover-watched-watchlist-block+foryou-authority+no-r301-dom-observer'" <<<"$JS" && grep -Fq 'M302.blocked=blocked302' <<<"$JS" && ! grep -Fq 'obsQueued301' <<<"$JS" && grep -Fq 'app-v302.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR302='discover-watched-watchlist-block+foryou-authority+finite-sports-profile'" <<<"$JS" && grep -Fq "window.__ctR302Sports='filters-restored+365d-coverage+finite-repair'" <<<"$JS" && grep -Fq "window.__ctR302F1='no-drivers+clickable-calendar+complete-detail-modal'" <<<"$JS" && grep -Fq 'M302.blocked=blocked302' <<<"$JS" && ! grep -Fq 'obsQueued301' <<<"$JS" && grep -Fq 'app-v302.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
