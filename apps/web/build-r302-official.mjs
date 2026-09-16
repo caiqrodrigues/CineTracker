@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r302.mjs');
+const dist=resolve('dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v302.js','app-v302.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r302 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.93';window.__ctOfficialVersion='1.0.93';","const REVISION='r302-official-1.0.93';","window.__ctR302='discover-watched-watchlist-block+foryou-authority+no-r301-dom-observer'","window.__ctR302Discover='watched+watchlist-excluded+canonical-add'","window.__ctR302ForYou='watchlist-preserved+fresh-personal-filter'",'blocked302','watchKeys302','data-ct288-add','buildForYou301'])must(js,x);
+if(js.includes('obsQueued301')||js.includes(".observe(app301,{subtree:true,childList:true})"))throw new Error('r302 global r301 observer present');
+must(html,'app-v302.js');must(html,'app-v302.css');must(css,'1.0.93 r302');
+const m=JSON.parse(release);if(m.version!=='1.0.93'||m.revision!=='r302-official-1.0.93'||m.discover_seen_excluded!==true||m.discover_watchlist_excluded!==true||m.discover_add_watchlist!==true||m.discover_for_you_fixed!==true||m.sports_profile_global_observer!==false||m.android!=='1.0.20/10062')throw new Error('r302 release identity');
+must(sw,"const CACHE='ct-web-1.0.93-r302';");
+console.log('WEB_1_0_93_OFFICIAL_OK r302 Discover personal filtering + canonical Watchlist + Pra Você + stable Sports/Profile; Android preserved');
