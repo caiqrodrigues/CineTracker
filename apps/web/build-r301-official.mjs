@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r301.mjs');
+const dist=resolve('dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v301.js','app-v301.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r301 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.92';window.__ctOfficialVersion='1.0.92';","const REVISION='r301-official-1.0.92';","window.__ctR301='f1-calendar-interactive+sports-next-wide+discover-fast-1-3-3+profile-stable'","window.__ctR301F1='no-drivers-tab+calendar-detail+canonical-watch'","window.__ctR301Sports='f1-first+next-120d+four-tabs'","window.__ctR301Discover='fast-exact-1+3+3+stable-watchlist-actions'","window.__ctR301Profile='stable-stats+watchlist-match-stadium-style'",'buildForYou301','f1CalendarHtml301','stabilizeProfile301'])must(js,x);
+must(html,'app-v301.js');must(html,'app-v301.css');must(css,'r301 — interactive F1 calendar');must(css,'.ct301-f1-modal-backdrop');
+const m=JSON.parse(release);if(m.version!=='1.0.92'||m.revision!=='r301-official-1.0.92'||m.sports_tabs!=='next+previous+watched+favorites'||m.sports_next_days!==120||m.f1_drivers_tab!==false||m.f1_calendar_interactive!==true||m.f1_watch_profile_sync!==true||m.discover_for_you!=='1+3+3'||m.discover_fast_pipeline!==true||m.discover_watchlist_action_stable!==true||m.profile_stats_stable!==true||m.android!=='1.0.20/10062')throw new Error('r301 release identity');
+must(sw,"const CACHE='ct-web-1.0.92-r301';");
+console.log('WEB_1_0_92_OFFICIAL_OK r301 F1 calendar + Sports next + fast exact Pra Você + stable Profile; Android preserved');
