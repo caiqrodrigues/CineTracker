@@ -1,0 +1,10 @@
+import{readFile}from'node:fs/promises';
+const [runtime,build,official,pkg]=await Promise.all(['runtime-r301-profile-sports-f1-order.js','build-r301.mjs','build-r301-official.mjs','package.json'].map(f=>readFile(f,'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw Error('R301_STATIC missing '+x)};
+for(const x of["window.__ctR301='f1-calendar-interactive+sports-next-wide+discover-fast-1-3-3+profile-stable'","window.__ctR301F1='no-drivers-tab+calendar-detail+canonical-watch'","window.__ctR301Sports='f1-first+next-120d+four-tabs'","window.__ctR301Discover='fast-exact-1+3+3+stable-watchlist-actions'","window.__ctR301Profile='stable-stats+watchlist-match-stadium-style'",'enhanceF1Watch263=async()=>false','F1_TABS255.splice','120*86400000','f1CalendarHtml301','data-ct301-f1-event','cinetracker_sports_watch_set_v296','buildForYou301',"for(const c of['movie','series','anime'])",'ensureWatchButtons301','Séries Watchlist','Filmes Watchlist','Jogos no Estádio'])must(runtime,x);
+if(runtime.includes('setInterval('))throw Error('R301_STATIC must stay bounded');
+if(runtime.includes('2200'))throw Error('R301_STATIC must not restore r300 delayed Discover recovery');
+for(const x of["version:'1.0.92'","revision:'r301-official-1.0.92'","sports_tabs:'next+previous+watched+favorites'","sports_next_days:120","f1_drivers_tab:false","f1_calendar_interactive:true","f1_watch_profile_sync:true","discover_for_you:'1+3+3'","discover_fast_pipeline:true","discover_watchlist_action_stable:true","profile_stats_stable:true",'app-v301.js','app-v301.css'])must(build,x);
+for(const x of["window.__ctWebBuild='1.0.92';window.__ctOfficialVersion='1.0.92';","const REVISION='r301-official-1.0.92';","const CACHE='ct-web-1.0.92-r301';"])must(official+build,x);
+must(pkg,'"version": "1.0.92"');must(pkg,'build-r301-official.mjs');must(pkg,'test-r301-browser.mjs');
+console.log('R301_STATIC_OK F1 interactive calendar + 120d Sports + fast exact 1+3+3 + stable Profile');
