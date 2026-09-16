@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r300.mjs');
+const dist=resolve('dist');
+const [html,js,css,release,sw]=await Promise.all(['index.html','app-v300.js','app-v300.css','release.json','service-worker.js'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r300 official missing '+x)};
+for(const x of["window.__ctWebBuild='1.0.91';window.__ctOfficialVersion='1.0.91';","const REVISION='r300-official-1.0.91';","window.__ctR300='discover-bounded-recovery+four-sports-tabs+watchlist-stat-style'","window.__ctR300Discover='browse-tabs-no-infinite-loading'","window.__ctR300Sports='next+previous+watched+favorites-no-live'","window.__ctR300Profile='series-watchlist+movies-watchlist-match-clickable-style'",'buildBrowse300','SPORTS_ORDER'])must(js,x);
+must(html,'app-v300.js');must(html,'app-v300.css');must(css,'r300 — four Sports tabs');must(css,'[data-ct255-sport-tab="live"]');
+const m=JSON.parse(release);if(m.version!=='1.0.91'||m.revision!=='r300-official-1.0.91'||m.sports_tabs!=='next+previous+watched+favorites'||m.sports_live_tab!==false||m.discover_browse_guard!==true||m.profile_watchlist_stat_style!=='matches-clickable-sports'||m.android!=='1.0.20/10062')throw new Error('r300 release identity');
+must(sw,"const CACHE='ct-web-1.0.91-r300';");
+console.log('WEB_1_0_91_OFFICIAL_OK r300 Discover recovery + four Sports tabs + Watchlist stat parity; Android preserved');

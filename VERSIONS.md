@@ -6,10 +6,24 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.90** | revision `r299-official-1.0.90`, package `1.0.90` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r299 |
+| Web | **1.0.91** | revision `r300-official-1.0.91`, package `1.0.91` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r300 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.91 / r300
+
+A r300 corrige as divergências observadas no vídeo real de 16/09/2026 em Perfil, Descobrir e Esportes, sem alterar o Android.
+
+- `Séries Watchlist` e `Filmes Watchlist` recebem o mesmo tratamento visual clicável usado em `Eventos assistidos` e `Jogos no Estádio`, preservando suas ações existentes;
+- Esportes passa a exibir exatamente quatro abas, na ordem `Próximos`, `Anteriores`, `Assistidos` e `Favoritos`; a aba `Ao vivo` é removida do DOM efetivamente renderizado pela r255 e também bloqueada por CSS caso um repaint legado tente recriá-la;
+- se uma sessão antiga estiver parada em `Ao vivo`, a r300 volta para `Próximos`, impedindo que eventos antigos — como jogos de 12/09 vistos no vídeo em 16/09 — permaneçam apresentados como conteúdo atual;
+- `Em alta`, `Populares`, `Novidades`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` ganham recuperação finita: se a autoridade herdada ficar presa em `Carregando títulos…`, a r300 busca candidatos pelo TMDB, respeita filtro Filme/Série e exclusões pessoais e pinta pelo renderer real r288;
+- a recuperação do Descobrir é limitada e não usa `setInterval` nem observer perpétuo; `Pra Você` 1+3+3 e `Top 10` mantêm suas autoridades específicas;
+- adiciona regressão Chromium reproduzindo o cenário do vídeo: Watchlist com estilo clicável, cinco abas herdadas reduzidas a quatro na ordem aprovada e detecção do loading persistente do Descobrir;
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v300.js` / `app-v300.css`; build: `apps/web/build-r300-official.mjs`; runtime: `apps/web/runtime-r300-discover-sports-profile-watchlist.js`; regressões: `apps/web/test-r300.mjs` e `apps/web/test-r300-browser.mjs`.
 
 ## Web 1.0.90 / r299
 
@@ -46,7 +60,7 @@ Assets oficiais: `app-v298.js` / `app-v298.css`; build: `apps/web/build-r298-off
 
 A r297 é um hotfix exclusivamente Web para recuperar o boot público da r296 e reconectar as autoridades do Descobrir aos renderers que realmente estão ativos desde a r288. O escopo funcional da r296 permanece inalterado e o Android continua intocado.
 
-- corrige a tela preta/vazia causada pelo `runtime-r295-browse-actions-self-scope-fix.js`, que podia lançar `r295 browse self-scope fix missing r295 authority` antes de `boot()`;
+- corrige a tela preta/vazia causada pelo `runtime-r295-browse-actions-self-scope-fix.js`, que podia lançar `r295 browse self-scope fix missing r295 authority` antes de `boot()`, interrompendo a aplicação com `#app` vazio;
 - corrige a causa arquitetural encontrada na validação do bundle final: desde a r288 os donos vivos do Descobrir são `window.__ctR288PaintBrowse`, `window.__ctR288PaintForYou` e `window.__ctR288LoadDiscover`, enquanto patches r295/r296 ainda tentavam interceptar nomes legados;
 - a r297 liga explicitamente as exclusões pessoais, ações de cards, Calendário e regras rígidas do `Pra Você` aos donos reais r288, mantendo fallback compatível para as regressões históricas;
 - o bridge r297 garante filtragem de vistos/Watchlist nas abas públicas, composição rígida do `Pra Você` e carregamento autorizado sem reconstruir a página inteira;
@@ -105,7 +119,7 @@ Assets oficiais: `app-v288.js` / `app-v288.css`; build: `apps/web/build-r288-off
 
 ## Android 1.0.20
 
-A r299 não altera Android. A identidade preservada é:
+A r300 não altera Android. A identidade preservada é:
 
 - `applicationId`: `com.cinetracker.app`;
 - `versionName`: `1.0.20`;
