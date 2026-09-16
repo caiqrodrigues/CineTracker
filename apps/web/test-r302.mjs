@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r302-official.mjs');
+const dist=resolve('dist');
+const [js,release,html]=await Promise.all(['app-v302.js','release.json','index.html'].map(f=>readFile(resolve(dist,f),'utf8')));
+const must=(s,x)=>{if(!s.includes(x))throw new Error('r302 test missing '+x)};
+for(const x of['blocked302','watchKeys302','M302.blocked=blocked302','data-ct288-add',"window.__ctR302Stability='finite-hooks-no-global-dom-observer'",'buildForYou301'])must(js,x);
+if(js.includes('obsQueued301')||js.includes("new MutationObserver(()=>{if(obsQueued301")||js.includes(".observe(app301,{subtree:true,childList:true})"))throw new Error('r302 regression: global r301 observer present');
+const m=JSON.parse(release);if(m.discover_seen_excluded!==true||m.discover_watchlist_excluded!==true||m.discover_add_watchlist!==true||m.discover_for_you_fixed!==true||m.sports_profile_global_observer!==false||m.android!=='1.0.20/10062')throw new Error('r302 metadata regression');
+must(html,'app-v302.js');
+console.log('R302_STATIC_OK watched+Watchlist blocked, canonical add preserved, Pra Você authority retained, r301 observer removed');
