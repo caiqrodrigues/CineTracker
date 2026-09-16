@@ -2,6 +2,60 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.91 — 2026-09-16 — Web r300
+
+### Perfil / Watchlist
+- `Séries Watchlist` e `Filmes Watchlist` recebem o mesmo tratamento visual clicável aplicado aos cards esportivos de estatísticas, preservando as ações já existentes desses contadores.
+
+### Esportes
+- Remove a aba `Ao vivo` do DOM efetivamente renderizado pela autoridade r255, em vez de tentar alterar constantes privadas fora do escopo do renderer.
+- A navegação fica exatamente na ordem `Próximos`, `Anteriores`, `Assistidos`, `Favoritos`.
+- Sessões antigas que ainda estejam em `live` retornam para `Próximos`; uma barreira CSS impede que controles `Ao vivo` legados reapareçam durante repaints.
+- Corrige a divergência mostrada no vídeo de 16/09, em que a aba `Ao vivo` ainda exibia partidas de 12/09.
+
+### Descobrir
+- Adiciona recuperação finita para `Em alta`, `Populares`, `Novidades`, `Mais Aguardados`, `Mais bem avaliados` e `Calendário` quando o fluxo herdado permanece preso em `Carregando títulos…`.
+- O fallback usa TMDB, respeita o filtro Filme/Série e a autoridade pessoal existente, e pinta pelo renderer real r288 sem observer ou `setInterval` perpétuo.
+- `Pra Você` 1+3+3 e `Top 10` permanecem sob as autoridades específicas das releases anteriores.
+
+### Build / validação
+- Web atualizada para `1.0.91 / r300-official-1.0.91`; Android permanece `1.0.20 / versionCode 10062` sem alteração.
+- Adiciona regressão Chromium reproduzindo os pontos do vídeo: Watchlist com estilo clicável, cinco abas esportivas legadas reduzidas para quatro na ordem aprovada e detecção do loading persistente do Descobrir.
+
+## 1.0.90 — 2026-09-16 — Web r299
+
+### Perfil / histórico esportivo
+- `Eventos assistidos` passa a ser clicável e abre o histórico esportivo do usuário.
+- `Jogos no Estádio` passa a ser clicável e abre somente os eventos marcados presencialmente.
+- As listas exibem evento, competição e data quando disponíveis, sem mostrar nome do estádio.
+
+### Presença no estádio
+- O fluxo real de Esportes mantém somente `📺 Assistido na TV / Tela` e `🏟️ Fui ao Estádio`.
+- A opção presencial salva `attended_in_person = true` com `stadium_name = null`; o campo legado para digitar o estádio deixa de participar da interface.
+- Badges presenciais mostram apenas `🏟️ No Estádio`.
+
+### Build / validação
+- Web atualizada para `1.0.90 / r299-official-1.0.90`; Android permanece `1.0.20 / versionCode 10062`.
+- Adiciona testes estáticos e Chromium para os dois históricos clicáveis e para o fluxo presencial sem captura de nome do estádio.
+
+## 1.0.89 — 2026-09-15 — Web r298
+
+### Esportes / presença presencial
+- Intercepta o botão esportivo real `data-ct255-watch` antes do handler legado e disponibiliza a escolha TV/Tela ou Estádio.
+- Registros presenciais usam o RPC canônico de histórico esportivo e recebem badge `🏟️ No Estádio`.
+
+### Perfil
+- `Jogos no Estádio` deixa de ser inserido em uma grade genérica próxima de Séries e passa a existir somente no painel semântico `Esportes assistidos`.
+
+### Descobrir / Pra Você
+- Introduz pipeline finito que aguarda autoridade pessoal, memória de recomendações e pools TMDB antes da pintura.
+- A composição fica em `Indicação do Dia` com 1 Filme, `Da sua Watchlist` com Filme + Série + Anime e `100% Novos` com Filme + Série + Anime, sem duplicações.
+- Falta real de candidato passa a produzir estado explícito em vez de spinner infinito.
+
+### Build / validação
+- Web atualizada para `1.0.89 / r298-official-1.0.89`; Android permanece `1.0.20 / versionCode 10062`.
+- Adiciona regressões Chromium para o botão esportivo real, posição da métrica no Perfil e composição 1+3+3 do `Pra Você`.
+
 ## 1.0.88 — 2026-09-15 — Web r297
 
 ### Boot / tela preta
