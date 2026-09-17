@@ -41,7 +41,7 @@ function ct307ApplyFreshAvailability(row,show){
     row.next_episode_air_date=null;
   }else{
     row.is_caught_up=false;
-    row.home_bucket='continue';
+    if(!row.home_bucket||row.home_bucket==='up_to_date')row.home_bucket='continue';
   }
   return row;
 }
