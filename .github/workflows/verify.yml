@@ -1,80 +1,90 @@
-name: Verify Web 1.0.95 r304 Canonical Recovery
+name: Verify Web 1.0.96 r305 Final Authority
 
 on:
   push:
-    branches: [main, 'fix/r304-movie-f1-sports-profile-authority']
+    branches: [main, 'fix/r305-final-canonical-authority']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_95_r304:
+  web_1_0_96_r305:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r304
+      - name: Version identity r305
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.95"' package.json
-          grep -Fq '"version": "1.0.95"' apps/web/package.json
-          grep -Fq 'build-r304-official.mjs' apps/web/package.json
-          test -f apps/web/build-r304.mjs
-          test -f apps/web/build-r304-official.mjs
-          test -f apps/web/runtime-r304-final.js
-          test -f apps/web/test-r304.mjs
-          test -f apps/web/test-r304-browser.mjs
-      - name: Syntax r304 release chain
+          grep -Fq '"version": "1.0.96"' package.json
+          grep -Fq '"version": "1.0.96"' apps/web/package.json
+          grep -Fq 'build-r305-official.mjs' apps/web/package.json
+          test -f apps/web/build-r305.mjs
+          test -f apps/web/build-r305-official.mjs
+          test -f apps/web/runtime-r305-final.js
+          test -f apps/web/test-r305.mjs
+          test -f apps/web/test-r305-browser.mjs
+      - name: Syntax r305 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r304-final.js
-          node --check apps/web/build-r304.mjs
-          node --check apps/web/build-r304-official.mjs
-          node --check apps/web/test-r304.mjs
-          node --check apps/web/test-r304-browser.mjs
-          ! grep -Fq 'MutationObserver' apps/web/runtime-r304-final.js
-          ! grep -Fq 'setInterval(' apps/web/runtime-r304-final.js
-      - name: Regression suite r304 including Chromium interactions
+          node --check apps/web/runtime-r305-final.js
+          node --check apps/web/build-r305.mjs
+          node --check apps/web/build-r305-official.mjs
+          node --check apps/web/test-r305.mjs
+          node --check apps/web/test-r305-browser.mjs
+          ! grep -Fq 'MutationObserver' apps/web/runtime-r305-final.js
+          ! grep -Fq 'setInterval(' apps/web/runtime-r305-final.js
+          ! grep -Fq 'setTimeout(' apps/web/runtime-r305-final.js
+      - name: Regression suite r305 including Chromium interactions
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r304
+      - name: Final bundle identity r305
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r304-official.mjs
-          node --check dist/app-v304.js
-          grep -Fq "window.__ctWebBuild='1.0.95';window.__ctOfficialVersion='1.0.95';" dist/app-v304.js
-          grep -Fq "const REVISION='r304-official-1.0.95';" dist/app-v304.js
-          grep -Fq "window.__ctR304Final='canonical-clicks+f1-drivers-calendar+sports-sync-order+profile-layout-only'" dist/app-v304.js
-          ! grep -Fq "window.__ctR303Final='related+actors+top10+f1-drivers-calendar+sports-refresh+profile-finite'" dist/app-v304.js
-          grep -Fq 'function removeDrivers301(){return false}' dist/app-v304.js
-          grep -Fq 'function removeDrivers302(){return false}' dist/app-v304.js
-          grep -Fq 'ensureSportsRefresh304' dist/app-v304.js
-          grep -Fq 'refreshSports304' dist/app-v304.js
-          grep -Fq 'stabilizeProfile304' dist/app-v304.js
-          grep -Fq 'app-v304.js' dist/index.html
-          grep -Fq 'app-v304.css' dist/index.html
-          grep -Fq '"version": "1.0.95"' dist/release.json
-          grep -Fq '"revision": "r304-official-1.0.95"' dist/release.json
+          node build-r305-official.mjs
+          node --check dist/app-v305.js
+          grep -Fq "window.__ctWebBuild='1.0.96';window.__ctOfficialVersion='1.0.96';" dist/app-v305.js
+          grep -Fq "const REVISION='r305-official-1.0.96';" dist/app-v305.js
+          grep -Fq "window.__ctR305Final='canonical-first-paint+overlay-hit-actions+provider-sync+stable-profile'" dist/app-v305.js
+          grep -Fq "window.__ctR305Lifecycle='pre-boot+renderer-hooks+no-mutation-observer+no-delayed-reconcile'" dist/app-v305.js
+          ! grep -Fq "window.__ctR304Final='canonical-clicks+f1-drivers-calendar+sports-sync-order+profile-layout-only'" dist/app-v305.js
+          grep -Fq 'function styleWatchlistStats300(){return false}' dist/app-v305.js
+          grep -Fq 'function stabilizeProfile301(){return false}' dist/app-v305.js
+          grep -Fq 'function enforceSportsTabs300(activateNext=true){return true}' dist/app-v305.js
+          grep -Fq "const SPORTS_ORDER=['next','previous','favorites','watched'];" dist/app-v305.js
+          grep -Fq 'elementsFromPoint' dist/app-v305.js
+          grep -Fq 'relatedControl305' dist/app-v305.js
+          grep -Fq 'personControl305' dist/app-v305.js
+          grep -Fq 'refreshSports305' dist/app-v305.js
+          grep -Fq 'stableProfile305' dist/app-v305.js
+          grep -Fq 'app-v305.js' dist/index.html
+          grep -Fq 'app-v305.css' dist/index.html
+          grep -Fq '"version": "1.0.96"' dist/release.json
+          grep -Fq '"revision": "r305-official-1.0.96"' dist/release.json
           grep -Fq '"related_titles_open": true' dist/release.json
           grep -Fq '"related_watchlist_action": true' dist/release.json
           grep -Fq '"related_seen_action": true' dist/release.json
           grep -Fq '"actors_open": true' dist/release.json
-          grep -Fq '"r303_capture_removed": true' dist/release.json
+          grep -Fq '"interaction_overlay_hit_test": true' dist/release.json
           grep -Fq '"top10_viewport_compact": true' dist/release.json
           grep -Fq '"sports_manual_refresh": true' dist/release.json
+          grep -Fq '"sports_provider_resync": true' dist/release.json
           grep -Fq '"sports_menu_below_f1": true' dist/release.json
           grep -Fq '"f1_drivers_tab": true' dist/release.json
           grep -Fq '"f1_calendar_interactive": true' dist/release.json
           grep -Fq '"profile_stats_preserved": true' dist/release.json
+          grep -Fq '"profile_legacy_delayed_overwrite": false' dist/release.json
           grep -Fq '"profile_watchlist_open_signal": false' dist/release.json
           grep -Fq '"profile_actor_cards_uniform": true' dist/release.json
           grep -Fq '"profile_actor_scroll_local": true' dist/release.json
+          grep -Fq '"r305_mutation_observer": false' dist/release.json
+          grep -Fq '"r305_delayed_reconcile": false' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.95-r304';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.96-r305';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -89,19 +99,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_95_r304, android_current_source]
+    needs: [web_1_0_96_r305, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.95 r304
+      - name: Official production serves and boots 1.0.96 r305
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.95"' <<<"$BODY" && grep -Fq '"revision": "r304-official-1.0.95"' <<<"$BODY" && grep -Fq '"related_titles_open": true' <<<"$BODY" && grep -Fq '"related_watchlist_action": true' <<<"$BODY" && grep -Fq '"related_seen_action": true' <<<"$BODY" && grep -Fq '"actors_open": true' <<<"$BODY" && grep -Fq '"r303_capture_removed": true' <<<"$BODY" && grep -Fq '"sports_manual_refresh": true' <<<"$BODY" && grep -Fq '"sports_menu_below_f1": true' <<<"$BODY" && grep -Fq '"f1_drivers_tab": true' <<<"$BODY" && grep -Fq '"f1_calendar_interactive": true' <<<"$BODY" && grep -Fq '"profile_stats_preserved": true' <<<"$BODY" && grep -Fq '"profile_watchlist_open_signal": false' <<<"$BODY" && grep -Fq '"profile_actor_cards_uniform": true' <<<"$BODY" && grep -Fq '"profile_actor_scroll_local": true' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v304.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.96"' <<<"$BODY" && grep -Fq '"revision": "r305-official-1.0.96"' <<<"$BODY" && grep -Fq '"related_titles_open": true' <<<"$BODY" && grep -Fq '"related_watchlist_action": true' <<<"$BODY" && grep -Fq '"related_seen_action": true' <<<"$BODY" && grep -Fq '"actors_open": true' <<<"$BODY" && grep -Fq '"interaction_overlay_hit_test": true' <<<"$BODY" && grep -Fq '"sports_manual_refresh": true' <<<"$BODY" && grep -Fq '"sports_provider_resync": true' <<<"$BODY" && grep -Fq '"sports_menu_below_f1": true' <<<"$BODY" && grep -Fq '"f1_drivers_tab": true' <<<"$BODY" && grep -Fq '"f1_calendar_interactive": true' <<<"$BODY" && grep -Fq '"profile_stats_preserved": true' <<<"$BODY" && grep -Fq '"profile_legacy_delayed_overwrite": false' <<<"$BODY" && grep -Fq '"profile_watchlist_open_signal": false' <<<"$BODY" && grep -Fq '"profile_actor_cards_uniform": true' <<<"$BODY" && grep -Fq '"profile_actor_scroll_local": true' <<<"$BODY" && grep -Fq '"r305_mutation_observer": false' <<<"$BODY" && grep -Fq '"r305_delayed_reconcile": false' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v305.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR304Final='canonical-clicks+f1-drivers-calendar+sports-sync-order+profile-layout-only'" <<<"$JS" && ! grep -Fq "window.__ctR303Final='related+actors+top10+f1-drivers-calendar+sports-refresh+profile-finite'" <<<"$JS" && grep -Fq 'ensureSportsRefresh304' <<<"$JS" && grep -Fq 'app-v304.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR305Final='canonical-first-paint+overlay-hit-actions+provider-sync+stable-profile'" <<<"$JS" && grep -Fq "window.__ctR305Lifecycle='pre-boot+renderer-hooks+no-mutation-observer+no-delayed-reconcile'" <<<"$JS" && ! grep -Fq "window.__ctR304Final='canonical-clicks+f1-drivers-calendar+sports-sync-order+profile-layout-only'" <<<"$JS" && grep -Fq 'elementsFromPoint' <<<"$JS" && grep -Fq 'refreshSports305' <<<"$JS" && grep -Fq 'stableProfile305' <<<"$JS" && grep -Fq 'app-v305.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
