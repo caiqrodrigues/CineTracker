@@ -16,9 +16,16 @@ let lastPointer305=null;
 function stop305(e){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation()}
 function hit305(e,selector){
  const direct=e.target?.closest?.(selector);if(direct)return direct;
- const x=Number(e.clientX),y=Number(e.clientY);if(!Number.isFinite(x)||!Number.isFinite(y)||typeof document.elementsFromPoint!=='function')return null;
- for(const node of document.elementsFromPoint(x,y)||[]){const hit=node?.closest?.(selector);if(hit)return hit}
- return null;
+ const x=Number(e.clientX),y=Number(e.clientY);if(!Number.isFinite(x)||!Number.isFinite(y))return null;
+ if(typeof document.elementsFromPoint==='function')for(const node of document.elementsFromPoint(x,y)||[]){const hit=node?.closest?.(selector);if(hit)return hit}
+ let best=null,bestArea=Infinity;
+ for(const node of qa305(selector)){
+  if(!node?.isConnected||typeof node.getBoundingClientRect!=='function')continue;
+  const r=node.getBoundingClientRect();if(!r||r.width<=0||r.height<=0||x<r.left||x>r.right||y<r.top||y>r.bottom)continue;
+  const cs=typeof getComputedStyle==='function'?getComputedStyle(node):null;if(cs&&(cs.display==='none'||cs.visibility==='hidden'))continue;
+  const area=Math.max(1,r.width*r.height);if(area<bestArea){best=node;bestArea=area}
+ }
+ return best;
 }
 function mediaSpec305(node){
  const card=node?.closest?.('.ct169-related-card,.ct170-related-card,[data-related-card],[data-similar-card]');
