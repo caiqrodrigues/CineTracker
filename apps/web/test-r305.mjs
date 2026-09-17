@@ -1,0 +1,33 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r305.mjs');
+const [js,css,releaseRaw,html,sw]=await Promise.all([
+ readFile(resolve('dist/app-v305.js'),'utf8'),readFile(resolve('dist/app-v305.css'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/service-worker.js'),'utf8')
+]);
+const release=JSON.parse(releaseRaw),must=(ok,msg)=>{if(!ok)throw new Error('R305 '+msg)};
+must(js.includes("window.__ctWebBuild='1.0.96';window.__ctOfficialVersion='1.0.96';"),'version');
+must(js.includes("const REVISION='r305-official-1.0.96';"),'revision');
+must(js.includes("window.__ctR305Final='canonical-first-paint+overlay-hit-actions+provider-sync+stable-profile'"),'runtime marker');
+must(js.includes("window.__ctR305Lifecycle='pre-boot+renderer-hooks+no-mutation-observer+no-delayed-reconcile'"),'lifecycle marker');
+must(!js.includes("window.__ctR304Final='canonical-clicks+f1-drivers-calendar+sports-sync-order+profile-layout-only'"),'r304 runtime survived');
+must(js.includes('function styleWatchlistStats300(){return false}'),'r300 profile late style still active');
+must(js.includes('function stabilizeProfile301(){return false}'),'r301 profile late rewrite still active');
+must(js.includes('function enforceSportsTabs300(activateNext=true){return true}'),'r300 delayed sports reorder still active');
+must(js.includes("const SPORTS_ORDER=['next','previous','favorites','watched'];"),'sports order');
+must(js.includes('elementsFromPoint')&&js.includes('relatedControl305')&&js.includes('personControl305'),'overlay hit-test actions');
+must(js.includes('addWatchlist')&&js.includes('markSeen')&&js.includes("go(`/person/${id}`)"),'canonical related/person actions');
+must(js.includes('openF1Modal301')&&js.includes('activateF1305'),'F1 historical click');
+must(js.includes('normalizeSportsModel305')&&js.includes("['drivers','Pilotos']"),'Pilotos model');
+must(js.includes("edge('ct-sports-sync'")&&js.includes('force:true'),'provider resync');
+must(js.includes('stableProfile305')&&js.includes('cleanWatchlistStat305'),'profile stabilization');
+must(!js.slice(js.indexOf("window.__ctR305Final='canonical-first-paint+overlay-hit-actions+provider-sync+stable-profile'"),js.indexOf('\nboot();')).includes('MutationObserver'),'r305 MutationObserver');
+must(css.includes('.ct305-top10-active .content>.header'),'Top 10 viewport compaction');
+must(css.includes('.ct305-actor-rail')&&css.includes('overflow-x:auto'),'actor local scroll');
+must(css.includes('.ct305-actor-card')&&css.includes('flex:0 0 132px'),'actor fixed geometry');
+must(css.includes('.ct305-watchlist-stat-clean::after')&&css.includes('content:none'),'Watchlist open signal CSS');
+must(html.includes('app-v305.js')&&html.includes('app-v305.css'),'html assets');
+must(sw.includes('ct-web-1.0.96-r305')&&sw.includes('app-v305.js'),'service worker');
+for(const k of['related_titles_open','related_watchlist_action','related_seen_action','actors_open','interaction_overlay_hit_test','top10_viewport_compact','f1_drivers_tab','f1_calendar_interactive','sports_menu_below_f1','sports_manual_refresh','sports_provider_resync','profile_stats_preserved','profile_actor_cards_uniform','profile_actor_scroll_local','r305_pre_boot'])must(release[k]===true,'release flag '+k);
+for(const k of['profile_legacy_delayed_overwrite','profile_watchlist_open_signal','r305_mutation_observer','r305_delayed_reconcile'])must(release[k]===false,'release false flag '+k);
+must(release.version==='1.0.96'&&release.revision==='r305-official-1.0.96','release identity');
+console.log('R305_STATIC_OK first-paint authority + overlay interaction recovery + provider resync + stable Profile');
