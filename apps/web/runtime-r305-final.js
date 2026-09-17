@@ -64,7 +64,16 @@ async function saveRelated305(el,spec,kind){
  }catch(err){if(el.isConnected){el.disabled=false;el.textContent=old;el.removeAttribute('aria-busy')}try{toast(err?.message||String(err))}catch{}}
  finally{busy305.delete(el)}
 }
-function relatedControl305(e){return hit305(e,'[data-ct169-related-watch],[data-ct169-related-seen],[data-related-watch],[data-related-seen],.ct169-related-open[data-media],[data-related-open],[data-similar-open],.ct169-related-card[data-ct169-related-card],.ct170-related-card[data-media],[data-related-card][data-media],[data-similar-card][data-media]')}
+function relatedControl305(e){
+ const selectors=[
+  '[data-ct169-related-watch],[data-related-watch]',
+  '[data-ct169-related-seen],[data-related-seen]',
+  '.ct169-related-open[data-media],[data-related-open],[data-similar-open]',
+  '.ct169-related-card[data-ct169-related-card],.ct170-related-card[data-media],[data-related-card][data-media],[data-similar-card][data-media]'
+ ];
+ for(const selector of selectors){const node=hit305(e,selector);if(node)return node}
+ return null;
+}
 function personControl305(e){return hit305(e,'.ct169-person-card [data-person],.ct170-person-card [data-person],.actor-card [data-person],.person-card [data-person],[data-profile] [data-person],.actor-link,.js-person,[data-person-id]')}
 function activateMedia305(e){
  const related=relatedControl305(e);if(related){const spec=mediaSpec305(related);if(!spec)return false;stop305(e);if(related.matches('[data-ct169-related-watch],[data-related-watch]'))void saveRelated305(related,spec,'watch');else if(related.matches('[data-ct169-related-seen],[data-related-seen]'))void saveRelated305(related,spec,'seen');else if(typeof go==='function')go(`/${spec.type==='movie'?'movie':'series'}/${spec.id}`);return true}
