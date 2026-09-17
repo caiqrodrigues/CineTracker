@@ -29,7 +29,7 @@
     "test:r307:browser": "node test-r307-browser.mjs",
     "release:r306": "node build-r306-official.mjs",
     "release:r307": "node build-r307-official.mjs",
-    "verify": "npm run build && npm run test:r299 && npm run test:r299:browser && npm run test:r300:browser && npm run test:r301:browser && npm run test:r302 && npm run test:r303 && npm run test:r304 && npm run test:r304:browser && npm run test:r305 && npm run test:r305:browser && npm run test:r306 && npm run test:r306:browser && npm run test:r307 && npm run test:r307:browser"
+    "verify": "npm run build && npm run test:r299 && npm run test:r299:browser && npm run test:r300:browser && npm run test:r301:browser && npm run test:r302 && npm run test:r303 && npm run test:r304 && npm run test:r304:browser && npm run test:r305 && npm run test:r305:browser && npm run test:r306:browser && npm run test:r307 && npm run test:r307:browser"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
