@@ -50,7 +50,7 @@ jobs:
           grep -Fq 'window.__ctR307EarlyShouldBypass=bypass307' dist/app-v307.js
           grep -Fq "const SPORT_TABS255=[['next','Próximos'],['previous','Anteriores'],['favorites','Favoritos'],['watched','Assistidos']];" dist/app-v307.js
           grep -Fq "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['teams','Equipes'],['circuits','Circuitos']];" dist/app-v307.js
-          ! grep -Fq "['drivers','Pilotos']" dist/app-v307.js
+          ! grep -Fq "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['drivers','Pilotos'],['teams','Equipes'],['circuits','Circuitos']];" dist/app-v307.js
           grep -Fq '[data-ct263-discover-tab].active' dist/app-v307.js
           grep -Fq "$$('[data-stat],.stat,.stat-card,.profile-stat',root)" dist/app-v307.js
           grep -Fq 'Grid de Largada' dist/app-v307.js
