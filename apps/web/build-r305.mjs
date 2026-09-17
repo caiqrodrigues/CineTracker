@@ -8,8 +8,11 @@ let [html,js,css,sw,releaseRaw,oldRuntime,runtime]=await Promise.all([
 ]);
 const must=(s,x)=>{if(!s.includes(x))throw new Error('r305 missing '+x)};
 for(const x of["window.__ctWebBuild='1.0.95';window.__ctOfficialVersion='1.0.95';","const REVISION='r304-official-1.0.95';",oldRuntime,'function styleWatchlistStats300(){','function enforceSportsTabs300(activateNext=true){','function stabilizeProfile301(){','\nboot();'])must(js,x);
-for(const x of["window.__ctR305Final='canonical-first-paint+overlay-hit-actions+provider-sync+stable-profile'","window.__ctR305Lifecycle='pre-boot+renderer-hooks+no-mutation-observer+no-delayed-reconcile'",'elementsFromPoint','refreshSports305','stableProfile305','normalizeSportsModel305'])must(runtime,x);
+for(const x of["window.__ctR305Final='canonical-first-paint+overlay-hit-actions+provider-sync+stable-profile'","window.__ctR305Lifecycle='pre-boot+renderer-hooks+no-mutation-observer+no-delayed-reconcile'",'elementsFromPoint','refreshSports305','stableProfile305','normalizeSportsModel305','window.__ctR305Pointer=pointer305'])must(runtime,x);
 if(runtime.includes('MutationObserver')||runtime.includes('setTimeout(')||runtime.includes('setInterval('))throw new Error('r305 runtime must not reconcile after paint');
+
+/* Capture authority must exist before any legacy listener is registered. It delegates only after the r305 runtime binds its real handlers. */
+const earlyCapture=String.raw`(()=>{if(window.__ctR305EarlyCapture)return;window.__ctR305EarlyCapture=true;window.addEventListener('pointerup',e=>window.__ctR305Pointer?.(e),true);window.addEventListener('click',e=>window.__ctR305Click?.(e),true);window.addEventListener('keydown',e=>window.__ctR305Key?.(e),true)})();`;
 
 /* r304 was a finite post-render repair. r305 replaces it with the final pre-boot owner. */
 js=js.replace(oldRuntime,'');
@@ -25,6 +28,7 @@ for(const x of['function styleWatchlistStats300(){return false}','function enfor
 js=js.replace("window.__ctWebBuild='1.0.95';window.__ctOfficialVersion='1.0.95';","window.__ctWebBuild='1.0.96';window.__ctOfficialVersion='1.0.96';")
  .replace("const REVISION='r304-official-1.0.95';","const REVISION='r305-official-1.0.96';")
  .replace('\nboot();','\n'+runtime+'\nboot();');
+js=earlyCapture+'\n'+js;
 
 css+=String.raw`
 /* CineTracker Web 1.0.96 r305 — first-paint stable layout + real interaction hit targets. */
@@ -39,7 +43,7 @@ html,body,#app,.app,.content{max-width:100%!important;overflow-x:clip!important}
 
 html=html.replaceAll('app-v304.js','app-v305.js').replaceAll('app-v304.css','app-v305.css').replaceAll('CineTracker • v1.0.95','CineTracker • v1.0.96');
 sw=sw.replaceAll('ct-web-1.0.95-r304','ct-web-1.0.96-r305').replaceAll('app-v304.js','app-v305.js').replaceAll('app-v304.css','app-v305.css');
-const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.96',revision:'r305-official-1.0.96',base:'r304-production',scope:'canonical-first-paint-real-interactions-provider-sync-stable-profile-web-only',related_titles_open:true,related_watchlist_action:true,related_seen_action:true,actors_open:true,interaction_overlay_hit_test:true,top10_viewport_compact:true,f1_drivers_tab:true,f1_calendar_interactive:true,sports_tabs:'next+previous+favorites+watched',sports_menu_below_f1:true,sports_manual_refresh:true,sports_provider_resync:true,profile_stats_preserved:true,profile_legacy_delayed_overwrite:false,profile_watchlist_open_signal:false,profile_actor_cards_uniform:true,profile_actor_scroll_local:true,r304_runtime_removed:true,r305_pre_boot:true,r305_mutation_observer:false,r305_delayed_reconcile:false,android:'1.0.20/10062'};
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.96',revision:'r305-official-1.0.96',base:'r304-production',scope:'canonical-first-paint-real-interactions-provider-sync-stable-profile-web-only',related_titles_open:true,related_watchlist_action:true,related_seen_action:true,actors_open:true,interaction_overlay_hit_test:true,top10_viewport_compact:true,f1_drivers_tab:true,f1_calendar_interactive:true,sports_tabs:'next+previous+favorites+watched',sports_menu_below_f1:true,sports_manual_refresh:true,sports_provider_resync:true,profile_stats_preserved:true,profile_legacy_delayed_overwrite:false,profile_watchlist_open_signal:false,profile_actor_cards_uniform:true,profile_actor_scroll_local:true,r304_runtime_removed:true,r305_early_capture:true,r305_pre_boot:true,r305_mutation_observer:false,r305_delayed_reconcile:false,android:'1.0.20/10062'};
 await Promise.all([writeFile(resolve(dist,'app-v305.js'),js),writeFile(resolve(dist,'app-v305.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
 await Promise.all([rm(resolve(dist,'app-v304.js'),{force:true}),rm(resolve(dist,'app-v304.css'),{force:true})]);
 console.log('WEB_R305_READY canonical first-paint interactions + provider sync + stable Profile; Android preserved');
