@@ -23,6 +23,20 @@ js=js.replace('for(const ms of[0,350,1200])setTimeout(reconcile299,ms);','queueM
 /* Keep the already-retired legacy Profile authorities retired. */
 for(const x of['function styleWatchlistStats300(){return false}','function stabilizeProfile301(){return false}','function enforceSportsTabs300(activateNext=true){return true}'])must(js,x);
 
+/*
+ * A dormant browser-test bridge is compiled into the exact production bundle.
+ * It is inert unless a test explicitly calls setTestBridge(), so production
+ * execution continues through the same canonical handlers and data functions.
+ * This avoids mutating app-v306.js while Chromium is loading it.
+ */
+runtime=runtime
+ .replace("if(typeof go==='function'){go(mediaRoute(m.type,m.id));return true}","if(typeof window.__ctR306TestBridge?.go==='function'){window.__ctR306TestBridge.go(mediaRoute(m.type,m.id));return true}\n    if(typeof go==='function'){go(mediaRoute(m.type,m.id));return true}")
+ .replace("try{if(typeof go==='function'){go(`/person/${id}`);return true}history.pushState({},'',`/person/${id}`);window.dispatchEvent(new PopStateEvent('popstate'));return true}catch{return false}","try{if(typeof window.__ctR306TestBridge?.go==='function'){window.__ctR306TestBridge.go(`/person/${id}`);return true}if(typeof go==='function'){go(`/person/${id}`);return true}history.pushState({},'',`/person/${id}`);window.dispatchEvent(new PopStateEvent('popstate'));return true}catch{return false}")
+ .replace("if(typeof addWatchlist==='function')await addWatchlist(m.type,m.id)","if(typeof window.__ctR306TestBridge?.addWatchlist==='function')await window.__ctR306TestBridge.addWatchlist(m.type,m.id)\n      else if(typeof addWatchlist==='function')await addWatchlist(m.type,m.id)")
+ .replace("if(typeof markSeen==='function')await markSeen(m.type,m.id)","if(typeof window.__ctR306TestBridge?.markSeen==='function')await window.__ctR306TestBridge.markSeen(m.type,m.id)\n      else if(typeof markSeen==='function')await markSeen(m.type,m.id)")
+ .replace("window.__ctR306={stabilize:stabilize306,openRace:openF1Race306,syncSports:syncSports306,version:'1.0.97',lifecycle:'pre-boot-renderer-hooks-no-delayed-reconcile'}","window.__ctR306={stabilize:stabilize306,openRace:openF1Race306,syncSports:syncSports306,openMedia:openMedia306,openPerson:openPerson306,persistAction:persistAction306,setTestBridge(bridge){window.__ctR306TestBridge=bridge&&typeof bridge==='object'?bridge:null},version:'1.0.97',lifecycle:'pre-boot-renderer-hooks-no-delayed-reconcile'}");
+for(const x of['__ctR306TestBridge','setTestBridge(bridge)','openMedia:openMedia306','openPerson:openPerson306','persistAction:persistAction306'])must(runtime,x);
+
 js=js.replace("window.__ctWebBuild='1.0.96';window.__ctOfficialVersion='1.0.96';","window.__ctWebBuild='1.0.97';window.__ctOfficialVersion='1.0.97';")
  .replace("const REVISION='r305-official-1.0.96';","const REVISION='r306-official-1.0.97';")
  .replace('\nboot();','\n'+runtime+'\nboot();');
