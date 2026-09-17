@@ -1,76 +1,80 @@
-name: Verify Web 1.0.94 r303 Regression Recovery
+name: Verify Web 1.0.95 r304 Canonical Recovery
 
 on:
   push:
-    branches: [main, 'fix/r303-regression-recovery']
+    branches: [main, 'fix/r304-movie-f1-sports-profile-authority']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_94_r303:
+  web_1_0_95_r304:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r303
+      - name: Version identity r304
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.94"' package.json
-          grep -Fq '"version": "1.0.94"' apps/web/package.json
-          grep -Fq 'build-r303-official.mjs' apps/web/package.json
-          test -f apps/web/build-r303.mjs
-          test -f apps/web/build-r303-official.mjs
-          test -f apps/web/runtime-r303-final.js
-          test -f apps/web/test-r303.mjs
-          ! test -f apps/web/runtime-r303-regression-recovery.js
-      - name: Syntax r303 release chain
+          grep -Fq '"version": "1.0.95"' package.json
+          grep -Fq '"version": "1.0.95"' apps/web/package.json
+          grep -Fq 'build-r304-official.mjs' apps/web/package.json
+          test -f apps/web/build-r304.mjs
+          test -f apps/web/build-r304-official.mjs
+          test -f apps/web/runtime-r304-final.js
+          test -f apps/web/test-r304.mjs
+          test -f apps/web/test-r304-browser.mjs
+      - name: Syntax r304 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r303-final.js
-          node --check apps/web/build-r303.mjs
-          node --check apps/web/build-r303-official.mjs
-          node --check apps/web/test-r303.mjs
-          ! grep -Fq 'MutationObserver' apps/web/runtime-r303-final.js
-          ! grep -Fq 'setInterval(' apps/web/runtime-r303-final.js
-      - name: Regression suite r303
+          node --check apps/web/runtime-r304-final.js
+          node --check apps/web/build-r304.mjs
+          node --check apps/web/build-r304-official.mjs
+          node --check apps/web/test-r304.mjs
+          node --check apps/web/test-r304-browser.mjs
+          ! grep -Fq 'MutationObserver' apps/web/runtime-r304-final.js
+          ! grep -Fq 'setInterval(' apps/web/runtime-r304-final.js
+      - name: Regression suite r304 including Chromium interactions
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r303
+      - name: Final bundle identity r304
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r303-official.mjs
-          node --check dist/app-v303.js
-          grep -Fq "window.__ctWebBuild='1.0.94';window.__ctOfficialVersion='1.0.94';" dist/app-v303.js
-          grep -Fq "const REVISION='r303-official-1.0.94';" dist/app-v303.js
-          grep -Fq "window.__ctR303Final='related+actors+top10+f1-drivers-calendar+sports-refresh+profile-finite'" dist/app-v303.js
-          grep -Fq 'activateRelated' dist/app-v303.js
-          grep -Fq 'activatePerson' dist/app-v303.js
-          grep -Fq 'restoreDrivers' dist/app-v303.js
-          grep -Fq 'calendarClickable' dist/app-v303.js
-          grep -Fq 'data-ct303-sports-refresh' dist/app-v303.js
-          grep -Fq 'app-v303.js' dist/index.html
-          grep -Fq 'app-v303.css' dist/index.html
-          grep -Fq '"version": "1.0.94"' dist/release.json
-          grep -Fq '"revision": "r303-official-1.0.94"' dist/release.json
+          node build-r304-official.mjs
+          node --check dist/app-v304.js
+          grep -Fq "window.__ctWebBuild='1.0.95';window.__ctOfficialVersion='1.0.95';" dist/app-v304.js
+          grep -Fq "const REVISION='r304-official-1.0.95';" dist/app-v304.js
+          grep -Fq "window.__ctR304Final='canonical-clicks+f1-drivers-calendar+sports-sync-order+profile-layout-only'" dist/app-v304.js
+          ! grep -Fq "window.__ctR303Final='related+actors+top10+f1-drivers-calendar+sports-refresh+profile-finite'" dist/app-v304.js
+          grep -Fq 'function removeDrivers301(){return false}' dist/app-v304.js
+          grep -Fq 'function removeDrivers302(){return false}' dist/app-v304.js
+          grep -Fq 'ensureSportsRefresh304' dist/app-v304.js
+          grep -Fq 'refreshSports304' dist/app-v304.js
+          grep -Fq 'stabilizeProfile304' dist/app-v304.js
+          grep -Fq 'app-v304.js' dist/index.html
+          grep -Fq 'app-v304.css' dist/index.html
+          grep -Fq '"version": "1.0.95"' dist/release.json
+          grep -Fq '"revision": "r304-official-1.0.95"' dist/release.json
           grep -Fq '"related_titles_open": true' dist/release.json
           grep -Fq '"related_watchlist_action": true' dist/release.json
           grep -Fq '"related_seen_action": true' dist/release.json
           grep -Fq '"actors_open": true' dist/release.json
+          grep -Fq '"r303_capture_removed": true' dist/release.json
           grep -Fq '"top10_viewport_compact": true' dist/release.json
-          grep -Fq '"sports_profile_global_observer": false' dist/release.json
           grep -Fq '"sports_manual_refresh": true' dist/release.json
           grep -Fq '"sports_menu_below_f1": true' dist/release.json
           grep -Fq '"f1_drivers_tab": true' dist/release.json
           grep -Fq '"f1_calendar_interactive": true' dist/release.json
-          grep -Fq '"profile_stats_stable": true' dist/release.json
+          grep -Fq '"profile_stats_preserved": true' dist/release.json
           grep -Fq '"profile_watchlist_open_signal": false' dist/release.json
+          grep -Fq '"profile_actor_cards_uniform": true' dist/release.json
+          grep -Fq '"profile_actor_scroll_local": true' dist/release.json
           grep -Fq '"android": "1.0.20/10062"' dist/release.json
-          grep -Fq "const CACHE='ct-web-1.0.94-r303';" dist/service-worker.js
+          grep -Fq "const CACHE='ct-web-1.0.95-r304';" dist/service-worker.js
 
   android_current_source:
     runs-on: ubuntu-latest
@@ -85,19 +89,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_94_r303, android_current_source]
+    needs: [web_1_0_95_r304, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.94 r303
+      - name: Official production serves and boots 1.0.95 r304
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.94"' <<<"$BODY" && grep -Fq '"revision": "r303-official-1.0.94"' <<<"$BODY" && grep -Fq '"related_titles_open": true' <<<"$BODY" && grep -Fq '"related_watchlist_action": true' <<<"$BODY" && grep -Fq '"related_seen_action": true' <<<"$BODY" && grep -Fq '"actors_open": true' <<<"$BODY" && grep -Fq '"sports_profile_global_observer": false' <<<"$BODY" && grep -Fq '"sports_manual_refresh": true' <<<"$BODY" && grep -Fq '"sports_menu_below_f1": true' <<<"$BODY" && grep -Fq '"f1_drivers_tab": true' <<<"$BODY" && grep -Fq '"f1_calendar_interactive": true' <<<"$BODY" && grep -Fq '"profile_stats_stable": true' <<<"$BODY" && grep -Fq '"profile_watchlist_open_signal": false' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v303.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.95"' <<<"$BODY" && grep -Fq '"revision": "r304-official-1.0.95"' <<<"$BODY" && grep -Fq '"related_titles_open": true' <<<"$BODY" && grep -Fq '"related_watchlist_action": true' <<<"$BODY" && grep -Fq '"related_seen_action": true' <<<"$BODY" && grep -Fq '"actors_open": true' <<<"$BODY" && grep -Fq '"r303_capture_removed": true' <<<"$BODY" && grep -Fq '"sports_manual_refresh": true' <<<"$BODY" && grep -Fq '"sports_menu_below_f1": true' <<<"$BODY" && grep -Fq '"f1_drivers_tab": true' <<<"$BODY" && grep -Fq '"f1_calendar_interactive": true' <<<"$BODY" && grep -Fq '"profile_stats_preserved": true' <<<"$BODY" && grep -Fq '"profile_watchlist_open_signal": false' <<<"$BODY" && grep -Fq '"profile_actor_cards_uniform": true' <<<"$BODY" && grep -Fq '"profile_actor_scroll_local": true' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v304.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR303Final='related+actors+top10+f1-drivers-calendar+sports-refresh+profile-finite'" <<<"$JS" && grep -Fq 'activateRelated' <<<"$JS" && grep -Fq 'restoreDrivers' <<<"$JS" && grep -Fq 'data-ct303-sports-refresh' <<<"$JS" && grep -Fq 'app-v303.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR304Final='canonical-clicks+f1-drivers-calendar+sports-sync-order+profile-layout-only'" <<<"$JS" && ! grep -Fq "window.__ctR303Final='related+actors+top10+f1-drivers-calendar+sports-refresh+profile-finite'" <<<"$JS" && grep -Fq 'ensureSportsRefresh304' <<<"$JS" && grep -Fq 'app-v304.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
