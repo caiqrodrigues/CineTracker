@@ -55,6 +55,9 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(after.available_episodes===0&&after.history_missing_episodes===0,'caught-up Raw still reports pending episode');
  ok(after.home_bucket==='up_to_date'&&after.is_caught_up===true,'caught-up Raw bucket');
  ok(after.next_episode_number===null&&after.next_season_number===null,'caught-up Raw stale next episode not cleared');
+ const dusty={tmdb_id:4656,title:'Raw',watched_episodes:246,__ct275WatchedKeys:[{s:34,e:36}],home_bucket:'dust',next_season_number:34,next_episode_number:37};
+ __ctR307Test.applyFreshAvailability(dusty,show);
+ ok(dusty.available_episodes===1&&dusty.home_bucket==='dust','legacy frontier must preserve Juntando poeira bucket');
 
  /* Current Discover selectors, not the old synthetic selector. */
  history.replaceState({},'','/discover');
