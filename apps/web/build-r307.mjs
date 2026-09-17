@@ -19,7 +19,7 @@ const count=(s,x)=>s.split(x).length-1;
 const once=(s,from,to,label=from)=>{
   const n=count(s,from);
   if(n!==1)throw new Error(`r307 expected one ${label}, found ${n}`);
-  return s.replace(from,to);
+  return s.replace(from,()=>to);
 };
 const must=(s,x)=>{if(!s.includes(x))throw new Error('r307 missing '+x)};
 
