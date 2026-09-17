@@ -21,15 +21,18 @@ function hit305(e,selector){
  if(typeof document.elementFromPoint==='function'){
   const peeled=[];
   try{
-   for(let i=0;i<16;i++){
+   for(let i=0;i<24;i++){
     const node=document.elementFromPoint(x,y);if(!node)break;
     const found=node.closest?.(selector);if(found)return found;
     const style=node.style;if(!style)break;
-    peeled.push([node,style.getPropertyValue('pointer-events'),style.getPropertyPriority('pointer-events')]);
+    const pe=style.getPropertyValue('pointer-events'),pep=style.getPropertyPriority('pointer-events'),vis=style.getPropertyValue('visibility'),visp=style.getPropertyPriority('visibility');
+    peeled.push([node,pe,pep,vis,visp]);
     style.setProperty('pointer-events','none','important');
+    style.setProperty('visibility','hidden','important');
+    void node.getBoundingClientRect();
    }
   }finally{
-   for(let i=peeled.length-1;i>=0;i--){const [node,value,priority]=peeled[i];if(value)node.style.setProperty('pointer-events',value,priority);else node.style.removeProperty('pointer-events')}
+   for(let i=peeled.length-1;i>=0;i--){const [node,pe,pep,vis,visp]=peeled[i],style=node.style;if(pe)style.setProperty('pointer-events',pe,pep);else style.removeProperty('pointer-events');if(vis)style.setProperty('visibility',vis,visp);else style.removeProperty('visibility')}
   }
  }
  let best=null,bestArea=Infinity;
@@ -124,12 +127,13 @@ function pointer305(e){
  if(activateF1305(e)||activateMedia305(e)){lastPointer305={x:Number(e.clientX),y:Number(e.clientY),at:Date.now()};return}
  const refresh=hit305(e,'[data-ct305-sports-refresh]');if(refresh){stop305(e);lastPointer305={el:refresh,at:Date.now()};void refreshSports305(refresh)}
 }
-window.addEventListener('pointerup',pointer305,true);
-window.addEventListener('click',e=>{
+function click305(e){
  const refresh=hit305(e,'[data-ct305-sports-refresh]');if(lastPointer305&&Date.now()-lastPointer305.at<800&&(refresh&&lastPointer305.el===refresh||Number(e.clientX)===lastPointer305.x&&Number(e.clientY)===lastPointer305.y)){stop305(e);return}
  if(activateF1305(e)||activateMedia305(e))return;if(refresh){stop305(e);void refreshSports305(refresh)}
-},true);
-window.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;if(activateF1305(e)||activateMedia305(e))return;const refresh=e.target?.closest?.('[data-ct305-sports-refresh]');if(refresh){stop305(e);void refreshSports305(refresh)}},true);
+}
+function key305(e){if(e.key!=='Enter'&&e.key!==' ')return;if(activateF1305(e)||activateMedia305(e))return;const refresh=e.target?.closest?.('[data-ct305-sports-refresh]');if(refresh){stop305(e);void refreshSports305(refresh)}}
+window.__ctR305Pointer=pointer305;window.__ctR305Click=click305;window.__ctR305Key=key305;
+if(!window.__ctR305EarlyCapture){window.addEventListener('pointerup',pointer305,true);window.addEventListener('click',click305,true);window.addEventListener('keydown',key305,true)}
 
 window.__ctR305Test={hit305,mediaSpec305,activateMedia305,normalizeSportsModel305,decorateSports305,refreshSports305,activateF1305,compactTop10305,stableProfile305,statCard305};
 })();
