@@ -18,6 +18,20 @@ function hit305(e,selector){
  const direct=e.target?.closest?.(selector);if(direct)return direct;
  const x=Number(e.clientX),y=Number(e.clientY);if(!Number.isFinite(x)||!Number.isFinite(y))return null;
  if(typeof document.elementsFromPoint==='function')for(const node of document.elementsFromPoint(x,y)||[]){const hit=node?.closest?.(selector);if(hit)return hit}
+ if(typeof document.elementFromPoint==='function'){
+  const peeled=[];
+  try{
+   for(let i=0;i<16;i++){
+    const node=document.elementFromPoint(x,y);if(!node)break;
+    const found=node.closest?.(selector);if(found)return found;
+    const style=node.style;if(!style)break;
+    peeled.push([node,style.getPropertyValue('pointer-events'),style.getPropertyPriority('pointer-events')]);
+    style.setProperty('pointer-events','none','important');
+   }
+  }finally{
+   for(let i=peeled.length-1;i>=0;i--){const [node,value,priority]=peeled[i];if(value)node.style.setProperty('pointer-events',value,priority);else node.style.removeProperty('pointer-events')}
+  }
+ }
  let best=null,bestArea=Infinity;
  for(const node of qa305(selector)){
   if(!node?.isConnected||typeof node.getBoundingClientRect!=='function')continue;
@@ -47,7 +61,7 @@ async function saveRelated305(el,spec,kind){
  }catch(err){if(el.isConnected){el.disabled=false;el.textContent=old;el.removeAttribute('aria-busy')}try{toast(err?.message||String(err))}catch{}}
  finally{busy305.delete(el)}
 }
-function relatedControl305(e){return hit305(e,'[data-ct169-related-watch],[data-ct169-related-seen],[data-related-watch],[data-related-seen],.ct169-related-open[data-media],[data-related-open],[data-similar-open]')}
+function relatedControl305(e){return hit305(e,'[data-ct169-related-watch],[data-ct169-related-seen],[data-related-watch],[data-related-seen],.ct169-related-open[data-media],[data-related-open],[data-similar-open],.ct169-related-card[data-ct169-related-card],.ct170-related-card[data-media],[data-related-card][data-media],[data-similar-card][data-media]')}
 function personControl305(e){return hit305(e,'.ct169-person-card [data-person],.ct170-person-card [data-person],.actor-card [data-person],.person-card [data-person],[data-profile] [data-person],.actor-link,.js-person,[data-person-id]')}
 function activateMedia305(e){
  const related=relatedControl305(e);if(related){const spec=mediaSpec305(related);if(!spec)return false;stop305(e);if(related.matches('[data-ct169-related-watch],[data-related-watch]'))void saveRelated305(related,spec,'watch');else if(related.matches('[data-ct169-related-seen],[data-related-seen]'))void saveRelated305(related,spec,'seen');else if(typeof go==='function')go(`/${spec.type==='movie'?'movie':'series'}/${spec.id}`);return true}
