@@ -1,13 +1,13 @@
 {
   "name": "cinetracker-web",
   "private": true,
-  "version": "1.0.95",
+  "version": "1.0.96",
   "type": "module",
   "scripts": {
-    "build": "node build-r304-official.mjs",
-    "build:legacy": "node build-r304.mjs",
-    "test": "node test-r304.mjs",
-    "test:browser": "node test-r304-browser.mjs",
+    "build": "node build-r305-official.mjs",
+    "build:legacy": "node build-r305.mjs",
+    "test": "node test-r305.mjs",
+    "test:browser": "node test-r305-browser.mjs",
     "test:r298": "node test-r298.mjs",
     "test:r298:browser": "node test-r298-browser.mjs",
     "test:r298:foryou": "node test-r298-foryou-browser.mjs",
@@ -21,8 +21,10 @@
     "test:r303": "node test-r303.mjs",
     "test:r304": "node test-r304.mjs",
     "test:r304:browser": "node test-r304-browser.mjs",
-    "release:r304": "node build-r304-official.mjs",
-    "verify": "npm run build && npm run test:r299 && npm run test:r299:browser && npm run test:r300:browser && npm run test:r301:browser && npm run test:r302 && npm run test:r303 && npm run test:r304 && npm run test:r304:browser"
+    "test:r305": "node test-r305.mjs",
+    "test:r305:browser": "node test-r305-browser.mjs",
+    "release:r305": "node build-r305-official.mjs",
+    "verify": "npm run build && npm run test:r299 && npm run test:r299:browser && npm run test:r300:browser && npm run test:r301:browser && npm run test:r302 && npm run test:r303 && npm run test:r304 && npm run test:r304:browser && npm run test:r305 && npm run test:r305:browser"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
