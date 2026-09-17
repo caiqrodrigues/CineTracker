@@ -20,14 +20,13 @@ js=js.replace('for(const ms of[160,420,900])setTimeout(decorateProfile299,ms);',
 js=js.replace('function reconcile299(){for(const ms of[0,180,500,1100,2200])setTimeout(()=>{decorateProfile299();scrubStadiumNames()},ms)}','function reconcile299(){decorateProfile299();scrubStadiumNames()}');
 js=js.replace('for(const ms of[0,350,1200])setTimeout(reconcile299,ms);','queueMicrotask(reconcile299);');
 
-/* Keep the already-retired legacy Profile authorities retired. */
+/* Keep the already-retired legacy Profile/Sports authorities retired. */
 for(const x of['function styleWatchlistStats300(){return false}','function stabilizeProfile301(){return false}','function enforceSportsTabs300(activateNext=true){return true}'])must(js,x);
 
 /*
  * A dormant browser-test bridge is compiled into the exact production bundle.
  * It is inert unless a test explicitly calls setTestBridge(), so production
  * execution continues through the same canonical handlers and data functions.
- * This avoids mutating app-v306.js while Chromium is loading it.
  */
 runtime=runtime
  .replace("if(typeof go==='function'){go(mediaRoute(m.type,m.id));return true}","if(typeof window.__ctR306TestBridge?.go==='function'){window.__ctR306TestBridge.go(mediaRoute(m.type,m.id));return true}\n    if(typeof go==='function'){go(mediaRoute(m.type,m.id));return true}")
@@ -37,9 +36,17 @@ runtime=runtime
  .replace("window.__ctR306={stabilize:stabilize306,openRace:openF1Race306,syncSports:syncSports306,version:'1.0.97',lifecycle:'pre-boot-renderer-hooks-no-delayed-reconcile'}","window.__ctR306={stabilize:stabilize306,openRace:openF1Race306,syncSports:syncSports306,openMedia:openMedia306,openPerson:openPerson306,persistAction:persistAction306,setTestBridge(bridge){window.__ctR306TestBridge=bridge&&typeof bridge==='object'?bridge:null},version:'1.0.97',lifecycle:'pre-boot-renderer-hooks-no-delayed-reconcile'}");
 for(const x of['__ctR306TestBridge','setTestBridge(bridge)','openMedia:openMedia306','openPerson:openPerson306','persistAction:persistAction306'])must(runtime,x);
 
+/*
+ * Register the r306 click authority before every legacy listener. The listener
+ * delegates to the canonical runtime API at event time, so there is no delayed
+ * reconciliation and handled clicks cannot fall through to stale handlers.
+ */
+const earlyCapture=String.raw`(()=>{if(window.__ctR306EarlyCapture)return;window.__ctR306EarlyCapture=true;window.addEventListener('click',e=>{try{const api=window.__ctR306,t=e.target;if(!api||!t?.closest)return;const handled=()=>{e.preventDefault();e.stopImmediatePropagation()};const sync=t.closest('.ct306-sports-sync');if(sync){handled();void api.syncSports(sync);return}const race=t.closest('[data-ct301-f1-event],.ct301-f1-event[data-season]');if(race&&!race.disabled){const eventId=String(race.dataset?.ct301F1Event||race.getAttribute('data-ct301-f1-event')||'').trim(),season=Number(race.dataset?.season||new Date().getFullYear()),round=Number(race.dataset?.round||(eventId.match(/-(\d+)$/)||[])[1]||1),title=String(race.querySelector?.('b,strong,h3,h4')?.textContent||race.textContent||('GP '+round)).trim().split('\n')[0];handled();api.openRace({season,round,eventId,title});return}const detail=t.closest('[data-detail-watchlist],[data-detail-seen]');if(detail){handled();void api.persistAction(detail.hasAttribute('data-detail-watchlist')?'watchlist':'seen',detail,detail);return}const person=t.closest('[data-person],[data-person-id],.cast-card,.person-card,.profile-person,.actor-card');if(person&&!t.closest('button[data-action],button[data-ct-action]')){if(api.openPerson(person)){handled()}return}const card=t.closest('[data-media],.poster-card,.media-card,.related-card,.similar-card,.recommendation-card,.ct169-related-card,.ct170-related-card,[data-related-card],[data-similar-card],.ct286-related-card,.ct292-related-card');if(!card)return;const button=t.closest('button,a,[role="button"]');const raw=String([button?.dataset?.action,button?.getAttribute?.('aria-label'),button?.title,button?.textContent].filter(Boolean).join(' ')).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();const kind=/watchlist|playlist|salvar|adicionar/.test(raw)?'watchlist':(/visto|assistid|seen|watched/.test(raw)?'seen':'');if(kind){handled();void api.persistAction(kind,card,button);return}if(button&&button!==card&&!button.matches?.('[data-media]')&&!button.closest?.('[data-media]'))return;if(api.openMedia(card))handled()}catch{}},true)})();`;
+
 js=js.replace("window.__ctWebBuild='1.0.96';window.__ctOfficialVersion='1.0.96';","window.__ctWebBuild='1.0.97';window.__ctOfficialVersion='1.0.97';")
  .replace("const REVISION='r305-official-1.0.96';","const REVISION='r306-official-1.0.97';")
  .replace('\nboot();',()=>`\n${runtime}\nboot();`);
+js=earlyCapture+'\n'+js;
 
 css+=String.raw`
 /* CineTracker Web 1.0.97 r306 — canonical modal/F1/Sports/Profile authority. */
@@ -47,7 +54,7 @@ css+=String.raw`
 `;
 html=html.replaceAll('app-v305.js','app-v306.js').replaceAll('app-v305.css','app-v306.css').replaceAll('CineTracker • v1.0.96','CineTracker • v1.0.97');
 sw=sw.replaceAll('ct-web-1.0.96-r305','ct-web-1.0.97-r306').replaceAll('app-v305.js','app-v306.js').replaceAll('app-v305.css','app-v306.css');
-const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.97',revision:'r306-official-1.0.97',base:'r305-production',scope:'canonical-modal-f1-sports-profile-stability-web-only',related_titles_open:true,related_watchlist_action:true,related_seen_action:true,actors_open:true,main_modal_watchlist_seen:true,top10_viewport_compact:true,f1_drivers_tab:false,f1_calendar_interactive:true,f1_grid_start:true,f1_finish_result:true,sports_tabs:'next+previous+favorites+watched',sports_menu_below_f1:true,sports_manual_refresh:true,sports_refresh_in_header:true,sports_provider_resync:true,profile_stats_preserved:true,profile_layout_switching:false,profile_watchlist_open_signal:false,profile_actor_cards_uniform:true,profile_actor_scroll_local:true,r305_runtime_removed:true,r299_delayed_profile_rewrite:false,r306_pre_boot:true,android:'1.0.20/10062'};
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.97',revision:'r306-official-1.0.97',base:'r305-production',scope:'canonical-modal-f1-sports-profile-stability-web-only',related_titles_open:true,related_watchlist_action:true,related_seen_action:true,actors_open:true,main_modal_watchlist_seen:true,top10_viewport_compact:true,f1_drivers_tab:false,f1_calendar_interactive:true,f1_grid_start:true,f1_finish_result:true,sports_tabs:'next+previous+favorites+watched',sports_menu_below_f1:true,sports_manual_refresh:true,sports_refresh_in_header:true,sports_provider_resync:true,profile_stats_preserved:true,profile_layout_switching:false,profile_watchlist_open_signal:false,profile_actor_cards_uniform:true,profile_actor_scroll_local:true,r305_runtime_removed:true,r299_delayed_profile_rewrite:false,r306_pre_boot:true,r306_early_capture:true,android:'1.0.20/10062'};
 await Promise.all([writeFile(resolve(dist,'app-v306.js'),js),writeFile(resolve(dist,'app-v306.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
 await Promise.all([rm(resolve(dist,'app-v305.js'),{force:true}),rm(resolve(dist,'app-v305.css'),{force:true})]);
 console.log('WEB_R306_READY canonical interactions + F1 grid/results + Sports header sync + stable Profile; Android preserved');
