@@ -1,0 +1,36 @@
+name: Diagnose r306 Chromium
+
+on:
+  push:
+    branches: ['fix/r306-final-canonical']
+
+permissions:
+  contents: read
+
+jobs:
+  browser_debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build r306 and capture Chromium output
+        working-directory: apps/web
+        run: |
+          set +e
+          node build-r306.mjs > r306-browser-debug.txt 2>&1
+          BUILD_CODE=$?
+          node test-r306-browser.mjs >> r306-browser-debug.txt 2>&1
+          TEST_CODE=$?
+          echo "BUILD_CODE=$BUILD_CODE" >> r306-browser-debug.txt
+          echo "TEST_CODE=$TEST_CODE" >> r306-browser-debug.txt
+          exit 0
+      - name: Upload Chromium diagnostic
+        uses: actions/upload-artifact@v4
+        with:
+          name: r306-browser-debug
+          path: apps/web/r306-browser-debug.txt
+          if-no-files-found: error
+          retention-days: 1
