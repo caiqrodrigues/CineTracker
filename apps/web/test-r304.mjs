@@ -10,6 +10,8 @@ must(js.includes("window.__ctWebBuild='1.0.95';window.__ctOfficialVersion='1.0.9
 must(js.includes("const REVISION='r304-official-1.0.95';"),'revision');
 must(js.includes("window.__ctR304Final='canonical-clicks+f1-drivers-calendar+sports-sync-order+profile-layout-only'"),'runtime marker');
 must(!js.includes("window.__ctR303Final='related+actors+top10+f1-drivers-calendar+sports-refresh+profile-finite'"),'r303 capture runtime still present');
+must(js.includes("window.__ctR286='related-open-watchlist-seen-window-capture'"),'retained related-title interaction authority missing');
+must(js.includes('ct286Open')&&js.includes('ct286Watchlist')&&js.includes('ct286Seen'),'related open/Watchlist/Visto actions missing');
 must(js.includes('function removeDrivers301(){return false}'),'r301 still removes Pilotos');
 must(js.includes('function removeDrivers302(){return false}'),'r302 still removes Pilotos');
 must(js.includes('[data-media]')&&js.includes('[data-person]'),'canonical movie/person delegated selectors missing');
@@ -26,4 +28,4 @@ must(sw.includes('ct-web-1.0.95-r304')&&sw.includes('app-v304.js'),'service work
 for(const k of['related_titles_open','related_watchlist_action','related_seen_action','actors_open','r303_capture_removed','top10_viewport_compact','sports_manual_refresh','sports_menu_below_f1','f1_drivers_tab','f1_calendar_interactive','profile_stats_preserved','profile_actor_cards_uniform','profile_actor_scroll_local'])must(release[k]===true,'release flag '+k);
 must(release.profile_watchlist_open_signal===false,'Watchlist open signal');
 must(release.version==='1.0.95'&&release.revision==='r304-official-1.0.95','release identity');
-console.log('R304_STATIC_OK r303 capture removed + canonical movie/person actions + F1 Pilotos/calendar + Sports sync/order + Profile preserved');
+console.log('R304_STATIC_OK r303 duplicate capture removed + retained related actions + person navigation + F1 Pilotos/calendar + Sports sync/order + Profile preserved');
