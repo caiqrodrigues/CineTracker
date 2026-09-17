@@ -6,32 +6,31 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.86** | `r295-official-1.0.86` | Descobrir com exclusão canônica de vistos/Watchlist, Calendário combinável e Indicação do Dia corrigida |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r295 |
+| Web | **1.0.97** | `r306-official-1.0.97` | interações de detalhes, Top 10, F1 Hub, Esportes e Perfil estabilizados |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r306 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.86 / r295
+## Web 1.0.97 / r306
 
-A r295 corrige o **Descobrir** usando uma autoridade pessoal unificada e mantém integralmente a baseline Android.
+A r306 substitui a autoridade final da r305 nos pontos que continuavam falhando em produção e elimina os repaints tardios responsáveis por mudanças visuais no Perfil.
 
-- **Em alta / Populares / Novidades / Mais Aguardados / Mais bem avaliados:** não exibem títulos já vistos nem presentes na Watchlist.
-- **Ações dos cards:** cada card dessas cinco áreas mantém `+ Playlist` e recebe `✓ Visto`; ao concluir a ação, o título sai imediatamente da seleção atual.
-- **Autoridade pessoal:** a Web une recomendações, painel do Perfil e snapshot da biblioteca para evitar vazamentos quando uma fonte isolada estiver incompleta.
-- **Calendário:** `Todos / Filmes / Séries` formam um eixo exclusivo e `Watchlist` funciona como filtro independente; combinações como `Séries + Watchlist` são suportadas.
-- **Calendário/Watchlist:** a Watchlist é aplicada depois da coleta do calendário, sem ser descartada prematuramente pela exclusão geral do Descobrir.
-- **Pra Você / 100% Novos:** candidatos são novamente filtrados contra a união canônica de vistos + Watchlist antes de cada pintura.
-- **Indicação do Dia:** passa a sair apenas do pool válido de `100% Novos`, de forma determinística por dia, e remove blur/filtros herdados do card/imagem.
+- **Detalhes de filmes e séries:** títulos semelhantes/recomendados e atores voltam a abrir pelo identificador correto; `+ Watchlist` e `✓ Visto` usam a ação assíncrona canônica tanto nos relacionados quanto no detalhe principal.
+- **Top 10:** header, margens e paddings superiores são compactados para manter o ranking mais alto na viewport, sem reintroduzir overflow horizontal global.
+- **F1 Hub:** a aba `Pilotos` é removida; corridas passadas do Calendário abrem detalhes com `Grid de Largada` e `Resultado de Chegada`, usando os resultados da corrida e fallback Jolpica quando necessário.
+- **Esportes:** `Próximos`, `Anteriores`, `Favoritos` e `Assistidos` ficam abaixo do F1 Hub; `↻ Rebuscar / Sincronizar` fica no header da página e força nova sincronização pelos providers/backend.
+- **Perfil:** estatísticas deixam de receber reconciliações temporizadas; sinais `Abrir`/setas da Watchlist são removidos; cards de atores têm geometria fixa e o scroll horizontal fica somente no trilho dos cards.
+- **Estabilidade:** a r305 é retirada do bundle final e a r306 opera antes do `boot()` por handlers/renderers canônicos, sem `MutationObserver`, `setInterval` ou `setTimeout` de reconciliação visual.
 - **Android preservado:** `1.0.20 / versionCode 10062`.
 
-Assets oficiais: `app-v295.js` / `app-v295.css`; build: `apps/web/build-r295-official.mjs`; runtime: `apps/web/runtime-r295-discover-personal-calendar-daily.js`.
+Build oficial: `apps/web/build-r306-official.mjs`; runtime: `apps/web/runtime-r306-final.js`; regressões: `apps/web/test-r306.mjs` e `apps/web/test-r306-browser.mjs`.
 
 ## Funcionalidades consolidadas
 
 - Home de séries e filmes com progresso, Assistir a seguir, Em dia, Juntando Poeira, Histórico recente e estados de biblioteca;
-- Histórico de episódios e filmes cronológico, com Reassistir e desfazer marcação de visto sem navegar para detalhes;
+- histórico de episódios e filmes cronológico, com Reassistir e desfazer marcação de visto sem navegar para detalhes;
 - reassistir filmes e episódios com contador persistente `2x`, `3x`, `4x...`;
 - detecção do primeiro episódio lançado não visto e tratamento específico para séries recorrentes antigas;
 - Descobrir/Pra Você, Top 10, tendências, novidades, mais aguardados, mais bem avaliados e calendário;
@@ -53,7 +52,7 @@ Assets oficiais: `app-v295.js` / `app-v295.css`; build: `apps/web/build-r295-off
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r295 herda a geometria/densidade da r294 e adiciona uma autoridade tardia para regras pessoais do Descobrir, filtros combináveis do Calendário e a recomendação diária, sem alterar o Android.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r306 herda a baseline da r305, remove sua autoridade final problemática e injeta uma única autoridade pré-boot para os pontos corrigidos, mantendo o Android intacto.
 
 ## Regra de validação
 

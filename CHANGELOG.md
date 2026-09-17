@@ -2,6 +2,36 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.97 — 2026-09-17 — Web r306
+
+### Detalhes de filmes e séries
+- Corrige a autoridade de clique dos títulos semelhantes/recomendados e dos cards de atores, usando o TMDB/person ID do próprio card antes dos handlers legados.
+- `+ Watchlist` e `✓ Visto` passam pela ação assíncrona canônica tanto nos cards relacionados quanto no detalhe principal, com estado de busy e atualização visual imediata.
+- Remove do bundle final a autoridade r305 que dependia de hit-test/handlers incompatíveis com o lifecycle real.
+
+### Descobrir / Top 10
+- Compacta header, margens e paddings superiores do Top 10 para elevar o ranking na viewport e reduzir a necessidade de scroll vertical.
+- Preserva o bloqueio de overflow horizontal global e mantém o scroll somente nos trilhos que precisam dele.
+
+### F1 Hub
+- Remove definitivamente a aba `Pilotos` do modelo e do DOM; a r306 falha em teste se ela reaparecer.
+- Corridas passadas do Calendário abrem modal próprio com `Grid de Largada` e `Resultado de Chegada`.
+- O detalhe usa resultados já disponíveis no evento e fallback Jolpica por temporada/round quando necessário.
+
+### Esportes
+- Força a ordem `Próximos`, `Anteriores`, `Favoritos`, `Assistidos` e mantém esse submenu estritamente abaixo do F1 Hub.
+- Move `↻ Rebuscar / Sincronizar` para o header da página, fora do submenu, e a ação força `ct-sports-sync`/reload dos providers e dados esportivos.
+
+### Perfil
+- Elimina reconciliações temporizadas do r299 e mantém as autoridades tardias r300/r301 neutralizadas, impedindo troca involuntária de versão/layout das estatísticas após a primeira pintura.
+- Remove `Abrir`, `>` e `›` dos cards `Séries Watchlist` e `Filmes Watchlist`.
+- Padroniza os cards de atores em 132x178 e os avatares em 112x112, com o scroll horizontal retido somente no trilho dos atores.
+
+### Build / validação
+- Web atualizada para `1.0.97 / r306-official-1.0.97`; Android permanece `1.0.20 / versionCode 10062` sem alteração.
+- Adiciona regressões estática e Chromium cobrindo interações de relacionados/atores/Watchlist/Visto, Top 10, remoção de Pilotos, Grid/Resultado da F1, ordem/refresh de Esportes e geometria/scroll do Perfil.
+- O runtime r306 opera por autoridade pré-boot e hooks de renderer, sem `MutationObserver`, `setInterval` ou `setTimeout` de reconciliação visual.
+
 ## 1.0.91 — 2026-09-16 — Web r300
 
 ### Perfil / Watchlist
