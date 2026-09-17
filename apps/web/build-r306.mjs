@@ -39,7 +39,7 @@ for(const x of['__ctR306TestBridge','setTestBridge(bridge)','openMedia:openMedia
 
 js=js.replace("window.__ctWebBuild='1.0.96';window.__ctOfficialVersion='1.0.96';","window.__ctWebBuild='1.0.97';window.__ctOfficialVersion='1.0.97';")
  .replace("const REVISION='r305-official-1.0.96';","const REVISION='r306-official-1.0.97';")
- .replace('\nboot();','\n'+runtime+'\nboot();');
+ .replace('\nboot();',()=>`\n${runtime}\nboot();`);
 
 css+=String.raw`
 /* CineTracker Web 1.0.97 r306 — canonical modal/F1/Sports/Profile authority. */
