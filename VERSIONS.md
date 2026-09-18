@@ -6,10 +6,23 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.102** | revision `r311-official-1.0.102`, package `1.0.102` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r311 |
+| Web | **1.0.103** | revision `r312-official-1.0.103`, package `1.0.103` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r312 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.103 / r312
+
+- Descobrir: cards próprios nas cinco abas públicas, sem corte vertical; vistos + Watchlist são excluídos por identidade canônica antes do paint.
+- Troca de abas: cache/prewarm de três minutos permite repaint imediato das abas já carregadas.
+- `Pra Você`: painel único compacto preservando Indicação + 3 Watchlist + 3 novos.
+- Autenticação: `JWT expired` renova a sessão uma vez e repete a chamada original.
+- Perfil: `Jogos no Estádio` mantém clique de histórico e favoritos de atores invalidam também o cache persistente.
+- Esportes: seletor inline em `Próximos`/`Anteriores` construído de todos os esportes do payload real.
+- F1 r311 preservado.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v312.js` / `app-v312.css`; build: `apps/web/build-r312-official.mjs`; runtime: `apps/web/runtime-r312-video-truth.js`; regressões: `apps/web/test-r312.mjs` e `apps/web/test-r312-browser.mjs`.
 
 ## Web 1.0.102 / r311
 
