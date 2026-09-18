@@ -2,6 +2,43 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.99 — 2026-09-17 — Web r308
+
+### Descobrir / Pra Você
+- Substitui a composição permissiva da r301 por pools separados de Filme, Série e Anime, garantindo a estrutura `Indicação do Dia + 3 Watchlist + 3 100% novos` sem usar uma categoria para preencher outra.
+- A Indicação do Dia passa a manter um pool próprio e recebe `↻ Trocar`; cada slot da Watchlist e dos 100% novos também troca somente dentro da própria categoria.
+- Inicia autoridade pessoal, memória de recomendações e primeira página dos três catálogos TMDB em paralelo; hidrata somente a parcela necessária da Watchlist e reutiliza a composição recente por três minutos.
+- Remove o refresh atrasado/observer da r293 e o observer de rota da r301 que podiam repintar o Pra Você depois de a tela já estar pronta.
+- Padroniza Watchlist/Visto com controles `chip` do próprio sistema, sem paleta exclusiva do Descobrir.
+
+### Descobrir / exclusões pessoais
+- Aplica novamente, na última etapa antes do renderer, a exclusão de qualquer mídia já assistida ou existente na Watchlist em `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados`.
+- Mantém `Calendário`, `Pra Você` e `Top 10` explicitamente fora dessa exclusão geral.
+
+### F1 Hub
+- Remove `Pilotos` e `Equipes` do modelo ativo e aposenta a rotina r304 que reinseria `Pilotos` após o render. O Hub fica com `Visão geral`, `Calendário`, `Classificações` e `Circuitos`.
+- Corrige a autoridade de clique do Calendário para ler `data-event-id`; IDs como `2026-16` resolvem temporada/rodada corretamente antes de abrir `Grid de Largada` e `Resultado de Chegada`.
+
+### Perfil
+- Aposenta `stabilizeProfile304/reconcile304`, incluindo as reconciliações atrasadas de 0/120/420 ms que alteravam a tela após a primeira pintura.
+- Identifica `Séries Watchlist` e `Filmes Watchlist` semanticamente pelo rótulo, remove `Abrir`/setas/pseudo-ícones e preserva a área clicável sem indicador visual.
+
+### Build / validação
+- Web atualizada para `1.0.99 / r308-official-1.0.99`; Android permanece `1.0.20 / versionCode 10062`.
+- Regressão Chromium monta a estrutura 1+3+3, verifica as cinco exclusões pessoais e três exceções, remove Pilotos/Equipes, clica uma corrida `2026-16` e valida o Perfil por rótulo.
+
+## 1.0.98 — 2026-09-17 — Web r307
+
+### Home / Raw e SmackDown
+- Impede a captura genérica r306 de transformar `Marcar episódio como assistido` em `markSeen` da série inteira.
+- Usa a fronteira assistida das séries recorrentes antigas para calcular somente episódios realmente novos; backlog histórico anterior não vira pendência.
+- Preserva o bucket `Juntando poeira` quando ainda existe episódio novo e força `Em dia` somente quando a fronteira alcança o último episódio lançado.
+- A reparação de dados do Raw em 17/09 removeu os registros em massa criados pelo clique defeituoso e preservou o episódio correto.
+
+### Build / validação
+- Web atualizada para `1.0.98 / r307-official-1.0.98`; Android permanece `1.0.20 / versionCode 10062`.
+- Regressão Chromium reproduz o botão real do episódio e falha se houver qualquer chamada de marcação da série inteira.
+
 ## 1.0.97 — 2026-09-17 — Web r306
 
 ### Detalhes de filmes e séries
