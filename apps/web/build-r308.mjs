@@ -32,9 +32,44 @@ for(const x of[
  "const REVISION='r307-official-1.0.98';",
  "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['teams','Equipes'],['circuits','Circuitos']];",
  "sanitizeTabs();normalizeRelatedAll(document);\nconst observer=new MutationObserver(ms=>{",
+ "function ensureDriversData304(){",
+ "function stabilizeProfile304(){",
+ "function normalizeSportsModel305(){",
+ "let obsQueued301=false;const app301=q301('#app');",
  "window.__ctR307EarlyShouldBypass=bypass307",
  "\nboot();"
 ])must(js,x);
+
+/* Retire legacy authorities that mutate the same UI after the canonical renderer. */
+js=between(js,
+ "function ensureDriversData304(){",
+ "\nfunction orderSports304(){",
+ "function ensureDriversData304(){return false}\nfunction orderSports304(){",
+ 'r304 driver reinsertion'
+);
+js=between(js,
+ "function stabilizeProfile304(){",
+ "\nfunction reconcile304(){",
+ "function stabilizeProfile304(){return false}\nfunction reconcile304(){",
+ 'r304 profile mutation'
+);
+js=between(js,
+ "function reconcile304(){",
+ "\n\nensureDriversData304();",
+ "function reconcile304(){return false}\n\nensureDriversData304();",
+ 'r304 delayed reconcile'
+);
+js=between(js,
+ "let obsQueued301=false;const app301=q301('#app');",
+ "\ndocument.addEventListener('click',e=>{",
+ "let obsQueued301=false;const app301=q301('#app');\n\ndocument.addEventListener('click',e=>{",
+ 'r301 mutation observer'
+);
+js=once(js,
+ " try{if(typeof F1_TABS255!=='undefined'&&Array.isArray(F1_TABS255)&&!F1_TABS255.some(x=>String(x?.[0])==='drivers')){const at=Math.max(0,F1_TABS255.findIndex(x=>String(x?.[0])==='teams'));F1_TABS255.splice(at<0?F1_TABS255.length:at,0,['drivers','Pilotos'])}}catch{}",
+ " try{if(typeof F1_TABS255!=='undefined'&&Array.isArray(F1_TABS255)){for(let i=F1_TABS255.length-1;i>=0;i--)if(['drivers','teams'].includes(String(F1_TABS255[i]?.[0])))F1_TABS255.splice(i,1)}}catch{}",
+ 'r305 F1 reinsertion'
+);
 
 /* r293 still repainted Pra Você after the visible render. r308 becomes the single final owner. */
 js=once(js,
@@ -131,7 +166,10 @@ for(const x of[
  "window.__ctR308LegacyForYouInitialRefreshDisabled=true",
  "data-event-id",
  "[data-ct308-action]",
- "ct308-watchlist-stat"
+ "ct308-watchlist-stat",
+ "function ensureDriversData304(){return false}",
+ "function stabilizeProfile304(){return false}",
+ "function reconcile304(){return false}"
 ])must(js,x);
 
 await Promise.all([
