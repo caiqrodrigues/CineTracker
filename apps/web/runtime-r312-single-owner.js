@@ -245,8 +245,8 @@ async function ensureStadium312(){
 }
 async function actorRows312(){
  if(testBridge?.actors)return arr(await testBridge.actors());
- if(typeof sbApi!=='function')return[];
- return arr(await sbApi('favorite_actors?select=id,tmdb_person_id,actor_name,profile_path,created_at&order=created_at.desc&limit=500'));
+ if(typeof api!=='function')return[];
+ return arr(await api('favorite_actors?select=id,tmdb_person_id,actor_name,profile_path,created_at&order=created_at.desc&limit=500'));
 }
 function actorMarkup312(a){
  const id=Number(a?.tmdb_person_id||0),u=imageUrl312(a?.profile_path,'w342');
@@ -307,7 +307,7 @@ window.__ctR312EarlyHandle=function(target,e){
  const stab=target.closest('[data-ct312-sport-tab]');if(stab&&B255?.sportState){B255.sportState.tab=String(stab.dataset.ct312SportTab||'next');B255.sportState.sport='all';paintSports312();return true}
  const sf=target.closest('[data-ct312-sport]');if(sf&&B255?.sportState){B255.sportState.sport=String(sf.dataset.ct312Sport||'all');paintSports312();return true}
  const race=target.closest('[data-ct312-f1-race]');if(race){const season=Number(race.dataset.season||0),round=Number(race.dataset.round||0),r=arr(B255.f1State?.data?.schedule).find(x=>Number(x?.round||0)===round);if(r)void R311.openRace?.({...r,season,round,title:r?.raceName||('GP '+round)});return true}
- const remove=target.closest('[data-ct312-actor-remove]');if(remove){const id=Number(remove.dataset.ct312ActorRemove||0);if(id>0&&typeof sbApi==='function')void sbApi('favorite_actors?tmdb_person_id=eq.'+id,{method:'DELETE'}).then(()=>{document.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'favorite-actor-r312',tmdb_person_id:id,favorite:false}}));return refreshActors312()});return true}
+ const remove=target.closest('[data-ct312-actor-remove]');if(remove){const id=Number(remove.dataset.ct312ActorRemove||0);if(id>0&&typeof api==='function')void api('favorite_actors?tmdb_person_id=eq.'+id,{method:'DELETE'}).then(()=>{document.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'favorite-actor-r312',tmdb_person_id:id,favorite:false}}));return refreshActors312()});return true}
  return false;
 };
 document.addEventListener('cinetracker:data-changed',e=>{
