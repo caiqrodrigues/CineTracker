@@ -4,18 +4,23 @@
 
 **Última atualização:** 2026-09-18  
 **Branch de produção:** `main`  
-**Release Web atual:** **1.0.102 / `r311-official-1.0.102`**  
+**Release Web atual:** **1.0.103 / `r312-official-1.0.103`**  
 **Android atual:** **1.0.20 / versionCode `10062`**  
 **Backend:** Supabase production compartilhado Web/Android  
 **Windows:** não lançado
 
 ## 1. Estado Web
 
-A r311 é a baseline Web atual. Ela herda as correções r307–r310 e consolida as três autoridades que o vídeo mais recente ainda mostrou divergentes:
+A r312 é a baseline Web atual. Ela herda a r311 e corrige os problemas reproduzidos no vídeo mais recente:
 
-- **Perfil:** `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist` usam uma única versão visual final. Os contratos de clique são preservados e autoridades visuais r300/r301 ficam inertes.
-- **F1 Hub:** o Calendário renderiza GPs clicáveis. O detalhe exibe o fim de semana completo, Grid de Largada e Resultado de Chegada; sessões iniciadas podem ser marcadas/desmarcadas como assistidas.
-- **Descobrir:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` excluem vistos e Watchlist antes do HTML e usam somente a faixa final `+ Watchlist` + `✓ Visto` abaixo do card.
+- **Autenticação:** refresh proativo do JWT e retry único após 401/JWT expirado, evitando que Esportes e autoridade pessoal do Descobrir caiam em sessão expirada.
+- **Descobrir:** as cinco abas públicas usam card próprio, não cortam título/metadados/ações, excluem vistos + Watchlist antes do HTML e mantêm cache/prefetch para troca de aba.
+- **Pra Você:** slots compactos em trilho horizontal, sem colunas gigantes.
+- **Perfil:** cache antigo não é pintado antes da consulta canônica; Jogos no Estádio nasce como botão no primeiro paint e favoritos de atores vêm do payload atualizado.
+- **Esportes:** filtros de todas as modalidades do payload ficam junto de Próximos/Anteriores.
+
+A r311 permanece como base do F1 Hub clicável e assistível.
+
 
 Produção Web: `https://mycinetracker.vercel.app`.
 
@@ -36,18 +41,18 @@ Produção Web: `https://mycinetracker.vercel.app`.
 - `versionName`: `1.0.20`
 - `versionCode`: `10062`
 
-A r311 é Web-only e deve preservar essa baseline.
+A r312 é Web-only e deve preservar essa baseline.
 
-## 4. Artefatos e validação da r311
+## 4. Artefatos e validação da r312
 
-- Build oficial: `apps/web/build-r311-official.mjs`
-- Runtime final: `apps/web/runtime-r311-profile-f1-discover.js`
-- Gate estático: `apps/web/test-r311.mjs`
-- Chromium: `apps/web/test-r311-browser.mjs`
+- Build oficial: `apps/web/build-r312-official.mjs`
+- Runtime final: `apps/web/runtime-r312-video-truth.js`
+- Gate estático: `apps/web/test-r312.mjs`
+- Chromium: `apps/web/test-r312-browser.mjs`
 - Workflow: `.github/workflows/verify.yml`
-- Assets finais: `app-v311.js` / `app-v311.css`
+- Assets finais: `app-v312.js` / `app-v312.css`
 
-O gate Chromium deve validar comportamento, não apenas presença de strings: igualdade dos controles do Perfil após a janela de repaints legados, clique do GP abrindo detalhe, persistência da sessão de F1 e exclusão/ações das cinco abas públicas do Descobrir.
+O gate Chromium deve validar comportamento, não apenas presença de strings: card público completo sem corte, exclusão de vistos/Watchlist, retorno de aba em cache, Pra Você compacto, botão de estádio, filtro de todas as modalidades e preservação das regressões F1 da r311.
 
 ## 5. Regra de evidência
 
