@@ -15,6 +15,26 @@ let [html,js,css,sw,releaseRaw,payload]=await Promise.all([
 ]);
 let runtime=gunzipSync(Buffer.from(payload.trim(),'base64')).toString('utf8');
 {
+ const a=runtime.indexOf('function addDash312(p,x){'),b=runtime.indexOf('\nasync function personal312',a);
+ if(a<0||b<0)throw new Error('r312 addDash312 markers missing');
+ runtime=runtime.slice(0,a)+`function addDash312(p,x){
+ const k=keyOf(x);if(!validKey(k))return;
+ const blocked=!!(x?.is_watchlist||x?.is_seen||x?.is_completed||x?.is_in_progress||x?.is_up_to_date||Number(x?.watched_episodes||0)>0||x?.last_watched_at);
+ if(x?.is_watchlist)p.watch.add(k);
+ if(x?.is_seen||x?.is_completed||x?.is_in_progress||x?.is_up_to_date||Number(x?.watched_episodes||0)>0||x?.last_watched_at)p.seen.add(k);
+ if(blocked){const al=alias312(x);if(al&&!al.endsWith(':'))p.aliases.add(al)}
+}`+runtime.slice(b);
+}
+{
+ const a=runtime.indexOf('function card312(x,saved=false){'),b=runtime.indexOf('\nfunction paintPublic312',a);
+ if(a<0||b<0)throw new Error('r312 card312 markers missing');
+ runtime=runtime.slice(0,a)+`function card312(x,saved=false){
+ const k=keyOf(x),poster=posterUrl312(x),rating=Number(x?.vote_average??x?.raw_tmdb?.vote_average??0),kind=typeOf(x)==='movie'?'Filme':'Série';
+ const meta=[yearOf(x),kind,rating?'TMDB '+rating.toFixed(1):''].filter(Boolean).join(' · ');
+ return '<article class="ct312-card" data-ct312-item="'+esc(k)+'"><button type="button" class="ct312-open" data-media="'+esc(k)+'"><div class="ct312-poster"'+(poster?' style="background-image:url(\\''+esc(poster)+'\\')"':'')+'></div><div class="ct312-card-body"><b>'+esc(titleOf(x))+'</b><small>'+esc(meta)+'</small></div></button><div class="ct312-actions"><button type="button" class="chip ct312-watch '+(saved?'active':'')+'" data-ct312-action="watchlist" data-media="'+esc(k)+'" '+(saved?'disabled':'')+'>'+(saved?'✓ Watchlist':'+ Watchlist')+'</button><button type="button" class="chip ct312-seen" data-ct312-action="seen" data-media="'+esc(k)+'">✓ Visto</button></div></article>';
+}`+runtime.slice(b);
+}
+{
  const end='\n})();',i=runtime.lastIndexOf(end);
  if(i<0)throw new Error('r312 runtime closure not found');
  const hook="\ntry{window.__ctR312Test.setSportsState=function(v){if(v&&typeof v==='object'){if(v.tab!=null)sport255.tab=String(v.tab);if(v.sport!=null)sport255.sport=String(v.sport);if(v.payload!=null)sport255.payload=v.payload}}}catch{}\n";
@@ -52,7 +72,7 @@ js=once(js,"const REVISION='r311-official-1.0.102';","const REVISION='r312-offic
 
 html=html.replaceAll('app-v311.js','app-v312.js').replaceAll('app-v311.css','app-v312.css').replaceAll('v1.0.102','v1.0.103').replaceAll('r311-official-1.0.102','r312-official-1.0.103');
 sw=sw.replaceAll('ct-web-1.0.102-r311','ct-web-1.0.103-r312').replaceAll('app-v311.js','app-v312.js').replaceAll('app-v311.css','app-v312.css');
-css+='\n/* CineTracker Web 1.0.103 r312 — latest-video stable Discover, auth retry, Profile and Sports filters. */\n';
+css+='\n/* CineTracker Web 1.0.103 r312 — latest-video stable Discover, auth retry, Profile and Sports filters. */\n.ct312-rail{align-items:stretch!important}.ct312-card-body{min-height:52px!important}.ct312-actions{margin-top:auto!important;padding-top:6px!important}\n';
 
 const prev=JSON.parse(releaseRaw),release={
  ...prev,
