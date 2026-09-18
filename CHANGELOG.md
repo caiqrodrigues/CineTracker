@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.100 — 2026-09-18 — Web r309
+
+### Descobrir
+- Usa os dois vídeos de validação de 18/09 como regressão: remove a aba `Lançamentos` de todos os produtores privados ainda embarcados e impede rails duplicados de recriarem `Top 10`/abas antigas.
+- Paraleliza autoridade pessoal e busca do catálogo nas abas públicas, eliminando a espera sequencial r308 que prolongava `Carregando títulos…`.
+- Deduplica o resultado final por TMDB e também por tipo+título+ano, cobrindo títulos visualmente duplicados como `Next Time`.
+- Reconstrói `Pra Você` combinando a autoridade r295 com `cinetracker_watchlist_full_v119`; hidrata a Watchlist por categoria e mantém Filme + Série + Anime em `Da sua Watchlist` e `100% novos`.
+- Garante dois controles visíveis por card — `+ Watchlist`/estado da Watchlist e `✓ Visto` — usando `chip` do sistema; `↻ Trocar` fica em uma linha própria.
+
+### F1 Hub
+- Remove `Pilotos` e `Equipes` da fonte r257 antes do primeiro paint.
+- Neutraliza os repaints r257 agendados em 0/180/700/1800 ms e a reparação do observer que podiam sobrescrever o Hub atual e recriar seis abas.
+- Mantém somente `Visão geral`, `Calendário`, `Classificações` e `Circuitos`; pilotos e equipes permanecem dentro de `Classificações`.
+
+### Perfil
+- Substitui o fluxo r168 de cache → quick stats → full payload por um único paint canônico. Cache e quick ficam somente como fallback caso o payload completo não responda no limite definido.
+- Estatísticas esportivas e resumo de `Jogos no Estádio` começam em paralelo com o payload do Perfil e entram antes de revelar a tela.
+- Neutraliza a reescrita tardia r255 e remove o chevron da Watchlist no próprio produtor, evitando aparecer e sumir.
+- O scroll de `Atores Favoritos` passa a pertencer somente ao pai real dos cards, mantendo a scrollbar abaixo do carrossel.
+
+### Build / validação
+- Web atualizada para `1.0.100 / r309-official-1.0.100`; Android permanece `1.0.20 / versionCode 10062`.
+- Novas regressões estáticas e Chromium cobrem 1+3+3, duplicação visual, rail de abas, dois controles por card, primeiro paint F1 e geometria do scroll de atores.
+
 ## 1.0.99 — 2026-09-17 — Web r308
 
 ### Descobrir / Pra Você
