@@ -6,10 +6,20 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.103** | revision `r312-official-1.0.103`, package `1.0.103` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r312 |
+| Web | **1.0.104** | revision `r313-official-1.0.104`, package `1.0.104` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.104 / r313
+
+- Descobrir volta ao card padrão `ct288Card`; o filtro Todos/Filmes/Séries fica oculto por padrão atrás do `☷`.
+- As cinco abas públicas continuam excluindo vistos e Watchlist antes do HTML, com ações pequenas abaixo do card.
+- Próximos/Anteriores produzem o filtro de todos os esportes diretamente em `paintSports255`.
+- Perfil usa somente `renderProfile313`, com um paint final e quatro cards de estatística no mesmo padrão.
+- JWT, F1 r311 e Android `1.0.20 / 10062` permanecem preservados.
+
+Assets oficiais: `app-v313.js` / `app-v313.css`; build: `apps/web/build-r313-official.mjs`; runtime: `apps/web/runtime-r313-discover-sports-profile.js`; regressões: `apps/web/test-r313.mjs` e `apps/web/test-r313-browser.mjs`.
 
 ## Web 1.0.103 / r312
 

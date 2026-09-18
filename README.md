@@ -6,12 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.103** | `r312-official-1.0.103` | Descobrir estável, sessão renovável, Perfil vivo e filtros esportivos inline |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r312 |
+| Web | **1.0.104** | `r313-official-1.0.104` | Descobrir no card aprovado com filtro oculto, filtro esportivo no produtor e Perfil de versão única |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.104 / r313
+
+A r313 corrige regressões visíveis no vídeo enviado após a r312, sem alterar a baseline Android.
+
+- **Descobrir / filtro:** `Todos / Filmes / Séries` volta ao comportamento aprovado da r288: fica oculto por padrão e abre somente pelo botão compacto `☷`.
+- **Descobrir / cards:** remove da fonte o card/banner próprio da r312. As cinco abas públicas voltam a usar o card padrão `ct288Card`, com `+ Watchlist` e `✓ Visto` em faixa pequena abaixo do card.
+- **Descobrir / exclusão:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` mantêm bloqueio por visto, Watchlist e identidade tipo+título+ano antes do HTML.
+- **Pra Você:** preserva a composição exata da r309 e reduz os painéis/controles sem reintroduzir o layout banner.
+- **Esportes:** o filtro de `Próximos` e `Anteriores` é produzido diretamente dentro de `paintSports255`, ao lado do título. As opções vêm de todos os esportes presentes em `payload.sports`.
+- **Perfil:** a r313 substitui a cadeia final de `renderProfile` por um único renderer canônico. Há um estado de loading e um único paint final; `Jogos no Estádio`, Watchlists e Eventos assistidos compartilham o mesmo contrato visual.
+- **Sessão/F1:** renovação de JWT e F1 clicável/assistível das r312/r311 permanecem preservados.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r313-official.mjs`; runtime: `apps/web/runtime-r313-discover-sports-profile.js`; regressões: `apps/web/test-r313.mjs` e `apps/web/test-r313-browser.mjs`.
 
 ## Web 1.0.103 / r312
 
