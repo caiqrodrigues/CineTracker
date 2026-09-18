@@ -6,12 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.105** | `r314-official-1.0.105` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.106** | `r315-official-1.0.106` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.106 / r315
+
+A r315 corrige regressões introduzidas na r314 sem redesenhar áreas que já estavam aprovadas.
+
+- **Pra você:** volta ao renderer r309 e recupera os controles aprovados de Watchlist, Visto e Trocar nos blocos Indicação do Dia, Da sua Watchlist e 100% novos.
+- **Top 10:** volta à autoridade r288: todos os streamings disponíveis permanecem selecionáveis e cada streaming exibe separadamente **Top 10 Séries** e **Top 10 Filmes**.
+- **Demais abas do Descobrir:** Em alta, Populares, Novidades, Lançamentos, Mais Aguardados e Mais bem avaliados aplicam a barreira canônica de vistos + Watchlist + identidade visual antes do HTML e mantêm as ações Watchlist + Visto.
+- **F1 Hub:** remove definitivamente o rail legado `Seu registro / Fórmula 1 assistida`; o modal/drawer de GP e a marcação individual de sessões permanecem preservados.
+- **Perfil:** restaura a ordem de estatísticas r238 e consulta `cinetracker_sport_stats_v1` junto do payload do Perfil, evitando zerar o tempo esportivo. Eventos assistidos e Jogos no Estádio voltam a abrir seus históricos.
+- **Recolher:** o mesmo controle volta a recolher/expandir em conjunto Estatísticas e Esportes assistidos.
+- **Watchlist no Perfil:** os contadores Séries Watchlist e Filmes Watchlist continuam estáticos, sem chevron e sem modal, conforme regra aprovada.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r315-official.mjs`; runtime: `apps/web/runtime-r315-regression-restore.js`; regressões: `apps/web/test-r315.mjs` e `apps/web/test-r315-browser.mjs`.
 
 ## Web 1.0.105 / r314
 

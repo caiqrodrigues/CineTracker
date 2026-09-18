@@ -2,6 +2,31 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.106 — 2026-09-18 — Web r315
+
+### Descobrir
+- Restaura o `Pra você` aprovado da r309, com Watchlist, Visto e Trocar nos slots corretos.
+- Restaura o Top 10 por streaming da r288, com duas listas independentes para cada provedor: `Top 10 Séries` e `Top 10 Filmes`.
+- Reaplica antes do HTML a exclusão estrita de vistos e Watchlist em Em alta, Populares, Novidades, Lançamentos, Mais Aguardados e Mais bem avaliados.
+- Remove o contrato de ação única da r314 e recupera Watchlist + Visto nas seis abas públicas.
+- Mantém cache de 5 minutos e prefetch em segundo plano para troca rápida entre abas.
+
+### F1 Hub
+- Remove o painel legado `Seu registro / Fórmula 1 assistida`, inclusive contra reinserções tardias do runtime r263.
+- Preserva detalhes do GP, qualificação, resultado, Δ, DNF, volta mais rápida e marcação individual de sessões.
+
+### Perfil
+- Restaura a ordem física de estatísticas da r238.
+- Volta a buscar `cinetracker_sport_stats_v1` em paralelo ao payload do Perfil; o tempo esportivo deixa de ser zerado por ausência de `sports_stats` em `cinetracker_profile_payload_v0997`.
+- Restaura as ações de histórico em Eventos assistidos e Jogos no Estádio.
+- O controle Recolher/Expandir volta a controlar em conjunto Estatísticas e Esportes assistidos.
+- Séries Watchlist e Filmes Watchlist permanecem estáticas, sem chevron/modal.
+- Mantém Atores Favoritos com geometria uniforme e overflow horizontal somente no rail.
+
+### Build / validação
+- Web atualizada para `1.0.106 / r315-official-1.0.106`; Android permanece `1.0.20 / versionCode 10062`.
+- Adiciona regressões estática e Chromium específicas para os contratos restaurados.
+
 ## 1.0.105 — 2026-09-18 — Web r314
 
 ### Perfil

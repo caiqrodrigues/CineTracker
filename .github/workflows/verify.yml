@@ -1,4 +1,4 @@
-name: Verify Web 1.0.105 r314 Profile Discover F1
+name: Verify Web 1.0.106 r315 Regression Restore
 
 on:
   push:
@@ -9,61 +9,60 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_105_r314:
+  web_1_0_106_r315:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r314
+      - name: Version identity r315
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.105"' package.json
-          grep -Fq '"version": "1.0.105"' apps/web/package.json
-          grep -Fq 'build-r314-official.mjs' apps/web/package.json
-          test -f apps/web/build-r314.mjs
-          test -f apps/web/build-r314-official.mjs
-          test -f apps/web/runtime-r314-urgent-fixes.js.gz.b64
-          test -f apps/web/test-r314.mjs
-          test -f apps/web/test-r314-browser.mjs
-      - name: Syntax r314 release chain
+          grep -Fq '"version": "1.0.106"' package.json
+          grep -Fq '"version": "1.0.106"' apps/web/package.json
+          grep -Fq 'build-r315-official.mjs' apps/web/package.json
+          test -f apps/web/build-r315.mjs
+          test -f apps/web/build-r315-official.mjs
+          test -f apps/web/runtime-r315-regression-restore.js
+          test -f apps/web/test-r315.mjs
+          test -f apps/web/test-r315-browser.mjs
+      - name: Syntax r315 release chain
         run: |
           set -euo pipefail
-          base64 -d apps/web/runtime-r314-urgent-fixes.js.gz.b64 | gzip -dc > /tmp/runtime-r314.js
-          node --check /tmp/runtime-r314.js
-          node --check apps/web/build-r314.mjs
-          node --check apps/web/build-r314-official.mjs
-          node --check apps/web/test-r314.mjs
-          node --check apps/web/test-r314-browser.mjs
-      - name: Regression suite through r314
+          node --check apps/web/runtime-r315-regression-restore.js
+          node --check apps/web/build-r315.mjs
+          node --check apps/web/build-r315-official.mjs
+          node --check apps/web/test-r315.mjs
+          node --check apps/web/test-r315-browser.mjs
+      - name: Regression suite through r315
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r314
+      - name: Final bundle identity r315
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r314-official.mjs
-          node --check dist/app-v314.js
-          CT_R314_SKIP_BUILD=1 node test-r314.mjs
-          test -f dist/app-v314.js
-          test -f dist/app-v314.css
-          grep -Fq 'app-v314.js' dist/index.html
-          grep -Fq 'app-v314.css' dist/index.html
+          node build-r315-official.mjs
+          node --check dist/app-v315.js
+          CT_R315_SKIP_BUILD=1 node test-r315.mjs
+          test -f dist/app-v315.js
+          test -f dist/app-v315.css
+          grep -Fq 'app-v315.js' dist/index.html
+          grep -Fq 'app-v315.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.105'
-            && r.revision==='r314-official-1.0.105'
+          const ok=r.version==='1.0.106'
+            && r.revision==='r315-official-1.0.106'
             && r.discover_tabs===9
-            && r.discover_releases_restored===true
+            && r.discover_foryou_owner==='r309-approved-actions'
+            && r.discover_top10==='all-providers+series+movies'
             && r.discover_public_exclusion==='seen+watchlist+alias-before-markup'
-            && r.discover_card_action==='minimal-plus'
-            && r.profile_renderer==='r314-live-supabase-only'
+            && r.discover_public_actions==='watchlist+seen'
+            && r.f1_legacy_watch_panel===false
+            && r.profile_stats_order==='r238-approved'
+            && r.profile_sports_stats_source==='cinetracker_sport_stats_v1'
+            && r.profile_stats_collapse==='main+sports-unified'
             && r.profile_watchlist_stats==='static-no-chevron-no-modal'
-            && r.profile_stats_position==='top-stable'
-            && r.f1_detail==='qualifying+final+delta+dnf+fastest-lap'
-            && r.f1_previous_gp_details===true
-            && r.f1_session_watch_rpc==='cinetracker_f1_session_watch_set_v314'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -81,27 +80,27 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_105_r314, android_current_source]
+    needs: [web_1_0_106_r315, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.105 r314
+      - name: Official production serves and boots 1.0.106 r315
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.105"' <<<"$BODY" \
-              && grep -Fq '"revision": "r314-official-1.0.105"' <<<"$BODY" \
-              && grep -Fq '"discover_tabs": 9' <<<"$BODY" \
-              && grep -Fq '"discover_card_action": "minimal-plus"' <<<"$BODY" \
-              && grep -Fq '"profile_renderer": "r314-live-supabase-only"' <<<"$BODY" \
-              && grep -Fq '"f1_detail": "qualifying+final+delta+dnf+fastest-lap"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v314.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.106"' <<<"$BODY" \
+              && grep -Fq '"revision": "r315-official-1.0.106"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_owner": "r309-approved-actions"' <<<"$BODY" \
+              && grep -Fq '"discover_top10": "all-providers+series+movies"' <<<"$BODY" \
+              && grep -Fq '"f1_legacy_watch_panel": false' <<<"$BODY" \
+              && grep -Fq '"profile_sports_stats_source": "cinetracker_sport_stats_v1"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v315.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR314='profile-live-static-watchlist+discover-nine-tabs-strict-cache+f1-race-details'" <<<"$JS" \
-                && grep -Fq "['releases','Lançamentos']" <<<"$JS" \
-                && grep -Fq 'cinetracker_f1_session_watch_set_v314' <<<"$JS" \
-                && grep -Fq 'app-v314.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR315='restore-approved-discover+remove-legacy-f1+restore-profile-stat-contract'" <<<"$JS" \
+                && grep -Fq 'window.__ctR288Test.loadTop10' <<<"$JS" \
+                && grep -Fq 'cinetracker_sport_stats_v1' <<<"$JS" \
+                && grep -Fq 'app-v315.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=7500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
