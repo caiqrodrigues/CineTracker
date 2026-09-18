@@ -6,10 +6,21 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.102** | revision `r311-official-1.0.102`, package `1.0.102` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r311 |
+| Web | **1.0.103** | revision `r312-official-1.0.103`, package `1.0.103` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r312 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.103 / r312
+
+- Descobrir: shell persistente, cinco abas públicas filtradas antes do HTML, ações estáveis e `Pra Você` compacto.
+- Sessão: refresh + retry único para REST/TMDB após JWT expirado.
+- Perfil: `Jogos no Estádio` garantido como botão e Atores Favoritos lidos diretamente de `favorite_actors`.
+- Esportes: filtros dinâmicos dentro de `Próximos` e `Anteriores`, usando `payload.sports`.
+- F1: calendário real r255 ligado ao detalhe r311.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets: `app-v312.js` / `app-v312.css`; build: `apps/web/build-r312-official.mjs`; runtime: `apps/web/runtime-r312-single-owner.js`.
 
 ## Web 1.0.102 / r311
 
