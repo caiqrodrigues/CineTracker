@@ -31,6 +31,21 @@ const card314Sig=runtime.match(/function card314\(x,\{([^}]*)\}=\{\}\)\{/);
 if(!card314Sig||!/\bwatch\s*=/.test(card314Sig[1]))throw new Error('r314 card314 signature not found');
 const card314Opts=card314Sig[1].replace(/\bwatch\s*=\s*[^,}]+/,'watch=false');
 runtime=runtime.replace(card314Sig[0],`function card314(x,{${card314Opts}}={}){`);
+const minimalPlusHelper=String.raw`
+function ct314MinimalPlus(html){
+ const src=String(html||'');
+ const out=src.replace(
+  /<div class="ct291-card-footer[^"]*"[^>]*>\\s*<button type="button" class="ct291-playlist" data-ct288-add="([^"]+)" aria-label="Adicionar à Watchlist">\\+ Playlist<\\/button>\\s*<\\/div>/g,
+  '<button type="button" class="ct288-state ct314-minimal-plus" data-ct288-add="$1" aria-label="Adicionar à Watchlist">+</button>'
+ );
+ return out===src?src:out.replace('ct291-has-footer','ct291-no-footer ct314-minimal-card');
+}
+`;
+if(!runtime.includes('ct288Card(x,{rank,watch,add:!watch})'))throw new Error('r314 card call not found');
+runtime=minimalPlusHelper+runtime.replace(
+ 'ct288Card(x,{rank,watch,add:!watch})',
+ 'ct314MinimalPlus(ct288Card(x,{rank,watch,add:!watch}))'
+);
 const early314=`(()=>{if(window.__ctR314EarlyCapture)return;window.__ctR314EarlyCapture=true;window.addEventListener('click',e=>{try{const fn=window.__ctR314EarlyHandle;if(typeof fn!=='function')return;if(fn(e.target,e)){e.preventDefault();e.stopImmediatePropagation()}}catch{}},true)})();`;
 js=once(js,'\nboot();','\n'+runtime+'\nboot();','r314 insertion');
 js=early314+'\n'+js;
