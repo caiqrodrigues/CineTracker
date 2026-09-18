@@ -1,15 +1,29 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-09-16
+**Atualizado em:** 2026-09-18
 
 ## Matriz oficial
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.91** | revision `r300-official-1.0.91`, package `1.0.91` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r300 |
+| Web | **1.0.99** | revision `r308-official-1.0.99`, package `1.0.99` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r308 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.99 / r308
+
+A r308 corrige as divergências reproduzidas no vídeo real de 17/09–18/09/2026 sem alterar o Android.
+
+- `Pra Você` passa a ser composto por pools separados: Indicação do Dia com troca real, `Da sua Watchlist` com Filme + Série + Anime e `100% novos` com Filme + Série + Anime; uma categoria não ocupa a vaga de outra;
+- autoridade pessoal, memória recente e primeiros pools TMDB começam em paralelo, e uma composição válida é reutilizada por três minutos para reduzir o loading ao revisitar a aba;
+- ações de Watchlist/Visto usam o `chip` visual canônico do sistema;
+- `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` recebem a barreira final de vistos + Watchlist antes do paint; `Calendário`, `Pra Você` e `Top 10` ficam fora dessa regra geral;
+- F1 Hub fica somente com `Visão geral`, `Calendário`, `Classificações` e `Circuitos`; o clique de corrida passa a usar o `data-event-id` real para abrir a rodada correta com Grid de Largada e Resultado de Chegada;
+- o Perfil recebe acabamento final por rótulo semântico e remove o sinal visual de clique de `Séries Watchlist` e `Filmes Watchlist`, preservando a área clicável;
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v308.js` / `app-v308.css`; build: `apps/web/build-r308-official.mjs`; runtime: `apps/web/runtime-r308-discover-f1-profile.js`; regressões: `apps/web/test-r308.mjs` e `apps/web/test-r308-browser.mjs`.
 
 ## Web 1.0.91 / r300
 
