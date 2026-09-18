@@ -36,6 +36,8 @@ const probe=`<script>setTimeout(async()=>{try{
  ok([...shell.querySelectorAll('[data-ct308-action]')].every(x=>x.classList.contains('chip')),'Discover actions do not use system chip style');
  ok(shell.querySelectorAll('[data-ct308-action="seen"]').length===7,'Visto action must exist on all seven recommendations');
  ok(shell.querySelectorAll('[data-ct308-action="watchlist"]').length===7,'Watchlist state/action must exist on all seven recommendations');
+ const slotWidths=[...shell.querySelectorAll('.ct308-fy-grid .ct308-slot')].map(x=>Math.round(x.getBoundingClientRect().width));ok(slotWidths.length===6&&slotWidths.every(w=>w>=150&&w<=166),'Discover slots drifted from compact card geometry: '+slotWidths.join(','));
+ const actionWidths=[...shell.querySelectorAll('.ct308-actions')].map(x=>x.getBoundingClientRect().width);ok(actionWidths.every(w=>w<=160),'Discover actions exceed card width');
  shell.remove();
 
  const rows=[media(301,'movie','movie','Seen'),media(302,'tv','series','Watchlist'),media(303,'movie','movie','Eligible')];
