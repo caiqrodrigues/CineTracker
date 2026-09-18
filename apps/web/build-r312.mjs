@@ -25,6 +25,20 @@ for(const x of[
  "\nboot();"
 ])must(js,x);
 
+/* Bind r312 to the actual r255 Sports owner and retire the old global filter at its producer. */
+js=once(js,
+ "window.__ctR255Test={normalizeHome255,auditHome255,releasedFrontier255,watchedFrontier255,legacy255,liveLast255,sportRows255,genres255,eligible255,fmtSports255,mediaCard255};",
+ "window.__ctR255Test={normalizeHome255,auditHome255,releasedFrontier255,watchedFrontier255,legacy255,liveLast255,sportRows255,genres255,eligible255,fmtSports255,mediaCard255,state:sport255,paintSports:paintSports255};",
+ 'r255 Sports state bridge'
+);
+{
+ const fn=js.indexOf("function paintSports255(){");
+ if(fn<0)throw new Error('r312 missing r255 Sports producer');
+ const a=js.indexOf('<div class="ct255-sport-filters">',fn);
+ const b=js.indexOf('<section class="ct255-f1hub"',a);
+ if(a<0||b<0)throw new Error('r312 cannot isolate old global Sports filter');
+ js=js.slice(0,a)+js.slice(b);
+}
 /* Favorite actor/media writes must invalidate the persistent Profile preload, not only RAM. */
 js=once(js,
  "profileCache=null;ct171SeenMap=null;ov.remove();toast('Favorito adicionado.');await render()",
@@ -83,6 +97,7 @@ for(const x of[
  "function paintForYou312",
  "data-ct312-sport-filter",
  "function sportsCatalog312",
+ "state:sport255,paintSports:paintSports255",
  "stadium.dataset.ct299History='stadium'",
  "localStorage.removeItem(CT163_CACHE+'profile')",
  "favorite-actor-r312",
