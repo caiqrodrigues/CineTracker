@@ -2,6 +2,33 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.105 — 2026-09-18 — Web r314
+
+### Perfil
+- Elimina o fallback de cache antigo do paint final: estatísticas gerais e esportivas passam a refletir o payload atual do Supabase e permanecem estabilizadas no topo do Perfil.
+- Transforma `Séries Watchlist` e `Filmes Watchlist` em contadores estritamente estáticos, removendo chevrons, links, `data-watchlist-kind`, cursor de ação e qualquer gatilho de modal.
+- Padroniza os cards/fotos de Atores Favoritos e restringe `overflow-x:auto` exclusivamente ao rail real dos atores.
+
+### Descobrir
+- Restaura `Lançamentos` e volta a nove sub-abas canônicas.
+- Aplica exclusão estrita de vistos + Watchlist + aliases antes do HTML em `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados` e `Mais bem avaliados`.
+- Reutiliza o `+` minimalista de Watchlist em todos os cards públicos.
+- Introduz cache stale-while-revalidate de 5 minutos, revalidação em segundo plano e prefetch das fontes públicas.
+- Compacta `Da sua Watchlist` e `100% novos` em três slots Filme/Série/Anime com proporção 2:3.
+
+### F1 Hub
+- Calendário e GPs anteriores da Visão Geral passam a abrir um drawer dedicado do GP.
+- O drawer consulta classificação e resultado da etapa selecionada, exibindo Grid de Largada, Q1/Q2/Q3, resultado final, Δ de posições, DNF e volta mais rápida.
+- Sessões individuais usam persistência própria por usuário com IDs `f1:temporada:etapa:sessão`.
+
+### Backend / segurança
+- Adiciona `user_f1_session_watch` com RLS por `profile_id` e RPCs `cinetracker_f1_session_watch_history_v314` / `cinetracker_f1_session_watch_set_v314` como `SECURITY INVOKER`.
+- Remove o writer F1 `SECURITY DEFINER` da tentativa anterior e reconcilia o histórico de migrations já aplicado em produção.
+
+### Build / validação
+- Web atualizada para `1.0.105 / r314-official-1.0.105`; Android permanece `1.0.20 / versionCode 10062`.
+- Adiciona regressões estática e Chromium para nove abas, exclusão estrita, `+` minimalista, Perfil estático/atores, detalhes da F1 e persistência de sessões.
+
 ## 1.0.104 — 2026-09-18 — Web r313
 
 ### Descobrir

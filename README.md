@@ -6,12 +6,30 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.104** | `r313-official-1.0.104` | Descobrir no card aprovado com filtro oculto, filtro esportivo no produtor e Perfil de versão única |
+| Web | **1.0.105** | `r314-official-1.0.105` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.105 / r314
+
+A r314 corrige diretamente as regressões reproduzidas no vídeo de 18/09/2026 e substitui a r313 como autoridade Web final, preservando o Android.
+
+- **Perfil / estatísticas:** o Perfil usa somente o payload atual de `cinetracker_profile_payload_v0997` no paint final, sem reaproveitar cache antigo como fonte de números. Os painéis de estatísticas gerais e esportivas são estabilizados no topo.
+- **Perfil / Watchlist:** `Séries Watchlist` e `Filmes Watchlist` são contadores estáticos: sem `>`, `›`, `Abrir`, `data-watchlist-kind`, modal ou cursor de ação.
+- **Perfil / Atores Favoritos:** cards e imagens ficam com dimensões idênticas; o overflow horizontal e a scrollbar pertencem somente ao rail real de atores.
+- **Descobrir / nove abas:** restaura `Lançamentos` e fixa a sequência `Pra você | Top 10 | Em alta | Populares | Novidades | Lançamentos | Mais Aguardados | Mais bem avaliados | Calendário`.
+- **Descobrir / exclusão estrita:** `Em alta`, `Populares`, `Novidades`, `Lançamentos`, `Mais Aguardados` e `Mais bem avaliados` removem títulos vistos e da Watchlist antes do HTML, incluindo aliases canônicos. `Pra você` e o Calendário preservam as exceções autorizadas.
+- **Descobrir / ações e performance:** cards públicos recebem o `+` minimalista da Watchlist. As fontes TMDB usam stale-time de 5 minutos, revalidação em segundo plano e prefetch das abas para troca imediata quando o cache está quente.
+- **Pra Você:** os três slots Filme/Série/Anime de `Da sua Watchlist` e `100% novos` ficam compactos e padronizados em 2:3.
+- **F1 Hub:** Calendário e GPs anteriores da Visão Geral abrem drawer do GP. O detalhe consulta a classificação real e o resultado da corrida, exibindo Grid de Largada, Q1/Q2/Q3, chegada, Δ de posições, DNF e volta mais rápida.
+- **F1 / assistidos:** treino, sprint, classificação e corrida usam IDs `f1:temporada:etapa:sessão` e persistência própria por usuário em `user_f1_session_watch`, com RLS e RPCs `SECURITY INVOKER`.
+- **Backend / segurança:** o writer F1 `SECURITY DEFINER` criado na tentativa anterior foi removido; o contrato r314 fica restrito ao usuário autenticado.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r314-official.mjs`; runtime: `apps/web/runtime-r314-urgent-fixes.js.gz.b64`; regressões: `apps/web/test-r314.mjs` e `apps/web/test-r314-browser.mjs`.
 
 ## Web 1.0.104 / r313
 
@@ -113,7 +131,7 @@ Build oficial: `apps/web/build-r309-official.mjs`; runtime: `apps/web/runtime-r3
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r312 herda a r311, preserva o F1 já validado e assume como autoridade final o Descobrir, renovação de sessão, atualização viva do Perfil e filtros esportivos, mantendo o Android intacto.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r314 herda a baseline r313, assume a autoridade final de Perfil, Descobrir e detalhe da F1, e mantém o Android intacto.
 
 ## Regra de validação
 
