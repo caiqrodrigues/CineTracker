@@ -50,6 +50,7 @@ const probe=`<script>setTimeout(async()=>{try{
  const race={season:2026,round:8,raceName:'Spanish Grand Prix',date:'2026-05-31',time:'13:00:00Z',Circuit:{circuitName:'Circuit de Barcelona-Catalunya',Location:{locality:'Barcelona',country:'Spain'}},FirstPractice:{date:'2026-05-29',time:'11:30:00Z'},SecondPractice:{date:'2026-05-29',time:'15:00:00Z'},ThirdPractice:{date:'2026-05-30',time:'10:30:00Z'},Qualifying:{date:'2026-05-30',time:'14:00:00Z'}};
  const f=document.createElement('div');f.innerHTML=T.f1Calendar311({season:2026,schedule:[race]});document.body.appendChild(f);
  const raceButton=f.querySelector('[data-ct311-f1-race="2026-8"]');ok(raceButton&&raceButton.textContent.includes('Abrir corrida'),'F1 calendar race is not visibly clickable');
+ ok(T.raceCache.has('2026-8'),'F1 visible race lost its complete object before click');
  raceButton.click();await new Promise(r=>setTimeout(r,120));
  const modal=document.querySelector('[data-ct311-f1-modal]');ok(modal,'clicking F1 race did not open modal');
  ok(modal.textContent.includes('Spanish Grand Prix')&&modal.textContent.includes('Fim de semana'),'F1 complete race header/weekend missing');
