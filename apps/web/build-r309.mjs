@@ -58,6 +58,10 @@ js=once(js,
  'r288 labels'
 );
 
+/* Remove the same unauthorized tab from every older private producer/label map still shipped. */
+js=js.replaceAll("['releases','Lançamentos'],","").replaceAll("releases:'Lançamentos',","");
+if(js.includes("['releases','Lançamentos']")||js.includes("releases:'Lançamentos'"))throw new Error('r309 legacy Lançamentos authority survived');
+
 /* F1: retire the r257 six-tab producer and all of its delayed takeover behavior. */
 js=once(js,
  "const F1TABS257=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['drivers','Pilotos'],['teams','Equipes'],['circuits','Circuitos']];",
