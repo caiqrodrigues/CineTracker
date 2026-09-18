@@ -6,10 +6,19 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.101** | revision `r310-official-1.0.101`, package `1.0.101` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r310 |
+| Web | **1.0.102** | revision `r311-official-1.0.102`, package `1.0.102` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r311 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.102 / r311
+
+- Perfil: quatro controles clicáveis de estatísticas usam uma única versão visual baseada em `Eventos assistidos`.
+- F1: Calendário abre cada GP; detalhe inclui fim de semana, Grid de Largada, Resultado de Chegada e marcação por sessão.
+- Descobrir: as cinco abas públicas excluem vistos + Watchlist antes do paint e exibem `+ Watchlist` + `✓ Visto` em faixa estável abaixo do card.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v311.js` / `app-v311.css`; build: `apps/web/build-r311-official.mjs`; runtime: `apps/web/runtime-r311-profile-f1-discover.js`; regressões: `apps/web/test-r311.mjs` e `apps/web/test-r311-browser.mjs`.
 
 ## Web 1.0.101 / r310
 
