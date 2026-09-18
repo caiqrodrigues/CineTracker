@@ -2,6 +2,31 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.103 — 2026-09-18 — Web r312
+
+### Descobrir
+- Introduz shell único r312 com abas persistentes; loading altera somente `data-ct312-content`.
+- As cinco abas públicas filtram vistos e Watchlist antes de montar os cards.
+- `+ Watchlist` e `✓ Visto` ficam fora do card de mídia, com posição estática.
+- Títulos/metadados não usam ellipsis/corte e os rails têm scrollbar horizontal nativa.
+- `Pra Você` preserva 1+3+3 com geometria compacta.
+
+### Sessão
+- `sbApi` renova proativamente o token e repete uma única vez após `401/JWT expired`.
+- `tmdbFetch` herda o mesmo refresh/retry, evitando falhas longas após expiração da sessão.
+
+### Perfil
+- Garante `Jogos no Estádio` como botão do mesmo contrato de `Eventos assistidos`, inclusive quando o payload original não trouxe o card.
+- Atores Favoritos passam a ser lidos da tabela `favorite_actors` e atualizados em resposta ao evento de mudança; o caso real de Liam Neeson passa a depender do dado vivo, não da árvore r115 antiga.
+
+### Esportes / F1
+- Filtros de esporte ficam dentro do cabeçalho de `Próximos` e `Anteriores`, usando dinamicamente todos os itens de `payload.sports`.
+- F1 Calendário é conectado ao produtor r255 real e delega o detalhe completo/assistível à r311.
+
+### Build / validação
+- Web `1.0.103 / r312-official-1.0.103`; Android preservado em `1.0.20 / versionCode 10062`.
+- Chromium reproduz loading com abas persistentes, exclusões pessoais, Pra Você compacto, estádio clicável, Liam Neeson, 12 esportes e GP clicável.
+
 ## 1.0.102 — 2026-09-18 — Web r311
 
 ### Perfil / Estatísticas
