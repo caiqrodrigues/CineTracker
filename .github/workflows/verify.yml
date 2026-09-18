@@ -1,65 +1,66 @@
-name: Verify Web 1.0.98 r307 Production Truth
+name: Verify Web 1.0.99 r308 Discover F1 Profile Truth
 
 on:
   push:
-    branches: [main, 'fix/r307-production-truth-raw-frontier']
+    branches: [main, 'fix/r308-discover-f1-profile-truth']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_98_r307:
+  web_1_0_99_r308:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r307
+      - name: Version identity r308
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.98"' package.json
-          grep -Fq '"version": "1.0.98"' apps/web/package.json
-          grep -Fq 'build-r307-official.mjs' apps/web/package.json
-          test -f apps/web/build-r307.mjs
-          test -f apps/web/build-r307-official.mjs
-          test -f apps/web/runtime-r307-production-truth.js
-          test -f apps/web/test-r307.mjs
-          test -f apps/web/test-r307-browser.mjs
-      - name: Syntax r307 release chain
+          grep -Fq '"version": "1.0.99"' package.json
+          grep -Fq '"version": "1.0.99"' apps/web/package.json
+          grep -Fq 'build-r308-official.mjs' apps/web/package.json
+          test -f apps/web/build-r308.mjs
+          test -f apps/web/build-r308-official.mjs
+          test -f apps/web/runtime-r308-discover-f1-profile.js
+          test -f apps/web/test-r308.mjs
+          test -f apps/web/test-r308-browser.mjs
+      - name: Syntax r308 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r307-production-truth.js
-          node --check apps/web/build-r307.mjs
-          node --check apps/web/build-r307-official.mjs
-          node --check apps/web/test-r307.mjs
-          node --check apps/web/test-r307-browser.mjs
-      - name: Regression suite through r307 including Chromium interactions
+          node --check apps/web/runtime-r308-discover-f1-profile.js
+          node --check apps/web/build-r308.mjs
+          node --check apps/web/build-r308-official.mjs
+          node --check apps/web/test-r308.mjs
+          node --check apps/web/test-r308-browser.mjs
+      - name: Regression suite through r308 including Chromium interactions
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r307
+      - name: Final bundle identity r308
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r307-official.mjs
-          node --check dist/app-v307.js
-          CT_R307_SKIP_BUILD=1 node test-r307.mjs
-          test -f dist/app-v307.js
-          test -f dist/app-v307.css
-          grep -Fq 'app-v307.js' dist/index.html
-          grep -Fq 'app-v307.css' dist/index.html
+          node build-r308-official.mjs
+          node --check dist/app-v308.js
+          CT_R308_SKIP_BUILD=1 node test-r308.mjs
+          test -f dist/app-v308.js
+          test -f dist/app-v308.css
+          grep -Fq 'app-v308.js' dist/index.html
+          grep -Fq 'app-v308.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.98'
-            && r.revision==='r307-official-1.0.98'
-            && r.exact_home_watch===true
-            && r.raw_smackdown_frontier===true
-            && r.legacy_backlog_as_pending===false
+          const ok=r.version==='1.0.99'
+            && r.revision==='r308-official-1.0.99'
+            && r.discover_foryou_exact_3_plus_3===true
+            && r.discover_daily_swap===true
+            && r.discover_exclusions==='trending+popular+new+anticipated+top => seen+watchlist'
             && r.f1_drivers_tab===false
-            && r.sports_menu_below_f1===true
-            && r.top10_current_renderer_compact===true
-            && r.profile_watchlist_chevrons===false
+            && r.f1_teams_tab===false
+            && r.f1_calendar_data_event_id===true
+            && r.profile_delayed_r304_reconcile===false
+            && r.profile_watchlist_open_signal===false
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -77,19 +78,19 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_98_r307, android_current_source]
+    needs: [web_1_0_99_r308, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.98 r307
+      - name: Official production serves and boots 1.0.99 r308
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.98"' <<<"$BODY" && grep -Fq '"revision": "r307-official-1.0.98"' <<<"$BODY" && grep -Fq '"exact_home_watch": true' <<<"$BODY" && grep -Fq '"raw_smackdown_frontier": true' <<<"$BODY" && grep -Fq '"f1_drivers_tab": false' <<<"$BODY" && grep -Fq '"sports_menu_below_f1": true' <<<"$BODY" && grep -Fq '"top10_current_renderer_compact": true' <<<"$BODY" && grep -Fq '"profile_watchlist_chevrons": false' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v307.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.99"' <<<"$BODY"               && grep -Fq '"revision": "r308-official-1.0.99"' <<<"$BODY"               && grep -Fq '"discover_foryou_exact_3_plus_3": true' <<<"$BODY"               && grep -Fq '"f1_teams_tab": false' <<<"$BODY"               && grep -Fq '"f1_calendar_data_event_id": true' <<<"$BODY"               && grep -Fq '"profile_delayed_r304_reconcile": false' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v308.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR307='exact-home-watch+legacy-frontier-production-renderers'" <<<"$JS" && grep -Fq 'window.__ctR307EarlyShouldBypass=bypass307' <<<"$JS" && grep -Fq "const SPORT_TABS255=[['next','Próximos'],['previous','Anteriores'],['favorites','Favoritos'],['watched','Assistidos']];" <<<"$JS" && grep -Fq "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['teams','Equipes'],['circuits','Circuitos']];" <<<"$JS" && grep -Fq 'app-v307.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR308='discover-exact-3+3+personal-filter+f1-four-tabs+calendar-click+profile-first-paint'" <<<"$JS"                 && grep -Fq "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['circuits','Circuitos']];" <<<"$JS"                 && grep -Fq 'data-event-id' <<<"$JS"                 && grep -Fq 'app-v308.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
