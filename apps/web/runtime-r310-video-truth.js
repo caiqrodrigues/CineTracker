@@ -145,8 +145,9 @@ function actorBottomScroll310(){
  const controls=qa('[data-person],[data-person-id]',section),cards=[...new Set(controls.map(x=>x.closest('article,li,.card,.person-card,.actor-card')||x))];if(!cards.length)return false;
  const rail=cards[0].parentElement;if(!rail||!cards.every(x=>x.parentElement===rail))return false;
  try{actorSyncCleanup?.()}catch{}actorSyncCleanup=null;
- section.classList.add('ct310-actor-section');rail.classList.add('ct310-actor-rail');
- for(const x of [section,...qa('*',section)])if(x!==rail&&!x.classList.contains('ct310-actor-scroll'))x.classList.remove('ct306-actor-rail','ct305-actor-rail','ct304-actor-rail','ct257-local-x','actors-scroll','row-scroll');
+ section.classList.add('ct310-actor-section');
+ for(const x of [section,...qa('*',section)])if(!x.classList.contains('ct310-actor-scroll'))x.classList.remove('ct306-actor-rail','ct305-actor-rail','ct304-actor-rail','ct257-local-x','actors-scroll','row-scroll');
+ rail.classList.add('ct310-actor-rail');
  let proxy=q(':scope > .ct310-actor-scroll',section);if(!proxy){proxy=document.createElement('div');proxy.className='ct310-actor-scroll';proxy.innerHTML='<div class="ct310-actor-scroll-inner"></div>';rail.after(proxy)}
  const inner=q('.ct310-actor-scroll-inner',proxy);
  const syncSize=()=>{const w=Math.max(rail.scrollWidth,rail.clientWidth);inner.style.width=w+'px';proxy.hidden=w<=rail.clientWidth+2;proxy.scrollLeft=rail.scrollLeft};
