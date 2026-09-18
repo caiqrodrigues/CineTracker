@@ -6,8 +6,8 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.97** | `r306-official-1.0.97` | interações de detalhes, Top 10, F1 Hub, Esportes e Perfil estabilizados |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r306 |
+| Web | **1.0.99** | `r308-official-1.0.99` | Descobrir 1+3+3, filtros pessoais, F1 Calendário e Perfil estabilizados no renderer real |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r308 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
@@ -52,7 +52,7 @@ Build oficial: `apps/web/build-r306-official.mjs`; runtime: `apps/web/runtime-r3
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r306 herda a baseline da r305, remove sua autoridade final problemática e injeta uma única autoridade pré-boot para os pontos corrigidos, mantendo o Android intacto.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r308 herda a r307, aposenta as autoridades atrasadas que ainda brigavam pelo DOM e conecta uma autoridade final aos renderers vivos de Descobrir, F1 e Perfil, mantendo o Android intacto.
 
 ## Regra de validação
 
