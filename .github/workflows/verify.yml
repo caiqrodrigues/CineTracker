@@ -1,73 +1,72 @@
-name: Verify Web 1.0.104 r313 Discover Hidden Filter Sports Profile Stability
+name: Verify Web 1.0.105 r314 Video Truth Discover F1 Profile
 
 on:
   push:
-    branches: [main, 'fix/r313-discover-hidden-filters-sports-profile']
+    branches: [main, 'fix/r314-video-truth-discover-f1-profile-collapse']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_104_r313:
+  web_1_0_105_r314:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r313
+      - name: Version identity r314
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.104"' package.json
-          grep -Fq '"version": "1.0.104"' apps/web/package.json
-          grep -Fq 'build-r313-official.mjs' apps/web/package.json
-          test -f apps/web/build-r313.mjs
-          test -f apps/web/build-r313-official.mjs
-          test -f apps/web/runtime-r313-discover-sports-profile.js
-          test -f apps/web/test-r313.mjs
-          test -f apps/web/test-r313-browser.mjs
-      - name: Syntax r313 release chain
+          grep -Fq '"version": "1.0.105"' package.json
+          grep -Fq '"version": "1.0.105"' apps/web/package.json
+          grep -Fq 'build-r314-official.mjs' apps/web/package.json
+          test -f apps/web/build-r314.mjs
+          test -f apps/web/build-r314-official.mjs
+          test -f apps/web/runtime-r314-video-truth.js
+          test -f apps/web/test-r314.mjs
+          test -f apps/web/test-r314-browser.mjs
+      - name: Syntax r314 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r313-discover-sports-profile.js
-          node --check apps/web/build-r313.mjs
-          node --check apps/web/build-r313-official.mjs
-          node --check apps/web/test-r313.mjs
-          node --check apps/web/test-r313-browser.mjs
-      - name: Regression suite through r313 including hidden-filter/card/Sports/Profile video failures
+          node --check apps/web/runtime-r314-video-truth.js
+          node --check apps/web/build-r314.mjs
+          node --check apps/web/build-r314-official.mjs
+          node --check apps/web/test-r314.mjs
+          node --check apps/web/test-r314-browser.mjs
+      - name: Regression suite through r314 including latest Discover/F1/Profile video failures
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r313 approved Discover + Sports producer + Profile
+      - name: Final bundle identity r314 video truth
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r313-official.mjs
-          node --check dist/app-v313.js
-          CT_R313_SKIP_BUILD=1 node test-r313.mjs
-          test -f dist/app-v313.js
-          test -f dist/app-v313.css
-          grep -Fq 'app-v313.js' dist/index.html
-          grep -Fq 'app-v313.css' dist/index.html
+          node build-r314-official.mjs
+          node --check dist/app-v314.js
+          CT_R314_SKIP_BUILD=1 node test-r314.mjs
+          test -f dist/app-v314.js
+          test -f dist/app-v314.css
+          grep -Fq 'app-v314.js' dist/index.html
+          grep -Fq 'app-v314.css' dist/index.html
+          ! grep -Fq 'Seu registro' dist/app-v314.js
+          ! grep -Fq 'Fórmula 1 assistida' dist/app-v314.js
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.104'
-            && r.revision==='r313-official-1.0.104'
-            && r.discover_type_filter==='compact-hidden-toggle'
-            && r.discover_type_filter_default_hidden===true
-            && r.discover_custom_banner===false
-            && r.discover_card_renderer==='ct288-approved'
+          const ok=r.version==='1.0.105'
+            && r.revision==='r314-official-1.0.105'
             && r.discover_public_exclusion==='seen+watchlist+alias-before-markup'
-            && r.discover_public_watchlist_button===true
-            && r.discover_metadata_unclipped===true
-            && r.sports_inline_filter_owner==='paintSports255-producer'
-            && r.sports_inline_filter_tabs==='next+previous'
-            && r.sports_inline_filter_source==='payload.sports'
-            && r.profile_renderer==='r313-single-canonical'
-            && r.profile_single_paint===true
-            && r.profile_version_switching===false
-            && r.auth_expired_jwt_refresh_retry===true
+            && r.discover_calendar_renderer==='r314-date-groups-fixed-card-width'
+            && r.discover_calendar_narrow_slivers===false
+            && r.discover_foryou_renderer==='r314-compact-single-panel'
+            && r.discover_foryou_legacy_buttons===false
+            && r.f1_watch_summary_in_hub===false
             && r.f1_session_watch===true
+            && r.profile_stat_single_version===true
+            && r.profile_sports_collapse===true
+            && r.profile_live_actors===true
+            && r.sports_inline_filter_tabs==='next+previous'
+            && r.sports_jwt_refresh_retry===true
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -85,35 +84,34 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_104_r313, android_current_source]
+    needs: [web_1_0_105_r314, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.104 r313
+      - name: Official production serves and boots 1.0.105 r314
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.104"' <<<"$BODY" \
-              && grep -Fq '"revision": "r313-official-1.0.104"' <<<"$BODY" \
-              && grep -Fq '"discover_type_filter": "compact-hidden-toggle"' <<<"$BODY" \
-              && grep -Fq '"discover_type_filter_default_hidden": true' <<<"$BODY" \
-              && grep -Fq '"discover_custom_banner": false' <<<"$BODY" \
-              && grep -Fq '"discover_card_renderer": "ct288-approved"' <<<"$BODY" \
-              && grep -Fq '"sports_inline_filter_owner": "paintSports255-producer"' <<<"$BODY" \
-              && grep -Fq '"profile_renderer": "r313-single-canonical"' <<<"$BODY" \
-              && grep -Fq '"profile_version_switching": false' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v313.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.105"' <<<"$BODY" \
+              && grep -Fq '"revision": "r314-official-1.0.105"' <<<"$BODY" \
+              && grep -Fq '"discover_calendar_renderer": "r314-date-groups-fixed-card-width"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_renderer": "r314-compact-single-panel"' <<<"$BODY" \
+              && grep -Fq '"f1_watch_summary_in_hub": false' <<<"$BODY" \
+              && grep -Fq '"profile_sports_collapse": true' <<<"$BODY" \
+              && grep -Fq '"sports_jwt_refresh_retry": true' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v314.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR313='discover-approved-card+hidden-filter+sports-producer-filter+profile-single-render'" <<<"$JS" \
-                && grep -Fq "window.__ctR313EarlyCapture=true" <<<"$JS" \
-                && grep -Fq "ct288-filter-btn ct313-filter-btn" <<<"$JS" \
-                && grep -Fq "data-ct313-sport-filter" <<<"$JS" \
-                && grep -Fq "renderProfile=renderProfile313" <<<"$JS" \
-                && ! grep -Fq '<article class="ct312-card"' <<<"$JS" \
-                && ! grep -Fq '<div class="ct255-sport-filters">' <<<"$JS" \
-                && grep -Fq 'app-v313.js' <<<"$HTML"; then
-                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=7500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
+              if grep -Fq "window.__ctR314='discover-calendar-foryou-final+f1-no-watch-summary+profile-stats-collapse'" <<<"$JS" \
+                && grep -Fq "window.__ctR314EarlyCapture=true" <<<"$JS" \
+                && grep -Fq "function paintCalendar314" <<<"$JS" \
+                && grep -Fq "function paintForYou314" <<<"$JS" \
+                && grep -Fq "data-ct314-sports-collapse" <<<"$JS" \
+                && grep -Fq "async function sportsRpc314" <<<"$JS" \
+                && ! grep -Fq "Seu registro" <<<"$JS" \
+                && ! grep -Fq "Fórmula 1 assistida" <<<"$JS" \
+                && grep -Fq 'app-v314.js' <<<"$HTML"; then
+                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
