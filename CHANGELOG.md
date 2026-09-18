@@ -2,6 +2,34 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.103 — 2026-09-18 — Web r312
+
+### Descobrir
+- Substitui nas cinco abas públicas o card herdado r288/r291 por um card final r312 com altura natural; título/metadados quebram linha e a sinopse completa fica disponível sem ser cortada pelo trilho horizontal.
+- Normaliza identidades pessoais `movie:id`, `tv:id`, `tmdb-movie-id`, `tmdb-tv-id` e objetos TMDB antes da barreira final, impedindo vistos e itens da Watchlist de reaparecerem por diferenças de formato.
+- Mantém `+ Watchlist` e `✓ Visto` abaixo do card em posição estática.
+- Adiciona cache de três minutos e pré-aquecimento para trocas rápidas entre `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados`.
+- Reagrupa `Pra Você` em um único painel compacto, preservando o 1+3+3 e reduzindo as ações/Trocar.
+
+### Autenticação
+- Centraliza recuperação de sessão para chamadas `api`, `rpc`, `edge` e integrações que usam o token atual.
+- `JWT expired` dispara somente uma renovação compartilhada do refresh token e uma repetição da chamada original, evitando falha da tela de Esportes sem criar loop de retries.
+
+### Perfil
+- Reforça `Jogos no Estádio` como controle clicável por `data-ct299-history="stadium"`, preservando a mesma versão visual dos demais cards de estatística.
+- Ao adicionar ator favorito, invalida RAM e também `cinetracker:preload:r163:profile`, além de emitir `cinetracker:data-changed`; o próximo paint não pode reutilizar a lista de atores anterior.
+
+### Esportes
+- Expõe com segurança o estado/repaint da autoridade r255 para a r312.
+- Remove o filtro esportivo global herdado do produtor.
+- Em `Próximos` e `Anteriores`, adiciona um seletor horizontal inline ao lado do título, usando todos os esportes de `payload.sports` e fallback pelos `sport_slug` dos eventos.
+- A seleção altera `sport255.sport` e repinta o payload já carregado, sem nova busca.
+
+### Build / validação
+- Web atualizada para `1.0.103 / r312-official-1.0.103`; Android permanece `1.0.20 / versionCode 10062`.
+- Chromium cobre retry de JWT, identidades misturadas de vistos/Watchlist, texto não cortado, aba cacheada sem loader, Pra Você compacto, clique de estádio, invalidação de ator favorito e filtro de todos os esportes do payload.
+- F1 r311 permanece preservado com GP clicável, fim de semana completo e marcação por sessão.
+
 ## 1.0.102 — 2026-09-18 — Web r311
 
 ### Perfil / Estatísticas
