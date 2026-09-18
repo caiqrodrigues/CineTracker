@@ -31,8 +31,6 @@ for(const x of[
  "window.__ctWebBuild='1.0.98';window.__ctOfficialVersion='1.0.98';",
  "const REVISION='r307-official-1.0.98';",
  "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['teams','Equipes'],['circuits','Circuitos']];",
- "function ensureDriversData304(){",
- "function stabilizeProfile304(){",
  "const observer=new MutationObserver(ms=>{",
  "let obsQueued301=false;const app301=q301('#app');",
  "window.__ctR307EarlyShouldBypass=bypass307",
