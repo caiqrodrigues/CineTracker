@@ -2,6 +2,35 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.103 — 2026-09-18 — Web r312
+
+### Autenticação
+- Renova a sessão antes de o JWT vencer e repete uma única vez chamadas REST/Edge/TMDB que retornem erro de autenticação.
+- Compartilha uma única promessa de refresh para impedir trocas concorrentes do mesmo refresh token.
+- Corrige o cenário do vídeo em que Esportes terminava em `Falha ao carregar Esportes: JWT expired`.
+
+### Descobrir
+- As cinco abas públicas usam renderer próprio r312, sem reaproveitar a geometria r288 que cortava título, legenda e ações.
+- Vistos e itens da Watchlist são excluídos antes do HTML; a autoridade pessoal é fail-closed e não libera catálogo sem filtro quando não consegue validar a biblioteca.
+- `+ Watchlist` e `✓ Visto` ficam em uma faixa fixa sob o card.
+- Cache curto de catálogo/resultado e pré-carregamento em idle reduzem a demora na troca de abas.
+- `Pra Você` volta a um trilho compacto com slots fixos e botões proporcionais.
+
+### Perfil
+- Remove o prepaint do cache r163 antes da consulta canônica.
+- `Jogos no Estádio` passa a existir no primeiro paint como botão navegável, usando a contagem esportiva canônica.
+- Mantém o mesmo contrato visual para `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist`.
+- Corrige favoritos de atores que ficavam presos no snapshot anterior quando o JWT expirava; Liam Neeson já estava persistido corretamente no backend.
+
+### Esportes
+- O seletor de modalidade passa para o cabeçalho de `Próximos` e `Anteriores`.
+- O catálogo do seletor é derivado de todas as modalidades entregues pelo payload do sistema, não de uma lista limitada pelo print de referência.
+- Preserva o F1 Hub clicável/assistível da r311.
+
+### Build / validação
+- Web atualizada para `1.0.103 / r312-official-1.0.103`; Android permanece `1.0.20 / versionCode 10062`.
+- Chromium cobre corte de texto/ações, exclusão pessoal, retorno de aba em cache, Pra Você compacto, botão de estádio e filtro de todos os esportes.
+
 ## 1.0.102 — 2026-09-18 — Web r311
 
 ### Perfil / Estatísticas
