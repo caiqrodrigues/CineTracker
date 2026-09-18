@@ -83,10 +83,11 @@ function paintPublic312(list,tab){
 const sourceCache312=new Map(),viewCache312=new Map();let publicGen312=0,prefetchScheduled312=false;
 const cacheKey312=tab=>`${String(discover?.type||'all')}|${tab}`;
 async function sourcePublic312(tab,force=false){
- if(bridge?.source)return rows(await bridge.source(tab,force));
  const k=cacheKey312(tab),old=sourceCache312.get(k);if(!force&&old&&Date.now()-old.at<120000)return old.rows;
- const fn=window.__ctR300Test?.sourceRows300;if(typeof fn!=='function')throw new Error('Fonte pública indisponível.');
- const v=rows(await fn(tab));sourceCache312.set(k,{at:Date.now(),rows:v});return v;
+ let v;
+ if(bridge?.source)v=rows(await bridge.source(tab,force));
+ else{const fn=window.__ctR300Test?.sourceRows300;if(typeof fn!=='function')throw new Error('Fonte pública indisponível.');v=rows(await fn(tab))}
+ sourceCache312.set(k,{at:Date.now(),rows:v});return v;
 }
 function prefetch312(current){
  if(prefetchScheduled312)return;prefetchScheduled312=true;
