@@ -63,14 +63,14 @@ const probe=`<script>setTimeout(async()=>{try{
 
  history.replaceState({},'','/sports');
  const sports=document.createElement('main');sports.innerHTML='<div data-ct255-sports><div class="ct255-sport-filters"><button>global old</button></div><section class="panel ct255-sports-feed"><div class="panel-head"><h2>Próximos</h2><small>4</small></div><div class="ct255-sport-grid"></div></section></div>';document.body.appendChild(sports);
- sport255.tab='next';sport255.sport='all';sport255.payload={sports:[{slug:'football',icon:'⚽',name:'Futebol'},{slug:'basketball',icon:'🏀',name:'Basquete'},{slug:'tennis',icon:'🎾',name:'Tênis'},{slug:'volleyball',icon:'🏐',name:'Vôlei'}]};
+ T.setSportsState({tab:'next',sport:'all',payload:{sports:[{slug:'football',icon:'⚽',name:'Futebol'},{slug:'basketball',icon:'🏀',name:'Basquete'},{slug:'tennis',icon:'🎾',name:'Tênis'},{slug:'volleyball',icon:'🏐',name:'Vôlei'}]}});
  ok(window.__ctR312.sportsInline(),'inline sports filter failed');
  ok(!sports.querySelector('.ct255-sport-filters'),'old global sports filter survived');
  const filter=sports.querySelector('.ct312-sport-filter');ok(filter&&filter.closest('.panel-head'),'sports filter is not beside Próximos');
  ok(filter.querySelectorAll('[data-ct312-sport-filter]').length===5,'not all payload sports + Todos were rendered');
  ok(filter.textContent.includes('Futebol')&&filter.textContent.includes('Basquete')&&filter.textContent.includes('Tênis')&&filter.textContent.includes('Vôlei'),'payload sports missing');
- sport255.tab='previous';window.__ctR312.sportsInline();ok(sports.querySelector('.ct312-sport-filter'),'Anteriores lost inline filter');
- sport255.tab='watched';window.__ctR312.sportsInline();ok(!sports.querySelector('.ct312-sport-filter'),'inline filter leaked into Assistidos');
+ T.setSportsState({tab:'previous'});window.__ctR312.sportsInline();ok(sports.querySelector('.ct312-sport-filter'),'Anteriores lost inline filter');
+ T.setSportsState({tab:'watched'});window.__ctR312.sportsInline();ok(!sports.querySelector('.ct312-sport-filter'),'inline filter leaked into Assistidos');
  sports.remove();
 
  document.documentElement.dataset.ct312done='1';
