@@ -32,12 +32,11 @@ for(const x of[
  "const REVISION='r307-official-1.0.98';",
  "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['teams','Equipes'],['circuits','Circuitos']];",
  "const observer=new MutationObserver(ms=>{",
- "let obsQueued301=false;const app301=q301('#app');",
  "window.__ctR307EarlyShouldBypass=bypass307",
  "\nboot();"
 ])must(js,x);
 
-/* r293/r301 kept repainting Discover/Profile after the visible render. r308 is the single final owner. */
+/* r293 still repainted Pra Você after the visible render. r308 becomes the single final owner. */
 js=once(js,
  "window.addEventListener('click',e=>{if(e.target?.closest?.('[data-ct263-discover-tab=\"foryou\"]'))setTimeout(()=>void refresh(true),180)},true);",
  "window.__ctR308LegacyForYouClickRefreshDisabled=true;",
@@ -55,13 +54,6 @@ js=once(js,
  "void loadRecent296();",
  'r296 asynchronous foryou repaint'
 );
-js=between(js,
- "let obsQueued301=false;const app301=q301('#app');",
- "\ndocument.addEventListener('click',e=>{",
- "let obsQueued301=false;const app301=q301('#app');\n\ndocument.addEventListener('click',e=>{",
- 'r301 route mutation observer'
-);
-
 /* The F1 model now has only the information that is not already inside Classificações. */
 js=once(js,
  "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['teams','Equipes'],['circuits','Circuitos']];",
