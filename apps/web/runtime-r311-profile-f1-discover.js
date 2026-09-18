@@ -49,9 +49,7 @@ function unifyProfileStats311(root=q('[data-profile]')){
  const base=[...ref.classList].filter(x=>!/^ct(?:300|301|306|308|309|310|311)-/.test(x));
  for(const label of labels){
   const card=statCard311(root,label);if(!card)continue;
-  for(const cls of [...card.classList])if(/^ct(?:300|301|306|308|309|310)-/.test(cls))card.classList.remove(cls);
-  for(const cls of base)card.classList.add(cls);
-  card.classList.add('ct311-stat-unified');card.dataset.ct311Stat=norm(label).replace(/ /g,'-');
+  card.className=[...base,'ct311-stat-unified'].join(' ');card.dataset.ct311Stat=norm(label).replace(/ /g,'-');
   scrubStat311(card);
   if(card.tagName!=='BUTTON'&&card.tagName!=='A'){card.setAttribute('role','button');if(!card.hasAttribute('tabindex'))card.setAttribute('tabindex','0')}
  }
