@@ -2,6 +2,28 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.102 — 2026-09-18 — Web r311
+
+### Perfil / Estatísticas
+- Unifica `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist` pela mesma classe/contrato visual final, usando `Eventos assistidos` como referência.
+- Neutraliza as autoridades visuais tardias r300/r301, impedindo que os cards troquem de versão após o primeiro paint.
+- Preserva os contratos de clique já existentes para histórico esportivo, estádio e Watchlists.
+
+### F1 Hub
+- O Calendário passa a renderizar cada GP como botão clicável `Abrir corrida`, em vez de artigos sem ação.
+- O modal de corrida reúne fim de semana, Grid de Largada e Resultado de Chegada.
+- Sessões já iniciadas podem ser marcadas/desmarcadas individualmente como assistidas usando IDs estáveis `f1:temporada:etapa:sessão` e `cinetracker_sports_watch_set_v296`.
+- O objeto completo de cada GP permanece estável entre repaints do calendário, evitando botão visível sem dados ao clicar.
+
+### Descobrir
+- `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` têm um único renderer final.
+- A exclusão de vistos e Watchlist ocorre antes da montagem do HTML.
+- Remove o `+` legado sobreposto ao card; `+ Watchlist` e `✓ Visto` ficam em uma faixa estável abaixo do card e fora do elemento de mídia.
+
+### Build / validação
+- Web atualizada para `1.0.102 / r311-official-1.0.102`; Android permanece `1.0.20 / versionCode 10062`.
+- Regressão Chromium exige igualdade visual dos quatro controles do Perfil, clique real do GP, persistência da sessão de F1 e ações estáveis/exclusões do Descobrir.
+
 ## 1.0.101 — 2026-09-18 — Web r310
 
 ### Descobrir / autoridades tardias
