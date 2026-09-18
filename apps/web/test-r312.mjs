@@ -52,9 +52,10 @@ ok(r.profile_favorite_actor_persistent_cache_invalidation===true,'release actor 
 
 /* Sports filter must be dynamic from the actual system sports catalog. */
 ok(js.includes("function sportsCatalog312"),'Sports catalog builder missing');
+ok(js.includes("state:sport255,paintSports:paintSports255"),'r312 Sports is not bound to the real r255 owner');
 ok(js.includes("for(const s of rows(p?.sports))"),'Sports filter not sourced from payload.sports');
 ok(js.includes("data-ct312-sport-filter"),'Sports filter control missing');
-ok(js.includes("if(!['next','previous'].includes(String(sport255.tab)))"),'Sports filter leaks outside Próximos/Anteriores');
+ok(js.includes("if(!['next','previous'].includes(String(state.tab)))"),'Sports filter leaks outside Próximos/Anteriores');
 ok(r.sports_filter_all_system_sports===true,'release all-system-sports');
 
 /* Preserve r311 F1 and Android. */
