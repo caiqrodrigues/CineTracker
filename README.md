@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.104** | `r313-official-1.0.104` | Descobrir no card aprovado com filtro oculto, filtro esportivo no produtor e Perfil de versão única |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
+| Web | **1.0.105** | `r314-official-1.0.105` | vídeo real: Descobrir final, F1 sem resumo assistido transitório e Perfil estável com Recolher em Esportes |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r314 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.105 / r314
+
+A r314 parte da r313 já publicada e usa o vídeo real mais recente como fonte de verdade.
+
+- **Descobrir / cinco abas públicas:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` aplicam vistos + Watchlist + alias antes do HTML. Os cards usam largura fixa, título/metadados sem corte e `+ Watchlist` + `✓ Visto` em faixa compacta e estática.
+- **Calendário:** deixa de delegar ao renderer legado. Cada data possui rail horizontal próprio com cards de largura normal; não existem mais slivers estreitos.
+- **Pra Você:** deixa de depender do markup r309. Os mesmos pools exatos 1+3+3 são renderizados em um único painel compacto, com ações pequenas e `Trocar` controlado pela r314.
+- **F1 Hub:** o produtor que emitia temporariamente `Seu registro / Fórmula 1 assistida` é removido no build. O histórico continua acessível em Esportes → Assistidos, nunca dentro do Hub F1.
+- **Perfil:** `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist` ficam com o mesmo contrato visual e clicável, sem setas/versões concorrentes. `Esportes assistidos` ganha `Recolher / Expandir`.
+- **Esportes:** preserva os filtros dinâmicos de Próximos/Anteriores vindos de `payload.sports` e passa todos os RPCs esportivos pelo retry de sessão expirada.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r314-official.mjs`; runtime: `apps/web/runtime-r314-video-truth.js`; regressões: `apps/web/test-r314.mjs` e `apps/web/test-r314-browser.mjs`.
 
 ## Web 1.0.104 / r313
 
