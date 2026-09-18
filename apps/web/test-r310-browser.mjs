@@ -36,7 +36,7 @@ const probe=`<script>setTimeout(async()=>{try{
  const p=document.createElement('main');p.innerHTML='<div data-profile><section class="panel"><div class="panel-head"><h2>Esportes assistidos</h2></div><div class="stats"><div class="stat"><small>Eventos assistidos</small><b>59</b></div><div class="stat"><small>Jogos no Estádio</small><b>1</b></div></div></section><section class="panel actors-scroll ct306-actor-rail"><div class="panel-head"><h2>Atores Favoritos</h2></div><div class="row ct305-actor-rail"><article class="card"><button data-person="1">A</button></article><article class="card"><button data-person="2">B</button></article><article class="card"><button data-person="3">C</button></article><article class="card"><button data-person="4">D</button></article></div></section></div>';document.body.appendChild(p);
  ok(T.sportsHistoryCount(Array.from({length:68},(_,i)=>({id:i+1,is_watched:true})))===68,'sports canonical count fixture');
  T.patchProfileSportsCount(68);ok(p.querySelector('.stat b').textContent==='68','Profile stayed on stale 59');
- T.actorBottomScroll310();const section=p.querySelector('section.actors-scroll'),rail=section.querySelector('.row'),proxy=section.querySelector('.ct310-actor-scroll');
+ const section=p.querySelector('section.actors-scroll'),rail=section.querySelector('.row');T.actorBottomScroll310();const proxy=section.querySelector('.ct310-actor-scroll');
  ok(proxy&&rail.nextElementSibling===proxy,'actor scrollbar proxy is not below cards');
  ok(!section.classList.contains('ct306-actor-rail')&&!section.classList.contains('actors-scroll'),'outer actor scroller authority survived');
  ok(!rail.classList.contains('ct305-actor-rail')&&rail.classList.contains('ct310-actor-rail'),'real actor rail authority wrong');
