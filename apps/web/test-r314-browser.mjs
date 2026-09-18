@@ -21,7 +21,7 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(shell.querySelectorAll('[data-ct314-tab]').length===9,'shell does not render nine tabs');
  ok(shell.textContent.includes('Lançamentos'),'Lançamentos label absent');
  const holder=document.createElement('div');holder.innerHTML=T.card314(media(4,'movie','Elegível'));document.body.appendChild(holder);
- const plus=holder.querySelector('[data-ct288-add]');ok(plus&&plus.textContent.trim()==='+','minimal + missing from Discover card');
+ const plus=holder.querySelector('[data-ct288-add]');ok(plus&&plus.textContent.trim()==='+','minimal + missing from Discover card; html='+holder.innerHTML);
  holder.remove();shell.remove();
  // PROFILE: Watchlist cards are static, top panels stable and actors identical with only rail overflow.
  history.replaceState({},'','/profile');
