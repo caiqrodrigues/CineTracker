@@ -101,7 +101,7 @@ jobs:
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
               if grep -Fq "window.__ctR312='single-owner-discover+auth-retry+live-profile+inline-sports-filters'" <<<"$JS" \
                 && grep -Fq 'data-ct312-content' <<<"$JS" \
-                && grep -Fq 'return sbApi(path, options, false)' <<<"$JS" \
+                && grep -Fq 'return api(path,options,false)' <<<"$JS" \
                 && grep -Fq 'favorite_actors?select=id,tmdb_person_id,actor_name,profile_path,created_at' <<<"$JS" \
                 && grep -Fq 'data-ct312-sport' <<<"$JS" \
                 && grep -Fq 'app-v312.js' <<<"$HTML"; then
