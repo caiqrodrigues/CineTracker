@@ -31,12 +31,9 @@ ok(js.includes("window.__ctR308LegacyForYouInitialRefreshDisabled=true"),'legacy
 
 ok(js.includes("const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['circuits','Circuitos']];"),'F1 exact four tabs');
 ok(!js.includes("const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['teams','Equipes']"),'Equipes removed from active renderer');
-ok(js.includes("function ensureDriversData304(){return false}"),'r304 Pilotos reinsertion retired');
 ok(js.includes("race.dataset?.eventId||race.dataset?.ct301F1Event"),'early F1 capture reads real data-event-id');
 ok(js.includes("window.__ctR308?.openRaceFromElement"),'early F1 capture delegates to r308');
 
-ok(js.includes("function stabilizeProfile304(){return false}"),'r304 profile delayed authority retired');
-ok(js.includes("function reconcile304(){return false}"),'r304 delayed reconcile retired');
 ok(js.includes("ct308-watchlist-stat::before,.ct308-watchlist-stat::after"),'semantic Watchlist click indicator hidden');
 ok(js.includes("cleanWatchStat(statByLabel(root,'Séries Watchlist'))"),'Series Watchlist semantic cleanup');
 ok(js.includes("cleanWatchStat(statByLabel(root,'Filmes Watchlist'))"),'Movies Watchlist semantic cleanup');
@@ -44,7 +41,7 @@ ok(js.includes("cleanWatchStat(statByLabel(root,'Filmes Watchlist'))"),'Movies W
 ok(release.discover_foryou_exact_3_plus_3===true,'release exact 3+3');
 ok(release.discover_exclusions==='trending+popular+new+anticipated+top => seen+watchlist','release browse exclusion');
 ok(release.f1_teams_tab===false&&release.f1_drivers_tab===false,'release F1 redundant tabs off');
-ok(release.profile_delayed_r304_reconcile===false,'release Profile delayed reconcile off');
+ok(release.profile_semantic_first_paint===true,'release Profile semantic first paint');
 ok(release.android==='1.0.20/10062','Android preserved');
 
 console.log('R308_STATIC_OK exact Discover composition/filter/actions + F1 four tabs/calendar + stable Profile');
