@@ -128,7 +128,7 @@ const prev=JSON.parse(releaseRaw),release={
  f1_calendar_data_event_id:true,
  f1_calendar_grid_and_result:true,
  profile_single_final_owner:true,
- profile_delayed_r304_reconcile:false,
+ profile_semantic_first_paint:true,
  profile_watchlist_open_signal:false,
  profile_watchlist_click_indicator:'invisible',
  android:'1.0.20/10062'
