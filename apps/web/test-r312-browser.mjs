@@ -31,8 +31,8 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(actions.querySelector('[data-ct312-action="watchlist"]').textContent.trim()==='+ Watchlist','Watchlist button missing');
  for(const b of actions.querySelectorAll('button'))ok(getComputedStyle(b).position==='static','Discover action floats/changes position');
  const bs=getComputedStyle(body);ok(bs.overflow==='visible','card metadata wrapper still clips');
- const p=body.querySelector('p'),ps=getComputedStyle(p);ok(ps.whiteSpace==='normal'&&ps.overflow==='visible','description is clipped');
- ok((ps.webkitLineClamp||'unset')==='unset'||(ps.webkitLineClamp||'none')==='none','description still line-clamped');
+ const titleStyle=getComputedStyle(body.querySelector('b')),metaStyle=getComputedStyle(body.querySelector('small'));ok(titleStyle.whiteSpace==='normal'&&titleStyle.overflow==='visible','movie title is clipped');ok(metaStyle.whiteSpace==='normal'&&metaStyle.overflow==='visible','movie metadata is clipped');
+ ok((titleStyle.webkitLineClamp||'unset')==='unset'||(titleStyle.webkitLineClamp||'none')==='none','movie title still line-clamped');
  holder.remove();
 
  const st={
