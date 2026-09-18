@@ -77,7 +77,7 @@ function strictFresh(x,a){
 }
 function watchEligible(x,a){
  if(!validMedia(x))return false;const k=keyOf(x);
- try{if(a?.seen?.has?.(k))return false;if(a?.watch?.has&& !a.watch.has(k))return false}catch{}
+ try{if(a?.seen?.has?.(k))return false}catch{}
  return true;
 }
 function today(){try{return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}catch{return new Date().toISOString().slice(0,10)}}
@@ -276,9 +276,9 @@ const style=document.createElement('style');style.id='ct-web-r309-video-truth';s
 [data-ct255-f1tab="drivers"],[data-ct255-f1tab="teams"],[data-ct257-f1tab="drivers"],[data-ct257-f1tab="teams"]{display:none!important}
 [data-ct309-owned] .ct291-card-footer,[data-ct309-owned] .ct295-card-footer,[data-ct309-owned] .ct288-state,[data-ct309-owned] .ct301-watch-action,[data-ct309-owned] .ct308-actions{display:none!important}
 [data-ct309-owned] .ct309-card,.ct309-slot .ct288-card,.ct309-daily-card .ct288-card{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
-.ct309-actions{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto!important;align-items:center!important;gap:5px!important;width:100%!important;margin-top:5px!important}
+.ct309-actions{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:center!important;gap:5px!important;width:100%!important;margin-top:5px!important}
 .ct309-actions .chip{position:static!important;inset:auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;min-height:30px!important;height:30px!important;padding:4px 7px!important;border-radius:9px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-.ct309-actions .ct309-swap{min-width:76px!important}
+.ct309-actions .ct309-swap{grid-column:1/-1!important;width:100%!important;min-width:0!important}
 .ct309-fy-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;align-items:start!important}
 .ct309-slot{min-width:0!important}.ct309-slot-head h3{margin:0 0 6px!important;font-size:13px!important}.ct309-daily-card{width:min(100%,158px)}
 .ct309-profile-stable .ct309-watchlist-stat::before,.ct309-profile-stable .ct309-watchlist-stat::after{content:none!important;display:none!important}
