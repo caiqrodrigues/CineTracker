@@ -41,8 +41,8 @@ async function hydrateWatch(rows){
 function freshEligible(x){if(!validMedia(x))return false;try{if(typeof M.blocked==='function'&&M.blocked(x))return false}catch{}try{return typeof S.strictEligible==='function'?S.strictEligible(x):true}catch{return false}}
 function watchEligible(x){if(!validMedia(x))return false;const k=keyOf(x);try{const c=M.cache;if(c?.seen?.has?.(k))return false;if(c?.watch?.has&& !c.watch.has(k))return false}catch{}return true}
 function group(rows){const g={movie:[],series:[],anime:[]};for(const x of dedupe(rows)){const c=category(x);if(g[c])g[c].push(x)}return g}
-function composeExact(watchRows,freshRows){
- const wg=group(asRows(watchRows).filter(watchEligible)),fg=group(asRows(freshRows).filter(freshEligible));
+function composeExact(watchRows,freshRows,{trust=false}={}){
+ const wg=group(asRows(watchRows).filter(trust?validMedia:watchEligible)),fg=group(asRows(freshRows).filter(trust?validMedia:freshEligible));
  const selectedFresh={movie:fg.movie[0]||null,series:fg.series[0]||null,anime:fg.anime[0]||null};
  const selectedKeys=new Set(Object.values(selectedFresh).filter(Boolean).map(keyOf));
  const dailyPool=fg.movie.filter(x=>!selectedKeys.has(keyOf(x))).slice(0,12);
