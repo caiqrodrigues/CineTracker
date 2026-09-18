@@ -32,6 +32,9 @@ for(const x of[
  "\nboot();"
 ])must(js,x);
 
+/* Register r311 exact-control capture before the inherited r306 early capture. */
+const early311=String.raw`(()=>{if(window.__ctR311EarlyCapture)return;window.__ctR311EarlyCapture=true;window.addEventListener('click',e=>{try{const fn=window.__ctR311EarlyHandle;if(typeof fn!=='function')return;if(fn(e.target,e)){e.preventDefault();e.stopImmediatePropagation()}}catch{}},true)})();`;
+
 /* Profile visual versions must never race after first paint. */
 js=replaceBetween(js,
  "function styleWatchlistStats300(){",
@@ -58,6 +61,7 @@ js=once(js,
 
 /* Final runtime is evaluated after every inherited owner and before boot. */
 js=once(js,'\nboot();','\n'+runtime+'\nboot();','r311 insertion');
+js=early311+'\n'+js;
 js=once(js,
  "window.__ctWebBuild='1.0.101';window.__ctOfficialVersion='1.0.101';",
  "window.__ctWebBuild='1.0.102';window.__ctOfficialVersion='1.0.102';",
@@ -94,6 +98,7 @@ for(const x of[
  "function styleWatchlistStats300(){return false}",
  "function stabilizeProfile301(){return false}",
  "window.__ctR311='profile-stat-single-version+f1-clickable-weekend+discover-public-single-renderer'",
+ "window.__ctR311EarlyCapture=true",
  "profile-stat-single-version",
  "data-ct311-action=\"watchlist\"",
  "data-ct311-f1-race",
