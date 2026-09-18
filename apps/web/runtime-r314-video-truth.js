@@ -125,7 +125,7 @@ function paintPublic314(list,tab,p=personal){
 function dateKey314(x){return String(x?.calendar_date||x?.release_date||x?.first_air_date||x?.raw_tmdb?.release_date||x?.raw_tmdb?.first_air_date||'').slice(0,10)||'Sem data'}
 function dateLabel314(k){if(k==='Sem data')return k;try{return new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(new Date(k+'T12:00:00'))}catch{return k}}
 function paintCalendar314(list,p=personal){
- const h=discoverHost();if(!h)return false,groups=new Map();
+ const h=discoverHost();if(!h)return false;const groups=new Map();
  for(const x of filterType314(list)){const d=dateKey314(x);if(!groups.has(d))groups.set(d,[]);groups.get(d).push(x)}
  const ordered=[...groups.entries()].sort(([a],[b])=>a==='Sem data'?1:b==='Sem data'?-1:a.localeCompare(b));
  h.innerHTML=`<div class="ct314-calendar">${ordered.map(([d,g])=>`<section class="panel ct314-calendar-day"><div class="panel-head"><h2>${esc(dateLabel314(d))}</h2><small>${g.length}</small></div><div class="ct314-calendar-rail">${g.map(x=>itemMarkup314(x,{saved:p?.watch?.has?.(keyOf(x)),seen:p?.seen?.has?.(keyOf(x))})).join('')}</div></section>`).join('')||'<div class="empty">Nenhum lançamento neste período.</div>'}</div>`;
