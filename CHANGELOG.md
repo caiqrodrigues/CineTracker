@@ -16,7 +16,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - Mantém `Calendário`, `Pra Você` e `Top 10` explicitamente fora dessa exclusão geral.
 
 ### F1 Hub
-- Remove `Pilotos` e `Equipes` do modelo ativo e aposenta a rotina r304 que reinseria `Pilotos` após o render. O Hub fica com `Visão geral`, `Calendário`, `Classificações` e `Circuitos`.
+- Remove `Pilotos` e `Equipes` do modelo ativo que chega à produção. O Hub fica com `Visão geral`, `Calendário`, `Classificações` e `Circuitos`, e a r308 também saneia qualquer botão redundante que ainda seja emitido por uma autoridade herdada.
 - Corrige a autoridade de clique do Calendário para ler `data-event-id`; IDs como `2026-16` resolvem temporada/rodada corretamente antes de abrir `Grid de Largada` e `Resultado de Chegada`.
 
 ### Perfil
