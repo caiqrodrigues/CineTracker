@@ -9,7 +9,7 @@ window.__ctR312Sports='next-previous-inline-all-system-sports-filter';
 window.__ctR312Profile='stadium-click-contract+favorite-actor-cache-invalidated';
 window.__ctR312Android='preserved-1.0.20-10062';
 
-const R=window.__ctR288R263||{},M=window.__ctR295Test||{},R309=window.__ctR309||{},R310=window.__ctR310||{};
+const R=window.__ctR288R263||{},M=window.__ctR295Test||{},R309=window.__ctR309||{},R310=window.__ctR310||{},R255=window.__ctR255Test||{};
 const q=(s,r=document)=>r?.querySelector?.(s)||null,qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
 const rows=v=>Array.isArray(v)?v:[];
 const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
@@ -253,20 +253,19 @@ function sportsCatalog312(p){
  return [...map.values()];
 }
 function sportsFilterMarkup312(p){
- const list=sportsCatalog312(p),active=String(sport255?.sport||'all');
+ const state=R255.state||{},list=sportsCatalog312(p),active=String(state.sport||'all');
  return `<div class="ct312-sport-filter" data-ct312-sport-filter-rail><button type="button" class="ct312-sport-chip ${active==='all'?'active':''}" data-ct312-sport-filter="all"><span>◉</span><b>Todos</b></button>${list.map(s=>`<button type="button" class="ct312-sport-chip ${active===s.slug?'active':''}" data-ct312-sport-filter="${esc(s.slug)}"><span>${esc(s.icon||'🏆')}</span><b>${esc(s.name||s.slug)}</b></button>`).join('')}</div>`;
 }
 function decorateSportsFilters312(){
- if(routeNow()!=='sports'||typeof sport255==='undefined')return false;const root=q('[data-ct255-sports]');if(!root)return false;
+ const state=R255.state;if(routeNow()!=='sports'||!state)return false;const root=q('[data-ct255-sports]');if(!root)return false;
  qa('.ct255-sport-filters',root).forEach(x=>x.remove());qa('[data-ct312-sport-filter-rail]',root).forEach(x=>x.remove());
- if(!['next','previous'].includes(String(sport255.tab)))return true;
+ if(!['next','previous'].includes(String(state.tab)))return true;
  const head=q('.ct255-sports-feed .panel-head',root);if(!head)return false;
- const h=q('h2',head);if(!h)return false;h.insertAdjacentHTML('afterend',sportsFilterMarkup312(sport255.payload||{}));return true;
+ const h=q('h2',head);if(!h)return false;h.insertAdjacentHTML('afterend',sportsFilterMarkup312(state.payload||{}));return true;
 }
 function selectSport312(slug,repaint=true){
- if(typeof sport255==='undefined')return'';sport255.sport=String(slug||'all');if(repaint&&typeof paintSports255==='function')paintSports255();return String(sport255.sport);
+ const state=R255.state;if(!state)return'';state.sport=String(slug||'all');if(repaint)R255.paintSports?.();return String(state.sport);
 }
-try{if(typeof paintSports255==='function'){const base=paintSports255;paintSports255=function(){const out=base.apply(this,arguments);decorateSportsFilters312();return out}}}catch{}
 
 /* r311's pre-legacy early capture remains the first listener. Point it at r312. */
 const early311Base=window.__ctR311EarlyHandle;
@@ -275,7 +274,7 @@ function exactClick312(target,e){
  const action=target.closest('[data-ct312-action]');if(action){void persistDiscover312(action);return true}
  const retry=target.closest('[data-ct312-retry]');if(retry){void buildPublic312(String(discover?.tab||''),true);return true}
  const swap=target.closest('[data-ct312-fy-swap]');if(swap){swapForYou312(String(swap.dataset.ct312FySwap||''));return true}
- const sf=target.closest('[data-ct312-sport-filter]');if(sf&&typeof sport255!=='undefined'){selectSport312(String(sf.dataset.ct312SportFilter||'all'),true);return true}
+ const sf=target.closest('[data-ct312-sport-filter]');if(sf&&R255.state){selectSport312(String(sf.dataset.ct312SportFilter||'all'),true);return true}
  return typeof early311Base==='function'?!!early311Base(target,e):false;
 }
 window.__ctR311EarlyHandle=exactClick312;
