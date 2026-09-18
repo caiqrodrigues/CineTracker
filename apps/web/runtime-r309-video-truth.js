@@ -259,7 +259,7 @@ function actorRail309(){
  const section=heading?.closest('section,.panel,article');if(!section)return false;
  const controls=qa('[data-person],[data-person-id]',section),cards=[...new Set(controls.map(x=>x.closest('article,li,.card,.person-card,.actor-card')||x))];if(!cards.length)return false;
  const rail=cards[0].parentElement;if(!rail||!cards.every(x=>x.parentElement===rail))return false;
- qa('.ct306-actor-rail,.ct305-actor-rail,.ct257-local-x',section).forEach(x=>{if(x!==rail)x.classList.remove('ct306-actor-rail','ct305-actor-rail','ct257-local-x')});
+ for(const x of [section,...qa('.ct306-actor-rail,.ct305-actor-rail,.ct257-local-x',section)])if(x!==rail)x.classList.remove('ct306-actor-rail','ct305-actor-rail','ct257-local-x');
  section.classList.add('ct309-actor-section');rail.classList.add('ct309-actor-rail');
  cards.forEach(card=>{card.classList.add('ct309-actor-card');const image=q('img,.poster,.avatar,[style*="background-image"]',card);if(image)image.classList.add('ct309-actor-image')});
  return true;
