@@ -17,6 +17,7 @@ ok(js.includes("window.__ctR310='delayed-authorities-retired+canonical-watchlist
 
 ok(js.includes("function ensureDiscoverTabs252(){return false}"),'r252 tab injector not retired');
 ok(!js.includes("add('releases','Lançamentos','anticipated')"),'r252 can recreate Lançamentos');
+ok(!js.includes("['releases','Lançamentos']"),'legacy release tab pair survived final bundle');
 ok(js.includes("function guardBrowse300(){return false}"),'r300 guard not retired');
 ok(!js.includes("function guardBrowse300(tab,delay=2200)"),'r300 delayed recovery survived');
 ok(js.includes("function queueRefresh(){return false}"),'r293 queued repaint not retired');
