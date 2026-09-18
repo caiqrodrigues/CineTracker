@@ -4,18 +4,20 @@
 
 **Última atualização:** 2026-09-18  
 **Branch de produção:** `main`  
-**Release Web atual:** **1.0.102 / `r311-official-1.0.102`**  
+**Release Web atual:** **1.0.103 / `r312-official-1.0.103`**  
 **Android atual:** **1.0.20 / versionCode `10062`**  
 **Backend:** Supabase production compartilhado Web/Android  
 **Windows:** não lançado
 
 ## 1. Estado Web
 
-A r311 é a baseline Web atual. Ela herda as correções r307–r310 e consolida as três autoridades que o vídeo mais recente ainda mostrou divergentes:
+A r312 é a baseline Web candidata atual. Ela herda a r311 e corrige os problemas reproduzidos no vídeo mais recente:
 
-- **Perfil:** `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist` usam uma única versão visual final. Os contratos de clique são preservados e autoridades visuais r300/r301 ficam inertes.
-- **F1 Hub:** o Calendário renderiza GPs clicáveis. O detalhe exibe o fim de semana completo, Grid de Largada e Resultado de Chegada; sessões iniciadas podem ser marcadas/desmarcadas como assistidas.
-- **Descobrir:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` excluem vistos e Watchlist antes do HTML e usam somente a faixa final `+ Watchlist` + `✓ Visto` abaixo do card.
+- **Descobrir:** shell r312 único/persistente; cinco abas públicas excluem vistos + Watchlist antes do HTML; Pra Você é compacto 1+3+3.
+- **Sessão:** JWT é renovado e a chamada é repetida uma única vez após expiração.
+- **Perfil:** Jogos no Estádio é garantido como botão; Atores Favoritos usa a tabela viva `favorite_actors`.
+- **Esportes:** filtros de Próximos/Anteriores vêm de `payload.sports` e ficam no cabeçalho da própria seção.
+- **F1 Hub:** Calendário real r255 abre o detalhe completo/assistível r311.
 
 Produção Web: `https://mycinetracker.vercel.app`.
 
@@ -36,14 +38,14 @@ Produção Web: `https://mycinetracker.vercel.app`.
 - `versionName`: `1.0.20`
 - `versionCode`: `10062`
 
-A r311 é Web-only e deve preservar essa baseline.
+A r312 é Web-only e deve preservar essa baseline.
 
 ## 4. Artefatos e validação da r311
 
-- Build oficial: `apps/web/build-r311-official.mjs`
-- Runtime final: `apps/web/runtime-r311-profile-f1-discover.js`
-- Gate estático: `apps/web/test-r311.mjs`
-- Chromium: `apps/web/test-r311-browser.mjs`
+- Build oficial: `apps/web/build-r312-official.mjs`
+- Runtime final: `apps/web/runtime-r312-single-owner.js`
+- Gate estático: `apps/web/test-r312.mjs`
+- Chromium: `apps/web/test-r312-browser.mjs`
 - Workflow: `.github/workflows/verify.yml`
 - Assets finais: `app-v311.js` / `app-v311.css`
 
