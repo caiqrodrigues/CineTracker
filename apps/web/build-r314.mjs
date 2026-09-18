@@ -33,14 +33,16 @@ const card314Opts=card314Sig[1].replace(/\bwatch\s*=\s*[^,}]+/,'watch=false');
 runtime=runtime.replace(card314Sig[0],`function card314(x,{${card314Opts}}={}){`);
 const minimalPlusHelper=String.raw`
 function ct314MinimalPlus(html){
- const src=String(html||'');
- const out=src.replace(
-  /<div class="ct291-card-footer[^"]*"[^>]*>\\s*<button type="button" class="ct291-playlist" data-ct288-add="([^"]+)" aria-label="Adicionar à Watchlist">\\+ Playlist<\\/button>\\s*<\\/div>/g,
-  '<button type="button" class="ct288-state ct314-minimal-plus" data-ct288-add="$1" aria-label="Adicionar à Watchlist">+</button>'
- );
- return out===src?src:out.replace('ct291-has-footer','ct291-no-footer ct314-minimal-card');
+ const src=String(html||''),marker='<div class="ct291-card-footer';
+ const start=src.indexOf(marker);if(start<0)return src;
+ const attr='data-ct288-add="',at=src.indexOf(attr,start);if(at<0)return src;
+ const idStart=at+attr.length,idEnd=src.indexOf('"',idStart);if(idEnd<0)return src;
+ const close=src.indexOf('</div>',idEnd);if(close<0)return src;
+ const key=src.slice(idStart,idEnd);
+ const button='<button type="button" class="ct288-state ct314-minimal-plus" data-ct288-add="'+key+'" aria-label="Adicionar à Watchlist">+</button>';
+ return (src.slice(0,start)+button+src.slice(close+6)).replace('ct291-has-footer','ct291-no-footer ct314-minimal-card');
 }
-`;
+`
 if(!runtime.includes('ct288Card(x,{rank,watch,add:!watch})'))throw new Error('r314 card call not found');
 runtime=minimalPlusHelper+runtime.replace(
  'ct288Card(x,{rank,watch,add:!watch})',
