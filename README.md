@@ -6,12 +6,28 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.102** | `r311-official-1.0.102` | Perfil unificado, F1 clicável/assistível e Descobrir público estável |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r311 |
+| Web | **1.0.103** | `r312-official-1.0.103` | Descobrir sem cortes, sessão resiliente, filtros de Esportes e Perfil atualizado |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r312 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.103 / r312
+
+A r312 usa o vídeo real de 18/09/2026 como fonte de verdade para as divergências que permaneceram após a r311.
+
+- **Descobrir / cinco abas públicas:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` usam cards próprios da r312, sem depender da geometria legada r288/r291. Título e metadados quebram linha normalmente, a sinopse completa pode ser expandida e o trilho horizontal não corta o conteúdo inferior.
+- **Descobrir / regra pessoal:** vistos e Watchlist são normalizados para uma identidade única `movie:id` / `tv:id`, incluindo formatos herdados como `tmdb-movie-id`, e são excluídos antes do HTML. Os itens elegíveis mantêm `+ Watchlist` e `✓ Visto` em fluxo normal abaixo do card.
+- **Descobrir / velocidade:** as cinco abas públicas usam cache de três minutos e pré-aquecimento das abas vizinhas; ao retornar a uma aba já carregada, o conteúdo é pintado imediatamente sem voltar ao spinner.
+- **Pra Você:** mantém a regra exata Indicação do Dia + Filme/Série/Anime da Watchlist + Filme/Série/Anime 100% novos, agora dentro de um único painel compacto, com ações de 30 px e `Trocar` de 28 px.
+- **Autenticação:** RPC/API/Edge passam por renovação compartilhada de sessão. Ao receber `JWT expired`, a Web renova o refresh token uma única vez e repete a mesma chamada, evitando a tela quebrada de Esportes.
+- **Perfil:** `Jogos no Estádio` recebe explicitamente o contrato clicável do histórico presencial. A inclusão de ator favorito remove também o cache persistente r163 e dispara mudança de dados, permitindo que o Perfil reflita imediatamente o novo ator.
+- **Esportes:** o filtro antigo global é aposentado. `Próximos` e `Anteriores` exibem um seletor horizontal dentro do cabeçalho do feed, construído dinamicamente de todos os esportes presentes em `payload.sports` e dos slugs efetivamente retornados nos eventos.
+- **F1 preservado:** o Calendário clicável, detalhe completo do fim de semana, Grid/Resultado e marcação por sessão da r311 permanecem ativos.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r312-official.mjs`; runtime: `apps/web/runtime-r312-video-truth.js`; regressões: `apps/web/test-r312.mjs` e `apps/web/test-r312-browser.mjs`.
 
 ## Web 1.0.102 / r311
 
@@ -82,7 +98,7 @@ Build oficial: `apps/web/build-r309-official.mjs`; runtime: `apps/web/runtime-r3
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r311 herda a r310 e consolida autoridades finais para Perfil, F1 e as cinco abas públicas do Descobrir, mantendo o Android intacto.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r312 herda a r311 e substitui as dependências visuais remanescentes do Descobrir, torna a autenticação resiliente e liga Perfil/Esportes aos estados canônicos, mantendo o Android intacto.
 
 ## Regra de validação
 
