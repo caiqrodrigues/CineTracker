@@ -28,9 +28,9 @@ runtime=gunzipSync(Buffer.from(runtime.trim(),'base64')).toString('utf8');
 // r314's first cut left card314's default watch mode enabled, so the browser
 // regression rendered a saved-state check instead of data-ct288-add.
 const card314Sig=runtime.match(/function card314\(x,\{([^}]*)\}=\{\}\)\{/);
-if(!card314Sig||!\/\\bwatch\\s*=\/.test(card314Sig[1]))throw new Error('r314 card314 signature not found');
-const card314Opts=card314Sig[1].replace(/\\bwatch\\s*=\\s*[^,}]+/,'watch=false');
-runtime=runtime.replace(card314Sig[0],`function card314(x,{\${card314Opts}}={}){`);
+if(!card314Sig||!/\bwatch\s*=/.test(card314Sig[1]))throw new Error('r314 card314 signature not found');
+const card314Opts=card314Sig[1].replace(/\bwatch\s*=\s*[^,}]+/,'watch=false');
+runtime=runtime.replace(card314Sig[0],`function card314(x,{${card314Opts}}={}){`);
 const early314=`(()=>{if(window.__ctR314EarlyCapture)return;window.__ctR314EarlyCapture=true;window.addEventListener('click',e=>{try{const fn=window.__ctR314EarlyHandle;if(typeof fn!=='function')return;if(fn(e.target,e)){e.preventDefault();e.stopImmediatePropagation()}}catch{}},true)})();`;
 js=once(js,'\nboot();','\n'+runtime+'\nboot();','r314 insertion');
 js=early314+'\n'+js;
