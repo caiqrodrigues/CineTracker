@@ -19,7 +19,7 @@ ok(js.includes("window.__ctR312='discover-owned-cards+auth-refresh+sports-inline
 ok(js.includes("s.includes('jwt expired')"),'JWT-expired detector');
 ok(js.includes("token?grant_type=refresh_token"),'refresh-token flow');
 ok(js.includes("return run();"),'same-request retry');
-ok(js.includes("auth_refresh_once_per_failure"),'release auth retry marker');
+ok(r.auth_refresh_once_per_failure===true,'release auth retry marker');
 
 /* Public Discover must not depend on legacy ct288 card markup. */
 ok(js.includes('function card312('),'owned Discover card missing');
