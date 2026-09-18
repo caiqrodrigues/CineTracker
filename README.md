@@ -6,12 +6,28 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.102** | `r311-official-1.0.102` | Perfil unificado, F1 clicável/assistível e Descobrir público estável |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r311 |
+| Web | **1.0.103** | `r312-official-1.0.103` | Descobrir estável, sessão renovável, Perfil vivo e filtros esportivos inline |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r312 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.103 / r312
+
+A r312 parte do último vídeo real de 18/09/2026 e substitui a r311 como candidata Web, preservando o F1 clicável já validado.
+
+- **Descobrir / shell único:** as oito abas permanecem visíveis durante carregamento e troca de aba; somente a linha de status e o conteúdo mudam.
+- **Descobrir / cinco abas públicas:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` excluem vistos e Watchlist antes da montagem do HTML, usando Watchlist completa, dashboard e exclusões pessoais.
+- **Descobrir / cards:** título e metadados deixam de ser truncados por regras legadas; `+ Watchlist` e `✓ Visto` ficam numa faixa fixa abaixo do card e participam do mesmo scroll horizontal nativo.
+- **Pra Você:** mantém os pools exatos Filme/Série/Anime da r309, porém com layout r312 compacto, sem painéis ou botões gigantes.
+- **Sessão:** erros de JWT expirado renovam a sessão pelo refresh token e repetem a operação uma única vez.
+- **Perfil:** `Jogos no Estádio` é garantido como botão idêntico a `Eventos assistidos`. Atores favoritos são lidos diretamente de `favorite_actors`; gravações nessa tabela invalidam o Perfil e atualizam a lista.
+- **Esportes:** `Próximos` e `Anteriores` recebem filtro horizontal interativo dentro do próprio cabeçalho, com `Todos` mais todos os esportes retornados por `payload.sports`; não há lista manual fixa.
+- **F1:** preserva a r311: GPs clicáveis, detalhe completo, grid/resultado e marcação individual das sessões como assistidas.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r312-official.mjs`; runtime final é injetado por `runtime-r312-video-truth.js.gz.b64`; regressões: `apps/web/test-r312.mjs` e `apps/web/test-r312-browser.mjs`.
 
 ## Web 1.0.102 / r311
 
@@ -82,7 +98,7 @@ Build oficial: `apps/web/build-r309-official.mjs`; runtime: `apps/web/runtime-r3
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r311 herda a r310 e consolida autoridades finais para Perfil, F1 e as cinco abas públicas do Descobrir, mantendo o Android intacto.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r312 herda a r311, preserva o F1 já validado e assume como autoridade final o Descobrir, renovação de sessão, atualização viva do Perfil e filtros esportivos, mantendo o Android intacto.
 
 ## Regra de validação
 
