@@ -160,7 +160,7 @@ const iso311=d=>d instanceof Date&&!Number.isNaN(d.getTime())?d.toISOString():nu
 function f1Key311(season,round){return `${Number(season)}-${Number(round)}`}
 function f1RaceTitle311(r){return String(r?.raceName||r?.name||r?.title||`GP ${r?.round||''}`).trim()}
 function f1Calendar311(d){
- const schedule=rows(d?.schedule),season=Number(d?.season||f1Season311());raceCache311.clear();
+ const schedule=rows(d?.schedule),season=Number(d?.season||f1Season311());
  return `<div class="ct311-f1-calendar">${schedule.map((r,i)=>{const round=Number(r?.round||i+1),key=f1Key311(season,round),start=f1Date311(r),title=f1RaceTitle311(r);raceCache311.set(key,{...r,season,round,title});return `<button type="button" class="ct311-f1-race" data-ct311-f1-race="${esc(key)}" data-season="${season}" data-round="${round}"><b>${round}. ${esc(title)}</b><span>${esc(r?.Circuit?.circuitName||'Circuito')} · ${esc(r?.Circuit?.Location?.country||'')}</span><small>${start?esc(start.toLocaleString('pt-BR')):'Data indisponível'}</small><em>Abrir corrida</em></button>`}).join('')||'<div class="empty">Calendário da Fórmula 1 indisponível.</div>'}</div>`;
 }
 try{
@@ -243,7 +243,7 @@ try{if(typeof paintF1255==='function'){const base=paintF1255;paintF1255=async fu
 window.addEventListener('click',e=>{
  const action=e.target?.closest?.('[data-ct311-action]');if(action){e.preventDefault();e.stopImmediatePropagation();void persistDiscover311(action);return}
  const retry=e.target?.closest?.('[data-ct311-retry]');if(retry){e.preventDefault();e.stopImmediatePropagation();void buildPublic311(String(discover?.tab||''),true);return}
- const raceBtn=e.target?.closest?.('[data-ct311-f1-race]');if(raceBtn){e.preventDefault();e.stopImmediatePropagation();const race=raceCache311.get(String(raceBtn.dataset.ct311F1Race||''));void openRace311(race);return}
+ const raceBtn=e.target?.closest?.('[data-ct311-f1-race]');if(raceBtn){e.preventDefault();e.stopImmediatePropagation();const key=String(raceBtn.dataset.ct311F1Race||''),race=raceCache311.get(key);if(race)void openRace311(race);else{const season=Number(raceBtn.dataset.season||0),round=Number(raceBtn.dataset.round||0),fallback=rows(typeof f1255!=='undefined'?f1255?.data?.schedule:[]).find(x=>Number(x?.round||0)===round);if(fallback)void openRace311({...fallback,season,round,title:f1RaceTitle311(fallback)})}return}
  const watch=e.target?.closest?.('[data-ct311-f1-watch]');if(watch){e.preventDefault();e.stopImmediatePropagation();void toggleF1Session311(watch);return}
  if(e.target?.closest?.('[data-ct311-f1-close]')||e.target?.matches?.('[data-ct311-f1-modal]')){e.preventDefault();e.stopImmediatePropagation();closeRace311()}
 },true);
