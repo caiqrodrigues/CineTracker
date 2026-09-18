@@ -26,6 +26,8 @@ const PUBLIC=new Set(['trending','popular','new','anticipated','top']);
 const TABS=[['foryou','Pra você'],['top10','Top 10'],['trending','Em alta'],['popular','Populares'],['new','Novidades'],['anticipated','Mais Aguardados'],['top','Mais bem avaliados'],['calendar','Calendário']];
 const LABELS=Object.fromEntries(TABS);
 let filterOpen=false,loadToken=0,personal={at:0,blocked:new Set(),aliases:new Set()},personalTask=null,sourceCache=new Map(),testBridge=null;
+function jwtExpired313(e){return /jwt\s*expired|token\s*expired|invalid\s*jwt/i.test(String(e?.message||e||''))}
+async function rpc313(name,args){try{return await rpc(name,args)}catch(e){if(!jwtExpired313(e))throw e;await restoreSession();return rpc(name,args)}}
 
 function discoverRoot(){return q('[data-ct313-discover]')}
 function discoverHost(){return q('[data-ct313-content]')||q('[data-ct263-discover-content]')}
@@ -61,8 +63,8 @@ async function personal313(force=false){
   const jobs=[
    Promise.resolve(M.authority?.(!!force)).catch(()=>null),
    Promise.resolve(R310.canonicalWatchlist?.(!!force)).catch(()=>null),
-   Promise.resolve(typeof rpc==='function'?rpc('cinetracker_profile_media_dashboard_v0991',{}):null).catch(()=>null),
-   Promise.resolve(typeof rpc==='function'?rpc('cinetracker_discovery_exclusions_v0994',{}):null).catch(()=>null)
+   Promise.resolve(typeof rpc==='function'?rpc313('cinetracker_profile_media_dashboard_v0991',{}):null).catch(()=>null),
+   Promise.resolve(typeof rpc==='function'?rpc313('cinetracker_discovery_exclusions_v0994',{}):null).catch(()=>null)
   ];
   const [a,w,dash,ex]=await Promise.all(jobs);
   for(const k of a?.seen||[])out.blocked.add(String(k));for(const k of a?.watch||[])out.blocked.add(String(k));
@@ -146,9 +148,9 @@ function canonicalStats313(root,count){
 async function renderProfile313(seq){
  setApp(shell('Perfil','Estatísticas, biblioteca, favoritos e atividade.','profile','<div class="page" data-profile>'+loading('Carregando Perfil...')+'</div>'));
  const cached=profileCache||ct163Read('profile')||null;
- const fullP=Promise.resolve(rpc('cinetracker_profile_payload_v0997',{p_tz:tz()})).catch(()=>null);
- const histP=Promise.resolve(rpc('cinetracker_sports_watch_history_v296',{})).catch(()=>[]);
- const stadiumP=Promise.resolve(rpc('cinetracker_sports_stadium_summary_v296',{})).catch(()=>null);
+ const fullP=Promise.resolve(rpc313('cinetracker_profile_payload_v0997',{p_tz:tz()})).catch(()=>null);
+ const histP=Promise.resolve(rpc313('cinetracker_sports_watch_history_v296',{})).catch(()=>[]);
+ const stadiumP=Promise.resolve(rpc313('cinetracker_sports_stadium_summary_v296',{})).catch(()=>null);
  const [full,hist,stadium]=await Promise.all([fullP,histP,stadiumP]);if(seq!==navSeq||routeNow()!=='profile')return;
  const data=full||cached;if(!data){const root=q('[data-profile]');if(root)root.innerHTML=fail('Falha ao carregar Perfil.','profile');return}
  const merged={...data,sports_stats:{...(data?.sports_stats||{})}};if(Array.isArray(hist))merged.sports_stats.watched_events=hist.filter(x=>x?.is_watched!==false).length;
@@ -192,5 +194,5 @@ const style=document.createElement('style');style.id='ct-web-r313';style.textCon
 
 window.__ctR313={renderDiscover:renderDiscover313,loadDiscover:loadDiscover313,renderProfile:renderProfile313,canonicalStats:canonicalStats313,ensureStadium:ensureStadium313,version:'1.0.104'};
 window.__ctR313EarlyHandle=earlyHandle313;
-window.__ctR313Test={shellHtml313,filterPublic313,standardCard313,paintPublic313,canonicalStats313,ensureStadium313,setPersonal(v){personal={at:Date.now(),blocked:new Set(v?.blocked||[]),aliases:new Set(v?.aliases||[])}},setDiscover(tab,type='all'){if(discover){discover.tab=tab;discover.type=type}},setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}};
+window.__ctR313Test={shellHtml313,filterPublic313,standardCard313,paintPublic313,canonicalStats313,ensureStadium313,jwtExpired313,setPersonal(v){personal={at:Date.now(),blocked:new Set(v?.blocked||[]),aliases:new Set(v?.aliases||[])}},setDiscover(tab,type='all'){if(discover){discover.tab=tab;discover.type=type}},setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}};
 })();
