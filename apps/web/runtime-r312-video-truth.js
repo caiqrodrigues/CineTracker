@@ -140,8 +140,8 @@ function card312(x,{watch=false,compact=false}={}){
 /* Cached public tabs: instant paint on return, refresh quietly when stale. */
 const publicRows312=new Map();let publicToken312=0;
 async function sourcePublic312(tab,force=false){
- if(bridge?.sourceRows)return rows(await bridge.sourceRows(tab,force));
  const hit=publicRows312.get(tab);if(!force&&hit&&Date.now()-hit.at<180000)return hit.rows;
+ if(bridge?.sourceRows){const out=rows(await bridge.sourceRows(tab,force));publicRows312.set(tab,{at:Date.now(),rows:out});return out;}
  let out=null;
  if(typeof window.__ctR300Test?.sourceRows300==='function')out=await window.__ctR300Test.sourceRows300(tab);
  if(!Array.isArray(out))throw new Error('Fonte do Descobrir indisponível');
@@ -257,6 +257,9 @@ function decorateSportsFilters312(){
  const head=q('.ct255-sports-feed .panel-head',root);if(!head)return false;
  const h=q('h2',head);if(!h)return false;h.insertAdjacentHTML('afterend',sportsFilterMarkup312(sport255.payload||{}));return true;
 }
+function selectSport312(slug,repaint=true){
+ if(typeof sport255==='undefined')return'';sport255.sport=String(slug||'all');if(repaint&&typeof paintSports255==='function')paintSports255();return String(sport255.sport);
+}
 try{if(typeof paintSports255==='function'){const base=paintSports255;paintSports255=function(){const out=base.apply(this,arguments);decorateSportsFilters312();return out}}}catch{}
 
 /* r311's pre-legacy early capture remains the first listener. Point it at r312. */
@@ -266,7 +269,7 @@ function exactClick312(target,e){
  const action=target.closest('[data-ct312-action]');if(action){void persistDiscover312(action);return true}
  const retry=target.closest('[data-ct312-retry]');if(retry){void buildPublic312(String(discover?.tab||''),true);return true}
  const swap=target.closest('[data-ct312-fy-swap]');if(swap){swapForYou312(String(swap.dataset.ct312FySwap||''));return true}
- const sf=target.closest('[data-ct312-sport-filter]');if(sf&&typeof sport255!=='undefined'){sport255.sport=String(sf.dataset.ct312SportFilter||'all');if(typeof paintSports255==='function')paintSports255();return true}
+ const sf=target.closest('[data-ct312-sport-filter]');if(sf&&typeof sport255!=='undefined'){selectSport312(String(sf.dataset.ct312SportFilter||'all'),true);return true}
  return typeof early311Base==='function'?!!early311Base(target,e):false;
 }
 window.__ctR311EarlyHandle=exactClick312;
@@ -296,12 +299,12 @@ const style=document.createElement('style');style.id='ct-web-r312-video-truth';s
 
 window.__ctR312={
  authRetry:authRetry312,refreshAuth:refreshAuth312,personal:personalAuthority312,filterPublic:filterPublic312,buildPublic:buildPublic312,buildForYou:buildForYou312,
- profileContracts:profileContracts312,invalidateProfile:invalidateProfile312,decorateSportsFilters:decorateSportsFilters312,sportsCatalog:sportsCatalog312,
+ profileContracts:profileContracts312,invalidateProfile:invalidateProfile312,decorateSportsFilters:decorateSportsFilters312,sportsCatalog:sportsCatalog312,selectSport:selectSport312,
  setBridge(v){bridge=v&&typeof v==='object'?v:null},version:'1.0.103'
 };
 window.__ctR312Test={
  parseKey312,filterPublic312,card312,paintPublic312,forYouModel312,paintForYou312,sportsCatalog312,sportsFilterMarkup312,profileContracts312,jwtExpired312,authRetry312,
- setPersonal(v){personal312={at:Date.now(),seen:new Set(v?.seen||[]),watch:new Set(v?.watch||[])}},
+ setPersonal(v){personal312={at:Date.now(),seen:new Set(v?.seen||[]),watch:new Set(v?.watch||[])}},selectSport312,
  setBridge(v){bridge=v&&typeof v==='object'?v:null},
  get personal(){return personal312}
 };
