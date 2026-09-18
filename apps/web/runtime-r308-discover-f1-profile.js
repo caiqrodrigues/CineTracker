@@ -105,8 +105,9 @@ async function buildForYou(force=false){
   const [page1,watch]=await Promise.all([page1P,watchP,recentP.then(()=>null).then(()=>page1P)]);
   if(token!==fyToken||routeNow()!=='discover'||String(discover.tab)!=='foryou')return false;
   let fresh=dedupe(page1.flat()).filter(freshEligible),draft=composeExact(watch,fresh);
-  const need=[];if(draft.freshPools.movie.length<2)need.push('movie');if(!draft.freshPools.series.length)need.push('series');if(!draft.freshPools.anime.length)need.push('anime');
+  const need=[];if(draft.freshPools.movie.length<3)need.push('movie');if(!draft.freshPools.series.length)need.push('series');if(!draft.freshPools.anime.length)need.push('anime');
   if(need.length){const extra=await Promise.all(need.map(k=>freshPage(k,2)));fresh=dedupe([...fresh,...extra.flat()]).filter(freshEligible);draft=composeExact(watch,fresh)}
+  if(draft.dailyPool.length<2){const moreMovies=await freshPage('movie',3);fresh=dedupe([...fresh,...moreMovies]).filter(freshEligible);draft=composeExact(watch,fresh)}
   if(token!==fyToken)return false;
   fyState=draft;fyAt=Date.now();discover.forYou={watch:Object.values(draft.watch).filter(Boolean),fresh:Object.values(draft.fresh).filter(Boolean),picks:draft.daily?[draft.daily]:[]};
   paintForYou();void recordVisible();
@@ -212,11 +213,11 @@ try{if(typeof renderProfile==='function'){const base=renderProfile;renderProfile
 
 const style=document.createElement('style');style.id='ct-web-r308-discover-f1-profile';style.textContent=`
 [data-ct308-owned] .ct291-card-footer,[data-ct308-owned] .ct295-card-footer,[data-ct308-owned] .ct291-slot-footer,[data-ct308-owned] .ct288-state,[data-ct308-owned] .ct301-watch-action{display:none!important}
-.ct308-actions{display:flex!important;align-items:center!important;gap:6px!important;width:100%!important;margin-top:4px!important}
-.ct308-actions .chip{position:static!important;inset:auto!important;min-height:28px!important;height:28px!important;padding:4px 8px!important;white-space:nowrap!important;line-height:1!important}
-.ct308-actions .ct308-swap{margin-left:auto!important}
-.ct308-fy-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;overflow:visible!important}
-.ct308-fy-grid>.ct288-slot{width:auto!important;min-width:0!important;max-width:none!important}
+.ct308-actions{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:6px!important;width:100%!important;max-width:158px!important;margin-top:4px!important}
+.ct308-actions .chip{position:static!important;inset:auto!important;min-width:0!important;min-height:28px!important;height:28px!important;padding:4px 7px!important;white-space:nowrap!important;line-height:1!important}.ct308-actions .ct308-action{flex:1 1 0!important}
+.ct308-actions .ct308-swap{flex:1 0 100%!important;margin-left:0!important}
+.ct308-fy-grid{display:grid!important;grid-template-columns:repeat(3,158px)!important;justify-content:start!important;gap:10px!important;overflow:visible!important}
+.ct308-fy-grid>.ct288-slot{width:158px!important;min-width:158px!important;max-width:158px!important}
 .ct308-daily-card{max-width:var(--ct-media-card-w,158px)}
 .ct308-watchlist-stat::before,.ct308-watchlist-stat::after{content:none!important;display:none!important}
 .ct308-watchlist-stat :is(.stat-link-icon,.stat-arrow,.open-arrow,.profile-card-arrow,[data-open-arrow],[data-profile-open-icon]){display:none!important}
