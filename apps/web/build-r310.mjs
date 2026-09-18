@@ -57,13 +57,6 @@ js=replaceBetween(js,
  "function queueRefresh(){return false}",
  'r293 queued repaint'
 );
-{
- const marker="setTimeout(()=>void refresh(true),180)",m=js.indexOf(marker);
- if(m<0)throw new Error('r310 missing r293 delayed For You click repaint');
- const a=js.lastIndexOf("window.addEventListener('click'",m),b=js.indexOf("\n",m);
- if(a<0||b<0)throw new Error('r310 cannot isolate r293 delayed For You click repaint');
- js=js.slice(0,a)+js.slice(b+1);
-}
 
 /* Profile: canonical full payload + exact sports history are resolved before the one visible paint. */
 const profile310=String.raw`const ct309ProfileBound=(p,ms,fallback=null)=>Promise.race([Promise.resolve(p),new Promise(r=>setTimeout(()=>r(fallback),ms))]);
