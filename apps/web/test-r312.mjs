@@ -28,9 +28,9 @@ ok(!js.includes("data-ct312-content><div class=\\\"ct312-loading\\\"></div></div
 
 ok(js.includes("function ct312JwtExpired"),'JWT expiry detector');
 ok(js.includes("async function ct312RefreshAccess"),'refresh flow');
-ok(js.includes("return sbApi(path, options, false)"),'REST retry once');
-ok(js.includes("return tmdbFetch(params, false)"),'TMDB retry once');
-ok(!js.includes("return sbApi(path, options, true)"),'REST retry loop');
+ok(js.includes("return api(path,options,false)"),'REST retry once');
+ok(js.includes("return tmdb(path,params,false)"),'TMDB retry once');
+ok(!js.includes("return api(path,options,true)"),'REST retry loop');
 
 ok(js.includes("window.__ctR312R255="),'r255 lexical bridge');
 ok(js.includes("sports_filter_location")||r.sports_filter_location==='inside-next+previous-heading','sports filter release flag');
