@@ -13,7 +13,13 @@ let [html,js,css,sw,releaseRaw,payload]=await Promise.all([
  readFile(resolve(dist,'release.json'),'utf8'),
  readFile(resolve(root,'runtime-r312-video-truth.js.gz.b64'),'utf8')
 ]);
-const runtime=gunzipSync(Buffer.from(payload.trim(),'base64')).toString('utf8');
+let runtime=gunzipSync(Buffer.from(payload.trim(),'base64')).toString('utf8');
+{
+ const end='\n})();',i=runtime.lastIndexOf(end);
+ if(i<0)throw new Error('r312 runtime closure not found');
+ const hook="\ntry{window.__ctR312Test.setSportsState=function(v){if(v&&typeof v==='object'){if(v.tab!=null)sport255.tab=String(v.tab);if(v.sport!=null)sport255.sport=String(v.sport);if(v.payload!=null)sport255.payload=v.payload}}}catch{}\n";
+ runtime=runtime.slice(0,i)+hook+runtime.slice(i);
+}
 new Function(runtime);
 const count=(s,x)=>s.split(x).length-1;
 const once=(s,from,to,label=from)=>{const n=count(s,from);if(n!==1)throw new Error('r312 expected one '+label+', found '+n);return s.replace(from,()=>to)};
@@ -89,6 +95,7 @@ for(const x of[
  "cinetracker_sports_stadium_summary_v296",
  "data-ct312-sport-filter",
  "sport255?.payload?.sports",
+ "setSportsState=function(v)",
  "window.__ctR311='profile-stat-single-version+f1-clickable-weekend+discover-public-single-renderer'",
  "const version='1.0.103',revision='r312-official-1.0.103';"
 ])must(js,x);
