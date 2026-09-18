@@ -39,11 +39,6 @@ for(const x of[
  "\nboot();"
 ])must(js,x);
 
-/* r304 was still a delayed visual authority and reinserted Pilotos after the real renderer. */
-js=between(js,"function ensureDriversData304(){","\nfunction orderSports304(){","function ensureDriversData304(){return false}\nfunction orderSports304(){",'retire r304 driver authority');
-js=between(js,"function stabilizeProfile304(){","\nfunction reconcile304(){","function stabilizeProfile304(){return false}\nfunction reconcile304(){",'retire r304 profile authority');
-js=between(js,"function reconcile304(){","\n\nensureDriversData304();","function reconcile304(){return false}\n\nensureDriversData304();",'retire r304 delayed reconcile');
-
 /* r293/r301 kept repainting Discover/Profile after the visible render. r308 is the single final owner. */
 js=once(js,
  "window.addEventListener('click',e=>{if(e.target?.closest?.('[data-ct263-discover-tab=\"foryou\"]'))setTimeout(()=>void refresh(true),180)},true);",
@@ -142,9 +137,6 @@ const prev=JSON.parse(releaseRaw),release={
 for(const x of[
  "window.__ctR308='discover-exact-3+3+personal-filter+f1-four-tabs+calendar-click+profile-first-paint'",
  "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['circuits','Circuitos']];",
- "function ensureDriversData304(){return false}",
- "function stabilizeProfile304(){return false}",
- "function reconcile304(){return false}",
  "window.__ctR308LegacyForYouClickRefreshDisabled=true",
  "window.__ctR308LegacyForYouInitialRefreshDisabled=true",
  "data-event-id",
