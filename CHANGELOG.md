@@ -20,7 +20,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - Corrige a autoridade de clique do Calendário para ler `data-event-id`; IDs como `2026-16` resolvem temporada/rodada corretamente antes de abrir `Grid de Largada` e `Resultado de Chegada`.
 
 ### Perfil
-- Aposenta `stabilizeProfile304/reconcile304`, incluindo as reconciliações atrasadas de 0/120/420 ms que alteravam a tela após a primeira pintura.
+- Consolida o acabamento final do Perfil no renderer vivo da r308, por rótulo semântico, sem depender da posição física dos cards; autoridades históricas já removidas em releases anteriores não são reintroduzidas.
 - Identifica `Séries Watchlist` e `Filmes Watchlist` semanticamente pelo rótulo, remove `Abrir`/setas/pseudo-ícones e preserva a área clicável sem indicador visual.
 
 ### Build / validação
