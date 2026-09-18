@@ -1,68 +1,68 @@
-name: Verify Web 1.0.101 r310 New Video Delayed Authorities Profile Truth
+name: Verify Web 1.0.102 r311 Profile F1 Discover Stability
 
 on:
   push:
-    branches: [main, 'fix/r310-delayed-authorities-profile-truth']
+    branches: [main, 'fix/r311-profile-f1-discover-stability']
   pull_request:
 
 permissions:
   contents: read
 
 jobs:
-  web_1_0_101_r310:
+  web_1_0_101_r311:
     runs-on: ubuntu-latest
     timeout-minutes: 80
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r310
+      - name: Version identity r311
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.101"' package.json
-          grep -Fq '"version": "1.0.101"' apps/web/package.json
-          grep -Fq 'build-r310-official.mjs' apps/web/package.json
-          test -f apps/web/build-r310.mjs
-          test -f apps/web/build-r310-official.mjs
-          test -f apps/web/runtime-r310-video-truth.js
-          test -f apps/web/test-r310.mjs
-          test -f apps/web/test-r310-browser.mjs
-      - name: Syntax r310 release chain
+          grep -Fq '"version": "1.0.102"' package.json
+          grep -Fq '"version": "1.0.102"' apps/web/package.json
+          grep -Fq 'build-r311-official.mjs' apps/web/package.json
+          test -f apps/web/build-r311.mjs
+          test -f apps/web/build-r311-official.mjs
+          test -f apps/web/runtime-r311-profile-f1-discover.js
+          test -f apps/web/test-r311.mjs
+          test -f apps/web/test-r311-browser.mjs
+      - name: Syntax r311 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r310-video-truth.js
-          node --check apps/web/build-r310.mjs
-          node --check apps/web/build-r310-official.mjs
-          node --check apps/web/test-r310.mjs
-          node --check apps/web/test-r310-browser.mjs
-      - name: Regression suite through r310 including the latest validation-video failures
+          node --check apps/web/runtime-r311-profile-f1-discover.js
+          node --check apps/web/build-r311.mjs
+          node --check apps/web/build-r311-official.mjs
+          node --check apps/web/test-r311.mjs
+          node --check apps/web/test-r311-browser.mjs
+      - name: Regression suite through r311 including Profile/F1/Discover latest-video failures
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r310 latest-video truth
+      - name: Final bundle identity r311 Profile F1 Discover stability
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r310-official.mjs
-          node --check dist/app-v310.js
-          CT_R310_SKIP_BUILD=1 node test-r310.mjs
-          test -f dist/app-v310.js
-          test -f dist/app-v310.css
-          grep -Fq 'app-v310.js' dist/index.html
-          grep -Fq 'app-v310.css' dist/index.html
+          node build-r311-official.mjs
+          node --check dist/app-v311.js
+          CT_R311_SKIP_BUILD=1 node test-r311.mjs
+          test -f dist/app-v311.js
+          test -f dist/app-v311.css
+          grep -Fq 'app-v311.js' dist/index.html
+          grep -Fq 'app-v311.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.101'
-            && r.revision==='r310-official-1.0.101'
-            && r.discover_r252_tab_injector===false
-            && r.discover_r300_delayed_recovery===false
-            && r.discover_r293_delayed_repaint===false
-            && r.discover_watchlist_excluded_before_paint===true
-            && r.discover_legacy_action_takeover===false
-            && r.profile_sports_count==='cinetracker_sports_watch_history_v296'
-            && r.profile_sports_legacy_overwrite===false
-            && r.profile_actor_scroll==='bottom-proxy-only'
-            && r.sports_stale_live_normalized===true
-            && r.footer_version==='1.0.101'
+          const ok=r.version==='1.0.102'
+            && r.revision==='r311-official-1.0.102'
+            && r.profile_stat_single_version===true
+            && r.profile_r300_delayed_style===false
+            && r.profile_r301_mutation_style===false
+            && r.f1_calendar_renderer==='r311-clickable-race-buttons'
+            && r.f1_session_watch===true
+            && r.f1_session_watch_rpc==='cinetracker_sports_watch_set_v296'
+            && r.discover_public_exclusion==='seen+watchlist-before-markup'
+            && r.discover_public_renderer==='r311-single-owner'
+            && r.discover_public_watchlist_button===true
+            && r.discover_actions_outside_media_card===true
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -80,32 +80,30 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_101_r310, android_current_source]
+    needs: [web_1_0_101_r311, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.101 r310
+      - name: Official production serves and boots 1.0.102 r311
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.101"' <<<"$BODY" \
-              && grep -Fq '"revision": "r310-official-1.0.101"' <<<"$BODY" \
-              && grep -Fq '"discover_r252_tab_injector": false' <<<"$BODY" \
-              && grep -Fq '"discover_r300_delayed_recovery": false' <<<"$BODY" \
-              && grep -Fq '"discover_watchlist_excluded_before_paint": true' <<<"$BODY" \
-              && grep -Fq '"profile_sports_count": "cinetracker_sports_watch_history_v296"' <<<"$BODY" \
-              && grep -Fq '"profile_actor_scroll": "bottom-proxy-only"' <<<"$BODY" \
-              && grep -Fq '"footer_version": "1.0.101"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v310.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.102"' <<<"$BODY" \
+              && grep -Fq '"revision": "r311-official-1.0.102"' <<<"$BODY" \
+              && grep -Fq '"profile_stat_single_version": true' <<<"$BODY" \
+              && grep -Fq '"f1_calendar_renderer": "r311-clickable-race-buttons"' <<<"$BODY" \
+              && grep -Fq '"f1_session_watch": true' <<<"$BODY" \
+              && grep -Fq '"discover_public_exclusion": "seen+watchlist-before-markup"' <<<"$BODY" \
+              && grep -Fq '"discover_public_watchlist_button": true' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v311.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR310='delayed-authorities-retired+canonical-watchlist+profile-sports-truth+actor-bottom-scroll'" <<<"$JS" \
-                && grep -Fq "function ensureDiscoverTabs252(){return false}" <<<"$JS" \
-                && grep -Fq "function guardBrowse300(){return false}" <<<"$JS" \
-                && grep -Fq "cinetracker_sports_watch_history_v296" <<<"$JS" \
-                && grep -Fq "CineTracker • v1.0.101" <<<"$JS" \
-                && ! grep -Fq "add('releases','Lançamentos','anticipated')" <<<"$JS" \
-                && grep -Fq 'app-v310.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR311='profile-stat-single-version+f1-clickable-weekend+discover-public-single-renderer'" <<<"$JS" \
+                && grep -Fq "function styleWatchlistStats300(){return false}" <<<"$JS" \
+                && grep -Fq "function stabilizeProfile301(){return false}" <<<"$JS" \
+                && grep -Fq 'data-ct311-f1-race' <<<"$JS" \
+                && grep -Fq 'data-ct311-action="watchlist"' <<<"$JS" \
+                && grep -Fq 'app-v311.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=6500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
