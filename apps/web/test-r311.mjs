@@ -14,6 +14,7 @@ ok(html.includes('app-v311.js')&&html.includes('app-v311.css'),'assets');
 ok(js.includes("window.__ctWebBuild='1.0.102';window.__ctOfficialVersion='1.0.102';"),'runtime version');
 ok(js.includes("const REVISION='r311-official-1.0.102';"),'revision');
 ok(js.includes("window.__ctR311='profile-stat-single-version+f1-clickable-weekend+discover-public-single-renderer'"),'r311 runtime');
+ok(js.includes("window.__ctR311EarlyCapture=true")&&js.includes("window.__ctR311EarlyHandle"),'r311 exact click capture is not registered before legacy handlers');
 
 ok(js.includes("function styleWatchlistStats300(){return false}"),'r300 delayed Profile style still active');
 ok(js.includes("function stabilizeProfile301(){return false}"),'r301 Profile mutation style still active');
