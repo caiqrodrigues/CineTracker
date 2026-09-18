@@ -128,6 +128,21 @@ async function action312(btn){
   void buildPublic312(String(discover?.tab||''),true,{quiet:true});return true;
  }catch(e){btn.disabled=false;btn.textContent=old;try{toast(e?.message||String(e))}catch{};return false}
 }
+function decorateSportsFilters312(){
+ const root=q('[data-ct255-sports]');if(!root)return false;
+ const active=q('[data-ct255-sport-tab].active',root),tab=String(active?.dataset?.ct255SportTab||'');
+ const head=q('.ct255-sports-feed .panel-head',root);if(!head)return false;
+ q('.ct312-sport-filter-rail',head)?.remove();
+ if(tab!=='next'&&tab!=='previous')return true;
+ const catalog=rows(window.__ctR312SportsCatalog),seen=new Set(),all=[];
+ for(const s of catalog){const slug=String(s?.slug||'');if(!slug||seen.has(slug))continue;seen.add(slug);all.push({slug,name:String(s?.name||slug).replace(/_/g,' '),icon:String(s?.icon||'🏆')})}
+ if(!all.length){for(const card of qa('[data-ct312-sport]',root)){const slug=String(card.dataset.ct312Sport||'');if(!slug||seen.has(slug))continue;seen.add(slug);all.push({slug,name:card.dataset.ct312SportName||slug,icon:card.dataset.ct312SportIcon||'🏆'})}}
+ const current=String(window.__ctR312SportSelected||'all'),rail=document.createElement('div');rail.className='ct312-sport-filter-rail';rail.setAttribute('role','group');rail.setAttribute('aria-label','Filtrar por esporte');
+ rail.innerHTML='<button type="button" class="chip '+(current==='all'?'active':'')+'" data-ct255-sport-filter="all">Todos</button>'+all.map(s=>'<button type="button" class="chip '+(current===s.slug?'active':'')+'" data-ct255-sport-filter="'+esc(s.slug)+'">'+esc(s.icon)+' '+esc(s.name)+'</button>').join('');
+ const title=q('h2',head);if(title)title.insertAdjacentElement('afterend',rail);else head.prepend(rail);
+ head.classList.add('ct312-sports-head');return true;
+}
+
 function invalidate312(){
  personal312={at:0,seen:new Set(),watch:new Set()};personalTask312=null;viewCache312.clear();
  try{profileCache=null;localStorage.removeItem('cinetracker:preload:r163:profile')}catch{}
@@ -174,10 +189,11 @@ const style=document.createElement('style');style.id='ct-web-r312-video-truth';s
 [data-ct309-foryou] .ct309-actions .ct309-swap{grid-column:1/-1!important;height:28px!important;min-height:28px!important}
 
 /* All requested clickable Profile stats share one immutable visual contract. */
-.ct312-stat-button{box-sizing:border-box!important;position:relative!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;min-height:58px!important;padding:10px 12px!important;border:1px solid var(--border,#23465a)!important;border-radius:10px!important;background:var(--panel-2,#0e1b23)!important;color:inherit!important;text-align:center!important;cursor:pointer!important;box-shadow:none!important;transform:none!important;transition:border-color .15s ease,background .15s ease!important}
-.ct312-stat-button:hover,.ct312-stat-button:focus-visible{background:var(--panel-3,#122633)!important;border-color:var(--accent,#2f83a8)!important;outline:none!important;transform:none!important}
-.ct312-stat-button::before,.ct312-stat-button::after{content:none!important;display:none!important}.ct312-stat-button :is(.ct117-stat-chevron,.stat-link-icon,.stat-arrow,.open-arrow,.profile-card-arrow,[data-open-arrow],[data-profile-open-icon]){display:none!important}
+.ct312-stat-button,[data-profile] [data-ct117-watchlist-stat],[data-profile] [data-ct299-history]{box-sizing:border-box!important;position:relative!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;min-height:58px!important;padding:10px 12px!important;border:1px solid var(--border,#23465a)!important;border-radius:10px!important;background:var(--panel-2,#0e1b23)!important;color:inherit!important;text-align:center!important;cursor:pointer!important;box-shadow:none!important;transform:none!important;transition:border-color .15s ease,background .15s ease!important}
+.ct312-stat-button:hover,.ct312-stat-button:focus-visible,[data-profile] [data-ct117-watchlist-stat]:hover,[data-profile] [data-ct117-watchlist-stat]:focus-visible,[data-profile] [data-ct299-history]:hover,[data-profile] [data-ct299-history]:focus-visible{background:var(--panel-3,#122633)!important;border-color:var(--accent,#2f83a8)!important;outline:none!important;transform:none!important}
+.ct312-stat-button::before,.ct312-stat-button::after,[data-profile] [data-ct117-watchlist-stat]::before,[data-profile] [data-ct117-watchlist-stat]::after,[data-profile] [data-ct299-history]::before,[data-profile] [data-ct299-history]::after{content:none!important;display:none!important}.ct312-stat-button :is(.ct117-stat-chevron,.stat-link-icon,.stat-arrow,.open-arrow,.profile-card-arrow,[data-open-arrow],[data-profile-open-icon]),[data-profile] [data-ct117-watchlist-stat] :is(.ct117-stat-chevron,.stat-link-icon,.stat-arrow,.open-arrow,.profile-card-arrow),[data-profile] [data-ct299-history] :is(.stat-arrow,.open-arrow,.profile-card-arrow){display:none!important}
 
+.ct255-sport-filters{display:none!important}
 /* Sports filter lives with Próximos/Anteriores title, using every sport from payload. */
 .ct312-sports-head{align-items:flex-start!important;gap:10px!important}.ct312-sports-head-main{display:flex!important;align-items:center!important;gap:10px!important;min-width:0!important;flex:1 1 auto!important}
 .ct312-sport-filter-rail{display:flex!important;flex-flow:row nowrap!important;gap:6px!important;min-width:0!important;max-width:min(76vw,920px)!important;overflow-x:auto!important;overflow-y:hidden!important;padding:2px 2px 5px!important;scrollbar-width:thin!important}
@@ -185,6 +201,6 @@ const style=document.createElement('style');style.id='ct-web-r312-video-truth';s
 @media(max-width:760px){.ct312-discover-item{flex-basis:154px!important;width:154px!important;min-width:154px!important;max-width:154px!important}.ct312-sports-head-main{align-items:flex-start!important;flex-direction:column!important}.ct312-sport-filter-rail{max-width:100%!important;width:100%!important}}
 `;document.head.appendChild(style);
 
-window.__ctR312={personalAuthority:personalAuthority312,filterPublic:filterPublic312,paintPublic:paintPublic312,buildPublic:buildPublic312,loadDiscover:loadDiscover312,card:card312,invalidate:invalidate312,setTestBridge(v){bridge=v&&typeof v==='object'?v:null},version:'1.0.103'};
-window.__ctR312Test={filterPublic312,card312,paintPublic312,kindLabel312,early312,setPersonal(v){personal312={at:Date.now(),seen:new Set(v?.seen||[]),watch:new Set(v?.watch||[])}},clearCaches(){sourceCache312.clear();viewCache312.clear();personal312={at:0,seen:new Set(),watch:new Set()}},setTestBridge(v){bridge=v&&typeof v==='object'?v:null}};
+window.__ctR312={personalAuthority:personalAuthority312,filterPublic:filterPublic312,paintPublic:paintPublic312,buildPublic:buildPublic312,loadDiscover:loadDiscover312,card:card312,invalidate:invalidate312,decorateSportsFilters:decorateSportsFilters312,setTestBridge(v){bridge=v&&typeof v==='object'?v:null},version:'1.0.103'};
+window.__ctR312Test={filterPublic312,card312,paintPublic312,kindLabel312,early312,decorateSportsFilters312,setPersonal(v){personal312={at:Date.now(),seen:new Set(v?.seen||[]),watch:new Set(v?.watch||[])}},clearCaches(){sourceCache312.clear();viewCache312.clear();personal312={at:0,seen:new Set(),watch:new Set()}},setTestBridge(v){bridge=v&&typeof v==='object'?v:null}};
 })();
