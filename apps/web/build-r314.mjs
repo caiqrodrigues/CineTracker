@@ -19,14 +19,14 @@ const must=(s,x)=>{if(!s.includes(x))throw new Error('r314 missing '+x)};
 function replaceFunction(src,name,replacement){
  const sig='function '+name+'(';const start=src.indexOf(sig);if(start<0)throw new Error('r314 missing function '+name);
  const open=src.indexOf('{',start);let depth=0,quote='',esc=false;
- for(let i=open;i<src.length;i++){const ch=src[i];if(quote){if(esc){esc=false;continue}if(ch==='\\\\'){esc=true;continue}if(ch===quote){quote='';continue}continue}if(ch==="'"||ch==='"'||ch.charCodeAt(0)===96){quote=ch;continue}if(ch==='{')depth++;else if(ch==='}'&&--depth===0)return src.slice(0,start)+replacement+src.slice(i+1)}
+ for(let i=open;i<src.length;i++){const ch=src[i];if(quote){if(esc){esc=false;continue}if(ch==='\\'){esc=true;continue}if(ch===quote){quote='';continue}continue}if(ch==="'"||ch==='"'||ch.charCodeAt(0)===96){quote=ch;continue}if(ch==='{')depth++;else if(ch==='}'&&--depth===0)return src.slice(0,start)+replacement+src.slice(i+1)}
  throw new Error('r314 unterminated function '+name);
 }
 function containingFunction(src,index){
- const prefix=src.slice(0,index),re=/function\\s+([A-Za-z_$][\\w$]*)\\s*\\([^)]*\\)\\s*\\{/g;let m,last=null;
+ const prefix=src.slice(0,index),re=/function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g;let m,last=null;
  while((m=re.exec(prefix)))last={name:m[1],start:m.index};if(!last)return null;
  const open=src.indexOf('{',last.start);let depth=0,quote='',esc=false;
- for(let i=open;i<src.length;i++){const ch=src[i];if(quote){if(esc){esc=false;continue}if(ch==='\\\\'){esc=true;continue}if(ch===quote){quote='';continue}continue}if(ch==="'"||ch==='"'||ch.charCodeAt(0)===96){quote=ch;continue}if(ch==='{')depth++;else if(ch==='}'&&--depth===0){if(index<=i)return{...last,end:i};break}}
+ for(let i=open;i<src.length;i++){const ch=src[i];if(quote){if(esc){esc=false;continue}if(ch==='\\'){esc=true;continue}if(ch===quote){quote='';continue}continue}if(ch==="'"||ch==='"'||ch.charCodeAt(0)===96){quote=ch;continue}if(ch==='{')depth++;else if(ch==='}'&&--depth===0){if(index<=i)return{...last,end:i};break}}
  return null;
 }
 
@@ -39,7 +39,7 @@ for(const x of[
  "async function toggleFavorite255(",
  "async function toggleSport255(",
  "const version='1.0.104',revision='r313-official-1.0.104';",
- "\\nboot();"
+ "\nboot();"
 ])must(js,x);
 
 {
@@ -52,7 +52,7 @@ for(const x of[
 
 js=once(js,
  "async function loadSports255(",
- "async function sportsRpc314(name,args){try{return await rpc(name,args)}catch(e){if(!/jwt\\\\s*expired|token\\\\s*expired|invalid\\\\s*jwt/i.test(String(e?.message||e||'')))throw e;await restoreSession();return rpc(name,args)}}\\nasync function loadSports255(",
+ "async function sportsRpc314(name,args){try{return await rpc(name,args)}catch(e){if(!/jwt\\s*expired|token\\s*expired|invalid\\s*jwt/i.test(String(e?.message||e||'')))throw e;await restoreSession();return rpc(name,args)}}\nasync function loadSports255(",
  'Sports JWT helper'
 );
 js=replaceFunction(js,'loadSports255',"async function loadSports255(force=false){if(!force&&sport255.payload&&Date.now()-sport255.at<45000)return sport255.payload;const p=await sportsRpc314('cinetracker_sports_payload_v1',{p_from:new Date(Date.now()-4*86400000).toISOString(),p_to:new Date(Date.now()+9*86400000).toISOString()});sport255.payload=p||{};sport255.at=Date.now();return sport255.payload}");
@@ -61,14 +61,14 @@ js=replaceFunction(js,'toggleSport255',"async function toggleSport255(btn){const
 
 const early314="(()=>{if(window.__ctR314EarlyCapture)return;window.__ctR314EarlyCapture=true;window.addEventListener('click',e=>{try{const fn=window.__ctR314EarlyHandle;if(typeof fn!=='function')return;if(fn(e.target,e)){e.preventDefault();e.stopImmediatePropagation()}}catch{}},true)})();";
 js=once(js,"const version='1.0.104',revision='r313-official-1.0.104';","const version='1.0.105',revision='r314-official-1.0.105';",'footer identity');
-js=once(js,'\\nboot();','\\n'+runtime+'\\nboot();','r314 insertion');
-js=early314+'\\n'+js;
+js=once(js,'\nboot();','\n'+runtime+'\nboot();','r314 insertion');
+js=early314+'\n'+js;
 js=once(js,"window.__ctWebBuild='1.0.104';window.__ctOfficialVersion='1.0.104';","window.__ctWebBuild='1.0.105';window.__ctOfficialVersion='1.0.105';",'Web version');
 js=once(js,"const REVISION='r313-official-1.0.104';","const REVISION='r314-official-1.0.105';",'revision');
 
 html=html.replaceAll('app-v313.js','app-v314.js').replaceAll('app-v313.css','app-v314.css').replaceAll('v1.0.104','v1.0.105').replaceAll('r313-official-1.0.104','r314-official-1.0.105');
 sw=sw.replaceAll('ct-web-1.0.104-r313','ct-web-1.0.105-r314').replaceAll('app-v313.js','app-v314.js').replaceAll('app-v313.css','app-v314.css');
-css+='\\n/* CineTracker Web 1.0.105 r314 — final Discover, no F1 watched-summary, stable Profile sports collapse. */\\n';
+css+='\n/* CineTracker Web 1.0.105 r314 — final Discover, no F1 watched-summary, stable Profile sports collapse. */\n';
 
 const prev=JSON.parse(releaseRaw),release={
  ...prev,version:'1.0.105',revision:'r314-official-1.0.105',base:'r313-production',
@@ -107,14 +107,14 @@ for(const x of[
  "function paintCalendar314",
  "function paintForYou314",
  "function filterPublic314",
- "data-ct314-action=\\\"watchlist\\\"",
- "data-ct314-action=\\\"seen\\\"",
+ "data-ct314-action=\\"watchlist\\"",
+ "data-ct314-action=\\"seen\\"",
  "data-ct314-sports-collapse",
  "function sportsRpc314",
  "window.__ctR311='profile-stat-single-version+f1-clickable-weekend+discover-public-single-renderer'",
  "const version='1.0.105',revision='r314-official-1.0.105';"
 ])must(js,x);
-if(!js.startsWith(early314+'\\n'))throw new Error('r314 capture is not first');
+if(!js.startsWith(early314+'\n'))throw new Error('r314 capture is not first');
 if(js.includes('Seu registro')||js.includes('Fórmula 1 assistida')||js.includes('Formula 1 assistida'))throw new Error('r314 F1 watched-summary survived final bundle');
 if(release.android!=='1.0.20/10062')throw new Error('r314 Android baseline changed');
 
