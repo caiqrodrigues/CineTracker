@@ -35,7 +35,7 @@ js=once(js,
  const fn=js.indexOf("function paintSports255(){");
  if(fn<0)throw new Error('r312 missing r255 Sports producer');
  const a=js.indexOf('<div class="ct255-sport-filters">',fn);
- const b=js.indexOf('<section class="ct255-f1hub"',a);
+ const b=js.indexOf('<section class="panel ct255-sports-feed"',a);
  if(a<0||b<0)throw new Error('r312 cannot isolate old global Sports filter');
  js=js.slice(0,a)+js.slice(b);
 }
