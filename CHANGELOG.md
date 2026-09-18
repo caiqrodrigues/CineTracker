@@ -2,6 +2,35 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.103 — 2026-09-18 — Web r312
+
+### Descobrir
+- Adota um shell único com oito abas persistentes; trocar de aba ou carregar títulos não pode mais apagar/recriar a navegação.
+- Nas cinco abas públicas, cruza Watchlist completa, dashboard pessoal e exclusões canônicas antes do HTML, removendo itens vistos ou já salvos.
+- Substitui cards herdados por cards r312 próprios, com metadados sem truncamento e `+ Watchlist` + `✓ Visto` em faixa estável abaixo do pôster.
+- Mantém scroll horizontal nativo no rail e alinha os controles pela altura final dos cards.
+- `Pra Você` reutiliza os pools exatos 1+3+3 da r309, mas com layout compacto e controles pequenos/estáveis.
+
+### Sessão / autenticação
+- Se uma chamada protegida retornar JWT expirado/401, renova a sessão com o `refresh_token`, persiste a nova sessão e repete a operação uma vez.
+- O fluxo cobre API/RPC, Edge Functions e TMDB proxy protegido, eliminando `Falha ao carregar Esportes: JWT expired` quando a sessão ainda pode ser renovada.
+
+### Perfil
+- Garante `Jogos no Estádio` mesmo quando o payload inicial não produzir o card, clonando o contrato visual/clicável de `Eventos assistidos`.
+- Lê Atores Favoritos diretamente da tabela `favorite_actors` e invalida/atualiza o Perfil imediatamente após gravações, cobrindo novos favoritos adicionados durante a sessão.
+
+### Esportes
+- Remove o filtro global antigo.
+- Insere em `Próximos` e `Anteriores`, ao lado do título, um filtro horizontal com `Todos` e todos os esportes disponíveis em `payload.sports`.
+- O filtro é dinâmico: novos esportes suportados pelo payload aparecem sem alteração de código.
+
+### F1 / preservação
+- Mantém a autoridade r311: Calendário clicável, fim de semana completo, Grid de Largada, Resultado de Chegada e marcação por sessão.
+
+### Build / validação
+- Web atualizada para `1.0.103 / r312-official-1.0.103`; Android permanece `1.0.20 / versionCode 10062`.
+- Chromium cobre shell durante loading, barreira vistos+Watchlist, cards/scroll, Pra Você compacto, estádio, atualização de ator favorito e filtros esportivos inline.
+
 ## 1.0.102 — 2026-09-18 — Web r311
 
 ### Perfil / Estatísticas
