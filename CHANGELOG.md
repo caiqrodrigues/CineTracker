@@ -2,6 +2,27 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.101 — 2026-09-18 — Web r310
+
+### Descobrir / autoridades tardias
+- Aposenta o injetor r252 que ainda podia acrescentar `Top 10` e `Lançamentos` depois que a interface canônica já estava pronta.
+- Neutraliza o recovery r300 de 2,2 s e o repaint atrasado r293, impedindo que renderers antigos substituam cards/actions depois da r310.
+- Usa `cinetracker_watchlist_full_v119` como fonte canônica adicional antes do paint das abas públicas; títulos já salvos deixam de reaparecer com `+ Watchlist`.
+- Os cards mantêm dois controles coerentes com o estado real: Watchlist e `✓ Visto`.
+
+### Perfil / Esportes
+- O primeiro paint do Perfil usa `cinetracker_sports_watch_history_v296` para o total de eventos assistidos; o RPC legado de stats fica somente como fallback para demais métricas.
+- Evita divergências como 59 eventos no Perfil contra 68 na aba Esportes.
+- Atores Favoritos passa a ter somente uma barra horizontal, criada explicitamente abaixo do rail dos cards.
+
+### Esportes / acabamento
+- Eventos antigos ainda marcados como `live` pelo provider são normalizados para encerrados após oito horas, evitando partidas de dias anteriores exibidas como `AO VIVO`.
+- Corrige o rodapé Web congelado em `v1.0.57`; a identidade visível passa a `v1.0.101 / r310-official-1.0.101`.
+
+### Build / validação
+- Web atualizada para `1.0.101 / r310-official-1.0.101`; Android permanece `1.0.20 / versionCode 10062`.
+- Chromium reproduz o novo vídeo: título já salvo na Watchlist, tabs tardias, takeover das ações, 68 vs 59, scrollbar dos atores e versão antiga no rodapé.
+
 ## 1.0.100 — 2026-09-18 — Web r309
 
 ### Descobrir
