@@ -6,27 +6,28 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.99** | `r308-official-1.0.99` | Descobrir 1+3+3, filtros pessoais, F1 Calendário e Perfil estabilizados no renderer real |
-| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r308 |
+| Web | **1.0.100** | `r309-official-1.0.100` | correções orientadas pelos dois vídeos: Descobrir, primeiro paint do F1 e Perfil canônico |
+| Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r309 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.99 / r308
+## Web 1.0.100 / r309
 
-A r308 corrige diretamente as áreas reproduzidas no vídeo de validação e mantém a proteção de progresso introduzida na r307.
+A r309 usa os dois vídeos de validação enviados em 18/09/2026 como fonte de verdade e corrige as autoridades que ainda repintavam a interface depois do primeiro frame.
 
-- **Descobrir / Pra Você:** `Indicação do Dia` com troca real, `Da sua Watchlist` com Filme + Série + Anime e `100% novos` com Filme + Série + Anime. Cada categoria mantém seu próprio pool; uma categoria não preenche a vaga de outra.
-- **Desempenho:** autoridade pessoal, memória semanal e pools iniciais do TMDB são iniciados em paralelo; a Watchlist hidrata somente o necessário para identificar Filme/Série/Anime e a composição recente é reutilizada por três minutos.
-- **Ações:** Watchlist e `✓ Visto` usam os controles `chip` do sistema, sem paleta paralela; os cards mantêm geometria compacta de 158 px e as ações permanecem contidas no card.
-- **Exclusões pessoais:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` recebem uma barreira final contra assistidos e Watchlist imediatamente antes do paint. `Calendário`, `Pra Você` e `Top 10` são exceções explícitas.
-- **F1 Hub:** somente `Visão geral`, `Calendário`, `Classificações` e `Circuitos`; `Pilotos` e `Equipes` não aparecem como abas redundantes. O clique do Calendário usa o `data-event-id` real e abre a rodada correta no modal com `Grid de Largada` e `Resultado de Chegada`.
-- **Perfil:** acabamento final pelo rótulo semântico das estatísticas, sem depender da posição do card. `Séries Watchlist` e `Filmes Watchlist` continuam clicáveis, mas sem `Abrir`, seta ou pseudo-ícone visível.
-- **Home preservada:** a r307 continua impedindo que o botão de um episódio do Raw/SmackDown seja convertido em marcação da série inteira e mantém a regra de fronteira para séries recorrentes antigas.
+- **Descobrir / navegação:** remove `Lançamentos` de todos os produtores privados ainda embarcados e elimina rails herdados/duplicados; a sequência canônica passa a ser somente `Pra você | Top 10 | Em alta | Populares | Novidades | Mais Aguardados | Mais bem avaliados | Calendário`.
+- **Descobrir / carregamento:** estado pessoal e catálogo TMDB começam juntos, em paralelo, em vez de uma chamada aguardar a outra. As respostas de browse ficam em cache curto e a composição do `Pra Você` reutiliza um estado válido por três minutos.
+- **Descobrir / Pra Você:** combina `cinetracker_recommendation_state_v108` com `cinetracker_watchlist_full_v119`, hidrata a Watchlist até identificar Filme, Série e Anime e mantém pools separados para `Da sua Watchlist` e `100% novos`. A Indicação do Dia usa pool próprio e possui troca real.
+- **Descobrir / cards:** deduplicação final usa identidade TMDB e também identidade visual tipo+título+ano, cobrindo o duplicado `Next Time` mostrado no vídeo. Watchlist e `✓ Visto` ficam sempre visíveis em dois controles `chip`; `Trocar` ocupa uma linha própria.
+- **F1 Hub:** neutraliza a autoridade r257 que ainda repintava o Hub em 0/180/700/1800 ms. `Pilotos` e `Equipes` são removidos do produtor antes do primeiro paint; o Hub nasce diretamente com quatro abas.
+- **Perfil:** elimina o fluxo visível cache → quick stats → full payload. O Perfil mantém um único estado de carregamento e só pinta quando o payload canônico, estatísticas esportivas e resumo de estádio foram resolvidos ou atingiram timeout controlado.
+- **Perfil / Watchlist:** o chevron é removido no próprio produtor, portanto não aparece nem por um frame; os cards continuam clicáveis.
+- **Perfil / atores:** somente o pai real dos cards recebe `overflow-x:auto`; wrappers externos perdem autoridade horizontal, mantendo a scrollbar abaixo dos cards.
 - **Android preservado:** `1.0.20 / versionCode 10062`.
 
-Build oficial: `apps/web/build-r308-official.mjs`; runtime: `apps/web/runtime-r308-discover-f1-profile.js`; regressões: `apps/web/test-r308.mjs` e `apps/web/test-r308-browser.mjs`.
+Build oficial: `apps/web/build-r309-official.mjs`; runtime: `apps/web/runtime-r309-video-truth.js`; regressões: `apps/web/test-r309.mjs` e `apps/web/test-r309-browser.mjs`.
 
 ## Funcionalidades consolidadas
 
@@ -53,7 +54,7 @@ Build oficial: `apps/web/build-r308-official.mjs`; runtime: `apps/web/runtime-r3
 - `.github/workflows/verify.yml` — verificação da Web atual e baseline Android;
 - `CHANGELOG.md` — histórico das versões.
 
-A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r308 herda a r307, aposenta as autoridades atrasadas que ainda brigavam pelo DOM e conecta uma autoridade final aos renderers vivos de Descobrir, F1 e Perfil, mantendo o Android intacto.
+A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. A r309 herda a r308, mas corrige os produtores antigos que ainda conseguiam aparecer antes das autoridades finais, mantendo o Android intacto.
 
 ## Regra de validação
 
