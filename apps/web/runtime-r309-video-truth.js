@@ -292,5 +292,5 @@ const style=document.createElement('style');style.id='ct-web-r309-video-truth';s
 
 canonicalDiscoverTabs();
 window.__ctR309={buildForYou,buildBrowse,loadDiscover:loadDiscover309,cleanProfile:cleanProfile309,actorRail:actorRail309,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null},version:'1.0.100'};
-window.__ctR309Test={anime,category,dedupeVisual,composeForYou,filterBrowse,forYouMarkup,canonicalDiscoverTabs,actorRail309,cleanProfile309,setForYouState(v){fy=v;fyAt=Date.now()},get state(){return fy}};
+window.__ctR309Test={anime,category,dedupeVisual,composeForYou,filterBrowse,forYouMarkup,decorateBrowse,canonicalDiscoverTabs,actorRail309,cleanProfile309,setForYouState(v){fy=v;fyAt=Date.now()},get state(){return fy}};
 })();
