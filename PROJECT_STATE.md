@@ -4,23 +4,21 @@
 
 **Última atualização:** 2026-09-18  
 **Branch de produção:** `main`  
-**Release Web candidata:** **1.0.104 / `r313-official-1.0.104`**  
+**Release Web candidata:** **1.0.105 / `r314-official-1.0.105`**  
 **Android atual:** **1.0.20 / versionCode `10062`**  
 **Backend:** Supabase production compartilhado Web/Android  
 **Windows:** não lançado
 
-## 1. Estado Web r313
+## 1. Estado Web r314
 
-A r313 parte da r312 em produção e corrige as regressões do vídeo mais recente:
+A r314 parte da r314 em produção e corrige as regressões do vídeo mais recente:
 
-- **Descobrir:** oito abas persistentes; `Todos / Filmes / Séries` oculto por padrão atrás do botão compacto `☷`; cards visuais usam `ct288Card`, sem `ct312-card`/banner; cinco abas públicas excluem vistos + Watchlist + alias antes do HTML.
-- **Pra Você:** preserva a composição exata r309 com Filme/Série/Anime e acabamento compacto.
-- **Esportes:** o filtro de `Próximos` e `Anteriores` nasce diretamente em `paintSports255`, ao lado do título, com `Todos` + todos os esportes em `payload.sports`.
-- **Perfil:** `renderProfile313` é o único renderer final. Um loading precede um único paint canônico; `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist` ficam no mesmo contrato visual/clicável.
-- **Sessão:** JWT expirado continua renovando a sessão e repetindo uma vez.
-- **F1:** preserva r311: quatro abas, GP clicável, detalhe do fim de semana, Grid/Resultado e marcação individual das sessões.
+- **Descobrir:** r314 é dona das cinco abas públicas, do Calendário e do Pra Você. Vistos/Watchlist são excluídos antes do HTML; Calendário usa cards de largura fixa por data; Pra Você mantém 1+3+3 em painel compacto.
+- **F1:** o resumo transitório `Seu registro / Fórmula 1 assistida` é removido no build e não pertence ao Hub. Corridas clicáveis e marcação por sessão permanecem.
+- **Perfil:** quatro estatísticas clicáveis usam um único padrão; `Esportes assistidos` tem `Recolher / Expandir`; Atores Favoritos continuam vindo da fonte viva.
+- **Esportes:** filtros dinâmicos Próximos/Anteriores são preservados; RPCs renovam sessão expirada e repetem uma vez.
 
-Produção atual antes da promoção r313: `1.0.103 / r312-official-1.0.103` em `https://mycinetracker.vercel.app`.
+Produção anterior à promoção r314: `1.0.105 / r314-official-1.0.105` em `https://mycinetracker.vercel.app`.
 
 ## 2. Regras funcionais preservadas
 
@@ -37,14 +35,14 @@ Produção atual antes da promoção r313: `1.0.103 / r312-official-1.0.103` em 
 - `versionName`: `1.0.20`
 - `versionCode`: `10062`
 
-## 4. Artefatos r313
+## 4. Artefatos r314
 
-- Build: `apps/web/build-r313.mjs`
-- Build oficial: `apps/web/build-r313-official.mjs`
-- Runtime: `apps/web/runtime-r313-discover-sports-profile.js`
-- Gate estático: `apps/web/test-r313.mjs`
-- Chromium: `apps/web/test-r313-browser.mjs`
-- Assets finais: `app-v313.js` / `app-v313.css`
+- Build: `apps/web/build-r314.mjs`
+- Build oficial: `apps/web/build-r314-official.mjs`
+- Runtime: `apps/web/runtime-r314-discover-sports-profile.js`
+- Gate estático: `apps/web/test-r314.mjs`
+- Chromium: `apps/web/test-r314-browser.mjs`
+- Assets finais: `app-v314.js` / `app-v314.css`
 
 O Chromium deve provar: filtro do Descobrir fechado por padrão e abrindo pelo `☷`; ausência de `ct312-card`; card r288 sem corte; bloqueio vistos/Watchlist; filtro esportivo no primeiro paint de Próximos/Anteriores; ausência do filtro em Assistidos; Perfil sem troca de classe/layout após a janela dos timers antigos; JWT/F1 preservados.
 
@@ -60,7 +58,7 @@ Estados separados:
 6. `production_smoke`;
 7. Android físico quando houver release Android.
 
-A r313 só vira release oficial após o `production_smoke` da `main`.
+A r314 só vira release oficial após o `production_smoke` da `main`.
 
 ## 6. Documentos canônicos
 
