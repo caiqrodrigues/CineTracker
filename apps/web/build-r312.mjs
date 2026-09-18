@@ -14,6 +14,21 @@ let [html,js,css,sw,releaseRaw,payload]=await Promise.all([
  readFile(resolve(root,'runtime-r312-video-truth.js.gz.b64'),'utf8')
 ]);
 let runtime=gunzipSync(Buffer.from(payload.trim(),'base64')).toString('utf8');
+
+/* r255 keeps Sports state in a private IIFE. Expose one narrow bridge in that
+   original scope so r312 and its Chromium regression exercise the real state. */
+{
+ const from="const sport255={tab:'next',sport:'all',payload:null,at:0,gen:0};";
+ const to=from+"window.__ctR312SportsBridge={get state(){return sport255},setState(v){if(!v||typeof v!=='object')return sport255;if(v.tab!=null)sport255.tab=String(v.tab);if(v.sport!=null)sport255.sport=String(v.sport);if(v.payload!=null)sport255.payload=v.payload;return sport255},paint(){return typeof paintSports255==='function'?paintSports255():null}};";
+ if((js.split(from).length-1)!==1)throw new Error('r312 expected one private sport255 state');
+ js=js.replace(from,to);
+}
+/* Bind the r312 runtime to the exact private Sports object exposed above. */
+{
+ const marker="'use strict';";
+ if((runtime.split(marker).length-1)!==1)throw new Error('r312 runtime strict marker mismatch');
+ runtime=runtime.replace(marker,marker+"\nconst sport255=window.__ctR312SportsBridge?.state||null;\nconst paintSports255=(...a)=>window.__ctR312SportsBridge?.paint?.(...a);");
+}
 {
  const a=runtime.indexOf('function addDash312(p,x){'),b=runtime.indexOf('\nasync function personal312',a);
  if(a<0||b<0)throw new Error('r312 addDash312 markers missing');
@@ -37,7 +52,7 @@ let runtime=gunzipSync(Buffer.from(payload.trim(),'base64')).toString('utf8');
 {
  const end='\n})();',i=runtime.lastIndexOf(end);
  if(i<0)throw new Error('r312 runtime closure not found');
- const hook="\ntry{window.__ctR312Test.setSportsState=function(v){if(v&&typeof v==='object'){if(v.tab!=null)sport255.tab=String(v.tab);if(v.sport!=null)sport255.sport=String(v.sport);if(v.payload!=null)sport255.payload=v.payload}}}catch{}\n";
+ const hook="\ntry{window.__ctR312Test.setSportsState=function(v){return window.__ctR312SportsBridge?.setState?.(v)}}catch{}\n";
  runtime=runtime.slice(0,i)+hook+runtime.slice(i);
 }
 new Function(runtime);
@@ -116,6 +131,7 @@ for(const x of[
  "data-ct312-sport-filter",
  "sport255?.payload?.sports",
  "setSportsState=function(v)",
+ "window.__ctR312SportsBridge",
  "window.__ctR311='profile-stat-single-version+f1-clickable-weekend+discover-public-single-renderer'",
  "const version='1.0.103',revision='r312-official-1.0.103';"
 ])must(js,x);
