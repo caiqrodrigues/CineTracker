@@ -13,19 +13,20 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.97 / r306
+## Web 1.0.99 / r308
 
-A r306 substitui a autoridade final da r305 nos pontos que continuavam falhando em produção e elimina os repaints tardios responsáveis por mudanças visuais no Perfil.
+A r308 corrige diretamente as áreas reproduzidas no vídeo de validação e mantém a proteção de progresso introduzida na r307.
 
-- **Detalhes de filmes e séries:** títulos semelhantes/recomendados e atores voltam a abrir pelo identificador correto; `+ Watchlist` e `✓ Visto` usam a ação assíncrona canônica tanto nos relacionados quanto no detalhe principal.
-- **Top 10:** header, margens e paddings superiores são compactados para manter o ranking mais alto na viewport, sem reintroduzir overflow horizontal global.
-- **F1 Hub:** a aba `Pilotos` é removida; corridas passadas do Calendário abrem detalhes com `Grid de Largada` e `Resultado de Chegada`, usando os resultados da corrida e fallback Jolpica quando necessário.
-- **Esportes:** `Próximos`, `Anteriores`, `Favoritos` e `Assistidos` ficam abaixo do F1 Hub; `↻ Rebuscar / Sincronizar` fica no header da página e força nova sincronização pelos providers/backend.
-- **Perfil:** estatísticas deixam de receber reconciliações temporizadas; sinais `Abrir`/setas da Watchlist são removidos; cards de atores têm geometria fixa e o scroll horizontal fica somente no trilho dos cards.
-- **Estabilidade:** a r305 é retirada do bundle final e a r306 opera antes do `boot()` por handlers/renderers canônicos, sem `MutationObserver`, `setInterval` ou `setTimeout` de reconciliação visual.
+- **Descobrir / Pra Você:** `Indicação do Dia` com troca real, `Da sua Watchlist` com Filme + Série + Anime e `100% novos` com Filme + Série + Anime. Cada categoria mantém seu próprio pool; uma categoria não preenche a vaga de outra.
+- **Desempenho:** autoridade pessoal, memória semanal e pools iniciais do TMDB são iniciados em paralelo; a Watchlist hidrata somente o necessário para identificar Filme/Série/Anime e a composição recente é reutilizada por três minutos.
+- **Ações:** Watchlist e `✓ Visto` usam os controles `chip` do sistema, sem paleta paralela; os cards mantêm geometria compacta de 158 px e as ações permanecem contidas no card.
+- **Exclusões pessoais:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` recebem uma barreira final contra assistidos e Watchlist imediatamente antes do paint. `Calendário`, `Pra Você` e `Top 10` são exceções explícitas.
+- **F1 Hub:** somente `Visão geral`, `Calendário`, `Classificações` e `Circuitos`; `Pilotos` e `Equipes` não aparecem como abas redundantes. O clique do Calendário usa o `data-event-id` real e abre a rodada correta no modal com `Grid de Largada` e `Resultado de Chegada`.
+- **Perfil:** acabamento final pelo rótulo semântico das estatísticas, sem depender da posição do card. `Séries Watchlist` e `Filmes Watchlist` continuam clicáveis, mas sem `Abrir`, seta ou pseudo-ícone visível.
+- **Home preservada:** a r307 continua impedindo que o botão de um episódio do Raw/SmackDown seja convertido em marcação da série inteira e mantém a regra de fronteira para séries recorrentes antigas.
 - **Android preservado:** `1.0.20 / versionCode 10062`.
 
-Build oficial: `apps/web/build-r306-official.mjs`; runtime: `apps/web/runtime-r306-final.js`; regressões: `apps/web/test-r306.mjs` e `apps/web/test-r306-browser.mjs`.
+Build oficial: `apps/web/build-r308-official.mjs`; runtime: `apps/web/runtime-r308-discover-f1-profile.js`; regressões: `apps/web/test-r308.mjs` e `apps/web/test-r308-browser.mjs`.
 
 ## Funcionalidades consolidadas
 
