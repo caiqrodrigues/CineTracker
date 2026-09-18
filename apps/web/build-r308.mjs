@@ -31,7 +31,7 @@ for(const x of[
  "window.__ctWebBuild='1.0.98';window.__ctOfficialVersion='1.0.98';",
  "const REVISION='r307-official-1.0.98';",
  "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['teams','Equipes'],['circuits','Circuitos']];",
- "const observer=new MutationObserver(ms=>{",
+ "sanitizeTabs();normalizeRelatedAll(document);\nconst observer=new MutationObserver(ms=>{",
  "window.__ctR307EarlyShouldBypass=bypass307",
  "\nboot();"
 ])must(js,x);
@@ -43,9 +43,9 @@ js=once(js,
  'r293 delayed foryou click refresh'
 );
 js=between(js,
- "const observer=new MutationObserver(ms=>{",
+ "sanitizeTabs();normalizeRelatedAll(document);\nconst observer=new MutationObserver(ms=>{",
  "observer.observe(document.documentElement,{subtree:true,childList:true});",
- "const observer={disconnect(){}};",
+ "sanitizeTabs();normalizeRelatedAll(document);\nconst observer={disconnect(){}};",
  'r293 Discover mutation observer'
 );
 js=once(js,"if(discover.tab==='foryou')queueRefresh();","window.__ctR308LegacyForYouInitialRefreshDisabled=true;",'r293 initial refresh');
