@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.104 — 2026-09-18 — Web r313
+
+### Descobrir
+- Reverte o renderer visual próprio da r312 e restaura o card aprovado `ct288Card`; nenhum `ct312-card`/banner é permitido no bundle final.
+- `Todos / Filmes / Séries` volta a ficar oculto por padrão e é aberto somente pelo botão compacto `☷`.
+- Mantém as oito abas visíveis durante loading, scroll horizontal nativo e título/metadados sem corte.
+- As cinco abas públicas aplicam visto + Watchlist + identidade visual antes da montagem do HTML e mantêm `+ Watchlist` + `✓ Visto`.
+- `Pra Você` reutiliza a autoridade exata r309 com acabamento compacto.
+
+### Esportes
+- Move a responsabilidade do filtro para o produtor real `paintSports255`.
+- `Próximos` e `Anteriores` recebem, dentro do próprio `panel-head`, `Todos` mais todos os esportes retornados em `payload.sports`.
+- Remove o produtor global antigo `.ct255-sport-filters`; `Assistidos` e demais abas não recebem o filtro inline.
+
+### Perfil
+- Substitui a cadeia herdada final por `renderProfile313`, com um único estado de carregamento e um único paint canônico.
+- Garante `Jogos no Estádio` e unifica o visual de `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist`, preservando os contratos de clique.
+- Mantém histórico esportivo canônico e atualização de atores favoritos da r312.
+
+### Preservações
+- JWT expirado continua renovando sessão e repetindo uma vez.
+- F1 r311 permanece clicável, com detalhe completo e marcação por sessão.
+- Android permanece `1.0.20 / versionCode 10062`.
+
 ## 1.0.103 — 2026-09-18 — Web r312
 
 ### Descobrir
