@@ -25,8 +25,8 @@ const between=(s,start,end,repl,label)=>{
 for(const x of[
  "window.__ctWebBuild='1.0.102';window.__ctOfficialVersion='1.0.102';",
  "const REVISION='r311-official-1.0.102';",
- "async function sbApi(path, options = {}) {",
- "async function tmdbFetch(params) {",
+ "async function sbApi(",
+ "async function tmdbFetch(",
  "window.__ctR255Test={normalizeHome255,auditHome255,releasedFrontier255,watchedFrontier255,legacy255,liveLast255,sportRows255,genres255,eligible255,fmtSports255,mediaCard255};",
  "window.__ctR311='profile-stat-single-version+f1-clickable-weekend+discover-public-single-renderer'",
  "const version='1.0.102',revision='r311-official-1.0.102';",
@@ -75,7 +75,7 @@ const api312=[
 "    return d;",
 "}"
 ].join('\n');
-js=between(js,"async function sbApi(path, options = {}) {","\nasync function sbRpc",api312+"\n",'sbApi');
+js=between(js,"async function sbApi(","\nasync function sbRpc",api312+"\n",'sbApi');
 
 const tmdb312=[
 "async function tmdbFetch(params, allowRetry = true) {",
@@ -96,7 +96,7 @@ const tmdb312=[
 "    return d;",
 "}"
 ].join('\n');
-js=between(js,"async function tmdbFetch(params) {","\nfunction authScreen()",tmdb312+"\n",'tmdbFetch');
+js=between(js,"async function tmdbFetch(","\nfunction authScreen()",tmdb312+"\n",'tmdbFetch');
 
 const early312="(()=>{if(window.__ctR312EarlyCapture)return;window.__ctR312EarlyCapture=true;window.addEventListener('click',e=>{try{const fn=window.__ctR312EarlyHandle;if(typeof fn!=='function')return;if(fn(e.target,e)){e.preventDefault();e.stopImmediatePropagation()}}catch{}},true)})();";
 
