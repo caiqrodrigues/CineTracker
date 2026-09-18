@@ -6,10 +6,21 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.102** | revision `r311-official-1.0.102`, package `1.0.102` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r311 |
+| Web | **1.0.103** | revision `r312-official-1.0.103`, package `1.0.103` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r312 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.103 / r312
+
+- JWT: refresh proativo e retry único em 401/JWT expirado.
+- Descobrir: renderer próprio nas cinco abas públicas, vistos/Watchlist excluídos antes do paint, títulos/metadados visíveis e ações fixas abaixo do card.
+- Pra Você: slots compactos em trilho horizontal.
+- Perfil: sem prepaint de cache antigo, botão `Jogos no Estádio` no primeiro paint e favoritos atuais.
+- Esportes: filtro de todas as modalidades no cabeçalho de `Próximos`/`Anteriores`.
+- F1 r311 preservado; Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v312.js` / `app-v312.css`; build: `apps/web/build-r312-official.mjs`; runtime: `apps/web/runtime-r312-video-truth.js`.
 
 ## Web 1.0.102 / r311
 
