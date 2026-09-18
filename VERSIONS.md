@@ -6,10 +6,20 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.104** | revision `r313-official-1.0.104`, package `1.0.104` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
+| Web | **1.0.105** | revision `r314-official-1.0.105`, package `1.0.105` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r314 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.105 / r314
+
+- Descobrir: cinco abas públicas com barreira vistos/Watchlist, Calendário próprio por data e Pra Você 1+3+3 em painel compacto.
+- F1: remove definitivamente o resumo transitório de itens assistidos do Hub; detalhe de corrida e marcação por sessão permanecem.
+- Perfil: quatro estatísticas clicáveis no mesmo padrão e `Esportes assistidos` com `Recolher / Expandir`.
+- Esportes: filtros dinâmicos Próximos/Anteriores preservados e RPCs com refresh/retry de JWT.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets: `app-v314.js` / `app-v314.css`; build: `apps/web/build-r314-official.mjs`; runtime: `apps/web/runtime-r314-video-truth.js`.
 
 ## Web 1.0.104 / r313
 
