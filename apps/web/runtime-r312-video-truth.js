@@ -83,6 +83,12 @@ function addKeys312(set,value,hint=''){
  return set;
 }
 let personal312={at:0,seen:new Set(),watch:new Set()},personalTask312=null;
+function canonicalPersonal312(v={}){
+ const seen=new Set(),watch=new Set();
+ addKeys312(seen,v?.seen);addKeys312(watch,v?.watch);
+ for(const k of seen)watch.delete(k);
+ return {at:Date.now(),seen,watch};
+}
 function addLocalSets312(seen,watch){
  try{if(typeof seenMedia!=='undefined')addKeys312(seen,seenMedia)}catch{}
  try{if(typeof watchlist!=='undefined')addKeys312(watch,watchlist)}catch{}
@@ -102,7 +108,7 @@ async function personalAuthority312(force=false){
   addKeys312(watch,a?.raw?.watchlist);addKeys312(watch,w?.keys);addKeys312(watch,w?.rows);
   addLocalSets312(seen,watch);
   for(const k of seen)watch.delete(k);
-  personal312={at:Date.now(),seen,watch};return personal312;
+  personal312=canonicalPersonal312({seen,watch});return personal312;
  })().finally(()=>{personalTask312=null});
  return personalTask312;
 }
@@ -303,8 +309,8 @@ window.__ctR312={
  setBridge(v){bridge=v&&typeof v==='object'?v:null},version:'1.0.103'
 };
 window.__ctR312Test={
- parseKey312,filterPublic312,card312,paintPublic312,forYouModel312,paintForYou312,sportsCatalog312,sportsFilterMarkup312,profileContracts312,jwtExpired312,authRetry312,
- setPersonal(v){personal312={at:Date.now(),seen:new Set(v?.seen||[]),watch:new Set(v?.watch||[])}},selectSport312,
+ parseKey312,canonicalPersonal312,filterPublic312,card312,paintPublic312,forYouModel312,paintForYou312,sportsCatalog312,sportsFilterMarkup312,profileContracts312,jwtExpired312,authRetry312,
+ setPersonal(v){personal312=canonicalPersonal312(v)},selectSport312,
  setBridge(v){bridge=v&&typeof v==='object'?v:null},
  get personal(){return personal312}
 };
