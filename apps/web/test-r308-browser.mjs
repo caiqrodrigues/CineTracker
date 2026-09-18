@@ -60,7 +60,7 @@ const probe=`<script>setTimeout(async()=>{try{
  race.remove();__ctR308.setTestBridge(null);
 
  history.replaceState({},'','/profile');
- const p=document.createElement('main');p.innerHTML='<div data-profile><div class="ct-r238-profile-grid"><button class="stat"><small>Séries Watchlist</small><b>7</b><span class="stat-link-icon">›</span></button><button class="stat"><small>Filmes Watchlist</small><b>9</b><button class="profile-card-arrow">Abrir</button></button><button class="stat"><small>Eventos assistidos</small><b>3</b></button></div></div>';document.body.appendChild(p);
+ const p=document.createElement('main');p.innerHTML='<div data-profile><div class="ct-r238-profile-grid"><div class="stat"><small>Séries Watchlist</small><b>7</b><span class="stat-link-icon">›</span></div><div class="stat"><small>Filmes Watchlist</small><b>9</b><button class="profile-card-arrow">Abrir</button></div><div class="stat"><small>Eventos assistidos</small><b>3</b></div></div></div>';document.body.appendChild(p);
  __ctR308Test.stabilizeProfile();
  const watchStats=[...p.querySelectorAll('.stat')].filter(x=>/watchlist/i.test(x.textContent));
  ok(watchStats.length===2&&watchStats.every(x=>x.classList.contains('ct308-watchlist-stat')),'semantic Watchlist stats not stabilized');
