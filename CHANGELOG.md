@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.105 — 2026-09-18 — Web r314
+
+### Descobrir
+- Passa a possuir também `Calendário` e `Pra Você`, eliminando os dois últimos renderers legados visíveis no vídeo.
+- Nas cinco abas públicas, reforça a barreira vistos + Watchlist + alias antes do HTML.
+- Padroniza cards com largura fixa, metadados sem clipping e botões pequenos lado a lado; remove controles legados internos.
+- Calendário agrupa por data em rails horizontais próprios; cards estreitos/slivers são proibidos.
+- `Pra Você` mantém os pools exatos 1+3+3, mas em um painel único compacto com `Trocar` pequeno.
+
+### F1 / Esportes
+- Remove no bundle a função que emitia `Seu registro / Fórmula 1 assistida` dentro do Hub F1; esse conteúdo nunca deve aparecer, nem transitoriamente.
+- Preserva quatro abas do F1, GP clicável, detalhe completo e marcação por sessão.
+- Preserva filtros dinâmicos em Próximos/Anteriores e aplica refresh de sessão + retry aos RPCs esportivos.
+
+### Perfil
+- Reaplica um único padrão visual/clicável para `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist`.
+- Mantém os datasets de clique de estádio/Watchlist, sem chevrons.
+- Adiciona `Recolher / Expandir` ao painel `Esportes assistidos`.
+- Preserva atualização viva de Atores Favoritos.
+
+### Build / validação
+- Web `1.0.105 / r314-official-1.0.105`; Android continua `1.0.20 / versionCode 10062`.
+- Chromium reproduz a barreira pessoal, Calendário com 12 cards sem slivers, Pra Você 1+3+3 compacto, Recolher no Perfil e ausência do resumo F1.
+
 ## 1.0.104 — 2026-09-18 — Web r313
 
 ### Descobrir
