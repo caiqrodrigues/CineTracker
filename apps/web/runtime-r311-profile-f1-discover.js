@@ -239,14 +239,19 @@ async function toggleF1Session311(btn){
 }
 try{if(typeof paintF1255==='function'){const base=paintF1255;paintF1255=async function(){const out=await base.apply(this,arguments);return out}}}catch{}
 
-/* Window capture runs before legacy document capture handlers. */
-window.addEventListener('click',e=>{
- const action=e.target?.closest?.('[data-ct311-action]');if(action){e.preventDefault();e.stopImmediatePropagation();void persistDiscover311(action);return}
- const retry=e.target?.closest?.('[data-ct311-retry]');if(retry){e.preventDefault();e.stopImmediatePropagation();void buildPublic311(String(discover?.tab||''),true);return}
- const raceBtn=e.target?.closest?.('[data-ct311-f1-race]');if(raceBtn){e.preventDefault();e.stopImmediatePropagation();const key=String(raceBtn.dataset.ct311F1Race||''),race=raceCache311.get(key);if(race)void openRace311(race);else{const season=Number(raceBtn.dataset.season||0),round=Number(raceBtn.dataset.round||0),fallback=rows(typeof f1255!=='undefined'?f1255?.data?.schedule:[]).find(x=>Number(x?.round||0)===round);if(fallback)void openRace311({...fallback,season,round,title:f1RaceTitle311(fallback)})}return}
- const watch=e.target?.closest?.('[data-ct311-f1-watch]');if(watch){e.preventDefault();e.stopImmediatePropagation();void toggleF1Session311(watch);return}
- if(e.target?.closest?.('[data-ct311-f1-close]')||e.target?.matches?.('[data-ct311-f1-modal]')){e.preventDefault();e.stopImmediatePropagation();closeRace311()}
-},true);
+function exactClick311(target){
+ if(!target?.closest)return false;
+ const action=target.closest('[data-ct311-action]');if(action){void persistDiscover311(action);return true}
+ const retry=target.closest('[data-ct311-retry]');if(retry){void buildPublic311(String(discover?.tab||''),true);return true}
+ const raceBtn=target.closest('[data-ct311-f1-race]');if(raceBtn){const key=String(raceBtn.dataset.ct311F1Race||''),race=raceCache311.get(key);if(race)void openRace311(race);else{const season=Number(raceBtn.dataset.season||0),round=Number(raceBtn.dataset.round||0),fallback=rows(typeof f1255!=='undefined'?f1255?.data?.schedule:[]).find(x=>Number(x?.round||0)===round);if(fallback)void openRace311({...fallback,season,round,title:f1RaceTitle311(fallback)})}return true}
+ const watch=target.closest('[data-ct311-f1-watch]');if(watch){void toggleF1Session311(watch);return true}
+ if(target.closest('[data-ct311-f1-close]')||target.matches?.('[data-ct311-f1-modal]')){closeRace311();return true}
+ return false;
+}
+/* Fallback owner. build-r311 also prepends an earlier window capture so no legacy
+   click authority can consume these exact controls first. */
+window.__ctR311EarlyHandle=exactClick311;
+window.addEventListener('click',e=>{if(exactClick311(e.target)){e.preventDefault();e.stopImmediatePropagation()}},true);
 window.addEventListener('keydown',e=>{if(e.key==='Escape')closeRace311()},true);
 document.addEventListener('cinetracker:data-changed',()=>{personal311={at:0,seen:new Set(),watch:new Set()};publicCache.clear();f1HistoryCache311={at:0,rows:[]}});
 
@@ -270,6 +275,6 @@ const style=document.createElement('style');style.id='ct-web-r311-stability';sty
 `;document.head.appendChild(style);
 
 unifyProfileStats311();
-window.__ctR311={unifyProfileStats:unifyProfileStats311,buildPublic:buildPublic311,loadDiscover:loadDiscover311,openRace:openRace311,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null},version:'1.0.102'};
+window.__ctR311={unifyProfileStats:unifyProfileStats311,buildPublic:buildPublic311,loadDiscover:loadDiscover311,openRace:openRace311,exactClick:exactClick311,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null},version:'1.0.102'};
 window.__ctR311Test={statCard311,unifyProfileStats311,filterPublic311,paintPublic311,browseItem311,f1Calendar311,sessionDef311,sessionWatched311,sessionRows311,openRace311,toggleF1Session311,resultTable311,setPersonal(v){personal311={at:Date.now(),seen:new Set(v?.seen||[]),watch:new Set(v?.watch||[])}},setTestBridge(v){testBridge=v&&typeof v==='object'?v:null},get raceCache(){return raceCache311}};
 })();
