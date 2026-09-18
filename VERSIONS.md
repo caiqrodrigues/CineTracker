@@ -6,10 +6,24 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.99** | revision `r308-official-1.0.99`, package `1.0.99` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r308 |
+| Web | **1.0.100** | revision `r309-official-1.0.100`, package `1.0.100` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r309 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.100 / r309
+
+A r309 é a correção orientada pelos dois vídeos reais enviados em 18/09/2026.
+
+- Descobrir fica com oito abas canônicas, sem `Lançamentos` nem rail duplicado; autoridade pessoal e TMDB carregam em paralelo.
+- `Pra Você` exige Filme + Série + Anime tanto na Watchlist quanto em `100% novos`, com Indicação do Dia e trocas independentes.
+- A deduplicação final também usa tipo+título+ano, eliminando duplicatas visuais.
+- Cards do Descobrir mantêm Watchlist e `✓ Visto` sempre visíveis; `Trocar` fica abaixo deles.
+- F1 nasce com quatro abas; a autoridade r257 que repintava seis abas depois da navegação é desativada.
+- Perfil deixa de exibir cache/quick antes do payload completo, recebe estádio no primeiro paint, não mostra chevrons de Watchlist e mantém a scrollbar dos atores no rail real dos cards.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v309.js` / `app-v309.css`; build: `apps/web/build-r309-official.mjs`; runtime: `apps/web/runtime-r309-video-truth.js`; regressões: `apps/web/test-r309.mjs` e `apps/web/test-r309-browser.mjs`.
 
 ## Web 1.0.99 / r308
 
