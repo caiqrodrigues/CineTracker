@@ -6,10 +6,34 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.100** | revision `r309-official-1.0.100`, package `1.0.100` | release Web atual |
-| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r309 |
+| Web | **1.0.102** | revision `r311-official-1.0.102`, package `1.0.102` | release Web atual |
+| Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r311 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.102 / r311
+
+- Perfil: quatro controles clicáveis de estatísticas usam uma única versão visual baseada em `Eventos assistidos`.
+- F1: Calendário abre cada GP; detalhe inclui fim de semana, Grid de Largada, Resultado de Chegada e marcação por sessão.
+- Descobrir: as cinco abas públicas excluem vistos + Watchlist antes do paint e exibem `+ Watchlist` + `✓ Visto` em faixa estável abaixo do card.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v311.js` / `app-v311.css`; build: `apps/web/build-r311-official.mjs`; runtime: `apps/web/runtime-r311-profile-f1-discover.js`; regressões: `apps/web/test-r311.mjs` e `apps/web/test-r311-browser.mjs`.
+
+## Web 1.0.101 / r310
+
+A r310 corrige as divergências visíveis no vídeo real enviado após a r309.
+
+- remove na fonte os produtores tardios r252/r300/r293 que recriavam abas e ações antigas;
+- usa a Watchlist completa `cinetracker_watchlist_full_v119` na exclusão final das abas públicas;
+- mantém Watchlist + `✓ Visto` com estado coerente nos cards;
+- usa `cinetracker_sports_watch_history_v296` para o total canônico de eventos assistidos no primeiro paint do Perfil;
+- posiciona uma única scrollbar dos atores explicitamente abaixo dos cards;
+- normaliza eventos esportivos antigos presos em status `live`;
+- corrige o rodapé para `v1.0.101 / r310-official-1.0.101`;
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Assets oficiais: `app-v310.js` / `app-v310.css`; build: `apps/web/build-r310-official.mjs`; runtime: `apps/web/runtime-r310-video-truth.js`; regressões: `apps/web/test-r310.mjs` e `apps/web/test-r310-browser.mjs`.
 
 ## Web 1.0.100 / r309
 

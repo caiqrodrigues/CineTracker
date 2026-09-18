@@ -1,107 +1,73 @@
 # CineTracker — Project State
 
-> Documento canônico de continuidade. O estado atual deve ser lido daqui e dos documentos vinculados, não inferido de versões históricas ou do histórico de conversa.
+> Documento canônico de continuidade. Print, vídeo e teste real prevalecem sobre asserts estáticos quando houver divergência.
 
-**Última atualização:** 2026-09-04  
+**Última atualização:** 2026-09-18  
 **Branch de produção:** `main`  
-**Release oficial:** **1.0.0**  
-**Web:** **1.0.0 / `r204-official-1.0.0`**  
-**Android:** **1.0.0 / versionCode `10042`**  
+**Release Web atual:** **1.0.102 / `r311-official-1.0.102`**  
+**Android atual:** **1.0.20 / versionCode `10062`**  
 **Backend:** Supabase production compartilhado Web/Android  
 **Windows:** não lançado
 
-## 1. Baseline oficial 1.0.0
+## 1. Estado Web
 
-A 1.0.0 encerra a fase pré-1.0 e passa a ser a única baseline recomendada para novas mudanças. Não reabre correções já aceitas; qualquer regressão deve ser tratada a partir desta release.
+A r311 é a baseline Web atual. Ela herda as correções r307–r310 e consolida as três autoridades que o vídeo mais recente ainda mostrou divergentes:
 
-A promoção foi deliberadamente conservadora:
+- **Perfil:** `Eventos assistidos`, `Jogos no Estádio`, `Séries Watchlist` e `Filmes Watchlist` usam uma única versão visual final. Os contratos de clique são preservados e autoridades visuais r300/r301 ficam inertes.
+- **F1 Hub:** o Calendário renderiza GPs clicáveis. O detalhe exibe o fim de semana completo, Grid de Largada e Resultado de Chegada; sessões iniciadas podem ser marcadas/desmarcadas como assistidas.
+- **Descobrir:** `Em alta`, `Populares`, `Novidades`, `Mais Aguardados` e `Mais bem avaliados` excluem vistos e Watchlist antes do HTML e usam somente a faixa final `+ Watchlist` + `✓ Visto` abaixo do card.
 
-- Web 1.0.0 = comportamento r203 + identidade oficial r204;
-- Android 1.0.0 = comportamento 0.99.7.71/r243 validado fisicamente + identidade oficial 1.0.0;
-- Supabase permanece o backend compartilhado atual, sem migration criada apenas para renumerar a aplicação.
+Produção Web: `https://mycinetracker.vercel.app`.
 
-## 2. Web oficial
+## 2. Regras funcionais que devem permanecer
 
-Revision: `r204-official-1.0.0`.
+- Raw, SmackDown e séries recorrentes antigas usam fronteira assistida; backlog histórico anterior não vira pendência.
+- O botão de episódio marca somente o episódio exato; nunca pode cair em `markSeen` da série inteira.
+- `Pra Você` mantém Indicação do Dia + Filme/Série/Anime da Watchlist + Filme/Série/Anime 100% novos.
+- F1 mantém quatro abas: `Visão geral`, `Calendário`, `Classificações`, `Circuitos`.
+- `Classificações` concentra pilotos e equipes; não recriar abas redundantes.
+- Atores Favoritos mantém uma única scrollbar horizontal abaixo dos cards.
+- Perfil usa histórico esportivo canônico para o total de eventos assistidos.
+- Android não deve ser alterado por releases Web sem solicitação explícita.
 
-A r204 importa integralmente a r203 e altera somente o envelope de release: package, revision/cache identity, asset final, `release.json`, snapshot e versão visível no rodapé.
+## 3. Android congelado
 
-Comportamentos preservados incluem Home, Descobrir, filtros, Sports, Perfil, busca, detalhes, favoritos, importação/sincronização, rewatch persistente e exclusões pessoais.
+- `applicationId`: `com.cinetracker.app`
+- `versionName`: `1.0.20`
+- `versionCode`: `10062`
 
-Produção: `https://mycinetracker.vercel.app`.
+A r311 é Web-only e deve preservar essa baseline.
 
-## 3. Android oficial
+## 4. Artefatos e validação da r311
 
-Identidade:
+- Build oficial: `apps/web/build-r311-official.mjs`
+- Runtime final: `apps/web/runtime-r311-profile-f1-discover.js`
+- Gate estático: `apps/web/test-r311.mjs`
+- Chromium: `apps/web/test-r311-browser.mjs`
+- Workflow: `.github/workflows/verify.yml`
+- Assets finais: `app-v311.js` / `app-v311.css`
 
-- `applicationId`: `com.cinetracker.app`;
-- `versionName`: `1.0.0`;
-- `versionCode`: `10042`;
-- base funcional: `0.99.7.71 / r243-android-watchlist-renderer-pool`;
-- preparação oficial: `scripts/prepare-android-v1000.mjs`;
-- teste oficial: `scripts/test-android-v1000.mjs`;
-- pipeline: `.github/workflows/release-v1.yml`;
-- APK: `CineTracker-1.0.0.apk`.
+O gate Chromium deve validar comportamento, não apenas presença de strings: igualdade dos controles do Perfil após a janela de repaints legados, clique do GP abrindo detalhe, persistência da sessão de F1 e exclusão/ações das cinco abas públicas do Descobrir.
 
-### Estado funcional congelado
-
-O último bug bloqueador antes da 1.0.0 era o `Trocar` em **Pra você → Da sua Watchlist**. A causa final estava na divergência entre o pool usado pelo renderer `ct186` e o pool reconstruído pelo handler `r237`. A 0.99.7.71 passou a usar exatamente `wmPool/wsPool/waPool` selecionados pelo renderer visível. O usuário confirmou no aparelho que a correção funcionou.
-
-Também está validado pelo usuário que o scroll lateral do Top 10/streamings ficou funcional. A implementação usa scroll horizontal nativo no WebView e não reintroduz `touchmove` manual.
-
-A 1.0.0 não altera essa lógica; apenas renumera a aplicação e a versão exibida.
-
-## 4. Versionamento visível
-
-A versão **1.0.0** deve aparecer:
-
-- no rodapé da Web;
-- no rodapé/runtime embarcado do Android;
-- em `window.__ctWebBuild` / identidade oficial do runtime;
-- em `apps/web/package.json`;
-- em `dist/release.json` da Web;
-- em `versionName` do APK;
-- na documentação canônica.
-
-O `versionCode` Android é `10042` para manter monotonicidade em relação à 0.99.7.71 (`10041`).
-
-## 5. Pipeline e governança
-
-Pipeline oficial: `.github/workflows/release-v1.yml`.
-
-Ele valida Web e Android juntos, incluindo:
-
-- build/test Web 1.0.0;
-- identidade visual 1.0.0;
-- preservação dos markers funcionais da r203;
-- preparação Android em cima da .71;
-- pool Watchlist igual ao renderer ativo;
-- clique completo Watchlist `11 → 14` mantendo 100% novos `21 → 21`;
-- Gradle APK;
-- `aapt` versionName/versionCode;
-- `apksigner`;
-- artifact oficial.
-
-## 6. Regra de evidência
+## 5. Regra de evidência
 
 Estados separados:
 
 1. source/documentação;
 2. CI/testes;
-3. deploy Web;
-4. APK/assinatura;
+3. merge em `main`;
+4. deploy Web;
 5. smoke real Web;
-6. smoke real Android.
+6. Android físico quando houver release Android.
 
-Print/vídeo/teste físico prevalece sobre CI quando houver divergência.
+Nenhum item deve ser declarado entregue em produção apenas porque o CI de branch ficou verde. A produção só é confirmada após `production_smoke` em `main`.
 
-## 7. Documentos canônicos
+## 6. Documentos canônicos
 
 - `README.md`
 - `VERSIONS.md`
 - `CHANGELOG.md`
+- `PROJECT_STATE.md`
 - `docs/ARCHITECTURE.md`
 - `docs/DEVELOPMENT_RULES.md`
 - `docs/SECURITY.md`
-- `docs/releases/1.0.0.md`
-- `docs/validation/1.0.0.md`
