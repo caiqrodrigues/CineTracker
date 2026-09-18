@@ -30,8 +30,7 @@ jobs:
       - name: Syntax r313 release chain
         run: |
           set -euo pipefail
-          node -e "const fs=require('fs'),z=require('zlib');fs.writeFileSync('/tmp/runtime-r313.js',z.gunzipSync(Buffer.from(fs.readFileSync('apps/web/runtime-r313-discover-sports-profile.js','utf8').trim(),'base64')))"
-          node --check /tmp/runtime-r313.js
+          node --check apps/web/runtime-r313-discover-sports-profile.js
           node --check apps/web/build-r313.mjs
           node --check apps/web/build-r313-official.mjs
           node --check apps/web/test-r313.mjs
