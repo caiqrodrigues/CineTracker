@@ -12,7 +12,7 @@ const track='<script>window.__ct312Errors=[];addEventListener("error",e=>__ct312
 const probe=`<script>setTimeout(async()=>{try{
  const ok=(v,m)=>{if(!v)throw new Error(m)},T=window.__ctR312Test,R=window.__ctR312,B=window.__ctR312R255;
  ok(T&&R&&B,'r312 bridges unavailable');
- ok(typeof window.ct312JwtExpired==='function'&&window.ct312JwtExpired(401,{})&&window.ct312JwtExpired(400,{message:'JWT expired'}),'JWT detector unavailable');
+ ok(window.__ctR312AuthTest?.jwtExpired?.(401,{})&&window.__ctR312AuthTest?.jwtExpired?.(400,{message:'JWT expired'}),'JWT detector unavailable');
 
  const media=(id,type,title)=>({id,tmdb_id:id,media_type:type,title,name:title,release_date:'2026-01-01',first_air_date:'2026-01-01',vote_average:8.4});
  const personal={seen:new Set(['movie:1']),watch:new Set(['tv:2'])};
