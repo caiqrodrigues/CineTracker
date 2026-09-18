@@ -59,7 +59,7 @@ jobs:
             && r.f1_drivers_tab===false
             && r.f1_teams_tab===false
             && r.f1_calendar_data_event_id===true
-            && r.profile_delayed_r304_reconcile===false
+            && r.profile_semantic_first_paint===true
             && r.profile_watchlist_open_signal===false
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
@@ -87,7 +87,7 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.99"' <<<"$BODY"               && grep -Fq '"revision": "r308-official-1.0.99"' <<<"$BODY"               && grep -Fq '"discover_foryou_exact_3_plus_3": true' <<<"$BODY"               && grep -Fq '"f1_teams_tab": false' <<<"$BODY"               && grep -Fq '"f1_calendar_data_event_id": true' <<<"$BODY"               && grep -Fq '"profile_delayed_r304_reconcile": false' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.99"' <<<"$BODY"               && grep -Fq '"revision": "r308-official-1.0.99"' <<<"$BODY"               && grep -Fq '"discover_foryou_exact_3_plus_3": true' <<<"$BODY"               && grep -Fq '"f1_teams_tab": false' <<<"$BODY"               && grep -Fq '"f1_calendar_data_event_id": true' <<<"$BODY"               && grep -Fq '"profile_semantic_first_paint": true' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v308.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
               if grep -Fq "window.__ctR308='discover-exact-3+3+personal-filter+f1-four-tabs+calendar-click+profile-first-paint'" <<<"$JS"                 && grep -Fq "const F1_TABS255=[['overview','Visão geral'],['calendar','Calendário'],['standings','Classificações'],['circuits','Circuitos']];" <<<"$JS"                 && grep -Fq 'data-event-id' <<<"$JS"                 && grep -Fq 'app-v308.js' <<<"$HTML"; then
