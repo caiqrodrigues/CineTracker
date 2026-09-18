@@ -30,7 +30,7 @@ const probe=`<script>setTimeout(async()=>{try{
  T.sanitizeTabs310();const keys=[...tabs.querySelectorAll('[data-ct288-tabs] [data-ct263-discover-tab]')].map(x=>x.dataset.ct263DiscoverTab);
  ok(keys.join('|')==='foryou|top10|trending|popular|new|anticipated|top|calendar','canonical Discover rail changed');
  ok(!tabs.querySelector('.ct251-tabs'),'legacy Discover rail survived');
- tabs.remove();
+
 
  history.replaceState({},'','/profile');
  const p=document.createElement('main');p.innerHTML='<div data-profile><section class="panel"><div class="panel-head"><h2>Esportes assistidos</h2></div><div class="stats"><div class="stat"><small>Eventos assistidos</small><b>59</b></div><div class="stat"><small>Jogos no Estádio</small><b>1</b></div></div></section><section class="panel actors-scroll ct306-actor-rail"><div class="panel-head"><h2>Atores Favoritos</h2></div><div class="row ct305-actor-rail"><article class="card"><button data-person="1">A</button></article><article class="card"><button data-person="2">B</button></article><article class="card"><button data-person="3">C</button></article><article class="card"><button data-person="4">D</button></article></div></section></div>';document.body.appendChild(p);
@@ -51,7 +51,11 @@ const probe=`<script>setTimeout(async()=>{try{
  f.remove();
 
  await new Promise(r=>setTimeout(r,2600));
- ok(!document.body.textContent.includes('Lançamentos'),'delayed Lançamentos reappeared after 2.6s');
+ const renderedRelease=document.querySelector('[data-ct251-discover-tab="releases"],[data-ct252-discover-tab="releases"],[data-ct255-discover-tab="releases"],[data-ct257-discover-tab="releases"],[data-ct263-discover-tab="releases"],[data-discover-tab="releases"]');
+ ok(!renderedRelease,'delayed Lançamentos tab reappeared after 2.6s');
+ const top10=[...tabs.querySelectorAll('button')].filter(x=>x.textContent.trim()==='Top 10');
+ ok(top10.length===1,'delayed duplicate Top 10 reappeared after 2.6s');
+ tabs.remove();
 
  document.documentElement.dataset.ct310done='1';
  document.documentElement.dataset.ct310watch='1';
