@@ -233,7 +233,8 @@ async function ensureStadium312(){
  if(routeNow()!=='profile')return false;const root=q('[data-profile]');if(!root)return false;
  const events=findStat312(root,'Eventos assistidos');if(!events)return false;
  let stadium=findStat312(root,'Jogos no Estádio'),count=0;
- try{const s=await rpc('cinetracker_sports_stadium_summary_v296',{});count=Number(s?.stadium_events??s?.[0]?.stadium_events??0)}catch{try{const h=arr(await rpc('cinetracker_sports_watch_history_v296',{}));count=h.filter(x=>x?.is_watched!==false&&x?.attended_in_person===true).length}catch{}}
+ if(testBridge&&testBridge.stadiumCount!=null){count=Number(typeof testBridge.stadiumCount==='function'?await testBridge.stadiumCount():testBridge.stadiumCount)||0}
+ else try{const s=await rpc('cinetracker_sports_stadium_summary_v296',{});count=Number(s?.stadium_events??s?.[0]?.stadium_events??0)}catch{try{const h=arr(await rpc('cinetracker_sports_watch_history_v296',{}));count=h.filter(x=>x?.is_watched!==false&&x?.attended_in_person===true).length}catch{}}
  if(!stadium){
   stadium=events.cloneNode(true);stadium.removeAttribute('data-ct299-history');stadium.removeAttribute('data-ct311-stat');events.parentElement?.appendChild(stadium);
  }
