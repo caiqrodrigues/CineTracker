@@ -1,4 +1,4 @@
-name: Verify Web 1.0.107 r316 Profile F1 Final
+name: Verify Web 1.0.108 r317 Watchlist Click
 
 on:
   push:
@@ -9,59 +9,53 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_107_r316:
+  web_1_0_108_r317:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r316
+      - name: Version identity r317
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.107"' package.json
-          grep -Fq '"version": "1.0.107"' apps/web/package.json
-          grep -Fq 'build-r316-official.mjs' apps/web/package.json
-          test -f apps/web/build-r316.mjs
-          test -f apps/web/build-r316-official.mjs
-          test -f apps/web/runtime-r316-profile-f1-final.js
-          test -f apps/web/test-r316.mjs
-          test -f apps/web/test-r316-browser.mjs
-      - name: Syntax r316 release chain
+          grep -Fq '"version": "1.0.108"' package.json
+          grep -Fq '"version": "1.0.108"' apps/web/package.json
+          grep -Fq 'build-r317-official.mjs' apps/web/package.json
+          test -f apps/web/build-r317.mjs
+          test -f apps/web/build-r317-official.mjs
+          test -f apps/web/runtime-r317-profile-watchlist-click.js
+          test -f apps/web/test-r317.mjs
+          test -f apps/web/test-r317-browser.mjs
+      - name: Syntax r317 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r316-profile-f1-final.js
-          node --check apps/web/build-r316.mjs
-          node --check apps/web/build-r316-official.mjs
-          node --check apps/web/test-r316.mjs
-          node --check apps/web/test-r316-browser.mjs
-      - name: Regression suite through r316
+          node --check apps/web/runtime-r317-profile-watchlist-click.js
+          node --check apps/web/build-r317.mjs
+          node --check apps/web/build-r317-official.mjs
+          node --check apps/web/test-r317.mjs
+          node --check apps/web/test-r317-browser.mjs
+      - name: Regression suite through r317
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r316
+      - name: Final bundle identity r317
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r316-official.mjs
-          node --check dist/app-v316.js
-          CT_R316_SKIP_BUILD=1 node test-r316.mjs
-          test -f dist/app-v316.js
-          test -f dist/app-v316.css
-          grep -Fq 'app-v316.js' dist/index.html
-          grep -Fq 'app-v316.css' dist/index.html
+          node build-r317-official.mjs
+          node --check dist/app-v317.js
+          CT_R317_SKIP_BUILD=1 node test-r317.mjs
+          test -f dist/app-v317.js
+          test -f dist/app-v317.css
+          grep -Fq 'app-v317.js' dist/index.html
+          grep -Fq 'app-v317.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.107'
-            && r.revision==='r316-official-1.0.107'
-            && r.profile_stats_order==='r237-requested-4col-two-wide-totals'
-            && r.profile_watchlist_stats==='clickable-open-full-list'
+          const ok=r.version==='1.0.108'
+            && r.revision==='r317-official-1.0.108'
+            && r.profile_stats_order==='r317-exact-ten-singular-plural-aliases'
+            && r.profile_watchlist_stats==='clickable-by-label-first-capture'
             && r.profile_watchlist_source==='cinetracker_watchlist_full_v119'
-            && r.profile_sports_stats_source==='cinetracker_sport_stats_v1'
-            && r.profile_sports_history_actions==='events+stadium'
-            && r.profile_stats_collapse==='main+sports-unified'
-            && r.f1_legacy_watch_panel===false
-            && r.f1_tabs==='overview+calendar+standings+circuits'
-            && r.f1_false_season_ended===false
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -79,26 +73,23 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_107_r316, android_current_source]
+    needs: [web_1_0_108_r317, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.107 r316
+      - name: Official production serves and boots 1.0.108 r317
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.107"' <<<"$BODY" \
-              && grep -Fq '"revision": "r316-official-1.0.107"' <<<"$BODY" \
-              && grep -Fq '"profile_stats_order": "r237-requested-4col-two-wide-totals"' <<<"$BODY" \
-              && grep -Fq '"profile_watchlist_stats": "clickable-open-full-list"' <<<"$BODY" \
-              && grep -Fq '"f1_false_season_ended": false' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v316.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.108"' <<<"$BODY" \
+              && grep -Fq '"revision": "r317-official-1.0.108"' <<<"$BODY" \
+              && grep -Fq '"profile_watchlist_stats": "clickable-by-label-first-capture"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v317.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR316='profile-r237-order+watchlist-open+f1-incomplete-schedule-truth'" <<<"$JS" \
-                && grep -Fq 'data-ct316-watchlist' <<<"$JS" \
-                && grep -Fq 'Agenda ainda não sincronizada' <<<"$JS" \
-                && grep -Fq 'app-v316.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR317='profile-watchlist-hard-click+exact-order-singular-alias'" <<<"$JS" \
+                && grep -Fq 'tempo de filme em watchlist' <<<"$JS" \
+                && grep -Fq 'app-v317.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=7500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi

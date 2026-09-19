@@ -2,6 +2,18 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.108 — 2026-09-19 — Web r317
+
+### Perfil
+- Corrige definitivamente `Filmes Watchlist`: o card passa a abrir a lista completa pelo rótulo no primeiro capture listener, antes dos bloqueadores legados.
+- Mantém `Séries Watchlist` com o mesmo contrato.
+- Corrige o alias singular `Tempo de filme em Watchlist` para preservar a ordem exata das dez estatísticas.
+
+### Build / validação
+- Web: `1.0.108 / r317-official-1.0.108`.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Adiciona teste Chromium que remove propositalmente os datasets do card de filmes e valida que o clique ainda abre a Watchlist apenas pelo rótulo.
+
 ## 1.0.107 — 2026-09-19 — Web r316
 
 ### Perfil

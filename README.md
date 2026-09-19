@@ -6,12 +6,23 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.107** | `r316-official-1.0.107` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.108** | `r317-official-1.0.108` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.108 / r317
+
+A r317 corrige especificamente o clique de `Filmes Watchlist` no Perfil.
+
+- `Filmes Watchlist` e `Séries Watchlist` agora são reconhecidos pelo próprio rótulo no primeiro listener de captura, sem depender de datasets que runtimes anteriores possam remover.
+- O clique abre a lista completa correspondente usando a fonte `cinetracker_watchlist_full_v119`.
+- Corrige também a ordem do card `Tempo de filme em Watchlist`, aceitando a forma singular exibida no Perfil e mantendo as dez estatísticas na ordem aprovada.
+- Android preservado em `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r317-official.mjs`; runtime: `apps/web/runtime-r317-profile-watchlist-click.js`.
 
 ## Web 1.0.107 / r316
 
