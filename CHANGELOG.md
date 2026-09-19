@@ -2,6 +2,23 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.107 — 2026-09-19 — Web r316
+
+### Perfil
+- Restaura a ordem visual aprovada do r237 para as dez estatísticas.
+- Restaura os cards Séries Watchlist e Filmes Watchlist como botões funcionais, abrindo a lista completa.
+- Mantém a fonte esportiva canônica e o recolher conjunto de Estatísticas + Esportes assistidos.
+
+### F1 Hub
+- Mantém apenas Visão geral, Calendário, Classificações e Circuitos.
+- Continua removendo o painel legado de registro da Fórmula 1.
+- Remove a mensagem falsa `Temporada encerrada` quando a agenda está incompleta e passa a sinalizar `Agenda ainda não sincronizada`.
+
+### Build / validação
+- Web: `1.0.107 / r316-official-1.0.107`.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Adiciona regressão Chromium para ordem física, abertura das duas Watchlists e verdade do F1 Hub.
+
 ## 1.0.106 — 2026-09-18 — Web r315
 
 ### Descobrir

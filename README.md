@@ -6,12 +6,24 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.106** | `r315-official-1.0.106` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.107** | `r316-official-1.0.107` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.107 / r316
+
+A r316 corrige os dois regressos restantes observados no vídeo enviado.
+
+- **Perfil / ordem das estatísticas:** volta exatamente à geometria aprovada do r237: quatro colunas no desktop e os cards `Tempo total de tela` e `Tempo total em Watchlist` ocupam duas colunas.
+- **Séries Watchlist / Filmes Watchlist:** voltam a ser botões clicáveis e abrem a lista completa correspondente. O bloqueio introduzido na r315 foi removido.
+- **Esportes no Perfil:** preserva tempo assistido ao vivo, histórico de eventos, Jogos no Estádio e o recolher unificado com Estatísticas.
+- **F1 Hub:** mantém apenas Visão geral, Calendário, Classificações e Circuitos; remove o painel legado; quando a agenda recebida está incompleta, não informa mais falsamente `Temporada encerrada` e mostra `Agenda ainda não sincronizada`.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r316-official.mjs`; runtime: `apps/web/runtime-r316-profile-f1-final.js`.
 
 ## Web 1.0.106 / r315
 
