@@ -25,7 +25,7 @@ for(const x of[
  "window.__ctR317='profile-watchlist-hard-click+exact-order-singular-alias'",
  "tempo de filme em watchlist",
  "window.__ctR316.openWatchlist",
- "data-ct317-watchlist"
+ "ct317Watchlist"
 ])must(runtime,x);
 
 const early=`(()=>{if(window.__ctR317EarlyCapture)return;window.__ctR317EarlyCapture=true;window.addEventListener('click',e=>{try{const fn=window.__ctR317EarlyHandle;if(typeof fn!=='function')return;if(fn(e.target,e)){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation()}}catch{}},true);window.addEventListener('keydown',e=>{try{if((e.key==='Enter'||e.key===' ')&&e.target?.closest?.('.stat,[data-stat],.stat-card,.profile-stat')){const fn=window.__ctR317EarlyHandle;if(typeof fn==='function'&&fn(e.target,e)){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation()}}}catch{}},true)})();`;
