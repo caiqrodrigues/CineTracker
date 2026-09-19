@@ -2,6 +2,23 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.109 — 2026-09-19 — Web r318
+
+### Descobrir
+- Adiciona filtro funcional no `Pra você`: Todos, Filmes, Séries e Animes.
+- Preserva as regras canônicas do `Pra você`, incluindo pools independentes, `Trocar`, ações Watchlist/Visto e exclusões de frescor/qualidade já aprovadas.
+- Aplica exclusão estrita antes da renderização em Top 10, Em alta, Populares, Novidades, Lançamentos, Mais Aguardados e Mais bem avaliados.
+- Títulos já vistos ou na Watchlist não entram no HTML dessas áreas; progresso, Em dia e aliases visuais também permanecem excluídos.
+- Top 10 mantém todos os streamings disponíveis e duas listas por provedor: Séries e Filmes.
+- Corrige janelas de Novidades (-30d), Lançamentos (-7d/+30d) e Mais Aguardados (a partir de amanhã).
+- Mantém Calendário como exceção autorizada de Watchlist.
+- Mantém cache de 5 minutos e prefetch.
+
+### Escopo
+- Nenhuma alteração em Perfil, Esportes ou F1 Hub.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Web: `1.0.109 / r318-official-1.0.109`.
+
 ## 1.0.108 — 2026-09-19 — Web r317
 
 ### Perfil

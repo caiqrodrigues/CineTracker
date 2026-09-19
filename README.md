@@ -6,12 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.108** | `r317-official-1.0.108` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.109** | `r318-official-1.0.109` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.109 / r318
+
+A r318 altera **somente o Descobrir**.
+
+- **Pra você:** filtro funcional com `Todos / Filmes / Séries / Animes`, preservando Indicação do Dia, Da sua Watchlist, 100% novos, Watchlist, Visto e Trocar.
+- **Regras do Pra você preservadas:** Da sua Watchlist usa apenas itens reais da Watchlist ainda não vistos; 100% novos exige pôster, nota ≥ 7,5, ano > 1990, exclui WWE/Raw/SmackDown, documentário/drama puro conforme regra vigente, vistos, Watchlist e recomendações exibidas recentemente.
+- **Top 10:** continua por streaming com `Top 10 Séries` e `Top 10 Filmes`, mas agora elimina vistos e Watchlist antes do HTML e busca páginas adicionais para completar até 10 elegíveis.
+- **Em alta / Populares / Novidades / Lançamentos / Mais Aguardados / Mais bem avaliados:** barreira canônica antes do HTML para visto, Watchlist, progresso/em dia e alias visual, seguida do filtro Todos/Filmes/Séries.
+- **Janelas:** Novidades = últimos 30 dias; Lançamentos = -7 a +30 dias; Mais Aguardados = a partir de amanhã.
+- **Calendário:** mantém a exceção de Watchlist já definida.
+- **Performance:** cache local de 5 minutos + prefetch das seis abas públicas.
+- **Android preservado:** `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r318-official.mjs`; runtime: `apps/web/runtime-r318-discover-final.js`.
 
 ## Web 1.0.108 / r317
 
