@@ -2,6 +2,21 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.110 — 2026-09-19 — Web r319
+
+### Descobrir
+- Corrige a barreira pessoal que permitia títulos já vistos ou já salvos reaparecerem em abas públicas.
+- Adiciona o RPC autenticado `cinetracker_discover_blocked_v319`, baseado em TMDB efetivo e no dashboard canônico do usuário.
+- Expõe separadamente `blocked_keys`, `seen_keys` e `watch_keys`, além de aliases de título/ano.
+- Em alta, Populares, Novidades, Lançamentos, Mais Aguardados, Mais bem avaliados e Top 10 consultam a autoridade pessoal novamente antes de cada render.
+- Se a autoridade pessoal falhar, a tela não renderiza catálogo sem filtro: comportamento fail-closed.
+- Mantém `Pra você` e Calendário com as exceções previamente autorizadas.
+
+### Escopo
+- Nenhuma alteração em Perfil, Esportes ou F1 Hub.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Web: `1.0.110 / r319-official-1.0.110`.
+
 ## 1.0.109 — 2026-09-19 — Web r318
 
 ### Descobrir

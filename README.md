@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.109** | `r318-official-1.0.109` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.110** | `r319-official-1.0.110` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.110 / r319
+
+A r319 corrige exclusivamente a regra de exclusão pessoal do Descobrir.
+
+- As abas públicas e o Top 10 passam a consultar `cinetracker_discover_blocked_v319`, que usa o TMDB efetivo do dashboard pessoal para bloquear itens vistos, em andamento, em dia, concluídos, na Watchlist e marcados como não interessados.
+- A r318 descartava o formato real de `cinetracker_discovery_exclusions_v0994` e podia cachear uma autoridade vazia quando a sessão ainda não estava pronta.
+- A r319 usa uma autoridade canônica explícita com `blocked_keys`, `seen_keys` e `watch_keys`.
+- A lista pessoal é atualizada em toda abertura de aba pública/Top 10; o catálogo TMDB continua em cache.
+- O modo agora é fail-closed: se a lista pessoal não carregar, nenhum título público é exibido até a autoridade ficar disponível.
+- `Pra você` preserva as exceções já aprovadas e o `Calendário` preserva a exceção de Watchlist.
+- Nenhuma alteração em Perfil, Esportes ou F1 Hub. Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r319-official.mjs`; runtime: `apps/web/runtime-r319-discover-canonical-blocklist.js`.
 
 ## Web 1.0.109 / r318
 
