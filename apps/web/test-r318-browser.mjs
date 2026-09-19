@@ -25,7 +25,7 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(clean.length===1&&clean[0].tmdb_id===3,'strict seen/watchlist/alias exclusion failed');
  T.setDiscover('trending','movie');clean=T.strict318([media(3,'movie','Livre'),media(5,'tv','Serie Livre')]);ok(clean.length===1&&clean[0].tmdb_id===3,'type filter must apply after exclusion');
 
- const host=document.createElement('div');host.setAttribute('data-ct318-content','');document.body.appendChild(host);T.paintPublic318([media(1,'movie','Visto'),media(3,'movie','Livre')],'trending',{blocked:new Set(['movie:1']),aliases:new Set()});ok(!host.querySelector('[data-ct318-item="movie:1"]')&&host.querySelector('[data-ct318-item="movie:3"]'),'blocked card reached public HTML');
+ const host=shell.querySelector('[data-ct318-content]');T.paintPublic318([media(1,'movie','Visto'),media(3,'movie','Livre')],'trending',{blocked:new Set(['movie:1']),aliases:new Set()});ok(!host.querySelector('[data-ct318-item="movie:1"]')&&host.querySelector('[data-ct318-item="movie:3"]'),'blocked card reached public HTML');
  document.documentElement.dataset.ct318done='1';
 }catch(e){document.documentElement.dataset.ct318probe='fail:'+String(e?.stack||e)}},4500)</script>`;
 const html=base.replace('</body>',probe+'</body>');
