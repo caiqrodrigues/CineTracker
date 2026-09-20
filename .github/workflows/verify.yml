@@ -1,4 +1,4 @@
-name: Verify Web 1.0.111 r320 Discover History Parity
+name: Verify Web 1.0.112 r321 Discover Loading Recovery
 
 on:
   push:
@@ -9,54 +9,53 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_111_r320:
+  web_1_0_112_r321:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r320
+      - name: Version identity r321
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.111"' package.json
-          grep -Fq '"version": "1.0.111"' apps/web/package.json
-          grep -Fq 'build-r320-official.mjs' apps/web/package.json
-          test -f apps/web/build-r320.mjs
-          test -f apps/web/build-r320-official.mjs
-          test -f apps/web/runtime-r320-discover-profile-history.js
-          test -f apps/web/test-r320.mjs
-          test -f apps/web/test-r320-browser.mjs
+          grep -Fq '"version": "1.0.112"' package.json
+          grep -Fq '"version": "1.0.112"' apps/web/package.json
+          grep -Fq 'build-r321-official.mjs' apps/web/package.json
+          test -f apps/web/build-r321.mjs
+          test -f apps/web/build-r321-official.mjs
+          test -f apps/web/runtime-r321-discover-profile-history.js
+          test -f apps/web/test-r321.mjs
+          test -f apps/web/test-r321-browser.mjs
           test -f supabase/migrations/20260920110500_r320_discover_exact_filter_profile_home_history.sql
-      - name: Syntax r320 release chain
+      - name: Syntax r321 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r320-discover-profile-history.js
-          node --check apps/web/build-r320.mjs
-          node --check apps/web/build-r320-official.mjs
-          node --check apps/web/test-r320.mjs
-          node --check apps/web/test-r320-browser.mjs
-      - name: Regression suite through r320
+          node --check apps/web/runtime-r321-discover-profile-history.js
+          node --check apps/web/build-r321.mjs
+          node --check apps/web/build-r321-official.mjs
+          node --check apps/web/test-r321.mjs
+          node --check apps/web/test-r321-browser.mjs
+      - name: Regression suite through r321
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r320
+      - name: Final bundle identity r321
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r320-official.mjs
-          node --check dist/app-v320.js
-          CT_R320_SKIP_BUILD=1 node test-r320.mjs
-          grep -Fq 'app-v320.js' dist/index.html
-          grep -Fq 'app-v320.css' dist/index.html
+          node build-r321-official.mjs
+          node --check dist/app-v321.js
+          CT_R321_SKIP_BUILD=1 node test-r321.mjs
+          grep -Fq 'app-v321.js' dist/index.html
+          grep -Fq 'app-v321.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.111'
-            && r.revision==='r320-official-1.0.111'
+          const ok=r.version==='1.0.112'
+            && r.revision==='r321-official-1.0.112'
             && r.discover_filter_authority==='cinetracker_discover_filter_v320'
-            && r.discover_validation==='each-rendered-candidate-before-visible'
+            && r.discover_validation==='server-before-paint'
+            && r.discover_loading==='visible-loader-no-hidden-content-gate'
             && r.profile_activity_source==='watch_history-same-as-home'
-            && r.profile_activity_days_rpc==='cinetracker_activity_by_day_v320'
-            && r.profile_activity_items_rpc==='cinetracker_activity_items_by_day_v320'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -74,25 +73,24 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_111_r320, android_current_source]
+    needs: [web_1_0_112_r321, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.111 r320
+      - name: Official production serves and boots 1.0.112 r321
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.111"' <<<"$BODY" \
-              && grep -Fq '"revision": "r320-official-1.0.111"' <<<"$BODY" \
-              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v320"' <<<"$BODY" \
-              && grep -Fq '"profile_activity_source": "watch_history-same-as-home"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v320.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.112"' <<<"$BODY" \
+              && grep -Fq '"revision": "r321-official-1.0.112"' <<<"$BODY" \
+              && grep -Fq '"discover_validation": "server-before-paint"' <<<"$BODY" \
+              && grep -Fq '"discover_loading": "visible-loader-no-hidden-content-gate"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v321.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR320='discover-exact-candidate-filter+profile-home-history-parity'" <<<"$JS" \
-                && grep -Fq 'cinetracker_discover_filter_v320' <<<"$JS" \
-                && grep -Fq 'cinetracker_activity_items_by_day_v320' <<<"$JS" \
-                && grep -Fq 'app-v320.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity'" <<<"$JS" \
+                && ! grep -Fq 'data-ct320-validated' <<<"$JS" \
+                && grep -Fq 'app-v321.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=7500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi

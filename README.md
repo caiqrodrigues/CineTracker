@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.111** | `r320-official-1.0.111` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.112** | `r321-official-1.0.112` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.112 / r321
+
+A r321 corrige a regressão de carregamento introduzida pela r320.
+
+- Remove completamente o gate visual que escondia cards aguardando validação pós-render.
+- O Descobrir volta a mostrar um loader normal e só chama o renderer depois que o lote foi validado no Supabase.
+- A validação exata por candidato continua usando `cinetracker_discover_filter_v320`, mas agora acontece **antes do paint**.
+- `Pra você` é validado explicitamente no próprio fluxo: `Da sua Watchlist` exige Watchlist e não visto; `100% novos` e Indicação do Dia exigem item desbloqueado.
+- Top 10 preserva séries + filmes por streaming e filtra ambos antes de montar o HTML.
+- Perfil > Assistido por dia continua usando `watch_history`, mesma fonte do Histórico da Home, com temporada/episódio, título do episódio, nota, data, restantes e reproduções.
+- Nenhuma alteração em F1 Hub ou Android. Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r321-official.mjs`; runtime: `apps/web/runtime-r321-discover-profile-history.js`.
 
 ## Web 1.0.111 / r320
 

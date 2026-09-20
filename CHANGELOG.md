@@ -2,6 +2,23 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.112 — 2026-09-20 — Web r321
+
+### Descobrir
+- Reverte o mecanismo da r320 que ocultava cards enquanto aguardava validação e podia deixar `Pra você` e outras abas em branco.
+- A validação pessoal agora ocorre dentro do carregamento da aba e antes do renderer.
+- Mantém `cinetracker_discover_filter_v320` como autoridade exata para Visto, progresso, Em dia, Concluído, Watchlist, Assistir depois e Não interessado.
+- `Pra você`, Top 10 e as seis abas públicas voltam a carregar normalmente sem depender de MutationObserver para liberar conteúdo.
+
+### Perfil / Histórico
+- Mantém o histórico diário baseado em `watch_history`, a mesma fonte de mídia usada pela Home.
+- Mantém temporada/episódio, nome do episódio, nota, data, episódios restantes e reproduções no detalhe diário.
+
+### Escopo
+- Web: `1.0.112 / r321-official-1.0.112`.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Nenhuma alteração em F1 Hub.
+
 ## 1.0.111 — 2026-09-20 — Web r320
 
 ### Descobrir
