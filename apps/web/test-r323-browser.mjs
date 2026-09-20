@@ -12,7 +12,7 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(T&&R&&X&&XT,'r323 bridges unavailable');
  ok(window.__ctOfficialVersion==='1.0.114','web version global stale');
  ok(window.__ctR322==='discover-indexed-user-filter+fast-top10','r322 baseline missing');
- ok(window.__ctR323==='home-movie-play-history+watchlist-sort+discover-legacy-alias','r323 marker missing');
+ ok(window.__ctR323?.version==='1.0.114','r323 runtime API missing');
 
  const alias=T.candidatePayload321([{media_type:'movie',tmdb_id:150540,title:'Divertida Mente',original_title:'Inside Out',release_date:'2015-06-17',poster_path:'/x.jpg'}])[0];
  ok(alias?.original_title==='Inside Out'&&alias?.release_year===2015,'legacy original-title alias not sent');
