@@ -2,6 +2,22 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.113 — 2026-09-20 — Web r322
+
+### Descobrir
+- Corrige o travamento observado no vídeo em `Carregando...` / `Montando Top 10...`.
+- Adiciona `cinetracker_discover_filter_v322`, usando a chave lógica TMDB indexada para cruzar candidatos com Watchlist, histórico e progresso do usuário.
+- Mantém a exclusão antes da renderização para vistos, progresso, Em dia, Concluído, Watchlist, Assistir depois e Não interessado.
+- Top 10 volta a usar a autoridade/cache `ct171TopRows` e aplica o mesmo filtro antes de montar as duas listas.
+- Pra você mantém as regras e filtros já aprovados.
+- Calendário mantém a exceção de Watchlist.
+
+### Escopo
+- Alteração somente em Descobrir.
+- Perfil/Histórico, Esportes e F1 Hub permanecem inalterados.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Web: `1.0.113 / r322-official-1.0.113`.
+
 ## 1.0.112 — 2026-09-20 — Web r321
 
 ### Descobrir

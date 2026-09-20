@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.112** | `r321-official-1.0.112` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.113** | `r322-official-1.0.113` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.113 / r322
+
+A r322 altera **somente o Descobrir**.
+
+- Substitui a checagem pesada da r321 por `cinetracker_discover_filter_v322`, que usa a chave lógica TMDB já indexada da tabela `media`.
+- Em uma validação com 40 candidatos, a checagem caiu de ~5,4 s para ~37 ms.
+- A regra continua sendo aplicada **antes do paint**: Visto, qualquer episódio/progresso, Em dia, Concluído, Watchlist, Assistir depois e Não interessado não entram nas abas públicas nem no Top 10.
+- `Top 10` volta a reutilizar `ct171TopRows`, com cache de sessão e apenas as duas consultas necessárias (Séries + Filmes) por streaming.
+- `Pra você` mantém as regras aprovadas: `Da sua Watchlist` = item na Watchlist e ainda não visto; `100% novos`/Indicação = item desbloqueado; filtros Todos/Filmes/Séries/Animes preservados.
+- `Calendário` preserva a exceção de Watchlist.
+- Perfil, Histórico, Esportes, F1 Hub e Android não são alterados nesta versão.
+
+Build oficial: `apps/web/build-r322-official.mjs`.
 
 ## Web 1.0.112 / r321
 
