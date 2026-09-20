@@ -6,12 +6,25 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.113** | `r322-official-1.0.113` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.114** | `r323-official-1.0.114` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.114 / r323
+
+A r323 corrige os quatro pontos observados no vídeo de 20/09.
+
+- **Home / Filmes vistos:** o histórico de filmes passa a complementar o payload da Home com `cinetracker_home_movie_history_v323`, que une `watch_play_events_v0994` e o histórico legado. Assim reproduções recentes que não chegaram ao `watch_history` antigo passam a aparecer na Home.
+- **Descobrir / Pra você:** `cinetracker_discover_filter_v323` aceita também título original e ano. Isso reconcilia registros legados com TMDB sintético/negativo, como um filme importado salvo pelo título original mas retornado pelo TMDB em português.
+- **Top 10:** após aplicar as exclusões pessoais, o carregador avança por até cinco páginas do ranking de cada streaming até completar 10 séries e 10 filmes elegíveis.
+- **Filmes/Séries Watchlist:** o modal passa a exibir um seletor visível de ordenação com Último adicionado, Primeiro adicionado, A–Z, Z–A, Ano mais recente e Ano mais antigo.
+- **Versão Web:** identidade atualizada para `1.0.114 / r323-official-1.0.114`.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r323-official.mjs`; runtime: `apps/web/runtime-r323-home-discover-watchlist.js`.
 
 ## Web 1.0.113 / r322
 

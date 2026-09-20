@@ -1,4 +1,4 @@
-name: Verify Web 1.0.113 r322 Discover Indexed Filter
+name: Verify Web 1.0.114 r323 History Discover Watchlist
 
 on:
   push:
@@ -9,54 +9,55 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_113_r322:
+  web_1_0_114_r323:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r322
+      - name: Version identity r323
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.113"' package.json
-          grep -Fq '"version": "1.0.113"' apps/web/package.json
-          grep -Fq 'build-r322-official.mjs' apps/web/package.json
-          test -f apps/web/build-r322.mjs
-          test -f apps/web/build-r322-official.mjs
-          test -f apps/web/test-r322.mjs
-          test -f apps/web/test-r322-browser.mjs
-          test -f supabase/migrations/20260920164500_r322_discover_filter_indexed.sql
-      - name: Syntax r322 release chain
+          grep -Fq '"version": "1.0.114"' package.json
+          grep -Fq '"version": "1.0.114"' apps/web/package.json
+          grep -Fq 'build-r323-official.mjs' apps/web/package.json
+          test -f apps/web/build-r323.mjs
+          test -f apps/web/build-r323-official.mjs
+          test -f apps/web/runtime-r323-home-discover-watchlist.js
+          test -f apps/web/test-r323.mjs
+          test -f apps/web/test-r323-browser.mjs
+          test -f supabase/migrations/20260920212500_r323_history_discover_watchlist.sql
+      - name: Syntax r323 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/build-r322.mjs
-          node --check apps/web/build-r322-official.mjs
-          node --check apps/web/test-r322.mjs
-          node --check apps/web/test-r322-browser.mjs
-      - name: Regression suite through r322
+          node --check apps/web/runtime-r323-home-discover-watchlist.js
+          node --check apps/web/build-r323.mjs
+          node --check apps/web/build-r323-official.mjs
+          node --check apps/web/test-r323.mjs
+          node --check apps/web/test-r323-browser.mjs
+      - name: Regression suite through r323
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r322
+      - name: Final bundle identity r323
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r322-official.mjs
-          node --check dist/app-v322.js
-          CT_R322_SKIP_BUILD=1 node test-r322.mjs
-          grep -Fq 'app-v322.js' dist/index.html
-          grep -Fq 'app-v322.css' dist/index.html
+          node build-r323-official.mjs
+          node --check dist/app-v323.js
+          CT_R323_SKIP_BUILD=1 node test-r323.mjs
+          grep -Fq 'app-v323.js' dist/index.html
+          grep -Fq 'app-v323.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.113'
-            && r.revision==='r322-official-1.0.113'
-            && r.scope==='discover-only-indexed-filter-performance-and-rules'
-            && r.discover_filter_authority==='cinetracker_discover_filter_v322'
-            && r.discover_filter_match==='indexed-logical-tmdb-key'
-            && r.discover_top10_source==='ct171TopRows-session-cache'
-            && r.profile_changes==='none-r322'
-            && r.sports_changes==='none-r322'
-            && r.f1_changes==='none-r322'
+          const ok=r.version==='1.0.114'
+            && r.revision==='r323-official-1.0.114'
+            && r.discover_filter_authority==='cinetracker_discover_filter_v323'
+            && r.discover_filter_match==='tmdb+legacy-original-title-year'
+            && r.discover_top10==='fill-to-ten-after-exclusions-up-to-five-pages'
+            && r.home_movie_history==='cinetracker_home_movie_history_v323'
+            && r.profile_watchlist_sort==='visible-last-added+first-added+az+za+year'
+            && r.web_version_ui==='1.0.114+r323-official-1.0.114'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -74,27 +75,31 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_113_r322, android_current_source]
+    needs: [web_1_0_114_r323, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.113 r322
+      - name: Official production serves and boots 1.0.114 r323
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.113"' <<<"$BODY" \
-              && grep -Fq '"revision": "r322-official-1.0.113"' <<<"$BODY" \
-              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v322"' <<<"$BODY" \
-              && grep -Fq '"discover_top10_source": "ct171TopRows-session-cache"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v322.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.114"' <<<"$BODY" \
+              && grep -Fq '"revision": "r323-official-1.0.114"' <<<"$BODY" \
+              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v323"' <<<"$BODY" \
+              && grep -Fq '"home_movie_history": "cinetracker_home_movie_history_v323"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v323.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR322='discover-indexed-user-filter+fast-top10'" <<<"$JS" \
-                && grep -Fq 'cinetracker_discover_filter_v322' <<<"$JS" \
-                && ! grep -Fq "rpc('cinetracker_discover_filter_v320'" <<<"$JS" \
-                && grep -Fq 'app-v322.js' <<<"$HTML"; then
-                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=7500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
-                if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
+              if grep -Fq "window.__ctR323='home-movie-play-history+watchlist-sort+discover-legacy-alias'" <<<"$JS" \
+                && grep -Fq 'cinetracker_discover_filter_v323' <<<"$JS" \
+                && grep -Fq 'cinetracker_home_movie_history_v323' <<<"$JS" \
+                && grep -Fq 'Último adicionado' <<<"$JS" \
+                && grep -Fq 'app-v323.js' <<<"$HTML"; then
+                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
+                if grep -Fq 'CineTracker' <<<"$DOM" \
+                  && grep -Fq 'v1.0.114' <<<"$DOM" \
+                  && grep -Fq 'r323-official-1.0.114' <<<"$DOM" \
+                  && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
             sleep 5
