@@ -2,6 +2,26 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.111 — 2026-09-20 — Web r320
+
+### Descobrir
+- Adiciona `cinetracker_discover_filter_v320`, que valida cada candidato diretamente contra Watchlist, histórico, progresso e estados do usuário.
+- A validação usa TMDB ID e fallback por título/ano para cobrir registros legados.
+- Cards públicos ficam ocultos até serem validados; itens vistos, em progresso, em dia, concluídos, na Watchlist ou não interessados são removidos antes de ficarem visíveis.
+- O mesmo cruzamento é aplicado ao Top 10.
+- No `Pra você`, `Da sua Watchlist` exige Watchlist + não visto; `100% novos` e Indicação do Dia exigem item totalmente desbloqueado.
+
+### Perfil / Histórico
+- Substitui a fonte divergente de atividade por `cinetracker_activity_by_day_v320` e `cinetracker_activity_items_by_day_v320`.
+- Episódios e filmes passam a vir do mesmo `watch_history` usado pela Home.
+- O detalhe diário preserva temporada/episódio, título do episódio, nota, data, episódios restantes e reproduções.
+- Eventos esportivos continuam aparecendo no Perfil sem alterar a autoridade de mídia da Home.
+
+### Escopo
+- Web: `1.0.111 / r320-official-1.0.111`.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Nenhuma alteração em F1 Hub.
+
 ## 1.0.110 — 2026-09-19 — Web r319
 
 ### Descobrir

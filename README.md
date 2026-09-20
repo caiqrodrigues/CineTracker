@@ -6,12 +6,25 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.110** | `r319-official-1.0.110` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.111** | `r320-official-1.0.111` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.111 / r320
+
+A r320 corrige dois contratos observados no vídeo de 20/09.
+
+- **Descobrir:** cada candidato das abas públicas e do Top 10 é validado no Supabase por TMDB ID (com fallback por título/ano) contra `media_overrides`, `watch_history` e `episode_progress`. Cards ficam ocultos até a validação terminar.
+- **Pra você:** os pools também passam pela validação exata: `Da sua Watchlist` exige estar na Watchlist e não estar visto; `100% novos` e Indicação do Dia rejeitam qualquer item bloqueado.
+- **Perfil > Assistido por dia:** deixa de usar `watch_play_events` como fonte principal e passa a usar o mesmo `watch_history` que alimenta o Histórico da Home.
+- **Detalhes do histórico:** temporada/episódio, nome do episódio, nota, data, quantidade restante e número de reproduções são mantidos no Perfil.
+- **Esportes:** permanecem no histórico diário do Perfil como complemento, sem alterar o histórico de mídia da Home.
+- Nenhuma alteração em F1 Hub, demais áreas do Perfil ou Android. Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r320-official.mjs`; runtime: `apps/web/runtime-r320-discover-profile-history.js`.
 
 ## Web 1.0.110 / r319
 

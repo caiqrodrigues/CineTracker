@@ -1,4 +1,4 @@
-name: Verify Web 1.0.110 r319 Discover Canonical Blocklist
+name: Verify Web 1.0.111 r320 Discover History Parity
 
 on:
   push:
@@ -9,56 +9,54 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_110_r319:
+  web_1_0_111_r320:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r319
+      - name: Version identity r320
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.110"' package.json
-          grep -Fq '"version": "1.0.110"' apps/web/package.json
-          grep -Fq 'build-r319-official.mjs' apps/web/package.json
-          test -f apps/web/build-r319.mjs
-          test -f apps/web/build-r319-official.mjs
-          test -f apps/web/runtime-r319-discover-canonical-blocklist.js
-          test -f apps/web/test-r319.mjs
-          test -f apps/web/test-r319-browser.mjs
-          test -f supabase/migrations/20260919195000_r319_discover_blocked_authority.sql
-          test -f supabase/migrations/20260919195500_r319_discover_blocked_authority_states.sql
-      - name: Syntax r319 release chain
+          grep -Fq '"version": "1.0.111"' package.json
+          grep -Fq '"version": "1.0.111"' apps/web/package.json
+          grep -Fq 'build-r320-official.mjs' apps/web/package.json
+          test -f apps/web/build-r320.mjs
+          test -f apps/web/build-r320-official.mjs
+          test -f apps/web/runtime-r320-discover-profile-history.js
+          test -f apps/web/test-r320.mjs
+          test -f apps/web/test-r320-browser.mjs
+          test -f supabase/migrations/20260920110500_r320_discover_exact_filter_profile_home_history.sql
+      - name: Syntax r320 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r319-discover-canonical-blocklist.js
-          node --check apps/web/build-r319.mjs
-          node --check apps/web/build-r319-official.mjs
-          node --check apps/web/test-r319.mjs
-          node --check apps/web/test-r319-browser.mjs
-      - name: Regression suite through r319
+          node --check apps/web/runtime-r320-discover-profile-history.js
+          node --check apps/web/build-r320.mjs
+          node --check apps/web/build-r320-official.mjs
+          node --check apps/web/test-r320.mjs
+          node --check apps/web/test-r320-browser.mjs
+      - name: Regression suite through r320
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r319
+      - name: Final bundle identity r320
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r319-official.mjs
-          node --check dist/app-v319.js
-          CT_R319_SKIP_BUILD=1 node test-r319.mjs
-          test -f dist/app-v319.js
-          test -f dist/app-v319.css
-          grep -Fq 'app-v319.js' dist/index.html
-          grep -Fq 'app-v319.css' dist/index.html
+          node build-r320-official.mjs
+          node --check dist/app-v320.js
+          CT_R320_SKIP_BUILD=1 node test-r320.mjs
+          grep -Fq 'app-v320.js' dist/index.html
+          grep -Fq 'app-v320.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.110'
-            && r.revision==='r319-official-1.0.110'
-            && r.discover_personal_authority==='cinetracker_discover_blocked_v319'
-            && r.discover_public_fail_mode==='fail-closed-no-personal-list-no-results'
-            && r.discover_personal_refresh==='every-public-tab-load+top10'
-            && r.discover_calendar==='watchlist-exception-preserved'
+          const ok=r.version==='1.0.111'
+            && r.revision==='r320-official-1.0.111'
+            && r.discover_filter_authority==='cinetracker_discover_filter_v320'
+            && r.discover_validation==='each-rendered-candidate-before-visible'
+            && r.profile_activity_source==='watch_history-same-as-home'
+            && r.profile_activity_days_rpc==='cinetracker_activity_by_day_v320'
+            && r.profile_activity_items_rpc==='cinetracker_activity_items_by_day_v320'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -76,24 +74,25 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_110_r319, android_current_source]
+    needs: [web_1_0_111_r320, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.110 r319
+      - name: Official production serves and boots 1.0.111 r320
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.110"' <<<"$BODY" \
-              && grep -Fq '"revision": "r319-official-1.0.110"' <<<"$BODY" \
-              && grep -Fq '"discover_personal_authority": "cinetracker_discover_blocked_v319"' <<<"$BODY" \
-              && grep -Fq '"discover_public_fail_mode": "fail-closed-no-personal-list-no-results"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v319.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.111"' <<<"$BODY" \
+              && grep -Fq '"revision": "r320-official-1.0.111"' <<<"$BODY" \
+              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v320"' <<<"$BODY" \
+              && grep -Fq '"profile_activity_source": "watch_history-same-as-home"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v320.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR319='discover-canonical-blocklist+fail-closed+fresh-every-tab'" <<<"$JS" \
-                && grep -Fq 'cinetracker_discover_blocked_v319' <<<"$JS" \
-                && grep -Fq 'app-v319.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR320='discover-exact-candidate-filter+profile-home-history-parity'" <<<"$JS" \
+                && grep -Fq 'cinetracker_discover_filter_v320' <<<"$JS" \
+                && grep -Fq 'cinetracker_activity_items_by_day_v320' <<<"$JS" \
+                && grep -Fq 'app-v320.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=7500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
