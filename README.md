@@ -6,12 +6,24 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.122** | `r331-official-1.0.122` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.123** | `r332-official-1.0.123` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.123 / r332
+
+A r332 volta para a última base verde (r326) e corrige os pontos mostrados nos prints de 21/09 sem reaproveitar a r331 que falhou no navegador.
+
+- Home / Filmes: `cinetracker_home_payload_v332` usa a mesma `cinetracker_watchlist_full_v119` do Perfil e ordena por `added_at desc`. O primeiro item da Home e do Perfil passa a ser o mesmo.
+- Histórico da Home: continua carregado como conteúdo natural acima do ponto inicial da página, sem botão e sem scroll interno; o ponto inicial fica logo depois do histórico, então ao subir aparece primeiro o mais recente.
+- Pra você: usa a Watchlist canônica, valida tudo com `cinetracker_discover_filter_v327`, mantém os filtros Todos/Filmes/Séries/Animes sempre visíveis e força Watchlist/Visto/Trocar na mesma linha, limitados à largura do card.
+- Top 10: Looke e Mubi são removidos. O desktop usa 10 colunas, sem trilho horizontal; a busca continua preenchendo até dez itens elegíveis e aborta imediatamente se o usuário troca de aba.
+- Navegação: os observers amplos da r324/r326 são neutralizados e os loops de refill são limitados pela rota/aba.
+- Sincronização de episódios da r325 é preservada.
+- Android permanece `1.0.20 / versionCode 10062`.
 
 ## Web 1.0.122 / r331
 

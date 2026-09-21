@@ -2,6 +2,26 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.123 — 2026-09-21 — Web r332
+
+### Home
+- Adiciona `cinetracker_home_payload_v332`.
+- `Assistir a seguir / Watchlist` de filmes passa a vir de `cinetracker_watchlist_full_v119`, a mesma autoridade do Perfil, ordenada por último adicionado.
+- Histórico de filmes/séries volta ao comportamento natural: sem botão, sem scroll interno e acima do ponto inicial da Home.
+
+### Descobrir
+- Autoridade pessoal consolidada em `cinetracker_discover_filter_v327`, incluindo histórico de reprodução e aliases legados.
+- `Pra você` recomposto a partir da Watchlist canônica e de candidatos frescos validados antes do paint.
+- Filtros Todos/Filmes/Séries/Animes ficam sempre visíveis.
+- Watchlist, Visto e Trocar ficam numa única linha compacta e com largura igual à do card.
+- Top 10 remove Looke e Mubi e usa dez colunas no desktop sem rolagem horizontal.
+- Refills de Pra você e Top 10 param imediatamente ao trocar de aba, reduzindo congelamentos.
+
+### Preservado
+- Sincronização de episódios r325.
+- Contagens/ordenação das Watchlists do Perfil r324.
+- Android `1.0.20 / versionCode 10062`.
+
 ## 1.0.122 — 2026-09-21 — Web r331
 
 ### Home
