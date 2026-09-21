@@ -6,12 +6,28 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.117** | `r326-official-1.0.117` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.118** | `r327-official-1.0.118` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.118 / r327
+
+A r327 corrige o comportamento observado no vídeo de 21/09 sem alterar F1, Esportes ou Android.
+
+- **Home / Histórico:** restaura o contrato da r276. O histórico de Séries e Filmes permanece totalmente renderizado acima da área inicial, sem botão e sem scrollbar interna. A Home abre ancorada na primeira seção normal; ao rolar para cima, o usuário encontra primeiro o registro mais recente e continua em direção aos mais antigos.
+- **Pra você / ações:** Watchlist, Visto e Trocar passam a usar uma linha flex real de três botões compactos; o botão Trocar deixa de herdar a regra antiga de ocupar uma linha inteira.
+- **Pra você / filtros:** Todos, Filmes, Séries e Animes passam por um handler de captura próprio da r327. O filtro também controla corretamente a Indicação do Dia conforme a categoria atual.
+- **Descobrir / regras:** todas as abas filtradas, Pra você e Top 10 passam a usar `cinetracker_discover_filter_v327`.
+- **Filtro v327:** além de Watchlist, `watch_history`, progresso e estados, inclui `watch_play_events_v0994`. O servidor expande os aliases do candidato pelo TMDB do catálogo antes de cruzar com registros antigos/localizados.
+- Isso cobre casos em que o Top 10 chega apenas com o título em português enquanto o histórico antigo está salvo em inglês.
+- Top 10 continua buscando páginas adicionais até tentar completar 10 itens elegíveis.
+- Sincronização de episódios da r325 e contagens completas de Watchlist da r324 são preservadas.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r327-official.mjs`; runtime: `apps/web/runtime-r327-home-discover-truth.js`.
 
 ## Web 1.0.117 / r326
 

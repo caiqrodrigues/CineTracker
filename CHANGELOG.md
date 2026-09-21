@@ -2,6 +2,28 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.118 — 2026-09-21 — Web r327
+
+### Home
+- Restaura o histórico no padrão r276: conteúdo completo acima da área inicial, sem botão e sem scroll interno.
+- Séries e Filmes abrem ancorados na primeira seção principal.
+- O histórico continua ordenado do mais antigo no topo ao mais recente no final, permitindo revelar primeiro o mais recente ao rolar para cima.
+
+### Descobrir
+- Adiciona `cinetracker_discover_filter_v327`.
+- O filtro passa a considerar também `watch_play_events_v0994`.
+- Os aliases dos candidatos são expandidos no servidor pelo TMDB e cruzados com títulos locais/originais já existentes no catálogo.
+- Pra você usa filtro funcional Todos / Filmes / Séries / Animes, incluindo a Indicação do Dia.
+- Watchlist / Visto / Trocar ficam obrigatoriamente na mesma linha em cada card.
+- Top 10 mantém o preenchimento até dez após exclusões e usa a mesma autoridade v327.
+
+### Preservado
+- Sincronização de episódios r325.
+- Contagens e modal completo de Watchlist r324.
+- F1 Hub e Esportes sem alterações.
+- Android `1.0.20 / versionCode 10062`.
+- Web `1.0.118 / r327-official-1.0.118`.
+
 ## 1.0.117 — 2026-09-21 — Web r326
 
 ### Home / Histórico
