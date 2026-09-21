@@ -9,7 +9,7 @@ if(!bin)throw new Error('Chromium unavailable');
 const dist=resolve('dist'),base=await readFile(resolve(dist,'index.html'),'utf8');
 const probe=`<script>setTimeout(async()=>{try{
  const ok=(v,m)=>{if(!v)throw new Error(m)},X=window.__ctR324,XT=window.__ctR324Test,T=window.__ctR321Test;
- ok(X&&XT&&T,'r324 bridges unavailable');
+ ok(X,'r324 main bridge unavailable');ok(XT,'r324 test bridge unavailable');ok(T,'r321 bridge unavailable');
  ok(window.__ctOfficialVersion==='1.0.115','web version stale');
  ok(X.version==='1.0.115','r324 API version stale');
 
