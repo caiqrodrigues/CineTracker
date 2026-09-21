@@ -2,6 +2,29 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.122 — 2026-09-21 — Web r331
+
+### Home
+- Restaura o contrato de histórico acima da área inicial: conteúdo pré-carregado, sem botão e sem scroll interno.
+- Entrada da Home e troca entre Séries/Filmes ancoram no primeiro bloco normal; o histórico é revelado apenas ao rolar a página para cima.
+- Remove as varreduras de DOM da r324/r326 que reintroduziam comportamento conflitante.
+
+### Descobrir
+- Usa `cinetracker_discover_filter_v327` para exclusão por TMDB, aliases legados, Watchlist, histórico, progresso e eventos de reprodução.
+- `Pra você` ganha filtros sempre visíveis: Todos, Filmes, Séries e Animes.
+- Watchlist, Visto e Trocar ficam em uma única linha compacta, e o runtime r310 deixa de remover/esconder a linha.
+- Loops de refill do Pra você e Top 10 deixam de iniciar novas páginas após mudança de aba/rota.
+- Top 10 evita uma segunda filtragem redundante após já ter preenchido itens elegíveis.
+
+### Episódios
+- Séries assistidas recentemente são reconciliadas primeiro com o TMDB ao vivo.
+- A identificação `NOVO` usa a data do último episódio lançado, mesmo quando o primeiro não visto é mais antigo.
+
+### Escopo
+- Web: `1.0.122 / r331-official-1.0.122`.
+- Perfil/Watchlist preserva a autoridade da r324.
+- Android permanece `1.0.20 / versionCode 10062`.
+
 ## 1.0.121 — 2026-09-21 — Web r330
 
 ### Home / histórico

@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.121** | `r330-official-1.0.121` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.122** | `r331-official-1.0.122` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.122 / r331
+
+A r331 parte diretamente da **r326, última release verde**, e não herda os experimentos r327–r330 que falharam no CI.
+
+- **Home / Histórico:** Séries e Filmes mantêm o histórico carregado no DOM acima da área inicial, sem botão e sem scroll interno. Ao entrar na Home ou trocar de aba, a tela é ancorada no primeiro bloco normal; ao rolar para cima, aparecem primeiro os registros mais recentes e depois os antigos.
+- **Pra você:** o filtro pessoal passa a usar `cinetracker_discover_filter_v327`, incluindo aliases legados, histórico e eventos de reprodução. Os filtros `Todos / Filmes / Séries / Animes` ficam sempre visíveis.
+- **Ações do Pra você:** `Watchlist`, `Visto` e `Trocar` ficam sob um único dono, lado a lado em uma linha compacta. O runtime r310 deixa de apagar/esconder essas ações.
+- **Descobrir / navegação:** os loops de reposição de recomendações e Top 10 param de iniciar novas páginas assim que o usuário troca de aba/rota, reduzindo congelamentos.
+- **Top 10:** mantém o preenchimento até dez itens elegíveis, aplicando o filtro v327 antes da exibição.
+- **Episódios novos:** a reconciliação prioriza séries assistidas recentemente e o selo `NOVO` considera a data do episódio mais recente lançado no TMDB.
+- Perfil/Watchlist preserva as contagens exatas da r324. Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r331-official.mjs`; runtime: `apps/web/runtime-r331-home-discover-stable.js`.
 
 ## Web 1.0.121 / r330
 
