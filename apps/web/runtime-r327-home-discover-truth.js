@@ -29,8 +29,24 @@ function normalizeHomeHistory327(){
   sec.classList.remove('is-collapsed');sec.classList.add('ct327-history-natural');
   sec.removeAttribute('data-ct324-history');
   for(const btn of qa('[data-ct275-history-toggle],[data-ct324-history-toggle],[data-ct326-history-toggle]',sec))btn.remove();
-  const shell=q('.ct275-history-shell',sec);if(shell)shell.setAttribute('aria-hidden','false');
-  const stack=q('.ct274-history-stack',sec);if(stack){stack.setAttribute('aria-hidden','false');try{stack.scrollTop=0}catch{}}
+  const shell=q('.ct275-history-shell',sec);if(shell){
+   shell.setAttribute('aria-hidden','false');
+   shell.style.setProperty('display','block','important');
+   shell.style.setProperty('max-height','none','important');
+   shell.style.setProperty('height','auto','important');
+   shell.style.setProperty('overflow','visible','important');
+   shell.style.setProperty('overflow-y','visible','important');
+  }
+  const stack=q('.ct274-history-stack',sec);if(stack){
+   stack.setAttribute('aria-hidden','false');
+   stack.style.setProperty('display','block','important');
+   stack.style.setProperty('max-height','none','important');
+   stack.style.setProperty('height','auto','important');
+   stack.style.setProperty('overflow','visible','important');
+   stack.style.setProperty('overflow-y','visible','important');
+   stack.style.setProperty('scrollbar-gutter','auto','important');
+   try{stack.scrollTop=0}catch{}
+  }
  }
  return found;
 }
