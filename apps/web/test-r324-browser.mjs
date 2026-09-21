@@ -6,10 +6,10 @@ import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r324.mjs');
 let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}
 if(!bin)throw new Error('Chromium unavailable');
-const dist=resolve('dist'),base=await readFile(resolve(dist,'index.html'),'utf8');
+const dist=resolve('dist');execFileSync(process.execPath,['--check',resolve(dist,'app-v324.js')],{stdio:'inherit'});const base=await readFile(resolve(dist,'index.html'),'utf8');
 const probe=`<script>setTimeout(async()=>{try{
  const ok=(v,m)=>{if(!v)throw new Error(m)},X=window.__ctR324,XT=window.__ctR324Test,T=window.__ctR321Test;
- ok(X,'r324 main bridge unavailable');ok(XT,'r324 test bridge unavailable');ok(T,'r321 bridge unavailable');
+ ok(window.__ctR324Marker,'r324 marker unavailable web='+String(window.__ctWebBuild)+' official='+String(window.__ctOfficialVersion)+' r323='+String(!!window.__ctR323)+' r321='+String(!!T));ok(X,'r324 main bridge unavailable marker='+String(window.__ctR324Marker));ok(XT,'r324 test bridge unavailable');ok(T,'r321 bridge unavailable');
  ok(window.__ctOfficialVersion==='1.0.115','web version stale');
  ok(X.version==='1.0.115','r324 API version stale');
 
