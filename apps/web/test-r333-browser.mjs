@@ -102,6 +102,7 @@ setTimeout(async()=>{try{
    not_interested_keys:[]
   })
  });
+ T.setDiscover('top10','all');
  const data=await T.topRaw321(9,true);
  ok(data.movies.length===10&&data.series.length===10,'Top10 did not refill to ten after exclusions');
  ok(data.movies.every(x=>x.tmdb_id>8),'blocked watched movie survived Top10');
