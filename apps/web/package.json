@@ -1,13 +1,13 @@
 {
   "name": "cinetracker-web",
   "private": true,
-  "version": "1.0.116",
+  "version": "1.0.117",
   "type": "module",
   "scripts": {
-    "build": "node build-r325-official.mjs",
-    "build:legacy": "node build-r325.mjs",
-    "test": "node test-r325.mjs",
-    "test:browser": "node test-r325-browser.mjs",
+    "build": "node build-r326-official.mjs",
+    "build:legacy": "node build-r326.mjs",
+    "test": "node test-r326.mjs",
+    "test:browser": "node test-r326-browser.mjs",
     "test:r298": "node test-r298.mjs",
     "test:r298:browser": "node test-r298-browser.mjs",
     "test:r298:foryou": "node test-r298-foryou-browser.mjs",
@@ -32,7 +32,7 @@
     "release:r306": "node build-r306-official.mjs",
     "release:r307": "node build-r307-official.mjs",
     "release:r308": "node build-r308-official.mjs",
-    "verify": "npm run build && npm run test:r299 && npm run test:r299:browser && npm run test:r300:browser && npm run test:r301:browser && npm run test:r302 && npm run test:r303 && npm run test:r304 && npm run test:r304:browser && npm run test:r305 && npm run test:r305:browser && npm run test:r306:browser && npm run test:r307 && npm run test:r307:browser && npm run test:r308 && npm run test:r308:browser && npm run test:r309 && npm run test:r309:browser && npm run test:r310 && npm run test:r310:browser && npm run test:r311 && npm run test:r311:browser && npm run test:r312 && npm run test:r312:browser && npm run test:r313 && npm run test:r313:browser && npm run test:r314 && npm run test:r314:browser && npm run test:r315 && npm run test:r315:browser && npm run test:r316 && npm run test:r316:browser && npm run test:r317 && npm run test:r317:browser && npm run test:r318 && npm run test:r318:browser && npm run test:r319 && npm run test:r319:browser && npm run test:r320 && npm run test:r320:browser && npm run test:r321 && npm run test:r321:browser && npm run test:r322 && npm run test:r322:browser && npm run test:r323 && npm run test:r323:browser && npm run test:r324 && npm run test:r324:browser && npm run test:r325 && npm run test:r325:browser",
+    "verify": "npm run build && npm run test:r299 && npm run test:r299:browser && npm run test:r300:browser && npm run test:r301:browser && npm run test:r302 && npm run test:r303 && npm run test:r304 && npm run test:r304:browser && npm run test:r305 && npm run test:r305:browser && npm run test:r306:browser && npm run test:r307 && npm run test:r307:browser && npm run test:r308 && npm run test:r308:browser && npm run test:r309 && npm run test:r309:browser && npm run test:r310 && npm run test:r310:browser && npm run test:r311 && npm run test:r311:browser && npm run test:r312 && npm run test:r312:browser && npm run test:r313 && npm run test:r313:browser && npm run test:r314 && npm run test:r314:browser && npm run test:r315 && npm run test:r315:browser && npm run test:r316 && npm run test:r316:browser && npm run test:r317 && npm run test:r317:browser && npm run test:r318 && npm run test:r318:browser && npm run test:r319 && npm run test:r319:browser && npm run test:r320 && npm run test:r320:browser && npm run test:r321 && npm run test:r321:browser && npm run test:r322 && npm run test:r322:browser && npm run test:r323 && npm run test:r323:browser && npm run test:r324 && npm run test:r324:browser && npm run test:r325 && npm run test:r325:browser && npm run test:r326 && npm run test:r326:browser",
     "test:r309": "node test-r309.mjs",
     "test:r309:browser": "node test-r309-browser.mjs",
     "release:r309": "node build-r309-official.mjs",
@@ -83,7 +83,10 @@
     "release:r324": "node build-r324-official.mjs",
     "test:r325": "node test-r325.mjs",
     "test:r325:browser": "node test-r325-browser.mjs",
-    "release:r325": "node build-r325-official.mjs"
+    "release:r325": "node build-r325-official.mjs",
+    "test:r326": "node test-r326.mjs",
+    "test:r326:browser": "node test-r326-browser.mjs",
+    "release:r326": "node build-r326-official.mjs"
   },
   "devDependencies": {
     "playwright": "^1.55.0"

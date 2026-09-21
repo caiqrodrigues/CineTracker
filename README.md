@@ -6,12 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.116** | `r325-official-1.0.116` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.117** | `r326-official-1.0.117` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.117 / r326
+
+A r326 corrige o comportamento mostrado no vídeo de 21/09 sem desfazer a sincronização episódica da r325.
+
+- **Home / Histórico de Séries e Filmes:** remove visualmente os botões `Ver histórico`. O histórico volta ao comportamento antigo: conteúdo já carregado, área rolável, **mais antigo no topo e mais recente no fundo**, abrindo já posicionada no mais recente; ao rolar para cima aparecem os registros anteriores.
+- **Descobrir / autoridade:** `cinetracker_discover_filter_v326` cruza cada candidato com **todas** as mídias conhecidas do usuário, por TMDB ou por aliases de título localizado/original + ano. O alias não fica mais restrito apenas a registros com TMDB legado.
+- **Pra você:** Watchlist exige `Watchlist && !Visto`; `100% novos` e Indicação do Dia usam somente candidatos desbloqueados. Se a filtragem remover candidatos, o fluxo busca páginas adicionais antes de montar o card final.
+- **Pra você / botões:** `+ Watchlist`, `✓ Visto` e `↻ Trocar` são forçados na mesma linha, compactos e sem quebra. As demais abas mantêm Watchlist + Visto lado a lado.
+- **Top 10:** continua preenchendo até 10 elegíveis por tipo e passa pela autoridade v326; Harry Potter e outros títulos já vistos em registros duplicados/legados permanecem bloqueados.
+- **Episódios novos:** toda a reconciliação r325 (duplicatas por TMDB, refresh de metadata e marca `NOVO`) é preservada.
+- **Perfil / Watchlists:** contadores completos e ordenação da r324 são preservados.
+- Web: `1.0.117 / r326-official-1.0.117`; Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r326-official.mjs`; runtime: `apps/web/runtime-r326-home-discover-final.js`.
 
 ## Web 1.0.116 / r325
 
