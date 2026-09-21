@@ -1,4 +1,4 @@
-name: Verify Web 1.0.124 r333 Discover Screenshot Contract
+name: Verify Web 1.0.117 r326 Home Discover Final
 
 on:
   push:
@@ -9,66 +9,70 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_124_r333:
+  web_1_0_117_r326:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Version identity r333
+        with: { node-version: 20 }
+      - name: Version identity r326
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.124"' package.json
-          grep -Fq '"version": "1.0.124"' apps/web/package.json
-          grep -Fq 'build-r333-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r333-discover-layout-final.js
-          test -f apps/web/build-r333.mjs
-          test -f apps/web/build-r333-official.mjs
-          test -f apps/web/test-r333.mjs
-          test -f apps/web/test-r333-browser.mjs
-      - name: Syntax r333 release chain
+          grep -Fq '"version": "1.0.117"' package.json
+          grep -Fq '"version": "1.0.117"' apps/web/package.json
+          grep -Fq 'build-r326-official.mjs' apps/web/package.json
+          test -f apps/web/build-r326.mjs
+          test -f apps/web/build-r326-official.mjs
+          test -f apps/web/runtime-r326-home-discover-final.js
+          test -f apps/web/test-r326.mjs
+          test -f apps/web/test-r326-browser.mjs
+          test -f supabase/migrations/20260921113000_r326_discover_all_user_aliases.sql
+      - name: Syntax r326 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r333-discover-layout-final.js
-          node --check apps/web/build-r333.mjs
-          node --check apps/web/build-r333-official.mjs
-          node --check apps/web/test-r333.mjs
-          node --check apps/web/test-r333-browser.mjs
-      - name: Last-green r326 baseline
+          node --check apps/web/runtime-r326-home-discover-final.js
+          node --check apps/web/build-r326.mjs
+          node --check apps/web/build-r326-official.mjs
+          node --check apps/web/test-r326.mjs
+          node --check apps/web/test-r326-browser.mjs
+      - name: Focused r326 browser gate
+        working-directory: apps/web
+        run: npm run test:r326:browser
+      - name: Focused regression suite
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node test-r326.mjs
-          node test-r326-browser.mjs
-      - name: Focused r333 gates
+          npm run test:r321
+          npm run test:r321:browser
+          npm run test:r323
+          npm run test:r323:browser
+          npm run test:r324
+          npm run test:r324:browser
+          npm run test:r325
+          npm run test:r325:browser
+          npm run test:r326
+          npm run test:r326:browser
+      - name: Final bundle identity r326
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node test-r333.mjs
-          node test-r333-browser.mjs
-      - name: Final bundle identity r333
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          node build-r333-official.mjs
-          node --check dist/app-v333.js
-          CT_R333_SKIP_BUILD=1 node test-r333.mjs
-          grep -Fq 'app-v333.js' dist/index.html
-          grep -Fq 'app-v333.css' dist/index.html
+          node build-r326-official.mjs
+          node --check dist/app-v326.js
+          CT_R326_SKIP_BUILD=1 node test-r326.mjs
+          grep -Fq 'app-v326.js' dist/index.html
+          grep -Fq 'app-v326.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.124'
-            && r.revision==='r333-official-1.0.124'
-            && r.discover_filter_authority==='cinetracker_discover_filter_v327'
-            && r.discover_foryou_layout==='standard-176-desktop-154-mobile-side-by-side'
-            && r.discover_foryou_actions==='three-buttons-single-row-inside-card-width'
-            && r.discover_public_actions==='two-buttons-single-row-inside-card-width'
-            && r.discover_tabbar==='right-next+global-filter-removed'
-            && r.discover_top10_provider_label==='duplicate-selected-name-removed'
-            && r.home_changes==='none-r333'
-            && r.profile_changes==='none-r333'
+          const ok=r.version==='1.0.117'
+            && r.revision==='r326-official-1.0.117'
+            && r.home_history_behavior==='always-rendered-scroll-oldest-top-newest-bottom-auto-bottom'
+            && r.home_history_toggle===false
+            && r.discover_filter_authority==='cinetracker_discover_filter_v326'
+            && r.discover_foryou==='exact-watchlist-unseen+strict-fresh-refill-before-paint'
+            && r.discover_foryou_actions==='watchlist+seen+swap-one-row-compact'
+            && r.home_episode_live_reconcile==='r325-preserved'
+            && r.profile_watchlist_counts==='r324-preserved-exact'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -86,29 +90,27 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_124_r333, android_current_source]
+    needs: [web_1_0_117_r326, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Production serves and boots r333
+      - name: Official production serves and boots 1.0.117 r326
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.124"' <<<"$BODY" \
-              && grep -Fq '"revision": "r333-official-1.0.124"' <<<"$BODY" \
-              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v327"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_layout": "standard-176-desktop-154-mobile-side-by-side"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v333.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.117"' <<<"$BODY" \
+              && grep -Fq '"revision": "r326-official-1.0.117"' <<<"$BODY" \
+              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v326"' <<<"$BODY" \
+              && grep -Fq '"home_history_toggle": false' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v326.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR333Marker='discover-standard-cards+single-row-actions+compact-top10+clean-tabbar'" <<<"$JS" \
-                && grep -Fq 'cinetracker_discover_filter_v327' <<<"$JS" \
-                && grep -Fq 'data-ct333-fy-kind' <<<"$JS" \
-                && grep -Fq 'app-v333.js' <<<"$HTML"; then
-                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --window-size=1600,1000 --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
-                if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.124' <<<"$DOM" \
-                  && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
+              if grep -Fq "window.__ctR326Marker='home-history-scroll-up+discover-compact-actions+strict-v326'" <<<"$JS" \
+                && grep -Fq 'cinetracker_discover_filter_v326' <<<"$JS" \
+                && grep -Fq 'ct-refresh-tv-state-user' <<<"$JS" \
+                && grep -Fq 'app-v326.js' <<<"$HTML"; then
+                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
+                if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
             sleep 5

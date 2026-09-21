@@ -6,113 +6,12 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.124** | `r333-official-1.0.124` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.117** | `r326-official-1.0.117` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
-
-## Web 1.0.124 / r333
-
-A r333 aplica o contrato visual do Descobrir mostrado nos prints de 21/09.
-
-- **Pra você:** cards voltam ao tamanho padrão histórico do CineTracker — 176 px no desktop e 154 px em telas menores — e ficam lado a lado. Os três botões `Watchlist / Visto / Trocar` ficam na mesma linha e exatamente dentro da largura do card.
-- **Filtros do Pra você:** `Todos / Filmes / Séries / Animes` ficam visíveis dentro da própria área, sem depender do botão lateral de filtro.
-- **Demais abas do Descobrir:** os dois botões de ação ficam em uma única linha e nunca ultrapassam a largura do poster/card.
-- **Top 10:** remove a linha duplicada com o nome do streaming selecionado, reduz o espaço em branco acima do título e compacta os painéis para liberar altura útil.
-- **Barra de abas:** remove os dois controles à direita do `Calendário` (seta seguinte e filtro global), conforme solicitado.
-- **Regras pessoais:** preserva `cinetracker_discover_filter_v327`; a autoridade foi conferida no banco com a saga Harry Potter e bloqueou 8/8 filmes já assistidos.
-- Home, Perfil, Esportes, F1 Hub e Android não são alterados nesta versão.
-
-Build oficial: `apps/web/build-r333-official.mjs`; runtime: `apps/web/runtime-r333-discover-layout-final.js`.
-
-## Web 1.0.123 / r332
-
-A r332 volta para a última base verde (r326) e corrige os pontos mostrados nos prints de 21/09 sem reaproveitar a r331 que falhou no navegador.
-
-- Home / Filmes: `cinetracker_home_payload_v332` usa a mesma `cinetracker_watchlist_full_v119` do Perfil e ordena por `added_at desc`. O primeiro item da Home e do Perfil passa a ser o mesmo.
-- Histórico da Home: continua carregado como conteúdo natural acima do ponto inicial da página, sem botão e sem scroll interno; o ponto inicial fica logo depois do histórico, então ao subir aparece primeiro o mais recente.
-- Pra você: usa a Watchlist canônica, valida tudo com `cinetracker_discover_filter_v327`, mantém os filtros Todos/Filmes/Séries/Animes sempre visíveis e força Watchlist/Visto/Trocar na mesma linha, limitados à largura do card.
-- Top 10: Looke e Mubi são removidos. O desktop usa 10 colunas, sem trilho horizontal; a busca continua preenchendo até dez itens elegíveis e aborta imediatamente se o usuário troca de aba.
-- Navegação: os observers amplos da r324/r326 são neutralizados e os loops de refill são limitados pela rota/aba.
-- Sincronização de episódios da r325 é preservada.
-- Android permanece `1.0.20 / versionCode 10062`.
-
-## Web 1.0.122 / r331
-
-A r331 parte diretamente da **r326, última release verde**, e não herda os experimentos r327–r330 que falharam no CI.
-
-- **Home / Histórico:** Séries e Filmes mantêm o histórico carregado no DOM acima da área inicial, sem botão e sem scroll interno. Ao entrar na Home ou trocar de aba, a tela é ancorada no primeiro bloco normal; ao rolar para cima, aparecem primeiro os registros mais recentes e depois os antigos.
-- **Pra você:** o filtro pessoal passa a usar `cinetracker_discover_filter_v327`, incluindo aliases legados, histórico e eventos de reprodução. Os filtros `Todos / Filmes / Séries / Animes` ficam sempre visíveis.
-- **Ações do Pra você:** `Watchlist`, `Visto` e `Trocar` ficam sob um único dono, lado a lado em uma linha compacta. O runtime r310 deixa de apagar/esconder essas ações.
-- **Descobrir / navegação:** os loops de reposição de recomendações e Top 10 param de iniciar novas páginas assim que o usuário troca de aba/rota, reduzindo congelamentos.
-- **Top 10:** mantém o preenchimento até dez itens elegíveis, aplicando o filtro v327 antes da exibição.
-- **Episódios novos:** a reconciliação prioriza séries assistidas recentemente e o selo `NOVO` considera a data do episódio mais recente lançado no TMDB.
-- Perfil/Watchlist preserva as contagens exatas da r324. Android permanece `1.0.20 / versionCode 10062`.
-
-Build oficial: `apps/web/build-r331-official.mjs`; runtime: `apps/web/runtime-r331-home-discover-stable.js`.
-
-## Web 1.0.121 / r330
-
-A r330 consolida os problemas vistos no vídeo de 21/09: lentidão ao trocar abas, ações desaparecendo no `Pra você` e o histórico da Home fora do comportamento aprovado.
-
-- **Home / histórico:** volta ao contrato r274/r326. Séries e Filmes ficam pré-carregados em um viewport interno de até 55vh/520 px, sem botão `Ver histórico`. A lista permanece do mais antigo no topo ao mais recente no fundo e abre posicionada no item mais recente; rolar para cima revela os anteriores.
-- **Home / desempenho:** preserva o cache-first e o RPC único da r328, mas neutraliza os normalizadores r327/r328 que expandiam dezenas de itens na página e reposicionavam a janela.
-- **Descobrir / navegação:** remove o prefetch automático das seis abas públicas durante a navegação. A troca passa a ser demand-only e continua usando o cache visual da r329 para retornos já carregados.
-- **Pra você / carregamento:** `loadRecent296` sai do caminho crítico da montagem das recomendações.
-- **Pra você / botões:** o r310 deixa de remover `.ct309-actions`. A r330 também reconstrói Watchlist, Visto e Trocar quando um cache/runtime anterior deixou o card sem ações, e força os três na mesma linha.
-- **Pra você / filtros:** Todos, Filmes, Séries e Animes ficam visíveis e atuam localmente, sem nova requisição.
-- **Top 10:** páginas 1–3 são buscadas em paralelo e filtradas em uma única onda; páginas 4–5 só são consultadas se necessário. O filtro pessoal é executado no máximo duas vezes por carregamento e a lista continua tentando completar 10 elegíveis.
-- **Regras:** mantém `cinetracker_discover_filter_v327`, a autoridade mais recente do bundle, incluindo `watch_play_events` e aliases para bloquear títulos assistidos em duplicatas legadas, como Harry Potter.
-- **Preservado:** contagens/ordenação das Watchlists r324, sincronização de episódios r325, F1, Esportes e Android.
-
-Build oficial: `apps/web/build-r330-official.mjs`; runtime: `apps/web/runtime-r330-recovery.js`.
-
-## Web 1.0.120 / r329
-
-A r329 corrige especificamente a fluidez do Descobrir e o layout do `Pra você` mostrado no vídeo de 21/09.
-
-- **Troca de abas:** conteúdo já carregado é restaurado do cache visual por até 5 minutos, sem voltar para skeleton/loader.
-- **Pré-carregamento:** fontes das abas públicas são aquecidas em idle, sem trocar a aba visível.
-- **Observer antigo:** a varredura global do Descobrir da r327 é desativada; a r329 observa apenas mudanças relevantes do container atual.
-- **Pra você / cards:** Filme, Série e Anime usam colunas fixas de 158 px, alinhadas à esquerda e com 12 px de intervalo, eliminando os espaços enormes do vídeo.
-- **Pra você / ações:** Watchlist, Visto e Trocar são reagrupados fisicamente no mesmo container e ficam obrigatoriamente na mesma linha, com 24 px de altura e sem quebra de texto.
-- **Filtros:** Todos / Filmes / Séries / Animes são locais e imediatos; trocar o filtro do `Pra você` não dispara rede.
-- **Demais áreas:** Home r328, sincronização episódica r325, Watchlists do Perfil r324, F1, Esportes e Android são preservados.
-
-Build oficial: `apps/web/build-r329-official.mjs`; runtime: `apps/web/runtime-r329-discover-performance-layout.js`.
-
-## Web 1.0.119 / r328
-
-A r328 corrige a regressão de Home/histórico observada no vídeo de 21/09 e preserva integralmente o Descobrir da r327.
-
-- **Congelamento ao trocar de abas:** o vídeo mostrou aproximadamente 13–14 s de skeleton ao entrar na Home. No banco, o payload principal foi medido em ~0,39 s e a nova autoridade única em ~0,58 s; o atraso vinha da cadeia redundante no cliente, não do SQL.
-- **Uma única autoridade de Home:** `cinetracker_home_payload_v328` entrega biblioteca + histórico de Séries + histórico de Filmes em um único RPC autenticado, substituindo o encadeamento paralelo r323/r325.
-- **Retorno à Home:** quando existe cache canônico, a Home pinta imediatamente e atualiza em segundo plano somente quando o cache tem mais de 60 s. A troca Séries/Filmes é local e não dispara nova carga.
-- **Histórico natural:** Séries e Filmes ficam completamente renderizados acima da área inicial, sem botão, sem scrollbar interna e sem limite de altura. A página abre ancorada na primeira seção normal; ao rolar para cima, o registro mais recente é encontrado primeiro e os mais antigos ficam acima.
-- **Data correta do histórico:** a data exibida nos cards passa a ser `watched_at`. A hidratação TMDB não pode mais trocar essa data pela data original de exibição do episódio (por exemplo, episódios antigos de WWE aparecendo como “1988” apesar de terem sido assistidos em 2026).
-- **Ordem:** histórico permanece do mais antigo no topo ao mais recente no final, deixando o mais recente imediatamente acima do conteúdo principal.
-- **Preservado:** sincronização de episódios novos da r325, Descobrir/filtros/botões da r327, Watchlists do Perfil da r324, F1, Esportes e Android.
-- Android permanece `1.0.20 / versionCode 10062`.
-
-Build oficial: `apps/web/build-r328-official.mjs`; runtime: `apps/web/runtime-r328-home-history-performance.js`.
-
-## Web 1.0.118 / r327
-
-A r327 corrige o comportamento observado no vídeo de 21/09 sem alterar F1, Esportes ou Android.
-
-- **Home / Histórico:** restaura o contrato da r276. O histórico de Séries e Filmes permanece totalmente renderizado acima da área inicial, sem botão e sem scrollbar interna. A Home abre ancorada na primeira seção normal; ao rolar para cima, o usuário encontra primeiro o registro mais recente e continua em direção aos mais antigos.
-- **Pra você / ações:** Watchlist, Visto e Trocar passam a usar uma linha flex real de três botões compactos; o botão Trocar deixa de herdar a regra antiga de ocupar uma linha inteira.
-- **Pra você / filtros:** Todos, Filmes, Séries e Animes passam por um handler de captura próprio da r327. O filtro também controla corretamente a Indicação do Dia conforme a categoria atual.
-- **Descobrir / regras:** todas as abas filtradas, Pra você e Top 10 passam a usar `cinetracker_discover_filter_v327`.
-- **Filtro v327:** além de Watchlist, `watch_history`, progresso e estados, inclui `watch_play_events_v0994`. O servidor expande os aliases do candidato pelo TMDB do catálogo antes de cruzar com registros antigos/localizados.
-- Isso cobre casos em que o Top 10 chega apenas com o título em português enquanto o histórico antigo está salvo em inglês.
-- Top 10 continua buscando páginas adicionais até tentar completar 10 itens elegíveis.
-- Sincronização de episódios da r325 e contagens completas de Watchlist da r324 são preservadas.
-- Android permanece `1.0.20 / versionCode 10062`.
-
-Build oficial: `apps/web/build-r327-official.mjs`; runtime: `apps/web/runtime-r327-home-discover-truth.js`.
 
 ## Web 1.0.117 / r326
 
