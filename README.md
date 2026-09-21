@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.115** | `r324-official-1.0.115` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.116** | `r325-official-1.0.116` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.116 / r325
+
+A r325 mantém as correções da r324 e corrige a sincronização de episódios observada no vídeo com o Bingers.
+
+- **Home / histórico oculto:** `cinetracker_home_history_v324` carrega episódios e filmes antes do primeiro paint; os dois históricos continuam recolhidos por padrão, mas o conteúdo já está no payload quando o usuário abre `Ver histórico`.
+- **Séries duplicadas/importadas:** `cinetracker_home_series_watch_state_v2` unifica todas as fichas que resolvem para o mesmo TMDB e retorna, no mesmo estado lógico, contagem assistida, chaves S/E, último S/E e último horário assistido.
+- **Episódios novos:** o Home chama a Edge Function autenticada `ct-refresh-tv-state-user` em intervalos controlados. Ela atualiza séries cujo `next_episode_to_air` já venceu ou cuja metadata está velha; em seguida o Home reconcilia novamente o TMDB atual e move episódio lançado/não visto para `Assistir a seguir`.
+- **Identificação visual:** episódio lançado nos últimos 14 dias e ainda não visto recebe `NOVO`.
+- **Casos confirmados no banco:** Reacher consolida 28 episódios assistidos e último S04E04; Lioness consolida 23 assistidos e último S03E07.
+- **Preservações da r324:** histórico recolhido, botões compactos do Descobrir, Top 10 filtrando vistos legados (incluindo Harry Potter), Watchlists completas com contadores do RPC e ordenação.
+- Web: `1.0.116 / r325-official-1.0.116`; Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r325-official.mjs`; runtime: `apps/web/runtime-r325-home-episode-sync.js`.
 
 ## Web 1.0.115 / r324
 

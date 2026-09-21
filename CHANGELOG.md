@@ -2,6 +2,26 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.116 — 2026-09-20 — Web r325
+
+### Home / Histórico
+- Adiciona `cinetracker_home_history_v324` como autoridade para pré-carregar histórico de episódios e filmes antes do paint.
+- Mantém os dois históricos recolhidos na abertura, sem depender de lazy-load quando o usuário expande.
+
+### Home / Séries e episódios novos
+- Adiciona `cinetracker_home_series_watch_state_v2`.
+- Consolida progresso de fichas duplicadas pelo TMDB efetivo, incluindo contagem assistida, chaves S/E, último S/E e último horário assistido.
+- Corrige combinações inconsistentes de contagem e episódio atual causadas por progresso dividido entre mídia legada e mídia canônica.
+- Ativa `ct-refresh-tv-state-user` a partir do Home para atualizar metadata episódica quando a data do próximo episódio já passou ou a ficha está velha.
+- Após atualização, o Home reconcilia o TMDB atual e calcula novamente episódios lançados, episódio seguinte não visto e quantidade disponível.
+- Episódio recente lançado e ainda não visto recebe marca `NOVO`.
+
+### Preservações
+- Mantém a r324 para botões compactos do Descobrir, filtro Top 10 contra vistos legados, Watchlists completas/contadores corretos e ordenação.
+- Web: `1.0.116 / r325-official-1.0.116`.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Esportes e F1 não foram alterados.
+
 ## 1.0.115 — 2026-09-20 — Web r324
 
 ### Home

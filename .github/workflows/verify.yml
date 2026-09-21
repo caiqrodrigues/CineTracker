@@ -1,4 +1,4 @@
-name: Verify Web 1.0.115 r324 Home Discover Profile
+name: Verify Web 1.0.116 r325 Home Episode Sync
 
 on:
   push:
@@ -9,60 +9,63 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_115_r324:
+  web_1_0_116_r325:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r324
+      - name: Version identity r325
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.115"' package.json
-          grep -Fq '"version": "1.0.115"' apps/web/package.json
-          grep -Fq 'build-r324-official.mjs' apps/web/package.json
-          test -f apps/web/build-r324.mjs
-          test -f apps/web/build-r324-official.mjs
-          test -f apps/web/runtime-r324-home-discover-profile.js
-          test -f apps/web/test-r324.mjs
-          test -f apps/web/test-r324-browser.mjs
-          test -f supabase/migrations/20260921003000_r324_discover_legacy_alias_union.sql
-      - name: Syntax r324 release chain
+          grep -Fq '"version": "1.0.116"' package.json
+          grep -Fq '"version": "1.0.116"' apps/web/package.json
+          grep -Fq 'build-r325-official.mjs' apps/web/package.json
+          test -f apps/web/build-r325.mjs
+          test -f apps/web/build-r325-official.mjs
+          test -f apps/web/runtime-r325-home-episode-sync.js
+          test -f apps/web/test-r325.mjs
+          test -f apps/web/test-r325-browser.mjs
+          test -f supabase/migrations/20260921020500_r325_home_history_episode_sync.sql
+          test -f supabase/functions/ct-refresh-tv-state-user/index.ts
+      - name: Syntax r325 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r324-home-discover-profile.js
-          node --check apps/web/build-r324.mjs
-          node --check apps/web/build-r324-official.mjs
-          node --check apps/web/test-r324.mjs
-          node --check apps/web/test-r324-browser.mjs
-      - name: Focused r324 browser gate
+          node --check apps/web/runtime-r325-home-episode-sync.js
+          node --check apps/web/build-r325.mjs
+          node --check apps/web/build-r325-official.mjs
+          node --check apps/web/test-r325.mjs
+          node --check apps/web/test-r325-browser.mjs
+          grep -Fq "next&&next<=today()" supabase/functions/ct-refresh-tv-state-user/index.ts
+          grep -Fq "6*60*60*1000" supabase/functions/ct-refresh-tv-state-user/index.ts
+      - name: Focused r325 browser gate
         working-directory: apps/web
-        run: npm run test:r324:browser
-      - name: Regression suite through r324
+        run: npm run test:r325:browser
+      - name: Regression suite through r325
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r324
+      - name: Final bundle identity r325
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r324-official.mjs
-          node --check dist/app-v324.js
-          CT_R324_SKIP_BUILD=1 node test-r324.mjs
-          grep -Fq 'app-v324.js' dist/index.html
-          grep -Fq 'app-v324.css' dist/index.html
+          node build-r325-official.mjs
+          node --check dist/app-v325.js
+          CT_R325_SKIP_BUILD=1 node test-r325.mjs
+          grep -Fq 'app-v325.js' dist/index.html
+          grep -Fq 'app-v325.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.115'
-            && r.revision==='r324-official-1.0.115'
+          const ok=r.version==='1.0.116'
+            && r.revision==='r325-official-1.0.116'
+            && r.home_history_authority==='cinetracker_home_history_v324'
+            && r.home_series_watch_state==='cinetracker_home_series_watch_state_v2'
+            && r.home_episode_metadata_refresh==='ct-refresh-tv-state-user'
+            && r.home_episode_live_reconcile==='tmdb-show+season-current-date'
             && r.discover_filter_authority==='cinetracker_discover_filter_v324'
-            && r.discover_filter_match==='tmdb-direct-plus-legacy-original-title-year-union'
             && r.discover_foryou_actions==='watchlist+seen+swap-single-row-compact'
-            && r.home_history_initial==='series+movies-preloaded-collapsed'
-            && r.profile_watchlist_source==='cinetracker_watchlist_full_v119-all-rows'
             && r.profile_watchlist_counts==='rpc-exact-series+movie-counts'
-            && r.discover_top10_seen_legacy==='blocked-through-original-title-year-even-with-positive-direct-record'
-            && r.web_version_ui==='1.0.115+r324-official-1.0.115'
+            && r.web_version_ui==='1.0.116+r325-official-1.0.116'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -80,31 +83,31 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_115_r324, android_current_source]
+    needs: [web_1_0_116_r325, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.115 r324
+      - name: Official production serves and boots 1.0.116 r325
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.115"' <<<"$BODY" \
-              && grep -Fq '"revision": "r324-official-1.0.115"' <<<"$BODY" \
-              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v324"' <<<"$BODY" \
-              && grep -Fq '"home_history_initial": "series+movies-preloaded-collapsed"' <<<"$BODY" \
-              && grep -Fq '"profile_watchlist_counts": "rpc-exact-series+movie-counts"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v324.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.116"' <<<"$BODY" \
+              && grep -Fq '"revision": "r325-official-1.0.116"' <<<"$BODY" \
+              && grep -Fq '"home_history_authority": "cinetracker_home_history_v324"' <<<"$BODY" \
+              && grep -Fq '"home_series_watch_state": "cinetracker_home_series_watch_state_v2"' <<<"$BODY" \
+              && grep -Fq '"home_episode_metadata_refresh": "ct-refresh-tv-state-user"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v325.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR324Marker='home-history-collapsed+discover-actions-compact+watchlist-complete+legacy-alias-union'" <<<"$JS" \
+              if grep -Fq "window.__ctR325Marker='home-history-authority+watch-state-v2+live-tv-refresh+new-episode'" <<<"$JS" \
+                && grep -Fq 'cinetracker_home_series_watch_state_v2' <<<"$JS" \
+                && grep -Fq 'ct-refresh-tv-state-user' <<<"$JS" \
                 && grep -Fq 'cinetracker_discover_filter_v324' <<<"$JS" \
-                && grep -Fq 'cinetracker_watchlist_full_v119' <<<"$JS" \
-                && grep -Fq 'Ver histórico' <<<"$JS" \
-                && grep -Fq 'app-v324.js' <<<"$HTML"; then
+                && grep -Fq 'app-v325.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.115' <<<"$DOM" \
-                  && grep -Fq 'r324-official-1.0.115' <<<"$DOM" \
+                  && grep -Fq 'v1.0.116' <<<"$DOM" \
+                  && grep -Fq 'r325-official-1.0.116' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
