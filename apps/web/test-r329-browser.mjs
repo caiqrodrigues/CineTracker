@@ -37,13 +37,12 @@ const probe=`<script>setTimeout(async()=>{try{
  let calls=0;
  X.setTestBridge({
   loadDiscover:async tab=>{calls++;await new Promise(r=>setTimeout(r,180));h.innerHTML='<div class="ct319-public">loaded '+tab+'</div>';return true},
-  source:async()=>{await new Promise(r=>setTimeout(r,5));return[]}
+  source:async()=>[]
  });
  const t0=performance.now();await X.loadTab('foryou');const cachedMs=performance.now()-t0;
  ok(cachedMs<80,'cached tab switch too slow '+cachedMs);
  ok(calls===0,'cached tab triggered network loader');
 
- await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
  const beforeText=h.textContent,beforeItems=h.querySelectorAll('[data-ct309-slot],[data-ct319-item],.ct319-public').length;
  await XT.prefetchSources329();
  const afterItems=h.querySelectorAll('[data-ct309-slot],[data-ct319-item],.ct319-public').length;
