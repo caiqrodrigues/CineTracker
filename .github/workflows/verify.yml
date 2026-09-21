@@ -36,6 +36,9 @@ jobs:
           node --check apps/web/build-r324-official.mjs
           node --check apps/web/test-r324.mjs
           node --check apps/web/test-r324-browser.mjs
+      - name: Focused r324 browser gate
+        working-directory: apps/web
+        run: npm run test:r324:browser
       - name: Regression suite through r324
         working-directory: apps/web
         run: npm run verify
