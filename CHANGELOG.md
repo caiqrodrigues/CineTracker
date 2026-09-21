@@ -2,6 +2,27 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.124 — 2026-09-21 — Web r333
+
+### Descobrir / layout
+- Normaliza os cards do `Pra você` para 176 px no desktop e 154 px em telas menores.
+- Mantém Filme, Série e Anime lado a lado em cada bloco do `Pra você`.
+- Coloca `Watchlist`, `Visto` e `Trocar` na mesma linha, sem quebra e sem ultrapassar o card.
+- Limita os dois botões das demais abas à largura exata do card/poster.
+- Expõe `Todos / Filmes / Séries / Animes` diretamente no `Pra você`.
+- Remove a seta seguinte e o filtro global à direita de `Calendário`.
+
+### Top 10
+- Remove o nome duplicado do streaming selecionado abaixo da linha de provedores.
+- Reduz margens e espaçamentos verticais para trazer `Top 10 Séries` e `Top 10 Filmes` para cima.
+- Mantém a grade de 10 colunas no desktop e a reposição de itens após exclusões.
+- Mantém `cinetracker_discover_filter_v327`; validação direta no banco bloqueou os oito filmes de Harry Potter marcados como assistidos.
+
+### Escopo
+- Web: `1.0.124 / r333-official-1.0.124`.
+- Home, Perfil, Esportes e F1 Hub permanecem inalterados.
+- Android permanece `1.0.20 / versionCode 10062`.
+
 ## 1.0.123 — 2026-09-21 — Web r332
 
 ### Home

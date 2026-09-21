@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.123** | `r332-official-1.0.123` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.124** | `r333-official-1.0.124` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.124 / r333
+
+A r333 aplica o contrato visual do Descobrir mostrado nos prints de 21/09.
+
+- **Pra você:** cards voltam ao tamanho padrão histórico do CineTracker — 176 px no desktop e 154 px em telas menores — e ficam lado a lado. Os três botões `Watchlist / Visto / Trocar` ficam na mesma linha e exatamente dentro da largura do card.
+- **Filtros do Pra você:** `Todos / Filmes / Séries / Animes` ficam visíveis dentro da própria área, sem depender do botão lateral de filtro.
+- **Demais abas do Descobrir:** os dois botões de ação ficam em uma única linha e nunca ultrapassam a largura do poster/card.
+- **Top 10:** remove a linha duplicada com o nome do streaming selecionado, reduz o espaço em branco acima do título e compacta os painéis para liberar altura útil.
+- **Barra de abas:** remove os dois controles à direita do `Calendário` (seta seguinte e filtro global), conforme solicitado.
+- **Regras pessoais:** preserva `cinetracker_discover_filter_v327`; a autoridade foi conferida no banco com a saga Harry Potter e bloqueou 8/8 filmes já assistidos.
+- Home, Perfil, Esportes, F1 Hub e Android não são alterados nesta versão.
+
+Build oficial: `apps/web/build-r333-official.mjs`; runtime: `apps/web/runtime-r333-discover-layout-final.js`.
 
 ## Web 1.0.123 / r332
 
