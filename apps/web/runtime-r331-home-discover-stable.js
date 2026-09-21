@@ -113,17 +113,24 @@ function exposeForYouFilters331(){
  if(routeNow()!=='discover')return false;
  let tab='';try{tab=String(discover?.tab||'')}catch{}
  if(tab!=='foryou')return false;
- const st=r319State331(),root=q('[data-ct319-discover]');if(!st||!root)return false;
- const types=q('[data-ct319-types]',root),trigger=q('[data-ct319-filter]',root);
- const kind=String(st.fyKind||'all');
+ const st=r319State331(),root=q('[data-ct319-discover]'),host=q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]');
+ if(!st||(!root&&!host))return false;
+ let types=(root&&q('[data-ct319-types]',root))||q('[data-ct331-fy-filters]');
+ const trigger=root&&q('[data-ct319-filter]',root),kind=String(st.fyKind||'all');
  st.filterOpen=true;
  if(trigger)trigger.hidden=true;
+ if(!types&&host){
+  types=document.createElement('div');
+  types.className='filters ct331-fy-types';
+  types.dataset.ct331FyFilters='1';
+  host.insertAdjacentElement('beforebegin',types);
+ }
  if(types){
   types.innerHTML=filterMarkup331(kind);
   types.hidden=false;types.classList.add('open','ct331-fy-types');
   types.setAttribute('aria-hidden','false');
  }
- return true;
+ return !!types;
 }
 function applyForYouFilter331(){
  const st=r319State331(),root=q('[data-ct309-foryou]');if(!st||!root)return false;
