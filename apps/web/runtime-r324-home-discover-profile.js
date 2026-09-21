@@ -1,7 +1,7 @@
 /* CineTracker Web 1.0.115 r324 — collapsed Home history, compact Discover actions, complete Watchlist modal. */
 (()=>{
 'use strict';
-if(window.__ctR324)return;
+if(window.__ctR324?.version==='1.0.115')return;
 window.__ctR324Marker='home-history-collapsed+discover-actions-compact+watchlist-complete+legacy-alias-union';
 window.__ctR324Home='series+movies-history-preloaded-collapsed-on-entry';
 window.__ctR324Discover='compact-one-row-actions+v324-legacy-seen-union';
@@ -16,6 +16,12 @@ const n=v=>{const x=Number(v);return Number.isFinite(x)?x:0};
 const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
 let testBridge=null;
 let historyOpen324={episodes:false,movies:false};
+window.__ctR324={
+ decorateHomeHistory:decorateHomeHistory324,setHistoryOpen:setHistoryOpen324,
+ openWatchlist:openWatch324,watchPayload:watchPayload324,sortWatchlist:sortRows324,
+ version:'1.0.115',setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}
+};
+window.__ctR324Test={decorateHomeHistory324,setHistoryOpen324,positiveTmdb324,sortRows324,watchCard324,watchPayload324,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}};
 
 /* HOME — history is fetched with the Home payload, but both tabs start collapsed. */
 function historyKind324(sec){
