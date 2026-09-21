@@ -8,7 +8,7 @@ const qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
 const rows=v=>Array.isArray(v)?v:[];
 const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
 const imp=(el,p,v)=>{try{el?.style?.setProperty(p,v,'important')}catch{}};
-let testBridge=null,homeTask=null,anchorSeq=0;
+let testBridge=null,homeTask=null,anchorSeq=0,fyKind332='all';
 
 async function fetchHome332(){
  if(testBridge?.homePayload)return testBridge.homePayload();
@@ -102,16 +102,17 @@ function filterMarkup332(kind){
 function ensureForYouFilters332(){
  if(routeNow()!=='discover')return false;
  let tab='';try{tab=String(discover?.tab||'')}catch{}if(tab!=='foryou')return false;
- const root=q('[data-ct319-discover]'),st=fyState332();if(!root||!st)return false;
- const types=q('[data-ct319-types]',root),trigger=q('[data-ct319-filter]',root),kind=String(st.fyKind||'all');
+ const root=q('[data-ct319-discover]');if(!root)return false;
+ const old=fyState332();if(old?.fyKind&&fyKind332==='all')fyKind332=String(old.fyKind||'all');
+ const types=q('[data-ct319-types]',root),trigger=q('[data-ct319-filter]',root),kind=fyKind332;
  if(trigger)trigger.hidden=true;
  if(!types)return false;
  types.innerHTML=filterMarkup332(kind);types.hidden=false;types.dataset.ct332FyFilters='1';types.classList.add('open','ct332-fy-types');types.setAttribute('aria-hidden','false');
  return true;
 }
 function applyForYouFilter332(){
- const st=fyState332(),root=q('[data-ct309-foryou]');if(!st||!root)return false;
- const kind=String(st.fyKind||'all');root.dataset.ct332FyFilter=kind;
+ const root=q('[data-ct309-foryou]');if(!root)return false;
+ const kind=fyKind332;root.dataset.ct332FyFilter=kind;
  for(const slot of qa('[data-ct309-slot]',root)){
   const k=String(slot.dataset.ct309Slot||'').split(':').pop(),show=kind==='all'||k===kind;
   slot.hidden=!show;if(show)slot.style.removeProperty('display');else imp(slot,'display','none');
