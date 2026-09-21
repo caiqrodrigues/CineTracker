@@ -23,7 +23,7 @@ Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline ofici
 - Mantém Todos / Filmes / Séries / Animes visíveis e locais.
 
 ### Regras e preservações
-- Mantém `cinetracker_discover_filter_v324` para excluir vistos/Watchlist/progresso, inclusive duplicatas legadas.
+- Mantém `cinetracker_discover_filter_v327` para excluir vistos/Watchlist/progresso e `watch_play_events`, inclusive duplicatas legadas.
 - Preserva Watchlists completas/contagens r324, episódios novos r325, F1 e Esportes.
 - Web `1.0.121 / r330-official-1.0.121`.
 - Android `1.0.20 / versionCode 10062`.

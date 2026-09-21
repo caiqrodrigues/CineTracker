@@ -24,7 +24,7 @@ A r330 consolida os problemas vistos no vídeo de 21/09: lentidão ao trocar aba
 - **Pra você / botões:** o r310 deixa de remover `.ct309-actions`. A r330 também reconstrói Watchlist, Visto e Trocar quando um cache/runtime anterior deixou o card sem ações, e força os três na mesma linha.
 - **Pra você / filtros:** Todos, Filmes, Séries e Animes ficam visíveis e atuam localmente, sem nova requisição.
 - **Top 10:** páginas 1–3 são buscadas em paralelo e filtradas em uma única onda; páginas 4–5 só são consultadas se necessário. O filtro pessoal é executado no máximo duas vezes por carregamento e a lista continua tentando completar 10 elegíveis.
-- **Regras:** mantém `cinetracker_discover_filter_v324`, incluindo o bloqueio de títulos assistidos em duplicatas legadas, como Harry Potter.
+- **Regras:** mantém `cinetracker_discover_filter_v327`, a autoridade mais recente do bundle, incluindo `watch_play_events` e aliases para bloquear títulos assistidos em duplicatas legadas, como Harry Potter.
 - **Preservado:** contagens/ordenação das Watchlists r324, sincronização de episódios r325, F1, Esportes e Android.
 
 Build oficial: `apps/web/build-r330-official.mjs`; runtime: `apps/web/runtime-r330-recovery.js`.

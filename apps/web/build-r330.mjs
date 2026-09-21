@@ -145,7 +145,7 @@ const prev=JSON.parse(releaseRaw),release={
  discover_foryou_recent_load:'off-critical-path',
  discover_foryou_actions:'owned-rebuilt-3-buttons-one-row',
  discover_foryou_filters:'visible-local-all+movie+series+anime',
- discover_filter_authority:'cinetracker_discover_filter_v324',
+ discover_filter_authority:'cinetracker_discover_filter_v327',
  discover_top10:'two-wave-concurrent+max-two-filter-rpcs+fill-ten',
  profile_watchlist_counts:'r324-preserved-exact',
  sports_changes:'none-r330',
