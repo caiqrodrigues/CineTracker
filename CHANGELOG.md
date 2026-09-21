@@ -2,6 +2,29 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.115 — 2026-09-20 — Web r324
+
+### Home
+- Séries e Filmes passam a iniciar com o histórico já carregado porém recolhido.
+- Adiciona controle independente `Ver histórico / Ocultar histórico` para cada aba, sem lazy-load do conteúdo.
+
+### Descobrir
+- Compacta as ações do `Pra você` em uma única linha: Watchlist, Visto e Trocar.
+- Mantém Watchlist + Visto em uma única linha nas abas públicas e Top 10, inclusive em viewport estreita.
+- Adiciona `cinetracker_discover_filter_v324`: aliases de título original + ano são unidos ao match TMDB direto, em vez de serem ignorados quando existe uma ficha positiva.
+- Corrige títulos vistos importados que reapareciam no Top 10, incluindo a duplicidade legado/atual da franquia Harry Potter.
+
+### Perfil / Watchlist
+- O modal deixa de usar a lista r316 que descartava `tmdb_id <= 0`.
+- Passa a renderizar todas as linhas de `cinetracker_watchlist_full_v119`.
+- O cabeçalho usa os contadores do RPC, preservando os totais completos de Séries e Filmes.
+- Registros legados sem TMDB positivo permanecem visíveis na lista, sem tentar abrir uma rota TMDB inválida.
+
+### Release
+- Web: `1.0.115 / r324-official-1.0.115`.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Esportes e F1 não foram alterados.
+
 ## 1.0.114 — 2026-09-20 — Web r323
 
 ### Home

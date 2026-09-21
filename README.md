@@ -6,12 +6,25 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.114** | `r323-official-1.0.114` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.115** | `r324-official-1.0.115` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.115 / r324
+
+A r324 corrige as regressões confirmadas no vídeo de 20/09 à noite.
+
+- **Home / Séries e Filmes:** os dois históricos continuam carregados junto com a Home, mas agora iniciam recolhidos. Cada aba mostra apenas o cabeçalho/contador e o botão `Ver histórico`; abrir um histórico não abre o outro.
+- **Descobrir / ações:** `+ Watchlist`, `✓ Visto` e `↻ Trocar` ficam na mesma linha no `Pra você`, com controles menores e sem quebra de texto. As abas públicas e Top 10 mantêm Watchlist + Visto lado a lado também no mobile.
+- **Perfil / Watchlists:** o modal usa diretamente `cinetracker_watchlist_full_v119` e não descarta mais registros importados com TMDB negativo. Os totais passam a usar os contadores do próprio RPC: Séries e Filmes mostram a população completa.
+- **Top 10 / vistos legados:** `cinetracker_discover_filter_v324` cruza aliases legados mesmo quando já existe uma ficha TMDB positiva. Isso cobre duplicatas importadas como Harry Potter em inglês marcadas como vistas e as fichas atuais em português.
+- **Validação no banco:** Harry Potter 1, 3, 4 e Interestelar foram validados como `seen_keys`/bloqueados pelo novo filtro.
+- Web: `1.0.115 / r324-official-1.0.115`; Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r324-official.mjs`; runtime: `apps/web/runtime-r324-home-discover-profile.js`.
 
 ## Web 1.0.114 / r323
 
