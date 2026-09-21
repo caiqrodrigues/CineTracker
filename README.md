@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.119** | `r328-official-1.0.119` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.120** | `r329-official-1.0.120` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.120 / r329
+
+A r329 corrige especificamente a fluidez do Descobrir e o layout do `Pra você` mostrado no vídeo de 21/09.
+
+- **Troca de abas:** conteúdo já carregado é restaurado do cache visual por até 5 minutos, sem voltar para skeleton/loader.
+- **Pré-carregamento:** fontes das abas públicas são aquecidas em idle, sem trocar a aba visível.
+- **Observer antigo:** a varredura global do Descobrir da r327 é desativada; a r329 observa apenas mudanças relevantes do container atual.
+- **Pra você / cards:** Filme, Série e Anime usam colunas fixas de 158 px, alinhadas à esquerda e com 12 px de intervalo, eliminando os espaços enormes do vídeo.
+- **Pra você / ações:** Watchlist, Visto e Trocar são reagrupados fisicamente no mesmo container e ficam obrigatoriamente na mesma linha, com 24 px de altura e sem quebra de texto.
+- **Filtros:** Todos / Filmes / Séries / Animes são locais e imediatos; trocar o filtro do `Pra você` não dispara rede.
+- **Demais áreas:** Home r328, sincronização episódica r325, Watchlists do Perfil r324, F1, Esportes e Android são preservados.
+
+Build oficial: `apps/web/build-r329-official.mjs`; runtime: `apps/web/runtime-r329-discover-performance-layout.js`.
 
 ## Web 1.0.119 / r328
 

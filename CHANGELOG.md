@@ -2,6 +2,26 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.120 — 2026-09-21 — Web r329
+
+### Descobrir / desempenho
+- Troca de abas passa a usar cache visual de 5 minutos para retorno instantâneo.
+- Adiciona prefetch em idle das fontes das abas públicas.
+- Remove a varredura contínua do MutationObserver r327 no Descobrir.
+
+### Pra você
+- Aproxima os cards: três colunas fixas de 158 px alinhadas à esquerda.
+- Reagrupa Watchlist, Visto e Trocar no mesmo container e força uma única linha compacta.
+- Todos / Filmes / Séries / Animes passam a ser filtro local, sem requisição de rede.
+
+### Preservado
+- Home r328.
+- Sincronização de episódios r325.
+- Contagens/modal da Watchlist r324.
+- F1 Hub e Esportes.
+- Android `1.0.20 / versionCode 10062`.
+- Web `1.0.120 / r329-official-1.0.120`.
+
 ## 1.0.119 — 2026-09-21 — Web r328
 
 ### Home / desempenho
