@@ -188,6 +188,13 @@ function settleForYou331(){
  const host=q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]');
  if(host)host.removeAttribute('data-ct310-owned');
  const fy=q('[data-ct309-foryou]',host||document);if(!fy)return false;
+ const st=r319State331(),kind=String(st?.fyKind||'all');
+ let local=q(':scope > [data-ct331-fy-local-filters]',fy);
+ if(!local){
+  local=document.createElement('div');local.dataset.ct331FyLocalFilters='1';local.className='ct331-fy-local-filters';
+  fy.prepend(local);
+ }
+ local.innerHTML=filterMarkup331(kind);
  for(const c of qa('.ct309-daily-card,.ct309-slot',fy))actionRow331(c);
  exposeForYouFilters331();applyForYouFilter331();return true;
 }
@@ -216,7 +223,7 @@ const style=document.createElement('style');style.id='ct-web-r331';style.textCon
  max-height:none!important;height:auto!important;overflow:visible!important;overflow-x:visible!important;overflow-y:visible!important
 }
 /* Permanent Pra voce category filters. */
-.ct331-fy-types{display:block!important;padding:0!important;margin:0 0 10px!important}
+.ct331-fy-types,.ct331-fy-local-filters{display:block!important;padding:0!important;margin:0 0 10px!important}
 .ct331-fy-filterbar{display:flex!important;flex-flow:row nowrap!important;align-items:center!important;gap:5px!important;overflow-x:auto!important;max-width:100%!important;padding:2px 0!important}
 .ct331-fy-filter{flex:0 0 auto!important;min-height:28px!important;height:28px!important;padding:3px 9px!important;font-size:10px!important;white-space:nowrap!important}
 /* Three actions always share one compact row. */
