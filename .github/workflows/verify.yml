@@ -1,4 +1,4 @@
-name: Verify Web 1.0.118 r327 Home Discover Truth
+name: Verify Web 1.0.119 r328 Home History Performance
 
 on:
   push:
@@ -9,56 +9,63 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_118_r327:
+  web_1_0_119_r328:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r327
+      - name: Version identity r328
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.118"' package.json
-          grep -Fq '"version": "1.0.118"' apps/web/package.json
-          grep -Fq 'build-r327-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r327-home-discover-truth.js
-          test -f apps/web/build-r327.mjs
-          test -f apps/web/build-r327-official.mjs
-          test -f apps/web/test-r327.mjs
-          test -f apps/web/test-r327-browser.mjs
-          test -f supabase/migrations/20260921124500_r327_discover_candidate_alias_play_events.sql
-      - name: Syntax r327 release chain
+          grep -Fq '"version": "1.0.119"' package.json
+          grep -Fq '"version": "1.0.119"' apps/web/package.json
+          grep -Fq 'build-r328-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r328-home-history-performance.js
+          test -f apps/web/build-r328.mjs
+          test -f apps/web/build-r328-official.mjs
+          test -f apps/web/test-r328.mjs
+          test -f apps/web/test-r328-browser.mjs
+          test -f supabase/migrations/20260921100000_r328_single_home_payload.sql
+      - name: Syntax r328 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r327-home-discover-truth.js
-          node --check apps/web/build-r327.mjs
-          node --check apps/web/build-r327-official.mjs
-          node --check apps/web/test-r327.mjs
-          node --check apps/web/test-r327-browser.mjs
-      - name: Regression suite through r327
+          node --check apps/web/runtime-r328-home-history-performance.js
+          node --check apps/web/build-r328.mjs
+          node --check apps/web/build-r328-official.mjs
+          node --check apps/web/test-r328.mjs
+          node --check apps/web/test-r328-browser.mjs
+      - name: Focused r328 browser gate
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node test-r328.mjs
+          node test-r328-browser.mjs
+      - name: Regression suite through r328
         working-directory: apps/web
         run: npm run verify
-      - name: Final bundle identity r327
+      - name: Final bundle identity r328
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r327-official.mjs
-          node --check dist/app-v327.js
-          CT_R327_SKIP_BUILD=1 node test-r327.mjs
-          grep -Fq 'app-v327.js' dist/index.html
-          grep -Fq 'app-v327.css' dist/index.html
+          node build-r328-official.mjs
+          node --check dist/app-v328.js
+          CT_R328_SKIP_BUILD=1 node test-r328.mjs
+          grep -Fq 'app-v328.js' dist/index.html
+          grep -Fq 'app-v328.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.118'
-            && r.revision==='r327-official-1.0.118'
-            && r.home_history_behavior==='r276-full-history-above-initial-viewport-oldest-top-newest-bottom'
-            && r.home_history_toggle===false
+          const ok=r.version==='1.0.119'
+            && r.revision==='r328-official-1.0.119'
+            && r.home_payload_source==='cinetracker_home_payload_v328-single-rpc'
+            && r.home_payload_previous_parallel_rpcs===false
+            && r.home_navigation==='cache-first-immediate+background-refresh-after-60s'
+            && r.home_history_behavior==='full-history-above-initial-viewport-page-scroll-only'
             && r.home_history_inner_scroll===false
-            && r.discover_filter_authority==='cinetracker_discover_filter_v327'
-            && r.discover_foryou_filter_ui==='hard-capture-todos+filmes+series+animes'
-            && r.discover_foryou_actions==='watchlist+seen+swap-flex-one-row-25px'
+            && r.home_history_episode_date==='watched_at-not-air-date'
             && r.home_episode_live_reconcile==='r325-preserved'
+            && r.discover==='r327-preserved'
             && r.profile_watchlist_counts==='r324-preserved-exact'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
@@ -77,28 +84,28 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_118_r327, android_current_source]
+    needs: [web_1_0_119_r328, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.118 r327
+      - name: Official production serves and boots 1.0.119 r328
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.118"' <<<"$BODY" \
-              && grep -Fq '"revision": "r327-official-1.0.118"' <<<"$BODY" \
-              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v327"' <<<"$BODY" \
-              && grep -Fq '"home_history_toggle": false' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v327.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.119"' <<<"$BODY" \
+              && grep -Fq '"revision": "r328-official-1.0.119"' <<<"$BODY" \
+              && grep -Fq '"home_payload_source": "cinetracker_home_payload_v328-single-rpc"' <<<"$BODY" \
+              && grep -Fq '"home_history_episode_date": "watched_at-not-air-date"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v328.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR327Marker='home-r276-anchor+foryou-flex-actions+hard-filters+discover-v327'" <<<"$JS" \
-                && grep -Fq 'cinetracker_discover_filter_v327' <<<"$JS" \
-                && grep -Fq 'app-v327.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR328Marker='single-home-rpc+cache-first-nav+natural-history+watched-date'" <<<"$JS" \
+                && grep -Fq 'cinetracker_home_payload_v328' <<<"$JS" \
+                && grep -Fq 'app-v328.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8500 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.118' <<<"$DOM" \
-                  && grep -Fq 'r327-official-1.0.118' <<<"$DOM" \
+                  && grep -Fq 'v1.0.119' <<<"$DOM" \
+                  && grep -Fq 'r328-official-1.0.119' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi

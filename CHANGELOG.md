@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.119 — 2026-09-21 — Web r328
+
+### Home / desempenho
+- Corrige o congelamento observado no vídeo ao entrar ou voltar para a Home.
+- Adiciona `cinetracker_home_payload_v328`, reunindo o payload principal e os históricos canônicos em um único RPC.
+- Remove a espera por chamadas redundantes de histórico no fluxo de entrada.
+- Retorno à Home passa a usar cache canônico imediatamente e faz refresh em segundo plano após 60 s.
+- Primeira carga recebe limite de 5 s no cliente para não deixar skeleton indefinidamente.
+
+### Home / histórico
+- Neutraliza definitivamente o scroll interno herdado das regras r274/r275/r326: seção, shell e stack ficam com altura natural e `overflow: visible`.
+- Remove controles legados de abrir/fechar histórico.
+- Mantém o histórico acima da área inicial com o mais antigo no topo e o mais recente no final.
+- Corrige a data dos episódios do histórico para `watched_at`; metadata do TMDB pode atualizar nome/nota, mas não substituir a data assistida pela data de exibição original.
+- Filmes também exibem explicitamente a data em que foram vistos.
+
+### Preservado
+- Descobrir r327 sem alterações.
+- Sincronização episódica r325 preservada.
+- Watchlists/contagens do Perfil r324 preservadas.
+- F1 Hub e Esportes sem alterações.
+- Android `1.0.20 / versionCode 10062`.
+- Web `1.0.119 / r328-official-1.0.119`.
+
 ## 1.0.118 — 2026-09-21 — Web r327
 
 ### Home

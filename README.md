@@ -6,12 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.118** | `r327-official-1.0.118` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.119** | `r328-official-1.0.119` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.119 / r328
+
+A r328 corrige a regressão de Home/histórico observada no vídeo de 21/09 e preserva integralmente o Descobrir da r327.
+
+- **Congelamento ao trocar de abas:** o vídeo mostrou aproximadamente 13–14 s de skeleton ao entrar na Home. No banco, o payload principal foi medido em ~0,39 s e a nova autoridade única em ~0,58 s; o atraso vinha da cadeia redundante no cliente, não do SQL.
+- **Uma única autoridade de Home:** `cinetracker_home_payload_v328` entrega biblioteca + histórico de Séries + histórico de Filmes em um único RPC autenticado, substituindo o encadeamento paralelo r323/r325.
+- **Retorno à Home:** quando existe cache canônico, a Home pinta imediatamente e atualiza em segundo plano somente quando o cache tem mais de 60 s. A troca Séries/Filmes é local e não dispara nova carga.
+- **Histórico natural:** Séries e Filmes ficam completamente renderizados acima da área inicial, sem botão, sem scrollbar interna e sem limite de altura. A página abre ancorada na primeira seção normal; ao rolar para cima, o registro mais recente é encontrado primeiro e os mais antigos ficam acima.
+- **Data correta do histórico:** a data exibida nos cards passa a ser `watched_at`. A hidratação TMDB não pode mais trocar essa data pela data original de exibição do episódio (por exemplo, episódios antigos de WWE aparecendo como “1988” apesar de terem sido assistidos em 2026).
+- **Ordem:** histórico permanece do mais antigo no topo ao mais recente no final, deixando o mais recente imediatamente acima do conteúdo principal.
+- **Preservado:** sincronização de episódios novos da r325, Descobrir/filtros/botões da r327, Watchlists do Perfil da r324, F1, Esportes e Android.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r328-official.mjs`; runtime: `apps/web/runtime-r328-home-history-performance.js`.
 
 ## Web 1.0.118 / r327
 
