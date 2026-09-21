@@ -44,7 +44,7 @@ const probe=`<script>setTimeout(async()=>{try{
   not_interested_keys:[]
  })});
  T.setDiscover('foryou','all');
- document.body.innerHTML='<div id="app"><div data-ct319-content data-ct315-content></div><div data-ct319-loadline hidden></div></div>';
+ document.body.innerHTML='<div id="app"><div data-ct263-discover-content data-ct319-content data-ct315-content></div><div data-ct319-loadline hidden></div></div>';
  const good=await window.__ctR321.loadForYou(false);
  const st=window.__ctR309Test.state;
  const keys=x=>Object.values(x||{}).flat().map(v=>v?.media_type+':'+v?.tmdb_id);
