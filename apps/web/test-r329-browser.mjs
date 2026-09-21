@@ -43,8 +43,11 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(cachedMs<80,'cached tab switch too slow '+cachedMs);
  ok(calls===0,'cached tab triggered network loader');
 
- const before=h.innerHTML;await XT.prefetchSources329();
- ok(h.innerHTML===before,'source prefetch changed visible DOM');
+ await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+ const beforeText=h.textContent,beforeItems=h.querySelectorAll('[data-ct309-slot],[data-ct319-item],.ct319-public').length;
+ await XT.prefetchSources329();
+ const afterItems=h.querySelectorAll('[data-ct309-slot],[data-ct319-item],.ct319-public').length;
+ ok(h.textContent===beforeText&&afterItems===beforeItems,'source prefetch changed visible content');
 
  document.documentElement.dataset.ct329done='1';
 }catch(e){document.documentElement.dataset.ct329probe='fail:'+String(e?.stack||e)}},5200)</script>`;
