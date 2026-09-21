@@ -21,7 +21,7 @@ for(const x of[
  "const version='1.0.114',revision='r323-official-1.0.114';",
  "cinetracker_discover_filter_v323",
  "window.__ctR323='home-movie-play-history+watchlist-sort+discover-legacy-alias'",
- "\\nboot();"
+ "boot();"
 ])must(js,x);
 for(const x of[
  "window.__ctR324Marker='home-history-collapsed+discover-actions-compact+watchlist-complete+legacy-alias-union'",
@@ -34,7 +34,7 @@ js=js.replaceAll('cinetracker_discover_filter_v323','cinetracker_discover_filter
 js=once(js,"window.__ctWebBuild='1.0.114';window.__ctOfficialVersion='1.0.114';","window.__ctWebBuild='1.0.115';window.__ctOfficialVersion='1.0.115';",'web version');
 js=once(js,"const REVISION='r323-official-1.0.114';","const REVISION='r324-official-1.0.115';",'revision');
 js=once(js,"const version='1.0.114',revision='r323-official-1.0.114';","const version='1.0.115',revision='r324-official-1.0.115';",'footer identity');
-js=once(js,'\\nboot();','\\n'+runtime+'\\nboot();','runtime insertion');
+js=once(js,'boot();',runtime+'\\nboot();','runtime insertion');
 
 html=html.replaceAll('app-v323.js','app-v324.js').replaceAll('app-v323.css','app-v324.css').replaceAll('v1.0.114','v1.0.115').replaceAll('r323-official-1.0.114','r324-official-1.0.115');
 sw=sw.replaceAll('ct-web-1.0.114-r323','ct-web-1.0.115-r324').replaceAll('app-v323.js','app-v324.js').replaceAll('app-v323.css','app-v324.css');
