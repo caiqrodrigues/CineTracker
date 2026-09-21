@@ -148,17 +148,17 @@ style.textContent=`
  scrollbar-width:thin!important
 }
 [data-ct309-foryou] .ct309-fy-grid>.ct309-slot{
- flex:0 0 var(--ct333-card-w)!important;
- width:var(--ct333-card-w)!important;
- min-width:var(--ct333-card-w)!important;
- max-width:var(--ct333-card-w)!important
+ flex:0 0 var(--ct333-card-w,176px)!important;
+ width:var(--ct333-card-w,176px)!important;
+ min-width:var(--ct333-card-w,176px)!important;
+ max-width:var(--ct333-card-w,176px)!important
 }
 [data-ct309-foryou] .ct309-slot>.ct288-card,
 [data-ct309-foryou] .ct309-daily-card,
 [data-ct309-foryou] .ct309-daily-card>.ct288-card{
- width:var(--ct333-card-w)!important;
- min-width:var(--ct333-card-w)!important;
- max-width:var(--ct333-card-w)!important;
+ width:var(--ct333-card-w,176px)!important;
+ min-width:var(--ct333-card-w,176px)!important;
+ max-width:var(--ct333-card-w,176px)!important;
  box-sizing:border-box!important
 }
 [data-ct309-foryou] .ct288-open,
@@ -175,9 +175,9 @@ style.textContent=`
  flex-flow:row nowrap!important;
  align-items:center!important;
  gap:3px!important;
- width:var(--ct333-card-w)!important;
- min-width:var(--ct333-card-w)!important;
- max-width:var(--ct333-card-w)!important;
+ width:var(--ct333-card-w,176px)!important;
+ min-width:var(--ct333-card-w,176px)!important;
+ max-width:var(--ct333-card-w,176px)!important;
  box-sizing:border-box!important;
  margin:5px 0 0!important
 }
@@ -232,10 +232,10 @@ style.textContent=`
 /* Other Discover rails: actions can never be wider than the standard poster/card. */
 .ct288-browse-block .ct288-rail>.ct288-card,
 .ct288-browse-block .ct309-card{
- flex:0 0 var(--ct333-card-w)!important;
- width:var(--ct333-card-w)!important;
- min-width:var(--ct333-card-w)!important;
- max-width:var(--ct333-card-w)!important;
+ flex:0 0 var(--ct333-card-w,176px)!important;
+ width:var(--ct333-card-w,176px)!important;
+ min-width:var(--ct333-card-w,176px)!important;
+ max-width:var(--ct333-card-w,176px)!important;
  box-sizing:border-box!important
 }
 .ct288-browse-block .ct288-card>.ct288-open,
