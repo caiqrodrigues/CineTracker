@@ -2,6 +2,32 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.121 — 2026-09-21 — Web r330
+
+### Home / histórico
+- Restaura o histórico de Séries e Filmes no viewport interno r274/r326, sem botão de abrir/fechar.
+- Mantém os registros carregados, mais antigo no topo e mais recente no fundo, com posicionamento inicial no fundo.
+- Neutraliza os normalizadores r327/r328 que convertiam o histórico em altura natural e movimentavam a página inteira.
+- Preserva cache-first da r328 e reconciliação episódica r325.
+
+### Descobrir / desempenho
+- Desliga o prefetch automático das seis abas públicas durante a navegação.
+- Mantém cache visual para retorno a abas já carregadas.
+- Remove `loadRecent296` do caminho crítico do `Pra você`.
+- Top 10 passa a buscar em duas ondas concorrentes (1–3 e, se necessário, 4–5), com no máximo duas chamadas ao filtro pessoal.
+
+### Pra você
+- Impede o r310 de apagar `.ct309-actions`.
+- Reconstrói Watchlist + Visto + Trocar caso um card/cache chegue sem a linha de ações.
+- Força os três botões na mesma linha, compactos e sem quebra.
+- Mantém Todos / Filmes / Séries / Animes visíveis e locais.
+
+### Regras e preservações
+- Mantém `cinetracker_discover_filter_v324` para excluir vistos/Watchlist/progresso, inclusive duplicatas legadas.
+- Preserva Watchlists completas/contagens r324, episódios novos r325, F1 e Esportes.
+- Web `1.0.121 / r330-official-1.0.121`.
+- Android `1.0.20 / versionCode 10062`.
+
 ## 1.0.120 — 2026-09-21 — Web r329
 
 ### Descobrir / desempenho

@@ -6,12 +6,28 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.120** | `r329-official-1.0.120` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.121** | `r330-official-1.0.121` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.121 / r330
+
+A r330 consolida os problemas vistos no vídeo de 21/09: lentidão ao trocar abas, ações desaparecendo no `Pra você` e o histórico da Home fora do comportamento aprovado.
+
+- **Home / histórico:** volta ao contrato r274/r326. Séries e Filmes ficam pré-carregados em um viewport interno de até 55vh/520 px, sem botão `Ver histórico`. A lista permanece do mais antigo no topo ao mais recente no fundo e abre posicionada no item mais recente; rolar para cima revela os anteriores.
+- **Home / desempenho:** preserva o cache-first e o RPC único da r328, mas neutraliza os normalizadores r327/r328 que expandiam dezenas de itens na página e reposicionavam a janela.
+- **Descobrir / navegação:** remove o prefetch automático das seis abas públicas durante a navegação. A troca passa a ser demand-only e continua usando o cache visual da r329 para retornos já carregados.
+- **Pra você / carregamento:** `loadRecent296` sai do caminho crítico da montagem das recomendações.
+- **Pra você / botões:** o r310 deixa de remover `.ct309-actions`. A r330 também reconstrói Watchlist, Visto e Trocar quando um cache/runtime anterior deixou o card sem ações, e força os três na mesma linha.
+- **Pra você / filtros:** Todos, Filmes, Séries e Animes ficam visíveis e atuam localmente, sem nova requisição.
+- **Top 10:** páginas 1–3 são buscadas em paralelo e filtradas em uma única onda; páginas 4–5 só são consultadas se necessário. O filtro pessoal é executado no máximo duas vezes por carregamento e a lista continua tentando completar 10 elegíveis.
+- **Regras:** mantém `cinetracker_discover_filter_v324`, incluindo o bloqueio de títulos assistidos em duplicatas legadas, como Harry Potter.
+- **Preservado:** contagens/ordenação das Watchlists r324, sincronização de episódios r325, F1, Esportes e Android.
+
+Build oficial: `apps/web/build-r330-official.mjs`; runtime: `apps/web/runtime-r330-recovery.js`.
 
 ## Web 1.0.120 / r329
 
