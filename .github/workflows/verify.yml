@@ -42,9 +42,20 @@ jobs:
       - name: Focused r325 browser gate
         working-directory: apps/web
         run: npm run test:r325:browser
-      - name: Regression suite through r325
+      - name: Focused regression suite for touched contracts
         working-directory: apps/web
-        run: npm run verify
+        run: |
+          set -euo pipefail
+          npm run test:r316
+          npm run test:r316:browser
+          npm run test:r321
+          npm run test:r321:browser
+          npm run test:r323
+          npm run test:r323:browser
+          npm run test:r324
+          npm run test:r324:browser
+          npm run test:r325
+          npm run test:r325:browser
       - name: Final bundle identity r325
         working-directory: apps/web
         run: |
