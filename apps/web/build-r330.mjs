@@ -24,7 +24,7 @@ for(const x of[
  "window.__ctWebBuild='1.0.120';window.__ctOfficialVersion='1.0.120';",
  "const REVISION='r329-official-1.0.120';",
  "const version='1.0.120',revision='r329-official-1.0.120';",
- "window.__ctR329Marker='foryou-154-rail+action-lock+strict-r326'",
+ "window.__ctR329Marker='discover-fixed-card-rail+one-line-actions+no-page-overflow'",
  "function ct285PaintHome(){",
  "async function ct287PrepareHome(payload,seq){",
  "async function paintTop321(provider,token,force=false){",
