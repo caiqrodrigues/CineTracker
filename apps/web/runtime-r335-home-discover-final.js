@@ -21,7 +21,18 @@ function visibleHomeKind335(){
 function rememberHome335(kind,ms=900){
  homeDesired335=kind==='movies'?'movies':'series';
  homeLockUntil335=Date.now()+Math.max(0,Number(ms)||0);
+ window.__ctR335HomeTabLock={kind:homeDesired335,until:homeLockUntil335};
  return homeDesired335;
+}
+function applyHomeTab335(kind){
+ let wanted=kind==='movies'?'movies':'series';
+ const lock=window.__ctR335HomeTabLock;
+ if(lock&&Number(lock.until)>Date.now()&&['movies','series'].includes(lock.kind)&&wanted!==lock.kind)wanted=lock.kind;
+ const root=q('[data-home]');if(!root)return false;
+ root.dataset.ct266HomeTab=wanted;
+ qa('[data-home-tab]',root).forEach(b=>{const on=String(b.dataset.homeTab||'series')===wanted;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
+ qa('[data-home-view]',root).forEach(v=>{const on=String(v.dataset.homeView||'series')===wanted;v.classList.toggle('hidden',!on);v.hidden=!on});
+ return true;
 }
 function normalizeHistory335(){
  if(routeNow()!=='home')return false;
@@ -67,18 +78,11 @@ function scheduleHome335(kind=visibleHomeKind335()){
 }
 
 /* Stop stale Home repaints from forcing Séries back after the user chose Filmes. */
-try{
- const baseApply335=ct266ApplyHomeTab;
- ct266ApplyHomeTab=function(tab){
-  let wanted=tab==='movies'?'movies':'series';
-  if(routeNow()==='home'&&homeDesired335&&Date.now()<homeLockUntil335&&wanted!==homeDesired335)wanted=homeDesired335;
-  return baseApply335(wanted);
- };
-}catch{}
 document.addEventListener('click',e=>{
  const tab=e.target?.closest?.('[data-home-tab]');if(!tab)return;
  const kind=rememberHome335(String(tab.dataset.homeTab||'series')==='movies'?'movies':'series');
- queueMicrotask(()=>{try{ct266ApplyHomeTab?.(kind)}catch{};scheduleHome335(kind)});
+ e.preventDefault();e.stopImmediatePropagation();
+ applyHomeTab335(kind);scheduleHome335(kind);
 },true);
 try{
  const baseRender335=renderHome;
@@ -86,8 +90,7 @@ try{
   const before=visibleHomeKind335();
   rememberHome335(before,1200);
   const out=await baseRender335.apply(this,arguments);
-  try{ct266ApplyHomeTab?.(homeDesired335||before)}catch{}
-  scheduleHome335(homeDesired335||before);
+  applyHomeTab335(homeDesired335||before);scheduleHome335(homeDesired335||before);
   return out;
  };
 }catch{}
@@ -218,7 +221,7 @@ const style=document.createElement('style');style.id='ct-web-r335';style.textCon
 setTimeout(()=>{if(routeNow()==='home'){rememberHome335(visibleHomeKind335(),1000);scheduleHome335(visibleHomeKind335())}if(routeNow()==='discover')normalizeDiscover335()},0);
 
 window.__ctR335={
- normalizeHistory:normalizeHistory335,homeAnchor:homeAnchor335,alignHome:alignHome335,rememberHomeTab:rememberHome335,applyHomeTab:kind=>{try{return ct266ApplyHomeTab(kind)}catch{return false}},
+ normalizeHistory:normalizeHistory335,homeAnchor:homeAnchor335,alignHome:alignHome335,rememberHomeTab:rememberHome335,applyHomeTab:applyHomeTab335,
  removeTopFilters:removeTopFilters335,normalizeActions:normalizeActions335,normalizeDiscover:normalizeDiscover335,finalForYou:finalForYou335,
  version:'1.0.126'
 };
