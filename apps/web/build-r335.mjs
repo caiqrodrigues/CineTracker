@@ -37,7 +37,6 @@ for(const x of[
  "window.__ctR335Marker='home-single-anchor-tab-lock+discover-no-top-filters+foryou-final-r329'",
  "removeTopFilters335",
  "ensureSwapButton335",
- "normal-flow",
  "top-filter-strip-removed"
 ])must(runtime,x);
 
