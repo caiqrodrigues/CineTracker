@@ -2,6 +2,31 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.126 — 2026-09-22 — Web r335
+
+### Home
+- Mantém o histórico de Séries e Filmes carregado no fluxo normal, sem botão e sem scroll interno.
+- Mantém a ordem cronológica ascendente no DOM: mais antigos acima e mais recentes imediatamente antes do conteúdo atual.
+- Faz um único alinhamento em `Assistir a seguir` / `Assistir a seguir / Watchlist`.
+- Adiciona trava curta de aba para impedir que um repaint antigo troque Filmes de volta para Séries.
+- Aposenta os últimos loops automáticos de posicionamento da r332/r334.
+
+### Descobrir
+- Remove a faixa temporária `Todos / Filmes / Séries / Animes` do topo e zera seu espaço de layout.
+- Reseta o filtro interno para `all`, evitando filtro invisível.
+- Mantém r329 como renderer final do `Pra você` após a auditoria v333.
+- Garante três ações por card — Watchlist, Visto e Trocar — em uma única linha compacta.
+- Mantém `cinetracker_discover_filter_v333` como autoridade para vistos/progresso/Watchlist/Não interessado.
+- Mantém Top 10 progressivo até 10 elegíveis após a auditoria.
+
+### Estabilidade
+- A r335 não adiciona MutationObserver.
+- Teste de navegador cobre Home Filmes sem retorno automático a Séries, remoção dos filtros superiores, recuperação do Trocar, auditoria do Pra você, troca rápida de abas e refill do Top 10.
+
+### Release
+- Web: `1.0.126 / r335-official-1.0.126`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.125 — 2026-09-22 — Web r334
 
 ### Home / navegação

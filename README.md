@@ -6,12 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.125** | `r334-official-1.0.125` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.126** | `r335-official-1.0.126` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.126 / r335
+
+A r335 corrige a regressão de navegação da Home e finaliza o comportamento do `Pra você` mostrado no vídeo de 22/09.
+
+- **Home / histórico:** não existe botão para abrir o histórico e não existe scroller interno. Séries e Filmes mantêm o histórico no fluxo normal acima do conteúdo atual. A ordem continua **mais antigo acima → mais recente abaixo**, de modo que, ao entrar em `Assistir a seguir` e rolar para cima, o primeiro item revelado é o mais recente.
+- **Home / Filmes:** um clique explícito em `Filmes` recebe uma trava curta de aba; repaints tardios não podem devolver a tela para `Séries`. A r335 aposenta os loops de reposicionamento da r332/r334 e faz um único alinhamento por render/troca de aba.
+- **Descobrir / topo:** remove a faixa temporária `Todos / Filmes / Séries / Animes` do topo e também o gatilho antigo de filtro. O conteúdo sobe para ocupar esse espaço. O estado interno volta a `all` para não deixar um filtro invisível ativo.
+- **Pra você:** o r329 é o renderer final depois da auditoria `cinetracker_discover_filter_v333`. Cada card tem `Watchlist + Visto + Trocar` em uma única linha compacta; se um renderer legado entregar só dois botões, a r335 recompõe o `Trocar` sem duplicá-lo.
+- **Regras:** a auditoria v333 continua bloqueando Visto, histórico de reprodução, progresso, Em dia, Concluído, Watchlist, Assistir depois e Não interessado. O banco foi conferido com os oito filmes de Harry Potter informados como vistos: todos retornam em `blocked_keys`.
+- **Top 10:** preserva refill progressivo de até oito páginas até obter 10 itens elegíveis por rail depois da auditoria pessoal.
+- **Congelamento ao trocar abas:** a r335 não adiciona MutationObserver e remove os últimos schedulers concorrentes de scroll/filtro que ainda disputavam a navegação.
+- Perfil, F1 Hub e Esportes permanecem fora do escopo. Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r335-official.mjs`; runtime: `apps/web/runtime-r335-home-discover-final.js`.
 
 ## Web 1.0.125 / r334
 

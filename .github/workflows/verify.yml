@@ -1,4 +1,4 @@
-name: Verify Web 1.0.125 r334 Stability
+name: Verify Web 1.0.126 r335 Home Discover Final
 
 on:
   push:
@@ -9,67 +9,67 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_125_r334:
+  web_1_0_126_r335:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - name: Version identity r334
+        with: { node-version: 24 }
+      - name: Version identity r335
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.125"' package.json
-          grep -Fq '"version": "1.0.125"' apps/web/package.json
-          grep -Fq 'build-r334-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r334-home-discover-stable.js
-          test -f apps/web/build-r334.mjs
-          test -f apps/web/build-r334-official.mjs
-          test -f apps/web/test-r334.mjs
-          test -f apps/web/test-r334-browser.mjs
-          test -f supabase/migrations/20260922180500_r334_home_fast_state.sql
-      - name: Syntax r334
+          grep -Fq '"version": "1.0.126"' package.json
+          grep -Fq '"version": "1.0.126"' apps/web/package.json
+          grep -Fq 'build-r335-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r335-home-discover-final.js
+          test -f apps/web/build-r335.mjs
+          test -f apps/web/build-r335-official.mjs
+          test -f apps/web/test-r335.mjs
+          test -f apps/web/test-r335-browser.mjs
+      - name: Syntax r335
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r334-home-discover-stable.js
-          node --check apps/web/build-r334.mjs
-          node --check apps/web/build-r334-official.mjs
-          node --check apps/web/test-r334.mjs
-          node --check apps/web/test-r334-browser.mjs
-      - name: Focused browser gate r334
-        working-directory: apps/web
-        run: npm run test:r334:browser
-      - name: Preserve stable late regressions
+          node --check apps/web/runtime-r335-home-discover-final.js
+          node --check apps/web/build-r335.mjs
+          node --check apps/web/build-r335-official.mjs
+          node --check apps/web/test-r335.mjs
+          node --check apps/web/test-r335-browser.mjs
+      - name: Current static regression lineage
         working-directory: apps/web
         run: |
           set -euo pipefail
           npm run test:r330
-          npm run test:r330:browser
           npm run test:r331
-          npm run test:r331:browser
           npm run test:r332
-          npm run test:r332:browser
           npm run test:r333
-      - name: Final bundle identity r334
+          npm run test:r334
+      - name: Focused r335 static and browser gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r334-official.mjs
-          node --check dist/app-v334.js
-          CT_R334_SKIP_BUILD=1 node test-r334.mjs
-          grep -Fq 'app-v334.js' dist/index.html
-          grep -Fq 'app-v334.css' dist/index.html
+          npm run test:r335
+          npm run test:r335:browser
+      - name: Final bundle identity r335
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node build-r335-official.mjs
+          node --check dist/app-v335.js
+          CT_R335_SKIP_BUILD=1 node test-r335.mjs
+          grep -Fq 'app-v335.js' dist/index.html
+          grep -Fq 'app-v335.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.125'
-            && r.revision==='r334-official-1.0.125'
+          const ok=r.version==='1.0.126'
+            && r.revision==='r335-official-1.0.126'
             && r.home_payload==='cinetracker_home_payload_v334'
-            && r.home_series_logical_state==='v4-fast-indexed-dedup'
-            && r.home_navigation==='r332-single-owner+old-r327-r328-r331-schedulers-retired'
+            && r.home_navigation==='r335-single-anchor+tab-lock+no-settle-loop'
             && r.discover_filter_authority==='cinetracker_discover_filter_v333'
-            && r.discover_observers==='r327+r328+r329+r331+r333-late-observers-retired'
-            && r.discover_foryou_actions==='all-owners-three-compact-one-row'
-            && r.sports_startup==='only-when-sports-active'
+            && r.discover_controls==='top-filter-strip-removed-pending-new-placement'
+            && r.discover_foryou_owner==='r329-after-v333-final-audit'
+            && r.discover_foryou_actions==='watchlist+seen+swap-three-compact-one-row'
+            && r.discover_top10==='progressive-eight-pages-until-ten+v333-audit'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -87,27 +87,30 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_125_r334, android_current_source]
+    needs: [web_1_0_126_r335, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.125 r334
+      - name: Official production serves and boots 1.0.126 r335
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.125"' <<<"$BODY" \
-              && grep -Fq '"revision": "r334-official-1.0.125"' <<<"$BODY" \
-              && grep -Fq '"home_payload": "cinetracker_home_payload_v334"' <<<"$BODY" \
-              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v333"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v334.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.126"' <<<"$BODY" \
+              && grep -Fq '"revision": "r335-official-1.0.126"' <<<"$BODY" \
+              && grep -Fq '"home_navigation": "r335-single-anchor+tab-lock+no-settle-loop"' <<<"$BODY" \
+              && grep -Fq '"discover_controls": "top-filter-strip-removed-pending-new-placement"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v335.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR334Marker='home-fast-v334+single-anchor+discover-no-observer-loop+stable-foryou'" <<<"$JS" \
-                && grep -Fq 'cinetracker_home_payload_v334' <<<"$JS" \
-                && grep -Fq 'cinetracker_home_series_watch_state_v4' <<<"$JS" \
-                && grep -Fq 'app-v334.js' <<<"$HTML"; then
-                DOM="$(google-chrome --headless=new --no-sandbox --disable-gpu --disable-background-networking --window-size=390,844 --virtual-time-budget=9000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
-                if grep -Fq 'CineTracker' <<<"$DOM" && grep -Fq 'v1.0.125' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
+              if grep -Fq "window.__ctR335Marker='home-single-anchor-tab-lock+discover-no-top-filters+foryou-final-r329'" <<<"$JS" \
+                && grep -Fq 'cinetracker_discover_filter_v333' <<<"$JS" \
+                && grep -Fq 'data-ct329-swap' <<<"$JS" \
+                && grep -Fq 'app-v335.js' <<<"$HTML"; then
+                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
+                if grep -Fq 'CineTracker' <<<"$DOM" \
+                  && grep -Fq 'v1.0.126' <<<"$DOM" \
+                  && grep -Fq 'r335-official-1.0.126' <<<"$DOM" \
+                  && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
             sleep 5
