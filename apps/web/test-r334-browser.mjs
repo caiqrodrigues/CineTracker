@@ -6,10 +6,15 @@ import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r334.mjs');
 let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}
 if(!bin)throw new Error('Chromium unavailable');
-const dist=resolve('dist'),base=await readFile(resolve(dist,'index.html'),'utf8');
+const dist=resolve('dist'),baseRaw=await readFile(resolve(dist,'index.html'),'utf8');
+const diag='<script>window.__ctDiagErrors=[];window.addEventListener("error",e=>window.__ctDiagErrors.push(String(e.error?.stack||e.message||e)));window.addEventListener("unhandledrejection",e=>window.__ctDiagErrors.push("PROMISE:"+String(e.reason?.stack||e.reason||e)))</script>';
+const base=baseRaw.replace('</head>',diag+'</head>');
 const probe=`<script>setTimeout(async()=>{try{
  const ok=(v,m)=>{if(!v)throw new Error(m)},X=window.__ctR334,T=window.__ctR321Test;
- ok(X&&T,'r334 bridges unavailable');
+ if(!(X&&T)){
+   const markers=Object.keys(window).filter(k=>/^__ctR(32|33|334)/.test(k)).sort().map(k=>k+'='+String(window[k]?.version||window[k])).slice(-40);
+   throw new Error('r334 bridges unavailable markers='+markers.join(',')+' errors='+(window.__ctDiagErrors||[]).join(' || '));
+ }
  ok(window.__ctOfficialVersion==='1.0.125','web version stale');
 
  history.replaceState({},'','/home');
