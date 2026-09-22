@@ -28,7 +28,7 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(mh.querySelector('.ct274-history-stack').lastElementChild.dataset.at==='new','newest movie is not nearest the landing anchor');
  ok(getComputedStyle(mh.querySelector('.ct274-history-stack')).overflow==='visible','Home history kept nested scrolling');
 
- X.rememberHomeTab('movies',1800);ct266ApplyHomeTab('movies');ct266ApplyHomeTab('series');
+ X.rememberHomeTab('movies',1800);X.applyHomeTab('movies');X.applyHomeTab('series');
  await new Promise(r=>setTimeout(r,30));
  ok(document.querySelector('[data-home-tab="movies"]').classList.contains('active'),'stale repaint switched Filmes back to Séries');
  ok(!document.querySelector('[data-home-view="movies"]').classList.contains('hidden'),'movie view hidden after stale series request');
