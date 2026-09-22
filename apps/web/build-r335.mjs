@@ -54,7 +54,7 @@ js=range(js,
   " r.querySelectorAll('[data-home-view]').forEach(v=>{const on=v.dataset.homeView===ct266HomeTab;v.classList.toggle('hidden',!on);v.hidden=!on});",
   " return true;",
   "}"
- ].join('\\n'),
+ ].join('\n'),
  "original Home tab lock"
 );
 
