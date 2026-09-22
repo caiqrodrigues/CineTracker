@@ -38,6 +38,10 @@ for(const x of[
  "single-r332-anchor"
 ])must(runtime,x);
 
+/* r333 accidentally emitted literal backslash-n tokens between statements in the Home history producer.
+   Repair only that generated function before any other r334 transformation. */
+js=patchSegment(js,'function ct275HistorySection(kind,rows,authoritative,payload){','function ct275SeriesSection(title,rows){',seg=>seg.replaceAll('\\n','\n'),'r333 history syntax repair');
+
 /* Fast consolidated Home state + canonical history in one payload. */
 js=js.replaceAll('cinetracker_home_payload_v333','cinetracker_home_payload_v334');
 js=js.replaceAll('cinetracker_home_series_watch_state_v2','cinetracker_home_series_watch_state_v4');
