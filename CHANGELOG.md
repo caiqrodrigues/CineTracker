@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.123 — 2026-09-22 — Web r332
+
+### Home
+- Remove qualquer dependência de botão para revelar o histórico; histórico de Séries e Filmes permanece no fluxo normal acima do conteúdo atual.
+- Corrige o ponto inicial para não deixar uma faixa do histórico aparente após repaints assíncronos.
+- Cancela o reposicionamento automático quando o usuário inicia scroll.
+- Reaplica o estado lógico consolidado das séries antes de exibir o próximo episódio.
+- Impede ponteiro de próximo episódio anterior ou igual ao último episódio já assistido.
+- Refresh de metadados episódicos volta a ser tentável após falha e recebe uma tentativa forçada em segundo plano por sessão.
+
+### Descobrir
+- Pra você deixa de aceitar o r309 como renderer final.
+- Faz auditoria final com `cinetracker_discover_filter_v326` e pinta apenas com o r329.
+- Mantém `Da sua Watchlist` restrita a Watchlist não vista e `100% novos`/Indicação sem vistos, progresso, Em dia, concluídos, Watchlist e Não interessado.
+- Restaura de forma determinística os filtros Todos / Filmes / Séries / Animes.
+- Watchlist, Visto e Trocar ficam em uma única linha compacta.
+- Preserva cache de fontes TMDB quando muda apenas o estado pessoal, deduplica requests concorrentes e pré-carrega abas públicas em segundo plano.
+- Top 10 mantém refill progressivo 10 Séries + 10 Filmes e auditoria final v326.
+
+### Escopo
+- Web: `1.0.123 / r332-official-1.0.123`.
+- Android permanece `1.0.20 / versionCode 10062`.
+- Perfil/Watchlist, Esportes e F1 Hub preservados.
+
 ## 1.0.121 — 2026-09-22 — Web r330
 
 ### Home · desempenho / navegação

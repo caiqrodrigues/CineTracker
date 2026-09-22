@@ -6,12 +6,29 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.121** | `r330-official-1.0.121` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.123** | `r332-official-1.0.123` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.123 / r332
+
+A r332 corrige as regressões ainda visíveis no vídeo de 22/09 sem trocar a autoridade de dados já validada no Supabase.
+
+- **Home / histórico:** continua sem botão e sem scroller interno. O histórico fica no fluxo normal acima do ponto inicial; a Home reposiciona o primeiro bloco útil logo abaixo das abas após os repaints iniciais, sem deixar uma faixa do histórico visível. Assim, rolar para cima revela primeiro o item mais recente e depois os anteriores.
+- **Home / navegação:** o reposicionamento inicial é cancelado assim que o usuário começa a rolar, evitando disputar scroll com a navegação.
+- **Episódios:** a Home reaplica o estado lógico consolidado por TMDB antes de exibir o próximo episódio. Um ponteiro antigo nunca pode ficar atrás do último episódio já assistido; a reconciliação TMDB e a atualização remota continuam em segundo plano.
+- **Atualização episódica:** falhas do refresh deixam de bloquear uma nova tentativa por 15 minutos; uma atualização forçada é disparada uma vez por sessão sem bloquear o primeiro paint.
+- **Descobrir / Pra você:** o r309 só fornece candidatos. Depois da auditoria final `cinetracker_discover_filter_v326`, o **r329 é o único renderer final**. Isso impede que um rascunho antigo devolva títulos vistos/Em dia ou os botões em duas linhas.
+- **Pra você / filtros:** Todos, Filmes, Séries e Animes continuam visíveis e filtram o DOM final r329.
+- **Pra você / botões:** Watchlist, Visto e Trocar ficam em três colunas iguais, compactas e sem quebra de linha.
+- **Descobrir / velocidade:** as respostas TMDB brutas permanecem em cache quando muda apenas a biblioteca pessoal; requisições simultâneas da mesma aba são deduplicadas e as outras abas públicas são pré-carregadas em segundo plano.
+- **Top 10:** preserva o preenchimento progressivo até 10 + 10 e a auditoria final v326 antes do HTML. O primeiro streaming é pré-carregado em segundo plano.
+- Perfil/Watchlist, Esportes, F1 Hub e Android não foram alterados. Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r332-official.mjs`; runtime: `apps/web/runtime-r332-home-discover-final.js`.
 
 ## Web 1.0.121 / r330
 
