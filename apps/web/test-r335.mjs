@@ -12,6 +12,7 @@ ok(r.version==='1.0.126'&&r.revision==='r335-official-1.0.126','identity');
 ok(html.includes('app-v335.js')&&html.includes('app-v335.css'),'assets');
 ok(js.includes("window.__ctR335Marker='home-single-anchor-tab-lock+discover-no-top-filters+foryou-final-r329'"),'runtime marker');
 ok(js.includes("function armHome332(kind=activeHomeKind332()){return false}"),'r332 repeated Home anchor still active');
+ok(js.includes("const lock=window.__ctR335HomeTabLock;"),'original Home tab authority does not honor r335 lock');
 ok(js.includes("function scheduleHome334(kind){return false}"),'r334 Home scheduler still active');
 ok(js.includes("types.innerHTML='';types.hidden=true"),'top filter removal missing');
 ok(js.includes("window.__ctR329?.paintForYou?.()"),'final r329 ForYou owner missing');
