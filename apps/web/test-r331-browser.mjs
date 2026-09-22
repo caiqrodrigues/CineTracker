@@ -15,7 +15,7 @@ const probe=`<script>setTimeout(async()=>{try{
  /* Cached Home must render and release navigation immediately even if refresh is slow. */
  history.replaceState({},'','/home');
  const payload={__ctHistoryAuthoritative:true,series:[],movie_watchlist:[],history_episodes:[{id:1,media_id:1,tmdb_id:1,media_title:'Histórico',watched_at:'2026-09-22T10:00:00Z',season_number:1,episode_number:1,plays:1}],history_movies:[]};
- try{homeCache=payload;ct274CanonicalHome=payload;navSeq=991}catch(e){throw new Error('Home globals unavailable '+e)}
+ try{navSeq=991;window.__ctR331SeedHomeTest(payload)}catch(e){throw new Error('Home cache seed unavailable '+e)}
 
  const t0=performance.now();const result=await Promise.race([window.__ctR331RenderHomeTest(991),new Promise((_,rej)=>setTimeout(()=>rej(new Error('cached Home render blocked')),500))]);
  const elapsed=performance.now()-t0;
