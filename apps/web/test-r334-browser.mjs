@@ -6,8 +6,9 @@ import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r334.mjs');
 let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}
 if(!bin)throw new Error('Chromium unavailable');
+execFileSync(process.execPath,['--check',resolve('dist/app-v334.js')],{stdio:'inherit'});
 const dist=resolve('dist'),baseRaw=await readFile(resolve(dist,'index.html'),'utf8');
-const diag='<script>window.__ctDiagErrors=[];window.addEventListener("error",e=>window.__ctDiagErrors.push(String(e.error?.stack||e.message||e)));window.addEventListener("unhandledrejection",e=>window.__ctDiagErrors.push("PROMISE:"+String(e.reason?.stack||e.reason||e)))</script>';
+const diag='<script>window.__ctDiagErrors=[];window.addEventListener("error",e=>window.__ctDiagErrors.push(String((e.filename||"inline")+":"+(e.lineno||0)+":"+(e.colno||0)+":"+(e.error?.stack||e.message||e))));window.addEventListener("unhandledrejection",e=>window.__ctDiagErrors.push("PROMISE:"+String(e.reason?.stack||e.reason||e)))</script>';
 const base=baseRaw.replace('</head>',diag+'</head>');
 const probe=`<script>setTimeout(async()=>{try{
  const ok=(v,m)=>{if(!v)throw new Error(m)},X=window.__ctR334,T=window.__ctR321Test;
