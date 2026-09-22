@@ -2,6 +2,28 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.119 — 2026-09-21 — Web r328
+
+### Home
+- Restaura o contrato r276: histórico renderizado acima da área inicial, sem botão e sem scroller interno.
+- Séries abre em `Assistir a seguir`; Filmes abre em `Assistir a seguir / Watchlist`.
+- Trocar Séries/Filmes redefine a posição da página para o início correto da respectiva aba.
+- O item mais recente do histórico permanece imediatamente acima da área normal; itens mais antigos ficam progressivamente mais acima.
+
+### Descobrir
+- `Pra você` passa a usar markup final próprio para eliminar a quebra de linha herdada da r309.
+- Watchlist + Visto + Trocar ficam na mesma linha, com três colunas compactas e cards 2:3 de largura uniforme.
+- Filtros `Todos / Filmes / Séries / Animes` ficam sempre visíveis no Pra você e atuam sem recarregar.
+- As abas públicas continuam sendo filtradas por `cinetracker_discover_filter_v326` antes do HTML.
+- Top 10 mantém a mesma autoridade, preenche até dez elegíveis e interrompe páginas extras quando o usuário muda de aba.
+
+### Preservado
+- r324: contagens/ordenação das Watchlists.
+- r325: consolidação de episódios e atualização de série.
+- Esportes e F1 Hub sem alterações.
+- Android `1.0.20 / versionCode 10062`.
+- Web `1.0.119 / r328-official-1.0.119`.
+
 ## 1.0.118 — 2026-09-21 — Web r327
 
 ### Home

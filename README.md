@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.118** | `r327-official-1.0.118` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.119** | `r328-official-1.0.119` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.119 / r328
+
+A r328 corrige o comportamento mostrado no vídeo de 21/09 sem alterar os contratos preservados de Perfil, Esportes, F1 e Android.
+
+- **Home:** restaura o comportamento r276. O histórico de Séries e Filmes continua carregado acima da área inicial, sem botão e sem rolagem interna; a tela abre exatamente em `Assistir a seguir` (Séries) ou `Assistir a seguir / Watchlist` (Filmes). Toda troca Séries ↔ Filmes reposiciona a página nesse ponto.
+- **Pra você:** passa a ter renderer final próprio. Cada card usa uma única faixa de três botões — Watchlist, Visto e Trocar — sem herdar a regra antiga que forçava Trocar para outra linha.
+- **Filtros do Pra você:** `Todos / Filmes / Séries / Animes` ficam visíveis diretamente abaixo das abas e filtram o conteúdo já carregado, sem nova consulta.
+- **Regras do Descobrir:** mantém `cinetracker_discover_filter_v326` como autoridade antes da renderização para excluir vistos, progresso, Em dia, concluídos, Watchlist, Assistir depois e Não interessado nas abas públicas e no Top 10.
+- **Top 10 / navegação:** páginas 1–2 são carregadas primeiro e páginas extras só são buscadas se ainda faltarem itens elegíveis e o usuário continuar no Top 10. Trocar de aba interrompe o refill restante.
+- **Sincronização episódica:** preserva a r325 e `cinetracker_home_series_watch_state_v2`.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r328-official.mjs`; runtime: `apps/web/runtime-r328-home-discover-authority.js`.
 
 ## Web 1.0.118 / r327
 
