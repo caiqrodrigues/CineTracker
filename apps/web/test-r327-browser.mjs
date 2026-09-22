@@ -40,7 +40,7 @@ const probe=`<script>setTimeout(async()=>{try{
 
  const grid=document.createElement('div');grid.className='ct319-top-row';grid.style.width='900px';
  for(let i=0;i<10;i++){const el=document.createElement('div');el.className='ct319-item';el.innerHTML='<div class="ct288-card"><div class="card-body"><b>Card '+i+'</b></div></div>';grid.appendChild(el)}
- document.body.appendChild(grid);await new Promise(r=>requestAnimationFrame(r));
+ document.body.appendChild(grid);grid.getBoundingClientRect();
  ok(getComputedStyle(grid).display==='grid','Top10 not grid');
  ok(getComputedStyle(grid).gridTemplateColumns.split(' ').length===10,'Top10 does not expose ten columns');
 
@@ -57,12 +57,12 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(top.series.every(x=>x.tmdb_id>107),'blocked series survived Top10');
 
  document.documentElement.dataset.ct327done='1';
-}catch(e){document.documentElement.dataset.ct327probe='fail:'+String(e?.stack||e)}},4800)</script>`;
+}catch(e){document.documentElement.dataset.ct327probe='fail:'+String(e?.stack||e)}},200)</script>`;
 const html=base.replace('</body>',probe+'</body>');
 const mime={'.js':'text/javascript','.css':'text/css','.json':'application/json','.html':'text/html','.png':'image/png','.svg':'image/svg+xml'};
 const server=createServer(async(req,res)=>{try{const u=new URL(req.url||'/','http://127.0.0.1'),p=u.pathname;if(p==='/'||p==='/home'||p==='/discover'){res.writeHead(200,{'content-type':'text/html'});res.end(html);return}const safe=p.startsWith('/')?p.slice(1):p,file=resolve(dist,safe);if(!file.startsWith(dist)){res.writeHead(403);res.end();return}const body=await readFile(file);res.writeHead(200,{'content-type':mime[extname(file)]||'application/octet-stream','cache-control':'no-store'});res.end(body)}catch{res.writeHead(404);res.end('not found')}});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
-const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--virtual-time-budget=15000','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--virtual-time-budget=9000','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});
 let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);const code=await new Promise(r=>child.on('close',r));await new Promise(r=>server.close(r));
 if(code!==0)throw new Error('Chromium failed '+code+' '+err.slice(-1600));
 if(!/data-ct327done="1"/.test(out)){const m=out.match(/data-ct327probe="([^"]*)"/);throw new Error('R327_BROWSER '+(m?.[1]||'probe did not finish'))}
