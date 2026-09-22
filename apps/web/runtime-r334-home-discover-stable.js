@@ -64,17 +64,23 @@ function filterHtml334(){
    .map(([k,l])=>'<button type="button" class="chip '+(kind===k?'active':'')+'" data-ct334-fy-kind="'+k+'">'+l+'</button>').join('');
 }
 function applyForYou334(){
- const root=q('[data-ct329-foryou]')||q('[data-ct328-foryou]')||q('[data-ct309-foryou]');
- if(!root)return false;
+ const roots=[...new Set([
+  ...qa('[data-ct329-foryou]'),
+  ...qa('[data-ct328-foryou]'),
+  ...qa('[data-ct309-foryou]')
+ ])];
+ if(!roots.length)return false;
  const kind=fyKind334();
- root.dataset.ct334Filter=kind;
- for(const slot of qa('[data-ct329-kind]',root))slot.hidden=!(kind==='all'||String(slot.dataset.ct329Kind)===kind);
- for(const slot of qa('[data-ct328-kind]',root))slot.hidden=!(kind==='all'||String(slot.dataset.ct328Kind)===kind);
- for(const slot of qa('.ct309-slot[data-ct309-slot]',root)){
-  const k=String(slot.dataset.ct309Slot||'').split(':').pop();
-  slot.hidden=!(kind==='all'||k===kind);
+ for(const root of roots){
+  root.dataset.ct334Filter=kind;
+  for(const slot of qa('[data-ct329-kind]',root))slot.hidden=!(kind==='all'||String(slot.dataset.ct329Kind)===kind);
+  for(const slot of qa('[data-ct328-kind]',root))slot.hidden=!(kind==='all'||String(slot.dataset.ct328Kind)===kind);
+  for(const slot of qa('.ct309-slot[data-ct309-slot]',root)){
+   const k=String(slot.dataset.ct309Slot||'').split(':').pop();
+   slot.hidden=!(kind==='all'||k===kind);
+  }
+  for(const daily of qa('.ct329-daily,.ct328-daily,.ct309-daily',root))daily.hidden=!(kind==='all'||kind==='movie');
  }
- for(const daily of qa('.ct329-daily,.ct328-daily,.ct309-daily',root))daily.hidden=!(kind==='all'||kind==='movie');
  qa('[data-ct334-fy-kind]').forEach(b=>b.classList.toggle('active',String(b.dataset.ct334FyKind)===kind));
  return true;
 }
@@ -103,8 +109,12 @@ function ensureFilters334(){
  return true;
 }
 function normalizeActions334(){
- const root=q('[data-ct329-foryou]')||q('[data-ct328-foryou]')||q('[data-ct309-foryou]');
- if(root){
+ const roots=[...new Set([
+  ...qa('[data-ct329-foryou]'),
+  ...qa('[data-ct328-foryou]'),
+  ...qa('[data-ct309-foryou]')
+ ])];
+ for(const root of roots){
   for(const row of qa('.ct329-actions,.ct328-actions,.ct309-actions',root)){
    const buttons=qa(':scope > button',row);
    row.dataset.ct334Actions=String(buttons.length);
