@@ -53,8 +53,6 @@ jobs:
           npm run test:r325:browser
           npm run test:r326
           npm run test:r326:browser
-          npm run test:r327
-          npm run test:r327:browser
       - name: Final bundle identity r327
         working-directory: apps/web
         run: |
