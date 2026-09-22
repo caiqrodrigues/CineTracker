@@ -218,7 +218,7 @@ const style=document.createElement('style');style.id='ct-web-r335';style.textCon
 setTimeout(()=>{if(routeNow()==='home'){rememberHome335(visibleHomeKind335(),1000);scheduleHome335(visibleHomeKind335())}if(routeNow()==='discover')normalizeDiscover335()},0);
 
 window.__ctR335={
- normalizeHistory:normalizeHistory335,homeAnchor:homeAnchor335,alignHome:alignHome335,rememberHomeTab:rememberHome335,
+ normalizeHistory:normalizeHistory335,homeAnchor:homeAnchor335,alignHome:alignHome335,rememberHomeTab:rememberHome335,applyHomeTab:kind=>{try{return ct266ApplyHomeTab(kind)}catch{return false}},
  removeTopFilters:removeTopFilters335,normalizeActions:normalizeActions335,normalizeDiscover:normalizeDiscover335,finalForYou:finalForYou335,
  version:'1.0.126'
 };
