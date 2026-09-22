@@ -136,9 +136,11 @@ const paintFn=[
 js=js.slice(0,paintStart)+paintFn+js.slice(paintEnd);
 
 const providersOld="const providers=typeof ct171Providers==='function'?await ct171Providers():[];";
-must(js,providersOld);
+const loadTopStart=js.indexOf('async function loadTop321(force=false){');
+const providerAt=js.indexOf(providersOld,loadTopStart);
+if(loadTopStart<0||providerAt<0)throw new Error('r327 Top10 provider anchor missing');
 const providersNew="const providers=(typeof ct171Providers==='function'?await ct171Providers():[]).filter(p=>!/(mubi|looke|loki)/i.test(String(p?.provider_name||'')));";
-js=once(js,providersOld,providersNew,'Top10 provider filter');
+js=js.slice(0,providerAt)+providersNew+js.slice(providerAt+providersOld.length);
 
 const marker="window.__ctR327Build='home-page-scroll+fast-discover+ten-grid';";
 js=once(js,"window.__ctWebBuild='1.0.117';window.__ctOfficialVersion='1.0.117';",marker+"window.__ctWebBuild='1.0.118';window.__ctOfficialVersion='1.0.118';",'web version');
