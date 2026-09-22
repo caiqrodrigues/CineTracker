@@ -2,6 +2,32 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.118 — 2026-09-21 — Web r327
+
+### Home
+- Histórico de Séries e Filmes deixa de ser um scroll interno e deixa de usar botão.
+- Histórico permanece carregado acima do conteúdo normal; troca Série ↔ Filme reposiciona a página no início normal de cada aba.
+- Rolar para cima revela primeiro os registros mais recentes e, continuando, os mais antigos.
+- Mantida a autoridade de histórico da r325/r323.
+
+### Descobrir · Pra você
+- Watchlist, Visto e Trocar ficam em uma única linha flexível e minimalista sem alterar o tamanho dos cards.
+- Filtros Todos / Filmes / Séries / Animes reaplicados diretamente após cada repaint.
+- Remove refill sequencial de até cinco rodadas; refill adicional é único e paralelo.
+
+### Descobrir · Top 10
+- Remove Mubi e Looke da seleção de streamings.
+- Mantém `cinetracker_discover_filter_v326` como autoridade autenticada para Visto/Watchlist/Progresso.
+- Top 10 busca páginas em lotes paralelos e completa até 10 elegíveis.
+- Exibe 10 cards integralmente no grid; fallback 5×2 em telas estreitas.
+
+### Preservação
+- Sincronização de episódios r325 preservada.
+- Watchlist do Perfil r324 preservada.
+- F1 Hub e Esportes não alterados.
+- Web: `1.0.118 / r327-official-1.0.118`.
+- Android: `1.0.20 / versionCode 10062`.
+
 ## 1.0.117 — 2026-09-21 — Web r326
 
 ### Home / Histórico

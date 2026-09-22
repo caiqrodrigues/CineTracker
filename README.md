@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.117** | `r326-official-1.0.117` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.118** | `r327-official-1.0.118` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.118 / r327
+
+A r327 preserva as correções válidas de r324–r326 e corrige as regressões observadas no vídeo de 21/09.
+
+- **Home / Histórico:** remove o mini-scroll interno e qualquer botão de abrir histórico. Séries e Filmes mantêm o histórico carregado acima do conteúdo normal, em fluxo de página. Ao entrar na Home ou trocar Série ↔ Filme, o viewport volta ao primeiro bloco normal; o histórico fica logo acima e é revelado apenas ao rolar para cima. A ordenação histórica continua do mais antigo para o mais recente no DOM, deixando o mais recente imediatamente acima do ponto inicial.
+- **Pra você:** preserva o tamanho aprovado dos cards e força Watchlist, Visto e Trocar em uma única linha flexível, compacta e sem quebra. Os filtros Todos / Filmes / Séries / Animes passam a aplicar visibilidade diretamente aos slots após qualquer repaint.
+- **Desempenho do Pra você:** remove a sequência de até cinco ciclos de refill. Há uma validação em lote e, somente se faltar categoria, um único refill paralelo das páginas 3–4.
+- **Top 10:** remove Mubi e Looke da seleção. O filtro autenticado r326 continua sendo a autoridade de Visto/Watchlist/Progresso. As páginas 1–3 são buscadas em paralelo e filtradas em um lote; páginas 4–5 só são consultadas se ainda faltarem elegíveis.
+- **Top 10 na tela:** as dez posições são exibidas em grid, sem trilho horizontal; em telas estreitas o grid passa para 5×2.
+- **Preservado:** sincronização de episódios r325, contagens/ordenação das Watchlists r324, histórico verdadeiro de filmes e regras estritas r326.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r327-official.mjs`; runtime: `apps/web/runtime-r327-home-discover-stable.js`.
 
 ## Web 1.0.117 / r326
 
