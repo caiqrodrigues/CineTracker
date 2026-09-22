@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.125 — 2026-09-22 — Web r334
+
+### Home / navegação
+- Adiciona `cinetracker_home_series_watch_state_v4` e `cinetracker_home_payload_v334`.
+- Remove o principal gargalo do estado consolidado de séries, reduzindo o benchmark de ~5,7 s para ~0,27 s.
+- Remove a segunda atualização de histórico da r331, já redundante porque o payload atual traz o histórico canônico.
+- Mantém o histórico no fluxo da página, sem botão e sem scroll interno.
+- Mantém apenas r332 como autoridade de posicionamento inicial da Home.
+- Desativa observers concorrentes de r327/r328/r329/r331/r333 que podiam repintar a interface durante navegação.
+
+### Descobrir
+- Mantém `cinetracker_discover_filter_v333` como autoridade, incluindo `watch_play_events` e aliases de título/ano.
+- Filtros do Pra você passam a ser diretos e idempotentes.
+- Watchlist, Visto e Trocar ficam em uma linha compacta em todos os renderers conhecidos.
+- Top 10 continua progressivo até 10 elegíveis por rail.
+
+### Performance
+- Sports não faz warmup em segundo plano durante Home/Descobrir.
+- Remove prefetch/normalização redundantes que competiam durante trocas de abas.
+
+### Release
+- Web: `1.0.125 / r334-official-1.0.125`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.124 — 2026-09-22 — Web r333
 
 ### Home

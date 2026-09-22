@@ -6,12 +6,26 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.124** | `r333-official-1.0.124` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.125** | `r334-official-1.0.125` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.125 / r334
+
+A r334 substitui a r333, cujo gate de navegador falhou e por isso não deve ser tratada como release validada.
+
+- **Home:** troca o estado lógico de séries pela RPC `cinetracker_home_series_watch_state_v4`, evitando a ordenação/agregação de JSON pesado. No mesmo conjunto de 120 séries, a consulta caiu de aproximadamente 5,7 s para 0,27 s.
+- **Payload da Home:** `cinetracker_home_payload_v334` usa o estado v4; no banco, o payload completo caiu de aproximadamente 4,6 s para 1,9 s antes das otimizações de navegador.
+- **Histórico:** continua carregado no fluxo normal da página, sem botão e sem scroll interno; a Home pousa no conteúdo normal e o histórico fica acima, com o item mais recente mais próximo do conteúdo.
+- **Navegação:** r332 passa a ser o único dono do posicionamento inicial da Home. Os schedulers concorrentes de r327/r328/r331 são aposentados.
+- **Congelamentos:** observers globais tardios de r327/r328/r329/r331/r333 são desativados; eles reescreviam filtros/DOM durante trocas de abas.
+- **Pra você:** filtros Todos/Filmes/Séries/Animes são idempotentes e os três botões ficam em uma única linha compacta para todos os renderers legados conhecidos.
+- **Top 10 / abas públicas:** mantém a autoridade `cinetracker_discover_filter_v333`, que bloqueia vistos, progresso, Watchlist, Assistir depois e Não interessado; Top 10 continua buscando até oito páginas para preencher 10 elegíveis.
+- **Sports:** warmup de provider não inicia mais ao abrir Home/Descobrir; só inicia quando Sports é a rota ativa.
+- Android permanece `1.0.20 / versionCode 10062`.
 
 ## Web 1.0.124 / r333
 
