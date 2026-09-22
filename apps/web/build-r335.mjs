@@ -40,6 +40,24 @@ for(const x of[
  "top-filter-strip-removed"
 ])must(runtime,x);
 
+/* Patch the original Home tab authority itself so every legacy repaint honors the active user tab lock. */
+js=range(js,
+ "function ct266ApplyHomeTab(tab=ct266HomeTab){",
+ "function ct266PendingEpisode(row){",
+ [
+  "function ct266ApplyHomeTab(tab=ct266HomeTab){",
+  " const lock=window.__ctR335HomeTabLock;",
+  " if(lock&&Number(lock.until)>Date.now()&&['movies','series'].includes(lock.kind))tab=lock.kind;",
+  " const r=document.querySelector('[data-home]');if(!r)return false;",
+  " ct266HomeTab=tab==='movies'?'movies':'series';r.dataset.ct266HomeTab=ct266HomeTab;",
+  " r.querySelectorAll('[data-home-tab]').forEach(b=>{const on=b.dataset.homeTab===ct266HomeTab;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});",
+  " r.querySelectorAll('[data-home-view]').forEach(v=>{const on=v.dataset.homeView===ct266HomeTab;v.classList.toggle('hidden',!on);v.hidden=!on});",
+  " return true;",
+  "}"
+ ].join('\\n'),
+ "original Home tab lock"
+);
+
 /* Home: r335 owns the landing anchor. Retire the last two automatic scroll owners. */
 js=range(js,
  "function armHome332(kind=activeHomeKind332()){",
