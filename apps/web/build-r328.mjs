@@ -76,7 +76,7 @@ const fyFn=[
 "  if(!window.__ctR328?.paintForYou?.())throw new Error('Renderer final do Pra você indisponível.');",
 "  window.__ctR328.ensureFilters?.();loaded321();return draft.complete;",
 " }catch(e){",
-"  if(token===loadToken){const h=host();if(h)h.innerHTML='<div class="empty">'+esc(e?.message||'Não foi possível montar as recomendações agora.')+'<br><button class="chip" type="button" data-ct321-retry>Tentar novamente</button></div>';loaded321()}",
+"  if(token===loadToken){const h=host();if(h)h.innerHTML='<div class=\\\"empty\\\">'+esc(e?.message||'Não foi possível montar as recomendações agora.')+'<br><button class=\\\"chip\\\" type=\\\"button\\\" data-ct321-retry>Tentar novamente</button></div>';loaded321()}",
 "  return false;",
 " }",
 "}",
