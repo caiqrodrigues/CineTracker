@@ -2,6 +2,26 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.120 — 2026-09-21 — Web r329
+
+### Descobrir · layout
+- Corrige a regressão visual em que cards do Pra você eram comprimidos para três colunas e o botão Trocar caía para baixo/encostava no bloco seguinte.
+- Restaura cards de 154 px no mobile e 176 px no desktop, proporção 2:3.
+- Filme / Série / Anime passam a rolar horizontalmente dentro de cada seção, sem scrollbar horizontal no documento.
+- Watchlist + Visto + Trocar ficam em uma linha única, com altura fixa e classes exclusivas da r329.
+- Slots vazios não ocupam um card fantasma.
+- Abas públicas e Top 10 recebem a mesma geometria padrão e ações sem quebra.
+
+### Regras preservadas
+- Mantém `cinetracker_discover_filter_v326` como autoridade estrita antes do HTML.
+- Mantém refill do Top 10 até dez elegíveis e cancelamento de refill ao trocar de aba.
+- Preserva filtros Todos / Filmes / Séries / Animes.
+
+### Escopo
+- Web: `1.0.120 / r329-official-1.0.120`.
+- Home, Perfil, episódios, Esportes e F1 sem alterações.
+- Android permanece `1.0.20 / versionCode 10062`.
+
 ## 1.0.119 — 2026-09-21 — Web r328
 
 ### Home

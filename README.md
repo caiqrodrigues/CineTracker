@@ -6,12 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.119** | `r328-official-1.0.119` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.120** | `r329-official-1.0.120` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.120 / r329
+
+A r329 corrige exclusivamente a geometria visual do Descobrir mostrada no vídeo de 21/09, preservando a autoridade de regras da r328/r326.
+
+- **Pra você:** volta ao tamanho padrão histórico do CineTracker: **154 px no celular e 176 px no desktop**, proporção 2:3.
+- Filme / Série / Anime deixam de ser espremidos em três colunas fluidas. Cada bloco passa a ter uma **rail horizontal própria**, sem aumentar a largura da página.
+- Watchlist, Visto e Trocar passam a usar classes exclusivas da r329 e ficam em **uma única linha de 26 px**, exatamente na largura do card. Nenhum seletor legado de `swap/watch/seen` pode reposicioná-los.
+- Slots sem item elegível deixam de reservar um card vazio grande.
+- Filtros `Todos / Filmes / Séries / Animes` permanecem visíveis e continuam filtrando o conteúdo carregado.
+- Abas públicas e Top 10 também voltam ao card padrão 154/176 px com scroll apenas dentro da rail e botões na mesma linha.
+- **Regras não foram relaxadas:** `cinetracker_discover_filter_v326` continua removendo Visto, progresso, Em dia, concluído, Watchlist, Assistir depois e Não interessado antes do paint; Top 10 mantém refill até 10 elegíveis.
+- Home, Perfil, sincronização episódica, Esportes, F1 e Android não são alterados.
+
+Build oficial: `apps/web/build-r329-official.mjs`; runtime: `apps/web/runtime-r329-discover-geometry.js`.
 
 ## Web 1.0.119 / r328
 
