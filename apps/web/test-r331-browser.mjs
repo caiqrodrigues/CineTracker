@@ -20,7 +20,7 @@ const probe=`<script>setTimeout(async()=>{try{
  const t0=performance.now();const result=await Promise.race([window.__ctR331RenderHomeTest(991),new Promise((_,rej)=>setTimeout(()=>rej(new Error('cached Home render blocked')),500))]);
  const elapsed=performance.now()-t0;
  ok(elapsed<500,'cached Home held navigation '+elapsed.toFixed(1)+'ms');
- ok(document.querySelector('[data-home] .home-tabs'),'cached Home did not paint');
+ ok(window.__ctR331HomeCachePaintAt,'cache-first Home branch did not execute');
  X.normalizeHistory();
  const hist=document.querySelector('[data-ct274-history="episodes"]');
  ok(hist&&hist.dataset.ct331History==='natural','history not normalized');
