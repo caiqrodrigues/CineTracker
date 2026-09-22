@@ -15,7 +15,10 @@ ok(js.includes("if(seq!==ct285HomeSeq||ct274Payload()!==payload||route()!=='home
 ok(js.includes("requestIdleCallback(kick,{timeout:750})"),'Home background reconcile scheduling');
 ok(js.includes("setTimeout(()=>{if(routeNow()==='home')void refreshTv325(false)},1600)"),'TV refresh still competing with first paint');
 ok(js.includes("const a=await exact321([...raw.movies,...raw.series]);"),'Top10 final personal audit missing');
-ok(js.includes("h.innerHTML='<section class=\\\"ct288-top-shell\\\"><div class=\\\"ct288-provider-row\\\""),'Top10 providers are not first content');
+const topStart=js.indexOf('async function loadTop321(force=false){'),topEnd=js.indexOf('async function loadDiscover321',topStart),topBody=js.slice(topStart,topEnd);
+ok(topStart>=0&&topEnd>topStart,'Top10 loader missing');
+ok(topBody.includes('data-ct321-providers'),'Top10 provider row missing');
+ok(!topBody.includes('ct288-top-title'),'Top10 duplicate title still in final loader');
 ok(js.includes('ct288-top-title,.ct288-top-name{display:none!important'),'Top10 duplicate heading CSS missing');
 ok(js.includes('grid-template-columns:repeat(3,minmax(0,1fr))'),'Pra voce 3-column actions missing');
 ok(r.home_initial_render==='db-payload-first-before-live-series-reconcile','Home release contract');
