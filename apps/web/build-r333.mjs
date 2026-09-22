@@ -39,6 +39,18 @@ for(const x of[
 /* Home payload authority: logical series state + released/unseen movie Watchlist + canonical histories. */
 js=once(js,"rpc('cinetracker_profile_home_payload_v0997_r6'","rpc('cinetracker_home_payload_v333'",'home v333 RPC');
 
+/* Render Home histories as ordinary page content from the first paint: no transient toggle button. */
+const history333=[
+"function ct275HistorySection(kind,rows,authoritative,payload){",
+" const series=kind==='episode',label=series?'Histórico recente':'Filmes vistos',empty=series?'Nenhum episódio no histórico.':'Nenhum filme no histórico.';",
+" const content=authoritative?(ct274HistoryRows(rows,kind,payload)||'<div class=\"empty\">'+empty+'</div>'):'<div class=\"empty\" data-ct274-history-loading>Carregando histórico…</div>';",
+" const count=authoritative?rows.length:'…',which=series?'series':'movies';",
+" return '<section class=\"home-section ct274-history ct275-history is-open\" data-ct274-history=\"'+(series?'episodes':'movies')+'\" data-ct275-history=\"'+which+'\"><div class=\"panel-head ct275-history-head\"><div><h3>'+label+'</h3><small>'+count+'</small></div></div><div class=\"ct275-history-shell\" aria-hidden=\"false\"><div class=\"stack ct274-history-stack\">'+content+'</div></div></section>';",
+"}",
+""
+].join('\\n');
+js=range(js,'function ct275HistorySection(kind,rows,authoritative,payload){','function ct275SeriesSection(title,rows){',history333,'Home history no-toggle renderer');
+
 /* All Discover audits use the v333 authority. */
 js=js.replaceAll('cinetracker_discover_filter_v326','cinetracker_discover_filter_v333');
 
