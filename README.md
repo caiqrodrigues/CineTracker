@@ -6,12 +6,30 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.123** | `r332-official-1.0.123` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.124** | `r333-official-1.0.124` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.124 / r333
+
+A r333 parte do vídeo de 22/09 e corrige a fonte dos dados antes de ajustar a interface.
+
+- **Home / Citadel e Stuart:** o primeiro payload já consolida duplicatas pelo TMDB efetivo com `cinetracker_home_series_watch_state_v2`. Citadel passa a 13/13 e Stuart a 9 episódios assistidos; quando não existe episódio lançado e ainda não visto, o card fica Em dia e o ponteiro antigo é removido.
+- **Home / filmes:** `cinetracker_home_payload_v333` refaz a Watchlist de filmes usando a Watchlist atual e só mantém filmes já lançados e ainda não vistos. Filmes com data futura deixam de aparecer.
+- **Home / histórico:** continua sem botão e sem scroller interno. O histórico permanece acima do ponto inicial; o item mais recente fica imediatamente acima do conteúdo atual e os mais antigos continuam mais para cima.
+- **Home / navegação:** reduz o settle inicial e remove o observer que disputava scroll durante repaints, diminuindo risco de congelamento ao trocar de aba/rota.
+- **Descobrir:** remove fisicamente as setas e o botão de filtro antigos. Os filtros ficam inline.
+- **Pra você:** `Todos / Filmes / Séries / Animes` ficam visíveis; o r329 segue como único renderer final e cada card tem Watchlist + Visto + Trocar em uma única linha compacta.
+- **Regras do Descobrir:** toda auditoria passa por `cinetracker_discover_filter_v333`; a autoridade também considera eventos de reprodução.
+- **Top 10:** busca até oito páginas somente quando necessário até completar 10 séries e 10 filmes elegíveis; há auditoria final antes do HTML. O bloco sobe para junto dos streamings, sem faixa vazia/título duplicado.
+- **Desempenho:** remove o pré-carregamento agressivo de todas as abas do Descobrir e do Top 10. As fontes continuam em cache/deduplicadas, mas são carregadas sob demanda.
+- **Esportes:** em toda abertura do site o payload atual é aquecido em segundo plano; depois o site dispara sincronização dos provedores para os 3 dias anteriores e hoje + 2 dias e recarrega o payload, sem bloquear a navegação.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r333-official.mjs`; runtime: `apps/web/runtime-r333-home-discover-sports.js`.
 
 ## Web 1.0.123 / r332
 

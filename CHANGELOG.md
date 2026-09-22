@@ -2,6 +2,33 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.124 — 2026-09-22 — Web r333
+
+### Home
+- Adiciona `cinetracker_home_payload_v333`.
+- Consolida duplicatas de séries antes do primeiro paint; Citadel/Stuart deixam de anunciar episódios já assistidos ou não lançados.
+- Filmes da Watchlist da Home passam a exigir: estar na Watchlist atual, já ter sido lançado e ainda não ter sido visto.
+- Histórico continua no fluxo da página acima do ponto inicial, sem botão e sem scroll interno.
+- Reduz reposicionamentos automáticos e remove o observer de scroll/repaint da r332.
+
+### Descobrir
+- Adiciona `cinetracker_discover_filter_v333`, incluindo eventos de reprodução na autoridade de vistos.
+- Remove setas laterais e botão de filtro antigo; filtros ficam inline.
+- Pra você mantém Todos / Filmes / Séries / Animes e força Watchlist + Visto + Trocar em três colunas compactas.
+- Remove prefetch agressivo ao entrar no Descobrir.
+- Top 10 busca páginas progressivamente até 10 elegíveis por rail e faz auditoria final v333.
+- Remove a faixa vazia superior do Top 10.
+
+### Esportes
+- Abertura do site aquece o payload de Esportes e dispara sincronização de provedores em segundo plano.
+- Após a sincronização, o payload é recarregado para a aba abrir com dados recentes sempre que possível.
+
+### Escopo
+- Web: `1.0.124 / r333-official-1.0.124`.
+- Perfil/Watchlist permanece na autoridade r324.
+- F1 Hub preservado.
+- Android permanece `1.0.20 / versionCode 10062`.
+
 ## 1.0.123 — 2026-09-22 — Web r332
 
 ### Home

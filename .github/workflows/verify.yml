@@ -1,4 +1,4 @@
-name: Verify Web 1.0.123 r332 Home Discover Final
+name: Verify Web 1.0.124 r333 Home Discover Sports
 
 on:
   push:
@@ -9,35 +9,36 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_123_r332:
+  web_1_0_124_r333:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r332
+      - name: Version identity r333
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.123"' package.json
-          grep -Fq '"version": "1.0.123"' apps/web/package.json
-          grep -Fq 'build-r332-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r332-home-discover-final.js
-          test -f apps/web/build-r332.mjs
-          test -f apps/web/build-r332-official.mjs
-          test -f apps/web/test-r332.mjs
-          test -f apps/web/test-r332-browser.mjs
-      - name: Syntax r332 release chain
+          grep -Fq '"version": "1.0.124"' package.json
+          grep -Fq '"version": "1.0.124"' apps/web/package.json
+          grep -Fq 'build-r333-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r333-home-discover-sports.js
+          test -f apps/web/build-r333.mjs
+          test -f apps/web/build-r333-official.mjs
+          test -f apps/web/test-r333.mjs
+          test -f apps/web/test-r333-browser.mjs
+          test -f supabase/migrations/20260922163500_r333_home_discover_sports.sql
+      - name: Syntax r333 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r332-home-discover-final.js
-          node --check apps/web/build-r332.mjs
-          node --check apps/web/build-r332-official.mjs
-          node --check apps/web/test-r332.mjs
-          node --check apps/web/test-r332-browser.mjs
-      - name: Focused browser gate r332
+          node --check apps/web/runtime-r333-home-discover-sports.js
+          node --check apps/web/build-r333.mjs
+          node --check apps/web/build-r333-official.mjs
+          node --check apps/web/test-r333.mjs
+          node --check apps/web/test-r333-browser.mjs
+      - name: Focused browser gate r333
         working-directory: apps/web
-        run: npm run test:r332:browser
+        run: npm run test:r333:browser
       - name: Preserve current regressions
         working-directory: apps/web
         run: |
@@ -46,25 +47,30 @@ jobs:
           npm run test:r330:browser
           npm run test:r331
           npm run test:r331:browser
-      - name: Final bundle identity r332
+          npm run test:r332
+          npm run test:r332:browser
+      - name: Final bundle identity r333
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r332-official.mjs
-          node --check dist/app-v332.js
-          CT_R332_SKIP_BUILD=1 node test-r332.mjs
-          grep -Fq 'app-v332.js' dist/index.html
-          grep -Fq 'app-v332.css' dist/index.html
+          node build-r333-official.mjs
+          node --check dist/app-v333.js
+          CT_R333_SKIP_BUILD=1 node test-r333.mjs
+          grep -Fq 'app-v333.js' dist/index.html
+          grep -Fq 'app-v333.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.123'
-            && r.revision==='r332-official-1.0.123'
-            && r.home_history_behavior==='normal-flow-above-anchor+zero-history-sliver-at-entry+newest-nearest-anchor'
-            && r.home_episode_pointer==='never-before-last-watched+background-current-tmdb-reconcile'
-            && r.discover_filter_authority==='cinetracker_discover_filter_v326'
-            && r.discover_foryou_owner==='r329-after-final-v326-audit-only'
+          const ok=r.version==='1.0.124'
+            && r.revision==='r333-official-1.0.124'
+            && r.home_payload==='cinetracker_home_payload_v333'
+            && r.home_movie_watchlist==='released+unseen-only+fresh-watchlist-v119'
+            && r.home_navigation==='short-anchor-settle+no-subtree-scroll-observer'
+            && r.discover_filter_authority==='cinetracker_discover_filter_v333'
+            && r.discover_controls==='direct-inline-filters+no-prev-next-filter-trigger'
             && r.discover_foryou_actions==='watchlist+seen+swap-three-compact-one-row'
-            && r.discover_public_source_cache==='preserved-across-personal-data-changes+dedup-concurrent'
+            && r.discover_prefetch==='on-demand-no-eager-network-storm'
+            && r.discover_top10==='progressive-eight-pages-until-ten+v333-audit'
+            && r.sports_startup==='warm-payload+background-provider-sync-every-open'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -82,26 +88,29 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_123_r332, android_current_source]
+    needs: [web_1_0_124_r333, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.123 r332
+      - name: Official production serves and boots 1.0.124 r333
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.123"' <<<"$BODY" \
-              && grep -Fq '"revision": "r332-official-1.0.123"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_owner": "r329-after-final-v326-audit-only"' <<<"$BODY" \
-              && grep -Fq '"home_episode_pointer": "never-before-last-watched+background-current-tmdb-reconcile"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v332.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.124"' <<<"$BODY" \
+              && grep -Fq '"revision": "r333-official-1.0.124"' <<<"$BODY" \
+              && grep -Fq '"home_payload": "cinetracker_home_payload_v333"' <<<"$BODY" \
+              && grep -Fq '"discover_filter_authority": "cinetracker_discover_filter_v333"' <<<"$BODY" \
+              && grep -Fq '"sports_startup": "warm-payload+background-provider-sync-every-open"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v333.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR332Marker='home-anchor-settle+foryou-final-owner+discover-cache-safe+episode-pointer-repair'" <<<"$JS" \
-                && grep -Fq "window.__ctR329.paintForYou()" <<<"$JS" \
-                && grep -Fq 'app-v332.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR333Marker='home-v333+discover-direct-controls+top10-final-audit+sports-background-warmup'" <<<"$JS" \
+                && grep -Fq 'cinetracker_home_payload_v333' <<<"$JS" \
+                && grep -Fq 'cinetracker_discover_filter_v333' <<<"$JS" \
+                && grep -Fq 'ct-sports-sync' <<<"$JS" \
+                && grep -Fq 'app-v333.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless=new --no-sandbox --disable-gpu --disable-background-networking --window-size=390,844 --virtual-time-budget=9000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
-                if grep -Fq 'CineTracker' <<<"$DOM" && grep -Fq 'v1.0.123' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
+                if grep -Fq 'CineTracker' <<<"$DOM" && grep -Fq 'v1.0.124' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
             sleep 5
