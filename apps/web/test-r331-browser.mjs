@@ -16,9 +16,9 @@ const probe=`<script>setTimeout(async()=>{try{
  history.replaceState({},'','/home');
  const payload={__ctHistoryAuthoritative:true,series:[],movie_watchlist:[],history_episodes:[{id:1,media_id:1,tmdb_id:1,media_title:'Histórico',watched_at:'2026-09-22T10:00:00Z',season_number:1,episode_number:1,plays:1}],history_movies:[]};
  try{homeCache=payload;ct274CanonicalHome=payload;navSeq=991}catch(e){throw new Error('Home globals unavailable '+e)}
- const oldFetch=ct274FetchHome;ct274FetchHome=()=>new Promise(r=>setTimeout(()=>r(payload),4000));
- const t0=performance.now();const result=await Promise.race([ct274RenderHome(991),new Promise((_,rej)=>setTimeout(()=>rej(new Error('cached Home render blocked')),500))]);
- const elapsed=performance.now()-t0;ct274FetchHome=oldFetch;
+
+ const t0=performance.now();const result=await Promise.race([window.__ctR331RenderHomeTest(991),new Promise((_,rej)=>setTimeout(()=>rej(new Error('cached Home render blocked')),500))]);
+ const elapsed=performance.now()-t0;
  ok(elapsed<500,'cached Home held navigation '+elapsed.toFixed(1)+'ms');
  ok(document.querySelector('[data-home] .home-tabs'),'cached Home did not paint');
  X.normalizeHistory();

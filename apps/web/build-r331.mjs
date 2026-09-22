@@ -108,6 +108,7 @@ const cacheFirstRender=[
 " try{const data=await ct274FetchHome();if(seq!==navSeq||route()!=='home')return;homeCache=data;ct274PaintHome();setTimeout(()=>window.__ctR331?.resetHome?.(),0)}",
 " catch(e){if(seq!==navSeq)return;const h=document.querySelector('[data-home]');if(h)h.innerHTML=fail('Falha ao sincronizar Home: '+(e?.message||e),'home')}",
 "}",
+"window.__ctR331RenderHomeTest=ct274RenderHome;",
 ""
 ].join('\n');
 js=range(js,'async function ct274RenderHome(seq){',"async function ct274ReloadHome(source='r274'){",cacheFirstRender,'cache-first render');
