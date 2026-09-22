@@ -1,4 +1,4 @@
-name: Verify Web 1.0.120 r329 Discover Geometry
+name: Verify Web 1.0.121 r330 Home Speed Discover Final
 
 on:
   push:
@@ -9,36 +9,36 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_120_r329:
+  web_1_0_121_r330:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - name: Version identity r329
+      - name: Version identity r330
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.120"' package.json
-          grep -Fq '"version": "1.0.120"' apps/web/package.json
-          grep -Fq 'build-r329-official.mjs' apps/web/package.json
-          test -f apps/web/build-r329.mjs
-          test -f apps/web/build-r329-official.mjs
-          test -f apps/web/runtime-r329-discover-geometry.js
-          test -f apps/web/test-r329.mjs
-          test -f apps/web/test-r329-browser.mjs
-      - name: Syntax r329 release chain
+          grep -Fq '"version": "1.0.121"' package.json
+          grep -Fq '"version": "1.0.121"' apps/web/package.json
+          grep -Fq 'build-r330-official.mjs' apps/web/package.json
+          test -f apps/web/build-r330.mjs
+          test -f apps/web/build-r330-official.mjs
+          test -f apps/web/runtime-r330-home-discover-speed.js
+          test -f apps/web/test-r330.mjs
+          test -f apps/web/test-r330-browser.mjs
+      - name: Syntax r330 release chain
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r329-discover-geometry.js
-          node --check apps/web/build-r329.mjs
-          node --check apps/web/build-r329-official.mjs
-          node --check apps/web/test-r329.mjs
-          node --check apps/web/test-r329-browser.mjs
-      - name: Focused mobile browser gate r329
+          node --check apps/web/runtime-r330-home-discover-speed.js
+          node --check apps/web/build-r330.mjs
+          node --check apps/web/build-r330-official.mjs
+          node --check apps/web/test-r330.mjs
+          node --check apps/web/test-r330-browser.mjs
+      - name: Focused browser gate r330
         working-directory: apps/web
-        run: npm run test:r329:browser
-      - name: Preserve r328 and current regressions
+        run: npm run test:r330:browser
+      - name: Preserve current regressions
         working-directory: apps/web
         run: |
           set -euo pipefail
@@ -52,27 +52,28 @@ jobs:
           npm run test:r327:browser
           npm run test:r328
           npm run test:r328:browser
-      - name: Final bundle identity r329
+          npm run test:r329
+          npm run test:r329:browser
+      - name: Final bundle identity r330
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r329-official.mjs
-          node --check dist/app-v329.js
-          CT_R329_SKIP_BUILD=1 node test-r329.mjs
-          grep -Fq 'app-v329.js' dist/index.html
-          grep -Fq 'app-v329.css' dist/index.html
+          node build-r330-official.mjs
+          node --check dist/app-v330.js
+          CT_R330_SKIP_BUILD=1 node test-r330.mjs
+          grep -Fq 'app-v330.js' dist/index.html
+          grep -Fq 'app-v330.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.120'
-            && r.revision==='r329-official-1.0.120'
+          const ok=r.version==='1.0.121'
+            && r.revision==='r330-official-1.0.121'
+            && r.home_initial_render==='db-payload-first-before-live-series-reconcile'
+            && r.home_reconcile==='background-idle+route-and-sequence-guard'
+            && r.home_history_behavior==='r328-preserved-above-initial-viewport-newest-nearest-content'
             && r.discover_filter_authority==='cinetracker_discover_filter_v326'
-            && r.discover_foryou_renderer==='r329-fixed-card-horizontal-rails'
-            && r.discover_foryou_actions==='unique-classes-single-row-no-wrap'
-            && r.discover_foryou_cards==='154-mobile+176-desktop+2x3'
-            && r.discover_foryou_overflow==='rail-only-no-document-horizontal-scroll'
-            && r.home_changes==='none-r329'
-            && r.profile_changes==='none-r329'
-            && r.episode_sync==='r325-preserved'
+            && r.discover_foryou_actions==='three-equal-compact-buttons-one-row'
+            && r.discover_top10==='progressive-fill-ten+v326-final-audit'
+            && r.discover_top10_heading==='provider-pills-only-no-duplicate-provider-name'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -90,26 +91,27 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_120_r329, android_current_source]
+    needs: [web_1_0_121_r330, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.120 r329
+      - name: Official production serves and boots 1.0.121 r330
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.120"' <<<"$BODY" \
-              && grep -Fq '"revision": "r329-official-1.0.120"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_renderer": "r329-fixed-card-horizontal-rails"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_overflow": "rail-only-no-document-horizontal-scroll"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v329.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.121"' <<<"$BODY" \
+              && grep -Fq '"revision": "r330-official-1.0.121"' <<<"$BODY" \
+              && grep -Fq '"home_initial_render": "db-payload-first-before-live-series-reconcile"' <<<"$BODY" \
+              && grep -Fq '"discover_top10_heading": "provider-pills-only-no-duplicate-provider-name"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v330.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR329Marker='discover-fixed-card-rail+one-line-actions+no-page-overflow'" <<<"$JS" \
+              if grep -Fq "window.__ctR330Marker='home-immediate-paint+cancel-stale-reconcile+discover-buttons-grid+top10-up-no-provider-duplicate'" <<<"$JS" \
+                && grep -Fq 'window.__ctR330HomeFirstPaintAt=Date.now()' <<<"$JS" \
                 && grep -Fq 'cinetracker_discover_filter_v326' <<<"$JS" \
-                && grep -Fq 'app-v329.js' <<<"$HTML"; then
+                && grep -Fq 'app-v330.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --window-size=390,844 --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
-                if grep -Fq 'CineTracker' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
+                if grep -Fq 'CineTracker' <<<"$DOM" && grep -Fq 'v1.0.121' <<<"$DOM" && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
             sleep 5

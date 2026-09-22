@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.121 — 2026-09-22 — Web r330
+
+### Home · desempenho / navegação
+- Remove o contrato r285 de aguardar reconciliação completa de até dezenas de séries antes do primeiro paint.
+- A Home pinta primeiro o payload do banco e reconcilia episódios em segundo plano.
+- Reconciliação antiga é impedida de repintar após mudança de rota.
+- O refresh remoto de TV é adiado para depois da primeira tela e só inicia se a Home continuar ativa.
+- Mantém o histórico r328 acima da área inicial, sem botão e sem scroll interno.
+
+### Descobrir · Pra você
+- Watchlist + Visto + Trocar passam a usar grid final de três colunas iguais.
+- Botões têm altura fixa, `nowrap` e o Trocar não pode cair para outra linha.
+
+### Descobrir · Top 10
+- Remove o cabeçalho `Top 10` redundante dentro da área e o segundo texto com o nome do streaming.
+- Reduz o espaço vertical entre tabs, streamings e listas.
+- Mantém refill até dez elegíveis e adiciona auditoria v326 imediatamente antes do paint.
+- Harry Potter foi usado como regressão de dados: os oito filmes informados como vistos retornam bloqueados pela autoridade atual.
+
+### Escopo
+- Web: `1.0.121 / r330-official-1.0.121`.
+- Perfil, Esportes e F1 Hub sem mudanças funcionais.
+- Android permanece `1.0.20 / versionCode 10062`.
+
 ## 1.0.120 — 2026-09-21 — Web r329
 
 ### Descobrir · layout

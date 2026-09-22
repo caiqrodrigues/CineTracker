@@ -6,12 +6,28 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.120** | `r329-official-1.0.120` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.121** | `r330-official-1.0.121` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.121 / r330
+
+A r330 corrige o carregamento prolongado da Home e finaliza a geometria do Descobrir observada no vídeo de 22/09.
+
+- **Home / desempenho:** o payload do Supabase é pintado imediatamente. A reconciliação ao vivo de séries/TMDB deixa de bloquear a primeira tela e passa a rodar depois do primeiro paint.
+- **Navegação:** a reconciliação em segundo plano usa token + rota; se o usuário sair da Home, o trabalho antigo não pode repintar a tela anterior.
+- **Atualização episódica:** preserva a r325, mas a atualização remota começa depois da primeira tela interativa e apenas se a Home ainda estiver ativa.
+- **Histórico da Home:** preserva o comportamento r328 — histórico carregado no fluxo da página, acima do ponto inicial, sem botão e sem scroller interno; rolar para cima revela primeiro os itens mais recentes.
+- **Pra você:** Watchlist, Visto e Trocar ficam em grid fixo de três colunas iguais, 26 px, sem quebra e sem esconder o terceiro botão.
+- **Top 10:** remove o título duplicado `Top 10` dentro do conteúdo e o nome repetido do streaming abaixo dos pills. Os pills passam a ser o cabeçalho visual e as listas sobem.
+- **Top 10 / regras:** mantém o refill progressivo e faz uma nova auditoria `cinetracker_discover_filter_v326` imediatamente antes do HTML final.
+- O banco foi conferido com os oito filmes de Harry Potter da biblioteca: todos os oito foram classificados em `seen_keys` / `blocked_keys`.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r330-official.mjs`; runtime: `apps/web/runtime-r330-home-discover-speed.js`.
 
 ## Web 1.0.120 / r329
 
