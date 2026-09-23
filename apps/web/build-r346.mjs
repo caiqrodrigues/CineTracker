@@ -36,8 +36,8 @@ for(const x of[
 ])must(runtime,x);
 
 /* r345/r169 may never treat .content as a search row again. */
-js=range(js,"function syncHeader345(){","if(window.__ctR344)window.__ctR344.decorateForYou=normalizeForYou345;","function syncHeader345(){return false;}\n\nif(window.__ctR344)window.__ctR344.decorateForYou=normalizeForYou345;",'retire r345 header mutation');
-js=range(js,"function ct169InjectBack(){","const ct169SetAppBase=setApp;","function ct169InjectBack(){return false;}\n\nconst ct169SetAppBase=setApp;",'retire r169 back injector');
+js=range(js,"function syncHeader345(){","if(window.__ctR344)window.__ctR344.decorateForYou=normalizeForYou345;","function syncHeader345(){return false;}",'retire r345 header mutation');
+js=range(js,"function ct169InjectBack(){","const ct169SetAppBase=setApp;","function ct169InjectBack(){return false;}",'retire r169 back injector');
 
 /* Remove filter controls at their source renderers, not after paint. */
 js=js.replace(
