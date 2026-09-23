@@ -1,0 +1,15 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+if(process.env.CT_R345_SKIP_BUILD!=='1')await import('./build-r345.mjs');
+const [js,html,rRaw,runtime]=await Promise.all([readFile(resolve('dist/app-v345.js'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('runtime-r345-foryou-back-filters.js'),'utf8')]);
+const r=JSON.parse(rRaw),ok=(v,m)=>{if(!v)throw new Error('R345_STATIC '+m)};
+ok(r.version==='1.0.136'&&r.revision==='r345-official-1.0.136','identity');
+ok(html.includes('app-v345.js')&&html.includes('app-v345.css'),'assets');
+ok(js.includes("if(row?.classList?.contains('ct336-actions'))return false;"),'r342 still owns Pra Você');
+ok(js.includes("b.className='ct345-back-icon'")&&!js.includes("b.innerHTML='<span>‹</span><b>Voltar</b>'"),'text back remains');
+ok(runtime.includes("[data-ct318-filter],[data-ct318-types],[data-ct336-filters]{display:none!important}"),'filters visible');
+ok(runtime.includes("grid-template-columns:repeat(3,minmax(0,1fr))"),'3-button grid missing');
+ok(runtime.includes("grid-template-columns:repeat(2,minmax(0,1fr))"),'2-button grid missing');
+ok(r.discover_foryou_filters==='removed-ui+forced-all','filter contract');
+ok(r.navigation_back==='icon-only-left-of-search-no-text-button','back contract');
+ok(r.android==='1.0.20/10062','Android changed');
+console.log('R345_STATIC_OK');
