@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_141_r351:
+  web_1_0_142_r351:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
@@ -128,7 +128,7 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_141_r351, android_current_source]
+    needs: [web_1_0_142_r351, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
