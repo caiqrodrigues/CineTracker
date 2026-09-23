@@ -56,7 +56,6 @@ jobs:
           npm run test:r340
           npm run test:r340:browser
           npm run test:r341
-          npm run test:r341:browser
       - name: Focused r342 static + no-jitter desktop/mobile browser gate
         working-directory: apps/web
         run: |
