@@ -12,7 +12,7 @@ const qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
 const rows=v=>Array.isArray(v)?v:[];
 const n=v=>{const x=Number(v);return Number.isFinite(x)?x:0};
 const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
-let homeRun343=0;
+let homeRun343=0,lastPrepared343=[];
 
 /* Build a fully reconciled Home snapshot before any real Home card is painted. */
 async function prepareHomePayload343(payload,navSeqExpected){
@@ -37,7 +37,7 @@ async function prepareHomePayload343(payload,navSeqExpected){
  try{ct285CommittedRows=typeof ct285CloneRow==='function'?list.map(ct285CloneRow):list.map(x=>({...x}))}catch{}
  try{ct275SourcePayload=payload}catch{}
  try{ct275CanonicalSeries=typeof ct285CloneRow==='function'?list.map(ct285CloneRow):list.map(x=>({...x}))}catch{}
- payload.__ct343Prepared=true;
+ lastPrepared343=list.map(x=>({...x}));window.__ctR343HomePreparedSnapshot=lastPrepared343;\n payload.__ct343Prepared=true;
  payload.__ct343PreparedAt=Date.now();
  return true;
 }
