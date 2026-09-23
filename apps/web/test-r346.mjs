@@ -1,0 +1,18 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+if(process.env.CT_R346_SKIP_BUILD!=='1')await import('./build-r346.mjs');
+const [js,html,rRaw,runtime]=await Promise.all([readFile(resolve('dist/app-v346.js'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('runtime-r346-layout-rollback-discover-clean.js'),'utf8')]);
+const r=JSON.parse(rRaw),ok=(v,m)=>{if(!v)throw new Error('R346_STATIC '+m)};
+ok(r.version==='1.0.137'&&r.revision==='r346-official-1.0.137','identity');
+ok(html.includes('app-v346.js')&&html.includes('app-v346.css'),'assets');
+ok(js.includes("function syncHeader345(){return false;}"),'r345 header mutator alive');
+ok(js.includes("function ct169InjectBack(){return false;}"),'r169 injector alive');
+ok(!js.includes('data-ct318-filter aria-label="Filtrar"'),'r318 filter button still rendered');
+ok(!js.includes('class="filters ct288-types ct318-types" data-ct318-types hidden'),'r318 filter row still rendered');
+ok(js.includes("function filters336(){return''}"),'r336 filters still rendered');
+ok(js.includes("if(st)st.fyKind='all';const kind='all';"),'r336 not forced all');
+ok(runtime.includes(".content{display:block!important"),'content normal-flow rollback missing');
+ok(runtime.includes("ct346-search-row"),'dedicated search row missing');
+ok(r.page_layout==='content-normal-flow-restored','layout contract');
+ok(r.discover_filters==='r318+r336-source-removed','filter contract');
+ok(r.android==='1.0.20/10062','Android changed');
+console.log('R346_STATIC_OK');
