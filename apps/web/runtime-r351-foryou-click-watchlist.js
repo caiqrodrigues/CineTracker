@@ -9,7 +9,7 @@ window.__ctR351Android='preserved-1.0.20-10062';
 const q=(s,r=document)=>r?.querySelector?.(s)||null;
 const qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
 const rows=v=>Array.isArray(v)?v:[];
-let testBridge=null,restoreTask=null,restoreAt=0;
+let testBridge=null,restoreTask=null,restoreAt=0,watchMo=null,watchHost=null;
 
 function routeNow351(){try{return String(typeof route==='function'?route():'')}catch{return''}}
 function typeOf351(x){return String(x?.media_type||x?.type||x?.raw_tmdb?.media_type||'tv')==='movie'?'movie':'tv'}
@@ -117,18 +117,31 @@ window.__ctR336EarlyHandle=function(target,event){
  return typeof previousEarly351==='function'?previousEarly351(target,event):false;
 };
 
-setTimeout(()=>{
- if(routeNow351()==='discover'){
-  try{window.__ctR348?.fixAll?.()}catch{}
-  try{window.__ctR349?.compact?.()}catch{}
-  void restoreWatchlist351(false);
- }
-},0);
+function bindWatchRestore351(){
+ const h=q('[data-ct319-content]');
+ if(!h||h===watchHost)return false;
+ watchMo?.disconnect?.();watchHost=h;
+ watchMo=new MutationObserver(ms=>{
+  if(routeNow351()!=='discover')return;
+  if(ms.some(m=>m.addedNodes.length||m.removedNodes.length))queueMicrotask(()=>void restoreWatchlist351(false));
+ });
+ watchMo.observe(h,{subtree:true,childList:true});return true;
+}
+function startup351(){
+ if(routeNow351()!=='discover')return;
+ try{window.__ctR348?.fixAll?.()}catch{}
+ try{window.__ctR349?.compact?.()}catch{}
+ bindWatchRestore351();void restoreWatchlist351(false);
+}
+setTimeout(startup351,0);
+setTimeout(startup351,600);
+setTimeout(startup351,1600);
 
 window.__ctR351={
  version:'1.0.142',
  directClick:directClick351,
  restoreWatchlist:restoreWatchlist351,
+ bindWatchRestore:bindWatchRestore351,
  setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}
 };
 window.__ctR351Test={
