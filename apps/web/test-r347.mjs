@@ -1,0 +1,15 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+if(process.env.CT_R347_SKIP_BUILD!=='1')await import('./build-r347.mjs');
+const [js,html,rRaw,runtime]=await Promise.all([readFile(resolve('dist/app-v347.js'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('runtime-r347-production-layout-buttons.js'),'utf8')]);
+const r=JSON.parse(rRaw),ok=(v,m)=>{if(!v)throw new Error('R347_STATIC '+m)};
+ok(r.version==='1.0.138'&&r.revision==='r347-official-1.0.138','identity');
+ok(html.includes('app-v347.js')&&html.includes('app-v347.css'),'assets');
+ok(js.includes("window.__ctR347Marker='remove-r338-zero-width-css+full-home-width+stable-foryou-buttons'"),'runtime marker');
+ok(runtime.includes("['ct-web-r338','ct-web-r339']"),'legacy style removal missing');
+ok(runtime.includes("width:100%!important;min-width:0!important;max-width:100%!important"),'button width reset missing');
+ok(runtime.includes("content.classList.remove('ct345-search-row')"),'content cleanup missing');
+ok(r.page_layout==='content-normal-flow+home-full-inner-width','page contract');
+ok(r.discover_foryou_legacy_css==='r338+r339-removed-at-runtime','legacy css contract');
+ok(r.discover_foryou_buttons==='nonzero-grid-buttons+swap-visible+poster-width-row','button contract');
+ok(r.android==='1.0.20/10062','Android changed');
+console.log('R347_STATIC_OK');
