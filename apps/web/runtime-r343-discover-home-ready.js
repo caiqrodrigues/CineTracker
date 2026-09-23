@@ -25,7 +25,9 @@ async function prepareHomePayload343(payload,navSeqExpected){
  const run=++homeRun343;
  if(!payload||!homeActive343())return false;
  let list=[];
- try{list=typeof ct275DedupSeries==='function'?ct275DedupSeries(payload?.series||[]):rows(payload?.series)}catch{list=rows(payload?.series)}
+ const rawSeries=rows(payload?.series);
+ try{list=typeof ct275DedupSeries==='function'?ct275DedupSeries(rawSeries):rawSeries}catch{list=rawSeries}
+ if(!list.length&&rawSeries.length)list=rawSeries;
  try{if(typeof ct285CloneRow==='function')list=list.map(ct285CloneRow);else list=list.map(x=>({...x}))}catch{list=list.map(x=>({...x}))}
  try{
   if(typeof ct275FetchWatchState==='function'){
