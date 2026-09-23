@@ -79,11 +79,14 @@ function syncHeader345(){
  const search=input.closest('.search')||input.parentElement;if(!search)return false;
  const parent=search.parentElement;if(!parent)return false;
  parent.classList.add('ct345-search-row');
+ parent.style.setProperty('display','grid','important');parent.style.setProperty('grid-template-columns','34px minmax(0,1fr)','important');parent.style.setProperty('align-items','center','important');parent.style.setProperty('column-gap','8px','important');parent.style.setProperty('width','100%','important');
+ search.style.setProperty('grid-column','2','important');search.style.setProperty('grid-row','1','important');search.style.setProperty('width','100%','important');search.style.setProperty('min-width','0','important');search.style.setProperty('margin','0','important');
  qa('[data-ct169-back]',parent).forEach(x=>x.remove());
  const r=routeNow(),depth=Number(sessionStorage.getItem('ct:r169:nav-depth')||0)||0;
  if(r==='auth'||(r==='home'&&depth<=0))return true;
  const b=document.createElement('button');
  b.type='button';b.className='ct345-back-icon';b.dataset.ct169Back='1';b.setAttribute('aria-label','Voltar');b.setAttribute('title','Voltar');b.textContent='‹';
+ b.style.setProperty('grid-column','1','important');b.style.setProperty('grid-row','1','important');
  parent.insertBefore(b,search);
  purgeTextBack345();
  return true;
