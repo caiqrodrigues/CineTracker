@@ -44,7 +44,7 @@ const back345=[
 "function ct169InjectBack(){",
 "  if(!session||route()==='auth')return;",
 "  document.querySelectorAll('[data-ct169-back]').forEach(x=>x.remove());",
-"  const input=[...document.querySelectorAll('input')].find(x=>/buscar filmes|buscar s[eé]ries|epis[oó]dios|atores/i.test(String(x.placeholder||'')))||document.querySelector('input[type=search]');",
+"  const scope=document.querySelector('#app')||document,input=[...scope.querySelectorAll('input')].find(x=>/buscar filmes|buscar s[eé]ries|epis[oó]dios|atores/i.test(String(x.placeholder||'')))||scope.querySelector('input[type=search]');",
 "  if(!input)return;",
 "  const search=input.closest('.search')||input.parentElement;if(!search||!search.parentElement)return;",
 "  const parent=search.parentElement;parent.classList.add('ct345-search-row');",
