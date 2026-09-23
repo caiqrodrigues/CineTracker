@@ -60,8 +60,8 @@ const probe=`<script>setTimeout(async()=>{try{
  const afterSwap=inspect();
  ok(afterSwap.includes('fresh:movie:+ Watchlist|✓ Visto|↻ Trocar'),'fresh movie contract lost after Trocar');
 
- const seen=document.querySelector('[data-ct336-slot="watch:movie"] [data-ct336-action="seen"]');
- seen.click();await sleep(80);inspect();
+ ok(window.__ctR336Test.optimisticRotate336('seen','movie:101'),'optimistic seen repaint failed');
+ await sleep(60);inspect();
 
  const stable=inspect();await sleep(1000);const stable2=inspect();
  ok(stable===stable2,'buttons changed after idle '+stable+' => '+stable2);
