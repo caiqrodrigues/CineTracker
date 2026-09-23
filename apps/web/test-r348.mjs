@@ -8,6 +8,6 @@ ok(r.discover_foryou_buttons==='exact-direct-children+2-watch+3-fresh-daily+no-s
 ok(js.includes("window.__ctR348Marker='foryou-buttons-only+direct-children+no-stray-swap'"),'marker');
 ok(js.includes("row.replaceChildren(...buttons)"),'row rebuild');
 ok(js.includes("bucket==='watch'?2:3"),'2/3 contract');
-ok(js.includes("qa('[data-ct336-swap-only],.ct336-action',slot).forEach"),'stray cleanup');
+ok(js.includes("qa('[data-ct336-swap-only],.ct336-action',slot).filter(el=>el.parentElement!==row)"),'stray cleanup');
 ok(r.android==='1.0.20/10062','Android changed');
 console.log('R348_STATIC_OK');
