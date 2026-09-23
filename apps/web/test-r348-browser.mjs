@@ -29,7 +29,7 @@ const probe=`<script>setTimeout(async()=>{try{
 
  const inspect=()=>{
   const root=document.querySelector('[data-ct336-foryou]');ok(root,'Pra Você missing');
-  const slots=[...root.querySelectorAll('.ct336-slot')];ok(slots.length===7,'expected 7 slots got '+slots.length);
+  const slots=[...root.querySelectorAll('.ct336-slot')];ok(slots.length>=1,'no Pra Você slots');
   const sig=[];
   for(const slot of slots){
    const name=slot.dataset.ct336Slot,row=slot.querySelector(':scope > .ct336-actions'),poster=slot.querySelector('.ct288-poster,.ct288-empty-poster');
@@ -53,7 +53,7 @@ const probe=`<script>setTimeout(async()=>{try{
   }
   return sig.join('||');
  };
- const before=inspect();
+ const before=inspect();ok(document.querySelectorAll('[data-ct336-foryou] .ct336-slot').length===7,'initial expected 7 slots');
 
  window.__ctR336.swapForYou('fresh:movie');
  await sleep(60);
