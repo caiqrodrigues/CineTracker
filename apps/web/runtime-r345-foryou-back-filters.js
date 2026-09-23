@@ -37,6 +37,14 @@ function cleanActionGeometry345(root=document){
    b.removeAttribute('style');b.hidden=false;b.removeAttribute('hidden');b.dataset.ct345Action=String(i+1);
    if(b.matches('[data-ct336-swap-only]')){b.textContent='↻ Trocar';b.hidden=false}
   });
+  const slot=row.closest('.ct336-slot'),poster=slot&&q('.ct288-poster,.ct288-empty-poster',slot);
+  const pr=poster?.getBoundingClientRect?.(),sr=slot?.getBoundingClientRect?.();
+  if(pr&&Number(pr.width)>40){
+   const w=Math.round(Number(pr.width)*1000)/1000,off=Math.max(0,Math.round((Number(pr.left)-Number(sr?.left||pr.left))*1000)/1000);
+   row.style.setProperty('width',w+'px','important');row.style.setProperty('min-width',w+'px','important');row.style.setProperty('max-width',w+'px','important');
+   row.style.setProperty('margin-left',off+'px','important');
+   row.dataset.ct345PosterWidth=String(w);row.dataset.ct345PosterOffset=String(off);
+  }
  }
  return true;
 }
