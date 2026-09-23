@@ -73,8 +73,8 @@ function purgeTextBack345(){
 }
 function syncHeader345(){
  purgeTextBack345();
- const inputs=qa('input');
- const input=inputs.find(x=>/buscar\s+filmes|buscar\s+s[eé]ries|epis[oó]dios|atores/i.test(String(x.placeholder||'')))||q('input[type="search"]');
+ const scope=q('#app')||document,inputs=qa('input',scope);
+ const input=inputs.find(x=>/buscar\s+filmes|buscar\s+s[eé]ries|epis[oó]dios|atores/i.test(String(x.placeholder||'')))||q('input[type="search"]',scope);
  if(!input)return false;
  const search=input.closest('.search')||input.parentElement;if(!search)return false;
  const parent=search.parentElement;if(!parent)return false;
