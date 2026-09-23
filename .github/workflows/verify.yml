@@ -22,7 +22,7 @@ jobs:
           grep -Fq '"version": "1.0.141"' package.json
           grep -Fq '"version": "1.0.141"' apps/web/package.json
           grep -Fq 'build-r350-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r350-foryou-actions-compact.js
+          test -f apps/web/runtime-r350-foryou-actions-direct.js
           test -f apps/web/build-r350.mjs
           test -f apps/web/build-r350-official.mjs
           test -f apps/web/test-r350.mjs
@@ -31,7 +31,7 @@ jobs:
       - name: Syntax r350
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r350-foryou-actions-compact.js
+          node --check apps/web/runtime-r350-foryou-actions-direct.js
           node --check apps/web/build-r350.mjs
           node --check apps/web/build-r350-official.mjs
           node --check apps/web/test-r350.mjs
@@ -84,7 +84,7 @@ jobs:
           set -euo pipefail
           node build-r350-official.mjs
           node --check dist/app-v350.js
-          CT_R349_SKIP_BUILD=1 node test-r350.mjs
+          CT_R350_SKIP_BUILD=1 node test-r350.mjs
           grep -Fq 'app-v350.js' dist/index.html
           grep -Fq 'app-v350.css' dist/index.html
           node - <<'NODE'
