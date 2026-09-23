@@ -48,7 +48,7 @@ js=js.replace(
  '  <div class="filters ct288-types ct318-types" data-ct318-types hidden></div>\n',
  ''
 );
-js=range(js,"function filters336(){","function paintForYou336(){","function filters336(){return\'\'}\nfunction paintForYou336(){",'remove r336 filters');
+js=range(js,"function filters336(){","function paintForYou336(){","function filters336(){return\'\'}",'remove r336 filters');
 js=once(js,
  " const st=window.__ctR319Test?.state,kind=['movie','series','anime'].includes(String(st?.fyKind))?String(st.fyKind):'all';\n root.dataset.ct336Filter=kind;let visible=0;",
  " const st=window.__ctR319Test?.state;if(st)st.fyKind='all';const kind='all';\n root.dataset.ct336Filter=kind;let visible=0;",
