@@ -56,7 +56,7 @@ const probe=`<script>setTimeout(async()=>{try{
  ok(back.textContent.trim()==='‹','back is not icon-only');
  const br=back.getBoundingClientRect(),sr=search.getBoundingClientRect();
  ok(br.right<=sr.left+1,'back not left of search br='+JSON.stringify({left:br.left,right:br.right,top:br.top,width:br.width})+' sr='+JSON.stringify({left:sr.left,right:sr.right,top:sr.top,width:sr.width})+' parent='+getComputedStyle(back.parentElement).display);
- ok(Math.abs(br.top-sr.top)<=4,'back/search not same row');
+ ok(Math.abs((br.top+br.height/2)-(sr.top+sr.height/2))<=1.5,'back/search centers not aligned br='+JSON.stringify({top:br.top,height:br.height})+' sr='+JSON.stringify({top:sr.top,height:sr.height}));
  ok(![...document.querySelectorAll('button,a')].some(x=>/voltar/i.test(x.textContent)),'textual Voltar remains');
  document.documentElement.dataset.ct345done='1';
 }catch(e){document.documentElement.dataset.ct345probe='fail:'+String(e?.stack||e)+' ERRORS='+(window.__ctDiagErrors||[]).join(' || ')}},1800)</script>`;
