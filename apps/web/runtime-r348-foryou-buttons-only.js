@@ -9,7 +9,7 @@ window.__ctR348Android='preserved-1.0.20-10062';
 const q=(s,r=document)=>r?.querySelector?.(s)||null;
 const qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
 const imp=(el,k,v)=>el?.style?.setProperty?.(k,v,'important');
-let mo=null,host=null,raf=0;
+let mo=null,host=null;
 
 function typeOf(x){return String(x?.media_type||x?.type||'tv')==='movie'?'movie':'tv'}
 function idOf(x){return Number(x?.tmdb_id||x?.source_tmdb_id||x?.id||x?.raw_tmdb?.id||0)}
@@ -80,10 +80,10 @@ function fixAll(){
  let n=0;for(const slot of qa('.ct336-slot',root))if(fixSlot(slot,m))n++;
  root.dataset.ct348Fixed=String(n);return n>0;
 }
-function schedule(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>fixAll())}
+function schedule(){queueMicrotask(fixAll)}
 function bind(){
  const h=q('[data-ct319-content]');if(!h||h===host)return;mo?.disconnect?.();host=h;
- mo=new MutationObserver(ms=>{if(ms.some(m=>m.addedNodes.length||m.removedNodes.length))schedule()});
+ mo=new MutationObserver(ms=>{if(ms.some(m=>m.addedNodes.length||m.removedNodes.length))fixAll()});
  mo.observe(h,{subtree:true,childList:true});
 }
 const basePaint=window.__ctR336?.paintForYou;
