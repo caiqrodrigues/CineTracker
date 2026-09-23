@@ -78,10 +78,10 @@ function syncHeader345(){
  if(!input)return false;
  const search=input.closest('.search')||input.parentElement;if(!search)return false;
  const parent=search.parentElement;if(!parent)return false;
+ qa('[data-ct169-back]').forEach(x=>x.remove());
  parent.classList.add('ct345-search-row');
  parent.style.setProperty('display','grid','important');parent.style.setProperty('grid-template-columns','34px minmax(0,1fr)','important');parent.style.setProperty('align-items','center','important');parent.style.setProperty('column-gap','8px','important');parent.style.setProperty('width','100%','important');
  search.style.setProperty('grid-column','2','important');search.style.setProperty('grid-row','1','important');search.style.setProperty('width','100%','important');search.style.setProperty('min-width','0','important');search.style.setProperty('margin','0','important');
- qa('[data-ct169-back]',parent).forEach(x=>x.remove());
  const r=routeNow(),depth=Number(sessionStorage.getItem('ct:r169:nav-depth')||0)||0;
  if(r==='auth'||(r==='home'&&depth<=0))return true;
  const b=document.createElement('button');
