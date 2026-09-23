@@ -89,7 +89,7 @@ function bind342(){
  if(host===host342&&mo342){schedule342();return true}
  mo342?.disconnect?.();host342=host;
  if(window.MutationObserver){
-  mo342=new MutationObserver(muts=>{if(muts.some(m=>m.addedNodes.length||m.removedNodes.length))schedule342()});
+  mo342=new MutationObserver(muts=>{if(muts.some(m=>m.addedNodes.length||m.removedNodes.length))lockAll342()});
   mo342.observe(host,{subtree:true,childList:true});
  }
  schedule342();return true;
