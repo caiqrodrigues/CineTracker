@@ -1,0 +1,13 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+if(process.env.CT_R348_SKIP_BUILD!=='1')await import('./build-r348.mjs');
+const [js,rRaw]=await Promise.all([readFile(resolve('dist/app-v348.js'),'utf8'),readFile(resolve('dist/release.json'),'utf8')]);
+const r=JSON.parse(rRaw),ok=(v,m)=>{if(!v)throw new Error('R348_STATIC '+m)};
+ok(r.version==='1.0.139'&&r.revision==='r348-official-1.0.139','identity');
+ok(r.scope==='discover-foryou-buttons-only','scope');
+ok(r.discover_foryou_buttons==='exact-direct-children+2-watch+3-fresh-daily+no-stray-swap','contract');
+ok(js.includes("window.__ctR348Marker='foryou-buttons-only+direct-children+no-stray-swap'"),'marker');
+ok(js.includes("row.replaceChildren()"),'row rebuild');
+ok(js.includes("bucket==='watch'?2:3"),'2/3 contract');
+ok(js.includes("qa('[data-ct336-swap-only],.ct336-action',slot).forEach"),'stray cleanup');
+ok(r.android==='1.0.20/10062','Android changed');
+console.log('R348_STATIC_OK');
