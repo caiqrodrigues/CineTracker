@@ -12,7 +12,7 @@ const bridge=`<script>window.__ctR340TestBridge={load:async()=>({ok:true}),sync:
 const base=baseRaw.replace('</head>',bridge+'</head>');
 const fixture=JSON.stringify(`<div data-ct319-discover><div data-ct319-content>
  <section class="ct336-slot" data-ct336-slot="fresh:movie" style="width:230px">
-  <div class="ct336-cardwrap"><article class="ct288-card" style="width:176px"><button class="ct288-open"><img class="ct288-poster" style="width:154px;height:231px"></button></article></div>
+  <div class="ct336-cardwrap"><article class="ct288-card" style="width:176px"><button class="ct288-open"><img class="ct288-poster" style="width:154px!important;height:231px"></button></article></div>
   <div class="ct336-actions ct336-actions-three" style="display:grid;grid-template-columns:1fr;width:260px;position:relative">
    <button class="ct336-action" style="width:100%">+ Watchlist</button>
    <button class="ct336-action" style="position:absolute;left:0;width:100%;transform:translateX(-30px)">✓ Visto</button>
@@ -20,11 +20,11 @@ const fixture=JSON.stringify(`<div data-ct319-discover><div data-ct319-content>
   </div>
  </section>
  <div class="ct319-item" data-ct319-item="movie:1" style="width:220px">
-  <article class="ct288-card" style="width:176px"><button class="ct288-open"><img class="ct288-poster" style="width:142px;height:213px"></button></article>
+  <article class="ct288-card" style="width:176px"><button class="ct288-open"><img class="ct288-poster" style="width:142px!important;height:213px"></button></article>
   <div class="ct319-actions" style="display:grid;grid-template-columns:1fr;width:250px"><button style="width:100%">+ Watchlist</button><button style="position:absolute;width:100%">✓ Visto</button></div>
  </div>
  <div class="ct315-item" data-ct315-item="movie:2" style="width:220px">
-  <article class="ct288-card" style="width:176px"><button class="ct288-open"><img class="ct288-poster" style="width:136px;height:204px"></button></article>
+  <article class="ct288-card" style="width:176px"><button class="ct288-open"><img class="ct288-poster" style="width:136px!important;height:204px"></button></article>
   <div class="ct315-actions" style="width:250px"><button>+ Watchlist</button><button>✓ Visto</button></div>
  </div>
 </div></div>`);
@@ -57,11 +57,11 @@ const probe=`<script>setTimeout(async()=>{try{
  window.__ctR339.fixActions();X.settle();await new Promise(r=>setTimeout(r,650));check(fy,'after-r339-conflict');
 
  /* Poster width is the authority, not the card wrapper. ResizeObserver must follow it. */
- const pubPoster=X.poster(pub);pubPoster.style.width='128px';await new Promise(r=>setTimeout(r,180));check(pub,'public-after-poster-resize');ok(Math.abs(pub.getBoundingClientRect().width-128)<=0.7,'row did not follow resized poster');
+ const pubPoster=X.poster(pub);pubPoster.style.setProperty('width','128px','important');await new Promise(r=>setTimeout(r,180));check(pub,'public-after-poster-resize');ok(Math.abs(pub.getBoundingClientRect().width-128)<=0.7,'row did not follow resized poster');
 
  /* New cards inserted after paint must be normalized too. */
  const host=document.querySelector('[data-ct319-content]');
- host.insertAdjacentHTML('beforeend','<div class="ct319-item" data-ct319-item="movie:3"><article class="ct288-card" style="width:176px"><button class="ct288-open"><img class="ct288-poster" style="width:132px;height:198px"></button></article><div class="ct319-actions" style="display:grid;width:280px"><button style="width:100%">+ Watchlist</button><button style="position:absolute;width:100%">✓ Visto</button></div></div>');
+ host.insertAdjacentHTML('beforeend','<div class="ct319-item" data-ct319-item="movie:3"><article class="ct288-card" style="width:176px"><button class="ct288-open"><img class="ct288-poster" style="width:132px!important;height:198px"></button></article><div class="ct319-actions" style="display:grid;width:280px"><button style="width:100%">+ Watchlist</button><button style="position:absolute;width:100%">✓ Visto</button></div></div>');
  await new Promise(r=>setTimeout(r,650));check(host.lastElementChild.querySelector('.ct319-actions'),'after-repaint');
 
  const owned=window.__ctR336?.paintForYou;ok(owned?.__ctR341Owned===true,'r341 did not own r336 paint');
