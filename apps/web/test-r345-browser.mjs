@@ -49,12 +49,13 @@ const probe=`<script>setTimeout(async()=>{try{
  const sig2=slots.map(s=>{const r=s.querySelector(':scope > .ct336-actions').getBoundingClientRect();return [r.left,r.top,r.width,r.height].map(v=>Math.round(v*10)/10).join(':')}).join('|');
  ok(sig===sig2,'Pra Você actions moved');
 
- const back=document.querySelector('[data-ct169-back]'),search=document.querySelector('.search');
- ok(back&&search,'back/search missing');
+ const backs=[...document.querySelectorAll('[data-ct169-back]')];ok(backs.length===1,'expected exactly one back, got '+backs.length);
+ const back=backs[0],search=back?.parentElement?.querySelector('.search');
+ ok(back&&search,'back/search missing from same header');
  ok(!/voltar/i.test(back.textContent),'back contains text');
  ok(back.textContent.trim()==='‹','back is not icon-only');
  const br=back.getBoundingClientRect(),sr=search.getBoundingClientRect();
- ok(br.right<=sr.left+1,'back not left of search');
+ ok(br.right<=sr.left+1,'back not left of search br='+JSON.stringify({left:br.left,right:br.right,top:br.top,width:br.width})+' sr='+JSON.stringify({left:sr.left,right:sr.right,top:sr.top,width:sr.width})+' parent='+getComputedStyle(back.parentElement).display);
  ok(Math.abs(br.top-sr.top)<=4,'back/search not same row');
  ok(![...document.querySelectorAll('button,a')].some(x=>/voltar/i.test(x.textContent)),'textual Voltar remains');
  document.documentElement.dataset.ct345done='1';
