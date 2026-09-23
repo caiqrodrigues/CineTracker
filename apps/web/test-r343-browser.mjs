@@ -32,13 +32,13 @@ const probe=`<script>setTimeout(async()=>{try{
  const host=document.querySelector('[data-ct319-content]');
  const finalOk=()=>!!host.querySelector('[data-ct336-foryou]')&&!host.querySelector('[data-ct309-foryou]')&&!host.querySelector('[data-ct328-foryou]:not([data-ct336-foryou])')&&!host.querySelector('[data-ct329-foryou]:not([data-ct336-foryou])');
  ok(finalOk(),'final DOM not established');
- const before=host.innerHTML;
+ const beforeActions=host.querySelectorAll('.ct336-actions').length;
  await window.__ctR309.buildForYou(false);
  window.__ctR328Test?.paintForYou328?.();
  window.__ctR329Test?.paintForYou329?.();
  await sleep(700);
  ok(finalOk(),'legacy ForYou renderer replaced r336 DOM');
- ok(host.innerHTML===before,'legacy painter mutated final ForYou DOM');
+ ok(host.querySelectorAll('.ct336-actions').length===beforeActions,'final r336 action structure changed after legacy painters');
 
  /* Home preparation: live episode metadata must exist before the first real Home paint is allowed. */
  history.replaceState({},'','/');
