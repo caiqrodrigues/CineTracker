@@ -107,7 +107,8 @@ window.__ctR343={
  version:'1.0.134',
  prepareHomePayload:prepareHomePayload343,
  hydrateHomeDom:hydrateHomeDom343,
- ownDiscover:ownDiscover343
+ ownDiscover:ownDiscover343,
+ get prepared(){return lastPrepared343}
 };
 window.__ctR343Test={prepareHomePayload343,hydrateHomeDom343,ownDiscover343,setTestBridge(v){testBridge343=v&&typeof v==='object'?v:null}};
 })();
