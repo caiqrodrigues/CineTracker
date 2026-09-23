@@ -107,10 +107,10 @@ const style=document.createElement('style');style.id='ct-web-r345';style.textCon
 [data-ct318-filter],[data-ct318-types],[data-ct336-filters]{display:none!important}
 
 /* Back navigation lives on the same line, immediately left of global search. */
-.ct345-search-row{box-sizing:border-box!important;display:flex!important;flex-flow:row nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;position:relative!important;width:100%!important;min-width:0!important}
-.ct345-search-row>.search,.ct345-search-row .search{box-sizing:border-box!important;display:flex!important;align-items:center!important;position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;float:none!important;order:2!important;flex:none!important;min-width:0!important;max-width:100%!important;width:100%!important;margin:0!important}
+.ct345-search-row{box-sizing:border-box!important;display:grid!important;grid-template-columns:34px minmax(0,1fr)!important;grid-template-rows:auto!important;align-items:center!important;column-gap:8px!important;row-gap:0!important;position:relative!important;width:100%!important;min-width:0!important}
+.ct345-search-row>.search,.ct345-search-row .search{box-sizing:border-box!important;display:flex!important;align-items:center!important;position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;float:none!important;grid-column:2!important;grid-row:1!important;min-width:0!important;max-width:100%!important;width:100%!important;margin:0!important}
 .ct345-back-icon{
- box-sizing:border-box!important;position:relative!important;inset:auto!important;transform:none!important;float:none!important;order:1!important;z-index:2!important;display:grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;height:34px!important;
+ box-sizing:border-box!important;position:relative!important;inset:auto!important;transform:none!important;float:none!important;grid-column:1!important;grid-row:1!important;z-index:2!important;display:grid!important;place-items:center!important;width:34px!important;height:34px!important;
  min-width:34px!important;max-width:34px!important;margin:0!important;padding:0!important;border:1px solid #315b72!important;border-radius:10px!important;
  background:#081822!important;color:inherit!important;font-size:22px!important;line-height:1!important;cursor:pointer!important
 }
