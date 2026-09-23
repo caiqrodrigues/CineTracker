@@ -19,6 +19,11 @@ const range=(s,start,end,next,label)=>{
  if(a<0||b<0||b<=a)throw new Error('r343 range '+label+' missing');
  return s.slice(0,a)+next+'\n'+s.slice(b);
 };
+const patchSegment=(s,start,end,fn,label)=>{
+ const a=s.indexOf(start),b=s.indexOf(end,a+start.length);
+ if(a<0||b<0||b<=a)throw new Error('r343 segment '+label+' missing');
+ return s.slice(0,a)+fn(s.slice(a,b))+s.slice(b);
+};
 
 for(const x of[
  "window.__ctWebBuild='1.0.133';window.__ctOfficialVersion='1.0.133';",
@@ -40,9 +45,14 @@ for(const x of[
 ])must(runtime,x);
 
 /* Discover: no older renderer may touch Pra Você after the final r336 owner exists. */
-js=once(js,
- "function paintForYou(){\n const h=host();",
- "function paintForYou(){\n if(window.__ctR336?.paintForYou)return false;\n const h=host();",
+js=patchSegment(js,
+ "window.__ctR309='video-truth-discover-first-paint-f1-stable-profile';",
+ "window.__ctR310='delayed-authorities-retired+canonical-watchlist+profile-sports-truth+actor-bottom-scroll';",
+ seg=>{
+  const from="function paintForYou(){\n const h=host();",to="function paintForYou(){\n if(window.__ctR336?.paintForYou)return false;\n const h=host();";
+  const count=seg.split(from).length-1;if(count!==1)throw new Error('r343 r309 painter count '+count);
+  return seg.replace(from,to);
+ },
  'block late r309 paint'
 );
 js=once(js,
