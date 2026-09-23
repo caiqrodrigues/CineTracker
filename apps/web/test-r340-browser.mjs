@@ -21,6 +21,7 @@ const discoverFixture=JSON.stringify(`<div data-ct319-discover><div data-ct319-c
  <div class="ct319-item" data-ct319-item="movie:1" style="width:220px"><div class="ct288-card" style="width:142px;height:210px"></div><div class="ct319-actions" style="display:grid;grid-template-columns:1fr;width:230px"><button style="width:100%">Watchlist</button><button style="width:100%">Visto</button></div></div>
  <div class="ct336-slot"><div class="ct336-cardwrap"><div class="ct288-card" style="width:154px;height:230px"></div></div><div class="ct336-actions" style="display:grid;grid-template-columns:1fr;width:240px"><button>Watchlist</button><button style="position:absolute;left:0;width:100%">Visto</button><button>Trocar</button></div></div>
  <div class="ct329-slot"><div class="ct329-cardwrap"><div class="ct288-card" style="width:160px;height:230px"></div></div><div class="ct329-actions" style="width:260px"><button>Watchlist</button><button>Visto</button><button>Trocar</button></div></div>
+ <div class="ct315-item" data-ct315-item="movie:3" style="width:210px"><div class="ct288-card" style="width:142px;height:210px"></div><div class="ct315-actions" style="display:grid;grid-template-columns:1fr;width:250px"><button>Watchlist</button><button>Visto</button></div></div>
 </div></div>`);
 const probe=`<script>setTimeout(async()=>{document.documentElement.dataset.ct340step='start';try{
  const ok=(v,m)=>{if(!v)throw new Error(m)},X=window.__ctR340;
@@ -56,6 +57,7 @@ const probe=`<script>setTimeout(async()=>{document.documentElement.dataset.ct340
  check(document.querySelector('.ct319-actions'),'public-mobile');
  check(document.querySelector('.ct336-actions'),'foryou-current');
  check(document.querySelector('.ct329-actions'),'foryou-legacy');
+ check(document.querySelector('.ct315-actions'),'calendar-legacy');
 
  /* Child-list repaint is automatically normalized by the scoped observer. */
  const content=document.querySelector('[data-ct319-content]');content.insertAdjacentHTML('beforeend','<div class="ct319-item" data-ct319-item="movie:2"><div class="ct288-card" style="width:136px;height:200px"></div><div class="ct319-actions" style="display:grid;grid-template-columns:1fr;width:260px"><button>Watchlist</button><button>Visto</button></div></div>');
