@@ -80,8 +80,8 @@ window.addEventListener('pageshow',e=>{if(e.persisted){sportsOpenTask340=null;st
 
 /* Discover: one geometry contract for ForYou, Top 10 and all public tabs.
    Combined action width must equal the rendered poster/card width, with no wrap, overflow or unused tail space. */
-const ACTION_ROWS_340='.ct336-actions,.ct329-actions,.ct328-actions,.ct309-actions,.ct319-actions';
-const OWNER_340='.ct336-slot,[data-ct319-item],.ct329-slot,.ct328-slot,.ct309-slot,.ct329-daily,.ct328-daily,.ct309-daily';
+const ACTION_ROWS_340='.ct336-actions,.ct329-actions,.ct328-actions,.ct309-actions,.ct319-actions,.ct315-actions';
+const OWNER_340='.ct336-slot,[data-ct319-item],[data-ct315-item],.ct329-slot,.ct328-slot,.ct309-slot,.ct329-daily,.ct328-daily,.ct309-daily';
 function ownerForRow340(row){return row?.closest?.(OWNER_340)||row?.parentElement||null}
 function cardForRow340(row){
  const owner=ownerForRow340(row);if(!owner)return null;
@@ -173,7 +173,8 @@ const style=document.createElement('style');style.id='ct-web-r340';style.textCon
 [data-ct319-discover] .ct336-actions,
 [data-ct319-discover] .ct329-actions,
 [data-ct319-discover] .ct328-actions,
-[data-ct319-discover] .ct309-actions{
+[data-ct319-discover] .ct309-actions,
+[data-ct319-discover] .ct315-actions{
  box-sizing:border-box!important;display:flex!important;flex-flow:row nowrap!important;align-items:stretch!important;
  justify-content:stretch!important;overflow:hidden!important;padding:0!important;transform:none!important;contain:layout paint!important
 }
@@ -181,7 +182,8 @@ const style=document.createElement('style');style.id='ct-web-r340';style.textCon
 [data-ct319-discover] .ct336-actions>button,
 [data-ct319-discover] .ct329-actions>button,
 [data-ct319-discover] .ct328-actions>button,
-[data-ct319-discover] .ct309-actions>button{
+[data-ct319-discover] .ct309-actions>button,
+[data-ct319-discover] .ct315-actions>button{
  box-sizing:border-box!important;position:static!important;inset:auto!important;transform:none!important;float:none!important;
  flex:1 1 0px!important;flex-basis:0!important;width:0!important;min-width:0!important;max-width:none!important;
  margin:0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important
