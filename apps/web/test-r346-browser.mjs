@@ -34,7 +34,8 @@ const probe=`<script>setTimeout(async()=>{try{
  window.__ctR346.settle();await sleep(80);
  const hc=document.querySelector('.content'),hp=document.querySelector('[data-home]'),hs=document.querySelector('.search-global');
  ok(getComputedStyle(hc).display==='block','Home content still grid');
- ok(hp.getBoundingClientRect().width>=hc.getBoundingClientRect().width-2,'Home squeezed '+hp.getBoundingClientRect().width+'/'+hc.getBoundingClientRect().width);
+ const hcs=getComputedStyle(hc),inner=hc.clientWidth-parseFloat(hcs.paddingLeft||'0')-parseFloat(hcs.paddingRight||'0');
+ ok(hp.getBoundingClientRect().width>=inner-2,'Home squeezed '+hp.getBoundingClientRect().width+'/'+inner);
  ok(hs.getBoundingClientRect().width>700,'Home search collapsed');
  ok(!document.querySelector('[data-ct346-back]'),'root Home should not show back');
 
