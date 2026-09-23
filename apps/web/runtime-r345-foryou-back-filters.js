@@ -81,7 +81,7 @@ function syncHeader345(){
  qa('[data-ct169-back]').forEach(x=>x.remove());
  parent.classList.add('ct345-search-row');
  parent.style.setProperty('display','grid','important');parent.style.setProperty('grid-template-columns','34px minmax(0,1fr)','important');parent.style.setProperty('align-items','center','important');parent.style.setProperty('column-gap','8px','important');parent.style.setProperty('width','100%','important');
- search.style.setProperty('grid-column','2','important');search.style.setProperty('grid-row','1','important');search.style.setProperty('width','100%','important');search.style.setProperty('min-width','0','important');search.style.setProperty('margin','0','important');
+ search.style.setProperty('display','flex','important');search.style.setProperty('align-items','center','important');search.style.setProperty('grid-column','2','important');search.style.setProperty('grid-row','1','important');search.style.setProperty('width','100%','important');search.style.setProperty('min-width','0','important');search.style.setProperty('margin','0','important');
  const r=routeNow(),depth=Number(sessionStorage.getItem('ct:r169:nav-depth')||0)||0;
  if(r==='auth'||(r==='home'&&depth<=0))return true;
  const b=document.createElement('button');
@@ -108,7 +108,7 @@ const style=document.createElement('style');style.id='ct-web-r345';style.textCon
 
 /* Back navigation lives on the same line, immediately left of global search. */
 .ct345-search-row{box-sizing:border-box!important;display:flex!important;flex-flow:row nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;position:relative!important;width:100%!important;min-width:0!important}
-.ct345-search-row>.search,.ct345-search-row .search{box-sizing:border-box!important;position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;float:none!important;order:2!important;flex:none!important;min-width:0!important;max-width:100%!important;width:100%!important;margin:0!important}
+.ct345-search-row>.search,.ct345-search-row .search{box-sizing:border-box!important;display:flex!important;align-items:center!important;position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;float:none!important;order:2!important;flex:none!important;min-width:0!important;max-width:100%!important;width:100%!important;margin:0!important}
 .ct345-back-icon{
  box-sizing:border-box!important;position:relative!important;inset:auto!important;transform:none!important;float:none!important;order:1!important;z-index:2!important;display:grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;height:34px!important;
  min-width:34px!important;max-width:34px!important;margin:0!important;padding:0!important;border:1px solid #315b72!important;border-radius:10px!important;
