@@ -1,4 +1,4 @@
-name: Verify Web 1.0.132 r341 Discover Poster Lock
+name: Verify Web 1.0.133 r342 Discover Stable Buttons
 
 on:
   push:
@@ -9,33 +9,33 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_132_r341:
+  web_1_0_133_r342:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Version identity r341
+      - name: Version identity r342
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.132"' package.json
-          grep -Fq '"version": "1.0.132"' apps/web/package.json
-          grep -Fq 'build-r341-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r341-discover-poster-lock.js
-          test -f apps/web/build-r341.mjs
-          test -f apps/web/build-r341-official.mjs
-          test -f apps/web/test-r341.mjs
-          test -f apps/web/test-r341-browser.mjs
+          grep -Fq '"version": "1.0.133"' package.json
+          grep -Fq '"version": "1.0.133"' apps/web/package.json
+          grep -Fq 'build-r342-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r342-discover-stable-actions.js
+          test -f apps/web/build-r342.mjs
+          test -f apps/web/build-r342-official.mjs
+          test -f apps/web/test-r342.mjs
+          test -f apps/web/test-r342-browser.mjs
           test -f supabase/migrations/20260923030000_r337_episode_catalog_search.sql
-      - name: Syntax r341
+      - name: Syntax r342
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r341-discover-poster-lock.js
-          node --check apps/web/build-r341.mjs
-          node --check apps/web/build-r341-official.mjs
-          node --check apps/web/test-r341.mjs
-          node --check apps/web/test-r341-browser.mjs
+          node --check apps/web/runtime-r342-discover-stable-actions.js
+          node --check apps/web/build-r342.mjs
+          node --check apps/web/build-r342-official.mjs
+          node --check apps/web/test-r342.mjs
+          node --check apps/web/test-r342-browser.mjs
       - name: Current regression lineage
         working-directory: apps/web
         run: |
@@ -55,35 +55,37 @@ jobs:
           npm run test:r339:browser
           npm run test:r340
           npm run test:r340:browser
-      - name: Focused r341 static + desktop/mobile browser gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
           npm run test:r341
-          npm run test:r341:browser
-      - name: Final bundle identity r341
+      - name: Focused r342 static + no-jitter desktop/mobile browser gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r341-official.mjs
-          node --check dist/app-v341.js
-          CT_R341_SKIP_BUILD=1 node test-r341.mjs
-          grep -Fq 'app-v341.js' dist/index.html
-          grep -Fq 'app-v341.css' dist/index.html
+          npm run test:r342
+          npm run test:r342:browser
+      - name: Final bundle identity r342
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node build-r342-official.mjs
+          node --check dist/app-v342.js
+          CT_R342_SKIP_BUILD=1 node test-r342.mjs
+          grep -Fq 'app-v342.js' dist/index.html
+          grep -Fq 'app-v342.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.132'
-            && r.revision==='r341-official-1.0.132'
+          const ok=r.version==='1.0.133'
+            && r.revision==='r342-official-1.0.133'
             && r.search_global==='movies+series+actors+episodes'
             && r.search_episode_local==='cinetracker_episode_search_v337'
             && r.home_navigation==='r337-desired-tab-authority+multi-settle+user-scroll-cancel'
             && r.discover_foryou_swap==='same-bucket+same-kind-only'
             && r.discover_foryou_actions==='optimistic-immediate-replacement'
             && r.sports_startup==='every-open-warm+force-provider-sync+auth-retry+refresh-payload'
-            && r.discover_all_tabs_actions==='rendered-poster-width+explicit-equal-pixel-buttons+late-settle+resize-observer'
-            && r.discover_action_authority==='r341-poster-rect-only'
-            && r.discover_action_conflicts==='r338+r339-method-layout-wrappers-retired'
-            && r.discover_action_validation==='desktop-1680x900+mobile-412x915'
+            && r.discover_all_tabs_actions==='single-r342-owner+poster-width+explicit-pixels+no-transitions'
+            && r.discover_action_authority==='r342-single-owner'
+            && r.discover_action_conflicts==='r338+r339+r340+r341-geometry-writers-retired'
+            && r.discover_action_timing==='one-double-raf-after-real-dom-paint+mutation-only'
+            && r.discover_action_stability==='no-resize-observer+no-delayed-settle-loop+no-width-transition'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -101,31 +103,31 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_132_r341, android_current_source]
+    needs: [web_1_0_133_r342, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.132 r341
+      - name: Official production serves and boots 1.0.133 r342
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.132"' <<<"$BODY" \
-              && grep -Fq '"revision": "r341-official-1.0.132"' <<<"$BODY" \
+            if grep -Fq '"version": "1.0.133"' <<<"$BODY" \
+              && grep -Fq '"revision": "r342-official-1.0.133"' <<<"$BODY" \
               && grep -Fq '"search_episode_local": "cinetracker_episode_search_v337"' <<<"$BODY" \
               && grep -Fq '"sports_startup": "every-open-warm+force-provider-sync+auth-retry+refresh-payload"' <<<"$BODY" \
-              && grep -Fq '"discover_action_authority": "r341-poster-rect-only"' <<<"$BODY" \
-              && grep -Fq '"discover_action_validation": "desktop-1680x900+mobile-412x915"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v341.js?ct=$(date +%s%N)" || true)"
+              && grep -Fq '"discover_action_authority": "r342-single-owner"' <<<"$BODY" \
+              && grep -Fq '"discover_action_stability": "no-resize-observer+no-delayed-settle-loop+no-width-transition"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v342.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR341Marker='discover-poster-lock+explicit-button-pixels+legacy-layout-writers-retired'" <<<"$JS" \
-                && grep -Fq 'geometry341' <<<"$JS" \
+              if grep -Fq "window.__ctR342Marker='discover-buttons-single-owner+no-jitter+poster-width-freeze'" <<<"$JS" \
+                && grep -Fq 'lockRow342' <<<"$JS" \
                 && grep -Fq 'cinetracker_episode_search_v337' <<<"$JS" \
-                && grep -Fq 'app-v341.js' <<<"$HTML"; then
+                && grep -Fq 'app-v342.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.132' <<<"$DOM" \
-                  && grep -Fq 'r341-official-1.0.132' <<<"$DOM" \
+                  && grep -Fq 'v1.0.133' <<<"$DOM" \
+                  && grep -Fq 'r342-official-1.0.133' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
