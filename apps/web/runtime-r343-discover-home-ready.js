@@ -37,7 +37,8 @@ async function prepareHomePayload343(payload,navSeqExpected){
  try{ct285CommittedRows=typeof ct285CloneRow==='function'?list.map(ct285CloneRow):list.map(x=>({...x}))}catch{}
  try{ct275SourcePayload=payload}catch{}
  try{ct275CanonicalSeries=typeof ct285CloneRow==='function'?list.map(ct285CloneRow):list.map(x=>({...x}))}catch{}
- lastPrepared343=list.map(x=>({...x}));window.__ctR343HomePreparedSnapshot=lastPrepared343;\n payload.__ct343Prepared=true;
+ lastPrepared343=list.map(x=>({...x}));window.__ctR343HomePreparedSnapshot=lastPrepared343;
+ payload.__ct343Prepared=true;
  payload.__ct343PreparedAt=Date.now();
  return true;
 }
