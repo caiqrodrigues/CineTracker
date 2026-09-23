@@ -2,6 +2,32 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.127 — 2026-09-22 — Web r336
+
+### Busca
+- Amplia a busca global para filmes, séries, atores/pessoas e nomes de episódios.
+- Adiciona `cinetracker_episode_search_v336` para títulos de episódios presentes no histórico/cache do usuário.
+- Adiciona `cinetracker_episode_search_targets_v336` para selecionar séries acompanhadas que podem precisar de consulta episódica ao TMDB.
+- Faz busca ao vivo na temporada corrente para episódios ainda não persistidos localmente e aceita pequenas diferenças ortográficas, como `Unraveling` / `Unravelling`.
+
+### Home
+- Preserva o histórico de Séries e Filmes no fluxo normal acima da seção de entrada, sem botão.
+- Ao clicar em Séries ou Filmes, um único listener prioritário troca a aba e alinha diretamente em `Assistir a seguir` / `Assistir a seguir / Watchlist`.
+- Remove a interferência de listeners legados concorrentes durante a troca de abas.
+
+### Descobrir / Pra você
+- Restaura `Todos / Filmes / Séries / Animes` como filtro interno do próprio `Pra você`.
+- `Da sua Watchlist`: somente `Visto + Trocar`.
+- `100% novos` e `Indicação do Dia`: `Watchlist + Visto + Trocar`.
+- Todas as ações ficam em uma única linha compacta no tamanho do card.
+- Qualquer ação troca o card imediatamente; Watchlist/Visto persistem em seguida.
+- Mantém `cinetracker_discover_filter_v333` como auditoria final de vistos, progresso, Watchlist e Não interessado.
+
+### Release
+- Web: `1.0.127 / r336-official-1.0.127`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+- F1 Hub, Esportes e contagens do Perfil não são alterados.
+
 ## 1.0.126 — 2026-09-22 — Web r335
 
 ### Home

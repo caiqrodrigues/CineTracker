@@ -1,4 +1,4 @@
-name: Verify Web 1.0.126 r335 Home Discover Final
+name: Verify Web 1.0.127 r336 Search Home ForYou
 
 on:
   push:
@@ -9,32 +9,33 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_126_r335:
+  web_1_0_127_r336:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Version identity r335
+      - name: Version identity r336
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.126"' package.json
-          grep -Fq '"version": "1.0.126"' apps/web/package.json
-          grep -Fq 'build-r335-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r335-home-discover-final.js
-          test -f apps/web/build-r335.mjs
-          test -f apps/web/build-r335-official.mjs
-          test -f apps/web/test-r335.mjs
-          test -f apps/web/test-r335-browser.mjs
-      - name: Syntax r335
+          grep -Fq '"version": "1.0.127"' package.json
+          grep -Fq '"version": "1.0.127"' apps/web/package.json
+          grep -Fq 'build-r336-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r336-search-home-foryou.js
+          test -f apps/web/build-r336.mjs
+          test -f apps/web/build-r336-official.mjs
+          test -f apps/web/test-r336.mjs
+          test -f apps/web/test-r336-browser.mjs
+          test -f supabase/migrations/20260922233000_r336_episode_search.sql
+      - name: Syntax r336
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r335-home-discover-final.js
-          node --check apps/web/build-r335.mjs
-          node --check apps/web/build-r335-official.mjs
-          node --check apps/web/test-r335.mjs
-          node --check apps/web/test-r335-browser.mjs
+          node --check apps/web/runtime-r336-search-home-foryou.js
+          node --check apps/web/build-r336.mjs
+          node --check apps/web/build-r336-official.mjs
+          node --check apps/web/test-r336.mjs
+          node --check apps/web/test-r336-browser.mjs
       - name: Current static regression lineage
         working-directory: apps/web
         run: |
@@ -44,32 +45,33 @@ jobs:
           npm run test:r332
           npm run test:r333
           npm run test:r334
-      - name: Focused r335 static and browser gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
           npm run test:r335
-          npm run test:r335:browser
-      - name: Final bundle identity r335
+      - name: Focused r336 static and browser gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r335-official.mjs
-          node --check dist/app-v335.js
-          CT_R335_SKIP_BUILD=1 node test-r335.mjs
-          grep -Fq 'app-v335.js' dist/index.html
-          grep -Fq 'app-v335.css' dist/index.html
+          npm run test:r336
+          npm run test:r336:browser
+      - name: Final bundle identity r336
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node build-r336-official.mjs
+          node --check dist/app-v336.js
+          CT_R336_SKIP_BUILD=1 node test-r336.mjs
+          grep -Fq 'app-v336.js' dist/index.html
+          grep -Fq 'app-v336.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.126'
-            && r.revision==='r335-official-1.0.126'
-            && r.home_payload==='cinetracker_home_payload_v334'
-            && r.home_navigation==='r335-single-anchor+tab-lock+no-settle-loop'
+          const ok=r.version==='1.0.127'
+            && r.revision==='r336-official-1.0.127'
+            && r.search_global==='movies+series+actors+episodes'
+            && r.search_episode_local==='cinetracker_episode_search_v336'
+            && r.home_navigation==='r336-first-capture-single-owner+tab-click-always-next-section'
             && r.discover_filter_authority==='cinetracker_discover_filter_v333'
-            && r.discover_controls==='top-filter-strip-removed-pending-new-placement'
-            && r.discover_foryou_owner==='r329-after-v333-final-audit'
-            && r.discover_foryou_actions==='watchlist+seen+swap-three-compact-one-row'
-            && r.discover_top10==='progressive-eight-pages-until-ten+v333-audit'
+            && r.discover_foryou_filters==='inside-foryou-all+movie+series+anime'
+            && r.discover_foryou_watch_actions==='seen+swap-no-watchlist'
+            && r.discover_foryou_action_behavior==='optimistic-immediate-replacement'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -87,29 +89,29 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_126_r335, android_current_source]
+    needs: [web_1_0_127_r336, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.126 r335
+      - name: Official production serves and boots 1.0.127 r336
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.126"' <<<"$BODY" \
-              && grep -Fq '"revision": "r335-official-1.0.126"' <<<"$BODY" \
-              && grep -Fq '"home_navigation": "r335-single-anchor+tab-lock+no-settle-loop"' <<<"$BODY" \
-              && grep -Fq '"discover_controls": "top-filter-strip-removed-pending-new-placement"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v335.js?ct=$(date +%s%N)" || true)"
+            if grep -Fq '"version": "1.0.127"' <<<"$BODY" \
+              && grep -Fq '"revision": "r336-official-1.0.127"' <<<"$BODY" \
+              && grep -Fq '"search_global": "movies+series+actors+episodes"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_watch_actions": "seen+swap-no-watchlist"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v336.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR335Marker='home-single-anchor-tab-lock+discover-no-top-filters+foryou-final-r329'" <<<"$JS" \
-                && grep -Fq 'cinetracker_discover_filter_v333' <<<"$JS" \
-                && grep -Fq 'data-ct329-swap' <<<"$JS" \
-                && grep -Fq 'app-v335.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR336Marker='episode-search+home-anchor-on-tab+foryou-actions-swap-immediate'" <<<"$JS" \
+                && grep -Fq 'cinetracker_episode_search_v336' <<<"$JS" \
+                && grep -Fq 'Buscar filmes, séries, episódios e atores' <<<"$JS" \
+                && grep -Fq 'app-v336.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.126' <<<"$DOM" \
-                  && grep -Fq 'r335-official-1.0.126' <<<"$DOM" \
+                  && grep -Fq 'v1.0.127' <<<"$DOM" \
+                  && grep -Fq 'r336-official-1.0.127' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi

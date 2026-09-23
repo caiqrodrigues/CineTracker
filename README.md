@@ -6,12 +6,29 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.126** | `r335-official-1.0.126` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.127** | `r336-official-1.0.127` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.127 / r336
+
+A r336 consolida os ajustes mostrados no vídeo de 22/09 e adiciona busca por nome de episódio.
+
+- **Busca global:** a mesma barra passa a combinar filmes, séries, pessoas e episódios. Episódios conhecidos localmente são pesquisados por `cinetracker_episode_search_v336`; para títulos atuais ainda não gravados no histórico, a Web consulta a temporada corrente das séries recentemente acompanhadas e aceita correspondência exata, parcial e pequena variação ortográfica. O resultado do episódio abre a série correspondente.
+- **Home / Séries e Filmes:** o histórico continua carregado no fluxo normal acima de `Assistir a seguir` / `Assistir a seguir / Watchlist`, sem botão e sem scroll interno. Clicar explicitamente em Séries ou Filmes passa por um único listener prioritário e sempre posiciona a seção atual no ponto de entrada, independentemente da posição anterior da página.
+- **Pra você / filtros:** `Todos / Filmes / Séries / Animes` volta como controle interno do próprio `Pra você`, sem recriar a faixa global antiga do Descobrir.
+- **Pra você / Da sua Watchlist:** remove o botão Watchlist. Cada card fica com `Visto + Trocar`.
+- **Pra você / 100% novos e Indicação do Dia:** cada card fica com `Watchlist + Visto + Trocar`.
+- **Pra você / ações:** os botões ficam na mesma linha, sem quebra. `Watchlist`, `Visto` e `Trocar` substituem o card imediatamente; a gravação no backend acontece em seguida.
+- **Estabilidade:** a r336 assume primeiro o clique das abas da Home e do Descobrir, impedindo que listeners legados concorrentes executem a mesma troca e congelem/revertam a tela.
+- A auditoria de exclusão do Descobrir continua sendo `cinetracker_discover_filter_v333`.
+- O refresh de episódios da r325 e o estado lógico consolidado de séries são preservados.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r336-official.mjs`; runtime: `apps/web/runtime-r336-search-home-foryou.js`.
 
 ## Web 1.0.126 / r335
 
