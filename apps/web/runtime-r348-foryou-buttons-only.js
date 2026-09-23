@@ -59,17 +59,28 @@ function styleRow(row,poster,count){
 function fixSlot(slot,m){
  const item=modelItem(slot,m);if(!item)return false;
  const name=String(slot.dataset.ct336Slot||''),bucket=name==='daily'?'daily':name.split(':')[0],swap=name==='daily'?'daily':name;
- const key=keyOf(item),canSwap=poolLength(slot,m)>1;
+ const key=keyOf(item),canSwap=poolLength(slot,m)>1,expected=bucket==='watch'?2:3;
  let row=q(':scope > .ct336-actions',slot);
  if(!row){row=document.createElement('div');slot.appendChild(row)}
- qa('[data-ct336-swap-only],.ct336-action',slot).forEach(el=>{if(el.parentElement!==row)el.remove()});
+ const stray=qa('[data-ct336-swap-only],.ct336-action',slot).filter(el=>el.parentElement!==row);
+ stray.forEach(el=>el.remove());
  row.className='ct336-actions '+(bucket==='watch'?'ct336-actions-two':'ct336-actions-three');
  row.dataset.ct336Bucket=bucket;
- row.replaceChildren();
- if(bucket!=='watch')row.appendChild(buildButton('+ Watchlist',{ct336Action:'watchlist',ct336Media:key,ct336Swap:swap}));
- row.appendChild(buildButton('✓ Visto',{ct336Action:'seen',ct336Media:key,ct336Swap:swap}));
- const sw=buildButton('↻ Trocar',{ct336SwapOnly:swap});sw.disabled=!canSwap;row.appendChild(sw);
- const expected=bucket==='watch'?2:3;
+ const direct=qa(':scope > button.ct336-action',row),labels=bucket==='watch'?['✓ Visto','↻ Trocar']:['+ Watchlist','✓ Visto','↻ Trocar'];
+ const valid=direct.length===expected&&direct.every((b,i)=>{
+  if(String(b.textContent||'').trim()!==labels[i])return false;
+  if(labels[i]==='↻ Trocar')return String(b.dataset.ct336SwapOnly||'')===swap;
+  const action=labels[i]==='+ Watchlist'?'watchlist':'seen';
+  return String(b.dataset.ct336Action||'')===action&&String(b.dataset.ct336Media||'')===key&&String(b.dataset.ct336Swap||'')===swap;
+ });
+ if(!valid){
+  const buttons=[];
+  if(bucket!=='watch')buttons.push(buildButton('+ Watchlist',{ct336Action:'watchlist',ct336Media:key,ct336Swap:swap}));
+  buttons.push(buildButton('✓ Visto',{ct336Action:'seen',ct336Media:key,ct336Swap:swap}));
+  buttons.push(buildButton('↻ Trocar',{ct336SwapOnly:swap}));
+  row.replaceChildren(...buttons);
+ }
+ const sw=q(':scope > [data-ct336-swap-only]',row);if(sw)sw.disabled=!canSwap;
  const poster=q('.ct288-poster,.ct288-empty-poster',slot);
  styleRow(row,poster,expected);
  return true;
