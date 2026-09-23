@@ -13,7 +13,7 @@ ok(html.includes('app-v340.js')&&html.includes('app-v340.css'),'assets');
 ok(js.includes("window.__ctR340Marker='sports-every-open-auth-retry+discover-all-tabs-exact-card-width'"),'runtime marker');
 ok(js.includes("body:JSON.stringify({action:'sync',date_from:from,date_to:to,force:true})"),'sports force sync missing');
 ok(js.includes("setTimeout(()=>{},300);"),'old route-only sports kickoff still active');
-ok(runtime.includes("const ACTION_ROWS_340='.ct336-actions,.ct329-actions,.ct328-actions,.ct309-actions,.ct319-actions'"),'all Discover action owners missing');
+ok(runtime.includes("const ACTION_ROWS_340='.ct336-actions,.ct329-actions,.ct328-actions,.ct309-actions,.ct319-actions,.ct315-actions'"),'all Discover action owners missing');
 ok(runtime.includes("imp(row,'flex-flow','row nowrap')"),'nowrap row missing');
 ok(runtime.includes("imp(row,'width',px)")&&runtime.includes("imp(row,'min-width',px)")&&runtime.includes("imp(row,'max-width',px)"),'exact row width missing');
 ok(runtime.includes("imp(b,'flex','1 1 0px')")&&runtime.includes("imp(b,'width','0')"),'equal fill buttons missing');
