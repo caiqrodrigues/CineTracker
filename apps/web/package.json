@@ -1,13 +1,13 @@
 {
   "name": "cinetracker-web",
   "private": true,
-  "version": "1.0.129",
+  "version": "1.0.130",
   "type": "module",
   "scripts": {
-    "build": "node build-r338-official.mjs",
-    "build:legacy": "node build-r338.mjs",
-    "test": "node test-r338.mjs",
-    "test:browser": "node test-r338-browser.mjs",
+    "build": "node build-r339-official.mjs",
+    "build:legacy": "node build-r339.mjs",
+    "test": "node test-r339.mjs",
+    "test:browser": "node test-r339-browser.mjs",
     "test:r298": "node test-r298.mjs",
     "test:r298:browser": "node test-r298-browser.mjs",
     "test:r298:foryou": "node test-r298-foryou-browser.mjs",
@@ -32,7 +32,7 @@
     "release:r306": "node build-r306-official.mjs",
     "release:r307": "node build-r307-official.mjs",
     "release:r308": "node build-r308-official.mjs",
-    "verify": "npm run build && npm run test:r330 && npm run test:r331 && npm run test:r332 && npm run test:r333 && npm run test:r334 && npm run test:r335 && npm run test:r336 && npm run test:r336:browser && npm run test:r337 && npm run test:r337:browser && npm run test:r338 && npm run test:r338:browser",
+    "verify": "npm run build && npm run test:r330 && npm run test:r331 && npm run test:r332 && npm run test:r333 && npm run test:r334 && npm run test:r335 && npm run test:r336 && npm run test:r336:browser && npm run test:r337 && npm run test:r337:browser && npm run test:r338 && npm run test:r338:browser && npm run test:r339 && npm run test:r339:browser",
     "test:r309": "node test-r309.mjs",
     "test:r309:browser": "node test-r309-browser.mjs",
     "release:r309": "node build-r309-official.mjs",
@@ -122,7 +122,10 @@
     "release:r337": "node build-r337-official.mjs",
     "test:r338": "node test-r338.mjs",
     "test:r338:browser": "node test-r338-browser.mjs",
-    "release:r338": "node build-r338-official.mjs"
+    "release:r338": "node build-r338-official.mjs",
+    "test:r339": "node test-r339.mjs",
+    "test:r339:browser": "node test-r339-browser.mjs",
+    "release:r339": "node build-r339-official.mjs"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
