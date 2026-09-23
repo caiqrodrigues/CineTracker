@@ -25,7 +25,7 @@ for(const x of[
 for(const x of[
  "window.__ctR340Marker='sports-every-open-auth-retry+discover-all-tabs-exact-card-width'",
  "force:true",
- "const ACTION_ROWS_340='.ct336-actions,.ct329-actions,.ct328-actions,.ct309-actions,.ct319-actions'",
+ "const ACTION_ROWS_340='.ct336-actions,.ct329-actions,.ct328-actions,.ct309-actions,.ct319-actions,.ct315-actions'",
  "MutationObserver",
  "flex','1 1 0px'"
 ])must(runtime,x);
