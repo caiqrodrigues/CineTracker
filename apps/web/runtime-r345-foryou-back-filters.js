@@ -108,7 +108,7 @@ const style=document.createElement('style');style.id='ct-web-r345';style.textCon
 
 /* Back navigation lives on the same line, immediately left of global search. */
 .ct345-search-row{box-sizing:border-box!important;display:flex!important;flex-flow:row nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;position:relative!important;width:100%!important;min-width:0!important}
-.ct345-search-row>.search,.ct345-search-row .search{box-sizing:border-box!important;position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;float:none!important;order:2!important;flex:1 1 0!important;min-width:0!important;max-width:none!important;width:0!important;margin:0!important}
+.ct345-search-row>.search,.ct345-search-row .search{box-sizing:border-box!important;position:relative!important;inset:auto!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;transform:none!important;float:none!important;order:2!important;flex:none!important;min-width:0!important;max-width:100%!important;width:100%!important;margin:0!important}
 .ct345-back-icon{
  box-sizing:border-box!important;position:relative!important;inset:auto!important;transform:none!important;float:none!important;order:1!important;z-index:2!important;display:grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;height:34px!important;
  min-width:34px!important;max-width:34px!important;margin:0!important;padding:0!important;border:1px solid #315b72!important;border-radius:10px!important;
