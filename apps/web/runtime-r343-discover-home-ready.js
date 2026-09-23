@@ -12,27 +12,28 @@ const qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
 const rows=v=>Array.isArray(v)?v:[];
 const n=v=>{const x=Number(v);return Number.isFinite(x)?x:0};
 const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
-let homeRun343=0,lastPrepared343=[];
+let homeRun343=0,lastPrepared343=[],testBridge343=window.__ctR343TestBridge||null;
+function homeActive343(){try{return testBridge343?.route?String(testBridge343.route())==='home':homeActive343()}catch{return homeActive343()}}
 
 /* Build a fully reconciled Home snapshot before any real Home card is painted. */
 async function prepareHomePayload343(payload,navSeqExpected){
  const run=++homeRun343;
- if(!payload||routeNow()!=='home')return false;
+ if(!payload||!homeActive343())return false;
  let list=[];
  try{list=typeof ct275DedupSeries==='function'?ct275DedupSeries(payload?.series||[]):rows(payload?.series)}catch{list=rows(payload?.series)}
  try{if(typeof ct285CloneRow==='function')list=list.map(ct285CloneRow);else list=list.map(x=>({...x}))}catch{list=list.map(x=>({...x}))}
  try{
   if(typeof ct275FetchWatchState==='function'){
    const state=await ct275FetchWatchState(list);
-   if(run!==homeRun343||routeNow()!=='home'||(Number.isFinite(navSeqExpected)&&typeof navSeq!=='undefined'&&navSeqExpected!==navSeq))return false;
+   if(run!==homeRun343||!homeActive343()||(Number.isFinite(navSeqExpected)&&typeof navSeq!=='undefined'&&navSeqExpected!==navSeq))return false;
    if(typeof ct275ApplyWatchState==='function')ct275ApplyWatchState(list,state);
   }
   let candidates=[];
   try{candidates=typeof ct287Candidates==='function'?ct287Candidates(list):list.filter(x=>n(x?.watched_episodes)>0&&['continue','up_to_date','dust'].includes(String(x?.home_bucket||'')))}catch{candidates=list}
-  const reconcile=async row=>{if(run!==homeRun343||routeNow()!=='home')return row;try{return typeof ct275ReconcileOne==='function'?await ct275ReconcileOne(row):row}catch{return row}};
+  const reconcile=async row=>{if(run!==homeRun343||!homeActive343())return row;try{return typeof ct275ReconcileOne==='function'?await ct275ReconcileOne(row):row}catch{return row}};
   if(typeof ct275MapLimit==='function')await ct275MapLimit(candidates,8,reconcile);else await Promise.all(candidates.map(reconcile));
  }catch{}
- if(run!==homeRun343||routeNow()!=='home'||(Number.isFinite(navSeqExpected)&&typeof navSeq!=='undefined'&&navSeqExpected!==navSeq))return false;
+ if(run!==homeRun343||!homeActive343()||(Number.isFinite(navSeqExpected)&&typeof navSeq!=='undefined'&&navSeqExpected!==navSeq))return false;
  try{ct285HomePayload=payload}catch{}
  try{ct285CommittedRows=typeof ct285CloneRow==='function'?list.map(ct285CloneRow):list.map(x=>({...x}))}catch{}
  try{ct275SourcePayload=payload}catch{}
@@ -45,11 +46,11 @@ async function prepareHomePayload343(payload,navSeqExpected){
 
 /* Hydrate the actually painted episode/movie cards while the Home loader is still on screen. */
 async function hydrateHomeDom343(){
- if(routeNow()!=='home')return false;
+ if(!homeActive343())return false;
  try{
   if(typeof ct274HydrateHome==='function')await ct274HydrateHome();
  }catch{}
- if(routeNow()!=='home')return false;
+ if(!homeActive343())return false;
  const episodeCards=qa('[data-home] [data-ct274-episode-card]');
  let incomplete=episodeCards.filter(el=>{
   const t=String(q('.ct274-meta',el)?.textContent||'');
@@ -101,5 +102,5 @@ window.__ctR343={
  hydrateHomeDom:hydrateHomeDom343,
  ownDiscover:ownDiscover343
 };
-window.__ctR343Test={prepareHomePayload343,hydrateHomeDom343,ownDiscover343};
+window.__ctR343Test={prepareHomePayload343,hydrateHomeDom343,ownDiscover343,setTestBridge(v){testBridge343=v&&typeof v==='object'?v:null}};
 })();
