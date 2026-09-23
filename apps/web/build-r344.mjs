@@ -21,7 +21,6 @@ for(const x of[
  "const version='1.0.134',revision='r343-official-1.0.134';",
  "window.__ctR343Marker='discover-final-dom-owner+home-enriched-before-first-paint'",
  "window.__ctR228bV122='all-discover-cards-year-genres'",
- "setInterval(sync,1200);sync();window.__ctV122MetadataSync=sync;window.__ctV122MetadataRun=run;window.__ctV122MetadataDecorate=decorate;",
  "host.dataset.ct336Owned='foryou';applyForYouFilter336();return true;",
  "boot();"
 ])must(js,x);
@@ -32,12 +31,14 @@ for(const x of[
  "grid-template-columns:repeat(10,minmax(0,1fr))"
 ])must(runtime,x);
 
-/* Retire the legacy 1.2s metadata mutator that moved action buttons and injected up to 3 genres. */
-js=once(js,
- "try{new MutationObserver(sync).observe(q('#app')||document.documentElement,{subtree:true,childList:true})}catch{}setInterval(sync,1200);sync();window.__ctV122MetadataSync=sync;window.__ctV122MetadataRun=run;window.__ctV122MetadataDecorate=decorate;",
- "window.__ctV122MetadataSync=()=>{};window.__ctV122MetadataRun=()=>{};window.__ctV122MetadataDecorate=()=>{};",
- 'retire legacy metadata observer/interval'
-);
+/* Retire the entire r228b metadata/action mutator, independent of which historical source variant built the bundle. */
+{
+ const marker="window.__ctR228bV122='all-discover-cards-year-genres'";
+ const p=js.indexOf(marker),a=js.lastIndexOf("(()=>{",p),z=js.indexOf("})();",p);
+ if(p<0||a<0||z<0)throw new Error('r344 legacy r228b segment missing');
+ const stub="(()=>{'use strict';window.__ctR228bV122='retired-r344';window.__ctV122CardLayout='retired-r344';window.__ctV122MetadataSync=()=>{};window.__ctV122MetadataRun=()=>{};window.__ctV122MetadataDecorate=()=>{};})();";
+ js=js.slice(0,a)+stub+js.slice(z+5);
+}
 
 /* Every canonical r336 paint is decorated synchronously before the browser gets a chance to paint it. */
 js=once(js,
