@@ -39,8 +39,18 @@ const probe=`<script>setTimeout(async()=>{try{
   ok(row.querySelectorAll(':scope > button').length===expected,'wrong action count '+slot.dataset.ct336Slot);
  }
  const first=root.querySelector('.ct344-primary-genre');ok(first.textContent==='Ficção científica'||first.textContent==='Terror','unexpected primary genre '+first.textContent);
- const before=root.innerHTML;window.__ctV122MetadataRun?.();window.__ctV122MetadataSync?.();await sleep(1400);ok(root.innerHTML===before,'legacy metadata mutated Pra Você after 1.2s');
-
+ await sleep(120);
+ const semantic=()=>slots.map(slot=>({
+  genre:slot.querySelector('.ct344-primary-genre')?.textContent||'',
+  actions:[...slot.querySelectorAll(':scope > .ct336-actions > button')].map(b=>b.textContent.trim()).join('|'),
+  swapVisible:!!slot.querySelector('[data-ct336-swap-only]')&&getComputedStyle(slot.querySelector('[data-ct336-swap-only]')).display!=='none'&&getComputedStyle(slot.querySelector('[data-ct336-swap-only]')).visibility!=='hidden'
+ }));
+ const before=JSON.stringify(semantic());
+ ok(window.__ctR228bV122==='retired-r344','legacy r228b runtime not retired: '+window.__ctR228bV122);
+ window.__ctV122MetadataRun?.();window.__ctV122MetadataSync?.();await sleep(1400);
+ ok(!root.querySelector('.ct122-media-info,.ct122-card-meta,.ct122-media-actions'),'legacy ct122 metadata/actions reappeared');
+ ok(JSON.stringify(semantic())===before,'Pra Você semantic metadata/actions changed after 1.2s');
+ for(const slot of slots){const genre=slot.querySelector('.ct344-primary-genre'),row=slot.querySelector(':scope > .ct336-actions');const gr=genre.getBoundingClientRect(),rr=row.getBoundingClientRect();ok(rr.top>=gr.bottom-0.5,'delayed overlap returned '+genre.textContent)}
  const host=document.querySelector('[data-ct319-content]');
  host.innerHTML='<div data-ct321-top-content><section class="panel ct288-top-section"><div class="ct319-top-row">'+Array.from({length:10},(_,i)=>'<div class="ct319-item"><article class="ct288-card"><button class="ct288-open"><div class="ct288-poster" style="aspect-ratio:2/3"></div><span class="ct288-copy"><b>Item '+(i+1)+'</b><small>2026 · Filme</small></span></button></article><div class="ct319-actions"><button class="chip">Watchlist</button><button class="chip">Visto</button></div></div>').join('')+'</div></section></div>';
  window.__ctR344.fitTopTen();await sleep(60);
