@@ -13,7 +13,12 @@ const rows=v=>Array.isArray(v)?v:[];
 const n=v=>{const x=Number(v);return Number.isFinite(x)?x:0};
 const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
 let homeRun343=0,lastPrepared343=[],testBridge343=window.__ctR343TestBridge||null;
-function homeActive343(){try{return testBridge343?.route?String(testBridge343.route())==='home':homeActive343()}catch{return homeActive343()}}
+function homeActive343(){
+ try{
+  if(testBridge343?.route)return String(testBridge343.route())==='home';
+  return routeNow()==='home';
+ }catch{return routeNow()==='home'}
+}
 
 /* Build a fully reconciled Home snapshot before any real Home card is painted. */
 async function prepareHomePayload343(payload,navSeqExpected){
