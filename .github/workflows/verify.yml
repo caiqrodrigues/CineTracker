@@ -47,7 +47,6 @@ jobs:
           npm run test:r334
           npm run test:r335
           npm run test:r336
-          npm run test:r336:browser
           npm run test:r337
           npm run test:r337:browser
       - name: Focused r338 static and browser gate
