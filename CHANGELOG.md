@@ -2,6 +2,22 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.143 — 2026-09-23 — Web r352
+
+### Descobrir / ações de card
+- Elimina qualquer repaint global do `Pra você` ao clicar em `Trocar`, `✓ Visto` ou `+ Watchlist`.
+- `Trocar` altera apenas o slot clicado, de forma imediata e sem chamada ao backend.
+- `✓ Visto` e `+ Watchlist` usam estado otimista: o card clicado é substituído imediatamente e a persistência ocorre em segundo plano.
+- Em falha de rede, somente o slot afetado é revertido e um toast discreto é exibido.
+- Os handlers chamam `preventDefault`, `stopPropagation` e `stopImmediatePropagation`, evitando navegação/submissão acidental.
+- Não há `window.location.reload()`, `router.refresh()`, `router.push()`, `renderDiscover()`, `loadForYou()` nem `paintForYou336()` no fluxo de clique r352.
+- Em Top 10/Populares e demais listas públicas, `+ Watchlist` muda imediatamente para `✓ Salvo` e persiste em segundo plano sem trocar o card.
+- A transição local usa `transition-opacity duration-300 ease-in-out`.
+
+### Release
+- Web: `1.0.143 / r352-official-1.0.143`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.127 — 2026-09-22 — Web r336
 
 ### Busca

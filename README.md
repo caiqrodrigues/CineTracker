@@ -6,12 +6,27 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.127** | `r336-official-1.0.127` | Perfil estável e canônico, Descobrir com 9 abas/filtro estrito/cache e F1 com detalhes por GP |
+| Web | **1.0.143** | `r352-official-1.0.143` | ações de cards locais/otimistas, sem reload ou repaint global |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.143 / r352
+
+A r352 corrige exclusivamente o comportamento dos botões de ação dos cards no Descobrir.
+
+- **Sem reload/repaint global:** `Trocar`, `✓ Visto` e `+ Watchlist` não recarregam a página nem redesenham o `Pra você` inteiro.
+- **Troca local:** apenas o slot clicado é atualizado; os outros cards mantêm o mesmo nó DOM e o mesmo conteúdo.
+- **Optimistic UI:** Visto/Watchlist substituem o card antes da resposta do Supabase e persistem em segundo plano.
+- **Falha de rede:** rollback somente do slot afetado, com toast discreto.
+- **Outras abas do Descobrir:** `+ Watchlist` muda para `✓ Salvo` no próprio botão, sem remover ou trocar o card.
+- **Eventos:** os handlers bloqueiam propagação/navegação acidental.
+- **Transição:** `transition-opacity duration-300 ease-in-out` aplicada à troca do slot.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r352-official.mjs`; runtime: `apps/web/runtime-r352-local-card-actions.js`.
 
 ## Web 1.0.127 / r336
 
