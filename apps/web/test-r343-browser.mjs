@@ -42,7 +42,7 @@ const probe=`<script>setTimeout(async()=>{try{
 
  /* Home preparation: live episode metadata must exist before the first real Home paint is allowed. */
  history.replaceState({},'','/');
- window.__ctR343.setTestBridge({route:()=> 'home'});
+ window.__ctR343Test.setTestBridge({route:()=> 'home'});
  window.__ctR325Test?.setTestBridge?.({
   seriesState:async ids=>ids.map(id=>({tmdb_id:id,canonical_media_id:9001,watched_episodes:1,watched_keys:['1:1'],media_ids:[9001],last_season_number:1,last_episode_number:1})),
   show:async()=>({number_of_episodes:8,status:'Returning Series',last_episode_to_air:{season_number:1,episode_number:8,air_date:'2026-09-20'},seasons:[{season_number:1,episode_count:8}]}),
