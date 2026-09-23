@@ -57,7 +57,7 @@ const probe=`<script>setTimeout(async()=>{try{
  window.__ctR339.fixActions();X.settle();await new Promise(r=>setTimeout(r,650));check(fy,'after-r339-conflict');
 
  /* Poster width is the authority, not the card wrapper. ResizeObserver must follow it. */
- const pubPoster=X.poster(pub);pubPoster.style.setProperty('width','128px','important');await new Promise(r=>setTimeout(r,180));check(pub,'public-after-poster-resize');ok(Math.abs(pub.getBoundingClientRect().width-128)<=0.7,'row did not follow resized poster');
+ const pubPoster=X.poster(pub);pubPoster.style.setProperty('width','128px','important');X.fixAll();await new Promise(r=>setTimeout(r,80));check(pub,'public-after-poster-resize');ok(Math.abs(pub.getBoundingClientRect().width-128)<=0.7,'row did not follow resized poster');
 
  /* New cards inserted after paint must be normalized too. */
  const host=document.querySelector('[data-ct319-content]');
