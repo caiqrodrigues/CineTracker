@@ -156,7 +156,7 @@ async function hydrateIncomplete(){
 async function waitHomeReady({timeout=12000}={}){
  const start=Date.now();let left=incompleteHomeCards().length;
  while(routeNow()==='home'&&left>0&&Date.now()-start<timeout){
-  try{await window.__ctR343?.hydrateHomeDom?.()}catch{}
+  if(!testBridge?.hydrate){try{await window.__ctR343?.hydrateHomeDom?.()}catch{}}
   left=await hydrateIncomplete();
   if(left>0)await sleep(140);
  }
