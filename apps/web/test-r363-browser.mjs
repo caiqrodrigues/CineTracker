@@ -3,7 +3,7 @@ import {resolve,extname} from 'node:path';
 import {createServer} from 'node:http';
 import {spawn,execFileSync} from 'node:child_process';
 
-await import('./build-r363.mjs');
+if(process.env.CT_R363_SKIP_BUILD!=='1')await import('./build-r363.mjs');
 let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}
 if(!bin)throw new Error('Chromium unavailable');
 execFileSync(process.execPath,['--check',resolve('dist/app-v363.js')],{stdio:'inherit'});
