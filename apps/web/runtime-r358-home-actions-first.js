@@ -204,5 +204,5 @@ window.__ctR358={
  version:'1.0.149',early:early358,repairButton,handleAction,primeTvState,waitHomeReady,incompleteHomeCards,
  setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}
 };
-window.__ctR358Test={repairButton,early358,handleAction,primeTvState,waitHomeReady,incompleteHomeCards,hydrateIncomplete,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}};
+window.__ctR358Test={repairButton,early358,handleAction,primeTvState,waitHomeReady,incompleteHomeCards,hydrateIncomplete,showHomeGate,releaseHomeGate,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}};
 })();
