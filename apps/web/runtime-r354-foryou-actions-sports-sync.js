@@ -80,16 +80,22 @@ function action354(btn){
 }
 function directClick354(target,event){
  if(!target?.closest||routeNow354()!=='discover')return false;
- if(!target.closest('[data-ct336-foryou]'))return false;
- const swap=target.closest('[data-ct336-swap-only]');
- if(swap){
-  const ok=swap354(swap);
+ const root=target.closest('[data-ct336-foryou]');if(!root)return false;
+ const candidate=target.closest('button.ct336-action,.ct336-actions button');
+ if(!candidate)return false;
+ const label=String(candidate.textContent||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ const isSwap=candidate.matches('[data-ct336-swap-only]')||/trocar/.test(label);
+ const isWatch=candidate.matches('[data-ct336-action="watchlist"]')||/watchlist/.test(label);
+ const isSeen=candidate.matches('[data-ct336-action="seen"]')||/visto/.test(label);
+ if(isSwap){
+  if(!candidate.dataset.ct336SwapOnly)candidate.dataset.ct336SwapOnly=String(candidate.closest('[data-ct336-slot]')?.dataset?.ct336Slot||'');
+  const ok=swap354(candidate);
   if(ok){event?.preventDefault?.();event?.stopPropagation?.();event?.stopImmediatePropagation?.()}
   return ok;
  }
- const action=target.closest('[data-ct336-action]');
- if(action){
-  const ok=action354(action);
+ if(isWatch||isSeen){
+  if(!candidate.dataset.ct336Action)candidate.dataset.ct336Action=isWatch?'watchlist':'seen';
+  const ok=action354(candidate);
   if(ok){event?.preventDefault?.();event?.stopPropagation?.();event?.stopImmediatePropagation?.()}
   return ok;
  }
