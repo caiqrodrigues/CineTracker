@@ -1,13 +1,13 @@
 {
   "name": "cinetracker-web",
   "private": true,
-  "version": "1.0.152",
+  "version": "1.0.153",
   "type": "module",
   "scripts": {
-    "build": "node build-r361-official.mjs",
-    "build:legacy": "node build-r361.mjs",
-    "test": "node test-r361.mjs",
-    "test:browser": "node test-r361-browser.mjs",
+    "build": "node build-r362-official.mjs",
+    "build:legacy": "node build-r362.mjs",
+    "test": "node test-r362.mjs",
+    "test:browser": "node test-r362-browser.mjs",
     "test:r298": "node test-r298.mjs",
     "test:r298:browser": "node test-r298-browser.mjs",
     "test:r298:foryou": "node test-r298-foryou-browser.mjs",
@@ -32,7 +32,7 @@
     "release:r306": "node build-r306-official.mjs",
     "release:r307": "node build-r307-official.mjs",
     "release:r308": "node build-r308-official.mjs",
-    "verify": "npm run build && npm run test:r330 && npm run test:r331 && npm run test:r332 && npm run test:r333 && npm run test:r334 && npm run test:r335 && npm run test:r336 && npm run test:r336:browser && npm run test:r337 && npm run test:r337:browser && npm run test:r338 && npm run test:r338:browser && npm run test:r339 && npm run test:r339:browser && npm run test:r340 && npm run test:r340:browser && npm run test:r341 && npm run test:r342 && npm run test:r342:browser && npm run test:r343 && npm run test:r343:browser && npm run test:r344 && npm run test:r344:browser && npm run test:r345 && npm run test:r345:browser && npm run test:r346 && npm run test:r346:browser && npm run test:r347 && npm run test:r347:browser && npm run test:r348 && npm run test:r348:browser && npm run test:r349 && npm run test:r349:browser && npm run test:r350 && npm run test:r350:browser && npm run test:r351 && npm run test:r351:browser && npm run test:r352 && npm run test:r352:browser && npm run test:r353 && npm run test:r353:browser && npm run test:r354 && npm run test:r354:browser && npm run test:r355 && npm run test:r355:browser && npm run test:r356 && npm run test:r356:browser && npm run test:r357 && npm run test:r357:browser && npm run test:r358 && npm run test:r358:browser && npm run test:r359 && npm run test:r359:browser && npm run test:r360 && npm run test:r360:browser && npm run test:r361 && npm run test:r361:browser",
+    "verify": "npm run build && npm run test:r330 && npm run test:r331 && npm run test:r332 && npm run test:r333 && npm run test:r334 && npm run test:r335 && npm run test:r336 && npm run test:r336:browser && npm run test:r337 && npm run test:r337:browser && npm run test:r338 && npm run test:r338:browser && npm run test:r339 && npm run test:r339:browser && npm run test:r340 && npm run test:r340:browser && npm run test:r341 && npm run test:r342 && npm run test:r342:browser && npm run test:r343 && npm run test:r343:browser && npm run test:r344 && npm run test:r344:browser && npm run test:r345 && npm run test:r345:browser && npm run test:r346 && npm run test:r346:browser && npm run test:r347 && npm run test:r347:browser && npm run test:r348 && npm run test:r348:browser && npm run test:r349 && npm run test:r349:browser && npm run test:r350 && npm run test:r350:browser && npm run test:r351 && npm run test:r351:browser && npm run test:r352 && npm run test:r352:browser && npm run test:r353 && npm run test:r353:browser && npm run test:r354 && npm run test:r354:browser && npm run test:r355 && npm run test:r355:browser && npm run test:r356 && npm run test:r356:browser && npm run test:r357 && npm run test:r357:browser && npm run test:r358 && npm run test:r358:browser && npm run test:r359 && npm run test:r359:browser && npm run test:r360 && npm run test:r360:browser && npm run test:r361 && npm run test:r361:browser && npm run test:r362 && npm run test:r362:browser",
     "test:r309": "node test-r309.mjs",
     "test:r309:browser": "node test-r309-browser.mjs",
     "release:r309": "node build-r309-official.mjs",
@@ -191,7 +191,10 @@
     "release:r360": "node build-r360-official.mjs",
     "test:r361": "node test-r361.mjs",
     "test:r361:browser": "node test-r361-browser.mjs",
-    "release:r361": "node build-r361-official.mjs"
+    "release:r361": "node build-r361-official.mjs",
+    "test:r362": "node test-r362.mjs",
+    "test:r362:browser": "node test-r362-browser.mjs",
+    "release:r362": "node build-r362-official.mjs"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
