@@ -1,0 +1,14 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+if(process.env.CT_R361_SKIP_BUILD!=='1')await import('./build-r361.mjs');
+const [js,html,rRaw,runtime]=await Promise.all([readFile(resolve('dist/app-v361.js'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('runtime-r361-foryou-rearm-actions.js'),'utf8')]);
+const r=JSON.parse(rRaw),ok=(v,m)=>{if(!v)throw new Error('R361_STATIC '+m)};
+ok(r.version==='1.0.152'&&r.revision==='r361-official-1.0.152','identity');
+ok(html.includes('app-v361.js')&&html.includes('app-v361.css'),'assets');
+ok(js.includes("window.__ctR361Marker='foryou-rearm-after-every-repaint+repeat-click-live'"),'marker');
+ok(runtime.includes("window.__ctR359Early=early"),'physical first capture not repointed');
+ok(runtime.includes("btn.disabled=false"),'stale disabled repair missing');
+ok(runtime.includes("window.__ctR359.renderSlot=wrapped"),'renderSlot rearm hook missing');
+ok(runtime.includes("setTimeout(()=>armSlot(slotByName(name)),90)"),'late rearm missing');
+ok(r.discover_foryou_actions==='repeat-click-live+stale-disabled-repair+same-slot-only+background-persist','contract');
+ok(r.android==='1.0.20/10062','Android changed');
+console.log('R361_STATIC_OK');
