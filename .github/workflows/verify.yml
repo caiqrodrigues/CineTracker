@@ -9,36 +9,36 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_154_r363:
+  web_1_0_155_r364:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Version identity r363
+      - name: Version identity r364
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.154"' package.json
-          grep -Fq '"version": "1.0.154"' apps/web/package.json
-          grep -Fq 'build-r363-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r363-foryou-pool-refill.js
-          test -f apps/web/build-r363.mjs
-          test -f apps/web/build-r363-official.mjs
-          test -f apps/web/test-r363.mjs
-          test -f apps/web/test-r363-browser.mjs
+          grep -Fq '"version": "1.0.155"' package.json
+          grep -Fq '"version": "1.0.155"' apps/web/package.json
+          grep -Fq 'build-r364-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r364-foryou-no-freeze.js
+          test -f apps/web/build-r364.mjs
+          test -f apps/web/build-r364-official.mjs
+          test -f apps/web/test-r364.mjs
+          test -f apps/web/test-r364-browser.mjs
           test -f supabase/migrations/20260923030000_r337_episode_catalog_search.sql
           test -f supabase/migrations/20260924140039_r359_home_episode_cache_first_paint.sql
           test -f supabase/migrations/20260924140711_r359_backfill_latest_episode_metadata.sql
           grep -Fq "version:'tv-state-refresh-v2'" supabase/functions/ct-refresh-tv-state-user/index.ts
-      - name: Syntax r363
+      - name: Syntax r364
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r363-foryou-pool-refill.js
-          node --check apps/web/build-r363.mjs
-          node --check apps/web/build-r363-official.mjs
-          node --check apps/web/test-r363.mjs
-          node --check apps/web/test-r363-browser.mjs
+          node --check apps/web/runtime-r364-foryou-no-freeze.js
+          node --check apps/web/build-r364.mjs
+          node --check apps/web/build-r364-official.mjs
+          node --check apps/web/test-r364.mjs
+          node --check apps/web/test-r364-browser.mjs
       - name: Focused r361 repeated repaint action gate
         working-directory: apps/web
         run: |
@@ -121,15 +121,15 @@ jobs:
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r363-official.mjs
-          node --check dist/app-v363.js
-          CT_R363_SKIP_BUILD=1 node test-r363.mjs
-          grep -Fq 'app-v363.js' dist/index.html
-          grep -Fq 'app-v363.css' dist/index.html
+          node build-r364-official.mjs
+          node --check dist/app-v364.js
+          CT_R364_SKIP_BUILD=1 node test-r364.mjs
+          grep -Fq 'app-v364.js' dist/index.html
+          grep -Fq 'app-v364.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.154'
-            && r.revision==='r363-official-1.0.154'
+          const ok=r.version==='1.0.155'
+            && r.revision==='r364-official-1.0.155'
             && r.search_global==='movies+series+actors+episodes'
             && r.search_episode_local==='cinetracker_episode_search_v337'
             && r.home_navigation==='r337-desired-tab-authority+multi-settle+user-scroll-cancel'
@@ -186,17 +186,17 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_154_r363, android_current_source]
+    needs: [web_1_0_155_r364, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.154 r363
+      - name: Official production serves and boots 1.0.155 r364
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.154"' <<<"$BODY" \
-              && grep -Fq '"revision": "r363-official-1.0.154"' <<<"$BODY" \
+            if grep -Fq '"version": "1.0.155"' <<<"$BODY" \
+              && grep -Fq '"revision": "r364-official-1.0.155"' <<<"$BODY" \
               && grep -Fq '"search_episode_local": "cinetracker_episode_search_v337"' <<<"$BODY" \
               && grep -Fq '"sports_startup": "every-open-warm+force-provider-sync+auth-retry+refresh-payload"' <<<"$BODY" \
               && grep -Fq '"page_layout": "content-normal-flow+home-full-inner-width"' <<<"$BODY" \
@@ -222,16 +222,16 @@ jobs:
               && grep -Fq '"discover_foryou_reload": "forbidden-no-paintForYou-no-loadForYou-no-renderDiscover"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_spacing": "slot-width-equals-poster+6px-gap"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_heart": "inside-poster-top-right"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v363.js?ct=$(date +%s%N)" || true)"
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v364.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR363Marker='foryou-pool-refill+actions-never-die+persist-even-at-last-item'" <<<"$JS" \
+              if grep -Fq "window.__ctR364Marker='foryou-single-click-owner+legacy-observers-retired+no-freeze'" <<<"$JS" \
                 && grep -Fq 'weightedPick353' <<<"$JS" \
                 && grep -Fq 'cinetracker_episode_search_v337' <<<"$JS" \
-                && grep -Fq 'app-v363.js' <<<"$HTML"; then
+                && grep -Fq 'app-v364.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.154' <<<"$DOM" \
-                  && grep -Fq 'r363-official-1.0.154' <<<"$DOM" \
+                  && grep -Fq 'v1.0.155' <<<"$DOM" \
+                  && grep -Fq 'r364-official-1.0.155' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
