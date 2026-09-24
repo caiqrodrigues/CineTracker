@@ -90,9 +90,9 @@ const server=createServer(async(req,res)=>{try{
  const body=await readFile(file);res.writeHead(200,{'content-type':mime[extname(file)]||'application/octet-stream','cache-control':'no-store'});res.end(body)
 }catch{res.writeHead(404);res.end('not found')}});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
-const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--window-size=1664,936','--virtual-time-budget=18000','--dump-dom','http://127.0.0.1:'+port+'/discover?tab=foryou'],{stdio:['ignore','pipe','pipe']});
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--window-size=1664,936','--virtual-time-budget=7000','--dump-dom','http://127.0.0.1:'+port+'/discover?tab=foryou'],{stdio:['ignore','pipe','pipe']});
 let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
-const killer=setTimeout(()=>{try{child.kill('SIGKILL')}catch{}},22000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
+const killer=setTimeout(()=>{try{child.kill('SIGKILL')}catch{}},14000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
 if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1200));
 if(!/data-ct364done="1"/.test(out)){const m=out.match(/data-ct364probe="([^"]*)"/);throw new Error('R364_BROWSER '+(m?.[1]||'probe did not finish'))}
 console.log('R364_BROWSER_OK full bundle: 40 real Trocar clicks stay responsive; Visto/Watchlist remain single-slot');
