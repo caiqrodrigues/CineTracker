@@ -107,6 +107,7 @@ function prepareWatchState353(st,a=null){
   const pool=rows(st.watchPools?.[kind]);if(!pool.length){st.watchIndex[kind]=0;continue}
   const idx=weightedPick353(pool,kind,-1,{record:true,authority:a});
   st.watchIndex[kind]=idx<0?0:idx;
+  if(st.initial?.watch)st.initial.watch[kind]=pool[st.watchIndex[kind]]||null;
  }
  return st;
 }
