@@ -10,9 +10,12 @@ execFileSync(process.execPath,['--check',resolve('dist/app-v364.js')],{stdio:'in
 const js=await readFile(resolve('dist/app-v364.js'),'utf8');
 
 function segment(marker){
- const p=js.indexOf(marker),a=js.lastIndexOf('(()=>{',p),z=js.indexOf('})();',p);
- if(p<0||a<0||z<0)throw new Error('segment missing '+marker);
- return js.slice(a,z+5);
+ const p=js.indexOf(marker);if(p<0)throw new Error('segment missing '+marker);
+ const a=js.lastIndexOf('/* CineTracker Web',p);if(a<0)throw new Error('segment header missing '+marker);
+ const next=js.indexOf('/* CineTracker Web',p+marker.length);
+ const boot=js.indexOf('\nboot();',p+marker.length);
+ const z=next>=0?next:(boot>=0?boot:js.length);
+ return js.slice(a,z);
 }
 const runtimeStack=[
  segment("window.__ctR348Marker='foryou-buttons-only+direct-children+no-stray-swap'"),
