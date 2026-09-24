@@ -60,7 +60,7 @@ function early(target,event){
  return ok;
 }
 
-/* One physical owner for all historical aliases. No MutationObserver in r364. */
+/* One physical owner for all historical aliases. No DOM observer in r364. */
 window.__ctR358Early=early;
 window.__ctR359Early=early;
 window.__ctR336EarlyHandle=early;
