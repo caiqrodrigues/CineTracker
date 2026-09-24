@@ -1,4 +1,4 @@
-name: Verify Web 1.0.144 r353 Smart Random Watchlist
+name: Verify Web 1.0.145 r354 Pra Voce Actions Sports Sync
 
 on:
   push:
@@ -78,7 +78,9 @@ jobs:
           npm run test:r351:browser
           npm run test:r352
           npm run test:r352:browser
-      - name: Focused r353 smart-random Watchlist browser gate
+          npm run test:r353
+          npm run test:r353:browser
+      - name: Focused r354 Pra Voce actions + Sports sync browser gate
         working-directory: apps/web
         run: |
           set -euo pipefail
@@ -109,7 +111,7 @@ jobs:
             && r.discover_filters==='r318+r336-source-removed'
             && r.discover_foryou_legacy_css==='r338+r339-removed-at-runtime'
             && r.discover_card_actions==='local-slot-only+prevent-default+stop-propagation'
-            && r.discover_foryou_actions==='optimistic-local-slot-swap+background-persist+silent-rollback'
+            && r.discover_foryou_actions==='repair-metadata+local-r352-first+safe-fallback'
             && r.discover_watchlist_selection==='weighted-random+history-affinity+watchlist-affinity+quality'
             && r.discover_watchlist_order==='not-list-order+not-index-plus-one'
             && r.discover_watchlist_initial==='smart-weighted-random'
@@ -157,7 +159,10 @@ jobs:
               && grep -Fq '"page_layout": "content-normal-flow+home-full-inner-width"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_legacy_css": "r338+r339-removed-at-runtime"' <<<"$BODY" \
               && grep -Fq '"discover_card_actions": "local-slot-only+prevent-default+stop-propagation"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_actions": "optimistic-local-slot-swap+background-persist+silent-rollback"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_actions": "repair-metadata+local-r352-first+safe-fallback"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_click_owner": "r354-first-branch-before-r351-r352"' <<<"$BODY" \
+              && grep -Fq '"sports_manual_sync": "header-button-restored"' <<<"$BODY" \
+              && grep -Fq '"sports_every_open_window": "past-3+future-9-days"' <<<"$BODY" \
               && grep -Fq '"discover_watchlist_selection": "weighted-random+history-affinity+watchlist-affinity+quality"' <<<"$BODY" \
               && grep -Fq '"discover_watchlist_order": "not-list-order+not-index-plus-one"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_reload": "forbidden-no-paintForYou-no-loadForYou-no-renderDiscover"' <<<"$BODY" \
