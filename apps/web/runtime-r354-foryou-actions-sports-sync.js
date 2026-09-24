@@ -36,9 +36,29 @@ function repairAction354(btn){
 }
 function swap354(btn){
  repairAction354(btn);
- try{if(window.__ctR352?.swap?.(btn))return true}catch{}
  const name=String(btn?.dataset?.ct336SwapOnly||btn?.closest?.('[data-ct336-slot]')?.dataset?.ct336Slot||'');
  if(!name)return false;
+ const st=window.__ctR309Test?.state;
+ if(st){
+  if(name==='daily'){
+   const pool=rows(st.dailyPool);if(pool.length<2)return false;
+   st.dailyIndex=(Number(st.dailyIndex||0)+1)%pool.length;
+  }else{
+   const [bucket,kind]=name.split(':');
+   if(!['watch','fresh'].includes(bucket)||!['movie','series','anime'].includes(kind))return false;
+   const pool=rows(st?.[bucket+'Pools']?.[kind]);if(pool.length<2)return false;
+   const current=Number(st?.[bucket+'Index']?.[kind]||0);
+   let next=(current+1)%pool.length;
+   if(bucket==='watch'&&window.__ctR353?.pickIndex){
+    const smart=Number(window.__ctR353.pickIndex(pool,kind,current));
+    if(Number.isInteger(smart)&&smart>=0&&smart<pool.length&&smart!==current)next=smart;
+   }
+   st[bucket+'Index']={...(st[bucket+'Index']||{})};st[bucket+'Index'][kind]=next;
+  }
+  window.__ctR309Test?.setForYouState?.(st);
+  try{if(window.__ctR352?.renderSlot?.(name,{animate:true}))return true}catch{}
+ }
+ try{if(window.__ctR352?.swap?.(btn))return true}catch{}
  try{if(window.__ctR350?.swap?.(name))return true}catch{}
  try{return !!window.__ctR336?.swapForYou?.(name)}catch{return false}
 }
