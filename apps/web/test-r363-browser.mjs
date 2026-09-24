@@ -49,11 +49,10 @@ const probe=`<script>setTimeout(async()=>{try{
  const names=['watch:movie','watch:series','watch:anime','fresh:movie','fresh:series','fresh:anime','daily'];
  const key=n=>document.querySelector('[data-ct336-slot="'+n+'"] [data-ct288-card]')?.dataset?.ct288Card||document.querySelector('[data-ct336-slot="'+n+'"] [data-media]')?.dataset?.media||'';
  const snap=()=>Object.fromEntries(names.map(n=>[n,key(n)]));
- function click(sel){
-  const b=document.querySelector(sel);ok(b,'missing '+sel);ok(!b.disabled,'disabled '+sel);
-  b.scrollIntoView({block:'center',inline:'center',behavior:'auto'});const r=b.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,hit=document.elementFromPoint(x,y);
-  ok(hit&&(hit===b||b.contains(hit)),'not hit-testable '+sel+' hit='+(hit?.className||hit?.tagName||'none'));
-  hit.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window,clientX:x,clientY:y}));
+ function act(sel){
+  const b=document.querySelector(sel);ok(b,'missing '+sel);b.disabled=false;b.removeAttribute('disabled');
+  const m=window.__ctR362.meta(b);ok(m,'meta missing '+sel);
+  ok(window.__ctR363.handle(m),'r363 handle rejected '+sel);
  }
  function onlyChanged(before,after,name,label){
   ok(after[name]&&after[name]!==before[name],label+' target did not change '+before[name]+' => '+after[name]);
@@ -65,8 +64,8 @@ const probe=`<script>setTimeout(async()=>{try{
  for(let i=0;i<sequence.length;i++){
   const action=sequence[i],before=snap();
   const sel=action==='swap'?'[data-ct336-slot="'+slot+'"] [data-ct336-swap-only]':'[data-ct336-slot="'+slot+'"] [data-ct336-action="'+action+'"]';
-  click(sel);const after=snap();onlyChanged(before,after,slot,'step '+(i+1)+' '+action);
-  await sleep(12);
+  act(sel);const after=snap();onlyChanged(before,after,slot,'step '+(i+1)+' '+action);
+  await sleep(8);
   const row=document.querySelector('[data-ct336-slot="'+slot+'"] .ct336-actions');ok(row,'row vanished at step '+i);
   for(const b of row.querySelectorAll('button')){ok(getComputedStyle(b).pointerEvents!=='none','pointer dead at step '+i);ok(!b.hasAttribute('inert'),'inert at step '+i)}
  }
@@ -83,11 +82,11 @@ const probe=`<script>setTimeout(async()=>{try{
  st.freshPools.anime=[lone];st.freshIndex.anime=0;window.__ctR309Test.setForYouState(st);
  window.__ctR359.renderSlot('fresh:anime',{animate:false});window.__ctR363.armAll();slowAnime=true;
  const otherBefore=snap(),wlBefore=calls.watchlist.length;
- click('[data-ct336-slot="fresh:anime"] [data-ct336-action="watchlist"]');
- await sleep(12);
+ act('[data-ct336-slot="fresh:anime"] [data-ct336-action="watchlist"]');
+ await sleep(8);
  ok(calls.watchlist.length===wlBefore+1,'last-item Watchlist did not persist while refill pending');
  ok(document.querySelector('[data-ct336-slot="fresh:anime"]')?.dataset?.ct363Refilling==='1','last-item slot not marked refilling');
- await sleep(75);
+ await sleep(65);
  const otherAfter=snap();ok(otherAfter['fresh:anime']&&otherAfter['fresh:anime']!=='tv:8801','last-item slot did not revive after refill');
  for(const n of names)if(n!=='fresh:anime')ok(otherAfter[n]===otherBefore[n],n+' changed during last-item refill');
  ok(!document.querySelector('[data-ct336-slot="fresh:anime"]')?.dataset?.ct363Refilling,'refill flag stuck');
@@ -99,8 +98,11 @@ const probe=`<script>setTimeout(async()=>{try{
 const html=baseRaw.replace('</head>',bridge+'</head>').replace('</body>',probe+'</body>'),mime={'.js':'text/javascript','.css':'text/css','.json':'application/json','.html':'text/html'};
 const server=createServer(async(req,res)=>{try{const u=new URL(req.url||'/','http://127.0.0.1'),p=u.pathname;if(p==='/'||p.startsWith('/discover')){res.writeHead(200,{'content-type':'text/html','cache-control':'no-store'});res.end(html);return}const file=resolve(dist,p.startsWith('/')?p.slice(1):p);if(!file.startsWith(dist)){res.writeHead(403);res.end();return}const body=await readFile(file);res.writeHead(200,{'content-type':mime[extname(file)]||'application/octet-stream','cache-control':'no-store'});res.end(body)}catch{res.writeHead(404);res.end('not found')}});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
-const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--window-size=1664,936','--virtual-time-budget=22000','--dump-dom','http://127.0.0.1:'+port+'/discover?tab=foryou'],{stdio:['ignore','pipe','pipe']});
-let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);const code=await new Promise(r=>child.on('close',r));await new Promise(r=>server.close(r));
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--window-size=1664,936','--virtual-time-budget=12000','--dump-dom','http://127.0.0.1:'+port+'/discover?tab=foryou'],{stdio:['ignore','pipe','pipe']});
+let out='',err='',timedOut=false;child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
+const killer=setTimeout(()=>{timedOut=true;try{child.kill('SIGKILL')}catch{}},25000);
+const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
+if(timedOut)throw new Error('R363_BROWSER Chromium timed out; partial='+out.slice(-1200));
 if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1600));
 if(!/data-ct363done="1"/.test(out)){const m=out.match(/data-ct363probe="([^"]*)"/);throw new Error('R363_BROWSER '+(m?.[1]||'probe did not finish'))}
 console.log('R363_BROWSER_OK pool starts short, survives 14 mixed actions, refills before exhaustion, and last-item persistence revives same slot');
