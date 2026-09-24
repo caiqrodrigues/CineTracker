@@ -84,8 +84,9 @@ function random353(){
 }
 function weightedPick353(pool,kind,currentIndex=-1,{record=true,authority=null}={}){
  const list=rows(pool);if(list.length<2)return list.length?0:-1;
- const cur=((Number(currentIndex||0)%list.length)+list.length)%list.length,curKey=keyOf353(list[cur]),recent=new Set(readRecent353(kind));
- let candidates=list.map((item,index)=>({item,index,key:keyOf353(item)})).filter(x=>x.index!==cur&&x.key&&x.key!==curKey);
+ const hasCurrent=Number(currentIndex)>=0;
+ const cur=hasCurrent?((Number(currentIndex)%list.length)+list.length)%list.length:-1,curKey=hasCurrent?keyOf353(list[cur]):'',recent=new Set(readRecent353(kind));
+ let candidates=list.map((item,index)=>({item,index,key:keyOf353(item)})).filter(x=>(!hasCurrent||x.index!==cur)&&x.key&&(!curKey||x.key!==curKey));
  if(!candidates.length)return cur;
  const nonRecent=candidates.filter(x=>!recent.has(x.key));
  if(nonRecent.length)candidates=nonRecent;
