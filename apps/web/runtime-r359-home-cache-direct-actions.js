@@ -40,6 +40,23 @@ function installState(st){
  window.__ctR309Test?.setForYouState?.(st);return true;
 }
 function removeKey(list,key){return rows(list).filter(x=>mediaKey(x)!==key)}
+function syncVisible(name,key){
+ const st=window.__ctR309Test?.state;if(!st||!key)return false;
+ let changed=false;
+ if(name==='daily'){
+  const p=rows(st.dailyPool),idx=p.findIndex(x=>mediaKey(x)===key);
+  if(idx>=0&&Number(st.dailyIndex||0)!==idx){st.dailyIndex=idx;changed=true}
+ }else{
+  const [bucket,kind]=String(name||'').split(':');
+  if(!['watch','fresh'].includes(bucket)||!['movie','series','anime'].includes(kind))return false;
+  const p=rows(st?.[bucket+'Pools']?.[kind]),idx=p.findIndex(x=>mediaKey(x)===key);
+  if(idx>=0&&Number(st?.[bucket+'Index']?.[kind]||0)!==idx){
+   st[bucket+'Index']={...(st[bucket+'Index']||{})};st[bucket+'Index'][kind]=idx;changed=true;
+  }
+ }
+ if(changed)window.__ctR309Test?.setForYouState?.(st);
+ return true;
+}
 function mutate(meta){
  const st=window.__ctR309Test?.state;if(!st)return null;
  const before=cloneState(st),next=cloneState(st),name=meta.name;
@@ -65,9 +82,10 @@ function repair(btn){
  const slot=btn?.closest?.('[data-ct336-slot]');if(!slot)return null;
  const name=String(slot.dataset.ct336Slot||'');if(!name)return null;
  const label=String(btn.textContent||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
- if(btn.matches('[data-ct336-swap-only]')||label.includes('trocar'))return{slot,name,key:'',action:'swap'};
- const action=label.includes('watchlist')?'watchlist':label.includes('visto')?'seen':String(btn.dataset.ct336Action||'');
  const key=validKey(q('[data-ct288-card]',slot)?.dataset?.ct288Card)||validKey(btn.dataset.ct336Media);
+ if(key)syncVisible(name,key);
+ if(btn.matches('[data-ct336-swap-only]')||label.includes('trocar'))return{slot,name,key,action:'swap'};
+ const action=label.includes('watchlist')?'watchlist':label.includes('visto')?'seen':String(btn.dataset.ct336Action||'');
  if(!['watchlist','seen'].includes(action)||!key)return null;
  return{slot,name,key,action};
 }
@@ -208,9 +226,9 @@ if(oldEpisodeMeta)try{
 }catch{}
 
 window.__ctR359={
- version:'1.0.150',early,handle,repair,mutate,renderSlot,persist,
+ version:'1.0.150',early,handle,repair,mutate,syncVisible,renderSlot,persist,
  fetchHome,payloadReady,episodeComplete,prepare,hydrateDom,
  setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}
 };
-window.__ctR359Test={early,handle,repair,mutate,fetchHome,payloadReady,episodeComplete,prepare,hydrateDom,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}};
+window.__ctR359Test={early,handle,repair,mutate,syncVisible,fetchHome,payloadReady,episodeComplete,prepare,hydrateDom,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null}};
 })();
