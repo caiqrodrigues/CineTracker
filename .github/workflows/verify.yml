@@ -92,6 +92,8 @@ jobs:
           npm run test:r355:browser
           npm run test:r356
           npm run test:r356:browser
+          npm run test:r357
+          npm run test:r357:browser
       - name: Final bundle identity r358
         working-directory: apps/web
         run: |
@@ -174,9 +176,11 @@ jobs:
               && grep -Fq '"discover_card_actions": "local-slot-only+prevent-default+stop-propagation"' <<<"$BODY" \
               && grep -Fq '"media_kind": "badge-on-poster-no-kind-in-meta"' <<<"$BODY" \
               && grep -Fq '"media_metadata": "year+rating+primary-genre+tmdb-detail-fallback"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_actions": "r352-local-slot-only+background-persist"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_actions": "local-slot-immediate+direct-backend-persist+no-global-repaint"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_repaint": "clicked-slot-only"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_click_owner": "r357-first-branch-before-r354-r355-r356"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_click_owner": "r358-physical-first-window-capture"' <<<"$BODY" \
+              && grep -Fq '"home_startup": "tv-refresh-before-first-paint+episode-meta-gate"' <<<"$BODY" \
+              && grep -Fq '"home_episode_reveal": "wait-until-visible-episode-title-rating-date-ready"' <<<"$BODY" \
               && grep -Fq '"sports_national_teams": "espn-international-routes-v5"' <<<"$BODY" \
               && grep -Fq '"sports_payload": "r255-authoritative-bridge+forced-reload-after-sync"' <<<"$BODY" \
               && grep -Fq '"sports_manual_sync": "r356-full-sync+reload+paint"' <<<"$BODY" \
