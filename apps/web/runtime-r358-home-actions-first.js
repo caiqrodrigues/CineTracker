@@ -155,7 +155,7 @@ async function hydrateIncomplete(){
 }
 async function waitHomeReady({timeout=12000}={}){
  const start=Date.now();let left=incompleteHomeCards().length;
- while(routeNow()==='home'&&left>0&&Date.now()-start<timeout){
+ while(q('[data-home]')&&left>0&&Date.now()-start<timeout){
   if(!testBridge?.hydrate){try{await window.__ctR343?.hydrateHomeDom?.()}catch{}}
   left=await hydrateIncomplete();
   if(left>0)await sleep(140);
@@ -182,9 +182,9 @@ try{
    }
   }catch{}
   await primeTvState();
-  if(routeNow()!=='home')return false;
+  if(routeNow()!=='home'&&!q('[data-home]'))return false;
   const out=await baseHome358.apply(this,arguments);
-  if(routeNow()!=='home')return out;
+  if(routeNow()!=='home'&&!q('[data-home]'))return out;
   await waitHomeReady({timeout:12000});
   releaseHomeGate();
   return out;
