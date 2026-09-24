@@ -19,7 +19,7 @@ const probe=`<script>setTimeout(async()=>{try{
  await repeatSwap('fresh:movie',5);await repeatSwap('watch:movie',4);await repeatSwap('daily',4);
  for(let i=0;i<2;i++){const n='fresh:series',sel='[data-ct336-slot="'+n+'"] [data-ct336-action="watchlist"]',before=key(n);click(sel);const after=key(n);ok(after&&after!==before,'Watchlist repeat '+i+' failed');await sleep(25);ok(!document.querySelector(sel).disabled,'Watchlist disabled after repaint')}
  for(let i=0;i<2;i++){const n='watch:series',sel='[data-ct336-slot="'+n+'"] [data-ct336-action="seen"]',before=key(n);click(sel);const after=key(n);ok(after&&after!==before,'Seen repeat '+i+' failed');await sleep(25);ok(!document.querySelector(sel).disabled,'Seen disabled after repaint')}
- ok(calls.watchlist.length===2,'watchlist persistence count '+calls.watchlist.length);ok(calls.seen.length===2,'seen persistence count '+calls.seen.length);ok(calls.swap.length>=13,'swap memory count '+calls.swap.length);
+ ok(calls.watchlist.length===2,'watchlist persistence count '+calls.watchlist.length);ok(calls.seen.length===2,'seen persistence count '+calls.seen.length);ok(calls.swap.length===9,'swap memory count '+calls.swap.length+' expected 9 (fresh+watch only; daily is local)');
  await sleep(140);for(const b of document.querySelectorAll('[data-ct336-foryou] .ct336-actions button:not([disabled])'))ok(getComputedStyle(b).pointerEvents!=='none','final pointer dead');
  document.documentElement.dataset.ct361done='1';
 }catch(e){document.documentElement.dataset.ct361probe='fail:'+String(e?.stack||e)+' ERRORS='+(window.__ctDiagErrors||[]).join(' || ')}},1700)</script>`;
