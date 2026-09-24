@@ -20,11 +20,19 @@ for(const x of[
  "const version='1.0.144',revision='r353-official-1.0.144';",
  "window.__ctR353Marker='watchlist-smart-weighted-random+history-affinity+recent-memory'",
  "const direct=window.__ctR351DirectClick;if(typeof direct==='function'&&direct(e.target,e)){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();return}",
+ "window.addEventListener('click',e=>{try{const api=window.__ctR306,t=e.target;if(!api||!t?.closest)return;",
  "await syncSportsWindow340(day340(0),day340(2));",
  "boot();"
 ])if(!js.includes(x))throw new Error('r354 missing '+x);
 
-/* r354 is the first branch of the already-earliest click capture. */
+/* r354 is the first branch of the true earliest window-capture (r306), before every later owner. */
+js=once(js,
+ "window.addEventListener('click',e=>{try{const api=window.__ctR306,t=e.target;if(!api||!t?.closest)return;",
+ "window.addEventListener('click',e=>{try{const t=e.target;const direct354=window.__ctR354DirectClick;if(typeof direct354==='function'&&direct354(t,e))return;const api=window.__ctR306;if(!api||!t?.closest)return;",
+ 'true earliest r306 capture'
+);
+
+/* Keep the later r351 bridge aligned too. */
 js=once(js,
  "const direct=window.__ctR351DirectClick;if(typeof direct==='function'&&direct(e.target,e)){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();return}",
  "const direct354=window.__ctR354DirectClick;if(typeof direct354==='function'&&direct354(e.target,e)){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();return}const direct=window.__ctR351DirectClick;if(typeof direct==='function'&&direct(e.target,e)){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();return}",
