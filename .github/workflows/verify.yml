@@ -1,4 +1,4 @@
-name: Verify Web 1.0.154 r363 Pra Voce Pool Liveness
+name: Verify Web 1.0.155 r364 Pra Voce No Freeze
 
 on:
   push:
@@ -61,6 +61,12 @@ jobs:
         run: |
           set -euo pipefail
           CT_R363_SKIP_BUILD=1 node test-r363-browser.mjs
+      - name: Focused r364 full-bundle repeated-click no-freeze gate
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          npm run test:r364
+          npm run test:r364:browser
       - name: Current regression lineage
         working-directory: apps/web
         run: |
@@ -117,7 +123,7 @@ jobs:
           npm run test:r358:browser
           npm run test:r359
           npm run test:r359:browser
-      - name: Final bundle identity r363
+      - name: Final bundle identity r364
         working-directory: apps/web
         run: |
           set -euo pipefail
@@ -144,13 +150,13 @@ jobs:
             && r.discover_card_actions==='local-slot-only+prevent-default+stop-propagation'
             && r.media_kind==='badge-on-poster-no-kind-in-meta'
             && r.media_metadata==='year+rating+primary-genre+tmdb-detail-fallback'
-            && r.discover_foryou_actions==='real-click+clicked-slot-only+background-persist+targeted-refill'
+            && r.discover_foryou_actions==='r363-targeted-state+single-slot-render+background-persist'
             && r.discover_foryou_repaint==='renderSlot-hook+microtask+raf+90ms-rearm'
-            && r.discover_foryou_click_owner==='r363-all-historical-pointers+pool-aware'
+            && r.discover_foryou_click_owner==='r364-single-physical-owner'
             && r.discover_foryou_key_resolution==='card+open-button+action-button+state-fallback'
             && r.discover_foryou_pool_liveness==='targeted-background-refill+no-exhaustion-deadlock'
             && r.discover_foryou_last_item==='persist-action+same-slot-refill+no-global-repaint'
-            && r.discover_foryou_refill==='fresh-tmdb-next-pages+watchlist-authoritative+session-blocklist'
+            && r.discover_foryou_refill==='startup-once+targeted-after-action'\n            && r.discover_foryou_observers==='r348+r349+r360+r361+r362+r363-action-observers-retired'\n            && r.discover_foryou_stability==='no-observer-storm+repeat-click-watchdog'
             && r.sports_national_teams==='espn-international-routes-v5'
             && r.discover_watchlist_selection==='weighted-random+history-affinity+watchlist-affinity+quality'
             && r.discover_watchlist_order==='not-list-order+not-index-plus-one'
@@ -204,12 +210,14 @@ jobs:
               && grep -Fq '"discover_card_actions": "local-slot-only+prevent-default+stop-propagation"' <<<"$BODY" \
               && grep -Fq '"media_kind": "badge-on-poster-no-kind-in-meta"' <<<"$BODY" \
               && grep -Fq '"media_metadata": "year+rating+primary-genre+tmdb-detail-fallback"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_actions": "real-click+clicked-slot-only+background-persist+targeted-refill"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_actions": "r363-targeted-state+single-slot-render+background-persist"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_repaint": "renderSlot-hook+microtask+raf+90ms-rearm"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_click_owner": "r363-all-historical-pointers+pool-aware"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_click_owner": "r364-single-physical-owner"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_pool_liveness": "targeted-background-refill+no-exhaustion-deadlock"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_last_item": "persist-action+same-slot-refill+no-global-repaint"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_key_resolution": "card+open-button+action-button+state-fallback"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_observers": "r348+r349+r360+r361+r362+r363-action-observers-retired"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_stability": "no-observer-storm+repeat-click-watchdog"' <<<"$BODY" \
               && grep -Fq '"home_payload": "cinetracker_home_payload_v359"' <<<"$BODY" \
               && grep -Fq '"home_startup": "db-episode-metadata-first-paint+nonblocking-background-tv-refresh"' <<<"$BODY" \
               && grep -Fq '"home_episode_reveal": "no-live-hydration-wait"' <<<"$BODY" \
