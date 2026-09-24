@@ -36,6 +36,12 @@ jobs:
           node --check apps/web/build-r354-official.mjs
           node --check apps/web/test-r354.mjs
           node --check apps/web/test-r354-browser.mjs
+      - name: Focused r354 Pra Voce actions + Sports sync browser gate
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          npm run test:r354
+          npm run test:r354:browser
       - name: Current regression lineage
         working-directory: apps/web
         run: |
@@ -80,12 +86,6 @@ jobs:
           npm run test:r352:browser
           npm run test:r353
           npm run test:r353:browser
-      - name: Focused r354 Pra Voce actions + Sports sync browser gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          npm run test:r354
-          npm run test:r354:browser
       - name: Final bundle identity r354
         working-directory: apps/web
         run: |
