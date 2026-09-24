@@ -66,8 +66,10 @@ const probe=`<script>setTimeout(async()=>{try{
 
  before=cardKey('fresh:series');
  btn=document.querySelector('[data-ct336-slot="fresh:series"] [data-ct336-swap-only]');
+ const idxBefore=Number(window.__ctR309Test.state?.freshIndex?.series??-1);
  delete btn.dataset.ct336SwapOnly;btn.click();after=cardKey('fresh:series');
- ok(after&&after!==before,'Trocar click did not replace card immediately '+before+' => '+after);
+ const idxAfter=Number(window.__ctR309Test.state?.freshIndex?.series??-1);
+ ok(after&&after!==before,'Trocar click did not replace card immediately '+before+' => '+after+' idx='+idxBefore+'->'+idxAfter+' disabled='+String(btn.disabled)+' slot='+String(btn.closest('[data-ct336-slot]')?.dataset?.ct336Slot||''));
  ok(backend.length===2,'Trocar incorrectly called backend '+backend.join(','));
 
  /* SPORTS: button exists, click syncs full future window, reloads and repaints. */
