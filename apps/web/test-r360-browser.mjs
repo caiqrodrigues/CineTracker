@@ -53,6 +53,7 @@ const probe=`<script>setTimeout(async()=>{try{
  };
  function hitClick(selector){
   const btn=document.querySelector(selector);ok(btn,'button missing '+selector);ok(!btn.disabled,'button disabled '+selector);
+  btn.scrollIntoView({block:'center',inline:'center',behavior:'auto'});
   const cs=getComputedStyle(btn);ok(cs.pointerEvents!=='none','pointer-events none '+selector);
   const r=btn.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,hit=document.elementFromPoint(x,y);
   ok(hit&&(hit===btn||btn.contains(hit)),'button not hit-testable after repaint '+selector+' hit='+(hit?.className||hit?.tagName));
