@@ -1,4 +1,4 @@
-name: Verify Web 1.0.150 r359 Cache First Home Direct Actions
+name: Verify Web 1.0.151 r360 Pra Voce Repeat Clicks
 
 on:
   push:
@@ -9,42 +9,42 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_150_r359:
+  web_1_0_151_r360:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Version identity r359
+      - name: Version identity r360
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.150"' package.json
-          grep -Fq '"version": "1.0.150"' apps/web/package.json
-          grep -Fq 'build-r359-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r359-home-cache-actions-direct.js
-          test -f apps/web/build-r359.mjs
-          test -f apps/web/build-r359-official.mjs
-          test -f apps/web/test-r359.mjs
-          test -f apps/web/test-r359-browser.mjs
+          grep -Fq '"version": "1.0.151"' package.json
+          grep -Fq '"version": "1.0.151"' apps/web/package.json
+          grep -Fq 'build-r360-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r360-foryou-repeat-clicks.js
+          test -f apps/web/build-r360.mjs
+          test -f apps/web/build-r360-official.mjs
+          test -f apps/web/test-r360.mjs
+          test -f apps/web/test-r360-browser.mjs
           test -f supabase/migrations/20260923030000_r337_episode_catalog_search.sql
           test -f supabase/migrations/20260924140039_r359_home_episode_cache_first_paint.sql
           test -f supabase/migrations/20260924140711_r359_backfill_latest_episode_metadata.sql
           grep -Fq "version:'tv-state-refresh-v2'" supabase/functions/ct-refresh-tv-state-user/index.ts
-      - name: Syntax r359
+      - name: Syntax r360
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r359-home-cache-actions-direct.js
-          node --check apps/web/build-r359.mjs
-          node --check apps/web/build-r359-official.mjs
-          node --check apps/web/test-r359.mjs
-          node --check apps/web/test-r359-browser.mjs
-      - name: Focused r359 direct actions + cache-first Home gate
+          node --check apps/web/runtime-r360-foryou-repeat-clicks.js
+          node --check apps/web/build-r360.mjs
+          node --check apps/web/build-r360-official.mjs
+          node --check apps/web/test-r360.mjs
+          node --check apps/web/test-r360-browser.mjs
+      - name: Focused r360 repeated same-slot action gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          npm run test:r359
-          npm run test:r359:browser
+          npm run test:r360
+          npm run test:r360:browser
       - name: Current regression lineage
         working-directory: apps/web
         run: |
@@ -99,19 +99,21 @@ jobs:
           npm run test:r357:browser
           npm run test:r358
           npm run test:r358:browser
-      - name: Final bundle identity r359
+          npm run test:r359
+          npm run test:r359:browser
+      - name: Final bundle identity r360
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r359-official.mjs
-          node --check dist/app-v359.js
-          CT_R359_SKIP_BUILD=1 node test-r359.mjs
-          grep -Fq 'app-v359.js' dist/index.html
-          grep -Fq 'app-v359.css' dist/index.html
+          node build-r360-official.mjs
+          node --check dist/app-v360.js
+          CT_R360_SKIP_BUILD=1 node test-r360.mjs
+          grep -Fq 'app-v360.js' dist/index.html
+          grep -Fq 'app-v360.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.150'
-            && r.revision==='r359-official-1.0.150'
+          const ok=r.version==='1.0.151'
+            && r.revision==='r360-official-1.0.151'
             && r.search_global==='movies+series+actors+episodes'
             && r.search_episode_local==='cinetracker_episode_search_v337'
             && r.home_navigation==='r337-desired-tab-authority+multi-settle+user-scroll-cancel'
@@ -126,9 +128,9 @@ jobs:
             && r.discover_card_actions==='local-slot-only+prevent-default+stop-propagation'
             && r.media_kind==='badge-on-poster-no-kind-in-meta'
             && r.media_metadata==='year+rating+primary-genre+tmdb-detail-fallback'
-            && r.discover_foryou_actions==='r359-direct-state+clicked-slot-render+background-persist'
-            && r.discover_foryou_repaint==='clicked-slot-only-no-library-change-event'
-            && r.discover_foryou_click_owner==='r359-physical-first-window-capture'
+            && r.discover_foryou_actions==='repeat-click-safe+dom-state-resync+clicked-slot-only+background-persist'
+            && r.discover_foryou_repaint==='same-slot-rebind+pointer-live+no-global-reload'
+            && r.discover_foryou_click_owner==='r360-via-r359-physical-first-window-capture'
             && r.sports_national_teams==='espn-international-routes-v5'
             && r.discover_watchlist_selection==='weighted-random+history-affinity+watchlist-affinity+quality'
             && r.discover_watchlist_order==='not-list-order+not-index-plus-one'
@@ -164,17 +166,17 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_150_r359, android_current_source]
+    needs: [web_1_0_151_r360, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.150 r359
+      - name: Official production serves and boots 1.0.151 r360
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.150"' <<<"$BODY" \
-              && grep -Fq '"revision": "r359-official-1.0.150"' <<<"$BODY" \
+            if grep -Fq '"version": "1.0.151"' <<<"$BODY" \
+              && grep -Fq '"revision": "r360-official-1.0.151"' <<<"$BODY" \
               && grep -Fq '"search_episode_local": "cinetracker_episode_search_v337"' <<<"$BODY" \
               && grep -Fq '"sports_startup": "every-open-warm+force-provider-sync+auth-retry+refresh-payload"' <<<"$BODY" \
               && grep -Fq '"page_layout": "content-normal-flow+home-full-inner-width"' <<<"$BODY" \
@@ -182,9 +184,9 @@ jobs:
               && grep -Fq '"discover_card_actions": "local-slot-only+prevent-default+stop-propagation"' <<<"$BODY" \
               && grep -Fq '"media_kind": "badge-on-poster-no-kind-in-meta"' <<<"$BODY" \
               && grep -Fq '"media_metadata": "year+rating+primary-genre+tmdb-detail-fallback"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_actions": "r359-direct-state+clicked-slot-render+background-persist"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_repaint": "clicked-slot-only-no-library-change-event"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_click_owner": "r359-physical-first-window-capture"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_actions": "repeat-click-safe+dom-state-resync+clicked-slot-only+background-persist"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_repaint": "same-slot-rebind+pointer-live+no-global-reload"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_click_owner": "r360-via-r359-physical-first-window-capture"' <<<"$BODY" \
               && grep -Fq '"home_payload": "cinetracker_home_payload_v359"' <<<"$BODY" \
               && grep -Fq '"home_startup": "db-episode-metadata-first-paint+nonblocking-background-tv-refresh"' <<<"$BODY" \
               && grep -Fq '"home_episode_reveal": "no-live-hydration-wait"' <<<"$BODY" \
@@ -197,16 +199,16 @@ jobs:
               && grep -Fq '"discover_foryou_reload": "forbidden-no-paintForYou-no-loadForYou-no-renderDiscover"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_spacing": "slot-width-equals-poster+6px-gap"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_heart": "inside-poster-top-right"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v359.js?ct=$(date +%s%N)" || true)"
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v360.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR359Marker='home-v359-cache-first+foryou-single-slot-direct-actions'" <<<"$JS" \
+              if grep -Fq "window.__ctR360Marker='foryou-repeat-clicks+dom-state-resync+slot-stays-live'" <<<"$JS" \
                 && grep -Fq 'weightedPick353' <<<"$JS" \
                 && grep -Fq 'cinetracker_episode_search_v337' <<<"$JS" \
-                && grep -Fq 'app-v359.js' <<<"$HTML"; then
+                && grep -Fq 'app-v360.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.150' <<<"$DOM" \
-                  && grep -Fq 'r359-official-1.0.150' <<<"$DOM" \
+                  && grep -Fq 'v1.0.151' <<<"$DOM" \
+                  && grep -Fq 'r360-official-1.0.151' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
