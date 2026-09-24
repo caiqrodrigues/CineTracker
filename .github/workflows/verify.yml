@@ -51,12 +51,16 @@ jobs:
           set -euo pipefail
           npm run test:r362
           npm run test:r362:browser
-      - name: Focused r363 pool exhaustion + last-item recovery gate
+      - name: Focused r363 pool exhaustion static gate
         working-directory: apps/web
         run: |
           set -euo pipefail
           npm run test:r363
-          npm run test:r363:browser
+      - name: Focused r363 pool exhaustion browser gate
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          CT_R363_SKIP_BUILD=1 node test-r363-browser.mjs
       - name: Current regression lineage
         working-directory: apps/web
         run: |
