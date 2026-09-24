@@ -1,4 +1,4 @@
-name: Verify Web 1.0.143 r352 Local Card Actions No Reload
+name: Verify Web 1.0.144 r353 Smart Random Watchlist
 
 on:
   push:
@@ -9,33 +9,33 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_143_r352:
+  web_1_0_144_r353:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Version identity r352
+      - name: Version identity r353
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.143"' package.json
-          grep -Fq '"version": "1.0.143"' apps/web/package.json
-          grep -Fq 'build-r352-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r352-local-card-actions.js
-          test -f apps/web/build-r352.mjs
-          test -f apps/web/build-r352-official.mjs
-          test -f apps/web/test-r352.mjs
-          test -f apps/web/test-r352-browser.mjs
+          grep -Fq '"version": "1.0.144"' package.json
+          grep -Fq '"version": "1.0.144"' apps/web/package.json
+          grep -Fq 'build-r353-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r353-smart-watchlist.js
+          test -f apps/web/build-r353.mjs
+          test -f apps/web/build-r353-official.mjs
+          test -f apps/web/test-r353.mjs
+          test -f apps/web/test-r353-browser.mjs
           test -f supabase/migrations/20260923030000_r337_episode_catalog_search.sql
-      - name: Syntax r352
+      - name: Syntax r353
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r352-local-card-actions.js
-          node --check apps/web/build-r352.mjs
-          node --check apps/web/build-r352-official.mjs
-          node --check apps/web/test-r352.mjs
-          node --check apps/web/test-r352-browser.mjs
+          node --check apps/web/runtime-r353-smart-watchlist.js
+          node --check apps/web/build-r353.mjs
+          node --check apps/web/build-r353-official.mjs
+          node --check apps/web/test-r353.mjs
+          node --check apps/web/test-r353-browser.mjs
       - name: Current regression lineage
         working-directory: apps/web
         run: |
@@ -76,25 +76,27 @@ jobs:
           npm run test:r350:browser
           npm run test:r351
           npm run test:r351:browser
-      - name: Focused r352 local card actions no-reload browser gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
           npm run test:r352
           npm run test:r352:browser
-      - name: Final bundle identity r352
+      - name: Focused r353 smart-random Watchlist browser gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r352-official.mjs
-          node --check dist/app-v352.js
-          CT_R352_SKIP_BUILD=1 node test-r352.mjs
-          grep -Fq 'app-v352.js' dist/index.html
-          grep -Fq 'app-v352.css' dist/index.html
+          npm run test:r353
+          npm run test:r353:browser
+      - name: Final bundle identity r353
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node build-r353-official.mjs
+          node --check dist/app-v353.js
+          CT_R353_SKIP_BUILD=1 node test-r353.mjs
+          grep -Fq 'app-v353.js' dist/index.html
+          grep -Fq 'app-v353.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.143'
-            && r.revision==='r352-official-1.0.143'
+          const ok=r.version==='1.0.144'
+            && r.revision==='r353-official-1.0.144'
             && r.search_global==='movies+series+actors+episodes'
             && r.search_episode_local==='cinetracker_episode_search_v337'
             && r.home_navigation==='r337-desired-tab-authority+multi-settle+user-scroll-cancel'
@@ -108,6 +110,10 @@ jobs:
             && r.discover_foryou_legacy_css==='r338+r339-removed-at-runtime'
             && r.discover_card_actions==='local-slot-only+prevent-default+stop-propagation'
             && r.discover_foryou_actions==='optimistic-local-slot-swap+background-persist+silent-rollback'
+            && r.discover_watchlist_selection==='weighted-random+history-affinity+watchlist-affinity+quality'
+            && r.discover_watchlist_order==='not-list-order+not-index-plus-one'
+            && r.discover_watchlist_initial==='smart-weighted-random'
+            && r.discover_watchlist_swap==='smart-weighted-random-same-kind'
             && r.discover_foryou_reload==='forbidden-no-paintForYou-no-loadForYou-no-renderDiscover'
             && r.discover_public_watchlist==='instant-saved-state+background-persist+no-card-swap'
             && r.discover_public_seen==='instant-seen-state+background-persist+no-card-swap'
@@ -132,36 +138,38 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_143_r352, android_current_source]
+    needs: [web_1_0_144_r353, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.143 r352
+      - name: Official production serves and boots 1.0.144 r353
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.143"' <<<"$BODY" \
-              && grep -Fq '"revision": "r352-official-1.0.143"' <<<"$BODY" \
+            if grep -Fq '"version": "1.0.144"' <<<"$BODY" \
+              && grep -Fq '"revision": "r353-official-1.0.144"' <<<"$BODY" \
               && grep -Fq '"search_episode_local": "cinetracker_episode_search_v337"' <<<"$BODY" \
               && grep -Fq '"sports_startup": "every-open-warm+force-provider-sync+auth-retry+refresh-payload"' <<<"$BODY" \
               && grep -Fq '"page_layout": "content-normal-flow+home-full-inner-width"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_legacy_css": "r338+r339-removed-at-runtime"' <<<"$BODY" \
               && grep -Fq '"discover_card_actions": "local-slot-only+prevent-default+stop-propagation"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_actions": "optimistic-local-slot-swap+background-persist+silent-rollback"' <<<"$BODY" \
+              && grep -Fq '"discover_watchlist_selection": "weighted-random+history-affinity+watchlist-affinity+quality"' <<<"$BODY" \
+              && grep -Fq '"discover_watchlist_order": "not-list-order+not-index-plus-one"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_reload": "forbidden-no-paintForYou-no-loadForYou-no-renderDiscover"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_spacing": "slot-width-equals-poster+6px-gap"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_heart": "inside-poster-top-right"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v352.js?ct=$(date +%s%N)" || true)"
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v353.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR352Marker='local-card-swap+no-global-repaint+optimistic-background-persist'" <<<"$JS" \
-                && grep -Fq 'renderSlot352' <<<"$JS" \
+              if grep -Fq "window.__ctR353Marker='watchlist-smart-weighted-random+history-affinity+recent-memory'" <<<"$JS" \
+                && grep -Fq 'weightedPick353' <<<"$JS" \
                 && grep -Fq 'cinetracker_episode_search_v337' <<<"$JS" \
-                && grep -Fq 'app-v352.js' <<<"$HTML"; then
+                && grep -Fq 'app-v353.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.143' <<<"$DOM" \
-                  && grep -Fq 'r352-official-1.0.143' <<<"$DOM" \
+                  && grep -Fq 'v1.0.144' <<<"$DOM" \
+                  && grep -Fq 'r353-official-1.0.144' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
