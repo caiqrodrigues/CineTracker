@@ -1,4 +1,4 @@
-name: Verify Web 1.0.153 r362 Pra Voce Click Owner Pra Voce Rearm Actions
+name: Verify Web 1.0.153 r362 Pra Voce Click Owner
 
 on:
   push:
@@ -45,6 +45,12 @@ jobs:
           set -euo pipefail
           npm run test:r361
           npm run test:r361:browser
+      - name: Focused r362 physical Pra Voce click gate
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          npm run test:r362
+          npm run test:r362:browser
       - name: Current regression lineage
         working-directory: apps/web
         run: |
@@ -101,7 +107,7 @@ jobs:
           npm run test:r358:browser
           npm run test:r359
           npm run test:r359:browser
-      - name: Final bundle identity r361
+      - name: Final bundle identity r362
         working-directory: apps/web
         run: |
           set -euo pipefail
@@ -128,9 +134,10 @@ jobs:
             && r.discover_card_actions==='local-slot-only+prevent-default+stop-propagation'
             && r.media_kind==='badge-on-poster-no-kind-in-meta'
             && r.media_metadata==='year+rating+primary-genre+tmdb-detail-fallback'
-            && r.discover_foryou_actions==='repeat-click-live+stale-disabled-repair+same-slot-only+background-persist'
+            && r.discover_foryou_actions==='real-click+clicked-slot-only+background-persist'
             && r.discover_foryou_repaint==='renderSlot-hook+microtask+raf+90ms-rearm'
-            && r.discover_foryou_click_owner==='r361-via-r359-physical-first-window-capture'
+            && r.discover_foryou_click_owner==='r362-all-historical-pointers+dom-driven'
+            && r.discover_foryou_key_resolution==='card+open-button+action-button+state-fallback'
             && r.sports_national_teams==='espn-international-routes-v5'
             && r.discover_watchlist_selection==='weighted-random+history-affinity+watchlist-affinity+quality'
             && r.discover_watchlist_order==='not-list-order+not-index-plus-one'
@@ -184,9 +191,10 @@ jobs:
               && grep -Fq '"discover_card_actions": "local-slot-only+prevent-default+stop-propagation"' <<<"$BODY" \
               && grep -Fq '"media_kind": "badge-on-poster-no-kind-in-meta"' <<<"$BODY" \
               && grep -Fq '"media_metadata": "year+rating+primary-genre+tmdb-detail-fallback"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_actions": "repeat-click-live+stale-disabled-repair+same-slot-only+background-persist"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_actions": "real-click+clicked-slot-only+background-persist"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_repaint": "renderSlot-hook+microtask+raf+90ms-rearm"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_click_owner": "r361-via-r359-physical-first-window-capture"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_click_owner": "r362-all-historical-pointers+dom-driven"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_key_resolution": "card+open-button+action-button+state-fallback"' <<<"$BODY" \
               && grep -Fq '"home_payload": "cinetracker_home_payload_v359"' <<<"$BODY" \
               && grep -Fq '"home_startup": "db-episode-metadata-first-paint+nonblocking-background-tv-refresh"' <<<"$BODY" \
               && grep -Fq '"home_episode_reveal": "no-live-hydration-wait"' <<<"$BODY" \
