@@ -19,14 +19,14 @@ for(const x of[
  "const REVISION='r356-official-1.0.147';",
  "const version='1.0.147',revision='r356-official-1.0.147';",
  "window.__ctR356Marker='foryou-actions-dom-key-fallback+sports-authoritative-payload-repaint'",
- "window.addEventListener('click',e=>{try{const t=e.target;const direct354=window.__ctR354DirectClick;if(typeof direct354==='function'&&direct354(t,e))return;const api=window.__ctR306;if(!api||!t?.closest)return;",
+ "window.addEventListener('click',e=>{try{const t=e.target;const direct355=window.__ctR355DirectClick;if(typeof direct355==='function'&&direct355(t,e))return;const direct354=window.__ctR354DirectClick;if(typeof direct354==='function'&&direct354(t,e))return;const api=window.__ctR306;if(!api||!t?.closest)return;",
  "boot();"
 ])if(!js.includes(x))throw new Error('r357 missing '+x);
 
 /* r357 is the first and final decision for Descobrir > Pra você clicks. */
 js=once(js,
- "window.addEventListener('click',e=>{try{const t=e.target;const direct354=window.__ctR354DirectClick;if(typeof direct354==='function'&&direct354(t,e))return;const api=window.__ctR306;if(!api||!t?.closest)return;",
- "window.addEventListener('click',e=>{try{const t=e.target;const direct357=window.__ctR357DirectClick;if(typeof direct357==='function'&&direct357(t,e))return;const direct354=window.__ctR354DirectClick;if(typeof direct354==='function'&&direct354(t,e))return;const api=window.__ctR306;if(!api||!t?.closest)return;",
+ "window.addEventListener('click',e=>{try{const t=e.target;const direct355=window.__ctR355DirectClick;if(typeof direct355==='function'&&direct355(t,e))return;const direct354=window.__ctR354DirectClick;if(typeof direct354==='function'&&direct354(t,e))return;const api=window.__ctR306;if(!api||!t?.closest)return;",
+ "window.addEventListener('click',e=>{try{const t=e.target;const direct357=window.__ctR357DirectClick;if(typeof direct357==='function'&&direct357(t,e))return;const direct355=window.__ctR355DirectClick;if(typeof direct355==='function'&&direct355(t,e))return;const direct354=window.__ctR354DirectClick;if(typeof direct354==='function'&&direct354(t,e))return;const api=window.__ctR306;if(!api||!t?.closest)return;",
  'true earliest r357 click hook'
 );
 
