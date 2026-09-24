@@ -1,4 +1,4 @@
-name: Verify Web 1.0.149 r358 Home Ready Actions First Capture
+name: Verify Web 1.0.150 r359 Home Episode Cache Direct Actions
 
 on:
   push:
@@ -9,39 +9,42 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_149_r358:
+  web_1_0_150_r359:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Version identity r358
+      - name: Version identity r359
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.149"' package.json
-          grep -Fq '"version": "1.0.149"' apps/web/package.json
-          grep -Fq 'build-r358-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r358-home-actions-first.js
-          test -f apps/web/build-r358.mjs
-          test -f apps/web/build-r358-official.mjs
-          test -f apps/web/test-r358.mjs
-          test -f apps/web/test-r358-browser.mjs
+          grep -Fq '"version": "1.0.150"' package.json
+          grep -Fq '"version": "1.0.150"' apps/web/package.json
+          grep -Fq 'build-r359-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r359-home-cache-direct-actions.js
+          test -f apps/web/build-r359.mjs
+          test -f apps/web/build-r359-official.mjs
+          test -f apps/web/test-r359.mjs
+          test -f apps/web/test-r359-browser.mjs
           test -f supabase/migrations/20260923030000_r337_episode_catalog_search.sql
-      - name: Syntax r358
+          test -f supabase/migrations/20260924143000_r359_home_episode_cache_first_paint.sql
+          test -f supabase/migrations/20260924143500_r359_backfill_latest_episode_metadata.sql
+          test -f supabase/functions/ct-refresh-tv-state-user/index.ts
+      - name: Syntax r359
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r358-home-actions-first.js
-          node --check apps/web/build-r358.mjs
-          node --check apps/web/build-r358-official.mjs
-          node --check apps/web/test-r358.mjs
-          node --check apps/web/test-r358-browser.mjs
-      - name: Focused r358 first-capture actions + Home-ready gate
+          node --check apps/web/runtime-r359-home-cache-direct-actions.js
+          node --check apps/web/build-r359.mjs
+          node --check apps/web/build-r359-official.mjs
+          node --check apps/web/test-r359.mjs
+          node --check apps/web/test-r359-browser.mjs
+      - name: Focused r359 direct actions + cache-first Home gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          npm run test:r358
-          npm run test:r358:browser
+          npm run test:r359
+          npm run test:r359:browser
       - name: Current regression lineage
         working-directory: apps/web
         run: |
@@ -94,19 +97,21 @@ jobs:
           npm run test:r356:browser
           npm run test:r357
           npm run test:r357:browser
-      - name: Final bundle identity r358
+          npm run test:r358
+          npm run test:r358:browser
+      - name: Final bundle identity r359
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r358-official.mjs
-          node --check dist/app-v358.js
-          CT_R358_SKIP_BUILD=1 node test-r358.mjs
-          grep -Fq 'app-v358.js' dist/index.html
-          grep -Fq 'app-v358.css' dist/index.html
+          node build-r359-official.mjs
+          node --check dist/app-v359.js
+          CT_R359_SKIP_BUILD=1 node test-r359.mjs
+          grep -Fq 'app-v359.js' dist/index.html
+          grep -Fq 'app-v359.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.149'
-            && r.revision==='r358-official-1.0.149'
+          const ok=r.version==='1.0.150'
+            && r.revision==='r359-official-1.0.150'
             && r.search_global==='movies+series+actors+episodes'
             && r.search_episode_local==='cinetracker_episode_search_v337'
             && r.home_navigation==='r337-desired-tab-authority+multi-settle+user-scroll-cancel'
@@ -121,9 +126,9 @@ jobs:
             && r.discover_card_actions==='local-slot-only+prevent-default+stop-propagation'
             && r.media_kind==='badge-on-poster-no-kind-in-meta'
             && r.media_metadata==='year+rating+primary-genre+tmdb-detail-fallback'
-            && r.discover_foryou_actions==='local-slot-immediate+direct-backend-persist+no-global-repaint'
-            && r.discover_foryou_repaint==='clicked-slot-only'
-            && r.discover_foryou_click_owner==='r358-physical-first-window-capture'
+            && r.discover_foryou_actions==='direct-local-mutation+clicked-slot-render+direct-backend-persist'
+            && r.discover_foryou_repaint==='clicked-slot-only-no-global-event'
+            && r.discover_foryou_click_owner==='r359-absolute-first-window-capture'
             && r.sports_national_teams==='espn-international-routes-v5'
             && r.discover_watchlist_selection==='weighted-random+history-affinity+watchlist-affinity+quality'
             && r.discover_watchlist_order==='not-list-order+not-index-plus-one'
@@ -139,8 +144,11 @@ jobs:
             && r.discover_foryou_spacing==='slot-width-equals-poster+6px-gap'
             && r.discover_foryou_heart==='inside-poster-top-right'
             && r.discover_top10_geometry==='desktop-ten-equal-columns-visible-in-viewport'
-            && r.home_startup==='tv-refresh-before-first-paint+episode-meta-gate'
-            && r.home_episode_reveal==='wait-until-visible-episode-title-rating-date-ready'
+            && r.home_payload_source==='cinetracker_home_payload_v359'
+            && r.home_episode_metadata==='episode-catalog-cache-first'
+            && r.home_episode_hydration==='skip-when-cache-complete'
+            && r.home_episode_fallback==='tmdb-only-on-cache-miss'
+            && r.tv_refresh==='ct-refresh-tv-state-user-v2-episode-cache'
             && r.android==='1.0.20/10062';
           if(!ok){console.error(r);process.exit(1)}
           NODE
@@ -158,17 +166,17 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_149_r358, android_current_source]
+    needs: [web_1_0_150_r359, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.149 r358
+      - name: Official production serves and boots 1.0.150 r359
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.149"' <<<"$BODY" \
-              && grep -Fq '"revision": "r358-official-1.0.149"' <<<"$BODY" \
+            if grep -Fq '"version": "1.0.150"' <<<"$BODY" \
+              && grep -Fq '"revision": "r359-official-1.0.150"' <<<"$BODY" \
               && grep -Fq '"search_episode_local": "cinetracker_episode_search_v337"' <<<"$BODY" \
               && grep -Fq '"sports_startup": "every-open-warm+force-provider-sync+auth-retry+refresh-payload"' <<<"$BODY" \
               && grep -Fq '"page_layout": "content-normal-flow+home-full-inner-width"' <<<"$BODY" \
@@ -176,11 +184,13 @@ jobs:
               && grep -Fq '"discover_card_actions": "local-slot-only+prevent-default+stop-propagation"' <<<"$BODY" \
               && grep -Fq '"media_kind": "badge-on-poster-no-kind-in-meta"' <<<"$BODY" \
               && grep -Fq '"media_metadata": "year+rating+primary-genre+tmdb-detail-fallback"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_actions": "local-slot-immediate+direct-backend-persist+no-global-repaint"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_repaint": "clicked-slot-only"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_click_owner": "r358-physical-first-window-capture"' <<<"$BODY" \
-              && grep -Fq '"home_startup": "tv-refresh-before-first-paint+episode-meta-gate"' <<<"$BODY" \
-              && grep -Fq '"home_episode_reveal": "wait-until-visible-episode-title-rating-date-ready"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_actions": "direct-local-mutation+clicked-slot-render+direct-backend-persist"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_repaint": "clicked-slot-only-no-global-event"' <<<"$BODY" \
+              && grep -Fq '"discover_foryou_click_owner": "r359-absolute-first-window-capture"' <<<"$BODY" \
+              && grep -Fq '"home_payload_source": "cinetracker_home_payload_v359"' <<<"$BODY" \
+              && grep -Fq '"home_episode_metadata": "episode-catalog-cache-first"' <<<"$BODY" \
+              && grep -Fq '"home_episode_hydration": "skip-when-cache-complete"' <<<"$BODY" \
+              && grep -Fq '"tv_refresh": "ct-refresh-tv-state-user-v2-episode-cache"' <<<"$BODY" \
               && grep -Fq '"sports_national_teams": "espn-international-routes-v5"' <<<"$BODY" \
               && grep -Fq '"sports_payload": "r255-authoritative-bridge+forced-reload-after-sync"' <<<"$BODY" \
               && grep -Fq '"sports_manual_sync": "r356-full-sync+reload+paint"' <<<"$BODY" \
@@ -190,16 +200,16 @@ jobs:
               && grep -Fq '"discover_foryou_reload": "forbidden-no-paintForYou-no-loadForYou-no-renderDiscover"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_spacing": "slot-width-equals-poster+6px-gap"' <<<"$BODY" \
               && grep -Fq '"discover_foryou_heart": "inside-poster-top-right"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v358.js?ct=$(date +%s%N)" || true)"
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v359.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR358Marker='true-first-capture-foryou-actions+home-ready-before-reveal'" <<<"$JS" \
+              if grep -Fq "window.__ctR359Marker='direct-foryou-actions-no-chain+cached-home-episode-first-paint'" <<<"$JS" \
                 && grep -Fq 'weightedPick353' <<<"$JS" \
                 && grep -Fq 'cinetracker_episode_search_v337' <<<"$JS" \
-                && grep -Fq 'app-v358.js' <<<"$HTML"; then
+                && grep -Fq 'app-v359.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.149' <<<"$DOM" \
-                  && grep -Fq 'r358-official-1.0.149' <<<"$DOM" \
+                  && grep -Fq 'v1.0.150' <<<"$DOM" \
+                  && grep -Fq 'r359-official-1.0.150' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
