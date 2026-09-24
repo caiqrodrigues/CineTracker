@@ -138,6 +138,7 @@ function appendCandidates(name,candidates){
  install(st);return add.length;
 }
 async function refill(name,{force=false}={}){
+ if(!window.__ctR309Test?.state)return 0;
  if(refillTasks.has(name))return refillTasks.get(name);
  const size=poolFor(window.__ctR309Test?.state,name).length;
  if(!force&&size>=8)return 0;
@@ -150,7 +151,9 @@ async function refill(name,{force=false}={}){
  refillTasks.set(name,task);return task;
 }
 function warmAll(){
+ if(routeNow()!=='discover'||!window.__ctR309Test?.state)return false;
  for(const name of ['watch:movie','watch:series','watch:anime','fresh:movie','fresh:series','fresh:anime','daily'])void refill(name);
+ return true;
 }
 async function persist(action,key){
  const [type,idRaw]=String(key||'').split(':'),id=Number(idRaw||0);
