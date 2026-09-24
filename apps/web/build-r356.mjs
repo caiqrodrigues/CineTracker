@@ -19,16 +19,16 @@ for(const x of[
  "const REVISION='r355-official-1.0.146';",
  "const version='1.0.146',revision='r355-official-1.0.146';",
  "window.__ctR355Marker='foryou-hard-click-owner+local-slot-only+sports-sync-always-visible'",
- "const sport255={tab:'next',sport:'all',payload:null,at:0,gen:0};",
+ "window.__ctR312SportsBridge={get state(){return sport255},setState(v){if(!v||typeof v!=='object')return sport255;if(v.tab!=null)sport255.tab=String(v.tab);if(v.sport!=null)sport255.sport=String(v.sport);if(v.payload!=null)sport255.payload=v.payload;return sport255},paint(){return typeof paintSports255==='function'?paintSports255():null}};",
  "boot();"
 ])if(!js.includes(x))throw new Error('r356 missing '+x);
 
-/* Expose only the existing r255 Sports state/loader/painter so later fixes can reload the authoritative payload.
-   This does not replace the Sports renderer. */
+/* Extend the already-existing narrow r312 bridge inside the r255 closure.
+   This gives r356 access to the exact loader/rows/painter without duplicating Sports state. */
 js=once(js,
- "const sport255={tab:'next',sport:'all',payload:null,at:0,gen:0};\nconst f1255={tab:'overview',data:null,at:0};",
- "const sport255={tab:'next',sport:'all',payload:null,at:0,gen:0};\nconst f1255={tab:'overview',data:null,at:0};\nwindow.__ctR356SportsBridge={state:sport255,load:loadSports255,paint:paintSports255,rows:sportRows255};",
- 'r255 sports bridge'
+ "window.__ctR312SportsBridge={get state(){return sport255},setState(v){if(!v||typeof v!=='object')return sport255;if(v.tab!=null)sport255.tab=String(v.tab);if(v.sport!=null)sport255.sport=String(v.sport);if(v.payload!=null)sport255.payload=v.payload;return sport255},paint(){return typeof paintSports255==='function'?paintSports255():null}};",
+ "window.__ctR312SportsBridge={get state(){return sport255},setState(v){if(!v||typeof v!=='object')return sport255;if(v.tab!=null)sport255.tab=String(v.tab);if(v.sport!=null)sport255.sport=String(v.sport);if(v.payload!=null)sport255.payload=v.payload;if(v.at!=null)sport255.at=Number(v.at)||0;return sport255},paint(){return typeof paintSports255==='function'?paintSports255():null},load(force=false){return loadSports255(!!force)},rows(p=sport255.payload||{},tab=sport255.tab){return sportRows255(p,tab)}};window.__ctR356SportsBridge=window.__ctR312SportsBridge;",
+ 'extend r312 sports bridge'
 );
 
 js=once(js,"window.__ctWebBuild='1.0.146';window.__ctOfficialVersion='1.0.146';","window.__ctWebBuild='1.0.147';window.__ctOfficialVersion='1.0.147';",'version');
