@@ -3,7 +3,7 @@ if(process.env.CT_R380_SKIP_BUILD!=='1')await import('./build-r380.mjs');
 let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}if(!bin)throw new Error('Chromium unavailable');
 const runtime=(await readFile(resolve('runtime-r380-home-profile-discover.js'),'utf8')).replaceAll('</script>','<\\/script>');
 const html=`<!doctype html><html><head><style>.ct291-card{width:154px;height:260px}.ct378-slot{width:154px}.home-section{min-height:50px}.hidden{display:none}</style></head><body><div id="app"></div><script>
-let currentRoute='home',navSeq=1,sortCalls=0,navigations=0;window.route=()=>currentRoute;window.navSeq=navSeq;window.localDay=()=> '2026-09-25';window.tz=()=> 'America/Sao_Paulo';window.toast=()=>{};window.img=p=>p;window.loading=t=>'<div class="loader">'+t+'</div>';window.shell=(a,b,c,d)=>'<main>'+d+'</main>';window.setApp=h=>document.getElementById('app').innerHTML=h;
+let currentRoute='home',navSeq=1,sortCalls=0,navigations=0;function route(){return currentRoute}window.navSeq=navSeq;function localDay(){return '2026-09-25'}function tz(){return 'America/Sao_Paulo'}function toast(){}function img(p){return p}function loading(t){return '<div class="loader">'+t+'</div>'}function shell(a,b,c,d){return '<main>'+d+'</main>'}function setApp(h){document.getElementById('app').innerHTML=h}
 window.__snap={series:[
  {media_id:1,media_type:'tv',tmdb_id:101,title:'Berlim',home_bucket:'continue',watched_episodes:11,released_episodes:12,total_episodes:12,next_episode_title:null},
  {media_id:2,media_type:'tv',tmdb_id:102,title:'The Walking Dead',home_bucket:'continue',watched_episodes:176,released_episodes:177,total_episodes:177,next_episode_title:null},
