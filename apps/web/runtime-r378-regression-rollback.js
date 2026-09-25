@@ -15,9 +15,14 @@ const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catc
 let homeSnapshot=null,homeRefreshRun=0;
 const validHome=p=>!!p&&typeof p==='object'&&['series','movie_watchlist','history_episodes','history_movies'].every(k=>Array.isArray(p[k]));
 function activeHomeKind(){try{return window.__ctR371?.activeTab==='movies'?'movies':'series'}catch{return q('[data-home-tab].active')?.dataset?.homeTab==='movies'?'movies':'series'}}
+function saveHomeSnapshot(p){
+ if(!validHome(p))return false;homeSnapshot=p;window.__ctR378HomeSnapshot=p;
+ try{sessionStorage.setItem('ct379:home-snapshot',JSON.stringify(p))}catch{}
+ return true;
+}
 function captureHome(){
  let p=null;try{p=typeof ct274Payload==='function'?ct274Payload():homeCache}catch{}
- if(validHome(p)){homeSnapshot=p;window.__ctR378HomeSnapshot=p;return p}return null;
+ if(validHome(p)){saveHomeSnapshot(p);return p}return null;
 }
 function prepareHome(p){if(!validHome(p))return false;try{homeCache=p}catch{};try{window.__ctR359?.fastPrepareHome?.(p)}catch{};try{ct274CanonicalHome=p}catch{};try{ct275SourcePayload=p}catch{};return true}
 function settleHome(kind=activeHomeKind()){
@@ -36,8 +41,10 @@ async function refreshHomeInBackground(seq,kind){
  const run=++homeRefreshRun;
  try{
   const data=await ct274FetchHome();
-  if(run!==homeRefreshRun||seq!==navSeq||routeNow()!=='home'||!validHome(data))return false;
-  paintPreparedHome(data,kind);return true;
+  if(run!==homeRefreshRun||seq!==navSeq||!validHome(data))return false;
+  saveHomeSnapshot(data);
+  document.documentElement.dataset.ct378HomeRefresh='stored-next-navigation';
+  return true;
  }catch(e){
   document.documentElement.dataset.ct378HomeRefresh='failed-cache-kept';
   return false;
@@ -254,6 +261,6 @@ const style=document.createElement('style');style.id='ct-web-r378';style.textCon
 .ct378-loading{min-height:92px;display:flex;align-items:center;padding:12px}.ct378-loading h2{font-size:14px;opacity:.72}
 `;document.head.appendChild(style);
 
-window.__ctR378={version:'1.0.169',renderHome:renderHome378,captureHome,settleHome,renderForYou,loadForYou,renderSlot,swap,refillFresh,early:early378,get homeSnapshot(){return homeSnapshot},get authority(){return fyAuthority}};
-window.__ctR378Test={validHome,cloneState,current,slotHtml,renderForYou,applyFilter,refillFresh,swap,loadForYou,early378,setHomeSnapshot(v){homeSnapshot=v},setAuthority(v){fyAuthority={blocked:new Set(v?.blocked||[]),watch:new Set(v?.watch||[]),seen:new Set(v?.seen||[]),ready:true}},get homeSnapshot(){return homeSnapshot}};
+window.__ctR378={version:'1.0.169',renderHome:renderHome378,captureHome,saveHomeSnapshot,settleHome,renderForYou,loadForYou,renderSlot,swap,refillFresh,early:early378,get homeSnapshot(){return homeSnapshot},get authority(){return fyAuthority}};
+window.__ctR378Test={validHome,cloneState,current,slotHtml,renderForYou,applyFilter,refillFresh,swap,loadForYou,early378,setHomeSnapshot(v){saveHomeSnapshot(v)},setAuthority(v){fyAuthority={blocked:new Set(v?.blocked||[]),watch:new Set(v?.watch||[]),seen:new Set(v?.seen||[]),ready:true}},get homeSnapshot(){return homeSnapshot}};
 })();
