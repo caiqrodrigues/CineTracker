@@ -98,6 +98,11 @@ function unique(list){const out=[],seen=new Set();for(const x of rows(list)){con
 async function audit(st=state()){
  if(!st)return null;let a=null;
  try{if(typeof window.__ctR321?.exact==='function')a=await window.__ctR321.exact(allItems(st))}catch{}
+ if(!a&&typeof rpc==='function')try{
+  const items=unique(allItems(st)).map(x=>({media_type:typeOf(x),tmdb_id:idOf(x),title:titleOf(x),release_year:Number(String(x?.release_date||x?.first_air_date||x?.raw_tmdb?.release_date||x?.raw_tmdb?.first_air_date||'').slice(0,4)||0)||null})).filter(x=>x.tmdb_id>0);
+  const p=await rpc('cinetracker_discover_filter_v322',{p_items:items});
+  a={blocked:new Set(rows(p?.blocked_keys).map(String)),watch:new Set(rows(p?.watch_keys).map(String)),seen:new Set(rows(p?.seen_keys).map(String))};
+ }catch{}
  if(!a)try{a=await window.__ctR319?.personal?.(false)}catch{}
  const blocked=new Set(a?.blocked||[]),watch=new Set(a?.watch||[]),seen=new Set(a?.seen||[]);for(const k of seen)blocked.add(k);
  fyAuthority={blocked,watch,seen,ready:true};
@@ -223,7 +228,7 @@ function early378(target,event){
 async function loadForYou(force=false){
  if(window.__ctR379ForYouOwner&&typeof window.__ctR379LoadForYou==='function')return window.__ctR379LoadForYou(!!force);
  if(routeNow()!=='discover')return false;const run=++fyLoadRun,h=host();if(!h)return false;
- const existing=hasAny();if(existing)renderForYou();else h.innerHTML='<div data-ct378-loading><section class="panel ct378-loading"><h2>Indicação do Dia</h2></section><section class="panel ct378-loading"><h2>Da sua Watchlist</h2></section><section class="panel ct378-loading"><h2>100% novos</h2></section></div>';
+ const existing=hasAny();h.innerHTML='<div data-ct378-loading><section class="panel ct378-loading"><h2>Indicação do Dia</h2></section><section class="panel ct378-loading"><h2>Da sua Watchlist</h2></section><section class="panel ct378-loading"><h2>100% novos</h2></section></div>';
  try{
   if(!existing||force)await window.__ctR309?.buildForYou?.(!!force);
   if(run!==fyLoadRun||routeNow()!=='discover')return false;
