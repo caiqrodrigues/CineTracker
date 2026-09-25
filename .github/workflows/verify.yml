@@ -1,4 +1,4 @@
-name: Verify Web 1.0.169 r378 Regression Rollback
+name: Verify Web 1.0.170 r379 Stable Home Fresh Profile
 on:
   push:
     branches: [main]
@@ -6,26 +6,26 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r378:
+  web_r379:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and regression gate
+      - name: Build and regression validation
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r378-regression-rollback.js
-          node --check build-r378.mjs
-          node --check test-r378-browser.mjs
-          node build-r378-official.mjs
-          CT_R378_SKIP_BUILD=1 node test-r378.mjs
-          CT_R378_SKIP_BUILD=1 node test-r378-browser.mjs
-          node --check dist/app-v378.js
-          grep -Fq "rpc('cinetracker_home_payload_v359',{p_today:" dist/app-v378.js
-          ! grep -Fq "rpc('cinetracker_home_payload_v334',{p_today:" dist/app-v378.js
+          node --check runtime-r379-stable-home-fresh-profile.js
+          node --check build-r379.mjs
+          node --check test-r379-browser.mjs
+          node build-r379-official.mjs
+          CT_R379_SKIP_BUILD=1 node test-r379.mjs
+          CT_R379_SKIP_BUILD=1 node test-r379-browser.mjs
+          node --check dist/app-v379.js
+          grep -Fq "cinetracker_discover_filter_v379" dist/app-v379.js
+          grep -Fq "cinetracker_profile_quick_stats_v1" dist/app-v379.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -35,7 +35,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r378, android]
+    needs: [web_r379, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -44,10 +44,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.169"' <<<"$BODY" && grep -Fq '"revision": "r378-official-1.0.169"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v378.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.170"' <<<"$BODY" && grep -Fq '"revision": "r379-official-1.0.170"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v379.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR378Marker='home-v359-cache-first+semantic-anchor+foryou-isolated-dom-owner'" <<<"$JS" && grep -Fq 'app-v378.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR379Marker='home-persistent-v359-no-late-buckets+fresh-server-exact-known+profile-quick-first'" <<<"$JS" && grep -Fq 'app-v379.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

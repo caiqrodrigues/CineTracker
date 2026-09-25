@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.0.170 — 2026-09-25 — Web r379
+
+### Home Séries
+- Persiste o payload v359 (~167 KB) em armazenamento local e usa snapshot no primeiro paint, evitando skeleton longo nas aberturas seguintes.
+- Desativa os repaints tardios r325/r332 que alteravam buckets e faziam séries como Stuart aparecerem depois.
+- O payload v359 vira a autoridade de composição da lista; enriquecimento TMDB posterior só completa nome/nota/data do episódio, sem mover a série entre seções.
+- O alinhamento semântico Séries/Filmes da r375 continua obrigatório após cada paint.
+
+### Descobrir / Pra Você
+- Novo filtro `cinetracker_discover_filter_v379`: `100% Novos` bloqueia qualquer mídia já conhecida pela biblioteca pessoal, inclusive `Liked`, além de Visto e Watchlist.
+- Todo lote de fallback TMDB é validado no servidor antes de entrar no pool.
+- Filme/Série/Anime Fresh são reabastecidos em paralelo com nota mínima 7.5 e filtros de ano/WWE.
+- Contrato visual reimposto depois de cada render/troca: Daily/Fresh = Watchlist + Visto + Trocar; Watchlist = Visto + Trocar.
+- Troca continua local por slot e usa apenas candidatos Fresh previamente validados.
+
+### Perfil
+- Primeiro paint usa `cinetracker_profile_quick_stats_v1` (~150 ms na medição atual).
+- Biblioteca/favoritos/atividade entram depois pelo novo `cinetracker_profile_landing_v379` (~1,9 s medido), sem poder substituir o Perfil por erro vermelho.
+- Snapshot do Perfil é persistido para reaberturas instantâneas.
+
+### Detalhe
+- Remove falso positivo que tratava o texto “Marcar como visto” como evidência de item assistido; estado de Visto passa a exigir estado explícito.
+
+### Release
+- Web: `1.0.170 / r379-official-1.0.170`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.169 — 2026-09-25 — Web r378
 
 ### Rollback de regressões da r377

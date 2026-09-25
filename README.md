@@ -1,3 +1,15 @@
+## Web 1.0.170 / r379
+
+- **Home Séries estável:** snapshot v359 instantâneo, sem r325/r332 movendo séries depois do primeiro paint.
+- **Metadados:** nome/nota/data ausentes podem ser enriquecidos, mas sem alterar a seção da série.
+- **100% Novos realmente novos:** validação servidor v379 bloqueia qualquer item conhecido, inclusive favoritos/liked.
+- **Botões:** Fresh/Daily sempre 3 ações; Watchlist sempre 2, incluindo Trocar.
+- **Perfil rápido:** quick stats primeiro; biblioteca detalhada em background e sem tela vermelha fatal.
+- **Detalhe:** “Marcar como visto” não é mais interpretado como prova de Visto.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r379-official.mjs`; runtime: `apps/web/runtime-r379-stable-home-fresh-profile.js`.
+
 ## Web 1.0.169 / r378
 
 - **Rollback da regressão r377:** Home volta ao payload v359 e mantém snapshot instantâneo entre rotas.
@@ -28,7 +40,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.169** | `r378-official-1.0.169` | rollback r377 + Home v359 cache-first + Pra Você isolado |
+| Web | **1.0.170** | `r379-official-1.0.170` | Home estável + Fresh estrito + Perfil quick-first |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
