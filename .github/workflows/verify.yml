@@ -1,4 +1,4 @@
-name: Verify Web 1.0.157 r366 Pra Voce Authoritative Actions
+name: Verify Web 1.0.158 r367 Pra Voce Final Actions
 
 on:
   push:
@@ -9,36 +9,36 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_157_r366:
+  web_1_0_157_r367:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Version identity r366
+      - name: Version identity r367
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.157"' package.json
-          grep -Fq '"version": "1.0.157"' apps/web/package.json
-          grep -Fq 'build-r366-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r366-foryou-authoritative-actions.js
-          test -f apps/web/build-r366.mjs
-          test -f apps/web/build-r366-official.mjs
-          test -f apps/web/test-r366.mjs
-          test -f apps/web/test-r366-browser.mjs
+          grep -Fq '"version": "1.0.158"' package.json
+          grep -Fq '"version": "1.0.158"' apps/web/package.json
+          grep -Fq 'build-r367-official.mjs' apps/web/package.json
+          test -f apps/web/runtime-r367-foryou-authoritative-actions.js
+          test -f apps/web/build-r367.mjs
+          test -f apps/web/build-r367-official.mjs
+          test -f apps/web/test-r367.mjs
+          test -f apps/web/test-r367-browser.mjs
           test -f supabase/migrations/20260923030000_r337_episode_catalog_search.sql
           test -f supabase/migrations/20260924140039_r359_home_episode_cache_first_paint.sql
           test -f supabase/migrations/20260924140711_r359_backfill_latest_episode_metadata.sql
           grep -Fq "version:'tv-state-refresh-v2'" supabase/functions/ct-refresh-tv-state-user/index.ts
-      - name: Syntax r366
+      - name: Syntax r367
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r366-foryou-authoritative-actions.js
-          node --check apps/web/build-r366.mjs
-          node --check apps/web/build-r366-official.mjs
-          node --check apps/web/test-r366.mjs
-          node --check apps/web/test-r366-browser.mjs
+          node --check apps/web/runtime-r367-foryou-authoritative-actions.js
+          node --check apps/web/build-r367.mjs
+          node --check apps/web/build-r367-official.mjs
+          node --check apps/web/test-r367.mjs
+          node --check apps/web/test-r367-browser.mjs
       - name: Focused r361 repeated repaint action gate
         working-directory: apps/web
         run: |
@@ -67,12 +67,12 @@ jobs:
           set -euo pipefail
           npm run test:r364
           npm run test:r364:browser
-      - name: Focused r366 authoritative Pra Voce action gate
+      - name: Focused r367 authoritative Pra Voce action gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          npm run test:r366
-          npm run test:r366:browser
+          npm run test:r367
+          npm run test:r367:browser
       - name: Current regression lineage
         working-directory: apps/web
         run: |
@@ -129,19 +129,19 @@ jobs:
           npm run test:r358:browser
           npm run test:r359
           npm run test:r359:browser
-      - name: Final bundle identity r366
+      - name: Final bundle identity r367
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r366-official.mjs
+          node build-r367-official.mjs
           node --check dist/app-v366.js
-          CT_R365_SKIP_BUILD=1 node test-r366.mjs
+          CT_R365_SKIP_BUILD=1 node test-r367.mjs
           grep -Fq 'app-v366.js' dist/index.html
           grep -Fq 'app-v366.css' dist/index.html
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.157'
-            && r.revision==='r366-official-1.0.157'
+          const ok=r.version==='1.0.158'
+            && r.revision==='r367-official-1.0.158'
             && r.search_global==='movies+series+actors+episodes'
             && r.search_episode_local==='cinetracker_episode_search_v337'
             && r.home_navigation==='r337-desired-tab-authority+multi-settle+user-scroll-cancel'
@@ -201,17 +201,17 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_157_r366, android_current_source]
+    needs: [web_1_0_157_r367, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.157 r366
+      - name: Official production serves and boots 1.0.158 r367
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.157"' <<<"$BODY" \
-              && grep -Fq '"revision": "r366-official-1.0.157"' <<<"$BODY" \
+            if grep -Fq '"version": "1.0.158"' <<<"$BODY" \
+              && grep -Fq '"revision": "r367-official-1.0.158"' <<<"$BODY" \
               && grep -Fq '"search_episode_local": "cinetracker_episode_search_v337"' <<<"$BODY" \
               && grep -Fq '"sports_startup": "every-open-warm+force-provider-sync+auth-retry+refresh-payload"' <<<"$BODY" \
               && grep -Fq '"page_layout": "content-normal-flow+home-full-inner-width"' <<<"$BODY" \
@@ -242,14 +242,14 @@ jobs:
               && grep -Fq '"discover_foryou_heart": "inside-poster-top-right"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v366.js?ct=$(date +%s%N)" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR366Marker='foryou-authoritative-action-rows+daily-swap-always-present+refill-on-demand'" <<<"$JS" \
+              if grep -Fq "window.__ctR367Marker='foryou-authoritative-action-rows+daily-swap-always-present+refill-on-demand'" <<<"$JS" \
                 && grep -Fq 'weightedPick353' <<<"$JS" \
                 && grep -Fq 'cinetracker_episode_search_v337' <<<"$JS" \
                 && grep -Fq 'app-v366.js' <<<"$HTML"; then
                 DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
                 if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.157' <<<"$DOM" \
-                  && grep -Fq 'r366-official-1.0.157' <<<"$DOM" \
+                  && grep -Fq 'v1.0.158' <<<"$DOM" \
+                  && grep -Fq 'r367-official-1.0.158' <<<"$DOM" \
                   && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
               fi
             fi
