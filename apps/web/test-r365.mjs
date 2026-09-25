@@ -8,7 +8,7 @@ const [js,html,rRaw,runtime]=await Promise.all([
 const r=JSON.parse(rRaw),ok=(v,m)=>{if(!v)throw new Error('R365_STATIC '+m)};
 ok(r.version==='1.0.156'&&r.revision==='r365-official-1.0.156','identity');
 ok(html.includes('app-v365.js')&&html.includes('app-v365.css'),'assets');
-ok(js.includes("window.__ctR365Marker='discover-warm-authority+foryou-direct-local-actions+stable-action-row'"),'runtime marker');
+ok(js.includes("window.__ctR365Marker='discover-warm-authority+foryou-direct-local-actions+stable-action-row+render-owned-actions'"),'runtime marker');
 ok(js.includes('Date.now()-personal.at<300000'),'personal authority ttl');
 ok(js.includes('[personal319(!!force),source319(tab,force)]'),'public authority reuse');
 ok(js.includes('[personal319(!!force),topRaw319(provider,force)]'),'top authority reuse');
@@ -19,6 +19,8 @@ ok(runtime.includes('window.__ctR359Test?.mutate359')&&runtime.includes('persist
 ok(runtime.includes("if(action==='watchlist'&&name.startsWith('watch:'))return null"),'saved watchlist guard');
 ok(runtime.includes('function ensureActionSlot(slot)')&&runtime.includes("bucket==='watch'?[['✓ Visto','seen'],['↻ Trocar','swap']]"),'stable action rows survive local swaps');
 ok(runtime.includes('MutationObserver')&&runtime.includes('repairSoon()'),'action row self repair');
+ok(runtime.includes('function ownRenderers()')&&runtime.includes('__ctR365Owned'),'action rows owned by Pra Voce/card renderers');
+ok(runtime.includes('n>=0&&n<2'),'swap stays enabled while pool state is still unknown');
 ok(r.discover_foryou_click_owner==='r365-direct-local-owner','owner contract');
 ok(r.discover_tab_loading==='cached-source+cached-authority-first','speed contract');
 ok(r.android==='1.0.20/10062','Android changed');
