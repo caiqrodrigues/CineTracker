@@ -10,7 +10,7 @@ for(const x of ["window.__ctR379Marker='home-persistent-v359-no-late-buckets+fre
 ok(r325.includes("if(window.__ctR379HomeOwner)return{skipped:true,owner:'r379'}"),'r325 late refresh not guarded');
 ok((r332.match(/if\(window\.__ctR379HomeOwner\)return false;/g)||[]).length>=2,'r332 late repaint not guarded');
 ok(!r199.includes("/\\bvisto\\b|assistido/i.test"),'detail false watched text heuristic remains');
-ok(mig.includes("mo.state='Liked'")&&mig.includes("is_known as is_blocked"),'strict known filter missing');
+ok(mig.includes("mo.state='Liked'")&&/is_known\s+(?:as\s+)?is_blocked/.test(mig),'strict known filter missing');
 ok(html.includes('app-v379.js')&&sw.includes('ct-web-1.0.170-r379'),'asset identity');
 ok(r.version==='1.0.170'&&r.revision==='r379-official-1.0.170','release identity');
 console.log('WEB_R379_TEST_OK');
