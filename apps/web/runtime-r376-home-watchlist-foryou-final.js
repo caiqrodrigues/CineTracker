@@ -233,7 +233,7 @@ try{const b=paintHome;paintHome=function(){const out=b.apply(this,arguments);aft
 try{const b=ct275PaintHome;ct275PaintHome=function(){const out=b.apply(this,arguments);afterHomePaint();return out}}catch{}
 try{const b=renderHome;renderHome=async function(){const out=await b.apply(this,arguments);await hydrateHome(false);return out}}catch{}
 window.addEventListener('cinetracker:data-changed',()=>{invalidateHome();if(routeNow()==='home')void hydrateHome(true)});
-setTimeout(()=>{if(routeNow()==='home')void hydrateHome(false);if(routeNow()==='discover')void ensureFreshAll()},0);
+setTimeout(()=>{if(routeNow()==='home')void hydrateHome(false);if(routeNow()==='discover'&&typeof window.__ctR378LoadForYou!=='function')void ensureFreshAll()},0);
 
 const style=document.createElement('style');style.id='ct-web-r376';style.textContent=`
 .ct376-watch-tools{margin-left:auto;display:flex;align-items:center;gap:5px;position:relative;z-index:80;flex:0 0 auto}
