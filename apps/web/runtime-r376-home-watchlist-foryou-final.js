@@ -60,9 +60,9 @@ function renderAllHomeRows(){
   const frag=document.createDocumentFragment(),start=home.rendered,end=Math.min(source.length,start+BATCH);
   for(let i=start;i<end;i++){const x=source[i],node=makeHomeNode(x),id=mediaId(x);node.style.order=String(home.rank.get(id)??i);home.nodes.set(id,node);frag.appendChild(node)}
   stack.appendChild(frag);home.rendered=end;sec.dataset.ct376Rendered=String(end);
-  if(end<source.length)requestAnimationFrame(step);
+  if(end<source.length)setTimeout(step,0);
  };
- requestAnimationFrame(step);return true;
+ setTimeout(step,0);return true;
 }
 function sortLabel(mode=home.sort){return({added_desc:'Por último adicionado',added_asc:'Primeiro adicionado',release_desc:'Último lançado',release_asc:'Primeiro lançado',az:'A-Z',za:'Z-A'})[mode]||'Por último adicionado'}
 function stopEvent(e){e?.preventDefault?.();e?.stopImmediatePropagation?.();e?.stopPropagation?.()}
