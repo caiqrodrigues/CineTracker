@@ -74,7 +74,7 @@ function ensureMovieRewatch199(){
   const m=path199().match(/^\/movie\/(\d+)/);if(!m)return;
   const id=Number(m[1]),hero=document.querySelector('.ct169-detail-hero,.detail-hero');if(!hero)return;
   const seen=hero.querySelector('[data-detail-seen]');if(!seen)return;
-  const isSeen=seen.disabled||seen.classList.contains('on')||seen.getAttribute('aria-pressed')==='true'||/\bvisto\b|assistido/i.test(String(seen.textContent||''));
+  const isSeen=seen.disabled||seen.classList.contains('on')||seen.getAttribute('aria-pressed')==='true'||seen.dataset.seen==='1'||seen.dataset.watched==='1';
   if(!isSeen)return;
   let b=hero.querySelector(`[data-ct171-rewatch-media="movie:${id}"]`);
   if(!b){
