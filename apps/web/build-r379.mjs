@@ -6,6 +6,7 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
  readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r379-home-fresh-profile.js'),'utf8')
 ]);
 const once=(s,a,b,l)=>{const n=s.split(a).length-1;if(n!==1)throw new Error('r379 expected one '+l+', found '+n);return s.replace(a,b)};
+js=js.replaceAll("rpc('cinetracker_profile_payload_v0997',{p_tz:tz()})","rpc('cinetracker_profile_fast_v379',{p_tz:tz()})");
 js=once(js,"window.__ctWebBuild='1.0.169';window.__ctOfficialVersion='1.0.169';","window.__ctWebBuild='1.0.170';window.__ctOfficialVersion='1.0.170';",'version');
 js=once(js,"const REVISION='r378-official-1.0.169';","const REVISION='r379-official-1.0.170';",'revision');
 js=once(js,"const version='1.0.169',revision='r378-official-1.0.169';","const version='1.0.170',revision='r379-official-1.0.170';",'footer');
