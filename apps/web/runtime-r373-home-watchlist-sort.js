@@ -42,8 +42,6 @@ function section(){
 }
 function rowHtml(x){
  const id=idOf(x),p=posterOf(x),year=String(x?.release_year||x?.release_date||x?.raw_tmdb?.release_date||'').slice(0,4),mins=runtimeOf(x);
- let img='';
- try{img=p?(typeof img==='function'?img(p,'w154'):''):''}catch{}
  const poster=p?(/^https?:\/\//i.test(p)?p:(typeof window.img==='function'?window.img(p,'w154'):'https://image.tmdb.org/t/p/w154'+(String(p).startsWith('/')?'':'/')+p)):'';
  const meta=[year||'',mins?mins+' min':''].filter(Boolean).join(' · ');
  return '<div class="media-row ct373-watch-row" data-media="movie:'+id+'" data-ct373-watch-id="'+id+'">'+
@@ -78,8 +76,8 @@ function paint(){
   '<button type="button" class="ct373-sort-trigger" data-ct373-sort-trigger aria-label="Ordenar Watchlist" aria-haspopup="listbox" aria-expanded="'+state.open+'" title="'+esc373(sortLabel())+'">⇅</button>'+
   '<div class="ct373-sort-popover'+(state.open?' open':'')+'" data-ct373-sort-popover role="listbox" aria-label="Ordenar Watchlist">'+optionsHtml()+'</div>';
  stack.innerHTML=visible.length?visible.map(rowHtml).join(''):'<div class="empty">Nenhum filme na Watchlist.</div>';
+ qa('[data-ct373-more]',sec).forEach(x=>x.remove());
  if(visible.length<sorted.length)stack.insertAdjacentHTML('afterend','<button type="button" class="ct373-more" data-ct373-more>Mostrar mais <small>'+visible.length.toLocaleString('pt-BR')+' de '+sorted.length.toLocaleString('pt-BR')+'</small></button>');
- else q('[data-ct373-more]',sec)?.remove();
  sec.dataset.ct373Watchlist='full-v119';
  sec.dataset.ct373Total=String(state.rows.length);
  sec.dataset.ct373Sort=state.sort;
@@ -154,7 +152,6 @@ const style=document.createElement('style');style.id='ct-web-r373';style.textCon
 .ct373-more small{opacity:.58}
 `;document.head.appendChild(style);
 
-window.__ctR373={version:'1.0.164,',loadFull,hydrate,paint,setSort,toggleSort,more,invalidate,sortRows,get state(){return state}};
-window.__ctR373.version='1.0.164';
+window.__ctR373={version:'1.0.164',loadFull,hydrate,paint,setSort,toggleSort,more,invalidate,sortRows,get state(){return state}};
 window.__ctR373Test={movieRows,sortRows,setSort,more,paint,loadFull,setRows(v){state.rows=rows(v);state.loaded=true;state.at=Date.now();state.visible=PAGE_SIZE},get state(){return state}};
 })();
