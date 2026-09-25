@@ -6,12 +6,24 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.163** | `r372-official-1.0.163` | botões Pra Você estáveis + 100% Novos sem Vistos/Watchlist |
+| Web | **1.0.164** | `r373-official-1.0.164` | Watchlist Home completa + contador real + seis ordenações locais |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.164 / r373
+
+- **Watchlist completa na Home:** usa `cinetracker_watchlist_full_v119`, sem teto de 120 títulos.
+- **Contador real:** o cabeçalho de `Assistir a seguir / Watchlist` mostra o total completo carregado.
+- **DOM leve:** 80 linhas por página com `Mostrar mais`; a paginação visual não limita a busca nem o contador.
+- **Ordenação compacta:** botão `⇅` junto ao contador abre seis opções — último/primeiro adicionado, último/primeiro lançado, A-Z e Z-A.
+- **Sem reload:** a ordenação usa apenas estado local e reorganiza imediatamente os cards.
+- **Teste:** payload sintético de 155 filmes valida total acima de 120, as seis ordens e URL inalterada.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r373-official.mjs`; runtime: `apps/web/runtime-r373-home-watchlist-sort.js`.
 
 ## Web 1.0.163 / r372
 

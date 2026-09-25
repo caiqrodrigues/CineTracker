@@ -1,4 +1,4 @@
-name: Verify Web 1.0.163 r372 For You Layout and Fresh Strict
+name: Verify Web 1.0.164 r373 Home Watchlist Full Sort
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_1_0_163_r372:
+  web_1_0_164_r373:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -16,22 +16,22 @@ jobs:
       - name: Syntax and identity
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.163"' package.json
-          grep -Fq '"version": "1.0.163"' apps/web/package.json
-          node --check apps/web/runtime-r372-foryou-layout-fresh-strict.js
-          node --check apps/web/build-r372.mjs
-          node --check apps/web/test-r372.mjs
-          node --check apps/web/test-r372-browser.mjs
-      - name: Build and strict validation
+          grep -Fq '"version": "1.0.164"' package.json
+          grep -Fq '"version": "1.0.164"' apps/web/package.json
+          node --check apps/web/runtime-r373-home-watchlist-sort.js
+          node --check apps/web/build-r373.mjs
+          node --check apps/web/test-r373.mjs
+          node --check apps/web/test-r373-browser.mjs
+      - name: Build and Watchlist validation
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r372-official.mjs
-          CT_R372_SKIP_BUILD=1 node test-r372.mjs
-          CT_R372_SKIP_BUILD=1 node test-r372-browser.mjs
-          node --check dist/app-v372.js
-          grep -Fq 'app-v372.js' dist/index.html
-          grep -Fq 'ct-web-1.0.163-r372' dist/service-worker.js
+          node build-r373-official.mjs
+          CT_R373_SKIP_BUILD=1 node test-r373.mjs
+          CT_R373_SKIP_BUILD=1 node test-r373-browser.mjs
+          node --check dist/app-v373.js
+          grep -Fq 'app-v373.js' dist/index.html
+          grep -Fq 'ct-web-1.0.164-r373' dist/service-worker.js
   android_current_source:
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +41,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_163_r372, android_current_source]
+    needs: [web_1_0_164_r373, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -50,10 +50,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.163"' <<<"$BODY" && grep -Fq '"revision": "r372-official-1.0.163"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v372.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.164"' <<<"$BODY" && grep -Fq '"revision": "r373-official-1.0.164"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v373.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR372Marker='foryou-flex-controls+poster-overlay-z10+fresh-strict-seen-watch-authority'" <<<"$JS" && grep -Fq 'app-v372.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR373Marker='home-watchlist-full-v119+exact-count+compact-six-sort+dom-paging'" <<<"$JS" && grep -Fq 'app-v373.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

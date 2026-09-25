@@ -1,0 +1,20 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';import {createServer} from 'node:http';import {spawn,execFileSync} from 'node:child_process';
+if(process.env.CT_R373_SKIP_BUILD!=='1')await import('./build-r373.mjs');
+let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}if(!bin)throw new Error('Chromium unavailable');
+const runtime=(await readFile(resolve('runtime-r373-home-watchlist-sort.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const html=`<!doctype html><html><head></head><body><div data-home><div data-home-view="movies"><section class="home-section"><div class="panel-head"><h3>Assistir a seguir / Watchlist</h3><small>120</small></div><div class="stack"></div></section></div></div><script>
+window.route=()=> 'home';window.img=(p)=>p;const base=new Date('2026-01-01T00:00:00Z').getTime();window.__payload={rows:Array.from({length:155},(_,i)=>({media_type:'movie',tmdb_id:i+1,title:'Title '+String(155-i).padStart(3,'0'),poster_path:'/p'+i+'.jpg',release_year:1980+(i%46),added_at:new Date(base+i*86400000).toISOString(),raw_tmdb:{release_date:String(1980+(i%46))+'-01-01',runtime:90+i%40}})),counts:{movie:155,series:0}};window.rpc=async(name)=>{if(name!=='cinetracker_watchlist_full_v119')throw new Error(name);return window.__payload};
+</script><script>${runtime}</script><script>
+(async()=>{try{const ok=(v,m)=>{if(!v)throw new Error(m)},sleep=ms=>new Promise(r=>setTimeout(r,ms));await window.__ctR373.hydrate(true);await sleep(10);
+ const sec=document.querySelector('.home-section'),count=sec.querySelector('[data-ct373-count]');ok(count.textContent==='155','count '+count.textContent);ok(sec.dataset.ct373Total==='155','dataset total');ok(sec.dataset.ct373Rendered==='80','initial DOM page not 80');
+ const expected={added_desc:155,added_asc:1,release_desc:46,release_asc:1,az:155,za:1};
+ for(const mode of ['added_desc','added_asc','release_desc','release_asc','az','za']){window.__ctR373.setSort(mode);await sleep(0);ok(sec.dataset.ct373Sort===mode,'sort mode '+mode);const first=Number(sec.querySelector('[data-ct373-watch-id]')?.dataset.ct373WatchId||0);if(mode==='added_desc')ok(first===155,'added desc');if(mode==='added_asc')ok(first===1,'added asc');if(mode==='az')ok(first===155,'az');if(mode==='za')ok(first===1,'za')}
+ const before=location.href;sec.querySelector('[data-ct373-sort-trigger]').click();await sleep(0);ok(sec.querySelector('[data-ct373-sort-popover]').classList.contains('open'),'popover did not open');ok(sec.querySelectorAll('[data-ct373-sort]').length===6,'not six options');sec.querySelector('[data-ct373-sort="added_desc"]').click();await sleep(0);ok(location.href===before,'sort changed URL');
+ sec.querySelector('[data-ct373-more]').click();await sleep(0);ok(sec.dataset.ct373Rendered==='155','show more did not render all');
+ document.documentElement.dataset.ct373done='1'}catch(e){document.documentElement.dataset.ct373probe='fail:'+String(e?.stack||e)}})();
+</script></body></html>`;
+const server=createServer((req,res)=>{res.writeHead(200,{'content-type':'text/html','cache-control':'no-store'});res.end(html)});await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget=2500','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
+const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},15000),code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
+if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1000));if(!/data-ct373done="1"/.test(out)){const m=out.match(/data-ct373probe="([^"]*)"/);throw new Error('R373_BROWSER '+(m?.[1]||'probe did not finish'))}
+console.log('R373_BROWSER_OK 155 exact count + six local sorts + paged DOM + no URL reload');

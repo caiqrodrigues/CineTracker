@@ -2,6 +2,30 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.164 — 2026-09-25 — Web r373
+
+### Home / Assistir a seguir / Watchlist
+- A Home deixa de depender do subconjunto limitado do payload de Home para a Watchlist de filmes e passa a usar `cinetracker_watchlist_full_v119`, cuja consulta não aplica `LIMIT` aos títulos.
+- O contador no cabeçalho usa a coleção completa carregada e exibe o total real, inclusive acima de 120.
+- O DOM renderiza 80 itens por vez e oferece `Mostrar mais`, mantendo a busca/contagem completas sem montar centenas de nós de uma vez.
+
+### Mini-filtro de ordenação
+- Adiciona um botão compacto `⇅` imediatamente ao lado do contador, com popover local e seis opções:
+  - Por último adicionado (`added_at` desc, padrão)
+  - Primeiro adicionado (`added_at` asc)
+  - Último lançado (`release_date`/`first_air_date` desc)
+  - Primeiro lançado (`release_date`/`first_air_date` asc)
+  - A-Z
+  - Z-A
+- A ordenação acontece instantaneamente em memória, sem reload, navegação ou nova consulta ao banco.
+
+### Validação
+- Browser gate usa 155 itens, confirma contador `155`, paginação DOM inicial de 80, as seis ordenações e URL inalterada.
+
+### Release
+- Web: `1.0.164 / r373-official-1.0.164`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.163 — 2026-09-25 — Web r372
 
 ### Descobrir / Pra você — layout
