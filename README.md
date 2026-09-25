@@ -1,5 +1,16 @@
 ## Web 1.0.170 / r379
 
+- **Home estável:** sem Stuart/novas séries entrando dezenas de segundos depois; refresh fica para a próxima navegação.
+- **Metadados visíveis rápidos:** hidratação imediata e limitada dos episódios já mostrados.
+- **100% Novos estrito:** filtro indexado v322 antes do render; `movie:673` é caso obrigatório de regressão.
+- **Perfil rápido:** RPC v379 executa o dashboard uma vez, usa cache de sessão e não substitui Perfil válido por timeout.
+- **Watchlist do Perfil:** mesma autoridade completa v376.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r379-official.mjs`; runtime: `apps/web/runtime-r379-home-fresh-profile.js`.
+
+## Web 1.0.170 / r379
+
 - **Home Séries estável:** snapshot v359 instantâneo, sem r325/r332 movendo séries depois do primeiro paint.
 - **Metadados:** nome/nota/data ausentes podem ser enriquecidos, mas sem alterar a seção da série.
 - **100% Novos realmente novos:** validação servidor v379 bloqueia qualquer item conhecido, inclusive favoritos/liked.

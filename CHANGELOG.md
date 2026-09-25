@@ -2,6 +2,28 @@
 
 ## 1.0.170 — 2026-09-25 — Web r379
 
+### Home / Séries
+- r379 assume a autoridade da Home e desativa os reparos automáticos tardios da r332; a composição exibida não recebe novas séries dezenas de segundos depois.
+- O refresh em background é salvo como snapshot para a próxima navegação, sem repintar a tela atual.
+- O snapshot da Home é persistido em sessionStorage para retorno instantâneo.
+- Metadados dos episódios visíveis são hidratados imediatamente com limite de 3,5 s, sem aguardar o antigo ciclo tardio.
+
+### Descobrir / Pra Você
+- O filtro pessoal passa a usar `cinetracker_discover_filter_v322` (indexado).
+- Nenhum card de 100% Novos é renderizado antes da auditoria pessoal.
+- Regressão obrigatória: `movie:673` (Harry Potter e o Prisioneiro de Azkaban) marcado como visto deve ser removido do Fresh antes do render.
+
+### Perfil
+- Novo RPC `cinetracker_profile_fast_v379`: materializa o dashboard uma única vez e deriva estatísticas, estados e contagens sem recalcular o dashboard em funções aninhadas.
+- Perfil usa cache de sessão no primeiro paint e atualiza pelo RPC rápido; falha de atualização não derruba uma tela já válida.
+- Fonte da Watchlist do Perfil passa para `cinetracker_watchlist_full_v376`.
+
+### Release
+- Web: `1.0.170 / r379-official-1.0.170`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
+## 1.0.170 — 2026-09-25 — Web r379
+
 ### Home Séries
 - Persiste o payload v359 (~167 KB) em armazenamento local e usa snapshot no primeiro paint, evitando skeleton longo nas aberturas seguintes.
 - Desativa os repaints tardios r325/r332 que alteravam buckets e faziam séries como Stuart aparecerem depois.

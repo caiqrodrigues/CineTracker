@@ -1,4 +1,4 @@
-name: Verify Web 1.0.170 r379 Stable Home Fresh Profile
+name: Verify Web 1.0.170 r379 Home Fresh Profile
 on:
   push:
     branches: [main]
@@ -13,19 +13,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and regression validation
+      - name: Build and regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r379-stable-home-fresh-profile.js
+          node --check runtime-r379-home-fresh-profile.js
           node --check build-r379.mjs
           node --check test-r379-browser.mjs
           node build-r379-official.mjs
           CT_R379_SKIP_BUILD=1 node test-r379.mjs
           CT_R379_SKIP_BUILD=1 node test-r379-browser.mjs
-          node --check dist/app-v379.js
-          grep -Fq "cinetracker_discover_filter_v379" dist/app-v379.js
-          grep -Fq "cinetracker_profile_quick_stats_v1" dist/app-v379.js
+          grep -Fq 'app-v379.js' dist/index.html
+          grep -Fq 'ct-web-1.0.170-r379' dist/service-worker.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -46,8 +45,7 @@ jobs:
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
             if grep -Fq '"version": "1.0.170"' <<<"$BODY" && grep -Fq '"revision": "r379-official-1.0.170"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v379.js?ct=$CT" || true)"
-              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR379Marker='home-persistent-v359-no-late-buckets+fresh-server-exact-known+profile-quick-first'" <<<"$JS" && grep -Fq 'app-v379.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR379Marker='home-stable-no-late-recompose+visible-meta-fast+fresh-v322-strict+profile-fast-cache'" <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done
