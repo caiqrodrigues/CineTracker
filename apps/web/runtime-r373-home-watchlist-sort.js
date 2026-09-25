@@ -77,7 +77,11 @@ function paint(){
   '<div class="ct373-sort-popover'+(state.open?' open':'')+'" data-ct373-sort-popover role="listbox" aria-label="Ordenar Watchlist">'+optionsHtml()+'</div>';
  stack.innerHTML=visible.length?visible.map(rowHtml).join(''):'<div class="empty">Nenhum filme na Watchlist.</div>';
  qa('[data-ct373-more]',sec).forEach(x=>x.remove());
- if(visible.length<sorted.length)stack.insertAdjacentHTML('afterend','<button type="button" class="ct373-more" data-ct373-more>Mostrar mais <small>'+visible.length.toLocaleString('pt-BR')+' de '+sorted.length.toLocaleString('pt-BR')+'</small></button>');
+ if(visible.length<sorted.length){
+  stack.insertAdjacentHTML('afterend','<button type="button" class="ct373-more" data-ct373-more>Mostrar mais <small>'+visible.length.toLocaleString('pt-BR')+' de '+sorted.length.toLocaleString('pt-BR')+'</small></button>');
+  const moreBtn=q('[data-ct373-more]',sec);
+  if(moreBtn)moreBtn.onclick=e=>{e.preventDefault();e.stopPropagation();more()};
+ }
  sec.dataset.ct373Watchlist='full-v119';
  sec.dataset.ct373Total=String(state.rows.length);
  sec.dataset.ct373Sort=state.sort;
@@ -120,8 +124,6 @@ window.addEventListener('click',e=>{
  if(trigger){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();toggleSort();return}
  const opt=e.target?.closest?.('[data-ct373-sort]');
  if(opt){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();setSort(String(opt.dataset.ct373Sort||'added_desc'));return}
- const moreBtn=e.target?.closest?.('[data-ct373-more]');
- if(moreBtn){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();more();return}
  if(state.open&&!e.target?.closest?.('[data-ct373-sort-popover]')){state.open=false;paint()}
 },true);
 
