@@ -94,6 +94,7 @@ function repairStaleNext332(row){
  return row;
 }
 async function repairVisibleEpisodes332(){
+ if(window.__ctR379HomeOwner)return false;
  const run=++episodeRun;if(routeNow()!=='home')return false;
  try{
   const payload=typeof ct274Payload==='function'?ct274Payload():null;
