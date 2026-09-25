@@ -2,6 +2,23 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.165 — 2026-09-25 — Web r374
+
+### Home / troca Séries ↔ Filmes
+- A troca de semi-aba agora zera imediatamente a rolagem da janela e de qualquer ancestral/container interno scrollável da Home.
+- O clique é capturado antes dos antigos handlers de anchor (`r327/r328/r331/r332/r335`), impedindo que eles restaurem uma posição antiga ou mantenham a tela no fundo.
+- A seleção da aba continua delegada ao owner r371; a r374 assume somente o comportamento de scroll.
+- O reset é reafirmado de forma limitada durante a estabilização do layout e é cancelado assim que o usuário inicia uma nova rolagem manual.
+
+### Validação
+- Browser gate começa no fundo da aba Séries, troca para Filmes e confirma `window.scrollY = 0` e `scrollTop = 0` no container interno.
+- Repete do fundo de Filmes para Séries e confirma o mesmo resultado.
+- Um listener legado propositalmente hostil é instalado no teste e confirmado como bloqueado pelo novo owner.
+
+### Release
+- Web: `1.0.165 / r374-official-1.0.165`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.164 — 2026-09-25 — Web r373
 
 ### Home / Assistir a seguir / Watchlist

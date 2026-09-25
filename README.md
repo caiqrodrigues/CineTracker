@@ -6,12 +6,23 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.164** | `r373-official-1.0.164` | Watchlist Home completa + contador real + seis ordenações locais |
+| Web | **1.0.165** | `r374-official-1.0.165` | reset de scroll ao trocar Séries/Filmes na Home |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.165 / r374
+
+- **Troca de aba no topo:** alternar Séries ↔ Filmes zera a rolagem da janela e do container scrollável da Home.
+- **Owner único de UX:** a r374 captura o clique antes dos antigos anchors que podiam reposicionar a página depois da troca.
+- **Estado preservado:** a seleção continua sob a autoridade r371; a r374 controla apenas rolagem.
+- **Sem puxão tardio:** o reset é reafirmado por um período curto de estabilização e cancelado no primeiro gesto de rolagem do usuário.
+- **Teste:** valida ida Séries → Filmes e volta Filmes → Séries partindo do rodapé, com janela e container em `0` após a troca.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r374-official.mjs`; runtime: `apps/web/runtime-r374-home-tab-scroll-reset.js`.
 
 ## Web 1.0.164 / r373
 
