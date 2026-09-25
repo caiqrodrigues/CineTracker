@@ -1,3 +1,14 @@
+## Web 1.0.169 / r378
+
+- **Rollback da regressão r377:** Home volta ao payload v359 e mantém snapshot instantâneo entre rotas.
+- **Home sem regressão de posição:** Séries abre em Assistir a seguir; Filmes abre em Assistir a seguir / Watchlist; históricos permanecem acima.
+- **Pra Você isolado:** DOM e botões `ct378-*` não são mais alterados pelos writers antigos.
+- **100% Novos:** placeholders não exibem botões soltos; Movie/Série/Anime são preenchidos em paralelo antes das ações aparecerem.
+- **Ações locais:** Watchlist/Visto/Trocar não propagam para o card e Trocar muda só o slot clicado.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r378-official.mjs`; runtime: `apps/web/runtime-r378-regression-rollback.js`.
+
 ## Web 1.0.168 / r377
 
 - **Watchlist completa e rica:** todos os registros por `media_id`, com ano, duração, gêneros e nota restaurados.
@@ -17,7 +28,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.168** | `r377-official-1.0.168` | Watchlist rica + filtro nativo seguro + Pra Você físico |
+| Web | **1.0.169** | `r378-official-1.0.169` | rollback r377 + Home v359 cache-first + Pra Você isolado |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |

@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.0.169 — 2026-09-25 — Web r378
+
+### Rollback de regressões da r377
+- Restaura `cinetracker_home_payload_v359`, removendo a troca regressiva para v334.
+- A Home mantém um snapshot em memória entre rotas: ao voltar de Descobrir/Esportes/Detalhe, pinta imediatamente o conteúdo anterior e atualiza em background, sem ficar presa no loader.
+- Após qualquer repaint, reaplica a aba escolhida pelo usuário e o início semântico da r375: `Assistir a seguir` em Séries e `Assistir a seguir / Watchlist` em Filmes, com Histórico preservado acima.
+
+### Descobrir / Pra Você
+- Remove a autoridade interativa da r377.
+- O r321 delega diretamente ao owner r378; o startup r376 não disputa mais o mesmo DOM.
+- O r378 usa classes e handlers próprios (`ct378-*`), fora do alcance dos writers antigos `ct336-actions`.
+- Slots vazios exibem placeholder sem botões; botões só existem quando há card real.
+- `100% novos` preenche Filme/Série/Anime em paralelo com filtro pessoal e fallback TMDB limitado.
+- Visto/Watchlist são otimistas e locais; Trocar altera somente o slot clicado e usa lock por slot, sem loop bloqueante.
+
+### Validação
+- Gate exige retorno da Home por snapshot em menos de 500 ms, sem loader e com alinhamento semântico.
+- Gate rejeita qualquer `.ct336-actions` dentro do novo Pra Você.
+- Fresh precisa ter três cards reais e três botões por card; Watchlist precisa ter exatamente dois.
+- Oito trocas seguidas na mesma recomendação não podem navegar para o card nem quebrar os botões.
+
+### Release
+- Web: `1.0.169 / r378-official-1.0.169`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.168 — 2026-09-25 — Web r377
 
 ### Home / Watchlist

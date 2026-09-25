@@ -1,4 +1,4 @@
-name: Verify Web 1.0.168 r377 Video Ground Truth
+name: Verify Web 1.0.169 r378 Regression Rollback
 on:
   push:
     branches: [main]
@@ -6,34 +6,27 @@ on:
 permissions:
   contents: read
 jobs:
-  web_1_0_168_r377:
+  web_r378:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Syntax and identity
-        run: |
-          set -euo pipefail
-          grep -Fq '"version": "1.0.168"' package.json
-          grep -Fq '"version": "1.0.168"' apps/web/package.json
-          node --check apps/web/runtime-r376-home-watchlist-foryou-final.js
-          node --check apps/web/runtime-r377-video-ground-truth.js
-          node --check apps/web/build-r377.mjs
-          node --check apps/web/test-r377.mjs
-          node --check apps/web/test-r377-browser.mjs
-      - name: Build and video regression
+      - name: Build and regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r377-official.mjs
-          CT_R377_SKIP_BUILD=1 node test-r377.mjs
-          CT_R377_SKIP_BUILD=1 node test-r377-browser.mjs
-          node --check dist/app-v377.js
-          grep -Fq 'app-v377.js' dist/index.html
-          grep -Fq 'ct-web-1.0.168-r377' dist/service-worker.js
-  android_current_source:
+          node --check runtime-r378-regression-rollback.js
+          node --check build-r378.mjs
+          node --check test-r378-browser.mjs
+          node build-r378-official.mjs
+          CT_R378_SKIP_BUILD=1 node test-r378.mjs
+          CT_R378_SKIP_BUILD=1 node test-r378-browser.mjs
+          node --check dist/app-v378.js
+          grep -Fq "rpc('cinetracker_home_payload_v359',{p_today:" dist/app-v378.js
+          ! grep -Fq "rpc('cinetracker_home_payload_v334',{p_today:" dist/app-v378.js
+  android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +35,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_168_r377, android_current_source]
+    needs: [web_r378, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -51,10 +44,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.168"' <<<"$BODY" && grep -Fq '"revision": "r377-official-1.0.168"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v377.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.169"' <<<"$BODY" && grep -Fq '"revision": "r378-official-1.0.169"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v378.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR377Marker='native-watch-sort+rich-movie-meta+home-timeout-cache-fallback+foryou-physical-owner'" <<<"$JS" && grep -Fq 'app-v377.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR378Marker='home-v359-cache-first+semantic-anchor+foryou-isolated-dom-owner'" <<<"$JS" && grep -Fq 'app-v378.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
