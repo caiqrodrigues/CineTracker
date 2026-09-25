@@ -23,7 +23,7 @@ for(const x of[
 ])must(js,x);
 for(const x of[
  "window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity'",
- "cinetracker_discover_filter_v320",
+ "cinetracker_discover_filter_v322",
  "cinetracker_activity_by_day_v320",
  "cinetracker_activity_items_by_day_v320",
  "no-hidden-post-render-gate+exact-before-paint"
@@ -46,7 +46,7 @@ const prev=JSON.parse(releaseRaw),release={
  revision:'r321-official-1.0.112',
  base:'r319-production',
  scope:'rollback-r320-hidden-gate+discover-pre-render-exact-filter+profile-home-history-parity',
- discover_filter_authority:'cinetracker_discover_filter_v320',
+ discover_filter_authority:'cinetracker_discover_filter_v322',
  discover_validation:'server-before-paint',
  discover_loading:'visible-loader-no-hidden-content-gate',
  discover_public_exclusion:'seen+progress+up-to-date+completed+watchlist+watchlater+not-interested',
