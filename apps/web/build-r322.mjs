@@ -18,7 +18,7 @@ for(const x of[
  "const REVISION='r321-official-1.0.112';",
  "const version='1.0.112',revision='r321-official-1.0.112';",
  "window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity'",
- "cinetracker_discover_filter_v320",
+ "cinetracker_discover_filter_v322",
  "async function topRaw321(provider,force=false){",
  "function card321(x,rank=0){"
 ])must(js,x);
