@@ -29,7 +29,7 @@ for(const x of[
  "boot();"
 ])if(!js.includes(x))throw new Error('r365 missing '+x);
 for(const x of[
- "window.__ctR365Marker='discover-warm-authority+foryou-direct-local-actions'",
+ "window.__ctR365Marker='discover-warm-authority+foryou-direct-local-actions+stable-action-row'",
  "const tx=mutate(m.action,m.key,m.name)",
  "persistDirect(m.action,m.key)",
  "window.__ctR358Early=early"
