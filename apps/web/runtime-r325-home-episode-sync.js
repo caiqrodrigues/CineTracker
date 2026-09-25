@@ -129,6 +129,7 @@ try{ct275SeriesSection=seriesSection325}catch{}
 function supabaseUrl325(){try{return String(typeof SUPABASE_URL!=='undefined'?SUPABASE_URL:(window.SUPABASE_URL||''))}catch{return String(window.SUPABASE_URL||'')}}
 function auth325(){try{return typeof authHeaders==='function'?authHeaders():{}}catch{return{}}}
 async function refreshTv325(force=false){
+ if(window.__ctR379HomeOwner)return{skipped:true,owner:'r379'};
  if(refreshBusy)return refreshBusy;
  const key='ct325:tv-refresh-at',now=Date.now();
  try{if(!force&&now-n(sessionStorage.getItem(key))<15*60*1000)return{skipped:true}}catch{}
