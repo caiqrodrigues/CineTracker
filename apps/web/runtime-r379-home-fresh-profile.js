@@ -79,7 +79,7 @@ function paintProfile379(d){
  if(!h){setApp(shell('Perfil','Estatísticas, biblioteca, favoritos e atividade.','profile','<div class="page" data-profile></div>'));h=q('[data-profile]')}
  if(!h)return false;h.innerHTML=profileHtml379(d);h.dataset.ct379Profile='ready';
  try{window.__ctR321?.hydrateProfile?.()}catch{}
- setTimeout(()=>{try{window.__ctV119LoadFullWatchlist?.(false)}catch{}},0);
+ if(!window.__ctR380ProfileOwner)setTimeout(()=>{try{window.__ctV119LoadFullWatchlist?.(false)}catch{}},0);
  return true;
 }
 async function renderProfile379(seq){
