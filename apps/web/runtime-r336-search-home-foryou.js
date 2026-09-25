@@ -103,17 +103,17 @@ function card336(x){
  try{return typeof ct288Card==='function'?ct288Card(x,{watch:false,add:false,slot:true}):''}catch{return''}
 }
 function actionRow336(x,{bucket,kind,swap,length}){
- if(!x)return'';const key=keyOf(x),canSwap=Number(length||0)>1;
+ if(!x)return'';const key=keyOf(x);
  if(bucket==='watch'){
   return '<div class="ct336-actions ct336-actions-two" data-ct336-bucket="watch">'+
    '<button type="button" class="chip ct336-action" data-ct336-action="seen" data-ct336-media="'+esc(key)+'" data-ct336-swap="'+esc(swap)+'">✓ Visto</button>'+
-   '<button type="button" class="chip ct336-action" data-ct336-swap-only="'+esc(swap)+'"'+(canSwap?'':' disabled')+'>↻ Trocar</button>'+
+   '<button type="button" class="chip ct336-action" data-ct336-swap-only="'+esc(swap)+'">↻ Trocar</button>'+
   '</div>';
  }
  return '<div class="ct336-actions ct336-actions-three" data-ct336-bucket="'+esc(bucket)+'">'+
   '<button type="button" class="chip ct336-action" data-ct336-action="watchlist" data-ct336-media="'+esc(key)+'" data-ct336-swap="'+esc(swap)+'">+ Watchlist</button>'+
   '<button type="button" class="chip ct336-action" data-ct336-action="seen" data-ct336-media="'+esc(key)+'" data-ct336-swap="'+esc(swap)+'">✓ Visto</button>'+
-  '<button type="button" class="chip ct336-action" data-ct336-swap-only="'+esc(swap)+'"'+(canSwap?'':' disabled')+'>↻ Trocar</button>'+
+  '<button type="button" class="chip ct336-action" data-ct336-swap-only="'+esc(swap)+'">↻ Trocar</button>'+
  '</div>';
 }
 function slot336(label,kind,item,bucket,length){
