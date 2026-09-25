@@ -78,9 +78,10 @@ function paint(){
  stack.innerHTML=visible.length?visible.map(rowHtml).join(''):'<div class="empty">Nenhum filme na Watchlist.</div>';
  qa('[data-ct373-more]',sec).forEach(x=>x.remove());
  if(visible.length<sorted.length){
-  stack.insertAdjacentHTML('afterend','<button type="button" class="ct373-more" data-ct373-more>Mostrar mais <small>'+visible.length.toLocaleString('pt-BR')+' de '+sorted.length.toLocaleString('pt-BR')+'</small></button>');
-  const moreBtn=q('[data-ct373-more]',sec);
-  if(moreBtn)moreBtn.onclick=e=>{e.preventDefault();e.stopPropagation();more()};
+  const moreBtn=document.createElement('button');moreBtn.type='button';moreBtn.className='ct373-more';moreBtn.dataset.ct373More='1';
+  moreBtn.innerHTML='Mostrar mais <small>'+visible.length.toLocaleString('pt-BR')+' de '+sorted.length.toLocaleString('pt-BR')+'</small>';
+  moreBtn.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();more()});
+  stack.insertAdjacentElement('afterend',moreBtn);
  }
  sec.dataset.ct373Watchlist='full-v119';
  sec.dataset.ct373Total=String(state.rows.length);
