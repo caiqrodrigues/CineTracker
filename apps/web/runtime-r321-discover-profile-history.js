@@ -55,7 +55,7 @@ async function exact321(list){
  const items=candidatePayload321(list);if(!items.length)return auth321({blocked_keys:[],watch_keys:[],seen_keys:[],not_interested_keys:[]});
  if(testBridge?.exact)return auth321(await testBridge.exact(items));
  if(typeof rpc!=='function')throw new Error('Sessão pessoal indisponível.');
- return auth321(await rpc('cinetracker_discover_filter_v320',{p_items:items}));
+ return auth321(await rpc('cinetracker_discover_filter_v322',{p_items:items}));
 }
 function dedupe321(list){
  const out=[],seen=new Set();for(const x of rows(list)){const k=keyOf(x);if(!validKey(k)||seen.has(k)||!posterOf(x))continue;seen.add(k);out.push(x)}return out;
