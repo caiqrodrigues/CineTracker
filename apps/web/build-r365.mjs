@@ -39,7 +39,12 @@ js=once(js,"Date.now()-personal.at<5000","Date.now()-personal.at<300000",'person
 js=once(js,"[personal319(true),source319(tab,force)]","[personal319(!!force),source319(tab,force)]",'public personal reuse');
 js=once(js,"[personal319(true),topRaw319(provider,force)]","[personal319(!!force),topRaw319(provider,force)]",'top10 personal reuse');
 js=once(js,"function prefetch319(){if(routeNow()!=='discover')return;for(const t of STRICT)void source319(t,false)}","function prefetch319(){if(routeNow()!=='discover')return;void personal319(false);for(const t of STRICT)void source319(t,false)}",'discover authority prefetch');
-js=once(js,"personalTask=null;sourceCache.clear();topCache.clear();","personalTask=null;/* r365: keep public TMDB/provider source caches warm; personal filter is invalidated above */",'data changed source cache');
+{
+ const needle="personalTask=null;sourceCache.clear();topCache.clear();";
+ const count=js.split(needle).length-1;
+ if(count<1)throw new Error('r365 missing data changed source cache');
+ js=js.replaceAll(needle,"personalTask=null;/* r365: keep public TMDB/provider source caches warm; personal filter is invalidated above */");
+}
 js=once(js,"if(STRICT.has(t))void loadPublic319(t,true);","if(STRICT.has(t))void loadPublic319(t,false);",'data changed public reload');
 js=once(js,"else if(t==='top10')void loadTop319(true);","else if(t==='top10')void loadTop319(false);",'data changed top reload');
 
