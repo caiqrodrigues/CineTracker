@@ -70,7 +70,7 @@ function ensureActionSlot(slot){
  if(!valid)row.replaceChildren(...spec.map(([label,action])=>mkAction(label,action,name,key)));
  row.className='ct336-actions '+(bucket==='watch'?'ct336-actions-two':'ct336-actions-three');
  row.dataset.ct336Bucket=bucket;
- const sw=q(':scope > [data-ct336-swap-only]',row);if(sw){const n=poolLen(name);sw.disabled=n>=0&&n<2;sw.hidden=false;sw.style.setProperty('display','flex','important')}
+ const sw=q(':scope > [data-ct336-swap-only]',row);if(sw){sw.disabled=false;sw.hidden=false;sw.removeAttribute('disabled');sw.style.setProperty('display','flex','important')}
  for(const b of qa(':scope > button.ct336-action',row)){b.type='button';b.hidden=false;b.removeAttribute('hidden');b.removeAttribute('inert');b.style.setProperty('display','flex','important');b.style.setProperty('pointer-events','auto','important')}
  try{window.__ctR348?.styleRow?.(row,q('.ct288-poster,.ct288-empty-poster',slot),spec.length)}catch{}
  armSlot(slot);return true;
