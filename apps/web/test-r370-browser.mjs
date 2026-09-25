@@ -11,10 +11,12 @@ window.addEventListener('click',e=>{try{window.__ctR370?.early?.(e.target,e)}cat
  window.__ctR370.resetExcluded();const seen=new Set(['movie:1']);let beats=0;const heartbeat=setInterval(()=>beats++,2);
  for(let i=0;i<35;i++){btn.click();for(let n=0;n<200&&window.__ctR370.isSwapping;n++)await sleep(1);const k=document.querySelector('[data-ct288-card]').dataset.ct288Card;ok(!seen.has(k),'repeat '+k+' at '+i);seen.add(k);ok(!window.__ctR370.isSwapping,'lock stuck '+i);ok(!btn.disabled,'button disabled '+i);await sleep(0)}
  const beforeRapid=window.__ctR370.acceptedSwaps;for(let i=0;i<40;i++)btn.click();for(let n=0;n<200&&window.__ctR370.isSwapping;n++)await sleep(1);
+ const directMeta=window.__ctR367.meta(btn),beforeRejected=window.__ctR370.rejectedLockedClicks;
+ const burst=Array.from({length:40},()=>window.__ctR370.handleSwap(directMeta));await Promise.all(burst);for(let n=0;n<200&&window.__ctR370.isSwapping;n++)await sleep(1);
  clearInterval(heartbeat);
  ok(window.__ctR370.acceptedSwaps>=35,'sequential swaps missing');
- ok(window.__ctR370.acceptedSwaps<=beforeRapid+1,'rapid clicks bypassed synchronous lock');
- ok(window.__ctR370.rejectedLockedClicks>0,'no rapid clicks rejected by ref lock');
+ ok(window.__ctR370.acceptedSwaps<=beforeRapid+2,'rapid clicks bypassed physical/ref lock');
+ ok(window.__ctR370.rejectedLockedClicks-beforeRejected>=39,'sync ref lock did not reject concurrent calls');
  ok(beats>=10,'main thread heartbeat stalled');
  ok(!window.__ctR370.isSwapping&&!btn.disabled,'final lock state stuck');
  document.documentElement.dataset.ct370done='1';
