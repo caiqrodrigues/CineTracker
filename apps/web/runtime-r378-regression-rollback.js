@@ -206,6 +206,7 @@ function act(action,name,btn){
 function actionMeta(target){const b=target?.closest?.('[data-ct378-action]');if(!b)return null;const name=String(b.dataset.ct378SlotAction||''),action=String(b.dataset.ct378Action||'');return name&&['swap','seen','watchlist'].includes(action)?{btn:b,name,action}:null}
 function stop(e){e?.preventDefault?.();e?.stopImmediatePropagation?.();e?.stopPropagation?.()}
 function early378(target,event){
+ if(window.__ctR379ForYouOwner&&typeof window.__ctR379Early==='function')return window.__ctR379Early(target,event);
  if(!target?.closest)return false;
  const meta=actionMeta(target);if(meta&&routeNow()==='discover'){stop(event);act(meta.action,meta.name,meta.btn);return true}
  const filter=target.closest('[data-ct378-filter]');if(filter&&routeNow()==='discover'){stop(event);setFyKind(String(filter.dataset.ct378Filter||'all'));return true}
@@ -213,6 +214,7 @@ function early378(target,event){
  return false;
 }
 async function loadForYou(force=false){
+ if(window.__ctR379ForYouOwner&&typeof window.__ctR379LoadForYou==='function')return window.__ctR379LoadForYou(!!force);
  if(routeNow()!=='discover')return false;const run=++fyLoadRun,h=host();if(!h)return false;
  const existing=hasAny();if(existing)renderForYou();else h.innerHTML='<div data-ct378-loading><section class="panel ct378-loading"><h2>Indicação do Dia</h2></section><section class="panel ct378-loading"><h2>Da sua Watchlist</h2></section><section class="panel ct378-loading"><h2>100% novos</h2></section></div>';
  try{
