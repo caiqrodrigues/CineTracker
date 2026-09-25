@@ -132,6 +132,7 @@ async function handleSwap(meta){
  activeController?.abort();
  const controller=new AbortController();activeController=controller;setLocked(meta,true);remember(meta.key);seedDisplayed();
  try{
+  await Promise.resolve();
   const initialState=window.__ctR309Test?.state,currentKey=keyOf(currentItem(initialState,meta.name));
   let eligibleItems=prefilterPool(meta.name,poolFor(initialState,meta.name),currentKey);
   let selectedMedia=directPick(eligibleItems);
