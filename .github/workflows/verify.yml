@@ -1,4 +1,4 @@
-name: Verify Web 1.0.161 r370 Prefilter Swap Stress
+name: Verify Web 1.0.162 r371 Home Movies Tab Persistence
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_1_0_161_r370:
+  web_1_0_162_r371:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -16,23 +16,23 @@ jobs:
       - name: Syntax and identity
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.161"' package.json
-          grep -Fq '"version": "1.0.161"' apps/web/package.json
-          node --check apps/web/runtime-r370-prefilter-swap.js
-          node --check apps/web/build-r370.mjs
-          node --check apps/web/test-r370.mjs
-          node --check apps/web/test-r370-browser.mjs
-      - name: Build and 35-swap stress validation
+          grep -Fq '"version": "1.0.162"' package.json
+          grep -Fq '"version": "1.0.162"' apps/web/package.json
+          node --check apps/web/runtime-r371-home-tab-owner.js
+          node --check apps/web/build-r371.mjs
+          node --check apps/web/test-r371.mjs
+          node --check apps/web/test-r371-browser.mjs
+      - name: Build and Home tab persistence validation
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r370-official.mjs
-          CT_R370_SKIP_BUILD=1 node test-r370.mjs
-          CT_R370_SKIP_BUILD=1 node test-r370-browser.mjs
-          node --check dist/app-v370.js
-          grep -Fq 'app-v370.js' dist/index.html
-          grep -Fq 'ct-web-1.0.161-r370' dist/service-worker.js
-          grep -Fq "window.__ctR370Marker='prefilter-direct-pick+sync-ref-lock+single-fetch-no-recursion'" dist/app-v370.js
+          node build-r371-official.mjs
+          CT_R371_SKIP_BUILD=1 node test-r371.mjs
+          CT_R371_SKIP_BUILD=1 node test-r371-browser.mjs
+          node --check dist/app-v371.js
+          grep -Fq 'app-v371.js' dist/index.html
+          grep -Fq 'ct-web-1.0.162-r371' dist/service-worker.js
+          grep -Fq "window.__ctR371Marker='home-tab-user-only+repaint-preserved+async-generation-cancel'" dist/app-v371.js
   android_current_source:
     runs-on: ubuntu-latest
     steps:
@@ -42,7 +42,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_161_r370, android_current_source]
+    needs: [web_1_0_162_r371, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -51,10 +51,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.161"' <<<"$BODY" && grep -Fq '"revision": "r370-official-1.0.161"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v370.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.162"' <<<"$BODY" && grep -Fq '"revision": "r371-official-1.0.162"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v371.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR370Marker='prefilter-direct-pick+sync-ref-lock+single-fetch-no-recursion'" <<<"$JS" && grep -Fq 'app-v370.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR371Marker='home-tab-user-only+repaint-preserved+async-generation-cancel'" <<<"$JS" && grep -Fq 'app-v371.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

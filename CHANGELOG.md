@@ -2,6 +2,23 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.162 — 2026-09-25 — Web r371
+
+### Home / Séries e Filmes
+- A aba ativa passa a ter uma autoridade própria (`tabRef`) e só muda por clique explícito do usuário.
+- `paintHome`, `ct275PaintHome`, `ct274PaintHome` e `renderHome` podem atualizar dados, mas a seleção do usuário é reaplicada imediatamente após cada repaint.
+- Clicar em Séries/Filmes aborta o ciclo anterior com `AbortController`, incrementa uma geração lógica e invalida o `episodeRun` assíncrono da r332.
+- Respostas tardias de reconciliação de episódios não podem mais devolver a Home para Séries depois que o usuário escolheu Filmes.
+- O estado visual do botão, `aria-selected`, `hidden` e classe `hidden` são sincronizados pela mesma autoridade.
+
+### Validação
+- Browser gate seleciona Filmes, executa 10 repaints forçados que recriam o DOM com Séries como padrão e valida que Filmes continua ativo.
+- Em seguida conclui um `renderHome()` assíncrono tardio e confirma novamente que a aba permanece em Filmes.
+
+### Release
+- Web: `1.0.162 / r371-official-1.0.162`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.161 — 2026-09-25 — Web r370
 
 ### Descobrir / Pra você

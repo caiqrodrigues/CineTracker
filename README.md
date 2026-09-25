@@ -6,12 +6,22 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.161** | `r370-official-1.0.161` | Trocar por pré-filtro direto, lock síncrono e zero recursão/while |
+| Web | **1.0.162** | `r371-official-1.0.162` | Home Filmes preservada contra repaints e respostas assíncronas tardias |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.162 / r371
+
+- **Home tab user-owned:** Séries/Filmes só muda por clique explícito; carregamento de dados nunca escolhe a aba.
+- **Repaint-safe:** `paintHome`, `ct275PaintHome`, `ct274PaintHome` e `renderHome` reaplicam a seleção atual após reconstruir o DOM.
+- **Cancelamento:** cada troca de aba aborta o ciclo anterior, incrementa uma geração lógica e invalida reconciliações r332 ainda pendentes.
+- **Teste:** Filmes permanece ativo depois de 10 repaints que tentam voltar ao padrão Séries e após um render assíncrono tardio.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r371-official.mjs`; runtime: `apps/web/runtime-r371-home-tab-owner.js`.
 
 ## Web 1.0.161 / r370
 
