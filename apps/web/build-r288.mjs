@@ -31,7 +31,7 @@ js=once(js,"const REVISION='r287-official-1.0.78';","const REVISION='r288-offici
    live owners, then make the three local paint/load functions delegate to r288. This is what
    makes existing r263 tab/type click handlers drive the new Web parity renderer instead of a
    disconnected set of globals. */
-const r263Test="window.__ctR263Test={shift263,strictEligible263,browseEligible263,pickProviders263,f1Rows263,sportEventKey263,restoreHomeList263};";
+const r263Test="window.__ctR263Test={shift263,strictEligible263,browseEligible263,pickProviders263,f1Rows263,sportEventKey263,restoreHomeList263,toggleF1Watch263,updateF1Payload263,paintF1WatchButton263};";
 const r263Bridge=r263Test+"\nwindow.__ctR288R263={q263,qa263,n263,esc263,type263,id263,title263,poster263,year263,score263,image263,discover263,discoverHost263,block263,armDiscoverRails263,syncDiscover263,forYou263,loadBrowse263,DTABS263};";
 js=once(js,r263Test,r263Bridge,'r263 live bridge');
 js=once(js,'function paintForYou263(){','function paintForYou263(){if(typeof window.__ctR288PaintForYou===\'function\')return window.__ctR288PaintForYou();','r263 foryou delegate');
