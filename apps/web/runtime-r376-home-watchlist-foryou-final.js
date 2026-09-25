@@ -92,7 +92,6 @@ function buildTools(head){
   pop.appendChild(b);
  }
  trigger.addEventListener('pointerdown',stopEvent);trigger.addEventListener('touchstart',stopEvent,{passive:false});trigger.addEventListener('click',e=>{stopEvent(e);setPopover(!home.open)});
- tools.addEventListener('click',e=>{if(e.target.closest('[data-ct376-sort-trigger],[data-ct376-sort-option]'))stopEvent(e)},true);
  tools.append(count,trigger,pop);head.appendChild(tools);return tools;
 }
 function paintHomeWatch(){
