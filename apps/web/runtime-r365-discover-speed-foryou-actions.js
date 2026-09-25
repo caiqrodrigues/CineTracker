@@ -2,7 +2,7 @@
 (()=>{
 'use strict';
 if(window.__ctR365?.version==='1.0.156')return;
-window.__ctR365Marker='discover-warm-authority+foryou-direct-local-actions+stable-action-row';
+window.__ctR365Marker='discover-warm-authority+foryou-direct-local-actions+stable-action-row+render-owned-actions';
 window.__ctR365Scope='discover-speed+foryou-actions-only';
 window.__ctR365Android='preserved-1.0.20-10062';
 
@@ -81,9 +81,36 @@ function ensureAllActions(){
  root.dataset.ct365ActionRows=String(n);return n>0;
 }
 function repairSoon(){
+ ensureAllActions();
  queueMicrotask(ensureAllActions);
+ requestAnimationFrame(()=>ensureAllActions());
  setTimeout(ensureAllActions,0);
  setTimeout(ensureAllActions,80);
+}
+function ownRenderers(){
+ const fy=window.__ctR336;
+ if(fy&&typeof fy.paintForYou==='function'&&!fy.paintForYou.__ctR365Owned){
+  const base=fy.paintForYou;
+  const wrapped=function(){
+   const out=base.apply(this,arguments);
+   ensureAllActions();
+   queueMicrotask(ensureAllActions);
+   return out;
+  };
+  wrapped.__ctR365Owned=true;wrapped.__ctR365Base=base;fy.paintForYou=wrapped;
+ }
+ const r359=window.__ctR359;
+ if(r359&&typeof r359.renderSlot==='function'&&!r359.renderSlot.__ctR365Owned){
+  const base=r359.renderSlot;
+  const wrapped=function(name){
+   const out=base.apply(this,arguments);
+   ensureActionSlot(slotByName(name));
+   queueMicrotask(()=>ensureActionSlot(slotByName(name)));
+   return out;
+  };
+  wrapped.__ctR365Owned=true;wrapped.__ctR365Base=base;r359.renderSlot=wrapped;
+ }
+ return true;
 }
 function renderSlot(name){
  const ok=!!window.__ctR359?.renderSlot?.(name,{animate:true});
@@ -159,7 +186,10 @@ if(window.__ctR361)window.__ctR361.early=early;
 if(window.__ctR362)window.__ctR362.early=early;
 let repairMo=null,repairHost=null;
 function bindRepair(){const h=q('[data-ct319-content]');if(!h||h===repairHost)return false;repairMo?.disconnect?.();repairHost=h;repairMo=new MutationObserver(ms=>{if(ms.some(x=>x.addedNodes.length||x.removedNodes.length))repairSoon()});repairMo.observe(h,{subtree:true,childList:true});return true}
-setTimeout(()=>{armAll();ensureAllActions();bindRepair()},0);
-window.__ctR365={version:'1.0.156',early,handle,meta,armAll,armSlot,ensureActionSlot,ensureAllActions,bindRepair,persistDirect,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null},get clicks(){return clicks}};
-window.__ctR365Test={early,handle,meta,armAll,ensureActionSlot,ensureAllActions,persistDirect,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null},get clicks(){return clicks}};
+ownRenderers();
+setTimeout(()=>{ownRenderers();armAll();ensureAllActions();bindRepair()},0);
+setTimeout(()=>{ownRenderers();ensureAllActions();bindRepair()},250);
+setTimeout(()=>{ensureAllActions()},1000);
+window.__ctR365={version:'1.0.156',early,handle,meta,armAll,armSlot,ensureActionSlot,ensureAllActions,ownRenderers,bindRepair,persistDirect,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null},get clicks(){return clicks}};
+window.__ctR365Test={early,handle,meta,armAll,ensureActionSlot,ensureAllActions,ownRenderers,persistDirect,setTestBridge(v){testBridge=v&&typeof v==='object'?v:null},get clicks(){return clicks}};
 })();
