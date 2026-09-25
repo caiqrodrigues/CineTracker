@@ -1,4 +1,15 @@
-## Web 1.0.167 / r376\n\n- **Watchlist igual ao Perfil:** a Home usa `cinetracker_watchlist_full_v376`, sem deduplicação por TMDB; cada `media_id` da Watchlist é preservado.\n- **Todos os filmes:** render progressivo em lotes, sem teto manual e sem botão obrigatório de `Mostrar mais`.\n- **Filtro sem quebrar layout:** as seis ordens apenas reposicionam os mesmos nós DOM, preservando tamanho e conteúdo dos cards.\n- **Filtro sem navegação:** popover intercepta pointer/touch/click e não pode abrir mídia, Perfil ou outra rota.\n- **Pra Você final:** r376 assume ações e aposenta writers tardios; `100% Novos` usa refill + fallback TMDB e não fica vazio quando existe candidato pessoalmente elegível.\n- **Teste:** 1.381 filmes completos + seis sorts estáveis + três `100% Novos` preenchidos + seis trocas sem quebra de botões.\n- Android permanece `1.0.20 / versionCode 10062`.\n\nBuild oficial: `apps/web/build-r376-official.mjs`; runtime: `apps/web/runtime-r376-home-watchlist-foryou-final.js`.\n\n# 🎬 CineTracker
+## Web 1.0.168 / r377
+
+- **Watchlist completa e rica:** todos os registros por `media_id`, com ano, duração, gêneros e nota restaurados.
+- **Filtro mobile seguro:** `select` nativo compacto; não abre filme nem outra rota e não recria os cards.
+- **Home resiliente:** retorno usa payload v334 e mantém cache visível se o refresh falhar/der timeout.
+- **Pra Você:** estado válido não some durante refresh, 100% Novos preenche Movie/Série/Anime em paralelo e botões capturam o toque antes do card.
+- **Teste:** 1.382 cards + metadata rica + filtro sem vazamento + Fresh 3/3 + ações sem navegação.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r377-official.mjs`; runtime: `apps/web/runtime-r377-video-ground-truth.js`.
+
+# 🎬 CineTracker
 
 CineTracker é um companion pessoal multiplataforma para filmes, séries, animes e esportes. Web e Android compartilham conta, biblioteca, Watchlist, Histórico/progresso, Perfil, Descobrir, Configurações, importação/backup e sincronização pelo Supabase.
 
@@ -6,7 +17,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.167** | `r376-official-1.0.167` | Watchlist por media_id + sort estável + Pra Você owner final |
+| Web | **1.0.168** | `r377-official-1.0.168` | Watchlist rica + filtro nativo seguro + Pra Você físico |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |

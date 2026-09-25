@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.168 — 2026-09-25 — Web r377
+
+### Home / Watchlist
+- O filtro customizado é substituído por um `select` nativo compacto sobre o ícone ⇅; pointer/click não atravessa mais para os cards.
+- Os 1.382 registros continuam presentes por `media_id`, mas os cards voltam ao renderer rico `ct274Row/ct274MovieMeta`: ano, duração, gêneros e nota.
+- Cards sem metadados completos são enriquecidos sob demanda quando entram perto do viewport, com cache por TMDB.
+- Ordenar muda apenas a propriedade `order` dos mesmos nós DOM; não recria nem redimensiona os cards.
+- O retorno para a Home deixa de usar `cinetracker_profile_home_payload_v0997_r6` e usa `cinetracker_home_payload_v334`; se o refresh falhar, a Home em cache é mantida em vez de ser substituída por erro vermelho.
+
+### Descobrir / Pra Você
+- Um `Pra Você` válido permanece visível enquanto atualiza; o loader não apaga mais os cards existentes.
+- Os três pools de `100% Novos` são preenchidos em paralelo.
+- Ações têm área física de 34 px e captura de pointer/click antes da navegação do card.
+- A r377 assume a abertura da aba Pra Você: pinta estado disponível imediatamente e atualiza/refaz Fresh em background.
+
+### Validação
+- Browser gate usa 1.382 linhas e exige metadados ricos, seis ordens sem navegação/rebuild e altura preservada.
+- Um listener hostil de navegação é instalado no teste: tocar no filtro e nos botões do Pra Você não pode alcançá-lo.
+- Os três slots 100% Novos precisam ficar preenchidos e três trocas sucessivas não podem quebrar botões nem mudar de rota.
+
+### Release
+- Web: `1.0.168 / r377-official-1.0.168`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
 ## 1.0.166 — 2026-09-25 — Web r375\n\n### Home / início correto após trocar Séries ↔ Filmes\n- Corrige a regressão visual mostrada em vídeo: `scrollTop = 0` revelava o Histórico que fica propositalmente acima da tela inicial.\n- A troca de aba agora procura semanticamente o primeiro bloco não histórico: `Assistir a seguir` em Séries e `Assistir a seguir / Watchlist` em Filmes.\n- O bloco principal é alinhado logo abaixo do toggle Séries/Filmes, tanto para scroll da janela quanto para container interno.\n- `Histórico recente` e `Filmes vistos` continuam acima do viewport inicial e permanecem acessíveis rolando para cima.\n- Os anchors legados continuam bloqueados durante a troca para não disputar a posição.\n\n### Validação\n- Browser gate parte do rodapé, alterna Séries → Filmes e Filmes → Séries, confirmando que o bloco principal fica alinhado e que o Histórico permanece fora da tela acima.\n- O teste também exige `scrollTop > 500`, garantindo explicitamente que a implementação não voltou ao zero absoluto.\n\n### Release\n- Web: `1.0.166 / r375-official-1.0.166`.\n- Android: `1.0.20 / versionCode 10062` preservado.\n\n## 1.0.165 — 2026-09-25 — Web r374
