@@ -2,6 +2,29 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.160 — 2026-09-25 — Web r369
+
+### Esportes / F1
+- Neutraliza todos os caminhos de marcação assistida ativos (r255, r263, r296, r299 e r301).
+- Remove dos fluxos de clique qualquer `loadSports255(true)`, `paintSports255()`, `render()`, recarga de histórico F1 e `cinetracker:data-changed`.
+- Todos os botões envolvidos usam `type="button"`; handlers chamam `preventDefault()`, `stopPropagation()` e, nos owners legados, `stopImmediatePropagation()`.
+- A UI muda de forma otimista no card/botão local; Supabase persiste em background e falhas fazem rollback local.
+
+### Descobrir / Pra você
+- r369 vira o owner final do `Trocar`, sem `MutationObserver`.
+- Desativa o observer de refill da r363 e o observer global da r367 na build final.
+- Remove o `while` do sorteio de páginas e limita a varredura a 240 itens / 100 ms.
+- Usa `AbortController` real no TMDB, com timeout estrito de 3 segundos e cancelamento de requisição anterior.
+- Pool por slot é limitado a 60 itens; quando não há item inédito, usa fallback limitado no pool existente sem bloquear a main thread.
+
+### Validação
+- Teste de navegador executa 20 trocas sequenciais, verifica heartbeat da main thread e botão sempre liberado.
+- Teste de formulário executa 5 marcações esportivas e confirma zero submits e URL inalterada.
+
+### Release
+- Web: `1.0.160 / r369-official-1.0.160`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.159 — 2026-09-25 — Web r368
 
 ### Descobrir / Pra você

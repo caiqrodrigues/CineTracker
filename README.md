@@ -6,12 +6,23 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.159** | `r368-official-1.0.159` | Trocar sem repetição/congelamento; esportes/F1 otimistas sem refresh |
+| Web | **1.0.160** | `r369-official-1.0.160` | swap limitado/cancelável; todos os owners de Esportes/F1 sem refresh |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.160 / r369
+
+- **Esportes/F1:** r255, r263, r296, r299 e r301 deixam de disparar repaint/refetch global após marcar assistido. Botões são `type="button"`, com prevenção de submit/navegação e rollback local em erro.
+- **Pra você:** o `Trocar` não usa observers nem loops `while`; a busca local tem orçamento de 100 ms, pool limitado e fallback imediato.
+- **Cancelamento real:** o helper TMDB aceita `AbortController` externo e a troca aborta aos 3 segundos.
+- **Observers legados:** r363 não instala mais o observer de refill e r367 não observa mais o documento inteiro.
+- **Teste:** 20 trocas sequenciais com heartbeat da main thread + 5 marcações esportivas dentro de formulário, sem submit e sem mudança de URL.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r369-official.mjs`; runtime: `apps/web/runtime-r369-hard-no-refresh-bounded-swap.js`.
 
 ## Web 1.0.159 / r368
 

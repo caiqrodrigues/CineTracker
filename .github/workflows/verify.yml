@@ -1,4 +1,4 @@
-name: Verify Web 1.0.159 r368 Random Swap and Sports No Refresh
+name: Verify Web 1.0.160 r369 Hard No Refresh and Bounded Swap
 on:
   push:
     branches: [main]
@@ -6,32 +6,33 @@ on:
 permissions:
   contents: read
 jobs:
-  web_1_0_159_r368:
+  web_1_0_160_r369:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Source identity and syntax
+      - name: Syntax and identity
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.159"' package.json
-          grep -Fq '"version": "1.0.159"' apps/web/package.json
-          node --check apps/web/runtime-r368-random-sports-no-refresh.js
-          node --check apps/web/build-r368.mjs
-          node --check apps/web/test-r368.mjs
-          node --check apps/web/test-r368-browser.mjs
-      - name: Build and regression tests
+          grep -Fq '"version": "1.0.160"' package.json
+          grep -Fq '"version": "1.0.160"' apps/web/package.json
+          node --check apps/web/runtime-r369-hard-no-refresh-bounded-swap.js
+          node --check apps/web/build-r369.mjs
+          node --check apps/web/test-r369.mjs
+          node --check apps/web/test-r369-browser.mjs
+      - name: Build and strict validation
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r368-official.mjs
-          CT_R368_SKIP_BUILD=1 node test-r368.mjs
-          CT_R368_SKIP_BUILD=1 node test-r368-browser.mjs
-          node --check dist/app-v368.js
-          grep -Fq 'app-v368.js' dist/index.html
-          grep -Fq 'ct-web-1.0.159-r368' dist/service-worker.js
+          node build-r369-official.mjs
+          CT_R369_SKIP_BUILD=1 node test-r369.mjs
+          CT_R369_SKIP_BUILD=1 node test-r369-browser.mjs
+          node --check dist/app-v369.js
+          grep -Fq 'app-v369.js' dist/index.html
+          grep -Fq 'ct-web-1.0.160-r369' dist/service-worker.js
+          grep -Fq "window.__ctR369Marker='bounded-swap-no-observers+abort-3s+100ms-pick+sports-zero-refresh'" dist/app-v369.js
   android_current_source:
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +42,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_159_r368, android_current_source]
+    needs: [web_1_0_160_r369, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -50,10 +51,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.159"' <<<"$BODY" && grep -Fq '"revision": "r368-official-1.0.159"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v368.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.160"' <<<"$BODY" && grep -Fq '"revision": "r369-official-1.0.160"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v369.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR368Marker='foryou-swap-lock+session-no-repeat+random-tmdb-pages+sports-optimistic-no-refresh'" <<<"$JS" && grep -Fq 'app-v368.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR369Marker='bounded-swap-no-observers+abort-3s+100ms-pick+sports-zero-refresh'" <<<"$JS" && grep -Fq 'app-v369.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
