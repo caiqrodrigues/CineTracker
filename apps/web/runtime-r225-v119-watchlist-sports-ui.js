@@ -27,7 +27,7 @@ let full119=null,fullAt119=0,fullTask119=null;
 async function loadFull119(force=false){
  if(!force&&full119&&Date.now()-fullAt119<60000)return full119;
  if(fullTask119)return fullTask119;
- fullTask119=Promise.resolve().then(()=>rpc('cinetracker_watchlist_full_v119',{})).then(d=>{full119=d||{rows:[],counts:{movie:0,series:0}};fullAt119=Date.now();return full119}).finally(()=>fullTask119=null);
+ fullTask119=Promise.resolve().then(()=>rpc('cinetracker_watchlist_full_v376',{})).then(d=>{full119=d||{rows:[],counts:{movie:0,series:0}};fullAt119=Date.now();return full119}).finally(()=>fullTask119=null);
  return fullTask119;
 }
 function rows119(d,kind){const a=Array.isArray(d?.rows)?d.rows:[];return a.filter(x=>kind==='movie'?type119(x)==='movie':type119(x)==='tv').filter(x=>id119(x)>0)}
