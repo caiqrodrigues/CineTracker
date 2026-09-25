@@ -2,6 +2,28 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.163 — 2026-09-25 — Web r372
+
+### Descobrir / Pra você — layout
+- O rodapé de ações passa a ter uma única geometria final em Flexbox (`row`, `nowrap`, `gap: 8px`) com altura fixa de 32 px.
+- Botões de ação não encolhem, não quebram linha e não podem ficar ocultos após re-render do card.
+- Coração/favorito e controle flutuante do pôster ficam absolutos, 36×36, `z-index: 10` e fundo translúcido com blur.
+- O writer geométrico legado da r348 é retirado da build final para não voltar a sobrepor/recolher botões.
+
+### 100% Novos — filtro pessoal estrito
+- Antes de renderizar cada `fresh:*`, cruza o pool com a autoridade pessoal canônica da r319.
+- Qualquer ID presente em `seen` ou `watch` é removido do estado antes do card ficar visível.
+- Se um tipo ficar sem candidato elegível, busca um único novo lote TMDB e filtra novamente antes do render.
+- Marcar Visto/Watchlist atualiza imediatamente a autoridade local, impedindo que o mesmo item reapareça no próximo card.
+
+### Validação
+- Browser gate injeta itens Vistos e Watchlist nos três pools `fresh:*` e confirma que nenhum sobrevive.
+- Executa 15 re-renders dos cards e valida três botões visíveis, Flexbox nowrap e controles flutuantes 36×36/z10 em todas as passagens.
+
+### Release
+- Web: `1.0.163 / r372-official-1.0.163`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.162 — 2026-09-25 — Web r371
 
 ### Home / Séries e Filmes

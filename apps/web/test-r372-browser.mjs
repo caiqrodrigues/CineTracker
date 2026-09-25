@@ -1,0 +1,26 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';import {createServer} from 'node:http';import {spawn,execFileSync} from 'node:child_process';
+if(process.env.CT_R372_SKIP_BUILD!=='1')await import('./build-r372.mjs');
+let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}if(!bin)throw new Error('Chromium unavailable');
+const runtime=(await readFile(resolve('runtime-r372-foryou-layout-fresh-strict.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const html=`<!doctype html><html><head></head><body><div data-ct336-foryou>
+${['movie','series','anime'].map(k=>'<div class="ct336-slot" data-ct336-slot="fresh:'+k+'"><div class="ct336-cardwrap"><article class="ct288-card ct291-card"><button class="ct291-favorite" data-ct291-favorite="x">♥</button><button class="ct288-state">+</button><div class="ct288-poster"></div><span class="ct288-copy">TITLE</span></article></div><div class="ct336-actions"><button>+ Watchlist</button><button>✓ Visto</button><button data-ct336-swap-only="fresh:'+k+'">↻ Trocar</button></div></div>').join('')}
+</div><script>
+window.route=()=> 'discover';const item=(id,type='movie')=>({id,tmdb_id:id,media_type:type,poster_path:'/p.jpg',vote_average:8.5,release_date:'2025-01-01'});
+window.__ctR309Test={state:{freshPools:{movie:[item(1),item(2),item(3)],series:[item(11,'tv'),item(12,'tv')],anime:[item(21,'tv')]},freshIndex:{movie:0,series:0,anime:0}},setForYouState(v){this.state=v}};
+window.__ctR319={personal:async()=>({ready:true,seen:new Set(['movie:1','tv:11','tv:21']),watch:new Set(['movie:2']),blocked:new Set(['movie:1','movie:2','tv:11','tv:21'])})};
+window.__ctR370={excluded:new Set(),fetchOnceIfNeeded:async name=>{const k=name.split(':')[1];const st=window.__ctR309Test.state;const add=k==='series'?item(99,'tv'):k==='anime'?item(98,'tv'):item(97);st.freshPools[k]=[...st.freshPools[k],add];return 1}};
+window.__ctR367={meta:()=>null,handle:()=>true};
+window.__ctR359={renderSlot(name){const k=name.split(':')[1],st=window.__ctR309Test.state,p=st.freshPools[k],i=st.freshIndex[k]||0,slot=document.querySelector('[data-ct336-slot="'+name+'"]');slot.dataset.rendered=p[i]?((p[i].media_type==='movie'?'movie':'tv')+':'+p[i].tmdb_id):'empty';return true}};
+</script><script>${runtime}</script><script>
+(async()=>{try{const ok=(v,m)=>{if(!v)throw new Error(m)},sleep=ms=>new Promise(r=>setTimeout(r,ms));await window.__ctR372.ensureFreshValidated(true);await sleep(20);
+ const st=window.__ctR309Test.state;const blocked=new Set(['movie:1','movie:2','tv:11','tv:21']);
+ for(const k of ['movie','series','anime'])for(const x of st.freshPools[k]){const key=(x.media_type==='movie'?'movie':'tv')+':'+x.tmdb_id;ok(!blocked.has(key),'blocked fresh item survived '+key)}
+ for(const slot of document.querySelectorAll('[data-ct336-slot]')){ok(slot.dataset.ct372FreshOk==='1','slot not validated');const row=slot.querySelector('.ct336-actions'),cs=getComputedStyle(row);ok(cs.display==='flex','row not flex');ok(cs.flexWrap==='nowrap','row wrapped');ok(row.querySelectorAll('button').length===3,'button disappeared');for(const b of row.querySelectorAll('button')){const bs=getComputedStyle(b);ok(bs.display==='flex','action hidden');ok(parseFloat(bs.height)>=31,'action height collapsed')}const heart=slot.querySelector('.ct291-favorite'),hs=getComputedStyle(heart);ok(hs.position==='absolute','heart not absolute');ok(Number(hs.zIndex)>=10,'heart z-index low');ok(Math.round(parseFloat(hs.width))===36&&Math.round(parseFloat(hs.height))===36,'heart size unstable')}
+ for(let i=0;i<15;i++){for(const k of ['movie','series','anime'])window.__ctR359.renderSlot('fresh:'+k);window.__ctR372.layoutAll();await sleep(1);for(const row of document.querySelectorAll('.ct336-actions'))ok(row.querySelectorAll('button').length===3,'button lost after rerender '+i)}
+ document.documentElement.dataset.ct372done='1'}catch(e){document.documentElement.dataset.ct372probe='fail:'+String(e?.stack||e)}})();
+</script></body></html>`;
+const server=createServer((req,res)=>{res.writeHead(200,{'content-type':'text/html','cache-control':'no-store'});res.end(html)});await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget=3000','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
+const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},15000),code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
+if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1000));if(!/data-ct372done="1"/.test(out)){const m=out.match(/data-ct372probe="([^"]*)"/);throw new Error('R372_BROWSER '+(m?.[1]||'probe did not finish'))}
+console.log('R372_BROWSER_OK strict fresh exclusion + stable flex controls through 15 rerenders');

@@ -6,12 +6,23 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.162** | `r371-official-1.0.162` | Home Filmes preservada contra repaints e respostas assíncronas tardias |
+| Web | **1.0.163** | `r372-official-1.0.163` | botões Pra Você estáveis + 100% Novos sem Vistos/Watchlist |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.163 / r372
+
+- **Ações estáveis:** rodapé dos cards em Flexbox nowrap, gap fixo e botões com altura estável; writer geométrico legado r348 retirado da build final.
+- **Overlay:** coração/favorito e controle flutuante ficam 36×36, absolutos, `z-index: 10` e com backdrop blur.
+- **100% Novos:** os pools `fresh:*` são filtrados contra `seen` + `watch` da autoridade r319 antes do render.
+- **Fallback:** se o pool limpo esgotar, um lote TMDB é buscado uma única vez e novamente filtrado antes de aparecer.
+- **Teste:** itens bloqueados não sobrevivem e 15 re-renders consecutivos mantêm todos os botões visíveis e sem sobreposição.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r372-official.mjs`; runtime: `apps/web/runtime-r372-foryou-layout-fresh-strict.js`.
 
 ## Web 1.0.162 / r371
 

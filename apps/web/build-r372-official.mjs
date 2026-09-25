@@ -1,0 +1,2 @@
+import {spawnSync} from 'node:child_process';import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+await import('./build-r372.mjs');const g=spawnSync(process.execPath,['test-r372.mjs'],{cwd:process.cwd(),stdio:'inherit',env:{...process.env,CT_R372_SKIP_BUILD:'1'}});if(g.status!==0)throw new Error('r372 static gate failed');const r=JSON.parse(await readFile(resolve('dist/release.json'),'utf8'));if(r.version!=='1.0.163'||r.revision!=='r372-official-1.0.163')throw new Error('r372 identity');console.log('WEB_R372_OFFICIAL_OK');
