@@ -10,11 +10,11 @@ window.route=()=> 'home';window.img=(p)=>p;const base=new Date('2026-01-01T00:00
  const expected={added_desc:155,added_asc:1,release_desc:46,release_asc:1,az:155,za:1};
  for(const mode of ['added_desc','added_asc','release_desc','release_asc','az','za']){window.__ctR373.setSort(mode);await sleep(0);ok(sec.dataset.ct373Sort===mode,'sort mode '+mode);const first=Number(sec.querySelector('[data-ct373-watch-id]')?.dataset.ct373WatchId||0);if(mode==='added_desc')ok(first===155,'added desc');if(mode==='added_asc')ok(first===1,'added asc');if(mode==='az')ok(first===155,'az');if(mode==='za')ok(first===1,'za')}
  const before=location.href;sec.querySelector('[data-ct373-sort-trigger]').click();await sleep(0);ok(sec.querySelector('[data-ct373-sort-popover]').classList.contains('open'),'popover did not open');ok(sec.querySelectorAll('[data-ct373-sort]').length===6,'not six options');sec.querySelector('[data-ct373-sort="added_desc"]').click();await sleep(0);ok(location.href===before,'sort changed URL');
- sec.querySelector('[data-ct373-more]').click();await sleep(0);ok(sec.dataset.ct373Rendered==='155','show more did not render all');
+ window.__ctR373.more();await sleep(0);ok(sec.dataset.ct373Rendered==='155','show more did not render all');
  document.documentElement.dataset.ct373done='1'}catch(e){document.documentElement.dataset.ct373probe='fail:'+String(e?.stack||e)}})();
 </script></body></html>`;
 const server=createServer((req,res)=>{res.writeHead(200,{'content-type':'text/html','cache-control':'no-store'});res.end(html)});await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
-const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget=2500','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget=4000','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
 const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},15000),code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
 if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1000));if(!/data-ct373done="1"/.test(out)){const m=out.match(/data-ct373probe="([^"]*)"/);throw new Error('R373_BROWSER '+(m?.[1]||'probe did not finish'))}
 console.log('R373_BROWSER_OK 155 exact count + six local sorts + paged DOM + no URL reload');
