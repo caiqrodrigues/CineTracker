@@ -20,7 +20,7 @@ js=once(js,'boot();',runtime+'\nboot();','runtime');
 html=html.replaceAll('app-v366.js','app-v367.js').replaceAll('app-v366.css','app-v367.css').replaceAll('v1.0.157','v1.0.158').replaceAll('r366-official-1.0.157','r367-official-1.0.158');
 sw=sw.replaceAll('ct-web-1.0.157-r366','ct-web-1.0.158-r367').replaceAll('app-v366.js','app-v367.js').replaceAll('app-v366.css','app-v367.css');
 css+='\n/* CineTracker Web 1.0.158 r367 — single final owner for Pra Voce actions. */\n';
-const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.158',revision:'r367-official-1.0.158',base:'r366-production',scope:'discover-foryou-actions-final-owner',discover_foryou_actions:'daily/fresh=watchlist+seen+swap;watch=seen+swap',discover_foryou_click:'clicked-slot-only',android:'1.0.20/10062'};
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.158',revision:'r367-official-1.0.158',base:'r366-production',scope:'discover-foryou-actions-final-owner',discover_foryou_actions:'daily/fresh=watchlist+seen+swap;watch=seen+swap',discover_foryou_click:'clicked-slot-only',discover_foryou_click_owner:'r367-single-final-owner',discover_foryou_repaint:'clicked-slot-only+state-derived-row',discover_foryou_swap:'always-visible+refill-on-demand+clicked-slot-only',android:'1.0.20/10062'};
 await Promise.all([
  writeFile(resolve(dist,'app-v367.js'),js),writeFile(resolve(dist,'app-v367.css'),css),writeFile(resolve(dist,'index.html'),html),
  writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))
