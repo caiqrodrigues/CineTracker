@@ -7,13 +7,60 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
 ]);
 const once=(s,a,b,l)=>{const n=s.split(a).length-1;if(n!==1)throw new Error('r377 expected one '+l+', found '+n);return s.replace(a,b)};
 
-const oldFetch="async function ct274FetchHome(){return ct274NormalizeHomePayload(await rpc('cinetracker_profile_home_payload_v0997_r6',{p_today:typeof localDay==='function'?localDay():new Date().toISOString().slice(0,10),p_history_limit:20,p_series_limit:120,p_movie_limit:120}))}";
+const oldFetch="async function ct274FetchHome(){return ct274NormalizeHomePayload(await rpc('cinetracker_home_payload_v359',{p_today:typeof localDay==='function'?localDay():new Date().toISOString().slice(0,10),p_history_limit:20,p_series_limit:120,p_movie_limit:120}))}";
 const newFetch="async function ct274FetchHome(){return ct274NormalizeHomePayload(await rpc('cinetracker_home_payload_v334',{p_today:typeof localDay==='function'?localDay():new Date().toISOString().slice(0,10),p_history_limit:50,p_series_limit:120,p_movie_limit:240}))}";
 js=once(js,oldFetch,newFetch,'legacy Home timeout RPC');
 
-const oldRender="async function ct274RenderHome(seq){\n setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class=\"page\" data-home>'+loading('Sincronizando Home...')+'</div>'));\n window.__ctHomeHistoryPending=true;\n try{const data=await ct274FetchHome();if(seq!==navSeq||route()!=='home')return;homeCache=data;ct274PaintHome()}catch(e){if(seq!==navSeq)return;const h=document.querySelector('[data-home]');if(h)h.innerHTML=fail('Falha ao sincronizar Home: '+(e?.message||e),'home')}\n}";
-const newRender="async function ct274RenderHome(seq){\n setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class=\"page\" data-home>'+loading('Sincronizando Home...')+'</div>'));\n window.__ctHomeHistoryPending=true;const cached=ct274Payload(),usable=cached&&['series','movie_watchlist','history_episodes','history_movies'].every(k=>Array.isArray(cached[k]));\n if(usable&&seq===navSeq&&route()==='home'){homeCache=cached;ct274PaintHome()}\n try{const data=await ct274FetchHome();if(seq!==navSeq||route()!=='home')return;homeCache=data;ct274PaintHome()}catch(e){if(seq!==navSeq||route()!=='home')return;if(usable){homeCache=cached;ct274PaintHome();try{toast('Home mantida em cache; atualização em segundo plano falhou.')}catch{}}else{const h=document.querySelector('[data-home]');if(h)h.innerHTML=fail('Falha ao sincronizar Home: '+(e?.message||e),'home')}}\n}";
-js=once(js,oldRender,newRender,'Home cached timeout fallback');
+const renderStart="async function ct274RenderHome(seq){";
+const renderEnd="window.__ctR331RenderHomeTest=ct274RenderHome;";
+const a=js.indexOf(renderStart),z=js.indexOf(renderEnd,a);
+if(a<0||z<0||js.indexOf(renderStart,a+1)>=0)throw new Error('r377 current Home renderer not uniquely found');
+const currentRender=js.slice(a,z+renderEnd.length);
+const newRender=[
+"async function ct274RenderHome(seq){",
+" setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class=\"page\" data-home>'+loading('Carregando Home completa...')+'</div>'));",
+" window.__ctHomeHistoryPending=true;",
+" document.documentElement.dataset.ct343HomeLoading='1';",
+" delete document.documentElement.dataset.ct343HomeReady;",
+" delete document.documentElement.dataset.ct343HomeIncomplete;",
+" const cached=ct274Payload(),usable=cached&&['series','movie_watchlist','history_episodes','history_movies'].every(k=>Array.isArray(cached[k]));",
+" if(usable&&seq===navSeq&&route()==='home'){",
+"  homeCache=cached;",
+"  try{if(typeof ct275PaintHome==='function')ct275PaintHome();else ct274PaintHome()}catch{}",
+"  document.documentElement.dataset.ct343HomeReady='1';",
+"  delete document.documentElement.dataset.ct343HomeLoading;",
+" }",
+" try{",
+"  const data=await ct274FetchHome();",
+"  if(seq!==navSeq||route()!=='home')return;",
+"  homeCache=data;",
+"  if(window.__ctR343?.prepareHomePayload)await window.__ctR343.prepareHomePayload(data,seq);",
+"  if(seq!==navSeq||route()!=='home')return;",
+"  if(typeof ct275PaintHome==='function')ct275PaintHome();else ct274PaintHome();",
+"  if(window.__ctR343?.hydrateHomeDom)await window.__ctR343.hydrateHomeDom();",
+"  if(seq!==navSeq||route()!=='home')return;",
+"  document.documentElement.dataset.ct343HomeReady='1';",
+"  delete document.documentElement.dataset.ct343HomeLoading;",
+"  setTimeout(()=>window.__ctR331?.resetHome?.(),0);",
+"  return data;",
+" }catch(e){",
+"  if(seq!==navSeq||route()!=='home')return;",
+"  delete document.documentElement.dataset.ct343HomeLoading;",
+"  if(usable){",
+"   homeCache=cached;",
+"   try{if(typeof ct275PaintHome==='function')ct275PaintHome();else ct274PaintHome()}catch{}",
+"   document.documentElement.dataset.ct343HomeReady='1';",
+"   document.documentElement.dataset.ct377HomeFallback='cache';",
+"   try{toast('Home mantida em cache; atualização não concluiu.')}catch{}",
+"   return cached;",
+"  }",
+"  const h=document.querySelector('[data-home]');if(h)h.innerHTML=fail('Falha ao sincronizar Home: '+(e?.message||e),'home');",
+" }",
+"}",
+"window.__ctR331RenderHomeTest=ct274RenderHome;"
+].join('\n');
+js=js.slice(0,a)+newRender+js.slice(z+renderEnd.length);
+
 
 js=once(js,"window.__ctWebBuild='1.0.167';window.__ctOfficialVersion='1.0.167';","window.__ctWebBuild='1.0.168';window.__ctOfficialVersion='1.0.168';",'version');
 js=once(js,"const REVISION='r376-official-1.0.167';","const REVISION='r377-official-1.0.168';",'revision');
