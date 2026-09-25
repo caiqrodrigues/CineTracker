@@ -80,7 +80,7 @@ function fixSlot(slot,m){
   buttons.push(buildButton('↻ Trocar',{ct336SwapOnly:swap}));
   row.replaceChildren(...buttons);
  }
- const sw=q(':scope > [data-ct336-swap-only]',row);if(sw)sw.disabled=!canSwap;
+ const sw=q(':scope > [data-ct336-swap-only]',row);if(sw){sw.disabled=false;sw.removeAttribute('disabled');sw.hidden=false;sw.removeAttribute('hidden')}
  const poster=q('.ct288-poster,.ct288-empty-poster',slot);
  styleRow(row,poster,expected);
  return true;
