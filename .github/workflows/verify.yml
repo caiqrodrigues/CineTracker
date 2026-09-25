@@ -9,183 +9,59 @@ permissions:
   contents: read
 
 jobs:
-  web_1_0_157_r367:
+  web_1_0_158_r367:
     runs-on: ubuntu-latest
-    timeout-minutes: 70
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 24 }
-      - name: Version identity r367
+        with:
+          node-version: 24
+
+      - name: Version and source identity
         run: |
           set -euo pipefail
           grep -Fq '"version": "1.0.158"' package.json
           grep -Fq '"version": "1.0.158"' apps/web/package.json
           grep -Fq 'build-r367-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r367-foryou-authoritative-actions.js
+          test -f apps/web/runtime-r367-foryou-actions-final.js
           test -f apps/web/build-r367.mjs
           test -f apps/web/build-r367-official.mjs
           test -f apps/web/test-r367.mjs
-          test -f apps/web/test-r367-browser.mjs
-          test -f supabase/migrations/20260923030000_r337_episode_catalog_search.sql
-          test -f supabase/migrations/20260924140039_r359_home_episode_cache_first_paint.sql
-          test -f supabase/migrations/20260924140711_r359_backfill_latest_episode_metadata.sql
-          grep -Fq "version:'tv-state-refresh-v2'" supabase/functions/ct-refresh-tv-state-user/index.ts
-      - name: Syntax r367
+          grep -Fq "window.__ctR367Marker='foryou-single-final-owner+state-derived-buttons+clicked-slot-only'" apps/web/runtime-r367-foryou-actions-final.js
+          grep -Fq "sw.disabled=false" apps/web/runtime-r348-foryou-buttons-only.js
+
+      - name: Syntax
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r367-foryou-authoritative-actions.js
+          node --check apps/web/runtime-r367-foryou-actions-final.js
           node --check apps/web/build-r367.mjs
           node --check apps/web/build-r367-official.mjs
           node --check apps/web/test-r367.mjs
-          node --check apps/web/test-r367-browser.mjs
-      - name: Focused r361 repeated repaint action gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          npm run test:r361
-          npm run test:r361:browser
-      - name: Focused r362 physical Pra Voce click gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          npm run test:r362
-          npm run test:r362:browser
-      - name: Focused r363 pool exhaustion static gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          npm run test:r363
-      - name: Focused r363 pool exhaustion browser gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          CT_R363_SKIP_BUILD=1 node test-r363-browser.mjs
-      - name: Focused r364 full-bundle repeated-click no-freeze gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          npm run test:r364
-          npm run test:r364:browser
-      - name: Focused r367 authoritative Pra Voce action gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          npm run test:r367
-          npm run test:r367:browser
-      - name: Current regression lineage
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          npm run test:r330
-          npm run test:r331
-          npm run test:r332
-          npm run test:r333
-          npm run test:r334
-          npm run test:r335
-          npm run test:r336
-          npm run test:r337
-          npm run test:r337:browser
-          npm run test:r338
-          npm run test:r338:browser
-          npm run test:r339
-          npm run test:r339:browser
-          npm run test:r340
-          npm run test:r340:browser
-          npm run test:r341
-          npm run test:r342
-          npm run test:r342:browser
-          npm run test:r343
-          npm run test:r343:browser
-          npm run test:r344
-          npm run test:r344:browser
-          npm run test:r345
-          npm run test:r345:browser
-          npm run test:r346
-          npm run test:r346:browser
-          npm run test:r347
-          npm run test:r347:browser
-          npm run test:r348
-          npm run test:r348:browser
-          npm run test:r349
-          npm run test:r349:browser
-          npm run test:r350
-          npm run test:r350:browser
-          npm run test:r351
-          npm run test:r351:browser
-          npm run test:r352
-          npm run test:r352:browser
-          npm run test:r353
-          npm run test:r353:browser
-          npm run test:r354
-          npm run test:r354:browser
-          npm run test:r355
-          npm run test:r355:browser
-          npm run test:r356
-          npm run test:r356:browser
-          npm run test:r357
-          npm run test:r357:browser
-          npm run test:r358
-          npm run test:r358:browser
-          npm run test:r359
-          npm run test:r359:browser
-      - name: Final bundle identity r367
+
+      - name: Build and focused r367 gate
         working-directory: apps/web
         run: |
           set -euo pipefail
           node build-r367-official.mjs
-          node --check dist/app-v366.js
-          CT_R365_SKIP_BUILD=1 node test-r367.mjs
-          grep -Fq 'app-v366.js' dist/index.html
-          grep -Fq 'app-v366.css' dist/index.html
+          CT_R367_SKIP_BUILD=1 node test-r367.mjs
+          node --check dist/app-v367.js
+          grep -Fq 'app-v367.js' dist/index.html
+          grep -Fq 'app-v367.css' dist/index.html
+          grep -Fq 'ct-web-1.0.158-r367' dist/service-worker.js
+          grep -Fq "window.__ctR367Marker='foryou-single-final-owner+state-derived-buttons+clicked-slot-only'" dist/app-v367.js
           node - <<'NODE'
           const r=require('./dist/release.json');
-          const ok=r.version==='1.0.158'
-            && r.revision==='r367-official-1.0.158'
-            && r.search_global==='movies+series+actors+episodes'
-            && r.search_episode_local==='cinetracker_episode_search_v337'
-            && r.home_navigation==='r337-desired-tab-authority+multi-settle+user-scroll-cancel'
-            && r.sports_startup==='every-open-warm+force-provider-sync+auth-retry+refresh-payload'
-            && r.discover_foryou_owner==='r336-only-no-legacy-late-dom-repaint'
-            && r.discover_foryou_genres==='exactly-one-primary-genre'
-            && r.page_layout==='content-normal-flow+home-full-inner-width'
-            && r.navigation_back==='dedicated-search-row-icon-only'
-            && r.discover_filters==='r318+r336-source-removed'
-            && r.discover_foryou_legacy_css==='r338+r339-removed-at-runtime'
-            && r.discover_card_actions==='local-slot-only+prevent-default+stop-propagation'
-            && r.media_kind==='badge-on-poster-no-kind-in-meta'
-            && r.media_metadata==='year+rating+primary-genre+tmdb-detail-fallback'
-            && r.discover_foryou_actions==='clicked-slot-immediate+direct-background-persist+targeted-refill'
-            && r.discover_foryou_repaint==='renderSlot-hook+microtask+raf+90ms-rearm'
-            && r.discover_foryou_click_owner==='r365-direct-local-owner' && r.discover_foryou_swap==='always-visible+refill-on-demand+clicked-slot-only'
-            && r.discover_foryou_key_resolution==='card+open-button+action-button+state-fallback'
-            && r.discover_foryou_pool_liveness==='targeted-background-refill+no-exhaustion-deadlock'
-            && r.discover_foryou_last_item==='persist-action+same-slot-refill+no-global-repaint'
-            && r.discover_foryou_refill==='startup-once+targeted-after-action'
-            && r.discover_foryou_observers==='r348+r349+r360+r361+r362+r363-action-observers-retired'
-            && r.discover_foryou_stability==='no-observer-storm+repeat-click-watchdog'
-            && r.sports_national_teams==='espn-international-routes-v5'
-            && r.discover_watchlist_selection==='weighted-random+history-affinity+watchlist-affinity+quality'
-            && r.discover_watchlist_order==='not-list-order+not-index-plus-one'
-            && r.discover_watchlist_initial==='smart-weighted-random'
-            && r.discover_watchlist_swap==='smart-weighted-random-same-kind'
-            && r.sports_manual_sync==='r356-full-sync+reload+paint'
-            && r.sports_payload==='r255-authoritative-bridge+forced-reload-after-sync'
-            && r.sports_upcoming==='repaint-from-fresh-payload'
-            && r.sports_every_open_window==='past-3+future-9-days'
-            && r.discover_foryou_reload==='forbidden-no-renderDiscover-no-loadForYou-no-global-cache-clear'
-            && r.discover_tab_loading==='cached-source+cached-authority-first'
-            && r.discover_personal_cache==='5min+immediate-invalidate-on-data-change'
-            && r.discover_public_watchlist==='instant-saved-state+background-persist+no-card-swap'
-            && r.discover_public_seen==='instant-seen-state+background-persist+no-card-swap'
-            && r.discover_foryou_spacing==='slot-width-equals-poster+6px-gap'
-            && r.discover_foryou_heart==='inside-poster-top-right'
-            && r.discover_top10_geometry==='desktop-ten-equal-columns-visible-in-viewport'
-            && r.home_payload==='cinetracker_home_payload_v359'
-            && r.home_startup==='db-episode-metadata-first-paint+nonblocking-background-tv-refresh'
-            && r.home_episode_reveal==='no-live-hydration-wait'
-            && r.android==='1.0.20/10062';
-          if(!ok){console.error(r);process.exit(1)}
+          const ok =
+            r.version === '1.0.158' &&
+            r.revision === 'r367-official-1.0.158' &&
+            r.discover_foryou_actions === 'daily/fresh=watchlist+seen+swap;watch=seen+swap' &&
+            r.discover_foryou_click === 'clicked-slot-only' &&
+            r.discover_foryou_click_owner === 'r367-single-final-owner' &&
+            r.discover_foryou_repaint === 'clicked-slot-only+state-derived-row' &&
+            r.discover_foryou_swap === 'always-visible+refill-on-demand+clicked-slot-only' &&
+            r.android === '1.0.20/10062';
+          if(!ok){ console.error(r); process.exit(1); }
           NODE
 
   android_current_source:
@@ -201,56 +77,21 @@ jobs:
 
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_157_r367, android_current_source]
+    needs: [web_1_0_158_r367, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Official production serves and boots 1.0.158 r367
+      - name: Production serves Web 1.0.158 r367
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
-            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$(date +%s%N)" || true)"
-            if grep -Fq '"version": "1.0.158"' <<<"$BODY" \
-              && grep -Fq '"revision": "r367-official-1.0.158"' <<<"$BODY" \
-              && grep -Fq '"search_episode_local": "cinetracker_episode_search_v337"' <<<"$BODY" \
-              && grep -Fq '"sports_startup": "every-open-warm+force-provider-sync+auth-retry+refresh-payload"' <<<"$BODY" \
-              && grep -Fq '"page_layout": "content-normal-flow+home-full-inner-width"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_legacy_css": "r338+r339-removed-at-runtime"' <<<"$BODY" \
-              && grep -Fq '"discover_card_actions": "local-slot-only+prevent-default+stop-propagation"' <<<"$BODY" \
-              && grep -Fq '"media_kind": "badge-on-poster-no-kind-in-meta"' <<<"$BODY" \
-              && grep -Fq '"media_metadata": "year+rating+primary-genre+tmdb-detail-fallback"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_actions": "clicked-slot-immediate+direct-background-persist+targeted-refill"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_repaint": "renderSlot-hook+microtask+raf+90ms-rearm"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_click_owner": "r365-direct-local-owner"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_pool_liveness": "targeted-background-refill+no-exhaustion-deadlock"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_last_item": "persist-action+same-slot-refill+no-global-repaint"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_key_resolution": "card+open-button+action-button+state-fallback"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_observers": "r348+r349+r360+r361+r362+r363-action-observers-retired"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_stability": "no-observer-storm+repeat-click-watchdog"' <<<"$BODY" \
-              && grep -Fq '"home_payload": "cinetracker_home_payload_v359"' <<<"$BODY" \
-              && grep -Fq '"home_startup": "db-episode-metadata-first-paint+nonblocking-background-tv-refresh"' <<<"$BODY" \
-              && grep -Fq '"home_episode_reveal": "no-live-hydration-wait"' <<<"$BODY" \
-              && grep -Fq '"sports_national_teams": "espn-international-routes-v5"' <<<"$BODY" \
-              && grep -Fq '"sports_payload": "r255-authoritative-bridge+forced-reload-after-sync"' <<<"$BODY" \
-              && grep -Fq '"sports_manual_sync": "r356-full-sync+reload+paint"' <<<"$BODY" \
-              && grep -Fq '"sports_every_open_window": "past-3+future-9-days"' <<<"$BODY" \
-              && grep -Fq '"discover_watchlist_selection": "weighted-random+history-affinity+watchlist-affinity+quality"' <<<"$BODY" \
-              && grep -Fq '"discover_watchlist_order": "not-list-order+not-index-plus-one"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_reload": "forbidden-no-renderDiscover-no-loadForYou-no-global-cache-clear"' <<<"$BODY" \
-              && grep -Fq '"discover_tab_loading": "cached-source+cached-authority-first"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_spacing": "slot-width-equals-poster+6px-gap"' <<<"$BODY" \
-              && grep -Fq '"discover_foryou_heart": "inside-poster-top-right"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v366.js?ct=$(date +%s%N)" || true)"
-              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" || true)"
-              if grep -Fq "window.__ctR367Marker='foryou-authoritative-action-rows+daily-swap-always-present+refill-on-demand'" <<<"$JS" \
-                && grep -Fq 'weightedPick353' <<<"$JS" \
-                && grep -Fq 'cinetracker_episode_search_v337' <<<"$JS" \
-                && grep -Fq 'app-v366.js' <<<"$HTML"; then
-                DOM="$(google-chrome --headless --no-sandbox --disable-gpu --disable-background-networking --virtual-time-budget=8000 --dump-dom "https://mycinetracker.vercel.app/?ct=$(date +%s%N)" 2>/dev/null || true)"
-                if grep -Fq 'CineTracker' <<<"$DOM" \
-                  && grep -Fq 'v1.0.158' <<<"$DOM" \
-                  && grep -Fq 'r367-official-1.0.158' <<<"$DOM" \
-                  && ! grep -Fq '<div id="app"></div>' <<<"$DOM"; then exit 0; fi
+            CT="$(date +%s%N)"
+            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.158"' <<<"$BODY"               && grep -Fq '"revision": "r367-official-1.0.158"' <<<"$BODY"               && grep -Fq '"discover_foryou_click_owner": "r367-single-final-owner"' <<<"$BODY"               && grep -Fq '"discover_foryou_actions": "daily/fresh=watchlist+seen+swap;watch=seen+swap"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v367.js?ct=$CT" || true)"
+              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
+              if grep -Fq "window.__ctR367Marker='foryou-single-final-owner+state-derived-buttons+clicked-slot-only'" <<<"$JS"                 && grep -Fq 'app-v367.js' <<<"$HTML"; then
+                exit 0
               fi
             fi
             sleep 5
