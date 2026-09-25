@@ -118,6 +118,5 @@ const mo=new MutationObserver(()=>queueMicrotask(ensureAll));
 mo.observe(document.documentElement,{subtree:true,childList:true});
 for(const ms of [0,50,200,800,1600])setTimeout(ensureAll,ms);
 
-window.__ctR367={version:'1.0.158,',ensureSlot,ensureAll,renderSlot,meta,handle,early};
-window.__ctR367.version='1.0.158';
+window.__ctR367={version:'1.0.158',ensureSlot,ensureAll,renderSlot,meta,handle,early};
 })();
