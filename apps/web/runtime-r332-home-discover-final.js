@@ -122,6 +122,7 @@ async function repairVisibleEpisodes332(){
  }catch{return false}
 }
 async function forceTvRefresh332(){
+ if(window.__ctR379HomeOwner)return false;
  if(routeNow()!=='home'||!window.__ctR325?.refreshTv)return false;
  const key='ct332:forced-tv-refresh';
  try{if(sessionStorage.getItem(key)==='1')return false;sessionStorage.setItem(key,'1')}catch{}
