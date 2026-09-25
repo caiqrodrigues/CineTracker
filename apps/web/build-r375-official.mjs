@@ -1,0 +1,2 @@
+import {spawnSync} from 'node:child_process';import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+await import('./build-r375.mjs');const g=spawnSync(process.execPath,['test-r375.mjs'],{cwd:process.cwd(),stdio:'inherit',env:{...process.env,CT_R375_SKIP_BUILD:'1'}});if(g.status!==0)throw new Error('r375 static gate failed');const r=JSON.parse(await readFile(resolve('dist/release.json'),'utf8'));if(r.version!=='1.0.166'||r.revision!=='r375-official-1.0.166')throw new Error('r375 identity');console.log('WEB_R375_OFFICIAL_OK');

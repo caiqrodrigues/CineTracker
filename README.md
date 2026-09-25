@@ -6,14 +6,14 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.165** | `r374-official-1.0.165` | reset de scroll ao trocar Séries/Filmes na Home |
+| Web | **1.0.166** | `r375-official-1.0.166` | troca de Home inicia no bloco principal sem expor Histórico oculto |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.165 / r374
+## Web 1.0.166 / r375\n\n- **Correção baseada no vídeo:** o reset absoluto para `0` foi removido porque expunha `Histórico recente`/`Filmes vistos`.\n- **Início semântico:** Séries abre em `Assistir a seguir`; Filmes abre em `Assistir a seguir / Watchlist`.\n- **Histórico preservado:** continua renderizado acima do ponto inicial e aparece somente ao rolar para cima.\n- **Container-aware:** alinha o bloco principal tanto em scroll da janela quanto em container interno.\n- **Teste:** ambos os sentidos de troca partem do rodapé e terminam no bloco principal, com Histórico comprovadamente acima do viewport.\n- Android permanece `1.0.20 / versionCode 10062`.\n\nBuild oficial: `apps/web/build-r375-official.mjs`; runtime: `apps/web/runtime-r375-home-semantic-start.js`.\n\n## Web 1.0.165 / r374
 
 - **Troca de aba no topo:** alternar Séries ↔ Filmes zera a rolagem da janela e do container scrollável da Home.
 - **Owner único de UX:** a r374 captura o clique antes dos antigos anchors que podiam reposicionar a página depois da troca.

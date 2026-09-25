@@ -1,4 +1,4 @@
-name: Verify Web 1.0.165 r374 Home Tab Scroll Reset
+name: Verify Web 1.0.166 r375 Home Semantic Start
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_1_0_165_r374:
+  web_1_0_166_r375:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -16,22 +16,23 @@ jobs:
       - name: Syntax and identity
         run: |
           set -euo pipefail
-          grep -Fq '"version": "1.0.165"' package.json
-          grep -Fq '"version": "1.0.165"' apps/web/package.json
+          grep -Fq '"version": "1.0.166"' package.json
+          grep -Fq '"version": "1.0.166"' apps/web/package.json
           node --check apps/web/runtime-r374-home-tab-scroll-reset.js
-          node --check apps/web/build-r374.mjs
-          node --check apps/web/test-r374.mjs
-          node --check apps/web/test-r374-browser.mjs
-      - name: Build and Home scroll validation
+          node --check apps/web/runtime-r375-home-semantic-start.js
+          node --check apps/web/build-r375.mjs
+          node --check apps/web/test-r375.mjs
+          node --check apps/web/test-r375-browser.mjs
+      - name: Build and semantic start validation
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node build-r374-official.mjs
-          CT_R374_SKIP_BUILD=1 node test-r374.mjs
-          CT_R374_SKIP_BUILD=1 node test-r374-browser.mjs
-          node --check dist/app-v374.js
-          grep -Fq 'app-v374.js' dist/index.html
-          grep -Fq 'ct-web-1.0.165-r374' dist/service-worker.js
+          node build-r375-official.mjs
+          CT_R375_SKIP_BUILD=1 node test-r375.mjs
+          CT_R375_SKIP_BUILD=1 node test-r375-browser.mjs
+          node --check dist/app-v375.js
+          grep -Fq 'app-v375.js' dist/index.html
+          grep -Fq 'ct-web-1.0.166-r375' dist/service-worker.js
   android_current_source:
     runs-on: ubuntu-latest
     steps:
@@ -41,7 +42,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_165_r374, android_current_source]
+    needs: [web_1_0_166_r375, android_current_source]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -50,10 +51,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.165"' <<<"$BODY" && grep -Fq '"revision": "r374-official-1.0.165"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v374.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.166"' <<<"$BODY" && grep -Fq '"revision": "r375-official-1.0.166"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v375.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR374Marker='home-tab-switch-scroll-reset+legacy-anchor-blocked+container-aware'" <<<"$JS" && grep -Fq 'app-v374.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR375Marker='home-tab-semantic-start+history-preserved-above+no-absolute-zero'" <<<"$JS" && grep -Fq 'app-v375.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

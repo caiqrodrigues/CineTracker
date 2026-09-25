@@ -2,7 +2,7 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
-## 1.0.165 — 2026-09-25 — Web r374
+## 1.0.166 — 2026-09-25 — Web r375\n\n### Home / início correto após trocar Séries ↔ Filmes\n- Corrige a regressão visual mostrada em vídeo: `scrollTop = 0` revelava o Histórico que fica propositalmente acima da tela inicial.\n- A troca de aba agora procura semanticamente o primeiro bloco não histórico: `Assistir a seguir` em Séries e `Assistir a seguir / Watchlist` em Filmes.\n- O bloco principal é alinhado logo abaixo do toggle Séries/Filmes, tanto para scroll da janela quanto para container interno.\n- `Histórico recente` e `Filmes vistos` continuam acima do viewport inicial e permanecem acessíveis rolando para cima.\n- Os anchors legados continuam bloqueados durante a troca para não disputar a posição.\n\n### Validação\n- Browser gate parte do rodapé, alterna Séries → Filmes e Filmes → Séries, confirmando que o bloco principal fica alinhado e que o Histórico permanece fora da tela acima.\n- O teste também exige `scrollTop > 500`, garantindo explicitamente que a implementação não voltou ao zero absoluto.\n\n### Release\n- Web: `1.0.166 / r375-official-1.0.166`.\n- Android: `1.0.20 / versionCode 10062` preservado.\n\n## 1.0.165 — 2026-09-25 — Web r374
 
 ### Home / troca Séries ↔ Filmes
 - A troca de semi-aba agora zera imediatamente a rolagem da janela e de qualquer ancestral/container interno scrollável da Home.
