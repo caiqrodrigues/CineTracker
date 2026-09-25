@@ -1,0 +1,2 @@
+import {spawnSync} from 'node:child_process';import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+await import('./build-r376.mjs');const g=spawnSync(process.execPath,['test-r376.mjs'],{cwd:process.cwd(),stdio:'inherit',env:{...process.env,CT_R376_SKIP_BUILD:'1'}});if(g.status!==0)throw new Error('r376 static gate failed');const r=JSON.parse(await readFile(resolve('dist/release.json'),'utf8'));if(r.version!=='1.0.167'||r.revision!=='r376-official-1.0.167')throw new Error('r376 identity');console.log('WEB_R376_OFFICIAL_OK');
