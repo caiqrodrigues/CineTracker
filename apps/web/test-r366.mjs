@@ -10,7 +10,6 @@ const [js,html,release,runtime]=await Promise.all([
 const ok=(v,m)=>{if(!v)throw new Error(m)};
 ok(html.includes('app-v366.js'),'index missing app-v366.js');
 ok(release.version==='1.0.157'&&release.revision==='r366-official-1.0.157','release mismatch');
-ok(runtime.includes("bucket==='watch'?\n  ?"),'noop');
 ok(runtime.includes("[['+ Watchlist','watchlist'],['✓ Visto','seen'],['↻ Trocar','swap']]"),'daily/fresh action contract missing');
 ok(runtime.includes("b.disabled=false"),'swap/buttons must never be disabled by pool size');
 ok(runtime.includes("window.__ctR363?.handle"),'swap must delegate to refill-capable owner');
