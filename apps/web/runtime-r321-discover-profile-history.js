@@ -92,7 +92,9 @@ function allFy321(st){
  out.push(...rows(st.dailyPool));return dedupe321(out);
 }
 async function loadForYou321(force=false){
- const token=++loadToken;loading321('Montando recomendações…');
+ const token=++loadToken,existing=window.__ctR309Test?.state,hasExisting=allFy321(existing).length>0;
+ if(hasExisting){const l=q('[data-ct319-loadline]');if(l){l.hidden=false;l.textContent='Atualizando recomendações…'};try{O.paintForYou?.()}catch{}}
+ else loading321('Montando recomendações…');
  try{
   if(!window.__ctR309?.buildForYou)throw new Error('Recomendações indisponíveis.');
   await window.__ctR309.buildForYou(!!force);
