@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.0.171 — 2026-09-25 — Web r380
+
+### Home / Séries
+- Primeiro paint deixa de aguardar o payload monolítico: usa snapshot existente e o RPC enxuto `cinetracker_home_active_v380` para atualizar imediatamente séries `InProgress/UpToDate`.
+- Séries ativas ausentes do snapshot, como Stuart, entram no mesmo ciclo inicial; não existe recomposição de bucket dezenas de segundos depois.
+- Metadados visíveis continuam hidratados em paralelo com orçamento curto, sem bloquear a Home.
+- A aba selecionada e o ponto semântico da r375 continuam preservados.
+
+### Home / Filmes
+- A Watchlist completa da r376 é reaplicada depois de cada paint da Home.
+- Remove o contador-base truncado `240`; o cabeçalho mantém apenas o total completo (1.382 no estado atual).
+- O `select` de ordenação é religado ao owner da Watchlist e reorganiza os mesmos nós DOM.
+
+### Descobrir / Pra Você
+- Remove definitivamente o filtro duplicado abaixo da aba `Pra você`.
+- Daily/Fresh = `Watchlist + Visto + Trocar`; Watchlist = `Visto + Trocar`, sempre dentro da largura do card.
+- Novo `cinetracker_discover_filter_v380` cruza TMDB ID, título localizado e título original. Isso bloqueia o caso comprovado de Harry Potter/Azkaban salvo no histórico em inglês e recebido pelo TMDB em português.
+- Fresh é auditado antes do render e o fallback TMDB também passa pela auditoria v380.
+
+### Perfil
+- O Perfil deixa de chamar o dashboard monolítico e usa um único `cinetracker_profile_v380` direto sobre tabelas indexadas.
+- Na medição com a biblioteca atual, o RPC retornou o total de 1.382 filmes em Watchlist sem o timeout que derrubava a página.
+- Cache local continua disponível como primeiro paint/fallback.
+
+### Desempenho / Top 10 e favoritos
+- Corações usam `cinetracker_favorites_v380`, sem montar o dashboard do Perfil.
+- Lista de streamings fica em cache local por 24 h; Top 10 por provedor fica em cache por 15 min e os primeiros provedores são pré-carregados em segundo plano.
+- Coração fica inteiramente dentro do card/pôster também no Top 10.
+
+### Release
+- Web: `1.0.171 / r380-official-1.0.171`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.170 — 2026-09-25 — Web r379
 
 ### Home / Séries

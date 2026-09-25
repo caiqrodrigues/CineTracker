@@ -1,3 +1,14 @@
+## Web 1.0.171 / r380
+
+- **Home Séries:** snapshot + patch ativo v380; Stuart e metadata ativa não dependem mais do payload monolítico.
+- **Home Filmes:** total completo da Watchlist, sem cabeçalho 240 concorrente, com seis ordenações religadas.
+- **Pra Você:** sem filtro duplicado; botões 3/2/3; Harry/Azkaban e aliases vistos são bloqueados pelo filtro v380.
+- **Perfil:** RPC direto v380 sem dashboard monolítico.
+- **Top 10/Favoritos:** cache local/prefetch e coração totalmente dentro da capa.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r380-official.mjs`; runtime: `apps/web/runtime-r380-home-profile-discover.js`.
+
 ## Web 1.0.170 / r379
 
 - **Home estável:** sem Stuart/novas séries entrando dezenas de segundos depois; refresh fica para a próxima navegação.
@@ -51,7 +62,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.170** | `r379-official-1.0.170` | Home estável + Fresh estrito + Perfil quick-first |
+| Web | **1.0.171** | `r380-official-1.0.171` | Home estável + Fresh estrito + Perfil quick-first |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
