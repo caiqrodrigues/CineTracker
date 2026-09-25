@@ -2,6 +2,24 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.159 — 2026-09-25 — Web r368
+
+### Descobrir / Pra você
+- Adiciona lock `isSwapping` durante cada troca e libera obrigatoriamente o botão em `finally`.
+- Mantém `session_excluded_ids` em `sessionStorage` para impedir repetição de mídias já exibidas na sessão.
+- Amplia o pool com páginas aleatórias do TMDB e escolhe a próxima mídia com `Math.random()`.
+- Preserva filtros de Vistos, Watchlist quando aplicável, WWE, nota, ano e auditoria pessoal.
+
+### Esportes / F1
+- Marcar/desmarcar assistido passa a ser otimista e persiste no Supabase em segundo plano.
+- Remove do toggle `loadSports255(true)`, `paintSports255()`, `enhanceF1Watch263(true)` e `cinetracker:data-changed`.
+- Sem reload, repaint global ou refetch global; falha reverte somente o card afetado.
+- Perfil recebe atualização local pelo evento `cinetracker:sports-watched-changed`.
+
+### Release
+- Web: `1.0.159 / r368-official-1.0.159`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.143 — 2026-09-23 — Web r352
 
 ### Descobrir / ações de card

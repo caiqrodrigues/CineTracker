@@ -6,12 +6,23 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.143** | `r352-official-1.0.143` | ações de cards locais/otimistas, sem reload ou repaint global |
+| Web | **1.0.159** | `r368-official-1.0.159` | Trocar sem repetição/congelamento; esportes/F1 otimistas sem refresh |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.159 / r368
+
+- `Trocar` usa lock `isSwapping` com liberação garantida em `finally`.
+- `session_excluded_ids` evita repetição durante a sessão; o pool é ampliado com páginas aleatórias do TMDB e seleção por `Math.random()`.
+- Vistos, Watchlist quando aplicável, WWE e critérios de nota/ano continuam excluídos.
+- Esportes e F1 usam UI otimista e persistência Supabase em segundo plano, sem `loadSports255(true)`, `paintSports255()`, `enhanceF1Watch263(true)`, `cinetracker:data-changed`, `window.location.reload()` ou `router.refresh()`.
+- O contador visível do Perfil acompanha o evento local `cinetracker:sports-watched-changed`.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r368-official.mjs`; runtime: `apps/web/runtime-r368-random-sports-no-refresh.js`.
 
 ## Web 1.0.143 / r352
 

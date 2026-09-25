@@ -1,98 +1,59 @@
-name: Verify Web 1.0.158 r367 Pra Voce Final Actions
-
+name: Verify Web 1.0.159 r368 Random Swap and Sports No Refresh
 on:
   push:
     branches: [main]
   pull_request:
-
 permissions:
   contents: read
-
 jobs:
-  web_1_0_158_r367:
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Version and source identity
-        run: |
-          set -euo pipefail
-          grep -Fq '"version": "1.0.158"' package.json
-          grep -Fq '"version": "1.0.158"' apps/web/package.json
-          grep -Fq 'build-r367-official.mjs' apps/web/package.json
-          test -f apps/web/runtime-r367-foryou-actions-final.js
-          test -f apps/web/build-r367.mjs
-          test -f apps/web/build-r367-official.mjs
-          test -f apps/web/test-r367.mjs
-          grep -Fq "window.__ctR367Marker='foryou-single-final-owner+state-derived-buttons+clicked-slot-only'" apps/web/runtime-r367-foryou-actions-final.js
-          grep -Fq "sw.disabled=false" apps/web/runtime-r348-foryou-buttons-only.js
-
-      - name: Syntax
-        run: |
-          set -euo pipefail
-          node --check apps/web/runtime-r367-foryou-actions-final.js
-          node --check apps/web/build-r367.mjs
-          node --check apps/web/build-r367-official.mjs
-          node --check apps/web/test-r367.mjs
-
-      - name: Build and focused r367 gate
-        working-directory: apps/web
-        run: |
-          set -euo pipefail
-          node build-r367-official.mjs
-          CT_R367_SKIP_BUILD=1 node test-r367.mjs
-          node --check dist/app-v367.js
-          grep -Fq 'app-v367.js' dist/index.html
-          grep -Fq 'app-v367.css' dist/index.html
-          grep -Fq 'ct-web-1.0.158-r367' dist/service-worker.js
-          grep -Fq "window.__ctR367Marker='foryou-single-final-owner+state-derived-buttons+clicked-slot-only'" dist/app-v367.js
-          node - <<'NODE'
-          const r=require('./dist/release.json');
-          const ok =
-            r.version === '1.0.158' &&
-            r.revision === 'r367-official-1.0.158' &&
-            r.discover_foryou_actions === 'daily/fresh=watchlist+seen+swap;watch=seen+swap' &&
-            r.discover_foryou_click === 'clicked-slot-only' &&
-            r.discover_foryou_click_owner === 'r367-single-final-owner' &&
-            r.discover_foryou_repaint === 'clicked-slot-only+state-derived-row' &&
-            r.discover_foryou_swap === 'always-visible+refill-on-demand+clicked-slot-only' &&
-            r.android === '1.0.20/10062';
-          if(!ok){ console.error(r); process.exit(1); }
-          NODE
-
-  android_current_source:
-    runs-on: ubuntu-latest
-    timeout-minutes: 8
-    steps:
-      - uses: actions/checkout@v4
-      - name: Preserve current Android baseline
-        run: |
-          set -euo pipefail
-          grep -Fq "versionName '1.0.20'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10062' apps/android/app/build.gradle
-
-  production_smoke:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_1_0_158_r367, android_current_source]
+  web_1_0_159_r368:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Production serves Web 1.0.158 r367
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - name: Source identity and syntax
         run: |
+          set -euo pipefail
+          grep -Fq '"version": "1.0.159"' package.json
+          grep -Fq '"version": "1.0.159"' apps/web/package.json
+          node --check apps/web/runtime-r368-random-sports-no-refresh.js
+          node --check apps/web/build-r368.mjs
+          node --check apps/web/test-r368.mjs
+          node --check apps/web/test-r368-browser.mjs
+      - name: Build and regression tests
+        working-directory: apps/web
+        run: |
+          set -euo pipefail
+          node build-r368-official.mjs
+          CT_R368_SKIP_BUILD=1 node test-r368.mjs
+          CT_R368_SKIP_BUILD=1 node test-r368-browser.mjs
+          node --check dist/app-v368.js
+          grep -Fq 'app-v368.js' dist/index.html
+          grep -Fq 'ct-web-1.0.159-r368' dist/service-worker.js
+  android_current_source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          grep -Fq "versionName '1.0.20'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10062' apps/android/app/build.gradle
+  production_smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [web_1_0_159_r368, android_current_source]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.158"' <<<"$BODY"               && grep -Fq '"revision": "r367-official-1.0.158"' <<<"$BODY"               && grep -Fq '"discover_foryou_click_owner": "r367-single-final-owner"' <<<"$BODY"               && grep -Fq '"discover_foryou_actions": "daily/fresh=watchlist+seen+swap;watch=seen+swap"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v367.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.159"' <<<"$BODY" && grep -Fq '"revision": "r368-official-1.0.159"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v368.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR367Marker='foryou-single-final-owner+state-derived-buttons+clicked-slot-only'" <<<"$JS"                 && grep -Fq 'app-v367.js' <<<"$HTML"; then
-                exit 0
-              fi
+              if grep -Fq "window.__ctR368Marker='foryou-swap-lock+session-no-repeat+random-tmdb-pages+sports-optimistic-no-refresh'" <<<"$JS" && grep -Fq 'app-v368.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
