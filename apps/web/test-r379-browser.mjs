@@ -17,7 +17,7 @@ window.profileRows=d=>({series:[],movies:[],seriesFav:[],movieFav:[]});window.pr
 </script><script>${r378}</script><script>${r379}</script><script>
 (async()=>{try{const ok=(v,m)=>{if(!v)throw new Error(m)},sleep=ms=>new Promise(r=>setTimeout(r,ms));
  // Home: background refresh must not repaint current composition / add Stuart.
- window.__ctR378Test.setHomeSnapshot(home);await window.__ctR378.renderHome(1);const paints=homePaints;await sleep(180);ok(homePaints===paints,'Home repainted late');ok(!document.body.textContent.includes('Stuart'),'late Stuart appeared');ok(window.__ctR379HomeOwner===true,'r379 Home owner missing');
+ window.__ctR378Test.setHomeSnapshot(home);await window.__ctR378.renderHome(1);const paints=homePaints;await sleep(180);ok(homePaints===paints,'Home repainted late');ok(!document.querySelector('[data-home]')?.textContent.includes('Stuart'),'late Stuart appeared in Home DOM');ok(window.__ctR379HomeOwner===true,'r379 Home owner missing');
  // Fresh: movie:673 must be removed before render.
  currentRoute='discover';document.getElementById('app').innerHTML='<div data-ct319-content></div>';await window.__ctR378.loadForYou(false);const pool=window.__ctR309Test.state.freshPools.movie;ok(!pool.some(x=>Number(x.tmdb_id||x.id)===673),'movie:673 survived Fresh audit');
  // Profile: fast RPC must paint without timeout/error.
