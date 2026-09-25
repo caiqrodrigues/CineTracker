@@ -5,7 +5,8 @@ const [html,js,sw,rel,owner,src]=await Promise.all([
  readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('runtime-r374-home-tab-scroll-reset.js'),'utf8'),readFile(resolve('runtime-r375-home-semantic-start.js'),'utf8')
 ]);
 const r=JSON.parse(rel),ok=(v,m)=>{if(!v)throw new Error(m)};
-for(const x of ["window.__ctR375Marker='home-tab-semantic-start+history-preserved-above+no-absolute-zero'","home_tab_scroll:'first-non-history-section-under-tabs'"])ok(js.includes(x)||rel.includes(x),'missing '+x);
+ok(js.includes("window.__ctR375Marker='home-tab-semantic-start+history-preserved-above+no-absolute-zero'"),'r375 marker missing');
+ok(r.home_tab_scroll==='first-non-history-section-under-tabs','release home_tab_scroll mismatch');
 for(const x of ["function homeAnchor(","!x.matches('[data-ct274-history],[data-ct275-history],[data-ct276-history]')","target.getBoundingClientRect().top-targetTop()"])ok(owner.includes(x),'owner missing '+x);
 ok(!owner.includes("document.scrollingElement.scrollTop=0")&&!owner.includes("document.body.scrollTop=0"),'absolute document zero still present');
 ok(html.includes('app-v375.js')&&sw.includes('ct-web-1.0.166-r375'),'asset identity');
