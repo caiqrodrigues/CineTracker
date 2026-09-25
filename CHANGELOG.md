@@ -2,6 +2,25 @@
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
+## 1.0.161 — 2026-09-25 — Web r370
+
+### Descobrir / Pra você
+- Substitui o algoritmo de troca por **pré-filtro único em memória**: `candidatePool.filter(...)` seguido de `Math.floor(Math.random() * eligibleItems.length)`.
+- Remove qualquer `while`, `do...while` e recursão da autoridade final `handleSwap`.
+- Se o array elegível estiver vazio, faz **uma única** busca assíncrona de lote e filtra novamente uma vez; não existe retry recursivo.
+- Adota trava síncrona física `swapLockRef.current`, equivalente a `useRef`, antes do primeiro `await`.
+- Mantém `AbortController` e timeout máximo de 3 segundos para a consulta TMDB.
+- Continua respeitando sessão excluída, Vistos/Watchlist através da autoridade pessoal, WWE, nota mínima e ano.
+- Pool final limitado a 80 itens por slot.
+
+### Validação de estresse
+- Browser gate executa **35 trocas consecutivas**, exigindo item diferente a cada troca, lock sempre liberado e heartbeat da main thread ativo.
+- Em seguida dispara **40 cliques rápidos** e confirma que o lock síncrono aceita no máximo uma troca concorrente e rejeita as demais sem bloquear a UI.
+
+### Release
+- Web: `1.0.161 / r370-official-1.0.161`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.160 — 2026-09-25 — Web r369
 
 ### Esportes / F1

@@ -6,12 +6,23 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.160** | `r369-official-1.0.160` | swap limitado/cancelável; todos os owners de Esportes/F1 sem refresh |
+| Web | **1.0.161** | `r370-official-1.0.161` | Trocar por pré-filtro direto, lock síncrono e zero recursão/while |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
 
 Produção Web: `https://mycinetracker.vercel.app`
+
+## Web 1.0.161 / r370
+
+- **Trocar sem laços de procura:** o pool é filtrado uma única vez com `Array.filter()` e o item é escolhido diretamente por índice aleatório.
+- **Sem recursão:** pool vazio causa uma única busca de lote; depois há uma única nova filtragem e retorno.
+- **Lock síncrono:** `swapLockRef.current` impede concorrência antes do primeiro `await`, equivalente ao uso de `useRef` em React.
+- **Cancelamento:** `AbortController` + timeout de 3 segundos permanece no caminho TMDB.
+- **Stress test:** 35 trocas consecutivas únicas + 40 cliques rápidos com heartbeat da main thread e liberação obrigatória do botão.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r370-official.mjs`; runtime: `apps/web/runtime-r370-prefilter-swap.js`.
 
 ## Web 1.0.160 / r369
 
