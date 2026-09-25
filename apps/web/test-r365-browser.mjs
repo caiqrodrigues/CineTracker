@@ -9,8 +9,8 @@ if(!bin)throw new Error('Chromium unavailable');
 const runtime=await readFile(resolve('runtime-r365-discover-speed-foryou-actions.js'),'utf8');
 const html=`<!doctype html><html><body>
 <form id="f"><div data-ct336-foryou>
- <div data-ct336-slot="fresh:movie"><div class="ct336-cardwrap"><article data-ct288-card="movie:1"></article></div><div class="ct336-actions"><button data-ct336-action="watchlist">+ Watchlist</button><button data-ct336-action="seen">✓ Visto</button><button data-ct336-swap-only="fresh:movie">↻ Trocar</button></div></div>
- <div data-ct336-slot="fresh:series"><div class="ct336-cardwrap"><article data-ct288-card="tv:2"></article></div><div class="ct336-actions"><button data-ct336-action="watchlist">+ Watchlist</button><button data-ct336-action="seen">✓ Visto</button><button data-ct336-swap-only="fresh:series">↻ Trocar</button></div></div>
+ <div data-ct336-slot="fresh:movie"><div class="ct336-cardwrap"><article data-ct288-card="movie:1"></article></div><div class="ct336-actions"><button data-ct336-action="watchlist">+ Watchlist</button><button data-ct336-action="seen">✓ Visto</button></div></div>
+ <div data-ct336-slot="fresh:series"><div class="ct336-cardwrap"><article data-ct288-card="tv:2"></article></div><div class="ct336-actions"><button data-ct336-action="watchlist">+ Watchlist</button><button data-ct336-action="seen">✓ Visto</button></div></div>
 </div></form>
 <script>
 window.route=()=> 'discover';window.__submitCount=0;document.querySelector('#f').addEventListener('submit',e=>{e.preventDefault();window.__submitCount++});
@@ -27,7 +27,8 @@ window.addEventListener('click',e=>{try{const h=window.__ctR358Early;if(typeof h
 <script>
 (async()=>{try{
  const ok=(v,m)=>{if(!v)throw new Error(m)},sleep=ms=>new Promise(r=>setTimeout(r,ms));const calls=[];
- window.__ctR365.setTestBridge({persist:async(a,k)=>{calls.push(a+':'+k);return true}});window.__ctR365.armAll();
+ window.__ctR365.setTestBridge({persist:async(a,k)=>{calls.push(a+':'+k);return true}});window.__ctR365.ownRenderers();window.__ctR365.ensureAllActions();window.__ctR365.armAll();
+ const rows=[...document.querySelectorAll('[data-ct336-slot] .ct336-actions')];ok(rows.length===2,'action row count');ok(rows.every(r=>r.querySelectorAll(':scope > button.ct336-action').length===3),'Trocar was not restored into every fresh action row');ok(rows.every(r=>!!r.querySelector(':scope > [data-ct336-swap-only]')&&!r.querySelector(':scope > [data-ct336-swap-only]').disabled),'Trocar missing or disabled before click');
  const key=n=>document.querySelector('[data-ct336-slot="'+n+'"] [data-ct288-card]').dataset.ct288Card;
  let a=key('fresh:movie'),b=key('fresh:series');
  document.querySelector('[data-ct336-slot="fresh:movie"] [data-ct336-action="seen"]').click();await sleep(20);
