@@ -7,11 +7,12 @@ ok(!js.includes("while(out.size<count)"),'blocking random while still shipped');
 ok(!js.includes("const mo=new MutationObserver(()=>queueMicrotask(ensureAll));"),'r367 global observer still shipped');
 ok(!js.includes("setTimeout(()=>{armAll();bind();warmAll()},0);"),'r363 observer boot still shipped');
 for(const marker of ["source:'r296'","source:'r299'","source:'r301'"])ok(js.includes(marker),'safe sports patch missing '+marker);
+const r299Start=js.indexOf('async function saveSport299('),r299End=js.indexOf('\n\n/* This listener',r299Start),r299Body=js.slice(r299Start,r299End);
+ok(!r299Body.includes("render()")&&!r299Body.includes("cinetracker:data-changed"),'r299 still refreshes globally');
 for(const forbidden of [
  "try{sport255.payload=null;sport255.at=0;await loadSports255(true);if(String(route())==='sports')paintSports255()}catch{}",
  "document.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'r296-sports-watch'}}))",
  "document.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'r299-stadium-simple'}}))",
- "if(typeof render==='function')await render()",
  "await loadF1History301(true);closeF1Modal301();await decorateF1Calendar301(false)"
 ])ok(!js.includes(forbidden),'forbidden sports refresh remains: '+forbidden);
 ok(html.includes('app-v369.js')&&sw.includes('ct-web-1.0.160-r369'),'asset identity');
