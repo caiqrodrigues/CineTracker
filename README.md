@@ -1,3 +1,13 @@
+## Web 1.0.172 / r381
+
+- **Home:** autoridade completa v359 no primeiro paint, Histórico restaurado e patch curto de episódios ativos antes de exibir a primeira versão de rede.
+- **Perfil:** visual/ordem original restaurados; somente a fonte rápida v380 permanece por baixo.
+- **Pra Você:** auditoria v381 obrigatória, Harry/Azkaban bloqueado por alias e ações finais isoladas em 3/2/3.
+- **Sem escopo extra:** Esportes e Android não foram alterados.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r381-official.mjs`; runtime: `apps/web/runtime-r381-restore-home-profile-foryou.js`.
+
 ## Web 1.0.171 / r380
 
 - **Home Séries:** snapshot + patch ativo v380; Stuart e metadata ativa não dependem mais do payload monolítico.
@@ -62,7 +72,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.171** | `r380-official-1.0.171` | Home estável + Fresh estrito + Perfil quick-first |
+| Web | **1.0.172** | `r381-official-1.0.172` | Home completa + Perfil original + Pra Você 3/2/3 auditado |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |

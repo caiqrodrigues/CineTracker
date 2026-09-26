@@ -1,4 +1,4 @@
-name: Verify Web 1.0.171 r380 Home Profile Discover
+name: Verify Web 1.0.172 r381 Restore Home Profile ForYou
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r380:
+  web_r381:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -17,16 +17,16 @@ jobs:
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r380-home-profile-discover.js
-          node --check build-r380.mjs
-          node --check test-r380-browser.mjs
-          node build-r380-official.mjs
-          CT_R380_SKIP_BUILD=1 node test-r380.mjs
-          CT_R380_SKIP_BUILD=1 node test-r380-browser.mjs
-          node --check dist/app-v380.js
-          grep -Fq 'app-v380.js' dist/index.html
-          grep -Fq 'ct-web-1.0.171-r380' dist/service-worker.js
-          grep -Fq "window.__ctR380Marker='home-active-first+watchlist-1382-sort+fresh-alias-seen+profile-direct+hearts-inside'" dist/app-v380.js
+          node --check runtime-r381-restore-home-profile-foryou.js
+          node --check build-r381.mjs
+          node --check test-r381-browser.mjs
+          node build-r381-official.mjs
+          CT_R381_SKIP_BUILD=1 node test-r381.mjs
+          CT_R381_SKIP_BUILD=1 node test-r381-browser.mjs
+          node --check dist/app-v381.js
+          grep -Fq 'app-v381.js' dist/index.html
+          grep -Fq 'ct-web-1.0.172-r381' dist/service-worker.js
+          grep -Fq "window.__ctR381Marker='home-full-v359-first+bounded-live-episode-patch+profile-original-structure+fresh-audit-required+actions-3-2-3'" dist/app-v381.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +36,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r380, android]
+    needs: [web_r381, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -45,9 +45,9 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.171"' <<<"$BODY" && grep -Fq '"revision": "r380-official-1.0.171"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v380.js?ct=$CT" || true)"
-              if grep -Fq "window.__ctR380Marker='home-active-first+watchlist-1382-sort+fresh-alias-seen+profile-direct+hearts-inside'" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.172"' <<<"$BODY" && grep -Fq '"revision": "r381-official-1.0.172"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v381.js?ct=$CT" || true)"
+              if grep -Fq "window.__ctR381Marker='home-full-v359-first+bounded-live-episode-patch+profile-original-structure+fresh-audit-required+actions-3-2-3'" <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done

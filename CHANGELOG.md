@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.0.172 — 2026-09-25 — Web r381
+
+### Home restaurada
+- Remove `home_active_v380` como autoridade parcial do primeiro paint. A composição, buckets e históricos voltam a vir do payload completo `cinetracker_home_payload_v359`.
+- Snapshots parciais r380 são ignorados; o cache r381 aceita somente Home completa.
+- No primeiro carregamento de rede, v359 e uma atualização curta dos episódios ativos rodam em paralelo. Séries com catálogo local atrasado, como Stuart, recebem o episódio liberado antes do primeiro paint quando o TMDB responde dentro do orçamento.
+- Histórico de séries e filmes volta a fazer parte do payload inicial e permanece acima do ponto semântico da Home.
+- Repaints/reconciliações tardios r332 são cancelados; a composição não deve ganhar séries dezenas de segundos depois.
+
+### Perfil
+- Mantém o RPC rápido `cinetracker_profile_v380`, medido abaixo de 1 s na biblioteca atual.
+- Remove o HTML próprio das r379/r380 e restaura a estrutura original: Estatísticas, Séries, Filmes, Séries Favoritas, Filmes Favoritos, Atores Favoritos, Episódios por dia e Biblioteca.
+- O produtor r238 volta a controlar o grid expandível de Estatísticas. A Watchlist completa v376 continua sincronizando os números, incluindo 1.382 filmes.
+
+### Descobrir / Pra Você
+- Novo filtro `cinetracker_discover_filter_v381` bloqueia candidatos somente por evidência do usuário, mas cruza TMDB, título localizado e título original. Harry Potter 673 é bloqueado pelo histórico legado em inglês.
+- Auditoria é obrigatória: erro de auditoria não libera Fresh sem validação.
+- A linha final de botões usa classe isolada `ct381-actions`; writers antigos não conseguem remover `Trocar`.
+- Contrato obrigatório e visível em mobile: Daily 3 botões, Watchlist 2, Fresh 3, todos dentro da largura do card.
+- Coração fica inteiramente dentro da capa.
+
+### Release
+- Web: `1.0.172 / r381-official-1.0.172`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.171 — 2026-09-25 — Web r380
 
 ### Home / Séries
