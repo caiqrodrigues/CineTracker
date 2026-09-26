@@ -146,18 +146,24 @@ function canonicalStats313(root,count){
  root.dataset.ct313Profile='single';return true;
 }
 async function renderProfile313(seq){
- setApp(shell('Perfil','Estatísticas, biblioteca, favoritos e atividade.','profile','<div class="page" data-profile>'+loading('Carregando Perfil...')+'</div>'));
  const cached=profileCache||ct163Read('profile')||null;
+ setApp(shell('Perfil','Estatísticas, biblioteca, favoritos e atividade.','profile','<div class="page" data-profile>'+(cached?'':loading('Carregando Perfil...'))+'</div>'));
+ if(cached){profileCache=cached;ct168PaintProfile(cached,'');try{window.__ctR312Test?.patchActors312?.(q('[data-profile]'),rows(cached.favorite_actors))}catch{}}
  const fullP=Promise.resolve(rpc313('cinetracker_profile_v380',{p_tz:tz()})).catch(()=>null);
  const histP=Promise.resolve(rpc313('cinetracker_sports_watch_history_v296',{})).catch(()=>[]);
  const stadiumP=Promise.resolve(rpc313('cinetracker_sports_stadium_summary_v296',{})).catch(()=>null);
- const [full,hist,stadium]=await Promise.all([fullP,histP,stadiumP]);if(seq!==navSeq||routeNow()!=='profile')return;
- const data=full||cached;if(!data){const root=q('[data-profile]');if(root)root.innerHTML=fail('Falha ao carregar Perfil.','profile');return}
- const merged={...data,sports_stats:{...(data?.sports_stats||{})}};if(Array.isArray(hist))merged.sports_stats.watched_events=hist.filter(x=>x?.is_watched!==false).length;
- profileCache=merged;try{ct163Write('profile',merged)}catch{};ct168PaintProfile(merged,'');
- const root=q('[data-profile]'),stadiumCount=Number(stadium?.stadium_events??stadium?.[0]?.stadium_events??0);canonicalStats313(root,stadiumCount);
- try{window.__ctR312Test?.patchActors312?.(root,rows(merged.favorite_actors))}catch{}
- return merged;
+ const full=await fullP;if(seq!==navSeq||routeNow()!=='profile')return cached||false;
+ const data=full||cached;if(!data){const root=q('[data-profile]');if(root)root.innerHTML=fail('Falha ao carregar Perfil.','profile');return false}
+ profileCache=data;try{ct163Write('profile',data)}catch{};ct168PaintProfile(data,'');
+ const root=q('[data-profile]');try{window.__ctR312Test?.patchActors312?.(root,rows(data.favorite_actors))}catch{}
+ Promise.all([histP,stadiumP]).then(([hist,stadium])=>{
+  if(seq!==navSeq||routeNow()!=='profile')return;
+  const merged={...profileCache,sports_stats:{...(profileCache?.sports_stats||{})}};
+  if(Array.isArray(hist))merged.sports_stats.watched_events=hist.filter(x=>x?.is_watched!==false).length;
+  profileCache=merged;try{ct163Write('profile',merged)}catch{}
+  const stadiumCount=Number(stadium?.stadium_events??stadium?.[0]?.stadium_events??0);canonicalStats313(q('[data-profile]'),stadiumCount);
+ }).catch(()=>{});
+ return data;
 }
 
 /* Exact click authority registered by build-r313 before older captures. */
