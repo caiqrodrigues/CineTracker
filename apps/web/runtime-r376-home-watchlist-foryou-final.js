@@ -226,14 +226,14 @@ window.__ctR367={...(window.__ctR367||{}),ensureSlot:fyEnsureSlot,ensureAll:fyEn
 window.__ctR336EarlyHandle=fyEarly;window.__ctR358Early=fyEarly;window.__ctR359Early=fyEarly;if(window.__ctR360)window.__ctR360.early=fyEarly;if(window.__ctR361)window.__ctR361.early=fyEarly;if(window.__ctR362)window.__ctR362.early=fyEarly;
 
 window.addEventListener('pointerdown',e=>{if(routeNow()!=='discover')return;const b=e.target?.closest?.('[data-ct336-foryou] .ct336-actions button');if(b){e.stopImmediatePropagation();e.stopPropagation()}},true);
-window.addEventListener('click',e=>{if(routeNow()!=='discover')return;const b=e.target?.closest?.('[data-ct336-foryou] .ct336-actions button');if(!b)return;const m=fyMeta(b);if(!m)return;stopEvent(e);fyHandle(m);document.documentElement.dataset.ct376PhysicalAction=m.action+':'+m.name},true);
+window.addEventListener('click',e=>{if(routeNow()!=='discover')return;if(typeof window.__ctR382Early==='function'&&window.__ctR382Early(e.target,e))return;const b=e.target?.closest?.('[data-ct336-foryou] .ct336-actions button');if(!b)return;const m=fyMeta(b);if(!m)return;stopEvent(e);fyHandle(m);document.documentElement.dataset.ct376PhysicalAction=m.action+':'+m.name},true);
 
 function afterHomePaint(){if(routeNow()==='home')queueMicrotask(()=>void hydrateHome(false))}
 try{const b=paintHome;paintHome=function(){const out=b.apply(this,arguments);afterHomePaint();return out}}catch{}
 try{const b=ct275PaintHome;ct275PaintHome=function(){const out=b.apply(this,arguments);afterHomePaint();return out}}catch{}
 try{const b=renderHome;renderHome=async function(){const out=await b.apply(this,arguments);await hydrateHome(false);return out}}catch{}
 window.addEventListener('cinetracker:data-changed',()=>{invalidateHome();if(routeNow()==='home')void hydrateHome(true)});
-setTimeout(()=>{if(routeNow()==='home')void hydrateHome(false);if(routeNow()==='discover'&&typeof window.__ctR378LoadForYou!=='function')void ensureFreshAll()},0);
+setTimeout(()=>{if(routeNow()==='home')void hydrateHome(false);if(routeNow()==='discover'&&typeof window.__ctR378LoadForYou!=='function'&&typeof window.__ctR382LoadForYou!=='function')void ensureFreshAll()},0);
 
 const style=document.createElement('style');style.id='ct-web-r376';style.textContent=`
 .ct376-watch-tools{margin-left:auto;display:flex;align-items:center;gap:5px;position:relative;z-index:80;flex:0 0 auto}
