@@ -6,10 +6,12 @@ const [html,js,sw,rel,src,r328s,r332s,r382s,r376s,mig]=await Promise.all([
 ]);
 const r=JSON.parse(rel),ok=(v,m)=>{if(!v)throw new Error(m)};
 for(const x of ["window.__ctR383Marker='home-fast-series-firstpaint+movies-full-owner+foryou-own-actions+fresh-final-state-check'","cinetracker_home_series_v383","cinetracker_media_state_v1","ct383-actions","window.__ctR383HomeOwner=true","window.__ctR383ForYouOwner=true"])ok(js.includes(x)||src.includes(x),'missing '+x);
-ok(r328s.includes('if(window.__ctR383ForYouOwner)return false;'),'r328 still owns ForYou');
-ok(r332s.includes('window.__ctR379HomeOwner||window.__ctR383HomeOwner'),'r332 late Home writer not disabled');
+ok(js.includes("function paintForYou328(){if(window.__ctR383ForYouOwner)return false;"),'final bundle did not retire r328 paint');
+ok(js.includes("function ensureForYouFilters328(){if(window.__ctR383ForYouOwner)return false;"),'final bundle did not retire duplicate r328 filter');
+ok(js.includes("window.__ctR379HomeOwner||window.__ctR383HomeOwner"),'final bundle did not retire r332 late Home writers');
+ok(js.includes("function normalizeForYou332(){\n if(window.__ctR383ForYouOwner)return false;"),'final bundle did not retire r332 ForYou writer');
 ok(r382s.includes("window.__ctR383ForYouOwner&&typeof window.__ctR383LoadForYou==='function'"),'r382 does not delegate');
-ok(r376s.includes('paintHomeWatch,renderAllHomeRows,setHomeSort'),'r376 full movie render not public');
+ok(r376s.includes('window.__ctR376Test={homeRows,sortHome,setHomeSort,renderAllHomeRows'), 'r376 test bridge cannot complete movie Watchlist DOM');
 ok(mig.includes("create or replace function public.cinetracker_home_series_v383"),'migration missing');
 ok(!src.includes('renderProfile')&&!src.includes('profile_v380'),'r383 touched Profile');
 ok(html.includes('app-v383.js')&&sw.includes('ct-web-1.0.174-r383'),'asset identity');
