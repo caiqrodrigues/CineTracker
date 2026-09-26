@@ -6,6 +6,13 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
  readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r383-home-foryou-authority.js'),'utf8')
 ]);
 const once=(s,a,b,l)=>{const n=s.split(a).length-1;if(n!==1)throw new Error('r383 expected one '+l+', found '+n);return s.replace(a,b)};
+const patchOnce=(src,a,b,l)=>{const n=src.split(a).length-1;if(n!==1)throw new Error('r383 final patch expected one '+l+', found '+n);return src.replace(a,b)};
+js=patchOnce(js,"function paintForYou328(){","function paintForYou328(){if(window.__ctR383ForYouOwner)return false;",'r328 paint owner');
+js=patchOnce(js,"function applyForYouFilter328(){","function applyForYouFilter328(){if(window.__ctR383ForYouOwner)return false;",'r328 filter owner');
+js=patchOnce(js,"function ensureForYouFilters328(){","function ensureForYouFilters328(){if(window.__ctR383ForYouOwner)return false;",'r328 duplicate filter owner');
+js=patchOnce(js,"async function repairVisibleEpisodes332(){\n if(window.__ctR379HomeOwner)return false;","async function repairVisibleEpisodes332(){\n if(window.__ctR379HomeOwner||window.__ctR383HomeOwner)return false;",'r332 late episode repaint');
+js=patchOnce(js,"async function forceTvRefresh332(){\n if(window.__ctR379HomeOwner)return false;","async function forceTvRefresh332(){\n if(window.__ctR379HomeOwner||window.__ctR383HomeOwner)return false;",'r332 forced tv refresh');
+js=patchOnce(js,"function normalizeForYou332(){\n if(routeNow()!=='discover'","function normalizeForYou332(){\n if(window.__ctR383ForYouOwner)return false;\n if(routeNow()!=='discover'",'r332 ForYou owner');
 js=once(js,"window.__ctWebBuild='1.0.173';window.__ctOfficialVersion='1.0.173';","window.__ctWebBuild='1.0.174';window.__ctOfficialVersion='1.0.174';",'version');
 js=once(js,"const REVISION='r382-official-1.0.173';","const REVISION='r383-official-1.0.174';",'revision');
 js=once(js,"const version='1.0.173',revision='r382-official-1.0.173';","const version='1.0.174',revision='r383-official-1.0.174';",'footer');
