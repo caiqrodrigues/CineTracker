@@ -247,6 +247,6 @@ const style=document.createElement('style');style.id='ct-web-r376';style.textCon
 [data-ct336-foryou] .ct376-actions>button{display:flex!important;flex:1 1 0!important;min-width:0!important;height:34px!important;min-height:34px!important;max-height:34px!important;white-space:nowrap!important;position:relative!important;z-index:31!important;touch-action:manipulation!important}
 `;document.head.appendChild(style);
 
-window.__ctR376={version:'1.0.167',hydrateHome,loadHomeWatch,paintHomeWatch,renderAllHomeRows,setHomeSort,sortHome,ensureFreshAll,fillFresh,swapFresh,fyEnsureAll,fyEnsureSlot,fyEarly,get home(){return home},get authority(){return fyAuthority}};
+window.__ctR376={version:'1.0.167',hydrateHome,loadHomeWatch,paintHomeWatch,setHomeSort,sortHome,ensureFreshAll,fillFresh,swapFresh,fyEnsureAll,fyEnsureSlot,fyEarly,get home(){return home},get authority(){return fyAuthority}};
 window.__ctR376Test={homeRows,sortHome,setHomeSort,renderAllHomeRows,ensureFreshAll,fillFresh,swapFresh,fyEnsureAll,fyEnsureSlot,setHomePayload(p){home.rows=homeRows(p);home.total=home.rows.length;home.loaded=true;home.at=Date.now()},setAuthority(p){const seen=new Set(p?.seen||[]),watch=new Set(p?.watch||[]),blocked=new Set(p?.blocked||[]);for(const k of seen)blocked.add(k);for(const k of watch)blocked.add(k);fyAuthority={ready:true,seen,watch,blocked,at:Date.now()}},get home(){return home},get authority(){return fyAuthority}};
 })();
