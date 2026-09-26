@@ -94,7 +94,7 @@ function repairStaleNext332(row){
  return row;
 }
 async function repairVisibleEpisodes332(){
- if(window.__ctR379HomeOwner||window.__ctR383HomeOwner)return false;
+ if(window.__ctR379HomeOwner)return false;
  const run=++episodeRun;if(routeNow()!=='home')return false;
  try{
   const payload=typeof ct274Payload==='function'?ct274Payload():null;
@@ -122,7 +122,7 @@ async function repairVisibleEpisodes332(){
  }catch{return false}
 }
 async function forceTvRefresh332(){
- if(window.__ctR379HomeOwner||window.__ctR383HomeOwner)return false;
+ if(window.__ctR379HomeOwner)return false;
  if(routeNow()!=='home'||!window.__ctR325?.refreshTv)return false;
  const key='ct332:forced-tv-refresh';
  try{if(sessionStorage.getItem(key)==='1')return false;sessionStorage.setItem(key,'1')}catch{}
@@ -149,7 +149,6 @@ try{
 
 /* Final visual ownership for audited ForYou. No legacy r309 draft is allowed after audit. */
 function normalizeForYou332(){
- if(window.__ctR383ForYouOwner)return false;
  if(routeNow()!=='discover'||String((window.__ctR288R263?.discover263||{}).tab||'')!=='foryou')return false;
  try{window.__ctR329?.ensureFilters?.()}catch{}
  try{window.__ctR329?.paintForYou?.()}catch{}
