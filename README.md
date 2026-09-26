@@ -1,3 +1,14 @@
+## Web 1.0.174 / r383
+
+- **Home rápida e completa:** séries visíveis vêm do RPC enxuto v383 com metadados de episódio já no primeiro paint; Stuart não entra tardiamente.
+- **Filmes completos:** Watchlist v376 continua com todos os registros; o contador 240 legado é removido e o sort continua sobre a lista completa.
+- **Pra Você estável:** sem filtro duplicado e sem usar a linha de ações legada; botões fixos em 3/2/3.
+- **100% Novos:** auditoria em lote + validação final por mídia; visto/Watchlist/favorito não entra.
+- **Escopo congelado:** Perfil, Configurações, animações e Esportes não foram tocados.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r383-official.mjs`; runtime: `apps/web/runtime-r383-home-foryou-authority.js`.
+
 ## Web 1.0.173 / r382
 
 - **Perfil restaurado de verdade:** renderer r313/r316 original; nenhuma estrutura nova de Perfil.
@@ -83,7 +94,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.173** | `r382-official-1.0.173` | Home completa + Perfil original + Pra Você 3/2/3 auditado |
+| Web | **1.0.174** | `r383-official-1.0.174` | Home completa + Perfil original + Pra Você 3/2/3 auditado |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |

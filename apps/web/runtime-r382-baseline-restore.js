@@ -80,7 +80,7 @@ function ensureSlot(slot){
  for(const[label,action]of spec(name)){const b=document.createElement('button');b.type='button';b.className='chip ct382-action';b.textContent=label;b.dataset.ct382Action=action;b.dataset.ct382Slot=name;row.appendChild(b)}
  row.dataset.ct382Cols=String(spec(name).length);slot.dataset.ct382Ready='1';return true;
 }
-function ensureAll(){const root=q('[data-ct336-foryou]');if(!root)return false;q('.ct378-filters',root)?.remove();for(const s of qa('[data-ct336-slot]',root))ensureSlot(s);return true}
+function ensureAll(){if(window.__ctR383ForYouOwner)return false;const root=q('[data-ct336-foryou]');if(!root)return false;q('.ct378-filters',root)?.remove();for(const s of qa('[data-ct336-slot]',root))ensureSlot(s);return true}
 const baseRender=window.__ctR359?.renderSlot?.bind(window.__ctR359);
 function renderSlot(name){let ok=false;try{ok=!!baseRender?.(name,{animate:true})}catch{};ensureSlot(q('[data-ct336-slot="'+CSS.escape(name)+'"]'));return ok}
 if(window.__ctR359&&baseRender)window.__ctR359.renderSlot=renderSlot;
@@ -115,11 +115,13 @@ async function act(action,name,btn){
  return true;
 }
 function early(target,event){
+ if(window.__ctR383ForYouOwner&&typeof window.__ctR383Early==='function')return window.__ctR383Early(target,event);
  const b=target?.closest?.('[data-ct382-action]');if(!b||routeNow()!=='discover')return false;
  event?.preventDefault?.();event?.stopImmediatePropagation?.();event?.stopPropagation?.();
  void act(String(b.dataset.ct382Action||''),String(b.dataset.ct382Slot||''),b);return true;
 }
 async function loadForYou(force=false){
+ if(window.__ctR383ForYouOwner&&typeof window.__ctR383LoadForYou==='function')return window.__ctR383LoadForYou(!!force);
  if(routeNow()!=='discover')return false;const h=q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]');if(!h)return false;
  const s=state(),has=s&&([...(rows(s.dailyPool)),...['movie','series','anime'].flatMap(k=>[...rows(s.watchPools?.[k]),...rows(s.freshPools?.[k])])].length>0);
  if(!has||force){h.innerHTML='<div class="ct263-loading">Montando recomendações…</div>';try{await Promise.race([Promise.resolve(window.__ctR309?.buildForYou?.(!!force)),new Promise(r=>setTimeout(r,5000))])}catch{}}
@@ -138,7 +140,7 @@ function fixMovieWatchHeader(){
  const count=q('[data-ct376-count]',tools),total=Number(window.__ctR376?.home?.total||0);if(count&&total>0)count.textContent=total.toLocaleString('pt-BR');
  return true;
 }
-for(const ms of [0,100,350,900])setTimeout(()=>{if(routeNow()==='home'){void window.__ctR376?.hydrateHome?.(false).then?.(fixMovieWatchHeader);fixMovieWatchHeader()}if(routeNow()==='discover')void loadForYou(false)},ms);
+for(const ms of [0,100,350,900])setTimeout(()=>{if(routeNow()==='home'){void window.__ctR376?.hydrateHome?.(false).then?.(fixMovieWatchHeader);fixMovieWatchHeader()}if(routeNow()==='discover'&&!window.__ctR383ForYouOwner)void loadForYou(false)},ms);
 
 const style=document.createElement('style');style.id='ct-web-r382';style.textContent=`
 [data-ct336-foryou] .ct382-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;width:100%!important;max-width:100%!important;height:34px!important;min-height:34px!important;margin:5px 0 0!important;padding:0!important;box-sizing:border-box!important;overflow:hidden!important;position:relative!important;z-index:50!important}

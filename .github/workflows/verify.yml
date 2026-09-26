@@ -1,4 +1,4 @@
-name: Verify Web 1.0.173 r382 Baseline Restore
+name: Verify Web 1.0.174 r383 Home and Pra Voce Authority
 on:
   push:
     branches: [main]
@@ -6,27 +6,26 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r382:
+  web_r383:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and baseline regression gate
+      - name: Build and focused regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r382-baseline-restore.js
-          node --check build-r382.mjs
-          node --check test-r382-browser.mjs
-          node build-r382-official.mjs
-          CT_R382_SKIP_BUILD=1 node test-r382.mjs
-          CT_R382_SKIP_BUILD=1 node test-r382-browser.mjs
-          node --check dist/app-v382.js
-          ! grep -Fq "window.__ctR380Marker" dist/app-v382.js
-          ! grep -Fq "window.__ctR381Marker" dist/app-v382.js
-          grep -Fq "cinetracker_home_payload_v382" dist/app-v382.js
+          node --check runtime-r383-home-foryou-authority.js
+          node --check build-r383.mjs
+          node --check test-r383-browser.mjs
+          node build-r383-official.mjs
+          CT_R383_SKIP_BUILD=1 node test-r383.mjs
+          CT_R383_SKIP_BUILD=1 node test-r383-browser.mjs
+          node --check dist/app-v383.js
+          grep -Fq "cinetracker_home_series_v383" dist/app-v383.js
+          grep -Fq "cinetracker_media_state_v1" dist/app-v383.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +35,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r382, android]
+    needs: [web_r383, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -45,10 +44,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.173"' <<<"$BODY" && grep -Fq '"revision": "r382-official-1.0.173"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v382.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.174"' <<<"$BODY" && grep -Fq '"revision": "r383-official-1.0.174"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v383.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR382Marker='baseline-r376-home-profile+home-v382-first-paint+fresh-v381-audit+actions-3-2-3'" <<<"$JS" && grep -Fq 'app-v382.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR383Marker='home-fast-series-firstpaint+movies-full-owner+foryou-own-actions+fresh-final-state-check'" <<<"$JS" && grep -Fq 'app-v383.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

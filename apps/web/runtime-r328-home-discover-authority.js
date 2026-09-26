@@ -126,6 +126,7 @@ function trio328(title,items,saved,bucket){
  '</div></section>';
 }
 function paintForYou328(){
+ if(window.__ctR383ForYouOwner)return false;
  if(routeNow()!=='discover')return false;
  const discoverObj=window.__ctR288R263?.discover263;
  if(discoverObj&&String(discoverObj.tab||'')!=='foryou')return false;
@@ -142,6 +143,7 @@ function fyKind328(){
  const st=window.__ctR319Test?.state;return ['movie','series','anime'].includes(String(st?.fyKind))?String(st.fyKind):'all';
 }
 function applyForYouFilter328(){
+ if(window.__ctR383ForYouOwner)return false;
  const root=q('[data-ct328-foryou]');if(!root)return false;
  const kind=fyKind328();root.dataset.ct328Filter=kind;
  for(const slot of qa('[data-ct328-kind]',root)){
@@ -153,6 +155,7 @@ function applyForYouFilter328(){
  return true;
 }
 function ensureForYouFilters328(){
+ if(window.__ctR383ForYouOwner)return false;
  const root=q('[data-ct319-discover]');if(!root)return false;
  const d=window.__ctR288R263?.discover263,tab=String(d?.tab||'foryou');
  const filter=q('[data-ct319-filter]',root),types=q('[data-ct319-types]',root);

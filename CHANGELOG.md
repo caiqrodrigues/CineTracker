@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.0.174 — 2026-09-26 — Web r383
+
+### Home — somente Home
+- Novo primeiro paint `cinetracker_home_series_v383`: busca apenas as séries relevantes e já devolve episódio, nome, nota, data, contagens e bucket antes de pintar.
+- Stuart e outras séries ativas entram na mesma resposta inicial; o payload completo v382 roda apenas em background e é salvo para a próxima navegação, sem repintar a tela atual dezenas de segundos depois.
+- Reconciliadores tardios r332 ficam desativados enquanto a r383 é a autoridade da Home.
+- Filmes continua usando a Watchlist completa v376; o contador legado 240 é removido antes da hidratação e a lista completa é reaplicada ao entrar em Filmes.
+- A ordenação da Watchlist continua no owner v376 sobre os nós completos.
+
+### Descobrir / Pra Você — somente Descobrir
+- Remove o filtro duplicado que r328 inseria abaixo da aba Pra você.
+- A faixa final de ações deixa de reutilizar `.ct336-actions`; usa `.ct383-actions`, fora do alcance dos writers antigos.
+- Contrato fixo: Indicação do Dia = Watchlist/Visto/Trocar; Da sua Watchlist = Visto/Trocar; 100% Novos = Watchlist/Visto/Trocar.
+- Cada Fresh passa pela auditoria v381 e por uma validação final `cinetracker_media_state_v1` antes de aparecer. Item visto, em Watchlist ou favorito é rejeitado.
+- Fresh Filme/Série/Anime é preenchido em paralelo com fallback TMDB limitado e sem loop bloqueante.
+- Coração fica integralmente dentro da capa.
+
+### Escopo preservado
+- Perfil, Configurações, animações e Esportes não são alterados.
+- Android permanece `1.0.20 / versionCode 10062`.
+
 ## 1.0.173 — 2026-09-26 — Web r382
 
 ### Rollback estrutural
