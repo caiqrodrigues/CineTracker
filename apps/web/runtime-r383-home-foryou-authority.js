@@ -141,8 +141,8 @@ async function sanitizeState(){
  }s.dailyIndex=0;saveState(s);return a
 }
 async function ownRefill(kind){
- const s=cloneState(ensureState()),old=unique(s.freshPools[kind]),keys=new Set(old.map(keyOf));
- for(let pass=0;pass<2&&old.length<8;pass++){
+ const initial=unique(ensureState()?.freshPools?.[kind]),collected=[...initial],keys=new Set(initial.map(keyOf));
+ for(let pass=0;pass<2&&collected.length<8;pass++){
   const base=2+Math.floor(Math.random()*18)+pass*23,pages=[base,base+4,base+9,base+15],controller=new AbortController(),timer=setTimeout(()=>controller.abort(),4200);
   try{
    const packs=await Promise.allSettled(pages.map(page=>kind==='movie'
@@ -151,24 +151,37 @@ async function ownRefill(kind){
       ?tmdb('/discover/tv',{page,sort_by:'popularity.desc',with_genres:'16',with_original_language:'ja','vote_average.gte':7},{signal:controller.signal,timeout:3600})
       :tmdb('/discover/tv',{page,sort_by:'popularity.desc','vote_average.gte':7},{signal:controller.signal,timeout:3600})));
    const raw=unique(packs.flatMap(r=>r.status==='fulfilled'?rows(r.value?.results):[]).map(x=>({...x,media_type:kind==='movie'?'movie':'tv',tmdb_id:Number(x.id||x.tmdb_id||0)}))).filter(x=>localFresh(x,kind,7.0));
-   const a=await auditBatch(raw);for(const x of raw){const k=keyOf(x);if(a.blocked.has(k)||keys.has(k))continue;keys.add(k);old.push(x);if(old.length>=30)break}
+   const audit=await auditBatch(raw);
+   for(const x of raw){const k=keyOf(x);if(audit.blocked.has(k)||keys.has(k))continue;keys.add(k);collected.push(x);if(collected.length>=30)break}
   }catch{}finally{clearTimeout(timer)}
  }
- s.freshPools[kind]=old.slice(-80);s.freshIndex[kind]=0;saveState(s);return old.length>0
+ const latest=cloneState(ensureState()),existing=unique(latest.freshPools?.[kind]),merged=[],seen=new Set();
+ for(const x of [...existing,...collected]){const k=keyOf(x);if(!k||seen.has(k))continue;seen.add(k);merged.push(x)}
+ latest.freshPools[kind]=merged.slice(-80);
+ if(!Number.isFinite(Number(latest.freshIndex?.[kind])))latest.freshIndex[kind]=0;
+ saveState(latest);
+ return latest.freshPools[kind].length>0
 }
 async function ensureFreshKind(kind){
- let s=ensureState();if(!rows(s.freshPools?.[kind]).length){try{await window.__ctR382?.refillFresh?.(kind)}catch{}}
- await sanitizeState();s=ensureState();
- if(!rows(s.freshPools?.[kind]).length)await ownRefill(kind);
+ let currentState=ensureState();
+ if(!rows(currentState.freshPools?.[kind]).length){try{await window.__ctR382?.refillFresh?.(kind)}catch{}}
+ currentState=ensureState();
+ if(!rows(currentState.freshPools?.[kind]).length)await ownRefill(kind);
  for(let pass=0;pass<2;pass++){
-  s=cloneState(ensureState());let p=unique(s.freshPools[kind]).filter(x=>localFresh(x,kind,7.0));
-  if(!p.length){await ownRefill(kind);continue}
-  const checked=p.slice(0,4),states=await Promise.all(checked.map(exactState)),bad=new Set(),good=[];
+  currentState=ensureState();
+  const candidates=unique(currentState.freshPools?.[kind]).filter(x=>localFresh(x,kind,7.0));
+  if(!candidates.length){await ownRefill(kind);continue}
+  const checked=candidates.slice(0,6),states=await Promise.all(checked.map(exactState)),bad=new Set(),good=[];
   checked.forEach((x,i)=>{const st=states[i];if(!st||st.is_seen||st.is_watchlist||st.is_favorite)bad.add(keyOf(x));else good.push(x)});
-  s.freshPools[kind]=p.filter(x=>!bad.has(keyOf(x)));s.freshIndex[kind]=0;saveState(s);
-  if(good.length){const pick=good[0],idx=s.freshPools[kind].findIndex(x=>keyOf(x)===keyOf(pick));s.freshIndex[kind]=Math.max(0,idx);saveState(s);return true}
-  await ownRefill(kind)
- }return false
+  const latest=cloneState(ensureState()),latestPool=unique(latest.freshPools?.[kind]).filter(x=>localFresh(x,kind,7.0)&&!bad.has(keyOf(x)));
+  latest.freshPools[kind]=latestPool;
+  if(good.length){
+   const preferred=keyOf(good[0]),idx=latestPool.findIndex(x=>keyOf(x)===preferred);
+   latest.freshIndex[kind]=Math.max(0,idx);saveState(latest);return true
+  }
+  latest.freshIndex[kind]=0;saveState(latest);await ownRefill(kind)
+ }
+ return rows(ensureState()?.freshPools?.[kind]).length>0
 }
 function removeDuplicateFilter(){
  const types=q('[data-ct319-types]');if(types&&types.querySelector('[data-ct328-fy-kind]')){types.replaceChildren();types.hidden=true;types.classList.remove('open');delete types.dataset.ct328Always}
@@ -220,7 +233,7 @@ async function loadForYou(force=false){
  const run=++loadRun;loadTask=(async()=>{
   ensureState();removeDuplicateFilter();
   const build=Promise.resolve().then(()=>window.__ctR309?.buildForYou?.(!!force)).catch(()=>null);
-  await Promise.allSettled([Promise.race([build,sleep(2500)]),sanitizeState().catch(()=>null),...['movie','series','anime'].map(ensureFreshKind)]);
+  await Promise.race([build,sleep(2200)]);
   if(run!==loadRun||routeNow()!=='discover')return false;
   try{await sanitizeState()}catch{}
   await Promise.all(['movie','series','anime'].map(ensureFreshKind));
