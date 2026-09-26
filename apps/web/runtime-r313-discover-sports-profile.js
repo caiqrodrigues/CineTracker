@@ -148,7 +148,7 @@ function canonicalStats313(root,count){
 async function renderProfile313(seq){
  setApp(shell('Perfil','Estatísticas, biblioteca, favoritos e atividade.','profile','<div class="page" data-profile>'+loading('Carregando Perfil...')+'</div>'));
  const cached=profileCache||ct163Read('profile')||null;
- const fullP=Promise.resolve(rpc313('cinetracker_profile_payload_v0997',{p_tz:tz()})).catch(()=>null);
+ const fullP=Promise.resolve(rpc313('cinetracker_profile_v380',{p_tz:tz()})).catch(()=>null);
  const histP=Promise.resolve(rpc313('cinetracker_sports_watch_history_v296',{})).catch(()=>[]);
  const stadiumP=Promise.resolve(rpc313('cinetracker_sports_stadium_summary_v296',{})).catch(()=>null);
  const [full,hist,stadium]=await Promise.all([fullP,histP,stadiumP]);if(seq!==navSeq||routeNow()!=='profile')return;
