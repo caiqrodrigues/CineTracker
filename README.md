@@ -1,3 +1,14 @@
+## Web 1.0.173 / r382
+
+- **Perfil restaurado de verdade:** renderer r313/r316 original; nenhuma estrutura nova de Perfil.
+- **Home restaurada:** composição original e Histórico/Continuar assistindo preservados; v382 só melhora dados do primeiro paint.
+- **Filmes:** Watchlist completa e somente o contador real, sem o antigo 240 concorrente.
+- **Pra Você:** auditoria v381 elimina vistos/Watchlist antes do render e fixa botões em 3/2/3 com Trocar.
+- **Base:** r382 parte diretamente da r376 para excluir r377-r381 do bundle final.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r382-official.mjs`; runtime: `apps/web/runtime-r382-baseline-restore.js`.
+
 ## Web 1.0.172 / r381
 
 - **Home:** autoridade completa v359 no primeiro paint, Histórico restaurado e patch curto de episódios ativos antes de exibir a primeira versão de rede.
@@ -72,7 +83,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.172** | `r381-official-1.0.172` | Home completa + Perfil original + Pra Você 3/2/3 auditado |
+| Web | **1.0.173** | `r382-official-1.0.173` | Home completa + Perfil original + Pra Você 3/2/3 auditado |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |

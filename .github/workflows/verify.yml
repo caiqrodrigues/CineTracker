@@ -1,4 +1,4 @@
-name: Verify Web 1.0.172 r381 Restore Home Profile ForYou
+name: Verify Web 1.0.173 r382 Baseline Restore
 on:
   push:
     branches: [main]
@@ -6,27 +6,27 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r381:
+  web_r382:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and regression gate
+      - name: Build and baseline regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r381-restore-home-profile-foryou.js
-          node --check build-r381.mjs
-          node --check test-r381-browser.mjs
-          node build-r381-official.mjs
-          CT_R381_SKIP_BUILD=1 node test-r381.mjs
-          CT_R381_SKIP_BUILD=1 node test-r381-browser.mjs
-          node --check dist/app-v381.js
-          grep -Fq 'app-v381.js' dist/index.html
-          grep -Fq 'ct-web-1.0.172-r381' dist/service-worker.js
-          grep -Fq "window.__ctR381Marker='home-full-v359-first+bounded-live-episode-patch+profile-original-structure+fresh-audit-required+actions-3-2-3'" dist/app-v381.js
+          node --check runtime-r382-baseline-restore.js
+          node --check build-r382.mjs
+          node --check test-r382-browser.mjs
+          node build-r382-official.mjs
+          CT_R382_SKIP_BUILD=1 node test-r382.mjs
+          CT_R382_SKIP_BUILD=1 node test-r382-browser.mjs
+          node --check dist/app-v382.js
+          ! grep -Fq "window.__ctR380Marker" dist/app-v382.js
+          ! grep -Fq "window.__ctR381Marker" dist/app-v382.js
+          grep -Fq "cinetracker_home_payload_v382" dist/app-v382.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +36,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r381, android]
+    needs: [web_r382, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -45,9 +45,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.172"' <<<"$BODY" && grep -Fq '"revision": "r381-official-1.0.172"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v381.js?ct=$CT" || true)"
-              if grep -Fq "window.__ctR381Marker='home-full-v359-first+bounded-live-episode-patch+profile-original-structure+fresh-audit-required+actions-3-2-3'" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.173"' <<<"$BODY" && grep -Fq '"revision": "r382-official-1.0.173"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v382.js?ct=$CT" || true)"
+              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
+              if grep -Fq "window.__ctR382Marker='baseline-r376-home-profile+home-v382-first-paint+fresh-v381-audit+actions-3-2-3'" <<<"$JS" && grep -Fq 'app-v382.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

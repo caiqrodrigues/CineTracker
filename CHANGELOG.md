@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.173 — 2026-09-26 — Web r382
+
+### Rollback estrutural
+- A build volta a partir da r376 para retirar completamente os renderers substitutos r380/r381 de Home e Perfil.
+- Perfil volta ao renderer aprovado r313/r316; apenas a fonte de dados muda para `cinetracker_profile_v380`, com cache-first, sem mudar seções, ordem ou estatísticas.
+
+### Home
+- O renderer original volta a ser a única autoridade de composição: Histórico, Continuar assistindo, Assistir a seguir, Em dia e demais buckets não são remontados por runtime novo.
+- Novo `cinetracker_home_payload_v382` parte do v359 e injeta apenas metadados ativos no primeiro payload (episódio, nota, data, contagens), preservando `home_bucket` do v359.
+- Séries ativas ausentes no v359 podem ser acrescentadas com o bucket derivado da própria autoridade ativa, evitando aparição tardia.
+- Filmes mantém a Watchlist completa v376; o contador legado de 240 é removido do header, deixando apenas o total real.
+
+### Descobrir / Pra Você
+- `100% Novos` é auditado obrigatoriamente por `cinetracker_discover_filter_v381`, incluindo aliases/título original; itens vistos ou em Watchlist são removidos antes do paint.
+- Ações finais são exatamente 3/2/3: Diário e 100% Novos = Watchlist, Visto, Trocar; Da sua Watchlist = Visto, Trocar.
+- O botão Trocar usa pool finito, lock por slot e refill sem loop bloqueante; o evento é interceptado antes do clique do card.
+- Coração fica integralmente dentro da capa.
+
+### Release
+- Web: `1.0.173 / r382-official-1.0.173`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.172 — 2026-09-25 — Web r381
 
 ### Home restaurada
