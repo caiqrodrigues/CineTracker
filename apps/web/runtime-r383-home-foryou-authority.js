@@ -44,7 +44,10 @@ async function ensureMoviesFull(showLoader=false){
  const sec=movieSection(),stack=q('.stack',sec),home=window.__ctR376?.home;
  if(showLoader&&!home?.loaded&&stack)stack.innerHTML='<div class="ct383-movie-loading">Carregando Watchlist completa…</div>';
  try{await window.__ctR376?.hydrateHome?.(false)}catch{}
- try{if(window.__ctR376?.home?.loaded&&window.__ctR376?.home?.nodes?.size!==window.__ctR376?.home?.rows?.length)window.__ctR376?.renderAllHomeRows?.()}catch{}
+ try{
+  const rerender=window.__ctR376?.renderAllHomeRows||window.__ctR376Test?.renderAllHomeRows;
+  if(window.__ctR376?.home?.loaded&&window.__ctR376?.home?.nodes?.size!==window.__ctR376?.home?.rows?.length)rerender?.()
+ }catch{}
  try{window.__ctR382?.fixMovieWatchHeader?.()}catch{}
  removeLegacyMovieCount();return true;
 }
