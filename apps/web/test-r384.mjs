@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+if(process.env.CT_R384_SKIP_BUILD!=='1')await import('./build-r384.mjs');
+const [html,js,sw,rel,src]=await Promise.all([readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/app-v384.js'),'utf8'),readFile(resolve('dist/service-worker.js'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('runtime-r384-home-foryou-final.js'),'utf8')]);
+const r=JSON.parse(rel),ok=(v,m)=>{if(!v)throw new Error(m)};
+for(const x of ["window.__ctR384Marker='home-series-staged-no-contention+movies-on-demand+foryou-strict-displayed-state+stable-actions'","cinetracker_home_series_v383","cinetracker_home_active_v380","cinetracker_media_state_v1","ct384-actions","ct336-filters"])ok(src.includes(x)||js.includes(x),'missing '+x);
+ok(js.includes("function afterHomePaint(){if(window.__ctR384HomeOwner)return;"),'r376 still auto-loads movies during Series paint');
+ok(js.includes("if(window.__ctR384ForYouOwner&&typeof window.__ctR384LoadForYou==='function')"),'r383 does not delegate ForYou');
+ok(js.includes("function early(target,event){if(window.__ctR384ForYouOwner)return false;"),'r383 action owner still active');
+ok(html.includes('app-v384.js')&&sw.includes('ct-web-1.0.175-r384'),'asset identity');
+ok(r.version==='1.0.175'&&r.revision==='r384-official-1.0.175'&&r.profile==='untouched'&&r.sports==='untouched','release identity');
+console.log('WEB_R384_TEST_OK');

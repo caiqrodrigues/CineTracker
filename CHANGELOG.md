@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.0.175 — 2026-09-27 — Web r384
+
+### Home
+- A abertura de Séries deixa de disparar simultaneamente Séries, payload completo e Watchlist de filmes.
+- Primeiro paint usa apenas `cinetracker_home_series_v383` e `cinetracker_home_active_v380` com live patch limitado, evitando o congestionamento observado no celular.
+- O cache de Séries passa a persistir entre reloads; quando existe, a Home pinta imediatamente.
+- Stuart e metadados do próximo episódio entram no mesmo ciclo inicial de até poucos segundos, não por um repaint tardio de dezenas de segundos.
+- A Watchlist completa de Filmes (1.382 no cenário atual) só é carregada ao entrar em Filmes; o contador legado de 240 é removido e o filtro nativo de seis opções permanece sob o owner r376.
+
+### Descobrir / Pra Você
+- O filtro duplicado dentro de Pra Você é removido; o filtro global ao lado da busca é preservado.
+- Todo card de `100% Novos` é validado individualmente por `cinetracker_media_state_v1` antes de ser exibido.
+- Visto, Watchlist e Favorito são exclusões obrigatórias no Fresh; aliases/títulos alternativos como o caso Harry Potter são bloqueados.
+- Indicação do Dia e 100% Novos recebem fallback limitado quando o pool está vazio.
+- Botões ficam fixos em 3/2/3 (Diário/Watchlist/Fresh), exatamente na largura do card; coração fica totalmente dentro da capa.
+- Trocar usa lock por slot e valida o próximo Fresh antes de renderizar.
+
+### Escopo
+- Somente Home e Descobrir/Pra Você.
+- Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+
 ## 1.0.174 — 2026-09-26 — Web r383
 
 ### Home — somente Home

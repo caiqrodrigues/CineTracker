@@ -1,4 +1,4 @@
-name: Verify Web 1.0.174 r383 Home and Pra Voce Authority
+name: Verify Web 1.0.175 r384 Home and Pra Voce Only
 on:
   push:
     branches: [main]
@@ -6,26 +6,25 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r383:
+  web_r384:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and focused regression gate
+      - name: Build and scoped regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r383-home-foryou-authority.js
-          node --check build-r383.mjs
-          node --check test-r383-browser.mjs
-          node build-r383-official.mjs
-          CT_R383_SKIP_BUILD=1 node test-r383.mjs
-          CT_R383_SKIP_BUILD=1 node test-r383-browser.mjs
-          node --check dist/app-v383.js
-          grep -Fq "cinetracker_home_series_v383" dist/app-v383.js
-          grep -Fq "cinetracker_media_state_v1" dist/app-v383.js
+          node --check runtime-r384-home-foryou-final.js
+          node --check build-r384.mjs
+          node --check test-r384-browser.mjs
+          node build-r384-official.mjs
+          CT_R384_SKIP_BUILD=1 node test-r384.mjs
+          CT_R384_SKIP_BUILD=1 node test-r384-browser.mjs
+          node --check dist/app-v384.js
+          grep -Fq 'ct-web-1.0.175-r384' dist/service-worker.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -35,7 +34,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r383, android]
+    needs: [web_r384, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -44,10 +43,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.174"' <<<"$BODY" && grep -Fq '"revision": "r383-official-1.0.174"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v383.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.175"' <<<"$BODY" && grep -Fq '"revision": "r384-official-1.0.175"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v384.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR383Marker='home-fast-series-firstpaint+movies-full-owner+foryou-own-actions+fresh-final-state-check'" <<<"$JS" && grep -Fq 'app-v383.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR384Marker='home-series-staged-no-contention+movies-on-demand+foryou-strict-displayed-state+stable-actions'" <<<"$JS" && grep -Fq 'app-v384.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

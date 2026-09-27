@@ -1,3 +1,11 @@
+## Web 1.0.175 / r384
+
+- Home Séries com carga em etapas: Séries primeiro, Filmes apenas ao abrir a aba Filmes.
+- Cache persistente e live patch limitado evitam metadados/novas séries aparecendo dezenas de segundos depois.
+- Filmes continuam com Watchlist completa e seis ordenações locais.
+- Pra Você remove o filtro duplicado, valida o card Fresh individualmente contra Visto/Watchlist/Favorito e fixa ações 3/2/3.
+- Escopo estrito: nenhuma alteração em Perfil, Esportes, Top 10, Configurações ou Android.
+
 ## Web 1.0.174 / r383
 
 - **Home rápida e completa:** séries visíveis vêm do RPC enxuto v383 com metadados de episódio já no primeiro paint; Stuart não entra tardiamente.
@@ -94,7 +102,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.174** | `r383-official-1.0.174` | Home completa + Perfil original + Pra Você 3/2/3 auditado |
+| Web | **1.0.175** | `r384-official-1.0.175` | Home completa + Perfil original + Pra Você 3/2/3 auditado |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
