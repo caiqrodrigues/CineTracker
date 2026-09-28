@@ -43,7 +43,7 @@ var route=window.route,localDay=window.localDay,shell=window.shell,setApp=window
  const t0=performance.now();await window.__ctR388.renderHome();
  for(let i=0;i<60&&!document.body.textContent.includes('Stuart Não Consegue');i++)await sleep(10);
  const firstMs=performance.now()-t0,sections=[...document.querySelectorAll('[data-ct388-series-section]')],cont=sections.find(s=>s.querySelector('h3')?.textContent==='Assistir a seguir'),dust=sections.find(s=>s.querySelector('h3')?.textContent==='Juntando poeira');
- ok(cont,'continue missing');ok(dust,'dust missing');
+ ok(cont,'continue missing | activeRows='+document.documentElement.dataset.ct391ActiveRows+' | activeErr='+document.documentElement.dataset.ct391ActiveError+' | buckets='+document.documentElement.dataset.ct391ActiveBuckets+' | render='+document.documentElement.dataset.ct391ActiveRender+' | stage='+document.documentElement.dataset.ct391LoadStage+' | body='+document.body.innerHTML.slice(0,5000));ok(dust,'dust missing | activeRows='+document.documentElement.dataset.ct391ActiveRows+' | buckets='+document.documentElement.dataset.ct391ActiveBuckets+' | body='+document.body.innerHTML.slice(0,5000));
  for(const n of ['Berlin','The Walking Dead','Magnatas do Crime','Stuart Não Consegue Salvar o Universo'])ok(cont.textContent.includes(n),'missing '+n);
  ok(cont.textContent.includes('Filmado com uma Plateia ao Vivo')&&cont.textContent.includes('2026-09-24')&&cont.textContent.includes('7.5'),'Stuart first-paint metadata incomplete');
  ok(!cont.textContent.includes('Série Antiga')&&dust.textContent.includes('Série Antiga'),'dust classification broken');
