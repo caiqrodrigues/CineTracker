@@ -12,6 +12,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
 const today=()=>{try{return typeof localDay==='function'?localDay():new Date().toISOString().slice(0,10)}catch{return new Date().toISOString().slice(0,10)}};
 const timeout=(p,ms)=>Promise.race([Promise.resolve(p),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const cacheGet=(k,max=300000)=>{try{const x=JSON.parse(sessionStorage.getItem(k)||'null');return x&&Date.now()-Number(x.at||0)<max?x.data:null}catch{return null}};
 const cacheSet=(k,v)=>{try{sessionStorage.setItem(k,JSON.stringify({at:Date.now(),data:v}))}catch{}};
 
@@ -139,7 +140,11 @@ async function loadSeries(force=false){
 async function loadHistory(){if(hHistoryTask)return hHistoryTask;hHistoryTask=timeout(rpc('cinetracker_home_history_v387',{}),7000).then(v=>{if(v&&typeof v==='object'){hHistory=v;cacheSet(HH,v);if(routeNow()==='home'){renderHistory('episodes');renderHistory('movies')}}return hHistory}).catch(()=>hHistory).finally(()=>{hHistoryTask=null});return hHistoryTask}
 async function loadMovies(){if(hMoviesTask)return hMoviesTask;hMoviesTask=timeout(rpc('cinetracker_watchlist_full_v376',{}),7000).then(v=>{const a=rows(v?.rows).filter(x=>String(x?.media_type||'')==='movie'&&mediaId(x)>0);if(a.length){hMovies=a;cacheSet(HM,a);if(routeNow()==='home'&&activeKind()==='movies'){const old=q('[data-ct388-movie-watch]');if(old){const t=document.createElement('template');t.innerHTML=movieSection();old.replaceWith(t.content.firstElementChild)}renderMoviesAll()}}return hMovies}).catch(()=>hMovies).finally(()=>{hMoviesTask=null});return hMoviesTask}
 async function renderHome388(){
- const kind=activeKind();try{setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class="page" data-home></div>'))}catch{};paintFrame(kind);void loadSeries(false);void loadHistory();void loadMovies();document.documentElement.dataset.ct388Home='ready-frame';return true
+ const kind=activeKind();try{setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class="page" data-home></div>'))}catch{};paintFrame(kind);
+ const seriesP=loadSeries(false);void loadHistory();void loadMovies();
+ await Promise.race([seriesP,sleep(2600)]).catch(()=>{});
+ if(routeNow()==='home'&&hSeries.length)renderSeries();
+ document.documentElement.dataset.ct388Home='first-stable';return true
 }
 try{renderHome=renderHome388}catch{}
 document.addEventListener('change',e=>{const s=e.target?.closest?.('[data-ct388-movie-sort]');if(!s||routeNow()!=='home')return;e.stopPropagation();movieSort=String(s.value||'added_desc');applyMovieSort()},true);
