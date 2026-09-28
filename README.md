@@ -1,3 +1,13 @@
+## Web 1.0.177 / r386
+
+- **Escopo estrito:** somente Home e Descobrir → Pra Você.
+- **Owner funcional preservado:** comportamento r385 continua intacto.
+- **Correção do vídeo:** a gravação estava executando r383; Home/Discover agora exigem HTML sem cache e verificam `release.json`/Service Worker para não permanecer em bundle antigo.
+- **Gate r385 repetido:** Home completa, Watchlist 1.382 + filtros e Pra Você com botões/100% Novos continuam cobertos.
+- Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+
+Build oficial: `apps/web/build-r386-official.mjs`; runtime: `apps/web/runtime-r386-home-discover-fresh-client.js`.
+
 ## Web 1.0.176 / r385
 
 - **Home independente:** Séries, Histórico e Filmes carregam em paralelo; nenhum clique de aba é necessário para preencher Filmes.
@@ -113,7 +123,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.176** | `r385-official-1.0.176` | Home independente + Pra Você v385 estrito |
+| Web | **1.0.177** | `r386-official-1.0.177` | Home independente + Pra Você v385 estrito |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |

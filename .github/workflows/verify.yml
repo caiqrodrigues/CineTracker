@@ -1,4 +1,4 @@
-name: Verify Web 1.0.176 r385 Home and Pra Voce Only
+name: Verify Web 1.0.177 r386 Home and Pra Voce Only
 on:
   push:
     branches: [main]
@@ -6,25 +6,35 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r385:
+  web_r386:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and scoped regression gate
+      - name: Scope and build
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r385-home-foryou-owner.js
-          node --check build-r385.mjs
-          node --check test-r385-browser.mjs
-          node build-r385-official.mjs
-          CT_R385_SKIP_BUILD=1 node test-r385.mjs
+          node --check runtime-r386-home-discover-fresh-client.js
+          node --check build-r386.mjs
+          node build-r386-official.mjs
+          CT_R386_SKIP_BUILD=1 node test-r386.mjs
           CT_R385_SKIP_BUILD=1 node test-r385-browser.mjs
-          node --check dist/app-v385.js
-          grep -Fq 'ct-web-1.0.176-r385' dist/service-worker.js
+          node --check dist/app-v386.js
+          grep -Fq 'app-v386.js' dist/index.html
+          grep -Fq 'ct-web-1.0.177-r386' dist/service-worker.js
+      - name: No-store only for Home/Discover HTML entries
+        working-directory: ../..
+        run: |
+          node - <<'NODE'
+          const v=require('./vercel.json');const m=new Map(v.headers.map(x=>[x.source,x.headers]));
+          for(const p of ['/','/home','/discover','/index.html']){
+            const c=(m.get(p)||[]).find(x=>x.key==='Cache-Control')?.value||'';
+            if(!c.includes('no-store'))throw new Error('missing no-store '+p);
+          }
+          NODE
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +44,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r385, android]
+    needs: [web_r386, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -43,10 +53,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.176"' <<<"$BODY" && grep -Fq '"revision": "r385-official-1.0.176"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v385.js?ct=$CT" || true)"
-              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR385Marker='home-independent-series-history-movies+foryou-v385-strict+actions-final'" <<<"$JS" && grep -Fq 'app-v385.js' <<<"$HTML"; then exit 0; fi
+            HDR="$(curl -fsSI -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/home?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.177"' <<<"$BODY" && grep -Fq '"revision": "r386-official-1.0.177"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v386.js?ct=$CT" || true)"
+              if grep -Fq "window.__ctR386Marker='home-discover-fresh-client+release-check+sw-update'" <<<"$JS" && grep -qi 'no-store' <<<"$HDR"; then exit 0; fi
             fi
             sleep 5
           done

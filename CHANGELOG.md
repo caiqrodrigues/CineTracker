@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.177 — 2026-09-28 — Web r386
+
+### Home + Descobrir / Pra Você
+- Mantém integralmente o owner r385 já validado para Home e Pra Você; nenhuma outra área funcional é alterada.
+- Corrige o cenário comprovado no vídeo em que o navegador permanecia em Web 1.0.174 / r383 mesmo após a produção estar em r385.
+- `/`, `/home`, `/discover` e `/index.html` passam a responder com `no-cache, no-store, must-revalidate`.
+- Ao entrar em Home ou Descobrir, o cliente consulta `release.json` sem cache e solicita atualização do Service Worker.
+- Depois que r386 estiver carregada uma vez, futuras divergências de versão nessas duas áreas acionam reload único para evitar continuar executando bundle antigo.
+
+### Validação
+- O gate completo da r385 é executado novamente sem mudanças: Stuart/metadata da Home, 1.382 filmes + seis filtros, remoção do filtro duplicado no Pra Você, três ações corretas e exclusão do Harry Potter visto.
+- Profile, Esportes, Top 10, Settings e Android permanecem fora do escopo.
+
 ## 1.0.176 — 2026-09-28 — Web r385
 
 ### Home — correção isolada
