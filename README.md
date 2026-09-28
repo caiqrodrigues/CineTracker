@@ -1,3 +1,15 @@
+## Web 1.0.183 / r392
+
+- **Home Séries:** remove o caminho active_v380 e qualquer fusão de estado velho; cinetracker_home_series_v391 passa a ser a única autoridade do bucket.
+- **Episódios:** o card da Home não delega mais ao renderer assíncrono legado; título, temporada/episódio, data e nota do payload entram no mesmo paint.
+- **Visto sem reload:** o writer r392 intercepta a ação antes do writer legado, aplica Optimistic UI, persiste e reconcilia Séries + Histórico sem reload/router.refresh.
+- **Stuart:** após T1E10 assistido, sai de Continuar e entra em Em dia; o T1E10 entra no Histórico.
+- **Histórico:** invalidação passa a ocorrer mesmo quando o episódio/filme é marcado fora da Home; respostas antigas não podem sobrescrever uma geração nova.
+- **Home Filmes:** Histórico recebe a mesma invalidação; a Watchlist completa só é buscada ao abrir Filmes, sem disputar rede com Séries/Histórico.
+- **Pra Você:** cache existente passa por uma única auditoria estrita em lote e pinta progressivamente; o top-up TMDB permanece limitado e itens vistos/Watchlist continuam bloqueados.
+- Escopo congelado: Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+
+Build oficial: apps/web/build-r392-official.mjs; owner: apps/web/runtime-r388-home-foryou-final.js.
 ## Web 1.0.182 / r391
 
 - **Home Séries:** primeiro paint sem TMDB por card; buckets completos vêm da autoridade v391.

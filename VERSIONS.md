@@ -1,16 +1,25 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-09-18
+**Atualizado em:** 2026-09-28
 
 ## Matriz oficial
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.104** | revision `r313-official-1.0.104`, package `1.0.104` | release Web atual |
+| Web | **1.0.183** | revision `r392-official-1.0.183`, package `1.0.183` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
 
+## Web 1.0.183 / r392
+
+- Home usa apenas a autoridade de séries v391; caches/duplicatas antigos não reintroduzem próximos episódios já assistidos.
+- Writer r392 de Visto é otimista e não executa reload global; mutações em detalhe invalidam Home/Histórico antes da próxima entrada.
+- Cards de episódio da Home usam metadados do payload direto, sem renderer assíncrono legado.
+- Pra Você faz auditoria estrita em lote do cache antes do paint e top-up bounded.
+- Android permanece 1.0.20 / 10062.
+
+Assets oficiais: app-v392.js / app-v392.css; build: apps/web/build-r392-official.mjs; regressões: apps/web/test-r392.mjs e apps/web/test-r392-browser.mjs.
 ## Web 1.0.104 / r313
 
 - Descobrir volta ao card padrão `ct288Card`; o filtro Todos/Filmes/Séries fica oculto por padrão atrás do `☷`.

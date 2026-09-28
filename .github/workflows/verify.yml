@@ -1,4 +1,4 @@
-name: Verify Web 1.0.182 r391 Home and Pra Voce
+name: Verify Web 1.0.183 r392 Home and Pra Voce
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r391:
+  web_r392:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -18,15 +18,15 @@ jobs:
         run: |
           set -euo pipefail
           node --check runtime-r388-home-foryou-final.js
-          node --check runtime-r391-home-foryou-authority.js
-          node --check build-r391.mjs
-          node --check test-r391.mjs
-          node --check test-r391-browser.mjs
-          node build-r391-official.mjs
-          CT_R391_SKIP_BUILD=1 node test-r391.mjs
-          CT_R391_SKIP_BUILD=1 node test-r391-browser.mjs
-          node --check dist/app-v391.js
-          grep -Fq "window.__ctR391Marker='home-first-paint-authority+history-fast+foryou-strict-fast'" dist/app-v391.js
+          node --check runtime-r392-home-hard-authority.js
+          node --check build-r392.mjs
+          node --check test-r392.mjs
+          node --check test-r392-browser.mjs
+          node build-r392-official.mjs
+          CT_R392_SKIP_BUILD=1 node test-r392.mjs
+          CT_R392_SKIP_BUILD=1 node test-r392-browser.mjs
+          node --check dist/app-v392.js
+          grep -Fq "window.__ctR392Marker='home-authority-only+optimistic-watch+history-route-invalidation+foryou-cache-audit'" dist/app-v392.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +36,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r391, android]
+    needs: [web_r392, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -45,10 +45,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.182"' <<<"$BODY" && grep -Fq '"revision": "r391-official-1.0.182"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v391.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.183"' <<<"$BODY" && grep -Fq '"revision": "r392-official-1.0.183"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v392.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR391Marker='home-first-paint-authority+history-fast+foryou-strict-fast'" <<<"$JS" && grep -Fq 'app-v391.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR392Marker='home-authority-only+optimistic-watch+history-route-invalidation+foryou-cache-audit'" <<<"$JS" && grep -Fq 'app-v392.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

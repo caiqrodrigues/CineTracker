@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.0.183 — 2026-09-28 — Web r392
+
+### Escopo exclusivo: Home + Descobrir / Pra Você
+- Remove da Home a combinação entre cinetracker_home_active_v380 e a autoridade v391. Duplicatas antigas não conseguem mais preencher next_episode_* nulo de uma série já atualizada e ressuscitar um card em Continuar.
+- O renderer de séries deixa de chamar ct276EpisodeCard; os metadados autoritativos do episódio são renderizados diretamente no mesmo paint, eliminando Atualizando episódios... / Sincronizando estado atual persistentes.
+- Ações de episódio/filme assistido ganham owner r392 com UI otimista, lock síncrono por item e persistência cinetracker_mark_watch_v0994, sem reload global.
+- cinetracker:data-changed invalida memória e caches da Home em qualquer rota. Marcar no detalhe e voltar para a Home força uma leitura nova; resultados de requests antigos são descartados por geração.
+- Stuart/TMDB 287620 foi validado no banco após o vídeo: T1E10 existe em episode_progress/watch_history, e a autoridade v391 retorna up_to_date, 10/10 e zero episódios disponíveis.
+- Histórico de episódios e filmes sobe para 100 itens recentes por bloco e deixa de concorrer, no primeiro paint de Séries, com o fetch completo da Watchlist de Filmes.
+- A Watchlist de Filmes só é carregada ao abrir a semi-aba Filmes; mantém lista completa e ordenações existentes.
+- Pra Você audita pools persistidos em um único lote antes de exibir cards e reutiliza itens já validados; Fresh continua com TMDB bounded e auditoria pessoal fail-closed.
+- Nenhum window.location.reload(), router.refresh() ou loop infinito foi adicionado.
+
+### Validação
+- Gate Chromium reproduz mutação feita fora da Home: invalida cache, refaz a Home, exige Stuart fora de Continuar, presente em Em dia e T1E10 no Histórico.
+- Gate injeta um renderer legado que só devolve loading e exige que ele não seja usado pela Home r392.
+- Gate preserva 1.382 filmes, seis sorts, exclusão de Harry/Azkaban visto e ações 3/2/3 do Pra Você.
+
+### Não alterado
+- Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
+
+### Release
+- Web: 1.0.183 / r392-official-1.0.183.
+- Android: 1.0.20 / versionCode 10062 preservado.
 ## 1.0.182 — 2026-09-28 — Web r391
 
 ### Escopo exclusivo: Home + Descobrir / Pra Você
