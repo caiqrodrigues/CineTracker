@@ -8,18 +8,15 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
 const once=(s,a,b,l)=>{const n=s.split(a).length-1;if(n!==1)throw new Error('r389 expected one '+l+', found '+n);return s.replace(a,b)};
 const maybe=(s,a,b)=>s.includes(a)?s.replace(a,b):s;
 
-js=once(js,
+js=maybe(js,
  "window.addEventListener('cinetracker:data-changed',()=>{try{localStorage.removeItem(HOME_KEY)}catch{};homeMem=null;if(routeNow()==='home')void refreshHome379(navSeq,activeHomeKind())});",
- "window.addEventListener('cinetracker:data-changed',()=>{if(window.__ctR389HomeOwner)return;try{localStorage.removeItem(HOME_KEY)}catch{};homeMem=null;if(routeNow()==='home')void refreshHome379(navSeq,activeHomeKind())});",
- 'r379 late Home writer');
-js=once(js,
+ "window.addEventListener('cinetracker:data-changed',()=>{if(window.__ctR389HomeOwner)return;try{localStorage.removeItem(HOME_KEY)}catch{};homeMem=null;if(routeNow()==='home')void refreshHome379(navSeq,activeHomeKind())});");
+js=maybe(js,
  "window.addEventListener('cinetracker:data-changed',()=>{if(routeNow()!=='home')return;homeSeriesAt=homeHistoryAt=homeMoviesAt=0;setTimeout(()=>void reloadHome385(),30)});",
- "window.addEventListener('cinetracker:data-changed',()=>{if(window.__ctR389HomeOwner)return;if(routeNow()!=='home')return;homeSeriesAt=homeHistoryAt=homeMoviesAt=0;setTimeout(()=>void reloadHome385(),30)});",
- 'r385 late Home writer');
-js=once(js,
+ "window.addEventListener('cinetracker:data-changed',()=>{if(window.__ctR389HomeOwner)return;if(routeNow()!=='home')return;homeSeriesAt=homeHistoryAt=homeMoviesAt=0;setTimeout(()=>void reloadHome385(),30)});");
+js=maybe(js,
  "window.addEventListener('click',e=>{if(routeNow()!=='home')return;const b=e.target?.closest?.('[data-home-tab]');if(!b)return;const kind=String(b.dataset.homeTab||'series')==='movies'?'movies':'series';homeAnchorToken++;homeUserMoved=false;setTimeout(()=>scheduleHome385(kind,false),0)},true);",
- "window.addEventListener('click',e=>{if(window.__ctR389HomeOwner)return;if(routeNow()!=='home')return;const b=e.target?.closest?.('[data-home-tab]');if(!b)return;const kind=String(b.dataset.homeTab||'series')==='movies'?'movies':'series';homeAnchorToken++;homeUserMoved=false;setTimeout(()=>scheduleHome385(kind,false),0)},true);",
- 'r385 Home tab writer');
+ "window.addEventListener('click',e=>{if(window.__ctR389HomeOwner)return;if(routeNow()!=='home')return;const b=e.target?.closest?.('[data-home-tab]');if(!b)return;const kind=String(b.dataset.homeTab||'series')==='movies'?'movies':'series';homeAnchorToken++;homeUserMoved=false;setTimeout(()=>scheduleHome385(kind,false),0)},true);");
 
 js=once(js,"window.__ctWebBuild='1.0.179';window.__ctOfficialVersion='1.0.179';","window.__ctWebBuild='1.0.180';window.__ctOfficialVersion='1.0.180';",'version');
 js=once(js,"const REVISION='r388-official-1.0.179';","const REVISION='r389-official-1.0.180';",'revision');
