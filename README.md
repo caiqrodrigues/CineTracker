@@ -1,4 +1,15 @@
-## Web 1.0.179 / r388\n\n- Escopo exclusivo: **Home** e **Descobrir → Pra Você**.\n- Séries: estado ativo + metadados de episódios antes do primeiro paint estável.\n- Filmes: Watchlist completa (total atual 1.381) e seis ordenações sobre todos os registros.\n- Pra Você: renderer direto, sem filtro duplicado; botões exatos e 100% Novos auditado contra Vistos/Watchlist.\n- Perfil, Esportes, Top 10 e Configurações intocados.\n\n## Web 1.0.178 / r387
+## Web 1.0.181 / r390
+
+- **Escopo fechado:** somente Home e Descobrir → Pra Você.
+- **Home Séries:** active-first v380 + deduplicação lógica + enriquecimento curto antes do primeiro paint; RPC completa r389 apenas completa o restante em background.
+- **Home Filmes:** Watchlist completa v376, total real (gate com 1.382) e seis ordenações.
+- **Pra Você:** caminho rápido v387 + auditoria r389; Harry/Azkaban 673 é bloqueado como Visto.
+- **Ações:** Diário/Fresh = Watchlist + Visto + Trocar; Watchlist = Visto + Trocar; coração contido na capa.
+- Perfil, Esportes, Top 10, Configurações e Android permanecem intocados.
+
+Build oficial: `apps/web/build-r390-official.mjs`; runtime funcional: `apps/web/runtime-r388-home-foryou-final.js`.
+
+## Web 1.0.178 / r387
 
 - **Home:** abre em Assistir a seguir, com Histórico completo escondido acima.
 - **Histórico:** sem teto de 50/100; filmes recentes posteriores ao antigo corte entram normalmente.
@@ -140,7 +151,18 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 Produção Web: `https://mycinetracker.vercel.app`
 
-## Web 1.0.166 / r375\n\n- **Correção baseada no vídeo:** o reset absoluto para `0` foi removido porque expunha `Histórico recente`/`Filmes vistos`.\n- **Início semântico:** Séries abre em `Assistir a seguir`; Filmes abre em `Assistir a seguir / Watchlist`.\n- **Histórico preservado:** continua renderizado acima do ponto inicial e aparece somente ao rolar para cima.\n- **Container-aware:** alinha o bloco principal tanto em scroll da janela quanto em container interno.\n- **Teste:** ambos os sentidos de troca partem do rodapé e terminam no bloco principal, com Histórico comprovadamente acima do viewport.\n- Android permanece `1.0.20 / versionCode 10062`.\n\nBuild oficial: `apps/web/build-r375-official.mjs`; runtime: `apps/web/runtime-r375-home-semantic-start.js`.\n\n## Web 1.0.165 / r374
+## Web 1.0.166 / r375
+
+- **Correção baseada no vídeo:** o reset absoluto para `0` foi removido porque expunha `Histórico recente`/`Filmes vistos`.
+- **Início semântico:** Séries abre em `Assistir a seguir`; Filmes abre em `Assistir a seguir / Watchlist`.
+- **Histórico preservado:** continua renderizado acima do ponto inicial e aparece somente ao rolar para cima.
+- **Container-aware:** alinha o bloco principal tanto em scroll da janela quanto em container interno.
+- **Teste:** ambos os sentidos de troca partem do rodapé e terminam no bloco principal, com Histórico comprovadamente acima do viewport.
+- Android permanece `1.0.20 / versionCode 10062`.
+
+Build oficial: `apps/web/build-r375-official.mjs`; runtime: `apps/web/runtime-r375-home-semantic-start.js`.
+
+## Web 1.0.165 / r374
 
 - **Troca de aba no topo:** alternar Séries ↔ Filmes zera a rolagem da janela e do container scrollável da Home.
 - **Owner único de UX:** a r374 captura o clique antes dos antigos anchors que podiam reposicionar a página depois da troca.

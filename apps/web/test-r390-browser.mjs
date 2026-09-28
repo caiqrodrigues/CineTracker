@@ -1,0 +1,66 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';import {createServer} from 'node:http';import {spawn,execFileSync} from 'node:child_process';
+if(process.env.CT_R390_SKIP_BUILD!=='1')await import('./build-r390.mjs');
+let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}if(!bin)throw new Error('Chromium unavailable');
+const base=(await readFile(resolve('runtime-r388-home-foryou-final.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const mark=(await readFile(resolve('runtime-r390-home-foryou-validated.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const html=`<!doctype html><html><head><style>body{margin:0}.home-list.hidden{display:none}.media-row{height:42px}.ct291-card{height:264px;position:relative}.ct291-favorite{position:absolute}.ct388-slot{width:176px}</style></head><body><div id="app"></div>
+<script>
+localStorage.clear();sessionStorage.clear();
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));window.currentRoute='home';window.route=()=>window.currentRoute;window.navSeq=1;window.toast=()=>{};window.img=p=>p;window.localDay=()=> '2026-09-28';
+window.shell=(t,s,a,b)=>'<main>'+b+'</main>';window.setApp=h=>document.getElementById('app').innerHTML=h;
+window.__ctR371={activeTab:'series',applyTab(k){this.activeTab=k;document.querySelectorAll('[data-home-tab]').forEach(b=>b.classList.toggle('active',b.dataset.homeTab===k));document.querySelectorAll('[data-home-view]').forEach(v=>v.classList.toggle('hidden',v.dataset.homeView!==k))},preserveAfterPaint:()=>true};window.__ctR375={align:()=>true};window.__ctR385={scheduleHome:()=>true};
+window.ct274Row=(x,o={})=>'<div class="media-row" '+(o.attrs||'')+'><b>'+String(x.title||x.media_title||'')+'</b><small>'+String(o.meta||'')+' '+String(o.sub||'')+'</small>'+(o.action||'')+'</div>';
+window.ct274EpisodeMeta=x=>'S'+x.season_number+'E'+x.episode_number+' '+(x.episode_title||'')+' '+(x.episode_air_date||'')+' ⭐'+Number(x.episode_rating||0).toFixed(1);
+window.ct274AvailableText=x=>String(x.available_episodes||0)+' episódios disponíveis';window.ct274EpisodeWatchAction=()=>'';window.ct274EpisodeAttrs=()=>'';window.ct276EpisodeCard=x=>window.ct274Row({...x,season_number:x.next_season_number,episode_number:x.next_episode_number,episode_title:x.next_episode_title,episode_air_date:x.next_episode_air_date,episode_rating:x.next_episode_rating},{meta:window.ct274EpisodeMeta({season_number:x.next_season_number,episode_number:x.next_episode_number,episode_title:x.next_episode_title,episode_air_date:x.next_episode_air_date,episode_rating:x.next_episode_rating}),sub:window.ct274AvailableText(x)});
+window.ct274MovieMeta=x=>(x.release_year||'')+' • '+(x.runtime_minutes||0)+' min • ⭐ '+Number(x.vote_average||0).toFixed(1);window.ct274MovieWatchAction=()=>'';window.ct274MovieAttrs=x=>'data-media="movie:'+x.tmdb_id+'"';window.ct274HistoryRows=()=>'<div>hist</div>';
+const active=[
+ {tmdb_id:1,title:'Berlin',home_bucket:'continue',source_state:'InProgress',watched_episodes:8,last_watched_at:'2026-09-20T00:00:00Z',next_season_number:1,next_episode_number:9,next_episode_title:'Berlin Novo',next_episode_air_date:'2026-09-20',next_episode_rating:8.1,available_episodes:1},
+ {tmdb_id:2,title:'The Walking Dead',home_bucket:'continue',source_state:'InProgress',watched_episodes:10,last_watched_at:'2026-09-19T00:00:00Z',next_season_number:2,next_episode_number:1,next_episode_title:'TWD Novo',next_episode_air_date:'2026-09-19',next_episode_rating:8.2,available_episodes:1},
+ {tmdb_id:3,title:'Magnatas do Crime',home_bucket:'continue',source_state:'InProgress',watched_episodes:7,last_watched_at:'2026-09-18T00:00:00Z',next_season_number:2,next_episode_number:1,next_episode_title:'Magnatas Novo',next_episode_air_date:'2026-09-03',next_episode_rating:8.3,available_episodes:1},
+ {tmdb_id:4,title:'Stuart Não Consegue Salvar o Universo',home_bucket:'continue',source_state:'InProgress',watched_episodes:9,last_watched_at:'2026-09-21T00:00:00Z',last_season_number:1,last_episode_number:9,available_episodes:0},
+ {tmdb_id:4,title:'Stuart Fails to Save the Universe',home_bucket:'continue',source_state:'InProgress',watched_episodes:9,last_watched_at:'2026-09-21T00:00:00Z',last_season_number:1,last_episode_number:9,next_season_number:1,next_episode_number:10,available_episodes:1}
+];
+const full=active.filter((x,i)=>i!==4).map(x=>x.tmdb_id===4?{...x,home_bucket:'up_to_date',next_episode_number:null,next_episode_title:null,next_episode_air_date:null,next_episode_rating:null,available_episodes:0}:x);
+const movies=Array.from({length:1382},(_,i)=>({media_id:i+1,media_type:'movie',tmdb_id:10000+i,title:'Movie '+String(1382-i).padStart(4,'0'),release_year:2000+(i%26),runtime_minutes:100,vote_average:7+(i%20)/10,added_at:new Date(Date.UTC(2020,0,1)+i*86400000).toISOString(),raw_tmdb:{release_date:(2000+(i%26))+'-01-01'}}));
+const fresh=(k)=>Array.from({length:16},(_,i)=>({media_type:k==='movie'?'movie':'tv',media_kind:k==='anime'?'anime':'series',tmdb_id:k==='movie'?(i===0?673:700+i):(k==='series'?1700+i:2700+i),id:k==='movie'?(i===0?673:700+i):(k==='series'?1700+i:2700+i),title:k==='movie'?(i===0?'Harry Potter e o Prisioneiro de Azkaban':'Fresh M '+i):undefined,original_title:k==='movie'&&i===0?'Harry Potter and the Prisoner of Azkaban':undefined,name:k!=='movie'?'Fresh '+k+' '+i:undefined,poster_path:'/p.jpg',vote_average:8.2,release_date:k==='movie'?(i===0?'2004-06-04':'2024-01-01'):undefined,first_air_date:k!=='movie'?'2024-01-01':undefined,genre_ids:k==='anime'?[16]:[18],original_language:k==='anime'?'ja':'en',origin_country:k==='anime'?['JP']:[]}));
+const watchItem=k=>({media_type:k==='movie'?'movie':'tv',media_kind:k==='anime'?'anime':'series',tmdb_id:k==='movie'?9001:k==='series'?9002:9003,title:k==='movie'?'Watch M':undefined,name:k!=='movie'?'Watch '+k:undefined,poster_path:'/p.jpg',vote_average:8,release_date:k==='movie'?'2022-01-01':undefined,first_air_date:k!=='movie'?'2022-01-01':undefined,genre_ids:k==='anime'?[16]:[18],original_language:k==='anime'?'ja':'en',origin_country:k==='anime'?['JP']:[]});
+window.rpc=async(name,args={})=>{
+ if(name==='cinetracker_home_active_v380'){await sleep(70);return active}
+ if(name==='cinetracker_home_series_v389'){await sleep(1800);return full}
+ if(name==='cinetracker_home_history_v387'){await sleep(60);return{history_episodes:[],history_movies:[]}}
+ if(name==='cinetracker_watchlist_full_v376'){await sleep(80);return{rows:movies,counts:{movie:1382,series:0}}}
+ if(name==='cinetracker_discover_watch_v389'){await sleep(35);return[watchItem(args.p_kind)]}
+ if(name==='cinetracker_discover_fresh_v387'){await sleep(80);return fresh(args.p_kind)}
+ if(name==='cinetracker_discover_filter_v389'){await sleep(30);const items=args.p_items||[],seen=items.filter(x=>Number(x.tmdb_id)===673).map(x=>'movie:673'),watch=items.filter(x=>[9001,9002,9003].includes(Number(x.tmdb_id))).map(x=>(x.media_type==='movie'?'movie:':'tv:')+x.tmdb_id);return{checked_count:items.length,blocked_keys:[...seen],seen_keys:seen,watch_keys:watch}}
+ return{}
+};
+window.tmdb=async(path)=>{await sleep(35);if(path==='/tv/4')return{last_episode_to_air:{season_number:1,episode_number:10,air_date:'2026-09-25'}};if(path==='/tv/4/season/1')return{episodes:[{season_number:1,episode_number:10,name:'Novo Stuart',air_date:'2026-09-25',vote_average:8.8}]};return{}};
+window.ct288Card=x=>'<article class="ct291-card" data-media="'+(x.media_type==='movie'?'movie':'tv')+':'+x.tmdb_id+'"><button type="button" class="ct291-favorite">♡</button><div>'+String(x.title||x.name||'')+'</div></article>';
+window.__ctR365={persistDirect:async()=>true};window.__ctR376={};window.__ctR382={};let leaked=0;document.addEventListener('click',e=>{if(e.target.closest?.('[data-media]'))leaked++});
+var route=window.route,localDay=window.localDay,shell=window.shell,setApp=window.setApp,rpc=window.rpc,tmdb=window.tmdb,img=window.img,ct274Row=window.ct274Row,ct274EpisodeMeta=window.ct274EpisodeMeta,ct274AvailableText=window.ct274AvailableText,ct274EpisodeWatchAction=window.ct274EpisodeWatchAction,ct274EpisodeAttrs=window.ct274EpisodeAttrs,ct276EpisodeCard=window.ct276EpisodeCard,ct274MovieMeta=window.ct274MovieMeta,ct274MovieWatchAction=window.ct274MovieWatchAction,ct274MovieAttrs=window.ct274MovieAttrs,ct274HistoryRows=window.ct274HistoryRows,ct288Card=window.ct288Card;
+</script><script>${base}</script><script>${mark}</script><script>
+(async()=>{try{const ok=(v,m)=>{if(!v)throw new Error(m)};
+ const t0=performance.now();await window.__ctR388.renderHome();
+ for(let i=0;i<60&&!document.body.textContent.includes('Novo Stuart');i++)await sleep(20);
+ const firstMs=performance.now()-t0,cont=[...document.querySelectorAll('[data-ct388-series-section]')].find(s=>s.querySelector('h3')?.textContent==='Assistir a seguir');
+ ok(cont,'continue missing');for(const n of ['Berlin','The Walking Dead','Magnatas do Crime','Stuart Não Consegue Salvar o Universo'])ok(cont.textContent.includes(n),'missing '+n);
+ ok(cont.textContent.includes('Novo Stuart')&&cont.textContent.includes('2026-09-25')&&cont.textContent.includes('8.8'),'Stuart metadata incomplete');
+ ok(firstMs<900,'first complete Home too slow '+firstMs);
+ const initialCount=cont.querySelectorAll('.media-row').length;await sleep(1900);const cont2=[...document.querySelectorAll('[data-ct388-series-section]')].find(s=>s.querySelector('h3')?.textContent==='Assistir a seguir');ok(cont2.querySelectorAll('.media-row').length===initialCount,'late composition changed');
+ document.querySelector('[data-home-tab="movies"]').click();for(let i=0;i<80&&document.querySelectorAll('[data-ct388-movie-id]').length<1382;i++)await sleep(15);
+ ok(document.querySelectorAll('[data-ct388-movie-id]').length===1382,'movie list incomplete');ok(document.querySelector('[data-ct388-movie-count]').textContent==='1.382','movie count');
+ const sel=document.querySelector('[data-ct388-movie-sort]');for(const mode of ['added_desc','added_asc','release_desc','release_asc','az','za']){sel.value=mode;sel.dispatchEvent(new Event('change',{bubbles:true}));await sleep(0);ok(document.querySelector('[data-ct388-movie-watch]').dataset.ct388Sort===mode,'sort '+mode)}
+ window.currentRoute='discover';document.getElementById('app').innerHTML='<div data-ct319-content></div>';const task=window.__ctR388.loadForYou(true);await sleep(10);ok(document.querySelector('[data-ct388-foryou]'),'progressive ForYou shell missing');await task;
+ const root=document.querySelector('[data-ct388-foryou]');ok(root,'ForYou missing');ok(!root.querySelector('[data-media="movie:673"]'),'Harry leaked');
+ ok(!root.querySelector('.ct378-filters')&&!root.querySelector('[data-ct328-foryou]'),'duplicate local filter');
+ for(const n of ['daily','fresh:movie','fresh:series','fresh:anime']){const slot=root.querySelector('[data-ct388-slot="'+n+'"]');ok(slot.querySelector('[data-media]'),'card missing '+n);ok(slot.querySelectorAll('.ct388-actions>button').length===3,'buttons '+n)}
+ for(const n of ['watch:movie','watch:series','watch:anime']){const slot=root.querySelector('[data-ct388-slot="'+n+'"]');ok(slot.querySelector('[data-media]'),'watch card missing '+n);ok(slot.querySelectorAll('.ct388-actions>button').length===2,'watch buttons '+n)}
+ const fs=root.querySelector('[data-ct388-slot="fresh:movie"]');for(let i=0;i<10;i++){const b=fs.querySelector('[data-ct388-action="swap"]');b.click();await sleep(90);ok(fs.querySelector('[data-media]'),'fresh blank '+i);ok(!fs.querySelector('[data-media="movie:673"]'),'Harry swap leak '+i);ok(fs.querySelectorAll('.ct388-actions>button').length===3,'buttons broke '+i)}
+ const fav=fs.querySelector('.ct291-favorite'),card=fs.querySelector('.ct291-card'),fr=fav.getBoundingClientRect(),cr=card.getBoundingClientRect();ok(fr.right<=cr.right+1&&fr.left>=cr.left-1&&fr.top>=cr.top-1,'heart outside card');ok(leaked===0,'action click leaked to card');
+ document.documentElement.dataset.ct390done='1'}catch(e){document.documentElement.dataset.ct390probe='fail:'+String(e?.stack||e)}})();
+</script></body></html>`;
+const server=createServer((req,res)=>{res.writeHead(200,{'content-type':'text/html','cache-control':'no-store'});res.end(html)});await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget=10000','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
+const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},30000),code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
+if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1200));if(!/data-ct390done="1"/.test(out)){const m=out.match(/data-ct390probe="([^"]*)"/);throw new Error('R390_BROWSER '+(m?.[1]||'probe did not finish'))}
+console.log('R390_BROWSER_OK no-cache active-first Home + 1382 movies six-sort + strict fast Pra Voce');

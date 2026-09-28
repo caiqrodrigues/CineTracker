@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.181 — 2026-09-28 — Web r390
+
+### Escopo exclusivo: Home + Descobrir / Pra Você
+- Home Séries passa a usar `cinetracker_home_active_v380` como primeiro fetch (medido em ~0,17 s no banco), deduplica títulos pelo TMDB e combina linhas duplicadas antes do primeiro paint.
+- Séries ativas são enriquecidas em paralelo com timeout curto antes de aparecerem; a RPC completa `cinetracker_home_series_v389` fica em background e não deve alterar tardiamente a composição de Continuar assistindo.
+- Stuart duplicado em português/inglês é consolidado no mesmo item lógico, preservando o título localizado e o ponteiro/metadados de episódio mais completo.
+- Filmes preservam a Watchlist completa v376. O gate usa 1.382 registros e testa as seis ordenações.
+- Pra Você mantém o caminho rápido `fresh_v387 + filter_v389` (medido em ~0,76 s para 24 filmes). A RPC `fresh_v389` de ~26 s fica fora do runtime.
+- Auditoria r389 cruza TMDB + título localizado/original + ano. Harry Potter/Azkaban TMDB 673 retorna em `seen_keys`/`blocked_keys` e é caso obrigatório do gate.
+- Botões permanecem 3/2/3 e o coração precisa ficar integralmente dentro da capa.
+
+### Não alterado
+- Perfil, Esportes, Top 10, Configurações e Android não foram modificados.
+
+### Release
+- Web: `1.0.181 / r390-official-1.0.181`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.179 — 2026-09-28 — Web r388
 
 ### Escopo exclusivo: Home + Descobrir / Pra Você

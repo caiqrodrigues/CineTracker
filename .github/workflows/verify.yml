@@ -1,4 +1,4 @@
-name: Verify Web 1.0.179 r388 Home and Pra Voce
+name: Verify Web 1.0.181 r390 Home and Pra Voce
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r388:
+  web_r390:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -18,13 +18,14 @@ jobs:
         run: |
           set -euo pipefail
           node --check runtime-r388-home-foryou-final.js
-          node --check build-r388.mjs
-          node --check test-r388-browser.mjs
-          node build-r388-official.mjs
-          CT_R388_SKIP_BUILD=1 node test-r388.mjs
-          CT_R388_SKIP_BUILD=1 node test-r388-browser.mjs
-          node --check dist/app-v388.js
-          grep -Fq "window.__ctR388Marker='home-series-first-complete+movies-all-1381+foryou-direct-strict-no-empty-actions'" dist/app-v388.js
+          node --check runtime-r390-home-foryou-validated.js
+          node --check build-r390.mjs
+          node --check test-r390-browser.mjs
+          node build-r390-official.mjs
+          CT_R390_SKIP_BUILD=1 node test-r390.mjs
+          CT_R390_SKIP_BUILD=1 node test-r390-browser.mjs
+          node --check dist/app-v390.js
+          grep -Fq "window.__ctR390Marker='home-active-first-complete+movies-1382-six-sort+foryou-fast-strict-harry-block'" dist/app-v390.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +35,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r388, android]
+    needs: [web_r390, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -43,9 +44,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.179"' <<<"$BODY" && grep -Fq '"revision": "r388-official-1.0.179"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v388.js?ct=$CT" || true)"
-              if grep -Fq "window.__ctR388Marker='home-series-first-complete+movies-all-1381+foryou-direct-strict-no-empty-actions'" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.181"' <<<"$BODY" && grep -Fq '"revision": "r390-official-1.0.181"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v390.js?ct=$CT" || true)"
+              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
+              if grep -Fq "window.__ctR390Marker='home-active-first-complete+movies-1382-six-sort+foryou-fast-strict-harry-block'" <<<"$JS" && grep -Fq 'app-v390.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
