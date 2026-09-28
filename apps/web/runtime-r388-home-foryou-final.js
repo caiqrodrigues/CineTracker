@@ -213,9 +213,9 @@ async function loadSeries(force=false){
  hSeriesTask=(async()=>{
   const fullP=timeout(rpc('cinetracker_home_series_v391',{p_today:today()}),2600).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
   if(!hadCache){
-   const active=await timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),900).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
+   const active=await timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),900).then(v=>mergeLogicalSeries(rows(v))).catch(e=>{document.documentElement.dataset.ct391ActiveError=String(e?.stack||e);return[]});document.documentElement.dataset.ct391ActiveRows=String(active.length);
    if(run!==hRun)return hSeries;
-   if(active.length){hSeries=mergeSeries(active,hSeries);cacheSet(HS,hSeries);localSet(HSP,hSeries);document.documentElement.dataset.ct391SeriesFirst='active';if(routeNow()==='home')renderSeries()}
+   if(active.length){hSeries=mergeSeries(active,hSeries);cacheSet(HS,hSeries);localSet(HSP,hSeries);document.documentElement.dataset.ct391SeriesFirst='active';document.documentElement.dataset.ct391ActiveBuckets=hSeries.map(x=>String(x.tmdb_id)+':'+String(x.home_bucket)).join(',');if(routeNow()==='home')document.documentElement.dataset.ct391ActiveRender=String(renderSeries())}
   }
   const full=await fullP;if(run!==hRun)return hSeries;
   if(full.length){const beforeTop=rows(hSeries).filter(x=>['continue','dust'].includes(x.home_bucket)).map(x=>x.tmdb_id+':'+x.home_bucket).join('|');hSeries=mergeSeries(full,hSeries);cacheSet(HS,hSeries);localSet(HSP,hSeries);const afterTop=rows(hSeries).filter(x=>['continue','dust'].includes(x.home_bucket)).map(x=>x.tmdb_id+':'+x.home_bucket).join('|');document.documentElement.dataset.ct391TopStable=String(beforeTop===afterTop||!beforeTop);if(routeNow()==='home')renderSeries()}
