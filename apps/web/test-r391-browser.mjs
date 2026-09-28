@@ -1,0 +1,72 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';import {createServer} from 'node:http';import {spawn,execFileSync} from 'node:child_process';
+if(process.env.CT_R391_SKIP_BUILD!=='1')await import('./build-r391.mjs');
+let bin='';for(const x of ['google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}if(!bin)throw new Error('Chromium unavailable');
+const base=(await readFile(resolve('runtime-r388-home-foryou-final.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const mark=(await readFile(resolve('runtime-r391-home-foryou-authority.js'),'utf8')).replaceAll('</script>','<\\/script>');
+const html=`<!doctype html><html><head><style>body{margin:0}.home-list.hidden{display:none}.media-row{height:42px}.ct291-card{height:264px;position:relative}.ct291-favorite{position:absolute}.ct388-slot{width:176px}</style></head><body><div id="app"></div>
+<script>
+localStorage.clear();sessionStorage.clear();
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));window.currentRoute='home';window.route=()=>window.currentRoute;window.navSeq=1;window.toast=()=>{};window.img=p=>p;window.localDay=()=> '2026-09-28';
+window.shell=(t,s,a,b)=>'<main>'+b+'</main>';window.setApp=h=>document.getElementById('app').innerHTML=h;
+window.__ctR371={activeTab:'series',applyTab(k){this.activeTab=k;document.querySelectorAll('[data-home-tab]').forEach(b=>b.classList.toggle('active',b.dataset.homeTab===k));document.querySelectorAll('[data-home-view]').forEach(v=>v.classList.toggle('hidden',v.dataset.homeView!==k))},preserveAfterPaint:()=>true};window.__ctR375={align:()=>true};window.__ctR385={scheduleHome:()=>true};
+window.ct274Row=(x,o={})=>'<div class="media-row" '+(o.attrs||'')+'><b>'+String(x.title||x.media_title||'')+'</b><small>'+String(o.meta||'')+' '+String(o.sub||'')+'</small>'+(o.action||'')+'</div>';
+window.ct274EpisodeMeta=x=>'S'+x.season_number+'E'+x.episode_number+' '+(x.episode_title||'')+' '+(x.episode_air_date||'')+' ⭐'+Number(x.episode_rating||0).toFixed(1);
+window.ct274AvailableText=x=>String(x.available_episodes||0)+' episódios disponíveis';window.ct274EpisodeWatchAction=()=>'';window.ct274EpisodeAttrs=()=>'';window.ct276EpisodeCard=x=>window.ct274Row({...x,season_number:x.next_season_number,episode_number:x.next_episode_number,episode_title:x.next_episode_title,episode_air_date:x.next_episode_air_date,episode_rating:x.next_episode_rating},{meta:window.ct274EpisodeMeta({season_number:x.next_season_number,episode_number:x.next_episode_number,episode_title:x.next_episode_title,episode_air_date:x.next_episode_air_date,episode_rating:x.next_episode_rating}),sub:window.ct274AvailableText(x)});
+window.ct274MovieMeta=x=>(x.release_year||'')+' • '+(x.runtime_minutes||0)+' min • ⭐ '+Number(x.vote_average||0).toFixed(1);window.ct274MovieWatchAction=()=>'';window.ct274MovieAttrs=x=>'data-media="movie:'+x.tmdb_id+'"';window.ct274HistoryRows=(a)=>a.map(x=>'<div class="hist-row">'+(x.media_title||x.title||'')+'</div>').join('');
+const active=[
+ {tmdb_id:1,title:'Berlin',home_bucket:'continue',source_state:'InProgress',watched_episodes:8,last_watched_at:'2026-09-20T00:00:00Z',next_season_number:1,next_episode_number:9,next_episode_title:'Berlin Novo',next_episode_air_date:'2026-09-20',next_episode_rating:8.1,available_episodes:1},
+ {tmdb_id:2,title:'The Walking Dead',home_bucket:'continue',source_state:'InProgress',watched_episodes:10,last_watched_at:'2026-09-19T00:00:00Z',next_season_number:2,next_episode_number:1,next_episode_title:'TWD Novo',next_episode_air_date:'2026-09-19',next_episode_rating:8.2,available_episodes:1},
+ {tmdb_id:3,title:'Magnatas do Crime',home_bucket:'continue',source_state:'InProgress',watched_episodes:7,last_watched_at:'2026-09-18T00:00:00Z',next_season_number:2,next_episode_number:1,next_episode_title:'Magnatas Novo',next_episode_air_date:'2026-09-03',next_episode_rating:8.3,available_episodes:1},
+ {tmdb_id:287620,title:'Stuart Não Consegue Salvar o Universo',home_bucket:'continue',source_state:'InProgress',watched_episodes:9,last_watched_at:'2026-09-21T01:04:20Z',last_season_number:1,last_episode_number:9,next_season_number:1,next_episode_number:10,next_episode_title:'Spoiler: Filmado com uma Plateia ao Vivo',next_episode_air_date:'2026-09-24',next_episode_rating:7.5,available_episodes:1},
+ {tmdb_id:44,title:'Série Antiga',home_bucket:'continue',source_state:'InProgress',watched_episodes:4,last_watched_at:'2026-07-01T00:00:00Z',next_season_number:1,next_episode_number:5,next_episode_title:'Volta antiga',next_episode_air_date:'2026-07-05',next_episode_rating:7.9,available_episodes:1}
+];
+const full=active.map(x=>x.tmdb_id===44?{...x,home_bucket:'dust'}:x).concat([{tmdb_id:55,title:'Não iniciada',home_bucket:'not_started',source_state:'WatchLater',watched_episodes:0,available_episodes:0}]);
+const history={history_episodes:[{media_title:'Berlin',season_number:1,episode_number:8,watched_at:'2026-09-20'}],history_movies:[{title:'Matrix Revolutions',watched_at:'2026-09-19'}]};
+const movies=Array.from({length:1382},(_,i)=>({media_id:i+1,media_type:'movie',tmdb_id:10000+i,title:'Movie '+String(1382-i).padStart(4,'0'),release_year:2000+(i%26),runtime_minutes:100,vote_average:7+(i%20)/10,added_at:new Date(Date.UTC(2020,0,1)+i*86400000).toISOString(),raw_tmdb:{release_date:(2000+(i%26))+'-01-01'}}));
+const fresh=(k)=>Array.from({length:18},(_,i)=>({media_type:k==='movie'?'movie':'tv',media_kind:k==='anime'?'anime':'series',id:k==='movie'?(i===0?673:700+i):(k==='series'?1700+i:2700+i),tmdb_id:k==='movie'?(i===0?673:700+i):(k==='series'?1700+i:2700+i),title:k==='movie'?(i===0?'Harry Potter e o Prisioneiro de Azkaban':'Fresh M '+i):undefined,original_title:k==='movie'&&i===0?'Harry Potter and the Prisoner of Azkaban':undefined,name:k!=='movie'?'Fresh '+k+' '+i:undefined,poster_path:'/p.jpg',vote_average:8.2,release_date:k==='movie'?(i===0?'2004-06-04':'2024-01-01'):undefined,first_air_date:k!=='movie'?'2024-01-01':undefined,genre_ids:k==='anime'?[16]:[18],original_language:k==='anime'?'ja':'en',origin_country:k==='anime'?['JP']:[]}));
+const watchItem=k=>({media_type:k==='movie'?'movie':'tv',media_kind:k==='anime'?'anime':'series',tmdb_id:k==='movie'?9001:k==='series'?9002:9003,title:k==='movie'?'Watch M':undefined,name:k!=='movie'?'Watch '+k:undefined,poster_path:'/p.jpg',vote_average:8,release_date:k==='movie'?'2022-01-01':undefined,first_air_date:k!=='movie'?'2022-01-01':undefined,genre_ids:k==='anime'?[16]:[18],original_language:k==='anime'?'ja':'en',origin_country:k==='anime'?['JP']:[]});
+window.__mockRpcCalls=[];window.rpc=async(name,args={})=>{window.__mockRpcCalls.push(name);
+ if(name==='cinetracker_home_active_v380')return active;
+ if(name==='cinetracker_home_series_v391')return full;
+ if(name==='cinetracker_home_history_v391')return history;
+ if(name==='cinetracker_watchlist_full_v376')return{rows:movies,counts:{movie:1382,series:0}};
+ if(name==='cinetracker_discover_watch_v391')return[watchItem(args.p_kind)];
+ if(name==='cinetracker_discover_filter_v391'){const items=args.p_items||[],seen=items.filter(x=>Number(x.tmdb_id)===673).map(x=>'movie:673'),watch=items.filter(x=>[9001,9002,9003].includes(Number(x.tmdb_id))).map(x=>(x.media_type==='movie'?'movie:':'tv:')+x.tmdb_id);return{checked_count:items.length,blocked_keys:[...seen,...watch],seen_keys:seen,watch_keys:watch}}
+ return{};
+};
+let homeTmdbCalls=0;window.tmdb=async(path,params={})=>{if(window.currentRoute==='home'){homeTmdbCalls++;return{}};if(path==='/discover/movie')return{results:fresh('movie')};if(path==='/discover/tv'&&String(params.with_genres||'')==='16')return{results:fresh('anime')};if(path==='/discover/tv')return{results:fresh('series')};return{}};
+window.ct288Card=x=>'<article class="ct291-card" data-media="'+(x.media_type==='movie'?'movie':'tv')+':'+x.tmdb_id+'"><button type="button" class="ct291-favorite">♡</button><div>'+String(x.title||x.name||'')+'</div></article>';
+window.__ctR365={persistDirect:async()=>true};window.__ctR376={};window.__ctR382={};let leaked=0;document.addEventListener('click',e=>{if(e.target.closest?.('[data-media]'))leaked++});
+var route=window.route,localDay=window.localDay,shell=window.shell,setApp=window.setApp,rpc=window.rpc,tmdb=window.tmdb,img=window.img,ct274Row=window.ct274Row,ct274EpisodeMeta=window.ct274EpisodeMeta,ct274AvailableText=window.ct274AvailableText,ct274EpisodeWatchAction=window.ct274EpisodeWatchAction,ct274EpisodeAttrs=window.ct274EpisodeAttrs,ct276EpisodeCard=window.ct276EpisodeCard,ct274MovieMeta=window.ct274MovieMeta,ct274MovieWatchAction=window.ct274MovieWatchAction,ct274MovieAttrs=window.ct274MovieAttrs,ct274HistoryRows=window.ct274HistoryRows,ct288Card=window.ct288Card;
+</script><script>${base}</script><script>${mark}</script><script>
+(async()=>{try{const ok=(v,m)=>{if(!v)throw new Error(m)};
+ const t0=performance.now();await window.__ctR388.renderHome();
+ for(let i=0;i<60&&!document.body.textContent.includes('Stuart Não Consegue');i++)await sleep(10);
+ const firstMs=performance.now()-t0,sections=[...document.querySelectorAll('[data-ct388-series-section]')],cont=sections.find(s=>s.querySelector('h3')?.textContent==='Assistir a seguir'),dust=sections.find(s=>s.querySelector('h3')?.textContent==='Juntando poeira');
+ ok(cont,'continue missing');ok(dust,'dust missing');
+ for(const n of ['Berlin','The Walking Dead','Magnatas do Crime','Stuart Não Consegue Salvar o Universo'])ok(cont.textContent.includes(n),'missing '+n);
+ ok(cont.textContent.includes('Filmado com uma Plateia ao Vivo')&&cont.textContent.includes('2026-09-24')&&cont.textContent.includes('7.5'),'Stuart first-paint metadata incomplete');
+ ok(!cont.textContent.includes('Série Antiga')&&dust.textContent.includes('Série Antiga'),'dust classification broken');
+ ok(firstMs<700,'Home first paint too slow '+firstMs);ok(homeTmdbCalls===0,'Home performed client TMDB enrichment before first paint');
+ for(let i=0;i<50&&!document.body.textContent.includes('Matrix Revolutions');i++)await sleep(10);
+ ok(document.body.textContent.includes('Berlin')&&document.body.textContent.includes('Matrix Revolutions'),'history did not load');
+ const initialTop=cont.querySelectorAll('.media-row').length+'|'+dust.querySelectorAll('.media-row').length;await sleep(60);
+ const sec2=[...document.querySelectorAll('[data-ct388-series-section]')],c2=sec2.find(s=>s.querySelector('h3')?.textContent==='Assistir a seguir'),d2=sec2.find(s=>s.querySelector('h3')?.textContent==='Juntando poeira');ok(initialTop===c2.querySelectorAll('.media-row').length+'|'+d2.querySelectorAll('.media-row').length,'late top composition changed');
+ document.querySelector('[data-home-tab="movies"]').click();for(let i=0;i<100&&document.querySelectorAll('[data-ct388-movie-id]').length<1382;i++)await sleep(10);
+ ok(document.querySelectorAll('[data-ct388-movie-id]').length===1382,'movie list incomplete');ok(document.querySelector('[data-ct388-movie-count]').textContent==='1.382','movie count');
+ const sel=document.querySelector('[data-ct388-movie-sort]');for(const mode of ['added_desc','added_asc','release_desc','release_asc','az','za']){sel.value=mode;sel.dispatchEvent(new Event('change',{bubbles:true}));await sleep(0);ok(document.querySelector('[data-ct388-movie-watch]').dataset.ct388Sort===mode,'sort '+mode)}
+ window.currentRoute='discover';document.getElementById('app').innerHTML='<div data-ct319-content></div>';const task=window.__ctR388.loadForYou(true);await sleep(5);ok(document.querySelector('[data-ct388-foryou]'),'progressive ForYou shell missing');await task;
+ const root=document.querySelector('[data-ct388-foryou]');ok(root,'ForYou missing');ok(!root.querySelector('[data-media="movie:673"]'),'Harry leaked');
+ ok(!window.__mockRpcCalls.includes('cinetracker_discover_fresh_v387')&&!window.__mockRpcCalls.includes('cinetracker_discover_fresh_v389'),'slow DB fresh path used');
+ ok(!root.querySelector('.ct378-filters')&&!root.querySelector('[data-ct328-foryou]'),'duplicate local filter');
+ for(const n of ['daily','fresh:movie','fresh:series','fresh:anime']){const slot=root.querySelector('[data-ct388-slot="'+n+'"]');ok(slot.querySelector('[data-media]'),'card missing '+n);ok(slot.querySelectorAll('.ct388-actions>button').length===3,'buttons '+n)}
+ for(const n of ['watch:movie','watch:series','watch:anime']){const slot=root.querySelector('[data-ct388-slot="'+n+'"]');ok(slot.querySelector('[data-media]'),'watch card missing '+n);ok(slot.querySelectorAll('.ct388-actions>button').length===2,'watch buttons '+n)}
+ const fs=root.querySelector('[data-ct388-slot="fresh:movie"]');for(let i=0;i<10;i++){const b=fs.querySelector('[data-ct388-action="swap"]');b.click();await sleep(50);ok(fs.querySelector('[data-media]'),'fresh blank '+i);ok(!fs.querySelector('[data-media="movie:673"]'),'Harry swap leak '+i);ok(fs.querySelectorAll('.ct388-actions>button').length===3,'buttons broke '+i)}
+ const fav=fs.querySelector('.ct291-favorite'),card=fs.querySelector('.ct291-card'),fr=fav.getBoundingClientRect(),cr=card.getBoundingClientRect();ok(fr.right<=cr.right+1&&fr.left>=cr.left-1&&fr.top>=cr.top-1,'heart outside card');ok(leaked===0,'action click leaked to card');
+ document.documentElement.dataset.ct391done='1'}catch(e){document.documentElement.dataset.ct391probe='fail:'+String(e?.stack||e)}})();
+</script></body></html>`;
+const server=createServer((req,res)=>{res.writeHead(200,{'content-type':'text/html','cache-control':'no-store'});res.end(html)});await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget=9000','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
+const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},30000),code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
+if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1200));if(!/data-ct391done="1"/.test(out)){const m=out.match(/data-ct391probe="([^"]*)"/);throw new Error('R391_BROWSER '+(m?.[1]||'probe did not finish'))}
+console.log('R391_BROWSER_OK first-paint Home buckets/history + 1382 movies + strict responsive Pra Voce');

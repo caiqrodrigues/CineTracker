@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.0.182 — 2026-09-28 — Web r391
+
+### Escopo exclusivo: Home + Descobrir / Pra Você
+- Remove o enriquecimento TMDB bloqueante do primeiro paint da Home. A lista ativa v380 aparece imediatamente e a autoridade completa v391 (~415 ms no conjunto real) corrige/completa o estado sem esperar chamadas por card.
+- Corrige a fusão que fazia o bucket rápido `continue` sobrescrever `dust`. No conjunto real, a autoridade v391 retorna 2 em Continuar e 20 em Juntando poeira, em vez de concentrar tudo no mesmo bloco.
+- Stuart/TMDB 287620 já sai no payload local como T1E10, com título, data e nota; o catálogo recebeu o episódio atual e o refresh TMDB fica apenas em background.
+- Histórico v391 foi reescrito para trabalhar somente sobre eventos recentes já indexados e caiu de ~8 s para ~125 ms no banco real.
+- Filmes preservam a Watchlist completa v376 e as seis ordenações existentes.
+- Pra Você deixa de consultar qualquer RPC de Fresh que varra a biblioteca. Filme/Série/Anime vêm de lotes TMDB limitados e passam pela auditoria pessoal v391.
+- A auditoria v391 une TMDB exato e aliases importados do mesmo título/ano. Harry Potter/Azkaban (movie:673) é bloqueado mesmo quando o registro visto está em um ID importado diferente.
+- Botões permanecem: Indicação/Fresh = Watchlist + Visto + Trocar; Da sua Watchlist = Visto + Trocar. Coração continua contido na capa.
+
+### Não alterado
+- Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
+
+### Release
+- Web: `1.0.182 / r391-official-1.0.182`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.181 — 2026-09-28 — Web r390
 
 ### Escopo exclusivo: Home + Descobrir / Pra Você

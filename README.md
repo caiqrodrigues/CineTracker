@@ -1,3 +1,16 @@
+## Web 1.0.182 / r391
+
+- **Home Séries:** primeiro paint sem TMDB por card; buckets completos vêm da autoridade v391.
+- **Juntando poeira:** estado rápido não sobrescreve mais o bucket autoritativo; regra de 30 dias reaplicada no merge.
+- **Stuart:** T1E10 está no catálogo local e chega com metadados no primeiro payload.
+- **Histórico:** autoridade v391 otimizada de ~8 s para ~125 ms no conjunto real.
+- **Home Filmes:** Watchlist completa e seis filtros preservados.
+- **Pra Você:** Fresh usa TMDB limitado + auditoria v391; itens vistos/watchlist são eliminados antes do card aparecer.
+- **Harry/Azkaban:** aliases importados + TMDB 673 são unidos na auditoria, impedindo que um registro visto duplicado escape.
+- Escopo congelado: Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+
+Build oficial: `apps/web/build-r391-official.mjs`; owner: `apps/web/runtime-r388-home-foryou-final.js`.
+
 ## Web 1.0.181 / r390
 
 - **Escopo fechado:** somente Home e Descobrir → Pra Você.
@@ -144,7 +157,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.178** | `r387-official-1.0.178` | Home no bloco principal + histórico completo + Pra Você estável |
+| Web | **1.0.182** | `r391-official-1.0.182` | Home autoritativa rápida + histórico ~125 ms + Pra Você estrito |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
