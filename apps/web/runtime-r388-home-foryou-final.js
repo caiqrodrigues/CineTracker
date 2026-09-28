@@ -262,10 +262,29 @@ function setIndex(name,item){const p=pool(name),i=p.findIndex(x=>keyOf(x)===keyO
 const ex=n=>{if(!excluded.has(n))excluded.set(n,new Set());return excluded.get(n)};
 async function swapFy(name,btn){
  if(locks.has(name))return false;locks.add(name);if(btn)btn.disabled=true;
- try{const cur=keyOf(current(name)),xs=ex(name);if(cur)xs.add(cur);let choices=pool(name).filter(x=>keyOf(x)&&keyOf(x)!==cur&&!xs.has(keyOf(x)));
-  if(name.startsWith('fresh:')){const k=name.split(':')[1];if(!choices.length){await ensureFresh(k,true);choices=pool(name).filter(x=>keyOf(x)!==cur&&!xs.has(keyOf(x)))}if(choices.length){const a=await audit(choices);choices=choices.filter(x=>!a.blocked.has(keyOf(x)));for(const x of choices)validated.add(keyOf(x))}}
-  if(!choices.length)choices=pool(name).filter(x=>keyOf(x)&&keyOf(x)!==cur);if(!choices.length)return false;
-  const item=choices[Math.floor(Math.random()*choices.length)];xs.add(keyOf(item));if(!setIndex(name,item))return false;renderSlot(name);return true
+ try{
+  const cur=keyOf(current(name)),xs=ex(name);if(cur)xs.add(cur);
+  let choices=pool(name).filter(x=>keyOf(x)&&keyOf(x)!==cur&&!xs.has(keyOf(x))&&validated.has(keyOf(x)));
+  if(name.startsWith('fresh:')){
+   const k=name.split(':')[1];
+   if(!choices.length){await ensureFresh(k,true);choices=pool(name).filter(x=>keyOf(x)&&keyOf(x)!==cur&&!xs.has(keyOf(x))&&validated.has(keyOf(x)))}
+   if(choices.length){const a=await audit(choices);choices=choices.filter(x=>!a.blocked.has(keyOf(x)));for(const x of choices)validated.add(keyOf(x))}
+   if(!choices.length)return false;
+  }else if(name==='daily'){
+   if(!choices.length){
+    await Promise.allSettled(['movie','series','anime'].map(k=>ensureFresh(k,false)));
+    choices=unique(['movie','series','anime'].flatMap(k=>rows(fy.freshPools[k])))
+      .filter(x=>validated.has(keyOf(x))&&keyOf(x)!==cur&&!xs.has(keyOf(x)));
+   }
+   if(!choices.length)return false;
+  }else{
+   if(!choices.length)choices=pool(name).filter(x=>keyOf(x)&&keyOf(x)!==cur&&validated.has(keyOf(x)));
+   if(!choices.length)return false;
+  }
+  const item=choices[Math.floor(Math.random()*choices.length)];xs.add(keyOf(item));
+  if(name==='daily'){fy.dailyPool=[item];fy.dailyIndex=0;validated.add(keyOf(item));saveFy()}
+  else if(!setIndex(name,item))return false;
+  renderSlot(name);return true
  }finally{locks.delete(name);if(btn?.isConnected)btn.disabled=false}
 }
 function removeKey(action,key){
