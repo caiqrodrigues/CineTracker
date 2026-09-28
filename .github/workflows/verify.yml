@@ -26,7 +26,6 @@ jobs:
           grep -Fq 'app-v386.js' dist/index.html
           grep -Fq 'ct-web-1.0.177-r386' dist/service-worker.js
       - name: No-store only for Home/Discover HTML entries
-        working-directory: ../..
         run: |
           node - <<'NODE'
           const v=require('./vercel.json');const m=new Map(v.headers.map(x=>[x.source,x.headers]));
