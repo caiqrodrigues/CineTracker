@@ -180,29 +180,24 @@ async function loadSeries(force=false){
  if(hSeriesTask&&!force)return hSeriesTask;const run=++hRun,hadCache=hSeries.length>0;
  document.documentElement.dataset.ct390LoadStage='start:'+run+':cache='+Number(hadCache);
  hSeriesTask=(async()=>{
-  const activeP=timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),700).then(v=>{const a=mergeLogicalSeries(rows(v));document.documentElement.dataset.ct390ActiveRows=String(a.length);return a}).catch(e=>{document.documentElement.dataset.ct390ActiveError=String(e?.message||e);return[]});
-  const fullP=timeout(rpc('cinetracker_home_series_v389',{p_today:today()}),3200).then(v=>{const a=mergeLogicalSeries(rows(v));document.documentElement.dataset.ct390FullRows=String(a.length);return a}).catch(e=>{document.documentElement.dataset.ct390FullError=String(e?.message||e);return[]});
   if(!hadCache){
-   let active=await activeP;document.documentElement.dataset.ct390LoadStage='active:'+active.length+':run='+run+':current='+hRun;
-   if(active.length){
-    active=await timeout(enrichSeries(active),1750).catch(e=>{document.documentElement.dataset.ct390EnrichError=String(e?.message||e);return active});
-    document.documentElement.dataset.ct390LoadStage='enriched:'+active.length+':run='+run+':current='+hRun;
+   let active=[];
+   try{active=mergeLogicalSeries(rows(await rpc('cinetracker_home_active_v380',{p_today:today()})));document.documentElement.dataset.ct390ActiveRows=String(active.length)}
+   catch(e){document.documentElement.dataset.ct390ActiveError=String(e?.message||e)}
+   if(active.length&&run===hRun){
+    try{active=await enrichSeries(active)}catch(e){document.documentElement.dataset.ct390EnrichError=String(e?.message||e)}
     if(run!==hRun){document.documentElement.dataset.ct390LoadDiscard='generation';return hSeries}
-    hSeries=mergeSeries(hSeries,active);document.documentElement.dataset.ct390StateRows=String(hSeries.length);cacheSet(HS,hSeries);localSet(HSP,hSeries);
-    if(routeNow()==='home')renderSeries();
+    hSeries=mergeSeries(hSeries,active);cacheSet(HS,hSeries);localSet(HSP,hSeries);
+    document.documentElement.dataset.ct390StateRows=String(hSeries.length);
     document.documentElement.dataset.ct390SeriesFirst='active-complete';
+    if(routeNow()==='home')renderSeries();
    }
   }
-  const full=await fullP;
-  if(full.length&&run===hRun){
-   let merged=mergeSeries(full,hSeries);
-   if(hadCache)merged=mergeSeries(merged,hSeries);
-   hSeries=merged;cacheSet(HS,hSeries);localSet(HSP,hSeries);
-   if(routeNow()==='home')renderSeries();
-   if(hadCache)void timeout(enrichSeries(hSeries),1750).then(live=>{if(run!==hRun||!live?.length)return;hSeries=mergeSeries(hSeries,live);cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries()}).catch(()=>{});
-  }else if(!hSeries.length){
-   const active=await activeP;if(active.length&&run===hRun){hSeries=active;cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries()}
-  }
+  void Promise.resolve().then(()=>rpc('cinetracker_home_series_v389',{p_today:today()})).then(v=>{
+   if(run!==hRun)return;const full=mergeLogicalSeries(rows(v));document.documentElement.dataset.ct390FullRows=String(full.length);if(!full.length)return;
+   hSeries=mergeSeries(full,hSeries);cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries();
+   if(hadCache)void enrichSeries(hSeries).then(live=>{if(run!==hRun||!live?.length)return;hSeries=mergeSeries(hSeries,live);cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries()}).catch(()=>{});
+  }).catch(e=>{document.documentElement.dataset.ct390FullError=String(e?.message||e)});
   return hSeries
  })().finally(()=>{hSeriesTask=null});return hSeriesTask
 }
