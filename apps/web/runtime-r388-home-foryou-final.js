@@ -70,12 +70,13 @@ function freshPairAfter(ep,x){
 }
 async function enrichOneSeries(x){
  const id=Number(x?.tmdb_id||0);if(!(id>0)||typeof tmdb!=='function')return x;
+ document.documentElement.dataset.ct390EnrichId=String(id);
  const missingMeta=Number(x?.next_episode_number||0)>0&&(!x?.next_episode_title||x?.next_episode_rating==null||!x?.next_episode_air_date);
  const mayHaveNew=!Number(x?.next_episode_number||0)&&['InProgress','UpToDate'].includes(String(x?.source_state||''))&&Number(x?.watched_episodes||0)>0;
  if(!missingMeta&&!mayHaveNew)return x;
  const c=new AbortController(),timer=setTimeout(()=>c.abort(),1700);
  try{
-  let details=null;try{details=await tmdb('/tv/'+id,{language:'pt-BR'},{signal:c.signal,timeout:1400})}catch{}
+  let details=null;try{details=await tmdb('/tv/'+id,{language:'pt-BR'},{signal:c.signal,timeout:1400});document.documentElement.dataset.ct390TmdbDetails=String(id)}catch(e){document.documentElement.dataset.ct390TmdbError=String(e?.message||e)}
   let next={...x},candidate=null;
   const lastKey=Number(x?.last_season_number||0)*100000+Number(x?.last_episode_number||0);
   const rawNext=x?.raw_tmdb?.next_episode_to_air,rawKey=Number(rawNext?.season_number||0)*100000+Number(rawNext?.episode_number||0);
@@ -185,7 +186,7 @@ async function loadSeries(force=false){
    try{active=mergeLogicalSeries(rows(await rpc('cinetracker_home_active_v380',{p_today:today()})));document.documentElement.dataset.ct390ActiveRows=String(active.length)}
    catch(e){document.documentElement.dataset.ct390ActiveError=String(e?.message||e)}
    if(active.length&&run===hRun){
-    try{active=await enrichSeries(active)}catch(e){document.documentElement.dataset.ct390EnrichError=String(e?.message||e)}
+    document.documentElement.dataset.ct390LoadStage='enrich-start:'+active.length;try{active=await enrichSeries(active);document.documentElement.dataset.ct390EnrichDone=String(active.length)}catch(e){document.documentElement.dataset.ct390EnrichError=String(e?.message||e)}
     if(run!==hRun){document.documentElement.dataset.ct390LoadDiscard='generation';return hSeries}
     hSeries=mergeSeries(hSeries,active);cacheSet(HS,hSeries);localSet(HSP,hSeries);
     document.documentElement.dataset.ct390StateRows=String(hSeries.length);
