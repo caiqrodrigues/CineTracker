@@ -30,8 +30,10 @@ function activeKind(){try{return window.__ctR371?.activeTab==='movies'?'movies':
 function applyTab(k){try{window.__ctR371?.applyTab?.(k)}catch{}try{if(typeof ct266ApplyHomeTab==='function')ct266ApplyHomeTab(k)}catch{}}
 function settleHome(k=activeKind()){try{window.__ctR371?.preserveAfterPaint?.()}catch{};try{window.__ctR385?.scheduleHome?.(k,true)}catch{};try{window.__ctR375?.align?.(k)}catch{}}
 function normalizeBucket391(x0){
- const x={...x0},watched=Number(x?.watched_episodes||0),hasNext=Number(x?.next_episode_number||0)>0,last=Date.parse(x?.last_watched_at||0)||0;
+ const x={...x0},watched=Number(x?.watched_episodes||0),hasNext=Number(x?.next_episode_number||0)>0,last=Date.parse(x?.last_watched_at||0)||0,
+  sports=/wwe|smackdown|nxt|monday night raw|friday night smackdown|formula 1|formula one|ufc/i.test(String(x?.title||''));
  if(watched===0&&String(x?.source_state||'')==='WatchLater')x.home_bucket='not_started';
+ else if(watched>0&&hasNext&&sports)x.home_bucket='up_to_date';
  else if(watched>0&&hasNext)x.home_bucket=(last&&Date.now()-last>30*86400000)?'dust':'continue';
  else if(watched>0)x.home_bucket='up_to_date';
  else if(String(x?.source_state||'')==='UpToDate')x.home_bucket='up_to_date';
@@ -211,13 +213,9 @@ async function loadSeries(force=false){
  hSeriesTask=(async()=>{
   const fullP=timeout(rpc('cinetracker_home_series_v391',{p_today:today()}),2600).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
   if(!hadCache){
-   const activeP=timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),900).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
-   const first=await Promise.race([
-    fullP.then(v=>({kind:'full',rows:v})),
-    activeP.then(v=>({kind:'active',rows:v}))
-   ]);
+   const active=await timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),900).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
    if(run!==hRun)return hSeries;
-   if(first.rows.length){hSeries=first.kind==='full'?mergeSeries(first.rows,hSeries):mergeSeries(first.rows,hSeries);cacheSet(HS,hSeries);localSet(HSP,hSeries);document.documentElement.dataset.ct391SeriesFirst=first.kind;if(routeNow()==='home')renderSeries()}
+   if(active.length){hSeries=mergeSeries(active,hSeries);cacheSet(HS,hSeries);localSet(HSP,hSeries);document.documentElement.dataset.ct391SeriesFirst='active';if(routeNow()==='home')renderSeries()}
   }
   const full=await fullP;if(run!==hRun)return hSeries;
   if(full.length){const beforeTop=rows(hSeries).filter(x=>['continue','dust'].includes(x.home_bucket)).map(x=>x.tmdb_id+':'+x.home_bucket).join('|');hSeries=mergeSeries(full,hSeries);cacheSet(HS,hSeries);localSet(HSP,hSeries);const afterTop=rows(hSeries).filter(x=>['continue','dust'].includes(x.home_bucket)).map(x=>x.tmdb_id+':'+x.home_bucket).join('|');document.documentElement.dataset.ct391TopStable=String(beforeTop===afterTop||!beforeTop);if(routeNow()==='home')renderSeries()}
