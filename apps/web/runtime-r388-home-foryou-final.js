@@ -117,7 +117,7 @@ function applyMovieSort(){
 }
 function renderMoviesAll(){
  const sec=q('[data-ct388-movie-watch]'),stack=q('.ct388-movie-stack',sec);if(!sec||!stack)return false;const count=q('[data-ct388-movie-count]',sec);if(count)count.textContent=hMovies.length.toLocaleString('pt-BR');
- stack.replaceChildren();stack.style.display='flex';stack.style.flexDirection='column';const frag=document.createDocumentFragment();movieNodes=new Map(),ranks=new Map();sortedMovies().forEach((x,i)=>ranks.set(mediaId(x),i));
+ stack.replaceChildren();stack.style.display='flex';stack.style.flexDirection='column';const frag=document.createDocumentFragment(),ranks=new Map();movieNodes=new Map();sortedMovies().forEach((x,i)=>ranks.set(mediaId(x),i));
  for(const x of hMovies){const t=document.createElement('template');t.innerHTML=movieRow(x).trim();const node=t.content.firstElementChild;if(!node)continue;const id=mediaId(x);node.dataset.ct388MovieId=String(id);node.style.order=String(ranks.get(id)??999999);movieNodes.set(id,node);frag.appendChild(node)}
  stack.appendChild(frag);sec.dataset.ct388Rendered=String(movieNodes.size);document.documentElement.dataset.ct388Movies=String(movieNodes.size);return true
 }
