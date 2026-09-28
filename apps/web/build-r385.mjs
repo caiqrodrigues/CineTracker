@@ -11,7 +11,12 @@ js=once(js,"window.addEventListener('click',e=>{if(routeNow()!=='home')return;co
 js=once(js,"window.addEventListener('cinetracker:data-changed',()=>{if(routeNow()!=='home')return;seriesCache=[];","window.addEventListener('cinetracker:data-changed',()=>{if(window.__ctR385HomeOwner)return;if(routeNow()!=='home')return;seriesCache=[];",'r384 Home change listener');
 js=once(js,"function early(target,event){const b=target?.closest?.('[data-ct384-action]');","function early(target,event){if(window.__ctR385ForYouOwner)return false;const b=target?.closest?.('[data-ct384-action]');",'r384 action delegate');
 js=once(js,"async function loadForYou(force=false){\n if(routeNow()!=='discover')return false;","async function loadForYou(force=false){\n if(window.__ctR385ForYouOwner&&typeof window.__ctR385LoadForYou==='function')return window.__ctR385LoadForYou(!!force);\n if(routeNow()!=='discover')return false;",'r384 ForYou delegate');
-js=once(js,"setTimeout(()=>{if(routeNow()==='discover'&&String(window.__ctR288R263?.discover263?.tab||'foryou')==='foryou')void loadForYou(false)},0);","setTimeout(()=>{if(!window.__ctR385ForYouOwner&&routeNow()==='discover'&&String(window.__ctR288R263?.discover263?.tab||'foryou')==='foryou')void loadForYou(false)},0);",'r384 autoload');
+{
+ const a="setTimeout(()=>{if(routeNow()==='discover'&&String(window.__ctR288R263?.discover263?.tab||'foryou')==='foryou')void loadForYou(false)},0);";
+ const b="setTimeout(()=>{if(!window.__ctR385ForYouOwner&&routeNow()==='discover'&&String(window.__ctR288R263?.discover263?.tab||'foryou')==='foryou')void loadForYou(false)},0);";
+ const n=js.split(a).length-1;if(n<1)throw new Error('r385 expected r384 autoload');
+ js=js.replaceAll(a,b);
+}
 js=once(js,"window.__ctWebBuild='1.0.175';window.__ctOfficialVersion='1.0.175';","window.__ctWebBuild='1.0.176';window.__ctOfficialVersion='1.0.176';",'version');
 js=once(js,"const REVISION='r384-official-1.0.175';","const REVISION='r385-official-1.0.176';",'revision');
 js=once(js,"const version='1.0.175',revision='r384-official-1.0.175';","const version='1.0.176',revision='r385-official-1.0.176';",'footer');
