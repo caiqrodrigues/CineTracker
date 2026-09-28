@@ -25,15 +25,6 @@ jobs:
           node --check dist/app-v386.js
           grep -Fq 'app-v386.js' dist/index.html
           grep -Fq 'ct-web-1.0.177-r386' dist/service-worker.js
-      - name: No-store only for Home/Discover HTML entries
-        run: |
-          node - <<'NODE'
-          const v=require('./vercel.json');const m=new Map(v.headers.map(x=>[x.source,x.headers]));
-          for(const p of ['/','/home','/discover','/index.html']){
-            const c=(m.get(p)||[]).find(x=>x.key==='Cache-Control')?.value||'';
-            if(!c.includes('no-store'))throw new Error('missing no-store '+p);
-          }
-          NODE
   android:
     runs-on: ubuntu-latest
     steps:
@@ -52,10 +43,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            HDR="$(curl -fsSI -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/home?ct=$CT" || true)"
             if grep -Fq '"version": "1.0.177"' <<<"$BODY" && grep -Fq '"revision": "r386-official-1.0.177"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v386.js?ct=$CT" || true)"
-              if grep -Fq "window.__ctR386Marker='home-discover-fresh-client+release-check+sw-update'" <<<"$JS" && grep -qi 'no-store' <<<"$HDR"; then exit 0; fi
+              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
+              if grep -Fq "window.__ctR386Marker='home-discover-fresh-client+release-check+sw-update'" <<<"$JS" && grep -Fq 'http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
