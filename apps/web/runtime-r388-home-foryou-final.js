@@ -94,7 +94,8 @@ async function enrichOneSeries(x){
  }catch{return x}finally{clearTimeout(timer)}
 }
 async function enrichSeries(list){
- const src=rows(list),targets=src.filter(x=>x?.home_bucket==='continue'||x?.source_state==='InProgress'||x?.source_state==='UpToDate').sort((a,b)=>(Date.parse(b?.state_updated_at||b?.last_watched_at||0)||0)-(Date.parse(a?.state_updated_at||a?.last_watched_at||0)||0)).slice(0,8);
+ const src=rows(list),need=x=>(!Number(x?.next_episode_number||0)&&['InProgress','UpToDate'].includes(String(x?.source_state||'')))||(Number(x?.next_episode_number||0)>0&&(!x?.next_episode_title||x?.next_episode_rating==null||!x?.next_episode_air_date));
+ const targets=src.filter(x=>x?.home_bucket==='continue'||x?.source_state==='InProgress'||x?.source_state==='UpToDate').sort((a,b)=>Number(need(b))-Number(need(a))||(Date.parse(b?.state_updated_at||b?.last_watched_at||0)||0)-(Date.parse(a?.state_updated_at||a?.last_watched_at||0)||0)).slice(0,8);
  if(!targets.length)return src;
  const map=new Map(src.map(x=>[Number(x?.tmdb_id||0),x])),done=await Promise.all(targets.map(enrichOneSeries));
  for(const x of done)map.set(Number(x?.tmdb_id||0),x);
@@ -187,7 +188,7 @@ window.addEventListener('cinetracker:data-changed',()=>{if(routeNow()!=='home')r
 const FY='ct389:foryou';
 const blankState=()=>({dailyPool:[],dailyIndex:0,watchPools:{movie:[],series:[],anime:[]},watchIndex:{movie:0,series:0,anime:0},freshPools:{movie:[],series:[],anime:[]},freshIndex:{movie:0,series:0,anime:0}});
 let fy=(()=>{const x=localGet(FY,12*60*60*1000)||cacheGet(FY,600000);return x&&typeof x==='object'?x:blankState()})(),fyTask=null,fyRun=0;
-const locks=new Set(),excluded=new Map();
+const locks=new Set(),excluded=new Map(),validated=new Set();
 const typeOf=x=>String(x?.media_type||x?.type||x?.raw_tmdb?.media_type||'tv')==='movie'?'movie':'tv';
 const idOf=x=>Number(x?.tmdb_id||x?.source_tmdb_id||x?.id||x?.raw_tmdb?.id||0)||0;
 const keyOf=x=>idOf(x)>0?typeOf(x)+':'+idOf(x):'';
@@ -215,7 +216,7 @@ async function loadWatchPools(){
  await Promise.all(['movie','series','anime'].map(async k=>{
   const raw=unique(rows(await timeout(rpc('cinetracker_discover_watch_v389',{p_kind:k,p_limit:30}),1800).catch(()=>[]))).filter(x=>kindOf(x)===k);
   if(!raw.length){fy.watchPools[k]=[];fy.watchIndex[k]=0;return}
-  try{const a=await audit(raw);fy.watchPools[k]=raw.filter(x=>a.watch.has(keyOf(x))&&!a.seen.has(keyOf(x))).slice(0,30)}
+  try{const a=await audit(raw);fy.watchPools[k]=raw.filter(x=>a.watch.has(keyOf(x))&&!a.seen.has(keyOf(x))).slice(0,30);for(const x of fy.watchPools[k])validated.add(keyOf(x))}
   catch{fy.watchPools[k]=[]}
   fy.watchIndex[k]=0;if(routeNow()==='discover')renderSlot('watch:'+k)
  }));
@@ -227,14 +228,15 @@ async function tmdbFresh(k){
  try{const packs=await Promise.allSettled(pages.map(page=>k==='movie'?tmdb('/discover/movie',{page,sort_by:'popularity.desc','vote_average.gte':7.5,'vote_count.gte':80,include_adult:false},{signal:c.signal,timeout:2100}):k==='anime'?tmdb('/discover/tv',{page,sort_by:'popularity.desc',with_genres:'16',with_original_language:'ja','vote_average.gte':7.5},{signal:c.signal,timeout:2100}):tmdb('/discover/tv',{page,sort_by:'popularity.desc','vote_average.gte':7.5},{signal:c.signal,timeout:2100})));return unique(packs.flatMap(r=>r.status==='fulfilled'?rows(r.value?.results):[]).map(x=>({...x,media_type:k==='movie'?'movie':'tv',tmdb_id:Number(x.id||x.tmdb_id||0)}))).filter(x=>localFresh(x,k))}finally{clearTimeout(timer)}
 }
 async function ensureFresh(k,force=false){
- let src=force?[]:unique(fy.freshPools[k]).filter(x=>localFresh(x,k));if(src.length){try{const a=await audit(src);src=src.filter(x=>!a.blocked.has(keyOf(x)))}catch{src=[]}}
- if(src.length<6){let add=await dbFresh(k);if(add.length){const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));src=unique([...src,...add])}}
- if(src.length<6){let add=await tmdbFresh(k);if(add.length){const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));src=unique([...src,...add])}}
+ let src=force?[]:unique(fy.freshPools[k]).filter(x=>localFresh(x,k));if(src.length){try{const a=await audit(src);src=src.filter(x=>!a.blocked.has(keyOf(x)));for(const x of src)validated.add(keyOf(x))}catch{src=[]}}
+ if(src.length<6){let add=await dbFresh(k);if(add.length){const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));for(const x of add)validated.add(keyOf(x));src=unique([...src,...add])}}
+ if(src.length<6){let add=await tmdbFresh(k);if(add.length){const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));for(const x of add)validated.add(keyOf(x));src=unique([...src,...add])}}
  fy.freshPools[k]=src.slice(0,90);fy.freshIndex[k]=0;saveFy();return fy.freshPools[k].length>0
 }
 async function ensureDaily(){
- const cur=current('daily');if(cur){try{const a=await audit([cur]);if(!a.blocked.has(keyOf(cur)))return true}catch{}}
- const choices=['movie','series','anime'].map(k=>current('fresh:'+k)).filter(Boolean);fy.dailyPool=choices.length?[choices[Math.floor(Math.random()*choices.length)]]:[];fy.dailyIndex=0;saveFy();return fy.dailyPool.length>0
+ const cur=current('daily');if(cur){try{const a=await audit([cur]);if(!a.blocked.has(keyOf(cur))){validated.add(keyOf(cur));return true}}catch{}}
+ const choices=['movie','series','anime'].map(k=>current('fresh:'+k)).filter(x=>x&&validated.has(keyOf(x)));
+ fy.dailyPool=choices.length?[choices[Math.floor(Math.random()*choices.length)]]:[];fy.dailyIndex=0;if(fy.dailyPool[0])validated.add(keyOf(fy.dailyPool[0]));saveFy();return fy.dailyPool.length>0
 }
 function cardHtml(x){
  if(!x)return '<div class="ct388-placeholder"><div class="ct388-skeleton"></div><b>Buscando indicação…</b></div>';
@@ -244,7 +246,7 @@ function cardHtml(x){
 }
 function spec(name){return name.startsWith('watch:')?[['✓ Visto','seen'],['↻ Trocar','swap']]:[['+ Watchlist','watchlist'],['✓ Visto','seen'],['↻ Trocar','swap']]}
 function slotHtml(name){
- const x=current(name),k=name==='daily'?(x?kindOf(x):'movie'):name.split(':')[1],acts=x?'<div class="ct388-actions '+(name.startsWith('watch:')?'two':'three')+'">'+spec(name).map(([l,a])=>'<button type="button" data-ct388-action="'+a+'" data-ct388-slot="'+name+'">'+l+'</button>').join('')+'</div>':'';
+ const raw=current(name),x=raw&&validated.has(keyOf(raw))?raw:null,k=name==='daily'?(raw?kindOf(raw):'movie'):name.split(':')[1],acts=x?'<div class="ct388-actions '+(name.startsWith('watch:')?'two':'three')+'">'+spec(name).map(([l,a])=>'<button type="button" data-ct388-action="'+a+'" data-ct388-slot="'+name+'">'+l+'</button>').join('')+'</div>':'';
  return '<div class="ct388-slot" data-ct388-slot="'+name+'" data-ct388-kind="'+k+'">'+(name==='daily'?'':'<h3>'+(k==='movie'?'Filme':k==='anime'?'Anime':'Série')+'</h3>')+'<div class="ct388-cardwrap">'+cardHtml(x)+'</div>'+acts+'</div>'
 }
 function renderForYou(){
@@ -261,7 +263,7 @@ const ex=n=>{if(!excluded.has(n))excluded.set(n,new Set());return excluded.get(n
 async function swapFy(name,btn){
  if(locks.has(name))return false;locks.add(name);if(btn)btn.disabled=true;
  try{const cur=keyOf(current(name)),xs=ex(name);if(cur)xs.add(cur);let choices=pool(name).filter(x=>keyOf(x)&&keyOf(x)!==cur&&!xs.has(keyOf(x)));
-  if(name.startsWith('fresh:')){const k=name.split(':')[1];if(!choices.length){await ensureFresh(k,true);choices=pool(name).filter(x=>keyOf(x)!==cur&&!xs.has(keyOf(x)))}if(choices.length){const a=await audit(choices);choices=choices.filter(x=>!a.blocked.has(keyOf(x)))}}
+  if(name.startsWith('fresh:')){const k=name.split(':')[1];if(!choices.length){await ensureFresh(k,true);choices=pool(name).filter(x=>keyOf(x)!==cur&&!xs.has(keyOf(x)))}if(choices.length){const a=await audit(choices);choices=choices.filter(x=>!a.blocked.has(keyOf(x)));for(const x of choices)validated.add(keyOf(x))}}
   if(!choices.length)choices=pool(name).filter(x=>keyOf(x)&&keyOf(x)!==cur);if(!choices.length)return false;
   const item=choices[Math.floor(Math.random()*choices.length)];xs.add(keyOf(item));if(!setIndex(name,item))return false;renderSlot(name);return true
  }finally{locks.delete(name);if(btn?.isConnected)btn.disabled=false}
@@ -280,10 +282,11 @@ async function loadForYou(force=false){
  if(routeNow()!=='discover')return false;if(fyTask&&!force)return fyTask;const run=++fyRun;
  fyTask=(async()=>{
   renderForYou();
+  const dailyQuick=ensureDaily().then(ok=>{if(ok&&run===fyRun&&routeNow()==='discover')renderSlot('daily');return ok}).catch(()=>false);
   const freshJobs=['movie','series','anime'].map(async k=>{await ensureFresh(k,force);if(run===fyRun&&routeNow()==='discover')renderSlot('fresh:'+k);return fy.freshPools[k].length>0});
   const dailyJob=Promise.any(freshJobs.map((p,i)=>p.then(ok=>{if(!ok)throw new Error('empty');return ['movie','series','anime'][i]}))).then(async()=>{await ensureDaily();if(run===fyRun&&routeNow()==='discover')renderSlot('daily')}).catch(()=>{});
   const watchJob=loadWatchPools().catch(()=>false);
-  await Promise.allSettled([...freshJobs,dailyJob,watchJob]);
+  await Promise.allSettled([...freshJobs,dailyQuick,dailyJob,watchJob]);
   if(run!==fyRun||routeNow()!=='discover')return false;
   await ensureDaily();renderForYou();document.documentElement.dataset.ct388ForYou='ready';
   return ['movie','series','anime'].every(k=>fy.freshPools[k].length>0)
@@ -309,5 +312,5 @@ const style=document.createElement('style');style.id='ct-web-r388';style.textCon
 `;document.head.appendChild(style);
 
 window.__ctR388={version:'1.0.179',renderHome:renderHome388,loadSeries,loadHistory,loadMovies,renderSeries,renderMoviesAll,loadForYou,renderForYou,ensureFresh,audit,swap:swapFy,early:earlyFy,get home(){return{series:hSeries,history:hHistory,movies:hMovies,movieSort}},get fy(){return fy}};
-window.__ctR388Test={mergeSeries,enrichSeries,sortedMovies,applyMovieSort,audit,ensureFresh,renderForYou,slotHtml,swap:swapFy,setHome(v){hSeries=rows(v?.series);hHistory=v?.history||null;hMovies=rows(v?.movies)},setFy(v){fy=v},get home(){return{series:hSeries,history:hHistory,movies:hMovies}},get fy(){return fy}};
+window.__ctR388Test={mergeSeries,enrichSeries,sortedMovies,applyMovieSort,audit,ensureFresh,renderForYou,slotHtml,swap:swapFy,validateKey:k=>validated.add(k),clearValidated:()=>validated.clear(),setHome(v){hSeries=rows(v?.series);hHistory=v?.history||null;hMovies=rows(v?.movies)},setFy(v){fy=v},get home(){return{series:hSeries,history:hHistory,movies:hMovies}},get fy(){return fy}};
 })();
