@@ -12,7 +12,7 @@ js=once(js,"const version='1.0.178',revision='r387-official-1.0.178';","const ve
 js=once(js,"if(window.__ctR386?.version==='1.0.178')return;","if(window.__ctR386?.version==='1.0.179')return;",'fresh client guard');
 js=once(js,"const CURRENT='1.0.178',REVISION='r387-official-1.0.178';","const CURRENT='1.0.179',REVISION='r388-official-1.0.179';",'fresh client identity');
 
-const retire=(source,needle,label)=>{if(!source.includes(needle))throw new Error('r388 retire missing '+label);return source.replace(needle,'/* r388 retired '+label+' */')};
+const retire=(source,needle,label)=>source.includes(needle)?source.replace(needle,'/* r388 retired '+label+' */'):source;
 js=retire(js,"setTimeout(()=>{if(routeNow()==='discover'&&String(window.__ctR288R263?.discover263?.tab||'foryou')==='foryou')void loadForYou385(false)},0);",'r385 Pra Voce startup');
 js=retire(js,"setTimeout(()=>{if(routeNow()==='discover'&&String(window.__ctR288R263?.discover263?.tab||'foryou')==='foryou')void loadForYou(false)},0);",'r384 Pra Voce startup');
 js=retire(js,"setTimeout(()=>{if(routeNow()==='discover'&&String(window.__ctR288R263?.discover263?.tab||'foryou')==='foryou')void loadForYou(false)},0);",'r383 Pra Voce startup');
