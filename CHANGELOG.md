@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.176 — 2026-09-28 — Web r385
+
+### Home — correção isolada
+- Remove a autoridade r384 da Home. Séries, Histórico e Filmes passam a carregar em paralelo e atualizar somente o próprio bloco.
+- Novo `cinetracker_home_series_v385` consolida duplicatas por TMDB, cruza todo o histórico/progresso do título e devolve bucket + próximo episódio + nome + nota + data + disponíveis na primeira resposta.
+- Séries esportivas de longa duração (Raw/SmackDown/F1/UFC) só entram em Continuar se houver episódio recente não visto; backlog antigo não volta a inflar Assistir a seguir.
+- Cache r384 não é reutilizado. O novo cache r385 é curto e sempre recebe refresh de rede.
+- Novo `cinetracker_home_history_v385` carrega Histórico em paralelo, sem depender do payload monolítico.
+- Filmes usam diretamente a Watchlist completa v376 desde a entrada na Home, sem depender do clique em Filmes. O único contador é o total real e os seis sorts continuam locais.
+
+### Descobrir / Pra Você — correção isolada
+- Novo filtro `cinetracker_discover_filter_v385` cruza TMDB + títulos localizado/original + histórico/progresso/overrides.
+- Auditoria Fresh é fail-closed: se a validação falhar, o card não é liberado como 100% novo.
+- `100% Novos` exige nota >= 7,5, ano > 1990, pôster, categoria correta e ausência em Visto/Watchlist.
+- Harry Potter/Azkaban marcado em registro legado é caso de regressão obrigatório.
+- Linha final de ações usa somente `.ct385-actions`: Diário/Fresh = Watchlist, Visto, Trocar; Watchlist = Visto, Trocar.
+- Filtro duplicado dentro de Pra Você é removido; filtro global externo é preservado; coração fica dentro da capa.
+
+### Escopo congelado
+- Nenhuma alteração em Perfil, Esportes, Top 10, Configurações ou Android.
+- Web: `1.0.176 / r385-official-1.0.176`.
+- Android preservado em `1.0.20 / versionCode 10062`.
+
 ## 1.0.175 — 2026-09-27 — Web r384
 
 ### Home

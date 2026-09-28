@@ -1,4 +1,4 @@
-name: Verify Web 1.0.175 r384 Home and Pra Voce Only
+name: Verify Web 1.0.176 r385 Home and Pra Voce Only
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r384:
+  web_r385:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -17,14 +17,14 @@ jobs:
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r384-home-foryou-final.js
-          node --check build-r384.mjs
-          node --check test-r384-browser.mjs
-          node build-r384-official.mjs
-          CT_R384_SKIP_BUILD=1 node test-r384.mjs
-          CT_R384_SKIP_BUILD=1 node test-r384-browser.mjs
-          node --check dist/app-v384.js
-          grep -Fq 'ct-web-1.0.175-r384' dist/service-worker.js
+          node --check runtime-r385-home-foryou-owner.js
+          node --check build-r385.mjs
+          node --check test-r385-browser.mjs
+          node build-r385-official.mjs
+          CT_R385_SKIP_BUILD=1 node test-r385.mjs
+          CT_R385_SKIP_BUILD=1 node test-r385-browser.mjs
+          node --check dist/app-v385.js
+          grep -Fq 'ct-web-1.0.176-r385' dist/service-worker.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r384, android]
+    needs: [web_r385, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -43,10 +43,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.175"' <<<"$BODY" && grep -Fq '"revision": "r384-official-1.0.175"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v384.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.176"' <<<"$BODY" && grep -Fq '"revision": "r385-official-1.0.176"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v385.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR384Marker='home-series-staged-no-contention+movies-on-demand+foryou-strict-displayed-state+stable-actions'" <<<"$JS" && grep -Fq 'app-v384.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR385Marker='home-independent-series-history-movies+foryou-v385-strict+actions-final'" <<<"$JS" && grep -Fq 'app-v385.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done

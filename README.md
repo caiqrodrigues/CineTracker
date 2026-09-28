@@ -1,3 +1,14 @@
+## Web 1.0.176 / r385
+
+- **Home independente:** Séries, Histórico e Filmes carregam em paralelo; nenhum clique de aba é necessário para preencher Filmes.
+- **Séries corretas no primeiro dado:** nova autoridade v385 agrega duplicatas, progresso e catálogo de episódios antes do card aparecer.
+- **Filmes completos:** Watchlist v376 inteira, um único contador real e seis ordenações locais.
+- **Pra Você estrito:** auditoria v385 fail-closed; visto/Watchlist não entra em 100% Novos.
+- **Botões finais:** 3/2/3 em `.ct385-actions`, sem writers antigos; filtro interno duplicado removido e coração dentro do pôster.
+- **Escopo:** somente Home e Descobrir/Pra Você. Perfil, Esportes, Top 10, Configurações e Android permanecem intocados.
+
+Build oficial: `apps/web/build-r385-official.mjs`; runtime: `apps/web/runtime-r385-home-foryou-owner.js`.
+
 ## Web 1.0.175 / r384
 
 - Home Séries com carga em etapas: Séries primeiro, Filmes apenas ao abrir a aba Filmes.
@@ -102,7 +113,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.175** | `r384-official-1.0.175` | Home completa + Perfil original + Pra Você 3/2/3 auditado |
+| Web | **1.0.176** | `r385-official-1.0.176` | Home independente + Pra Você v385 estrito |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |
