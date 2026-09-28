@@ -29,16 +29,38 @@ let hRun=0,hSeriesTask=null,hHistoryTask=null,hMoviesTask=null,movieSort='added_
 function activeKind(){try{return window.__ctR371?.activeTab==='movies'?'movies':'series'}catch{return q('[data-home-tab].active')?.dataset?.homeTab==='movies'?'movies':'series'}}
 function applyTab(k){try{window.__ctR371?.applyTab?.(k)}catch{}try{if(typeof ct266ApplyHomeTab==='function')ct266ApplyHomeTab(k)}catch{}}
 function settleHome(k=activeKind()){try{window.__ctR371?.preserveAfterPaint?.()}catch{};try{window.__ctR385?.scheduleHome?.(k,true)}catch{};try{window.__ctR375?.align?.(k)}catch{}}
+function mergeLogicalSeries(list){
+ const map=new Map();
+ const stateRank={InProgress:5,UpToDate:4,WatchLater:3,Completed:2,AlreadySeen:1};
+ for(const x0 of rows(list)){const id=Number(x0?.tmdb_id||0);if(!(id>0))continue;const x={...x0},prev=map.get(id);
+  if(!prev){map.set(id,x);continue}
+  const out={...prev};
+  for(const [k,v] of Object.entries(x))if((out[k]===null||out[k]===undefined||out[k]==='')&&v!==null&&v!==undefined&&v!=='')out[k]=v;
+  const prevNext=Number(prev?.next_episode_number||0),xNext=Number(x?.next_episode_number||0);
+  if(!prevNext&&xNext){for(const k of ['next_season_number','next_episode_number','next_episode_title','next_episode_rating','next_episode_air_date'])out[k]=x[k];out.home_bucket=x.home_bucket||out.home_bucket}
+  out.available_episodes=Math.max(Number(prev?.available_episodes||0),Number(x?.available_episodes||0));
+  out.watched_episodes=Math.max(Number(prev?.watched_episodes||0),Number(x?.watched_episodes||0));
+  out.released_episodes=Math.max(Number(prev?.released_episodes||0),Number(x?.released_episodes||0));
+  out.total_episodes=Math.max(Number(prev?.total_episodes||0),Number(x?.total_episodes||0));
+  const pKey=Number(prev?.last_season_number||0)*100000+Number(prev?.last_episode_number||0),xKey=Number(x?.last_season_number||0)*100000+Number(x?.last_episode_number||0);
+  if(xKey>pKey){out.last_season_number=x.last_season_number;out.last_episode_number=x.last_episode_number}
+  const pWhen=Date.parse(prev?.last_watched_at||0)||0,xWhen=Date.parse(x?.last_watched_at||0)||0;if(xWhen>pWhen)out.last_watched_at=x.last_watched_at;
+  if((stateRank[x?.source_state]||0)>(stateRank[out?.source_state]||0))out.source_state=x.source_state;
+  if(x?.title&&(!out?.title||/^Stuart Fails/i.test(out.title)))out.title=x.title;
+  map.set(id,out)
+ }
+ return [...map.values()]
+}
 function mergeSeries(full,active){
- const map=new Map(rows(full).map(x=>[Number(x?.tmdb_id||0),{...x}]));
- for(const a of rows(active)){const id=Number(a?.tmdb_id||0);if(!(id>0))continue;const prev=map.get(id);
+ const map=new Map(mergeLogicalSeries(full).map(x=>[Number(x?.tmdb_id||0),{...x}]));
+ for(const a of mergeLogicalSeries(active)){const id=Number(a?.tmdb_id||0),prev=map.get(id);
   if(!prev){map.set(id,{...a});continue}
   const patch={...prev};
   for(const [k,v] of Object.entries(a||{}))if(v!==null&&v!==undefined&&v!=='')patch[k]=v;
   if(!Number(a?.next_episode_number||0)&&prev.home_bucket)patch.home_bucket=prev.home_bucket;
   map.set(id,patch)
  }
- return [...map.values()]
+ return mergeLogicalSeries([...map.values()])
 }
 function freshPairAfter(ep,x){
  const s=Number(ep?.season_number||0),e=Number(ep?.episode_number||0),ls=Number(x?.last_season_number||0),le=Number(x?.last_episode_number||0);
@@ -55,8 +77,10 @@ async function enrichOneSeries(x){
  try{
   let details=null;try{details=await tmdb('/tv/'+id,{language:'pt-BR'},{signal:c.signal,timeout:1400})}catch{}
   let next={...x},candidate=null;
-  const last=details?.last_episode_to_air;
   const lastKey=Number(x?.last_season_number||0)*100000+Number(x?.last_episode_number||0);
+  const rawNext=x?.raw_tmdb?.next_episode_to_air,rawKey=Number(rawNext?.season_number||0)*100000+Number(rawNext?.episode_number||0);
+  if(rawNext&&rawKey>lastKey&&(!rawNext.air_date||String(rawNext.air_date)<=today()))candidate=rawNext;
+  const last=details?.last_episode_to_air;
   const detailKey=Number(last?.season_number||0)*100000+Number(last?.episode_number||0);
   if(mayHaveNew&&last&&detailKey>lastKey&&(!last.air_date||String(last.air_date)<=today())){
    const ls=Number(last.season_number||0);
@@ -95,7 +119,7 @@ async function enrichOneSeries(x){
 }
 async function enrichSeries(list){
  const src=rows(list),need=x=>(!Number(x?.next_episode_number||0)&&['InProgress','UpToDate'].includes(String(x?.source_state||'')))||(Number(x?.next_episode_number||0)>0&&(!x?.next_episode_title||x?.next_episode_rating==null||!x?.next_episode_air_date));
- const targets=src.filter(x=>x?.home_bucket==='continue'||x?.source_state==='InProgress'||x?.source_state==='UpToDate').sort((a,b)=>Number(need(b))-Number(need(a))||(Date.parse(b?.state_updated_at||b?.last_watched_at||0)||0)-(Date.parse(a?.state_updated_at||a?.last_watched_at||0)||0)).slice(0,8);
+ const targets=src.filter(x=>x?.home_bucket==='continue'||x?.source_state==='InProgress'||x?.source_state==='UpToDate').sort((a,b)=>Number(need(b))-Number(need(a))||(Date.parse(b?.state_updated_at||b?.last_watched_at||0)||0)-(Date.parse(a?.state_updated_at||a?.last_watched_at||0)||0)).slice(0,12);
  if(!targets.length)return src;
  const map=new Map(src.map(x=>[Number(x?.tmdb_id||0),x])),done=await Promise.all(targets.map(enrichOneSeries));
  for(const x of done)map.set(Number(x?.tmdb_id||0),x);
@@ -155,18 +179,27 @@ function paintFrame(kind=activeKind()){const h=q('[data-home]');if(!h)return fal
 async function loadSeries(force=false){
  if(hSeriesTask&&!force)return hSeriesTask;const run=++hRun,hadCache=hSeries.length>0;
  hSeriesTask=(async()=>{
-  let base=rows(await timeout(rpc('cinetracker_home_series_v389',{p_today:today()}),3200).catch(()=>[]));
-  if(!base.length){
-   const fallback=rows(await timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),1700).catch(()=>[]));
-   if(fallback.length)base=mergeSeries(hSeries,fallback);
-  }
-  if(!base.length||run!==hRun)return hSeries;
+  const activeP=timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),700).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
+  const fullP=timeout(rpc('cinetracker_home_series_v389',{p_today:today()}),3200).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
   if(!hadCache){
-   base=await timeout(enrichSeries(base),1800).catch(()=>base);
-   if(run!==hRun)return hSeries;hSeries=base;cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries();
-  }else{
-   hSeries=base;cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries();
-   void timeout(enrichSeries(base),1900).then(live=>{if(run!==hRun||!live?.length)return;hSeries=live;cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries()}).catch(()=>{});
+   let active=await activeP;
+   if(active.length){
+    active=await timeout(enrichSeries(active),1750).catch(()=>active);
+    if(run!==hRun)return hSeries;
+    hSeries=mergeSeries(hSeries,active);cacheSet(HS,hSeries);localSet(HSP,hSeries);
+    if(routeNow()==='home')renderSeries();
+    document.documentElement.dataset.ct390SeriesFirst='active-complete';
+   }
+  }
+  const full=await fullP;
+  if(full.length&&run===hRun){
+   let merged=mergeSeries(full,hSeries);
+   if(hadCache)merged=mergeSeries(merged,hSeries);
+   hSeries=merged;cacheSet(HS,hSeries);localSet(HSP,hSeries);
+   if(routeNow()==='home')renderSeries();
+   if(hadCache)void timeout(enrichSeries(hSeries),1750).then(live=>{if(run!==hRun||!live?.length)return;hSeries=mergeSeries(hSeries,live);cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries()}).catch(()=>{});
+  }else if(!hSeries.length){
+   const active=await activeP;if(active.length&&run===hRun){hSeries=active;cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries()}
   }
   return hSeries
  })().finally(()=>{hSeriesTask=null});return hSeriesTask
@@ -214,7 +247,7 @@ async function audit(list){
 }
 async function loadWatchPools(){
  await Promise.all(['movie','series','anime'].map(async k=>{
-  const raw=unique(rows(await timeout(rpc('cinetracker_discover_watch_v389',{p_kind:k,p_limit:30}),1800).catch(()=>[]))).filter(x=>kindOf(x)===k);
+  const raw=unique(rows(await timeout(rpc('cinetracker_discover_watch_v389',{p_kind:k,p_limit:30}),900).catch(()=>[]))).filter(x=>kindOf(x)===k);
   if(!raw.length){fy.watchPools[k]=[];fy.watchIndex[k]=0;return}
   try{const a=await audit(raw);fy.watchPools[k]=raw.filter(x=>a.watch.has(keyOf(x))&&!a.seen.has(keyOf(x))).slice(0,30);for(const x of fy.watchPools[k])validated.add(keyOf(x))}
   catch{fy.watchPools[k]=[]}
@@ -222,7 +255,7 @@ async function loadWatchPools(){
  }));
  saveFy();return true
 }
-async function dbFresh(k){try{return rows(await timeout(rpc('cinetracker_discover_fresh_v387',{p_kind:k,p_limit:24}),1500)).filter(x=>localFresh(x,k))}catch{return[]}}
+async function dbFresh(k){try{return rows(await timeout(rpc('cinetracker_discover_fresh_v387',{p_kind:k,p_limit:24}),1100)).filter(x=>localFresh(x,k))}catch{return[]}}
 async function tmdbFresh(k){
  if(typeof tmdb!=='function')return[];const base=2+Math.floor(Math.random()*14),pages=[base,base+7],c=new AbortController(),timer=setTimeout(()=>c.abort(),2400);
  try{const packs=await Promise.allSettled(pages.map(page=>k==='movie'?tmdb('/discover/movie',{page,sort_by:'popularity.desc','vote_average.gte':7.5,'vote_count.gte':80,include_adult:false},{signal:c.signal,timeout:2100}):k==='anime'?tmdb('/discover/tv',{page,sort_by:'popularity.desc',with_genres:'16',with_original_language:'ja','vote_average.gte':7.5},{signal:c.signal,timeout:2100}):tmdb('/discover/tv',{page,sort_by:'popularity.desc','vote_average.gte':7.5},{signal:c.signal,timeout:2100})));return unique(packs.flatMap(r=>r.status==='fulfilled'?rows(r.value?.results):[]).map(x=>({...x,media_type:k==='movie'?'movie':'tv',tmdb_id:Number(x.id||x.tmdb_id||0)}))).filter(x=>localFresh(x,k))}finally{clearTimeout(timer)}
