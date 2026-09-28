@@ -176,8 +176,9 @@ async function audit(list){
  return{blocked:new Set(rows(d.blocked_keys).map(String)),watch:new Set(rows(d.watch_keys).map(String)),seen:new Set(rows(d.seen_keys).map(String))}
 }
 async function loadWatchPools(){
- const d=await timeout(rpc('cinetracker_watchlist_full_v376',{}),6000),all=rows(d?.rows),a=await audit(all.slice(0,1200));
- for(const k of ['movie','series','anime'])fy.watchPools[k]=unique(all.filter(x=>kindOf(x)===k&&a.watch.has(keyOf(x))&&!a.seen.has(keyOf(x)))).slice(0,120);
+ const d=await timeout(rpc('cinetracker_watchlist_full_v376',{}),6000),all=rows(d?.rows),watch=new Set(),seen=new Set();
+ for(let i=0;i<all.length;i+=160){const a=await audit(all.slice(i,i+160));for(const x of a.watch)watch.add(x);for(const x of a.seen)seen.add(x)}
+ for(const k of ['movie','series','anime'])fy.watchPools[k]=unique(all.filter(x=>kindOf(x)===k&&watch.has(keyOf(x))&&!seen.has(keyOf(x)))).slice(0,160);
  fy.watchIndex={movie:0,series:0,anime:0};return true
 }
 async function dbFresh(k){try{return rows(await timeout(rpc('cinetracker_discover_fresh_v387',{p_kind:k,p_limit:72}),4200)).filter(x=>localFresh(x,k))}catch{return[]}}
