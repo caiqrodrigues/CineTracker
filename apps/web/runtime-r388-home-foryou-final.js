@@ -21,7 +21,7 @@ const HS='ct388:series',HH='ct388:history',HM='ct388:movies',HSP='ct389:series:p
 const localGet=(k,max=36*60*60*1000)=>{try{const x=JSON.parse(localStorage.getItem(k)||'null');if(x?.data&&Date.now()-Number(x.at||0)<max)return x.data;if(x?.payload&&Date.now()-Number(x.at||0)<max)return x.payload}catch{}return null};
 const localSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify({at:Date.now(),data:v}))}catch{}};
 const legacyHome=localGet(HLP,36*60*60*1000);
-let hSeries=rows(localGet(HSP)||cacheGet(HS,300000)||(legacyHome?.series||[])),
+let hSeries=rows(localGet(HSP)),
  hHistory=cacheGet(HH,300000)||((legacyHome&&typeof legacyHome==='object')?{history_episodes:rows(legacyHome.history_episodes),history_movies:rows(legacyHome.history_movies)}:null),
  hMovies=rows(cacheGet(HM,300000));
 let hRun=0,hSeriesTask=null,hHistoryTask=null,hMoviesTask=null,movieSort='added_desc',movieNodes=new Map();
@@ -58,12 +58,27 @@ async function enrichOneSeries(x){
   const last=details?.last_episode_to_air;
   const lastKey=Number(x?.last_season_number||0)*100000+Number(x?.last_episode_number||0);
   const detailKey=Number(last?.season_number||0)*100000+Number(last?.episode_number||0);
-  if(mayHaveNew&&last&&detailKey>lastKey&&(!last.air_date||String(last.air_date)<=today()))candidate=last;
+  if(mayHaveNew&&last&&detailKey>lastKey&&(!last.air_date||String(last.air_date)<=today())){
+   const ls=Number(last.season_number||0);
+   if(ls>0)try{
+    const sd=await tmdb('/tv/'+id+'/season/'+ls,{language:'pt-BR'},{signal:c.signal,timeout:1400});
+    const released=rows(sd?.episodes).filter(e=>Number(e?.season_number||ls)>0&&Number(e?.episode_number||0)>0&&(!e?.air_date||String(e.air_date)<=today()))
+      .sort((a,b)=>Number(a.season_number||ls)-Number(b.season_number||ls)||Number(a.episode_number)-Number(b.episode_number));
+    candidate=released.find(e=>(Number(e.season_number||ls)*100000+Number(e.episode_number))>lastKey)||last;
+    const available=released.filter(e=>(Number(e.season_number||ls)*100000+Number(e.episode_number))>lastKey).length;
+    if(available>0)next.available_episodes=Math.max(Number(next.available_episodes||0),available);
+   }catch{candidate=last}
+  }
   if(Number(x?.next_episode_number||0)>0){
    const ns=Number(x.next_season_number||0),ne=Number(x.next_episode_number||0);
    if(last&&Number(last.season_number)===ns&&Number(last.episode_number)===ne)candidate=last;
    if((!candidate||!candidate?.name||candidate?.vote_average==null||!candidate?.air_date)&&ns>0){
-    try{const sd=await tmdb('/tv/'+id+'/season/'+ns,{language:'pt-BR'},{signal:c.signal,timeout:1400});candidate=rows(sd?.episodes).find(e=>Number(e?.episode_number)===ne)||candidate}catch{}
+    try{
+     const sd=await tmdb('/tv/'+id+'/season/'+ns,{language:'pt-BR'},{signal:c.signal,timeout:1400}),eps=rows(sd?.episodes);
+     candidate=eps.find(e=>Number(e?.episode_number)===ne)||candidate;
+     const after=eps.filter(e=>Number(e?.episode_number||0)>=ne&&(!e?.air_date||String(e.air_date)<=today())).length;
+     if(after>0)next.available_episodes=Math.max(Number(next.available_episodes||0),after);
+    }catch{}
    }
   }
   if(!candidate)return x;
