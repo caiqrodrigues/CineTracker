@@ -178,15 +178,17 @@ function frame(){
 function paintFrame(kind=activeKind()){const h=q('[data-home]');if(!h)return false;h.innerHTML=frame();applyTab(kind);if(hSeries.length)renderSeries();if(kind==='movies'&&hMovies.length)renderMoviesAll();settleHome(kind);return true}
 async function loadSeries(force=false){
  if(hSeriesTask&&!force)return hSeriesTask;const run=++hRun,hadCache=hSeries.length>0;
+ document.documentElement.dataset.ct390LoadStage='start:'+run+':cache='+Number(hadCache);
  hSeriesTask=(async()=>{
-  const activeP=timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),700).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
-  const fullP=timeout(rpc('cinetracker_home_series_v389',{p_today:today()}),3200).then(v=>mergeLogicalSeries(rows(v))).catch(()=>[]);
+  const activeP=timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),700).then(v=>{const a=mergeLogicalSeries(rows(v));document.documentElement.dataset.ct390ActiveRows=String(a.length);return a}).catch(e=>{document.documentElement.dataset.ct390ActiveError=String(e?.message||e);return[]});
+  const fullP=timeout(rpc('cinetracker_home_series_v389',{p_today:today()}),3200).then(v=>{const a=mergeLogicalSeries(rows(v));document.documentElement.dataset.ct390FullRows=String(a.length);return a}).catch(e=>{document.documentElement.dataset.ct390FullError=String(e?.message||e);return[]});
   if(!hadCache){
-   let active=await activeP;
+   let active=await activeP;document.documentElement.dataset.ct390LoadStage='active:'+active.length+':run='+run+':current='+hRun;
    if(active.length){
-    active=await timeout(enrichSeries(active),1750).catch(()=>active);
-    if(run!==hRun)return hSeries;
-    hSeries=mergeSeries(hSeries,active);cacheSet(HS,hSeries);localSet(HSP,hSeries);
+    active=await timeout(enrichSeries(active),1750).catch(e=>{document.documentElement.dataset.ct390EnrichError=String(e?.message||e);return active});
+    document.documentElement.dataset.ct390LoadStage='enriched:'+active.length+':run='+run+':current='+hRun;
+    if(run!==hRun){document.documentElement.dataset.ct390LoadDiscard='generation';return hSeries}
+    hSeries=mergeSeries(hSeries,active);document.documentElement.dataset.ct390StateRows=String(hSeries.length);cacheSet(HS,hSeries);localSet(HSP,hSeries);
     if(routeNow()==='home')renderSeries();
     document.documentElement.dataset.ct390SeriesFirst='active-complete';
    }
