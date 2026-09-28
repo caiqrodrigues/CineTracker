@@ -1,3 +1,13 @@
+## Web 1.0.178 / r387
+
+- **Home:** abre em Assistir a seguir, com Histórico completo escondido acima.
+- **Histórico:** sem teto de 50/100; filmes recentes posteriores ao antigo corte entram normalmente.
+- **Pra Você:** uma única linha de ações, largura idêntica à capa e zero sobreposição.
+- **100% Novos:** fallback v387 no Supabase antes do fallback TMDB, sempre mantendo exclusão de Vistos/Watchlist.
+- **Escopo:** somente Home e Descobrir/Pra Você; demais áreas permanecem intocadas.
+
+Build oficial: `apps/web/build-r387-official.mjs`.
+
 ## Web 1.0.177 / r386
 
 - **Escopo estrito:** somente Home e Descobrir → Pra Você.
@@ -123,7 +133,7 @@ CineTracker é um companion pessoal multiplataforma para filmes, séries, animes
 
 | Plataforma | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.177** | `r386-official-1.0.177` | Home independente + Pra Você v385 estrito |
+| Web | **1.0.178** | `r387-official-1.0.178` | Home no bloco principal + histórico completo + Pra Você estável |
 | Android | **1.0.20** | `versionCode 10062` | produção, preservado sem alterações na r313 |
 | Backend | produção compartilhada | Supabase | estado canônico por TMDB efetivo e writers de progresso preservados |
 | Windows | — | — | não lançado |

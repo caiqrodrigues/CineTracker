@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.0.178 — 2026-09-28 — Web r387
+
+### Home — somente correções solicitadas
+- Séries e Filmes voltam a abrir no primeiro bloco principal: `Assistir a seguir` / `Assistir a seguir / Watchlist`.
+- Histórico continua fisicamente acima da posição inicial e só aparece ao rolar para cima.
+- O alinhamento é reafirmado durante os repaints iniciais, mas é cancelado assim que o usuário começa a rolar manualmente.
+- Novo `cinetracker_home_history_v387` remove o teto de 50/100 itens e consolida o histórico completo por mídia lógica.
+- A Watchlist de Filmes, filtros e demais regras da Home r385/r386 são preservados.
+
+### Descobrir / Pra Você — somente correções solicitadas
+- Antes de montar a linha final, qualquer action-row legado direto do slot é removido; fica uma única `.ct385-actions`.
+- A linha usa Flexbox nowrap e sincroniza sua largura com a largura real da capa.
+- Novo `cinetracker_discover_fresh_v387` fornece fallback local estrito já excluindo Vistos/Watchlist; TMDB continua como fallback bounded adicional.
+- O carregamento tenta novamente Fresh de forma limitada antes de aceitar estado parcial.
+- Nenhum outro bloco do Descobrir foi alterado.
+
+### Validação
+- Browser gate exige Histórico de Filmes com 130 itens completos e item posterior ao Pokémon presente.
+- Séries e Filmes precisam iniciar no bloco principal com o histórico acima do viewport.
+- Fresh começa vazio e precisa preencher Filme/Série/Anime pelo fallback.
+- O teste injeta action-rows legados e mede os botões: apenas uma linha pode sobreviver, sem sobreposição e sem exceder a largura da capa.
+
+### Escopo congelado
+- Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+- Web: `1.0.178 / r387-official-1.0.178`.
+- Android: `1.0.20 / versionCode 10062`.
+
 ## 1.0.177 — 2026-09-28 — Web r386
 
 ### Home + Descobrir / Pra Você
