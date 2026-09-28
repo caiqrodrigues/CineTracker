@@ -11,6 +11,7 @@ js=once(js,"const REVISION='r385-official-1.0.176';","const REVISION='r386-offic
 js=once(js,"const version='1.0.176',revision='r385-official-1.0.176';","const version='1.0.177',revision='r386-official-1.0.177';",'footer');
 js=once(js,'boot();',runtime+'\nboot();','runtime');
 html=html.replaceAll('app-v385.js','app-v386.js').replaceAll('app-v385.css','app-v386.css').replaceAll('v1.0.176','v1.0.177').replaceAll('r385-official-1.0.176','r386-official-1.0.177');
+html=html.replace('<meta charset="UTF-8">','<meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">');
 sw=sw.replaceAll('ct-web-1.0.176-r385','ct-web-1.0.177-r386').replaceAll('app-v385.js','app-v386.js').replaceAll('app-v385.css','app-v386.css');
 css+='\n/* CineTracker Web 1.0.177 r386 — Home/Discover fresh-client guard only; r385 UI/data owner preserved. */\n';
 const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.177',revision:'r386-official-1.0.177',base:'r385-production',scope:'home+discover-foryou-only',home_owner:'r385-preserved',discover_foryou_owner:'r385-preserved',client_freshness:'release-json-no-store+service-worker-update',stale_bundle_guard:'home+discover-only',profile:'untouched',sports:'untouched',top10:'untouched',settings:'untouched',android:'1.0.20/10062'};
