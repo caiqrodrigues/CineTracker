@@ -17,8 +17,13 @@ const cacheGet=(k,max=300000)=>{try{const x=JSON.parse(sessionStorage.getItem(k)
 const cacheSet=(k,v)=>{try{sessionStorage.setItem(k,JSON.stringify({at:Date.now(),data:v}))}catch{}};
 
 /* ---------------- HOME ---------------- */
-const HS='ct388:series',HH='ct388:history',HM='ct388:movies';
-let hSeries=rows(cacheGet(HS,300000)),hHistory=cacheGet(HH,300000)||null,hMovies=rows(cacheGet(HM,300000));
+const HS='ct388:series',HH='ct388:history',HM='ct388:movies',HSP='ct389:series:persistent',HLP='ct:home:v359:r379';
+const localGet=(k,max=36*60*60*1000)=>{try{const x=JSON.parse(localStorage.getItem(k)||'null');if(x?.data&&Date.now()-Number(x.at||0)<max)return x.data;if(x?.payload&&Date.now()-Number(x.at||0)<max)return x.payload}catch{}return null};
+const localSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify({at:Date.now(),data:v}))}catch{}};
+const legacyHome=localGet(HLP,36*60*60*1000);
+let hSeries=rows(localGet(HSP)||cacheGet(HS,300000)||(legacyHome?.series||[])),
+ hHistory=cacheGet(HH,300000)||((legacyHome&&typeof legacyHome==='object')?{history_episodes:rows(legacyHome.history_episodes),history_movies:rows(legacyHome.history_movies)}:null),
+ hMovies=rows(cacheGet(HM,300000));
 let hRun=0,hSeriesTask=null,hHistoryTask=null,hMoviesTask=null,movieSort='added_desc',movieNodes=new Map();
 
 function activeKind(){try{return window.__ctR371?.activeTab==='movies'?'movies':'series'}catch{return q('[data-home-tab].active')?.dataset?.homeTab==='movies'?'movies':'series'}}
@@ -43,34 +48,38 @@ function freshPairAfter(ep,x){
 }
 async function enrichOneSeries(x){
  const id=Number(x?.tmdb_id||0);if(!(id>0)||typeof tmdb!=='function')return x;
- const needMeta=Number(x?.next_episode_number||0)>0&&(!x?.next_episode_title||x?.next_episode_rating==null||!x?.next_episode_air_date);
- const recent=(Date.now()-(Date.parse(x?.last_watched_at||0)||0))<120*86400000;
- const probeMissing=!Number(x?.next_episode_number||0)&&recent&&Number(x?.watched_episodes||0)>0;
- if(!needMeta&&!probeMissing)return x;
- const c=new AbortController(),timer=setTimeout(()=>c.abort(),2200);
+ const missingMeta=Number(x?.next_episode_number||0)>0&&(!x?.next_episode_title||x?.next_episode_rating==null||!x?.next_episode_air_date);
+ const mayHaveNew=!Number(x?.next_episode_number||0)&&['InProgress','UpToDate'].includes(String(x?.source_state||''))&&Number(x?.watched_episodes||0)>0;
+ if(!missingMeta&&!mayHaveNew)return x;
+ const c=new AbortController(),timer=setTimeout(()=>c.abort(),1700);
  try{
-  let details=null;try{details=await tmdb('/tv/'+id,{language:'pt-BR'},{signal:c.signal,timeout:1800})}catch{}
-  const wantedS=Number(x?.next_season_number||0),lastS=Number(x?.last_season_number||0),lastAirS=Number(details?.last_episode_to_air?.season_number||0),numS=Number(details?.number_of_seasons||0);
-  const seasonNums=[wantedS,lastS,lastAirS,numS].filter(n=>n>0).filter((n,i,a)=>a.indexOf(n)===i).slice(0,2);
-  const packs=await Promise.allSettled(seasonNums.map(s=>tmdb('/tv/'+id+'/season/'+s,{language:'pt-BR'},{signal:c.signal,timeout:1800})));
-  const eps=packs.flatMap(r=>r.status==='fulfilled'?rows(r.value?.episodes):[]).filter(e=>Number(e?.season_number||0)>0&&Number(e?.episode_number||0)>0&&(!e?.air_date||String(e.air_date)<=today()))
-    .sort((a,b)=>Number(a.season_number)-Number(b.season_number)||Number(a.episode_number)-Number(b.episode_number));
-  let ep=null;
-  if(wantedS>0&&Number(x?.next_episode_number||0)>0)ep=eps.find(e=>Number(e.season_number)===wantedS&&Number(e.episode_number)===Number(x.next_episode_number));
-  if(!ep&&probeMissing)ep=eps.find(e=>freshPairAfter(e,x));
-  if(!ep)return x;
-  const next={...x,next_season_number:Number(ep.season_number),next_episode_number:Number(ep.episode_number),
-    next_episode_title:String(ep.name||x?.next_episode_title||('Episódio '+ep.episode_number)),
-    next_episode_rating:Number(ep.vote_average||x?.next_episode_rating||0),
-    next_episode_air_date:ep.air_date||x?.next_episode_air_date||null};
-  const available=eps.filter(e=>freshPairAfter(e,x)).length;next.available_episodes=Math.max(1,Number(x?.available_episodes||0),available);
+  let details=null;try{details=await tmdb('/tv/'+id,{language:'pt-BR'},{signal:c.signal,timeout:1400})}catch{}
+  let next={...x},candidate=null;
+  const last=details?.last_episode_to_air;
+  const lastKey=Number(x?.last_season_number||0)*100000+Number(x?.last_episode_number||0);
+  const detailKey=Number(last?.season_number||0)*100000+Number(last?.episode_number||0);
+  if(mayHaveNew&&last&&detailKey>lastKey&&(!last.air_date||String(last.air_date)<=today()))candidate=last;
+  if(Number(x?.next_episode_number||0)>0){
+   const ns=Number(x.next_season_number||0),ne=Number(x.next_episode_number||0);
+   if(last&&Number(last.season_number)===ns&&Number(last.episode_number)===ne)candidate=last;
+   if((!candidate||!candidate?.name||candidate?.vote_average==null||!candidate?.air_date)&&ns>0){
+    try{const sd=await tmdb('/tv/'+id+'/season/'+ns,{language:'pt-BR'},{signal:c.signal,timeout:1400});candidate=rows(sd?.episodes).find(e=>Number(e?.episode_number)===ne)||candidate}catch{}
+   }
+  }
+  if(!candidate)return x;
+  next.next_season_number=Number(candidate.season_number||x?.next_season_number||0)||null;
+  next.next_episode_number=Number(candidate.episode_number||x?.next_episode_number||0)||null;
+  next.next_episode_title=String(candidate.name||x?.next_episode_title||('Episódio '+next.next_episode_number));
+  next.next_episode_rating=Number(candidate.vote_average??x?.next_episode_rating??0)||0;
+  next.next_episode_air_date=candidate.air_date||x?.next_episode_air_date||null;
+  next.available_episodes=Math.max(1,Number(x?.available_episodes||0));
   next.released_episodes=Math.max(Number(x?.released_episodes||0),Number(x?.watched_episodes||0)+next.available_episodes);
-  if(!Number(x?.next_episode_number||0)){const lw=Date.parse(x?.last_watched_at||0)||0;next.home_bucket=lw&&Date.now()-lw<=30*86400000?'continue':'dust'}
-  next.__ct388_live=true;return next
+  if(mayHaveNew){const lw=Date.parse(x?.last_watched_at||0)||0;next.home_bucket=lw&&Date.now()-lw<=30*86400000?'continue':'dust'}
+  next.__ct389_live=true;return next
  }catch{return x}finally{clearTimeout(timer)}
 }
 async function enrichSeries(list){
- const src=rows(list),targets=src.filter(x=>x?.home_bucket==='continue'||x?.source_state==='InProgress'||(x?.home_bucket==='up_to_date'&&(Date.now()-(Date.parse(x?.last_watched_at||0)||0)<120*86400000))).sort((a,b)=>(Date.parse(b?.last_watched_at||0)||0)-(Date.parse(a?.last_watched_at||0)||0)).slice(0,12);
+ const src=rows(list),targets=src.filter(x=>x?.home_bucket==='continue'||x?.source_state==='InProgress'||x?.source_state==='UpToDate').sort((a,b)=>(Date.parse(b?.state_updated_at||b?.last_watched_at||0)||0)-(Date.parse(a?.state_updated_at||a?.last_watched_at||0)||0)).slice(0,8);
  if(!targets.length)return src;
  const map=new Map(src.map(x=>[Number(x?.tmdb_id||0),x])),done=await Promise.all(targets.map(enrichOneSeries));
  for(const x of done)map.set(Number(x?.tmdb_id||0),x);
@@ -128,12 +137,21 @@ function frame(){
 }
 function paintFrame(kind=activeKind()){const h=q('[data-home]');if(!h)return false;h.innerHTML=frame();applyTab(kind);if(hSeries.length)renderSeries();if(kind==='movies'&&hMovies.length)renderMoviesAll();settleHome(kind);return true}
 async function loadSeries(force=false){
- if(hSeriesTask&&!force)return hSeriesTask;const run=++hRun;
+ if(hSeriesTask&&!force)return hSeriesTask;const run=++hRun,hadCache=hSeries.length>0;
  hSeriesTask=(async()=>{
-  const fullP=timeout(rpc('cinetracker_home_series_v385',{p_today:today()}),5500).catch(()=>[]);
-  const activeP=timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),2800).catch(()=>[]);
-  const active=rows(await activeP);if(active.length&&run===hRun){let quick=mergeSeries(hSeries,active);quick=await timeout(enrichSeries(quick),2300).catch(()=>quick);if(quick.length){hSeries=quick;cacheSet(HS,hSeries);if(routeNow()==='home')renderSeries()}}
-  const full=rows(await fullP);if(full.length&&run===hRun){let final=mergeSeries(full,active);final=await timeout(enrichSeries(final),2400).catch(()=>final);hSeries=final;cacheSet(HS,hSeries);if(routeNow()==='home')renderSeries()}
+  let base=rows(await timeout(rpc('cinetracker_home_series_v389',{p_today:today()}),3200).catch(()=>[]));
+  if(!base.length){
+   const fallback=rows(await timeout(rpc('cinetracker_home_active_v380',{p_today:today()}),1700).catch(()=>[]));
+   if(fallback.length)base=mergeSeries(hSeries,fallback);
+  }
+  if(!base.length||run!==hRun)return hSeries;
+  if(!hadCache){
+   base=await timeout(enrichSeries(base),1800).catch(()=>base);
+   if(run!==hRun)return hSeries;hSeries=base;cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries();
+  }else{
+   hSeries=base;cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries();
+   void timeout(enrichSeries(base),1900).then(live=>{if(run!==hRun||!live?.length)return;hSeries=live;cacheSet(HS,hSeries);localSet(HSP,hSeries);if(routeNow()==='home')renderSeries()}).catch(()=>{});
+  }
   return hSeries
  })().finally(()=>{hSeriesTask=null});return hSeriesTask
 }
@@ -141,10 +159,9 @@ async function loadHistory(){if(hHistoryTask)return hHistoryTask;hHistoryTask=ti
 async function loadMovies(){if(hMoviesTask)return hMoviesTask;hMoviesTask=timeout(rpc('cinetracker_watchlist_full_v376',{}),7000).then(v=>{const a=rows(v?.rows).filter(x=>String(x?.media_type||'')==='movie'&&mediaId(x)>0);if(a.length){hMovies=a;cacheSet(HM,a);if(routeNow()==='home'&&activeKind()==='movies'){const old=q('[data-ct388-movie-watch]');if(old){const t=document.createElement('template');t.innerHTML=movieSection();old.replaceWith(t.content.firstElementChild)}renderMoviesAll()}}return hMovies}).catch(()=>hMovies).finally(()=>{hMoviesTask=null});return hMoviesTask}
 async function renderHome388(){
  const kind=activeKind();try{setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class="page" data-home></div>'))}catch{};paintFrame(kind);
- const seriesP=loadSeries(false);void loadHistory();void loadMovies();
- await Promise.race([seriesP,sleep(2600)]).catch(()=>{});
- if(routeNow()==='home'&&hSeries.length)renderSeries();
- document.documentElement.dataset.ct388Home='first-stable';return true
+ void loadSeries(false);void loadHistory();void loadMovies();
+ if(hSeries.length)renderSeries();
+ document.documentElement.dataset.ct388Home=hSeries.length?'cache-first':'frame-first';return true
 }
 try{renderHome=renderHome388}catch{}
 document.addEventListener('change',e=>{const s=e.target?.closest?.('[data-ct388-movie-sort]');if(!s||routeNow()!=='home')return;e.stopPropagation();movieSort=String(s.value||'added_desc');applyMovieSort()},true);
@@ -152,9 +169,9 @@ window.addEventListener('click',e=>{if(routeNow()!=='home')return;const b=e.targ
 window.addEventListener('cinetracker:data-changed',()=>{if(routeNow()!=='home')return;hRun++;hSeriesTask=hHistoryTask=hMoviesTask=null;setTimeout(()=>{void loadSeries(true);void loadHistory();void loadMovies()},20)});
 
 /* ---------------- PRA VOCE ---------------- */
-const FY='ct388:foryou';
+const FY='ct389:foryou';
 const blankState=()=>({dailyPool:[],dailyIndex:0,watchPools:{movie:[],series:[],anime:[]},watchIndex:{movie:0,series:0,anime:0},freshPools:{movie:[],series:[],anime:[]},freshIndex:{movie:0,series:0,anime:0}});
-let fy=(()=>{const x=cacheGet(FY,600000);return x&&typeof x==='object'?x:blankState()})(),fyTask=null,fyRun=0;
+let fy=(()=>{const x=localGet(FY,12*60*60*1000)||cacheGet(FY,600000);return x&&typeof x==='object'?x:blankState()})(),fyTask=null,fyRun=0;
 const locks=new Set(),excluded=new Map();
 const typeOf=x=>String(x?.media_type||x?.type||x?.raw_tmdb?.media_type||'tv')==='movie'?'movie':'tv';
 const idOf=x=>Number(x?.tmdb_id||x?.source_tmdb_id||x?.id||x?.raw_tmdb?.id||0)||0;
@@ -165,31 +182,39 @@ const anime=x=>{if(typeOf(x)==='movie')return false;const ids=[...rows(x?.genre_
 const kindOf=x=>typeOf(x)==='movie'?'movie':anime(x)?'anime':'series';
 const localFresh=(x,k)=>{const score=Number(x?.vote_average??x?.raw_tmdb?.vote_average??0),year=Number(String(x?.release_date||x?.first_air_date||x?.raw_tmdb?.release_date||x?.raw_tmdb?.first_air_date||'').slice(0,4)||0),t=title(x).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();return !!keyOf(x)&&!!poster(x)&&kindOf(x)===k&&score>=7.5&&year>1990&&!/wwe|smackdown|wrestlemania|royal rumble|summerslam|survivor series|(^| )raw( |$)/.test(t)};
 const unique=a=>{const out=[],seen=new Set();for(const x of rows(a)){const k=keyOf(x);if(!k||seen.has(k))continue;seen.add(k);out.push(x)}return out};
-const saveFy=()=>{cacheSet(FY,fy);return fy};
+const saveFy=()=>{cacheSet(FY,fy);localSet(FY,fy);return fy};
 function pool(name){if(name==='daily')return rows(fy.dailyPool);const[b,k]=name.split(':');return rows(fy?.[b+'Pools']?.[k])}
 function idx(name){if(name==='daily')return Number(fy.dailyIndex||0);const[b,k]=name.split(':');return Number(fy?.[b+'Index']?.[k]||0)}
 function current(name){const p=pool(name);if(!p.length)return null;return p[((idx(name)%p.length)+p.length)%p.length]||null}
 function candidate(x){return{media_type:typeOf(x),tmdb_id:idOf(x),title:title(x),original_title:String(x?.original_title||x?.original_name||x?.raw_tmdb?.original_title||x?.raw_tmdb?.original_name||''),release_year:Number(String(x?.release_date||x?.first_air_date||x?.release_year||'').slice(0,4)||0)||null}}
 async function audit(list){
- const a=unique(list),payload=a.map(candidate);if(!payload.length)return{blocked:new Set(),watch:new Set(),seen:new Set()};
- const d=await timeout(rpc('cinetracker_discover_filter_v385',{p_items:payload}),4500);if(!d||Number(d.checked_count)!==payload.length)throw new Error('auditoria incompleta');
- return{blocked:new Set(rows(d.blocked_keys).map(String)),watch:new Set(rows(d.watch_keys).map(String)),seen:new Set(rows(d.seen_keys).map(String))}
+ const a=unique(list),blocked=new Set(),watch=new Set(),seen=new Set();if(!a.length)return{blocked,watch,seen};
+ for(let i=0;i<a.length;i+=40){
+  const part=a.slice(i,i+40),payload=part.map(candidate),d=await timeout(rpc('cinetracker_discover_filter_v389',{p_items:payload}),1800);
+  if(!d||Number(d.checked_count)!==payload.length)throw new Error('auditoria incompleta');
+  for(const k of rows(d.blocked_keys))blocked.add(String(k));for(const k of rows(d.watch_keys))watch.add(String(k));for(const k of rows(d.seen_keys))seen.add(String(k));
+ }
+ return{blocked,watch,seen}
 }
 async function loadWatchPools(){
- const d=await timeout(rpc('cinetracker_watchlist_full_v376',{}),6000),all=rows(d?.rows),watch=new Set(),seen=new Set();
- for(let i=0;i<all.length;i+=160){const a=await audit(all.slice(i,i+160));for(const x of a.watch)watch.add(x);for(const x of a.seen)seen.add(x)}
- for(const k of ['movie','series','anime'])fy.watchPools[k]=unique(all.filter(x=>kindOf(x)===k&&watch.has(keyOf(x))&&!seen.has(keyOf(x)))).slice(0,160);
- fy.watchIndex={movie:0,series:0,anime:0};return true
+ await Promise.all(['movie','series','anime'].map(async k=>{
+  const raw=unique(rows(await timeout(rpc('cinetracker_discover_watch_v389',{p_kind:k,p_limit:30}),1800).catch(()=>[]))).filter(x=>kindOf(x)===k);
+  if(!raw.length){fy.watchPools[k]=[];fy.watchIndex[k]=0;return}
+  try{const a=await audit(raw);fy.watchPools[k]=raw.filter(x=>a.watch.has(keyOf(x))&&!a.seen.has(keyOf(x))).slice(0,30)}
+  catch{fy.watchPools[k]=[]}
+  fy.watchIndex[k]=0;if(routeNow()==='discover')renderSlot('watch:'+k)
+ }));
+ saveFy();return true
 }
-async function dbFresh(k){try{return rows(await timeout(rpc('cinetracker_discover_fresh_v387',{p_kind:k,p_limit:72}),4200)).filter(x=>localFresh(x,k))}catch{return[]}}
+async function dbFresh(k){try{return rows(await timeout(rpc('cinetracker_discover_fresh_v387',{p_kind:k,p_limit:24}),1500)).filter(x=>localFresh(x,k))}catch{return[]}}
 async function tmdbFresh(k){
- if(typeof tmdb!=='function')return[];const base=2+Math.floor(Math.random()*14),pages=[base,base+5,base+11],c=new AbortController(),timer=setTimeout(()=>c.abort(),3400);
- try{const packs=await Promise.allSettled(pages.map(page=>k==='movie'?tmdb('/discover/movie',{page,sort_by:'popularity.desc','vote_average.gte':7.5,'vote_count.gte':80,include_adult:false},{signal:c.signal,timeout:3000}):k==='anime'?tmdb('/discover/tv',{page,sort_by:'popularity.desc',with_genres:'16',with_original_language:'ja','vote_average.gte':7.5},{signal:c.signal,timeout:3000}):tmdb('/discover/tv',{page,sort_by:'popularity.desc','vote_average.gte':7.5},{signal:c.signal,timeout:3000})));return unique(packs.flatMap(r=>r.status==='fulfilled'?rows(r.value?.results):[]).map(x=>({...x,media_type:k==='movie'?'movie':'tv',tmdb_id:Number(x.id||x.tmdb_id||0)}))).filter(x=>localFresh(x,k))}finally{clearTimeout(timer)}
+ if(typeof tmdb!=='function')return[];const base=2+Math.floor(Math.random()*14),pages=[base,base+7],c=new AbortController(),timer=setTimeout(()=>c.abort(),2400);
+ try{const packs=await Promise.allSettled(pages.map(page=>k==='movie'?tmdb('/discover/movie',{page,sort_by:'popularity.desc','vote_average.gte':7.5,'vote_count.gte':80,include_adult:false},{signal:c.signal,timeout:2100}):k==='anime'?tmdb('/discover/tv',{page,sort_by:'popularity.desc',with_genres:'16',with_original_language:'ja','vote_average.gte':7.5},{signal:c.signal,timeout:2100}):tmdb('/discover/tv',{page,sort_by:'popularity.desc','vote_average.gte':7.5},{signal:c.signal,timeout:2100})));return unique(packs.flatMap(r=>r.status==='fulfilled'?rows(r.value?.results):[]).map(x=>({...x,media_type:k==='movie'?'movie':'tv',tmdb_id:Number(x.id||x.tmdb_id||0)}))).filter(x=>localFresh(x,k))}finally{clearTimeout(timer)}
 }
 async function ensureFresh(k,force=false){
- let src=force?[]:unique(fy.freshPools[k]).filter(x=>localFresh(x,k));if(src.length){try{const a=await audit(src.slice(0,60));src=src.filter(x=>!a.blocked.has(keyOf(x)))}catch{src=[]}}
- if(src.length<8){let add=await dbFresh(k);if(add.length){const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));src=unique([...src,...add])}}
- if(src.length<8){let add=await tmdbFresh(k);if(add.length){const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));src=unique([...src,...add])}}
+ let src=force?[]:unique(fy.freshPools[k]).filter(x=>localFresh(x,k));if(src.length){try{const a=await audit(src);src=src.filter(x=>!a.blocked.has(keyOf(x)))}catch{src=[]}}
+ if(src.length<6){let add=await dbFresh(k);if(add.length){const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));src=unique([...src,...add])}}
+ if(src.length<6){let add=await tmdbFresh(k);if(add.length){const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));src=unique([...src,...add])}}
  fy.freshPools[k]=src.slice(0,90);fy.freshIndex[k]=0;saveFy();return fy.freshPools[k].length>0
 }
 async function ensureDaily(){
@@ -238,8 +263,15 @@ async function actionFy(action,name,btn){
 function earlyFy(target,event){const b=target?.closest?.('[data-ct388-action]');if(!b||routeNow()!=='discover')return false;event?.preventDefault?.();event?.stopImmediatePropagation?.();event?.stopPropagation?.();void actionFy(String(b.dataset.ct388Action||''),String(b.dataset.ct388Slot||''),b);return true}
 async function loadForYou(force=false){
  if(routeNow()!=='discover')return false;if(fyTask&&!force)return fyTask;const run=++fyRun;
- fyTask=(async()=>{if(!force&&(fy.dailyPool.length||Object.values(fy.watchPools).some(a=>rows(a).length)||Object.values(fy.freshPools).some(a=>rows(a).length)))renderForYou();
-  const jobs=[loadWatchPools().catch(()=>false),...['movie','series','anime'].map(k=>ensureFresh(k,force))];await Promise.allSettled(jobs);await ensureDaily();if(run!==fyRun||routeNow()!=='discover')return false;renderForYou();document.documentElement.dataset.ct388ForYou='ready';return ['movie','series','anime'].every(k=>fy.freshPools[k].length>0)
+ fyTask=(async()=>{
+  renderForYou();
+  const freshJobs=['movie','series','anime'].map(async k=>{await ensureFresh(k,force);if(run===fyRun&&routeNow()==='discover')renderSlot('fresh:'+k);return fy.freshPools[k].length>0});
+  const dailyJob=Promise.any(freshJobs.map((p,i)=>p.then(ok=>{if(!ok)throw new Error('empty');return ['movie','series','anime'][i]}))).then(async()=>{await ensureDaily();if(run===fyRun&&routeNow()==='discover')renderSlot('daily')}).catch(()=>{});
+  const watchJob=loadWatchPools().catch(()=>false);
+  await Promise.allSettled([...freshJobs,dailyJob,watchJob]);
+  if(run!==fyRun||routeNow()!=='discover')return false;
+  await ensureDaily();renderForYou();document.documentElement.dataset.ct388ForYou='ready';
+  return ['movie','series','anime'].every(k=>fy.freshPools[k].length>0)
  })().finally(()=>{fyTask=null});return fyTask
 }
 window.__ctR388LoadForYou=loadForYou;window.__ctR378LoadForYou=loadForYou;window.__ctR379LoadForYou=loadForYou;window.__ctR380LoadForYou=loadForYou;window.__ctR383LoadForYou=loadForYou;window.__ctR384LoadForYou=loadForYou;window.__ctR385LoadForYou=loadForYou;
@@ -261,6 +293,6 @@ const style=document.createElement('style');style.id='ct-web-r388';style.textCon
 @media(max-width:700px){.ct388-rail{grid-template-columns:repeat(3,154px)}.ct388-rail.daily{grid-template-columns:154px}.ct388-slot,.ct388-cardwrap,.ct388-cardwrap>.ct291-card,.ct388-cardwrap>.ct288-card,.ct388-cardwrap>[data-ct288-card],.ct388-actions,.ct388-placeholder{width:154px!important;min-width:154px!important;max-width:154px!important}}
 `;document.head.appendChild(style);
 
-window.__ctR388={version:'1.0.179',renderHome:renderHome388,loadSeries,loadHistory,loadMovies,renderSeries,renderMoviesAll,loadForYou,renderForYou,ensureFresh,swap:swapFy,early:earlyFy,get home(){return{series:hSeries,history:hHistory,movies:hMovies,movieSort}},get fy(){return fy}};
+window.__ctR388={version:'1.0.179',renderHome:renderHome388,loadSeries,loadHistory,loadMovies,renderSeries,renderMoviesAll,loadForYou,renderForYou,ensureFresh,audit,swap:swapFy,early:earlyFy,get home(){return{series:hSeries,history:hHistory,movies:hMovies,movieSort}},get fy(){return fy}};
 window.__ctR388Test={mergeSeries,enrichSeries,sortedMovies,applyMovieSort,audit,ensureFresh,renderForYou,slotHtml,swap:swapFy,setHome(v){hSeries=rows(v?.series);hHistory=v?.history||null;hMovies=rows(v?.movies)},setFy(v){fy=v},get home(){return{series:hSeries,history:hHistory,movies:hMovies}},get fy(){return fy}};
 })();
