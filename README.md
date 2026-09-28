@@ -1,4 +1,4 @@
-## Web 1.0.178 / r387
+## Web 1.0.179 / r388\n\n- Escopo exclusivo: **Home** e **Descobrir → Pra Você**.\n- Séries: estado ativo + metadados de episódios antes do primeiro paint estável.\n- Filmes: Watchlist completa (total atual 1.381) e seis ordenações sobre todos os registros.\n- Pra Você: renderer direto, sem filtro duplicado; botões exatos e 100% Novos auditado contra Vistos/Watchlist.\n- Perfil, Esportes, Top 10 e Configurações intocados.\n\n## Web 1.0.178 / r387
 
 - **Home:** abre em Assistir a seguir, com Histórico completo escondido acima.
 - **Histórico:** sem teto de 50/100; filmes recentes posteriores ao antigo corte entram normalmente.

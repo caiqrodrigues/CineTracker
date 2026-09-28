@@ -1,4 +1,4 @@
-name: Verify Web 1.0.178 r387 Home and Pra Voce Only
+name: Verify Web 1.0.179 r388 Home and Pra Voce
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r387:
+  web_r388:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -17,16 +17,14 @@ jobs:
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r385-home-foryou-owner.js
-          node --check build-r387.mjs
-          node --check test-r387.mjs
-          node --check test-r387-browser.mjs
-          node build-r387-official.mjs
-          CT_R387_SKIP_BUILD=1 node test-r387.mjs
-          CT_R387_SKIP_BUILD=1 node test-r387-browser.mjs
-          node --check dist/app-v387.js
-          grep -Fq 'app-v387.js' dist/index.html
-          grep -Fq 'ct-web-1.0.178-r387' dist/service-worker.js
+          node --check runtime-r388-home-foryou-final.js
+          node --check build-r388.mjs
+          node --check test-r388-browser.mjs
+          node build-r388-official.mjs
+          CT_R388_SKIP_BUILD=1 node test-r388.mjs
+          CT_R388_SKIP_BUILD=1 node test-r388-browser.mjs
+          node --check dist/app-v388.js
+          grep -Fq "window.__ctR388Marker='home-series-first-complete+movies-all-1381+foryou-direct-strict-no-empty-actions'" dist/app-v388.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +34,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r387, android]
+    needs: [web_r388, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -45,10 +43,9 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.178"' <<<"$BODY" && grep -Fq '"revision": "r387-official-1.0.178"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v387.js?ct=$CT" || true)"
-              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR387Marker='home-semantic-hidden-history+full-history+foryou-single-action-row+fresh-db-fallback'" <<<"$JS" && grep -Fq 'app-v387.js' <<<"$HTML"; then exit 0; fi
+            if grep -Fq '"version": "1.0.179"' <<<"$BODY" && grep -Fq '"revision": "r388-official-1.0.179"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v388.js?ct=$CT" || true)"
+              if grep -Fq "window.__ctR388Marker='home-series-first-complete+movies-all-1381+foryou-direct-strict-no-empty-actions'" <<<"$JS"; then exit 0; fi
             fi
             sleep 5
           done

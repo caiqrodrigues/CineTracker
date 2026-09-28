@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.179 — 2026-09-28 — Web r388
+
+### Escopo exclusivo: Home + Descobrir / Pra Você
+- Home Séries passa a combinar o estado autoritativo v385 com o conjunto ativo v380 antes do primeiro paint estável.
+- Próximos episódios visíveis/ativos são enriquecidos em paralelo pelo TMDB com timeout curto; isso evita nomes/datas/notas chegando dezenas de segundos depois e permite que séries ativas como Stuart entrem no primeiro conjunto quando existe episódio novo.
+- Home Filmes usa a Watchlist completa v376 e monta todos os registros de uma vez. O total atual autoritativo é 1.381 e as seis ordenações atuam sobre todos os nós.
+- Pra Você deixa de depender das action rows/observers antigos. O r388 renderiza Indicação do Dia, Da sua Watchlist e 100% novos diretamente.
+- 100% novos é auditado pelo filtro pessoal v385 antes do render e antes de cada troca; Vistos/Watchlist não aparecem.
+- Botões: Diário e 100% Novos = Watchlist + Visto + Trocar; Da sua Watchlist = Visto + Trocar. Botões só existem quando existe card real.
+- Coração/favorito fica contido dentro da capa.
+
+### Não alterado
+- Perfil, Esportes, Top 10, Configurações e Android não foram modificados.
+
+### Release
+- Web: `1.0.179 / r388-official-1.0.179`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
 ## 1.0.178 — 2026-09-28 — Web r387
 
 ### Home — somente correções solicitadas
