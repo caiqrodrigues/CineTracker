@@ -1,7 +1,7 @@
 /* CineTracker Web 1.0.179 r388 — Home + Descobrir/Pra Você only. */
 (()=>{
 'use strict';
-if(window.__ctR388?.version==='1.0.179')return;
+if(window.__ctR388?.version==='1.0.183')return;
 window.__ctR388Marker='home-series-first-complete+movies-all-1381+foryou-direct-strict-no-empty-actions';
 window.__ctR388HomeOwner=true;window.__ctR388ForYouOwner=true;
 
@@ -202,9 +202,11 @@ async function loadMovies(force=false){
 }
 async function renderHome388(){
  const kind=activeKind();try{setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class="page" data-home></div>'))}catch{};paintFrame(kind);
- void loadSeries(false);void loadHistory(false);if(kind==='movies')void loadMovies(false);
- if(hSeries.length)renderSeries();
- document.documentElement.dataset.ct388Home=hSeries.length?'memory-first':'frame-first';return true
+ const critical=[loadSeries(false),loadHistory(false)];if(kind==='movies')critical.push(loadMovies(false));
+ await Promise.allSettled(critical);
+ if(routeNow()!=='home')return false;
+ renderSeries();if(hHistory){renderHistory('episodes');renderHistory('movies')}if(kind==='movies'&&hMovies.length)renderMoviesAll();
+ document.documentElement.dataset.ct388Home='authoritative-ready';document.documentElement.dataset.ct392HomeReady='1';return true
 }
 try{renderHome=renderHome388}catch{}
 document.addEventListener('change',e=>{const s=e.target?.closest?.('[data-ct388-movie-sort]');if(!s||routeNow()!=='home')return;e.stopPropagation();movieSort=String(s.value||'added_desc');applyMovieSort()},true);
