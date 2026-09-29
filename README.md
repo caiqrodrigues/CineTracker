@@ -1,3 +1,16 @@
+## Web 1.0.188 / r397
+
+- **Home / entrada:** Histórico permanece acima e acessível ao rolar para cima, mas o primeiro enquadramento ocorre somente depois que o bloco principal foi realmente pintado.
+- **Home / Filmes:** a Watchlist completa devolvida por cinetracker_home_movies_v393 é renderizada de forma defensiva e em lotes; uma falha de um card legado não apaga a lista inteira.
+- **Home / séries recorrentes:** Raw e SmackDown continuam em Em dia, evitando backlog histórico, porém exibem o próximo episódio recente não visto com ação Assistido.
+- **TV refresh v3:** ct-refresh-tv-state-user prioriza séries recorrentes e atualiza diretamente a temporada atual/episódios recentes.
+- **Descobrir / Pra Você:** r397 rebinda r395/r396 e recupera o entrypoint real que ainda podia ficar preso em Buscando indicação…
+- **Pra Você / dados:** cinetracker_discover_foryou_v396 continua como payload canônico; fallback é limitado e server-side.
+- **Ações:** Visto, Watchlist e Trocar permanecem no renderer otimista existente, sem full-page reload.
+- **Escopo:** Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+
+Build de hospedagem: apps/web/build-r397.mjs; gate oficial: apps/web/build-r397-official.mjs.
+
 ## Web 1.0.187 / r396
 
 - **Escopo exclusivo:** corrige somente `Descobrir > Pra você`; Home, Perfil, Esportes, Top 10, Configurações e Android permanecem intocados.
