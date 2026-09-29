@@ -19,7 +19,7 @@
 - Indicação do Dia, Da sua Watchlist e 100% Novos continuam usando `cinetracker_discover_foryou_v396` e ações locais Visto/Watchlist/Trocar.
 
 ### Estabilidade / build
-- Web 1.0.192 / r401 deriva da base segura r396; r397-r400 não são encadeadas no bundle.
+- Web 1.0.192 / r401 deriva da base segura r396; r397-r400 não são encadeadas no bundle.\n- O build r401 valida sintaxe do runtime, padrões proibidos e os nomes finais `app-v401.js`/cache r401 antes de concluir o deploy.
 - Nenhuma mutação usa `window.location.reload()` ou `router.refresh()`.
 - Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
 
