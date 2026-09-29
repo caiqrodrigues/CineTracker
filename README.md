@@ -10,6 +10,7 @@
 - Escopo congelado: Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
 
 Build oficial: apps/web/build-r392-official.mjs; owner: apps/web/runtime-r388-home-foryou-final.js.
+Build de hospedagem/Vercel: `apps/web/build-r392.mjs`; regressões Chromium ficam no gate GitHub, fora do ambiente de deploy.
 ## Web 1.0.182 / r391
 
 - **Home Séries:** primeiro paint sem TMDB por card; buckets completos vêm da autoridade v391.

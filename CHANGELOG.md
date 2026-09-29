@@ -12,6 +12,7 @@
 - A Watchlist de Filmes só é carregada ao abrir a semi-aba Filmes; mantém lista completa e ordenações existentes.
 - Pra Você audita pools persistidos em um único lote antes de exibir cards e reutiliza itens já validados; Fresh continua com TMDB bounded e auditoria pessoal fail-closed.
 - Nenhum window.location.reload(), router.refresh() ou loop infinito foi adicionado.
+- O build de hospedagem usa `build-r392.mjs`; o gate Chromium continua obrigatório no GitHub Actions via `build-r392-official.mjs`, evitando falha de deploy por ausência de browser no builder da Vercel.
 
 ### Validação
 - Gate Chromium reproduz mutação feita fora da Home: invalida cache, refaz a Home, exige Stuart fora de Continuar, presente em Em dia e T1E10 no Histórico.
