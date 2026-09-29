@@ -6,10 +6,19 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.183** | revision `r392-official-1.0.183`, package `1.0.183` | release Web atual |
+| Web | **1.0.184** | revision `r393-official-1.0.184`, package `1.0.184` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.184 / r393
+
+- Home restaura a entrada sem Histórico ocupando a viewport, preservando o Histórico acima para acesso por scroll.
+- Watchlist de Filmes usa RPC dedicado e leve `cinetracker_home_movies_v393`.
+- Pra Você usa Fresh do banco como caminho principal, auditado pelo filtro pessoal v391, com TMDB limitado como fallback.
+- Android permanece 1.0.20 / 10062.
+
+Assets oficiais: app-v393.js / app-v393.css; build: apps/web/build-r393-official.mjs; regressões: apps/web/test-r393.mjs e apps/web/test-r393-browser.mjs.
 
 ## Web 1.0.183 / r392
 
