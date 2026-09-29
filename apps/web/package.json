@@ -1,13 +1,13 @@
 {
   "name": "cinetracker-web",
   "private": true,
-  "version": "1.0.193",
+  "version": "1.0.194",
   "type": "module",
   "scripts": {
-    "build": "node build-r402.mjs",
-    "build:legacy": "node build-r402.mjs",
-    "test": "node test-r402.mjs",
-    "test:browser": "node test-r402-browser.mjs",
+    "build": "node build-r403.mjs",
+    "build:legacy": "node build-r403.mjs",
+    "test": "node test-r403.mjs",
+    "test:browser": "node test-r403-browser.mjs",
     "test:r298": "node test-r298.mjs",
     "test:r298:browser": "node test-r298-browser.mjs",
     "test:r298:foryou": "node test-r298-foryou-browser.mjs",
@@ -32,7 +32,7 @@
     "release:r306": "node build-r306-official.mjs",
     "release:r307": "node build-r307-official.mjs",
     "release:r308": "node build-r308-official.mjs",
-    "verify": "node build-r402-official.mjs",
+    "verify": "node build-r403-official.mjs",
     "test:r309": "node test-r309.mjs",
     "test:r309:browser": "node test-r309-browser.mjs",
     "release:r309": "node build-r309-official.mjs",
@@ -306,7 +306,10 @@
     "release:r401": "node build-r401-official.mjs",
     "test:r402": "node test-r402.mjs",
     "test:r402:browser": "node test-r402-browser.mjs",
-    "release:r402": "node build-r402-official.mjs"
+    "release:r402": "node build-r402-official.mjs",
+    "test:r403": "node test-r403.mjs",
+    "test:r403:browser": "node test-r403-browser.mjs",
+    "release:r403": "node build-r403-official.mjs"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
