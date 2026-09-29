@@ -1,3 +1,28 @@
+## Web 1.0.192 / r401 — 2026-09-29
+
+### Home / Séries
+- `cinetracker_home_series_v401` deixa de usar a cobertura parcial de `episode_catalog_v336` como contagem total de episódios liberados.
+- Para séries normais, episódios disponíveis passam a ser calculados pelos episódios efetivamente lançados no metadata TMDB menos episódios assistidos; o catálogo local fica responsável pelos metadados do próximo episódio.
+- O próximo episódio normal é derivado pela primeira lacuna real da temporada liberada, evitando saltos como S03E07 → S09E38 quando o catálogo local ainda está incompleto.
+- Raw e SmackDown mantêm semântica recorrente: backlog histórico é ignorado, mas o episódio recente não visto aparece em **Em dia**.
+- `ct-refresh-tv-state-user` v5 só considera uma temporada normal em cache quando todos os episódios já lançados daquela temporada estão presentes.
+
+### Home / Filmes
+- `cinetracker_home_movies_v401` substitui na Home o payload de 2,5 MB da Watchlist antiga por um payload enxuto sem `raw_tmdb`; para a conta validada, 1.381 filmes caíram para cerca de 407 KB.
+- Séries e filmes são pintados em lotes de 10 itens com `requestIdleCallback`/fallback por frame, evitando monopolizar a main thread.
+- **Assistir a seguir / Watchlist** usa a nova autoridade enxuta e não depende mais do RPC pesado v376.
+
+### Descobrir / Pra Você
+- O owner r401 reconhece a aba ativa pelo DOM e também cobre o container base `data-discover-content`, sem depender exclusivamente do estado legado `discover263`.
+- O renderer legado r388 é redirecionado para o renderer r401; loaders antigos não conseguem mais restaurar skeletons de **Buscando indicação…** depois que o payload v396 chega.
+- A posse da aba é reafirmada por uma sequência finita de timers, sem `MutationObserver`, `setInterval` ou loop permanente.
+- Indicação do Dia, Da sua Watchlist e 100% Novos continuam usando `cinetracker_discover_foryou_v396` e ações locais Visto/Watchlist/Trocar.
+
+### Estabilidade / build
+- Web 1.0.192 / r401 deriva da base segura r396; r397-r400 não são encadeadas no bundle.
+- Nenhuma mutação usa `window.location.reload()` ou `router.refresh()`.
+- Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
+
 ## Web 1.0.191 / r400 — 2026-09-29
 
 ### Home

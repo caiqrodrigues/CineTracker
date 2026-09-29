@@ -1,3 +1,16 @@
+## Web 1.0.192 / r401
+
+- **Home Séries:** `cinetracker_home_series_v401` calcula episódios disponíveis pela quantidade realmente lançada no TMDB menos o progresso assistido, sem depender de catálogo parcial.
+- **Próximo episódio:** séries normais usam a primeira lacuna real da temporada liberada; o refresh v5 completa a temporada necessária no cache.
+- **Raw / SmackDown:** continuam sem backlog histórico e mostram o episódio recente não visto em **Em dia**.
+- **Home Filmes:** `cinetracker_home_movies_v401` remove `raw_tmdb` do payload; a Watchlist de 1.381 filmes fica muito menor e é renderizada em lotes ociosos.
+- **Anti-congelamento:** listas extensas são pintadas em lotes de 10 usando `requestIdleCallback` com fallback por frame; sem observer global nem loop contínuo.
+- **Descobrir / Pra Você:** r401 assume o renderer legado, reconhece a aba pelo DOM e impede que loaders antigos restaurem `Buscando indicação…` após o payload v396.
+- **Ações:** Visto, Watchlist e Trocar permanecem otimistas/locais, sem full-page reload.
+- **Escopo:** Perfil, Esportes, Top 10, Configurações e Android preservados.
+
+Build de hospedagem: `apps/web/build-r401.mjs`; gate oficial: `apps/web/build-r401-official.mjs`.
+
 ## Web 1.0.191 / r400
 
 - **Boot autenticado:** Home e `Descobrir > Pra Você` só executam RPC depois que a sessão foi restaurada e o DOM da rota existe; respostas vazias geradas antes do login deixam de virar estado final.

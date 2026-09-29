@@ -48,6 +48,7 @@ const cachedCandidate=(catalog:any[],show:any,watched:Set<string>)=>{
   }).sort((a:any,b:any)=>n(a.season_number)-n(b.season_number)||n(a.episode_number)-n(b.episode_number))[0]||null;
 };
 const cacheComplete=(e:any)=>!!(e&&String(e.name_local||e.name_en||'').trim()&&e.air_date&&Number.isFinite(Number(e.vote_average)));
+const seasonCoverageComplete=(catalog:any[],show:any,sn:number)=>{const limit=releasedLimit(show,sn);if(limit<=0)return true;const seen=new Set(rows(catalog).filter((e:any)=>n(e?.season_number)===sn&&n(e?.episode_number)>0&&n(e?.episode_number)<=limit).map((e:any)=>n(e.episode_number)));if(seen.size<limit)return false;for(let ep=1;ep<=limit;ep++)if(!seen.has(ep))return false;return true};
 
 Deno.serve(async(req:Request)=>{
   if(req.method==='OPTIONS')return new Response('ok',{headers:CORS});
@@ -64,7 +65,7 @@ Deno.serve(async(req:Request)=>{
     if(de)return json({error:'dashboard unavailable'},500);
     const dash=rows(dashboard).filter((x:any)=>String(x.media_type)==='tv'&&n(x.watched_episodes)>0);
     const mediaIds=[...new Set(dash.map((x:any)=>n(x.media_id)).filter((x:number)=>x>0))];
-    if(!mediaIds.length)return json({ok:true,processed:0,refreshed:0,sports_refreshed:0,episodes_cached:0,skipped:0,version:'tv-state-refresh-v4'});
+    if(!mediaIds.length)return json({ok:true,processed:0,refreshed:0,sports_refreshed:0,episodes_cached:0,skipped:0,version:'tv-state-refresh-v5'});
 
     const {data:media,error:me}=await admin.from('media')
       .select('id,tmdb_id,media_type,title,original_title,poster_path,runtime_minutes,total_episodes,raw_tmdb,updated_at')
@@ -103,7 +104,7 @@ Deno.serve(async(req:Request)=>{
       const sn=firstNeededSeason(show,watched);
       if(sn<=0)return stale(m);
       const candidate=cachedCandidate(cat,show,watched);
-      return stale(m)||!cacheComplete(candidate);
+      return stale(m)||!seasonCoverageComplete(cat,show,sn);
     };
     const work=tvRows.filter(needs).sort((a:any,b:any)=>Number(sportsLike(b))-Number(sportsLike(a))||(priority.get(b.id)||0)-(priority.get(a.id)||0)).slice(0,80);
 
@@ -144,7 +145,7 @@ Deno.serve(async(req:Request)=>{
 
           const sn=sports?currentSportsSeason(show):firstNeededSeason(show,watched);if(!(sn>0))return;
           const cached=cachedCandidate(catMap.get(tmdbId)||[],show,watched);
-          if(!sports&&cacheComplete(cached))return;
+          if(!sports&&seasonCoverageComplete(catMap.get(tmdbId)||[],show,sn))return;
 
           const rr=await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}/season/${sn}?language=pt-BR`,{headers});
           if(!rr.ok)throw new Error(`TMDB season ${rr.status}`);
@@ -174,7 +175,7 @@ Deno.serve(async(req:Request)=>{
     }
     return json({
       ok:true,processed:work.length,refreshed,sports_refreshed:sportsRefreshed,failed,episodes_cached:episodesCached,next_episodes_cached:nextEpisodes,
-      skipped:Math.max(0,tvRows.length-work.length),version:'tv-state-refresh-v4'
+      skipped:Math.max(0,tvRows.length-work.length),version:'tv-state-refresh-v5'
     });
   }catch(e){return json({error:String(e)},500)}
 });
