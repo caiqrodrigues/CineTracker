@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.0.189 — 2026-09-29 — Web r398
+
+### Home
+- Corrige definitivamente a entrada: a Home aguarda o bloco principal existir e ancora em **Assistir a seguir** / **Assistir a seguir / Watchlist**, mantendo o Histórico acima para acesso por rolagem.
+- Filmes passa a ter fallback direto em `cinetracker_watchlist_full_v376`; a lista não depende mais de o cache/loader r388 já estar preenchido para renderizar os 1.381 itens.
+- A Watchlist de Filmes continua em paint delimitado por lotes, sem bloquear a main thread e sem full-page reload.
+- Séries usa `cinetracker_home_series_v391` diretamente antes e depois do refresh de TV.
+- Raw e SmackDown forçam `ct-refresh-tv-state-user` e reaplicam o payload v391, exibindo o episódio recente não visto no card de **Em dia**, sem caminhar por backlog histórico.
+
+### Descobrir / Pra Você
+- r398 assume renderer, estado e entrypoint do Pra Você sem depender do conjunto `validated` do r388, eliminando o deadlock que deixava os sete slots em **Buscando indicação…**.
+- `cinetracker_discover_foryou_v396` continua como payload canônico; em falha, existe somente um fallback limitado às seis RPCs server-side.
+- Indicação do Dia, Da sua Watchlist e 100% Novos são pintados no mesmo estado local.
+- Botões: Diário/Fresh = Watchlist + Visto + Trocar; Watchlist = Visto + Trocar.
+- Visto/Watchlist/Trocar são locais/otimistas, com trava síncrona por slot e sem reload.
+
+### Escopo
+- Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+- Android permanece 1.0.20 / versionCode 10062.
+
+### Release
+- Web: 1.0.189 / r398-official-1.0.189.
+- Commit/push: main.
+
+# Changelog
+
 ## 1.0.188 — 2026-09-29 — Web r397
 
 ### Home
