@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.0.184 — 2026-09-28 — Web r393
+
+### Escopo exclusivo: Home + Descobrir / Pra Você
+- Home volta a iniciar no primeiro bloco principal, mantendo o Histórico renderizado acima da posição inicial e acessível ao rolar para cima.
+- A âncora da Home é reaplicada durante os repaints assíncronos do Histórico e no alternar Séries/Filmes; interação manual de scroll cancela reposicionamentos posteriores.
+- A Watchlist de Filmes deixa de baixar o payload completo de filmes+séries do v376 como caminho principal. O novo `cinetracker_home_movies_v393` retorna somente filmes e os campos necessários para a Home.
+- No estado atual validado, o payload da Watchlist caiu de aproximadamente 2,87 MB / 1.961 registros para aproximadamente 399 KB / 1.381 filmes, preservando a contagem atual da Home.
+- Filmes passam a ser pré-carregados em segundo plano depois do carregamento crítico de Séries/Histórico; v376 permanece somente como fallback compatível.
+- Pra Você volta a preencher 100% Novos pelo `cinetracker_discover_fresh_v387` antes do fallback TMDB, com auditoria `cinetracker_discover_filter_v391` e limites de tempo maiores para rede móvel.
+- A auditoria inicial de cache foi reduzida aos cards correntes; pools grandes deixam de bloquear a tela inteira antes do primeiro paint útil.
+- Da sua Watchlist e 100% Novos carregam em paralelo por tipo e os slots são atualizados progressivamente.
+- Mantidas as ações sem full-page reload, os locks de interação e a exclusão estrita de vistos/Watchlist.
+
+### Banco
+- Migration `20260929002751_home_movies_v393_lightweight` aplicada e registrada no Supabase.
+- RPC novo usa `security invoker`, `auth.uid()` e retorna somente a Watchlist de filmes do usuário autenticado.
+
+### Validação
+- Gate estático exige âncora r393, RPC leve de Filmes, Pra Você DB-first e ausência de `window.location.reload()` / `router.refresh()`.
+- Gate Chromium preserva regressões r392, exige o caminho `cinetracker_home_movies_v393`, valida 1.382 itens mockados no cenário de regressão, confirma Histórico acima da viewport e Pra Você preenchido pelo caminho DB-first.
+- Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
+
+### Release
+- Web: 1.0.184 / r393-official-1.0.184.
+- Android: 1.0.20 / versionCode 10062 preservado.
+
 ## 1.0.183 — 2026-09-28 — Web r392
 
 ### Escopo exclusivo: Home + Descobrir / Pra Você
