@@ -1,3 +1,16 @@
+## Web 1.0.191 / r400
+
+- **Boot autenticado:** Home e `Descobrir > Pra Você` só executam RPC depois que a sessão foi restaurada e o DOM da rota existe; respostas vazias geradas antes do login deixam de virar estado final.
+- **Home Séries:** `cinetracker_home_series_v391` volta a ser a autoridade; as cinco seções são pintadas em lotes por frame e o primeiro enquadramento fica em **Assistir a seguir**, mantendo o Histórico acima.
+- **Home Filmes:** `cinetracker_watchlist_full_v376` é carregado após autenticação e a lista completa é pintada por `requestAnimationFrame`, sem bloquear a main thread.
+- **Raw / SmackDown:** o refresh autenticado de TV roda em segundo plano e atualiza a temporada corrente antes de reaplicar a autoridade da Home.
+- **Descobrir / Pra Você:** `cinetracker_discover_foryou_v396` alimenta diretamente Indicação do Dia, Da sua Watchlist e 100% Novos, com botões Visto/Watchlist/Trocar e trava síncrona por slot.
+- **Estabilidade:** r400 parte da base r396 e não inclui o `MutationObserver` global introduzido em r397.
+- **Sem reload:** nenhuma mutação usa `window.location.reload()` ou `router.refresh()`.
+- **Escopo:** Perfil, Esportes, Top 10, Configurações e Android preservados.
+
+Build de hospedagem: `apps/web/build-r400.mjs`; gate oficial: `apps/web/build-r400-official.mjs`.
+
 ## Web 1.0.190 / r399
 
 - **Travamento inicial:** removido o observer global do r398 que reagia a cada mutação do DOM e reentrava na Home, criando ciclo de renderização, novos timers e novas mutações.

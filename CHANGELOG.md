@@ -1,3 +1,24 @@
+## Web 1.0.191 / r400 — 2026-09-29
+
+### Home
+- Corrige a race condition de boot que disparava `cinetracker_home_series_v391` e `cinetracker_watchlist_full_v376` antes da sessão autenticada existir e consolidava listas vazias.
+- Séries e filmes passam a carregar somente após sessão + DOM da rota estarem prontos.
+- Renderização de listas extensas é fatiada com `requestAnimationFrame`; Histórico continua acima e a entrada é ancorada no bloco principal.
+- Raw e SmackDown recebem refresh autenticado da temporada corrente em segundo plano e nova leitura da autoridade v391.
+
+### Descobrir / Pra Você
+- Corrige o mesmo race de autenticação que transformava a falha inicial do RPC v396 em `Buscando indicação…`/estado vazio permanente.
+- O owner r400 consome o payload canônico `cinetracker_discover_foryou_v396` depois do boot e pinta os 7 slots com 18 ações.
+- Visto, Watchlist e Trocar permanecem locais/otimistas, com trava síncrona e sem full-page reload.
+
+### TV recorrente
+- `ct-refresh-tv-state-user` deixa de considerar cache recente suficiente para séries esportivas recorrentes.
+- Temporada atual de Raw/SmackDown é sempre consultada quando o refresh roda; episódios esportivos já lançados são aceitos pela data real da temporada, sem depender do `last_episode_to_air` atrasado do detalhe da série.
+
+### Estabilidade / build
+- r400 volta a derivar de r396 para retirar completamente do bundle o observer global introduzido em r397.
+- Web 1.0.191 / r400; Android permanece sem alteração.
+
 # Changelog
 
 ## 1.0.190 — 2026-09-29 — Web r399
