@@ -1,0 +1,3 @@
+se;const k=key(current(name));if(!k)return false;actionLocks.add(name);const before=snapshotFy();try{removeKey(k,action);renderForYou();Promise.resolve(window.__ctR365?.persistDirect?.(action,k)).catch(()=>{fy=before;if(isForYou())renderForYou()});return true}finally{actionLocks.delete(name)}}
+function enterForYou(force=false){if(!authReady()||routeNow()!=='discover')return false;bind();if(fyReady&&!force)return renderForYou();void loadForYou(force);return true}
+function bind(){for(const n of ['__ctR404','__ctR405','__ctR406','__ctR408','__ctR388','__ctR395','__ctR396'])if(window[n]&&typeof window[n]==='object'){window[n].loadForYou=loadForYou;if('renderForYou'in window[n])window[n].renderFo

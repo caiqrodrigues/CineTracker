@@ -1,3 +1,9 @@
+## r409 — Web 1.0.200
+- Home start sem restauração do fim do Histórico.
+- Episódio assistido com transição otimista instantânea de Home/Histórico/próximo episódio.
+- Pra Você com owner único, fallbacks paralelos delimitados e ações completas incluindo Trocar.
+- Sem full-page reload, MutationObserver global ou setInterval agressivo.
+
 # CineTracker — Versionamento por sistema
 
 **Atualizado em:** 2026-09-29

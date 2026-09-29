@@ -1,0 +1,5 @@
+f(isForYou())enterForYou(false)},ms)}const f=t.closest('[data-ct319-tab="foryou"],[data-ct263-tab="foryou"],[data-discover-tab="foryou"]');if(f)for(const ms of [0,100,300])setTimeout(()=>{bind();if(routeNow()==='discover')enterForYou(false)},ms)},true);
+window.addEventListener('focus',()=>{if(isForYou()&&fyReady&&!ownerOk())renderForYou()});
+window.addEventListener('online',()=>{if(isForYou())void loadForYou(true)});
+window.addEventListener('cinetracker:data-changed',()=>{if(routeNow()==='discover'){fyReady=false;fyRun++;fyTask=null}});
+function ready(n=0){bind();if(authReady()){if(routeNow()==='home')alignHome(activeHome(),true);else if(isForYou())enterForYou(false);return}if(n<30)setTimeou

@@ -1,3 +1,14 @@
+## [1.0.200] - 2026-09-29
+
+### Fixed
+- Home não abre mais no fim do Histórico; Séries e Filmes alinham na seção principal somente após o paint real.
+- Marcação de episódio como assistido atualiza imediatamente Histórico, contador, bucket e próximo episódio antes da confirmação do servidor.
+- Reconciliação pós-persistência usa as autoridades existentes da Home sem full-page reload e restaura o estado local em caso de falha.
+- Descobrir > Pra Você ganhou owner único r409, fallback paralelo delimitado e proteção contra painters legados sobrescreverem os cards.
+- Botões completos restaurados: **+ Watchlist / Visto / Trocar** nos slots diário e 100% novos; **Visto / Trocar** nos slots da Watchlist.
+- Mantidas as autoridades r406 para Séries e r405 para paginação da Watchlist de Filmes.
+- Sem MutationObserver global, setInterval agressivo, recursão não delimitada ou reload de página.
+
 ## Web 1.0.199 / r408 — 2026-09-29
 
 ### Home

@@ -1,0 +1,4 @@
+actionLocks.delete(name)}}
+function snapshotFy(){return{daily:[...fy.daily],watch:{movie:[...fy.watch.movie],series:[...fy.watch.series],anime:[...fy.watch.anime]},fresh:{movie:[...fy.fresh.movie],series:[...fy.fresh.series],anime:[...fy.fresh.anime]},idx:{watch:{...fy.idx.watch},fresh:{...fy.idx.fresh}}}}
+function removeKey(k,action){fy.daily=fy.daily.filter(x=>key(x)!==k);for(const t of ['movie','series','anime']){if(action==='seen')fy.watch[t]=fy.watch[t].filter(x=>key(x)!==k);fy.fresh[t]=fy.fresh[t].filter(x=>key(x)!==k);fy.idx.watch[t]=0;fy.idx.fresh[t]=0}if(!fy.daily.length)chooseDaily()}
+function act(action,name){if(action==='swap')return swap(name);if(actionLocks.has(name))return fal

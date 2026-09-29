@@ -1,5 +1,14 @@
 ## Web 1.0.199 / r408
 
+## Web 1.0.200 / r409
+
+- Home: abertura alinhada semanticamente em **Assistir a seguir** / **Assistir a seguir / Watchlist** somente depois do paint real; não restaura mais o fim do Histórico.
+- Episódios: marcação como assistido com atualização otimista imediata da série, contador, próximo episódio e Histórico; persistência e reconciliação ocorrem em segundo plano, com rollback em falha.
+- Descobrir > Pra Você: renderer único r409, RPC v396 em corrida com pools de fallback de Watchlist e 100% Novos, evitando ficar preso em **Buscando indicação…**.
+- Ações: Indicação do Dia e 100% Novos exibem **+ Watchlist + Visto + Trocar**; Da sua Watchlist exibe **Visto + Trocar**.
+- Estabilidade: timers e rede delimitados, trava por ação, sem MutationObserver global, setInterval agressivo ou full-page reload.
+
+
 - **Home:** entrada e retorno ancoram uma única vez em **Assistir a seguir** depois do paint real; Histórico continua acessível acima.
 - **Home / Filmes:** Watchlist dispara diretamente o loader r406/v405 e não depende de repaint tardio.
 - **Descobrir / Pra Você:** r408 mantém **Trocar** nos sete slots mesmo após painters legados tardios.

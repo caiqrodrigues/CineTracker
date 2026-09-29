@@ -1,0 +1,36 @@
+/* CineTracker Web 1.0.200 r409 — instant Home episode transitions + resilient Pra Voce owner. */
+(()=>{
+'use strict';
+if(window.__ctR409?.version==='1.0.200')return;
+const q=(s,r=document)=>r?.querySelector?.(s)||null,qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])],rows=v=>Array.isArray(v)?v:[];
+const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}},authReady=()=>{try{return!!session?.access_token}catch{return false}};
+const rpcCall=(n,a)=>{if(!authReady()||typeof rpc!=='function')return Promise.reject(new Error('auth/rpc'));return Promise.resolve(rpc(n,a))};
+const timeout=(p,ms)=>Promise.race([Promise.resolve(p),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+const visible=el=>{if(!el?.isConnected)return false;try{const s=getComputedStyle(el);return s.display!=='none'&&s.visibility!=='hidden'&&el.getClientRects().length>0}catch{return true}};
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const key=x=>{const id=Number(x?.tmdb_id||x?.source_tmdb_id||x?.raw_tmdb?.id||0)||0;return id>0?(String(x?.media_type||'tv')==='movie'?'movie':'tv')+':'+id:''};
+const title=x=>String(x?.title||x?.name||x?.raw_tmdb?.title||x?.raw_tmdb?.name||'Sem título');
+const base408=window.__ctR408||null,baseMovieWatch=typeof ct279MarkWatched==='function'?ct279MarkWatched:null;
+
+/* Home: semantic one-shot alignment only after the real list has painted. */
+let alignToken=0,alignPending=null,alignInternal=false,alignUserMoved=false;
+function activeHome(){const m=q('[data-home-view="movies"]'),s=q('[data-home-view="series"]');if(visible(m)&&!visible(s))return'movies';if(visible(s))return'series';return /filme/i.test(String(q('[data-home-tab].active,[data-home-tab][aria-selected="true"]')?.textContent||''))?'movies':'series'}
+function mainSection(kind){const view=q('[data-home-view="'+(kind==='movies'?'movies':'series')+'"]');if(!view)return null;if(kind==='movies')return q('[data-ct406-movie-watch],[data-ct405-movie-watch],[data-ct404-movie-watch],[data-ct388-movie-watch]',view)||qa('section,.home-section,.panel',view).find(x=>/assistir\s*a\s*seguir\s*\/\s*watchlist/i.test(q('h2,h3',x)?.textContent||''))||null;return q('[data-ct406-bucket="continue"],[data-ct404-bucket="continue"],[data-ct397-bucket="continue"],[data-ct388-bucket="continue"]',view)||qa('section,.home-section,.panel',view).find(x=>/assistir\s*a\s*seguir/i.test(q('h2,h3',x)?.textContent||''))||null}
+function stopAlign(){if(alignInternal)return;alignUserMoved=true;alignPending=null;alignToken++}
+for(const ev of ['wheel','touchstart','touchmove','pointerdown'])window.addEventListener(ev,stopAlign,{capture:true,passive:true});
+window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(e.key))stopAlign()},{capture:true});
+try{if('scrollRestoration'in history)history.scrollRestoration='manual'}catch{}
+function tryAlign(kind,token){if(!alignPending||alignPending.token!==token||alignUserMoved||routeNow()!=='home')return false;const target=mainSection(kind);if(!target||!visible(target))return false;const tabs=q('[data-home] .home-tabs'),bottom=tabs?.getBoundingClientRect?.().bottom||0,top=Math.max(0,Math.round((window.scrollY||document.documentElement.scrollTop||0)+target.getBoundingClientRect().top-Math.max(8,Math.ceil(bottom)+8)));alignInternal=true;try{window.scrollTo({top,left:0,behavior:'auto'})}catch{window.scrollTo(0,top)}queueMicrotask(()=>{alignInternal=false});target.dataset.ct409HomeStart='1';document.documentElement.dataset.ct409HomeAligned=kind;alignPending=null;return true}
+function alignHome(kind=activeHome(),fresh=true){const k=kind==='movies'?'movies':'series';if(fresh){alignToken++;alignUserMoved=false;alignPending={kind:k,token:alignToken}}const token=alignPending?.token??alignToken;if(!alignPending)alignPending={kind:k,token};for(const ms of [0,50,150,350,700,1200,2200,4000])setTimeout(()=>tryAlign(k,token),ms);return token}
+function onHomePaint(kind){const p=alignPending;if(p&&p.kind===kind)requestAnimationFrame(()=>tryAlign(kind,p.token));return true}
+
+/* Home episode optimistic transition: local series + local History first, server second. */
+const watchLocks=new Set();
+const today=()=>new Date().toISOString().slice(0,10);
+const episodeId=(t,s,e)=>'tv:'+t+':'+s+':'+e;
+function seriesSnapshot(){try{return rows(window.__ctR406?.getSeries?.()).map(x=>({...x}))}catch{return[]}}
+function commitSeries(list){try{return window.__ctR406?.setSeries?.(list,true)}catch{return false}}
+function availableText(n){n=Math.max(0,Number(n||0));return n.toLocaleString('pt-BR')+' '+(n===1?'episódio disponível para ver':'episódios disponíveis para ver')}
+function historyHost(){return q('[data-home-view="series"] [data-ct274-history="episodes"] .ct274-history-stack')}
+function historyCountEl(){return q('[data-home-view="series"] [data-ct274-history="episodes"] .panel-head small')}
+function optimisticHistory(card,tmdb,s,e,remaining,stamp){const host=historyHost();if(!host||!card)return null;const clone=card.cloneNode(true);clone.dataset.ct409OptimisticHistory=stamp;clone.dataset.ct274Context='history';clone.dataset.ct274Tmdb=String(tmdb);clone.dataset.ct274Season=String(s);clone.dataset.ct274Episode=String(e);clone.querySelectorAll('[data-ct279-watch],[data-ct266-watch],[data-ct408-action]

@@ -1,0 +1,3 @@
+rYou=renderForYou;if('swap'in window[n])window[n].swap=swap}window.__ctR288PaintForYou=renderForYou;document.documentElement.dataset.ct409Owner='1';return true}
+
+window.addEventListener('click',e=>{const t=e.target;if(!t?.closest)return;const a=t.closest('[data-ct409-action]');if(a){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();act(String(a.dataset.ct409Action||''),String(a.dataset.ct409Slot||''));return}const nav=t.closest('[data-nav]');if(nav){const d=String(nav.dataset.nav||'');if(d==='home')for(const ms of [0,100,300])setTimeout(()=>{bind();if(routeNow()==='home')alignHome(activeHome(),true)},ms);if(d==='discover')for(const ms of [0,100,300])setTimeout(()=>{bind();i

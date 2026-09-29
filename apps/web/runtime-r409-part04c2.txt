@@ -1,0 +1,3 @@
+eturn false;try{if(window.__ctR288R263?.discover263)window.__ctR288R263.discover263.tab='foryou'}catch{}const root=discoverRoot();if(!root)return false;if(fyReady&&!force)return renderForYou();if(!fyReady)root.innerHTML='<div data-ct409-foryou><div class="panel"><div class="empty">Buscando indicação…</div></div></div>';const ok=await fetchForYou(force);if(ok&&isForYou())return renderForYou();if(isForYou()&&!fyReady)root.innerHTML='<div data-ct409-foryou><div class="panel"><div class="empty">Falha ao carregar recomendações.</div></div></div>';return false}
+function ex(name){if(!excluded.has(name))excluded.set(name,new Set());return excluded.get(name)}
+function swap(name){if(actionLocks.
