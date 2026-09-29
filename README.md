@@ -1,3 +1,17 @@
+## Web 1.0.187 / r396
+
+- **Escopo exclusivo:** corrige somente `Descobrir > Pra você`; Home, Perfil, Esportes, Top 10, Configurações e Android permanecem intocados.
+- **Causa do loading:** o r388 fazia várias chamadas e uma segunda auditoria cliente para cada pool; qualquer atraso/falha em `cinetracker_discover_filter_v391` mantinha os 7 slots em `Buscando indicação…`.
+- **Carga canônica única:** `cinetracker_discover_foryou_v396` entrega Watchlist + 100% Novos de Filme/Série/Anime em uma única chamada autenticada.
+- **Watchlist não vista:** `cinetracker_discover_watch_unseen_v396` elimina episódios/filmes já vistos e estados AlreadySeen/Completed/InProgress/UpToDate antes do payload sair do banco.
+- **100% Novos:** continua usando a autoridade server-side `cinetracker_discover_fresh_v387`, que já exclui vistos e Watchlist; a auditoria redundante do cliente sai do caminho crítico.
+- **Indicação do Dia:** nasce do pool Fresh já validado no mesmo payload.
+- **Carregamento finito:** timeout único de 5 s; sucesso pinta os 7 slots imediatamente e falha encerra em estado explícito, sem skeleton infinito.
+- **Ações:** Visto, Watchlist e Trocar continuam no estado local/Optimistic UI existente, sem full-page reload.
+- **Backend:** migration `r396_discover_foryou_single_payload` aplicada no Supabase de produção.
+
+Build de hospedagem: `apps/web/build-r396.mjs`; gate oficial: `apps/web/build-r396-official.mjs`.
+
 ## Web 1.0.186 / r395
 
 - **Escopo exclusivo:** corrige somente `Descobrir > Pra você`; Home, Perfil, Esportes, Top 10, Configurações e Android ficam preservados.
