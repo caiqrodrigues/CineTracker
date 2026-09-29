@@ -12,7 +12,7 @@ const n=(v:any)=>{const x=Number(v);return Number.isFinite(x)?x:0};
 const rows=(v:any)=>Array.isArray(v)?v:[];
 const today=()=>new Date().toISOString().slice(0,10);
 const epKey=(s:any,e:any)=>n(s)+':'+n(e);
-const sportsLike=(m:any)=>/(^|\\b)(wwe|raw|smackdown|nxt|formula\\s*1|formula\\s*one|ufc)(\\b|$)/i.test(String(m?.title||m?.raw_tmdb?.name||''));
+const sportsLike=(m:any)=>/(^|\b)(wwe|raw|smackdown|nxt|formula\s*1|formula\s*one|ufc)(\b|$)/i.test(String(m?.title||m?.raw_tmdb?.name||''));
 const currentSportsSeason=(show:any)=>n(show?.last_episode_to_air?.season_number)||n(rows(show?.seasons).filter((x:any)=>n(x?.season_number)>0).sort((a:any,b:any)=>n(b.season_number)-n(a.season_number))[0]?.season_number);
 const recentCatalog=(catalog:any[])=>rows(catalog).some((e:any)=>{const d=Date.parse(e?.air_date||'')||0;return d>0&&Date.now()-d<=28*86400000});
 const stale=(m:any)=>{
