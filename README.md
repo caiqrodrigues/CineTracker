@@ -1,3 +1,13 @@
+## Web 1.0.195 / r404
+
+- **Home / Filmes:** Watchlist de 1.381 filmes usa `cinetracker_home_movies_v404` paginado em blocos de 120, com primeiro paint rápido, total exato e carregamento restante delimitado.
+- **Descobrir / Pra Você:** o owner usa o container visível real e restaura todos os botões: **+ Watchlist + Visto + Trocar** em Diário/100% Novos e **Visto + Trocar** em Da sua Watchlist.
+- **Raw / SmackDown:** o payload separa backlog histórico total do único episódio recente pendente; o recente controla o bucket Continuar/Em dia, enquanto o backlog continua exibido na contagem.
+- **Sem reload / anti-freeze:** ações locais, paginação limitada e recuperação finita; sem reload global, observer permanente ou loop infinito.
+- **Escopo:** Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.
+
+Build de hospedagem: `apps/web/build-r404.mjs`; gate oficial: `apps/web/build-r404-official.mjs`.
+
 ## Web 1.0.194 / r403
 
 - **Home / Séries:** Raw e SmackDown com episódio recente disponível passam para **Assistir a seguir / Continuar assistindo** via `cinetracker_home_series_v403`; backlog histórico continua ignorado.
