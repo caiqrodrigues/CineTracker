@@ -2,7 +2,7 @@
 
 - **Home / Filmes:** o clique real herdado da r388 agora delega para a autoridade r405 antes do loader legado. A Watchlist usa `cinetracker_home_movies_v405` com paginação SQL real de 120 itens; produção validada com **1.381 filmes**, 120 itens na primeira página e 120 na segunda.
 - **Correção da causa do loading infinito:** o loader antigo convertia `media_id` UUID com `Number(...)`, transformava IDs válidos em zero e descartava toda a Watchlist mesmo após RPC 200. Esse caminho deixa de ser executado pela Home Filmes.
-- **Descobrir / Pra Você:** os closures reais `loadDiscover263`, `paintForYou263` e o loader r388 passam a delegar diretamente para r405. O renderer antigo não pode mais apagar **Trocar** depois que os cards aparecem.
+- **Descobrir / Pra Você:** os closures efetivamente acionados em produção (`loadForYou321`, `paintForYou336`, `switchDiscover336`) e o loader/painter r388 passam a delegar diretamente para r405. O renderer antigo não pode mais apagar **Trocar** depois que os cards aparecem.
 - **Pra Você / dados:** Filme, Série e Anime de `Da sua Watchlist` e `100% Novos` são carregados em paralelo pelas autoridades server-side `cinetracker_discover_watch_unseen_v396` e `cinetracker_discover_fresh_v387`.
 - **Ações:** Indicação do Dia e 100% Novos mantêm **+ Watchlist + Visto + Trocar**; Da sua Watchlist mantém **Visto + Trocar**. As ações seguem locais/otimistas, sem reload global.
 - **Escopo:** Raw/SmackDown, Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.

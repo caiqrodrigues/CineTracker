@@ -31,21 +31,33 @@ js=once(js,
 );
 
 js=once(js,
+ "function renderForYou(){\n if(routeNow()!=='discover')return false;",
+ "function renderForYou(){\n if(window.__ctR405?.renderForYou)return window.__ctR405.renderForYou();\n if(routeNow()!=='discover')return false;",
+ 'r388 Pra Voce painter delegation'
+);
+
+js=once(js,
  "async function loadForYou(force=false){\n if(routeNow()!=='discover')return false;if(fyTask&&!force)return fyTask;const run=++fyRun;if(force)validated.clear();",
  "async function loadForYou(force=false){\n if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force);\n if(routeNow()!=='discover')return false;if(fyTask&&!force)return fyTask;const run=++fyRun;if(force)validated.clear();",
- 'r388 Pra Voce closure delegation'
+ 'r388 Pra Voce loader delegation'
 );
 
 js=once(js,
- "loadDiscover263=function(tab=discover263.tab,force=false){\n discover263.tab=tab;",
- "loadDiscover263=function(tab=discover263.tab,force=false){\n if(tab==='foryou'&&window.__ctR405?.loadForYou){discover263.tab=tab;discover263.type='all';++discover263.gen;ct288SyncShell();const host=discoverHost263();if(host)host.innerHTML='<div class=\"ct263-loading\">Carregando títulos…</div>';void window.__ctR405.loadForYou(force);return}\n discover263.tab=tab;",
- 'r288 Pra Voce loader delegation'
+ "async function loadForYou321(force=false){\n if(typeof window.__ctR382LoadForYou==='function')",
+ "async function loadForYou321(force=false){\n if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force);\n if(typeof window.__ctR382LoadForYou==='function')",
+ 'r321 Pra Voce closure delegation'
 );
 
 js=once(js,
- "paintForYou263=function(){\n const host=discoverHost263(),d=discover263.forYou;if(!host||!d)return;",
- "paintForYou263=function(){\n if(window.__ctR405?.renderForYou)return window.__ctR405.renderForYou();\n const host=discoverHost263(),d=discover263.forYou;if(!host||!d)return;",
- 'r288 Pra Voce painter delegation'
+ "function paintForYou336(){\n if(routeNow()!=='discover')return false;",
+ "function paintForYou336(){\n if(window.__ctR405?.renderForYou)return window.__ctR405.renderForYou();\n if(routeNow()!=='discover')return false;",
+ 'r336 Pra Voce painter delegation'
+);
+
+js=once(js,
+ "if(wanted==='foryou'){await window.__ctR321?.loadForYou?.(false);if(seq===discoverSeq)paintForYou336()}",
+ "if(wanted==='foryou'){if(window.__ctR405?.loadForYou)return await window.__ctR405.loadForYou(false);await window.__ctR321?.loadForYou?.(false);if(seq===discoverSeq)paintForYou336()}",
+ 'r336 Pra Voce switch delegation'
 );
 
 js=once(js,
@@ -83,7 +95,7 @@ const prev=JSON.parse(releaseRaw),release={
  scope:'home-movies+discover-foryou',
  home_series:'r404-unchanged',
  home_movies:'v405-true-sql-paging-120+live-r388-closure-delegation',
- discover_foryou:'watch-unseen-v396+fresh-v387-parallel+live-r288-r388-closure-delegation',
+ discover_foryou:'watch-unseen-v396+fresh-v387-parallel+live-r321-r336-r388-closure-delegation',
  discover_actions:'daily3-watch2-fresh3-local-optimistic-slot-lock-no-reload',
  raw_smackdown:'unchanged-r404',
  profile:'untouched',sports:'untouched',top10:'untouched',settings:'untouched',android:'1.0.20/10062'
@@ -109,9 +121,11 @@ for(const required of [
  "window.__ctR405Marker='home-movies-real-closure+foryou-real-closure+complete-swap'",
  "cinetracker_home_movies_v405",
  "if(window.__ctR405?.loadMovies)return window.__ctR405.loadMovies(force)",
- "if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force)",
- "if(tab==='foryou'&&window.__ctR405?.loadForYou)",
  "if(window.__ctR405?.renderForYou)return window.__ctR405.renderForYou()",
+ "if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force)",
+ "async function loadForYou321(force=false)",
+ "function paintForYou336()",
+ "if(wanted==='foryou'){if(window.__ctR405?.loadForYou)",
  "cinetracker_discover_watch_unseen_v396",
  "cinetracker_discover_fresh_v387"
 ])if(!builtJs.includes(required))throw new Error('r405 missing assembled authority: '+required);

@@ -12,8 +12,8 @@
 ### Descobrir / Pra Você
 - O vídeo real confirmou cards visíveis sem o botão **Trocar**.
 - Os logs mostraram o caminho legado ainda ativo (`shown_recommendations_v296`, `watchlist_full_v119`, `discover_filter_v333`) ao mesmo tempo em que a autoridade nova também carregava.
-- Os closures reais `loadDiscover263` e `paintForYou263` da r288 passam a delegar diretamente para r405 quando a aba é `foryou`.
-- O closure local `loadForYou` da r388 também delega para r405, impedindo repaint tardio do renderer antigo.
+- Os closures que realmente venciam a navegação em produção — `loadForYou321`, `paintForYou336` e `switchDiscover336` — passam a delegar diretamente para r405 quando a aba é `foryou`.
+- Os closures locais `loadForYou` e `renderForYou` da r388 também delegam para r405, impedindo repaint tardio do renderer antigo.
 - O caminho crítico deixa a chamada composta de ~8 s e carrega em paralelo os seis pools de Filme/Série/Anime por `cinetracker_discover_watch_unseen_v396` e `cinetracker_discover_fresh_v387`.
 - Indicação do Dia e 100% Novos exibem **+ Watchlist + Visto + Trocar**; Da sua Watchlist exibe **Visto + Trocar**.
 - `Trocar` continua com trava local por slot e não executa reload de página.

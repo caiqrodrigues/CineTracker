@@ -14,7 +14,7 @@
 ## Web 1.0.196 / r405
 
 - Home Filmes passa pelo closure real da r388 e usa `cinetracker_home_movies_v405` com paginação SQL verdadeira de 120 itens; produção validada em 1.381 filmes.
-- Pra Você toma posse dos closures reais r288/r388; o renderer legado deixa de apagar os botões **Trocar**.
+- Pra Você toma posse dos closures reais r321/r336/r388; o renderer legado deixa de apagar os botões **Trocar**.
 - Watchlist/Fresh de Filme, Série e Anime são carregados em paralelo pelas autoridades v396/v387, preservando exclusões de vistos e Watchlist.
 - Raw/SmackDown e demais áreas permanecem inalterados.
 - Android permanece 1.0.20 / 10062.

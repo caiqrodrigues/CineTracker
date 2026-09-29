@@ -27,8 +27,9 @@ jobs:
           grep -Fq "window.__ctR405Marker='home-movies-real-closure+foryou-real-closure+complete-swap'" dist/app-v405.js
           grep -Fq "cinetracker_home_movies_v405" dist/app-v405.js
           grep -Fq "if(window.__ctR405?.loadMovies)return window.__ctR405.loadMovies(force)" dist/app-v405.js
-          grep -Fq "if(tab==='foryou'&&window.__ctR405?.loadForYou)" dist/app-v405.js
+          grep -Fq "async function loadForYou321(force=false)" dist/app-v405.js
           grep -Fq "if(window.__ctR405?.renderForYou)return window.__ctR405.renderForYou()" dist/app-v405.js
+          grep -Fq "if(wanted==='foryou'){if(window.__ctR405?.loadForYou)" dist/app-v405.js
   android:
     runs-on: ubuntu-latest
     steps:
