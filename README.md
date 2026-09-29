@@ -1,3 +1,14 @@
+## Web 1.0.198 / r407
+
+- **Home / entrada:** Home abre e retorna em **Assistir a seguir**, mantendo o Histórico acima para acesso por rolagem. A restauração automática do navegador deixa de empurrar a viewport para o fim do Histórico.
+- **Home / Filmes:** o clique real da semi-aba passa a acionar imediatamente o loader paginado r406/v405; a Watchlist não depende mais de repaint tardio para aparecer.
+- **Descobrir / Pra Você:** um único owner consome `cinetracker_discover_foryou_v396` e bloqueia renderers r404/r406 de sobrescreverem os cards finais.
+- **Botões:** Indicação do Dia e 100% Novos = **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist = **✓ Visto + ↻ Trocar**.
+- **Estabilidade:** bursts tardios de até 46 s foram removidos; sem observer global, interval, loop infinito ou full-page reload.
+- **Escopo:** regras de Séries, Perfil, Esportes, Top 10, Configurações e Android permanecem inalteradas.
+
+Build de hospedagem: `apps/web/build-r407.mjs`; gate oficial: `apps/web/build-r407-official.mjs`; regressões: `apps/web/test-r407.mjs` e `apps/web/test-r407-browser.mjs`.
+
 ## Web 1.0.197 / r406\n\n- Home Séries volta a usar a contagem canônica de episódios recentes da r403/r402; Raw e SmackDown com episódio atual não visto entram em **Assistir a seguir** sem transformar backlog histórico em pendência.\n- Home Filmes mantém paginação SQL v405, mas a pintura da Watchlist passa a seguir a view realmente visível, evitando o bloco vazio por estado legado de aba.\n- Descobrir > Pra Você garante os botões completos: **+ Watchlist / ✓ Visto / ↻ Trocar** nos cards novos e **✓ Visto / ↻ Trocar** em Da sua Watchlist.\n- Sem reload global, MutationObserver global, setInterval agressivo ou loop infinito.\n\n## Web 1.0.196 / r405
 
 - **Home / Filmes:** o clique real herdado da r388 agora delega para a autoridade r405 antes do loader legado. A Watchlist usa `cinetracker_home_movies_v405` com paginação SQL real de 120 itens; produção validada com **1.381 filmes**, 120 itens na primeira página e 120 na segunda.
