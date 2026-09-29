@@ -1,3 +1,30 @@
+## Web 1.0.196 / r405 — 2026-09-29
+
+### Home / Filmes
+- O vídeo real da r404 confirmou que **Assistir a seguir / Watchlist** permanecia em `Carregando Watchlist…`.
+- Os logs de produção mostraram o clique real executando `cinetracker_home_movies_v393` com HTTP 200, sem chegar ao loader paginado r404.
+- A causa foi localizada no closure legado r388: `media_id` é UUID, mas o renderer aplicava `Number(media_id)`; o resultado virava zero e todos os filmes válidos eram descartados.
+- O closure real `loadMovies` da r388 agora delega imediatamente para r405, eliminando esse filtro inválido e a disputa de autoridade.
+- `cinetracker_home_movies_v405` implementa paginação SQL real com `LIMIT/OFFSET`, sem materializar primeiro o JSON completo da v402.
+- Produção validada com **1.381 filmes**; primeira página = **120**, segunda página = **120**.
+- O índice existente `idx_media_overrides_profile_state_updated_r274` é reutilizado; nenhum índice redundante foi criado.
+
+### Descobrir / Pra Você
+- O vídeo real confirmou cards visíveis sem o botão **Trocar**.
+- Os logs mostraram o caminho legado ainda ativo (`shown_recommendations_v296`, `watchlist_full_v119`, `discover_filter_v333`) ao mesmo tempo em que a autoridade nova também carregava.
+- Os closures reais `loadDiscover263` e `paintForYou263` da r288 passam a delegar diretamente para r405 quando a aba é `foryou`.
+- O closure local `loadForYou` da r388 também delega para r405, impedindo repaint tardio do renderer antigo.
+- O caminho crítico deixa a chamada composta de ~8 s e carrega em paralelo os seis pools de Filme/Série/Anime por `cinetracker_discover_watch_unseen_v396` e `cinetracker_discover_fresh_v387`.
+- Indicação do Dia e 100% Novos exibem **+ Watchlist + Visto + Trocar**; Da sua Watchlist exibe **Visto + Trocar**.
+- `Trocar` continua com trava local por slot e não executa reload de página.
+
+### Estabilidade / escopo
+- Nenhum `window.location.reload()`, `router.refresh()`, `setInterval`, `MutationObserver` permanente ou loop infinito foi adicionado.
+- Raw/SmackDown permanecem exatamente na regra já aprovada da r404.
+- Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+- Web **1.0.196 / r405**; Android preservado em **1.0.20 / 10062**.
+- Migration: `20260929235900_r405_home_movies_true_paging.sql`.
+
 ## Web 1.0.195 / r404 — 2026-09-29
 
 ### Home / Filmes

@@ -6,10 +6,20 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.195** | revision `r404-official-1.0.195`, package `1.0.195` | release Web atual |
+| Web | **1.0.196** | revision `r405-official-1.0.196`, package `1.0.196` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
-| Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
+| Backend / Supabase | produção compartilhada | Home Movies `cinetracker_home_movies_v405` + autoridades existentes | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.196 / r405
+
+- Home Filmes passa pelo closure real da r388 e usa `cinetracker_home_movies_v405` com paginação SQL verdadeira de 120 itens; produção validada em 1.381 filmes.
+- Pra Você toma posse dos closures reais r288/r388; o renderer legado deixa de apagar os botões **Trocar**.
+- Watchlist/Fresh de Filme, Série e Anime são carregados em paralelo pelas autoridades v396/v387, preservando exclusões de vistos e Watchlist.
+- Raw/SmackDown e demais áreas permanecem inalterados.
+- Android permanece 1.0.20 / 10062.
+
+Assets oficiais: app-v405.js / app-v405.css; build: apps/web/build-r405-official.mjs; regressões: apps/web/test-r405.mjs e apps/web/test-r405-browser.mjs.
 
 ## Web 1.0.195 / r404
 

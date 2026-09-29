@@ -1,4 +1,4 @@
-name: Verify Web 1.0.195 r404 Home + Pra Voce
+name: Verify Web 1.0.196 r405 Home Movies + Pra Voce
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r404:
+  web_r405:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -17,17 +17,18 @@ jobs:
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r404-home-discover-final.js
-          node --check build-r404.mjs
-          node --check build-r404-official.mjs
-          node --check test-r404.mjs
-          node --check test-r404-browser.mjs
-          node build-r404-official.mjs
-          CT_R404_SKIP_BUILD=1 node test-r404.mjs
-          CT_R404_SKIP_BUILD=1 node test-r404-browser.mjs
-          node --check dist/app-v404.js
-          grep -Fq "window.__ctR404Marker='home-counts-authority+movies+live-foryou-owner+no-freeze'" dist/app-v404.js
-          grep -Fq "r404 retired r403 runtime" dist/app-v404.js
+          node --check runtime-r405-live-authority-bridge.js
+          node --check build-r405.mjs
+          node --check build-r405-official.mjs
+          node --check test-r405.mjs
+          node --check test-r405-browser.mjs
+          node build-r405-official.mjs
+          node --check dist/app-v405.js
+          grep -Fq "window.__ctR405Marker='home-movies-real-closure+foryou-real-closure+complete-swap'" dist/app-v405.js
+          grep -Fq "cinetracker_home_movies_v405" dist/app-v405.js
+          grep -Fq "if(window.__ctR405?.loadMovies)return window.__ctR405.loadMovies(force)" dist/app-v405.js
+          grep -Fq "if(tab==='foryou'&&window.__ctR405?.loadForYou)" dist/app-v405.js
+          grep -Fq "if(window.__ctR405?.renderForYou)return window.__ctR405.renderForYou()" dist/app-v405.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -37,7 +38,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r404, android]
+    needs: [web_r405, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -46,10 +47,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.195"' <<<"$BODY" && grep -Fq '"revision": "r404-official-1.0.195"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v404.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.196"' <<<"$BODY" && grep -Fq '"revision": "r405-official-1.0.196"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v405.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR404Marker='home-counts-authority+movies+live-foryou-owner+no-freeze'" <<<"$JS" && grep -Fq 'app-v404.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR405Marker='home-movies-real-closure+foryou-real-closure+complete-swap'" <<<"$JS" && grep -Fq 'cinetracker_home_movies_v405' <<<"$JS" && grep -Fq 'app-v405.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
