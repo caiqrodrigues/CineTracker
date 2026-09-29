@@ -1,4 +1,4 @@
-## Web 1.0.196 / r405 — 2026-09-29
+## 1.0.197 — r406\n\n### Corrigido\n- Contagem de episódios disponíveis restaurada para a autoridade de episódios recentes; removida a sobrescrita r404 que transformava backlog histórico de Raw/SmackDown em `available_episodes`.\n- Raw e SmackDown com episódio recente liberado e não visto passam para **Assistir a seguir**.\n- Home > Filmes deixa de esvaziar a Watchlist quando o estado legado da aba diverge da view visível.\n- Descobrir > Pra Você completa os botões ausentes em todos os sete slots.\n- Renderização continua em lotes via `requestAnimationFrame` e timers são finitos; sem full page reload.\n\n## Web 1.0.196 / r405 — 2026-09-29
 
 ### Home / Filmes
 - O vídeo real da r404 confirmou que **Assistir a seguir / Watchlist** permanecia em `Carregando Watchlist…`.
