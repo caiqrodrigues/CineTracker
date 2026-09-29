@@ -1,3 +1,13 @@
+## Web 1.0.184 / r393
+
+- **Home:** Histórico continua renderizado antes do conteúdo, mas a entrada fica ancorada em Assistir a seguir / Watchlist; rolar para cima revela o Histórico.
+- **Home / Filmes:** novo RPC `cinetracker_home_movies_v393` entrega somente os filmes e campos usados na tela, com prefetch em segundo plano e fallback v376.
+- **Pra Você:** 100% Novos usa banco primeiro, auditoria pessoal v391 e TMDB apenas como fallback; cache inicial audita somente os cards correntes para não bloquear o paint.
+- **Sem reload:** ações de Visto, Watchlist e Trocar continuam por estado local/Optimistic UI.
+- **Escopo congelado:** Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+
+Build de hospedagem: `apps/web/build-r393.mjs`; gate oficial: `apps/web/build-r393-official.mjs`.
+
 ## Web 1.0.183 / r392
 
 - **Home Séries:** remove o caminho active_v380 e qualquer fusão de estado velho; cinetracker_home_series_v391 passa a ser a única autoridade do bucket.
