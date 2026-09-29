@@ -69,11 +69,11 @@ function alignHome397(kind=activeHome()){
 }
 async function forceSportsRefresh397(){
  if(sportsRefreshTask)return sportsRefreshTask;const src=rows(homeData()?.series);if(!src.some(sportsLike)||typeof window.__ctR388?.refreshTv!=='function')return false;
- sportsRefreshTask=Promise.resolve(window.__ctR388.refreshTv(true)).then(()=>{if(routeNow()==='home'){renderSeries397();alignHome397(series')}return true}).catch(()=>false).finally(()=>{sportsRefreshTask=null});return sportsRefreshTask;
+ sportsRefreshTask=Promise.resolve(window.__ctR388.refreshTv(true)).then(()=>{if(routeNow()==='home'){renderSeries397();alignHome397('series')}return true}).catch(()=>false).finally(()=>{sportsRefreshTask=null});return sportsRefreshTask;
 }
 const baseHomeRender=window.__ctR388?.renderHome||null;
 async function renderHome397(){
- if(homeWrapBusy)return typeof baseHomeRender==='function'?baseHomeRender():false;homeWrapBusy=true;let out=false;try{try{out=typeof baseHomeRender==='function'?await baseHomeRender():false}catch(e){document.documentElement.dataset.ct397BaseHomeError=String(e?.message||e)}if(routeNow()!=='home')return out;const kind=activeHome();if(kind==='movies')renderMovies397();else renderSeries397();requestAnimationFrame(()=>alignHome397(kind));for(const ms of [80,220,520])setTimeout(()=>alignHome397(kind),ms);if!kind==='series')setTimeout(()=>void forceSportsRefresh397(),180);return out}finally{homeWrapBusy=false}
+ if(homeWrapBusy)return typeof baseHomeRender==='function'?baseHomeRender():false;homeWrapBusy=true;let out=false;try{try{out=typeof baseHomeRender==='function'?await baseHomeRender():false}catch(e){document.documentElement.dataset.ct397BaseHomeError=String(e?.message||e)}if(routeNow()!=='home')return out;const kind=activeHome();if(kind==='movies')renderMovies397();else renderSeries397();requestAnimationFrame(()=>alignHome397(kind));for(const ms of [80,220,520])setTimeout(()=>alignHome397(kind),ms);if(kind==='series')setTimeout(()=>void forceSportsRefresh397(),180);return out}finally{homeWrapBusy=false}
 }
 function bindHome397(){if(!window.__ctR388)return false;window.__ctR388.renderHome=renderHome397;for(const n of ['__ctR393','__ctR394'])if(window[n]&&typeof window[n]==='object')window[n].renderHome=renderHome397;try{renderHome=renderHome397}catch{};return true}
 
