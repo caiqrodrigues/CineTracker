@@ -1,8 +1,8 @@
-/* CineTracker Web 1.0.179 r388 — Home + Descobrir/Pra Você only. */
+/* CineTracker Web 1.0.184 r393 — Home + Descobrir/Pra Você only. */
 (()=>{
 'use strict';
-if(window.__ctR388?.version==='1.0.183')return;
-window.__ctR388Marker='home-series-first-complete+movies-all-1381+foryou-direct-strict-no-empty-actions';
+if(window.__ctR388?.version==='1.0.184')return;
+window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';
 window.__ctR388HomeOwner=true;window.__ctR388ForYouOwner=true;
 
 const q=(s,r=document)=>r?.querySelector?.(s)||null;
@@ -27,7 +27,23 @@ function invalidateHome392(dropMemory=true){hRun++;hHistoryRun++;hMoviesRun++;hS
 
 function activeKind(){try{return window.__ctR371?.activeTab==='movies'?'movies':'series'}catch{return q('[data-home-tab].active')?.dataset?.homeTab==='movies'?'movies':'series'}}
 function applyTab(k){try{window.__ctR371?.applyTab?.(k)}catch{}try{if(typeof ct266ApplyHomeTab==='function')ct266ApplyHomeTab(k)}catch{}}
-function settleHome(k=activeKind()){try{window.__ctR371?.preserveAfterPaint?.()}catch{};try{window.__ctR385?.scheduleHome?.(k,true)}catch{};try{window.__ctR375?.align?.(k)}catch{}}
+let homeAnchorToken393=0,homeUserMoved393=false;
+function homeMain393(kind=activeKind()){
+ const view=q('[data-home-view="'+(kind==='movies'?'movies':'series')+'"]');if(!view)return null;
+ if(kind==='movies')return q(':scope > [data-ct388-movie-watch]',view);
+ return [...view.children].find(x=>x.matches?.('[data-ct388-series-section],[data-ct388-series-loading]')&&/assistir\s*a\s*seguir/i.test(q('.panel-head h3,h3',x)?.textContent||''))||q(':scope > [data-ct388-series-loading]',view)||null
+}
+function alignHome393(kind=activeKind(),token=homeAnchorToken393){
+ if(routeNow()!=='home'||token!==homeAnchorToken393||homeUserMoved393)return false;applyTab(kind);
+ const target=homeMain393(kind);if(!target)return false;const tabs=q('[data-home] .home-tabs'),margin=Math.max(8,Math.ceil(tabs?.getBoundingClientRect?.().height||0)+8);
+ target.style.scrollMarginTop=margin+'px';try{target.scrollIntoView({block:'start',inline:'nearest',behavior:'auto'})}catch{try{target.scrollIntoView(true)}catch{}}
+ target.dataset.ct393HomeStart='1';return true
+}
+function scheduleHome393(kind=activeKind(),fresh=false){
+ if(fresh){homeAnchorToken393++;homeUserMoved393=false}const token=homeAnchorToken393;
+ queueMicrotask(()=>alignHome393(kind,token));requestAnimationFrame(()=>alignHome393(kind,token));for(const ms of [40,140,360,760,1400])setTimeout(()=>alignHome393(kind,token),ms);return token
+}
+function settleHome(k=activeKind()){try{window.__ctR371?.preserveAfterPaint?.()}catch{};scheduleHome393(k,false)}
 function normalizeBucket391(x0){
  const x={...x0},watched=Number(x?.watched_episodes||0),hasNext=Number(x?.next_episode_number||0)>0,last=Date.parse(x?.last_watched_at||0)||0,
   sports=/wwe|smackdown|nxt|monday night raw|friday night smackdown|formula 1|formula one|ufc/i.test(String(x?.title||''));
@@ -198,19 +214,28 @@ async function loadHistory(force=false){
 }
 async function loadMovies(force=false){
  if(hMoviesTask&&!force)return hMoviesTask;const run=++hMoviesRun;
- hMoviesTask=timeout(rpc('cinetracker_watchlist_full_v376',{}),6500).then(v=>{if(run!==hMoviesRun)return hMovies;hMovies=rows(v?.rows).filter(x=>String(x?.media_type||'')==='movie'&&mediaId(x)>0);cacheSet(HM,hMovies);if(routeNow()==='home'&&activeKind()==='movies'){const old=q('[data-ct388-movie-watch]');if(old){const t=document.createElement('template');t.innerHTML=movieSection();old.replaceWith(t.content.firstElementChild)}renderMoviesAll()}return hMovies}).catch(e=>{document.documentElement.dataset.ct392MoviesError=String(e?.message||e);return hMovies}).finally(()=>{if(run===hMoviesRun)hMoviesTask=null});return hMoviesTask
+ hMoviesTask=(async()=>{
+  let v=null;
+  try{v=await timeout(rpc('cinetracker_home_movies_v393',{}),6000)}
+  catch(primary){document.documentElement.dataset.ct393MoviesPrimaryError=String(primary?.message||primary);v=await timeout(rpc('cinetracker_watchlist_full_v376',{}),15000)}
+  if(run!==hMoviesRun)return hMovies;hMovies=rows(v?.rows).filter(x=>String(x?.media_type||'')==='movie'&&mediaId(x)>0);cacheSet(HM,hMovies);
+  if(routeNow()==='home'&&activeKind()==='movies'){const old=q('[data-ct388-movie-watch]');if(old){const t=document.createElement('template');t.innerHTML=movieSection();old.replaceWith(t.content.firstElementChild)}renderMoviesAll();scheduleHome393('movies',false)}
+  document.documentElement.dataset.ct393MoviesReady=String(hMovies.length);return hMovies
+ })().catch(e=>{document.documentElement.dataset.ct392MoviesError=String(e?.message||e);if(routeNow()==='home'&&activeKind()==='movies'){const stack=q('.ct388-movie-stack');if(stack&&!hMovies.length)stack.innerHTML='<div class="empty">Não foi possível carregar a Watchlist. Troque de aba e tente novamente.</div>'}return hMovies}).finally(()=>{if(run===hMoviesRun)hMoviesTask=null});return hMoviesTask
 }
 async function renderHome388(){
- const kind=activeKind();try{setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class="page" data-home></div>'))}catch{};paintFrame(kind);
+ const kind=activeKind();try{setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class="page" data-home></div>'))}catch{};paintFrame(kind);scheduleHome393(kind,true);
  const critical=[loadSeries(false),loadHistory(false)];if(kind==='movies')critical.push(loadMovies(false));
  await Promise.allSettled(critical);
  if(routeNow()!=='home')return false;
- renderSeries();if(hHistory){renderHistory('episodes');renderHistory('movies')}if(kind==='movies'&&hMovies.length)renderMoviesAll();
- document.documentElement.dataset.ct388Home='authoritative-ready';document.documentElement.dataset.ct392HomeReady='1';return true
+ renderSeries();if(hHistory){renderHistory('episodes');renderHistory('movies')}if(kind==='movies'&&hMovies.length)renderMoviesAll();scheduleHome393(kind,false);
+ if(kind!=='movies'&&!hMovies.length)setTimeout(()=>{if(!hMovies.length)void loadMovies(false)},250);
+ document.documentElement.dataset.ct388Home='authoritative-ready';document.documentElement.dataset.ct392HomeReady='1';document.documentElement.dataset.ct393HomeReady='1';return true
 }
 try{renderHome=renderHome388}catch{}
 document.addEventListener('change',e=>{const s=e.target?.closest?.('[data-ct388-movie-sort]');if(!s||routeNow()!=='home')return;e.stopPropagation();movieSort=String(s.value||'added_desc');applyMovieSort()},true);
-window.addEventListener('click',e=>{if(routeNow()!=='home')return;const b=e.target?.closest?.('[data-home-tab]');if(!b)return;const k=String(b.dataset.homeTab||'series')==='movies'?'movies':'series';applyTab(k);setTimeout(()=>{if(k==='movies'){if(hMovies.length)renderMoviesAll();else void loadMovies(false)}settleHome(k)},0)},true);
+for(const ev of ['wheel','touchmove'])window.addEventListener(ev,()=>{if(routeNow()==='home')homeUserMoved393=true},{capture:true,passive:true});
+window.addEventListener('click',e=>{if(routeNow()!=='home')return;const b=e.target?.closest?.('[data-home-tab]');if(!b)return;const k=String(b.dataset.homeTab||'series')==='movies'?'movies':'series';homeAnchorToken393++;homeUserMoved393=false;applyTab(k);setTimeout(()=>{if(k==='movies'){if(hMovies.length)renderMoviesAll();else void loadMovies(false)}scheduleHome393(k,false)},0)},true);
 function afterDataChanged392(){const onHome=routeNow()==='home',kind=activeKind();invalidateHome392(!onHome);if(!onHome)return;setTimeout(()=>{if(routeNow()!=='home')return;void loadSeries(true);void loadHistory(true);if(kind==='movies')void loadMovies(true)},0)}
 window.addEventListener('cinetracker:data-changed',afterDataChanged392);
 
@@ -263,7 +288,7 @@ function candidate(x){return{media_type:typeOf(x),tmdb_id:idOf(x),title:title(x)
 async function audit(list){
  const a=unique(list),blocked=new Set(),watch=new Set(),seen=new Set();if(!a.length)return{blocked,watch,seen};
  for(let i=0;i<a.length;i+=40){
-  const part=a.slice(i,i+40),payload=part.map(candidate),d=await timeout(rpc('cinetracker_discover_filter_v391',{p_items:payload}),1100);
+  const part=a.slice(i,i+40),payload=part.map(candidate),d=await timeout(rpc('cinetracker_discover_filter_v391',{p_items:payload}),3500);
   if(!d||Number(d.checked_count)!==payload.length)throw new Error('auditoria incompleta');
   for(const k of rows(d.blocked_keys))blocked.add(String(k));for(const k of rows(d.watch_keys))watch.add(String(k));for(const k of rows(d.seen_keys))seen.add(String(k));
  }
@@ -271,7 +296,7 @@ async function audit(list){
 }
 async function loadWatchPools(){
  await Promise.all(['movie','series','anime'].map(async k=>{
-  const raw=unique(rows(await timeout(rpc('cinetracker_discover_watch_v391',{p_kind:k,p_limit:30}),1300).catch(()=>[]))).filter(x=>kindOf(x)===k);
+  const raw=unique(rows(await timeout(rpc('cinetracker_discover_watch_v391',{p_kind:k,p_limit:30}),3500).catch(()=>[]))).filter(x=>kindOf(x)===k);
   if(!raw.length){fy.watchPools[k]=[];fy.watchIndex[k]=0;return}
   try{const a=await audit(raw);fy.watchPools[k]=raw.filter(x=>a.watch.has(keyOf(x))&&!a.seen.has(keyOf(x))).slice(0,30);for(const x of fy.watchPools[k])validated.add(keyOf(x))}
   catch{fy.watchPools[k]=[]}
@@ -290,20 +315,30 @@ async function tmdbFresh(k){
   return unique(packs.flatMap(r=>r.status==='fulfilled'?rows(r.value?.results):[]).map(x=>({...x,media_type:k==='movie'?'movie':'tv',tmdb_id:Number(x.id||x.tmdb_id||0)}))).filter(x=>localFresh(x,k))
  }finally{clearTimeout(timer)}
 }
+async function dbFresh393(k){
+ const raw=unique(rows(await timeout(rpc('cinetracker_discover_fresh_v387',{p_kind:k,p_limit:24}),3500).catch(()=>[]))).filter(x=>localFresh(x,k));if(!raw.length)return[];
+ try{const a=await audit(raw),good=raw.filter(x=>!a.blocked.has(keyOf(x)));for(const x of good)validated.add(keyOf(x));return good}catch{return[]}
+}
 async function ensureFresh(k,force=false){
- let src=unique(fy.freshPools[k]).filter(x=>localFresh(x,k));
- if(src.length){const unknown=src.filter(x=>!validated.has(keyOf(x)));if(unknown.length)try{const a=await audit(unknown);src=src.filter(x=>validated.has(keyOf(x))||!a.blocked.has(keyOf(x)));for(const x of src)validated.add(keyOf(x))}catch{if(!src.some(x=>validated.has(keyOf(x))))src=[]}}
- if(force||src.length<8){let add=await tmdbFresh(k);if(add.length)try{const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));for(const x of add)validated.add(keyOf(x));src=unique([...src,...add])}catch{}}
+ let src=force?[]:unique(fy.freshPools[k]).filter(x=>localFresh(x,k)&&validated.has(keyOf(x)));
+ if(src.length<8){let add=await dbFresh393(k);if(!add.length){add=await tmdbFresh(k);if(add.length)try{const a=await audit(add);add=add.filter(x=>!a.blocked.has(keyOf(x)));for(const x of add)validated.add(keyOf(x))}catch{add=[]}}src=unique([...src,...add])}
  fy.freshPools[k]=src.slice(0,90);fy.freshIndex[k]=Math.min(Number(fy.freshIndex[k]||0),Math.max(0,fy.freshPools[k].length-1));saveFy();return fy.freshPools[k].length>0
 }
 async function validateCachedForYou392(){
- const all=unique([...rows(fy.dailyPool),...['movie','series','anime'].flatMap(k=>[...rows(fy.watchPools[k]),...rows(fy.freshPools[k])])]);if(!all.length)return false;
- const a=await audit(all);fy.dailyPool=rows(fy.dailyPool).filter(x=>!a.blocked.has(keyOf(x)));
- for(const k of ['movie','series','anime']){fy.watchPools[k]=rows(fy.watchPools[k]).filter(x=>a.watch.has(keyOf(x))&&!a.seen.has(keyOf(x)));fy.freshPools[k]=rows(fy.freshPools[k]).filter(x=>localFresh(x,k)&&!a.blocked.has(keyOf(x)));for(const x of [...fy.watchPools[k],...fy.freshPools[k]])validated.add(keyOf(x))}
- for(const x of fy.dailyPool)validated.add(keyOf(x));saveFy();if(routeNow()==='discover')renderForYou();return true
+ const names=['daily',...['movie','series','anime'].flatMap(k=>['watch:'+k,'fresh:'+k])],all=unique(names.map(current).filter(Boolean));if(!all.length)return false;
+ const a=await audit(all);
+ fy.dailyPool=rows(fy.dailyPool).filter(x=>keyOf(x)!==keyOf(current('daily'))||!a.blocked.has(keyOf(x)));
+ for(const k of ['movie','series','anime']){
+  const wk=keyOf(current('watch:'+k)),fk=keyOf(current('fresh:'+k));
+  if(wk&&!a.watch.has(wk)||wk&&a.seen.has(wk))fy.watchPools[k]=rows(fy.watchPools[k]).filter(x=>keyOf(x)!==wk);
+  if(fk&&a.blocked.has(fk))fy.freshPools[k]=rows(fy.freshPools[k]).filter(x=>keyOf(x)!==fk);
+  const wc=current('watch:'+k),fc=current('fresh:'+k);if(wc&&a.watch.has(keyOf(wc))&&!a.seen.has(keyOf(wc)))validated.add(keyOf(wc));if(fc&&localFresh(fc,k)&&!a.blocked.has(keyOf(fc)))validated.add(keyOf(fc));
+  fy.watchIndex[k]=0;fy.freshIndex[k]=0
+ }
+ const dc=current('daily');if(dc&&!a.blocked.has(keyOf(dc)))validated.add(keyOf(dc));fy.dailyIndex=0;saveFy();if(routeNow()==='discover')renderForYou();return true
 }
 async function ensureDaily(){
- const cur=current('daily');if(cur){try{const a=await audit([cur]);if(!a.blocked.has(keyOf(cur))){validated.add(keyOf(cur));return true}}catch{}}
+ const cur=current('daily');if(cur&&validated.has(keyOf(cur)))return true;if(cur){try{const a=await audit([cur]);if(!a.blocked.has(keyOf(cur))){validated.add(keyOf(cur));return true}}catch{}}
  const choices=['movie','series','anime'].map(k=>current('fresh:'+k)).filter(x=>x&&validated.has(keyOf(x)));
  fy.dailyPool=choices.length?[choices[Math.floor(Math.random()*choices.length)]]:[];fy.dailyIndex=0;if(fy.dailyPool[0])validated.add(keyOf(fy.dailyPool[0]));saveFy();return fy.dailyPool.length>0
 }
@@ -369,13 +404,10 @@ function earlyFy(target,event){const b=target?.closest?.('[data-ct388-action]');
 async function loadForYou(force=false){
  if(routeNow()!=='discover')return false;if(fyTask&&!force)return fyTask;const run=++fyRun;if(force)validated.clear();
  fyTask=(async()=>{
-  renderForYou();const cachedJob=validateCachedForYou392().catch(()=>false);
-  const freshJobs=['movie','series','anime'].map(async k=>{await cachedJob;await ensureFresh(k,force);if(run===fyRun&&routeNow()==='discover')renderSlot('fresh:'+k);return fy.freshPools[k].length>0});
-  const dailyQuick=cachedJob.then(()=>ensureDaily()).then(ok=>{if(ok&&run===fyRun&&routeNow()==='discover')renderSlot('daily');return ok}).catch(()=>false);
-  const dailyJob=Promise.any(freshJobs.map((p,i)=>p.then(ok=>{if(!ok)throw new Error('empty');return ['movie','series','anime'][i]}))).then(async()=>{await ensureDaily();if(run===fyRun&&routeNow()==='discover')renderSlot('daily')}).catch(()=>{});
-  const watchJob=loadWatchPools().catch(()=>false);
-  await Promise.allSettled([...freshJobs,dailyQuick,dailyJob,watchJob]);if(run!==fyRun||routeNow()!=='discover')return false;
-  await ensureDaily();renderForYou();document.documentElement.dataset.ct388ForYou='ready';document.documentElement.dataset.ct392ForYou='strict-cache-first';return ['movie','series','anime'].every(k=>fy.freshPools[k].length>0)
+  renderForYou();const cachedJob=validateCachedForYou392().catch(()=>false),watchJob=loadWatchPools().catch(()=>false);
+  const freshJobs=['movie','series','anime'].map(async k=>{await cachedJob;const ok=await ensureFresh(k,force);if(run===fyRun&&routeNow()==='discover'){renderSlot('fresh:'+k);if(ok){await ensureDaily();renderSlot('daily')}}return ok});
+  await Promise.allSettled([cachedJob,watchJob,...freshJobs]);if(run!==fyRun||routeNow()!=='discover')return false;
+  await ensureDaily();renderForYou();document.documentElement.dataset.ct388ForYou='ready';document.documentElement.dataset.ct392ForYou='db-first-bounded';document.documentElement.dataset.ct393ForYou='ready';return ['movie','series','anime'].every(k=>fy.freshPools[k].length>0)
  })().finally(()=>{if(run===fyRun)fyTask=null});return fyTask
 }
 window.__ctR388LoadForYou=loadForYou;window.__ctR378LoadForYou=loadForYou;window.__ctR379LoadForYou=loadForYou;window.__ctR380LoadForYou=loadForYou;window.__ctR383LoadForYou=loadForYou;window.__ctR384LoadForYou=loadForYou;window.__ctR385LoadForYou=loadForYou;
@@ -397,6 +429,6 @@ const style=document.createElement('style');style.id='ct-web-r388';style.textCon
 @media(max-width:700px){.ct388-rail{grid-template-columns:repeat(3,154px)}.ct388-rail.daily{grid-template-columns:154px}.ct388-slot,.ct388-cardwrap,.ct388-cardwrap>.ct291-card,.ct388-cardwrap>.ct288-card,.ct388-cardwrap>[data-ct288-card],.ct388-actions,.ct388-placeholder{width:154px!important;min-width:154px!important;max-width:154px!important}}
 `;document.head.appendChild(style);
 
-window.__ctR388={version:'1.0.183',renderHome:renderHome388,loadSeries,loadHistory,loadMovies,renderSeries,renderMoviesAll,loadForYou,renderForYou,ensureFresh,audit,swap:swapFy,early:earlyFy,refreshTv:refreshTv391,markWatched:markWatched392,invalidateHome:invalidateHome392,get home(){return{series:hSeries,history:hHistory,movies:hMovies,movieSort}},get fy(){return fy}};
+window.__ctR388={version:'1.0.184',renderHome:renderHome388,loadSeries,loadHistory,loadMovies,renderSeries,renderMoviesAll,loadForYou,renderForYou,ensureFresh,audit,swap:swapFy,early:earlyFy,refreshTv:refreshTv391,markWatched:markWatched392,invalidateHome:invalidateHome392,get home(){return{series:hSeries,history:hHistory,movies:hMovies,movieSort}},get fy(){return fy}};
 window.__ctR388Test={mergeSeries,enrichSeries,sortedMovies,applyMovieSort,audit,ensureFresh,validateCachedForYou:validateCachedForYou392,renderForYou,slotHtml,swap:swapFy,markWatched:markWatched392,invalidateHome:invalidateHome392,validateKey:k=>validated.add(k),clearValidated:()=>validated.clear(),setHome(v){hSeries=rows(v?.series);hHistory=v?.history||null;hMovies=rows(v?.movies)},setFy(v){fy=v},get home(){return{series:hSeries,history:hHistory,movies:hMovies}},get fy(){return fy}};
 })();
