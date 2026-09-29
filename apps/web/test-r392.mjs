@@ -11,7 +11,7 @@ ok(!src.includes("typeof ct276EpisodeCard==='function'"),'legacy async episode c
 ok(src.includes('function markWatched392')&&src.includes("source:'r392-watch'"),'optimistic watched owner missing');
 ok(src.includes("window.addEventListener('cinetracker:data-changed',afterDataChanged392)"),'route-independent Home invalidation missing');
 ok(src.includes("p_limit:100")&&src.includes('hHistoryRun'),'history generation/limit hardening missing');
-ok(src.includes("if(kind==='movies')void loadMovies(false)"),'movie watchlist still blocks Series Home');
+ok(src.includes("if(kind==='movies')critical.push(loadMovies(false))"),'movie watchlist still blocks Series Home');
 ok(src.includes('validateCachedForYou392')&&src.includes('strict-cache-first'),'Pra Voce cached strict audit missing');
 ok(!src.includes('while(true)'),'unbounded loop detected');
 ok(!src.includes('window.location.reload()')&&!src.includes('router.refresh()'),'full page reload detected in scoped owner');
