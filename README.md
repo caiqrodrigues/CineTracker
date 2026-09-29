@@ -1,3 +1,14 @@
+## Web 1.0.186 / r395
+
+- **Escopo exclusivo:** corrige somente `Descobrir > Pra você`; Home, Perfil, Esportes, Top 10, Configurações e Android ficam preservados.
+- **Causa confirmada em produção:** a sessão da captura ainda executava o caminho legado `watchlist_full_v119 / shown_recommendations_v296 / cinetracker_discover_filter_v333`, enquanto o renderer visível já era r388. Loader e renderer trabalhavam com autoridades diferentes e os cards ficavam presos em `Buscando indicação…`.
+- **Owner único:** os entrypoints reais de navegação/tab (`r321`, `r336`, aliases r378/r382/r383/r384/r385 e render de Descobrir) passam a encaminhar `Pra você` para o loader r388.
+- **Dados corretos:** `Da sua Watchlist` usa `cinetracker_discover_watch_v391`; `100% novos` usa `cinetracker_discover_fresh_v387` + `cinetracker_discover_filter_v391`, mantendo exclusão estrita de vistos/watchlist.
+- **Carregamento finito:** um único retry limitado é permitido quando nenhum card real foi pintado; depois disso o slot encerra em estado vazio explícito, sem skeleton infinito.
+- **Ações:** Visto, Watchlist e Trocar continuam via estado local/Optimistic UI e sem full-page reload.
+
+Build de hospedagem: `apps/web/build-r395.mjs`; gate oficial: `apps/web/build-r395-official.mjs`.
+
 ## Web 1.0.185 / r394
 
 - **Home:** a posição inicial passa a ser aplicada novamente depois que Séries e Histórico terminam a carga; o Histórico continua acima e acessível ao rolar para cima, sem empurrar `Assistir a seguir` para fora da entrada.

@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.0.186 — 2026-09-29 — Web r395
+
+### Escopo exclusivo: Descobrir / Pra Você
+- Corrige os placeholders permanentes de Indicação do Dia, Da sua Watchlist e 100% novos.
+- A navegação real de Pra Você passa a ter um único owner: r388.
+- r321/r336 e os aliases legados de loader são reencaminhados antes de cada entrada no Descobrir, sem alterar as outras abas.
+- Da sua Watchlist usa a autoridade `cinetracker_discover_watch_v391`.
+- 100% novos usa `cinetracker_discover_fresh_v387` e auditoria estrita `cinetracker_discover_filter_v391`.
+- Mantém filtros de vistos/watchlist, ações otimistas e ausência de full-page reload.
+- Adiciona retry único e delimitado; se não existir candidato elegível, o skeleton termina em estado vazio explícito em vez de permanecer carregando.
+
+### Evidência
+- Logs reais da sessão de 2026-09-29 mostraram chamadas a `cinetracker_watchlist_full_v119`, `cinetracker_shown_recommendations_recent_v296`, `cinetracker_shown_recommendations_record_v296` e `cinetracker_discover_filter_v333`.
+- No mesmo fluxo não houve chamadas às autoridades r388 esperadas (`discover_watch_v391`, `discover_fresh_v387`, `discover_filter_v391`), confirmando que o entrypoint legado ainda vencia em produção.
+
+### Validação
+- Gate estático valida owner r395, fontes v391/v387, ausência de v333 no novo runtime, ausência de reload e ausência de loop ilimitado.
+- Gate Chromium exercita os entrypoints r321/r336/render real e falha se o loader legado de Pra Você for chamado.
+- O gate r394 da Home continua no release oficial para garantir que a correção de Descobrir não regrida a Home.
+
+### Não alterado
+- Home, Perfil, Esportes, Top 10, Configurações e Android.
+
+### Release
+- Web: 1.0.186 / r395-official-1.0.186.
+- Android: 1.0.20 / versionCode 10062 preservado.
+
+
 ## 1.0.185 — 2026-09-29 — Web r394
 
 ### Escopo exclusivo: Home + Descobrir / Pra Você
