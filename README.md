@@ -1,3 +1,15 @@
+## Web 1.0.190 / r399
+
+- **Travamento inicial:** removido o observer global do r398 que reagia a cada mutação do DOM e reentrava na Home, criando ciclo de renderização, novos timers e novas mutações.
+- **Boot:** a entrada passa a usar probe finito/idempotente; nenhuma observação contínua de toda a árvore do documento.
+- **Home Séries:** usa `cinetracker_home_series_v391` no primeiro carregamento; atualização de Raw/SmackDown fica em segundo plano e possui trava/TTL.
+- **Home Filmes:** Watchlist mantém fallback `cinetracker_watchlist_full_v376`, mas a renderização dos itens passa a ser fatiada por `requestAnimationFrame` para não monopolizar a main thread.
+- **Descobrir / Pra Você:** owner r399 captura a aba antes dos handlers legados, usa `cinetracker_discover_foryou_v396` e mantém botões locais/otimistas.
+- **Sem reload:** Visto, Watchlist, Trocar e navegação da correção não usam full-page reload.
+- **Escopo:** Perfil, Esportes, Top 10, Configurações e Android preservados.
+
+Build de hospedagem: `apps/web/build-r399.mjs`; gate oficial: `apps/web/build-r399-official.mjs`.
+
 ## Web 1.0.189 / r398
 
 - **Home / entrada:** abre ancorada no bloco principal; Histórico continua escondido acima e acessível ao rolar para cima.
