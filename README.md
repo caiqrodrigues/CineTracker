@@ -1,3 +1,14 @@
+## Web 1.0.185 / r394
+
+- **Home:** a posição inicial passa a ser aplicada novamente depois que Séries e Histórico terminam a carga; o Histórico continua acima e acessível ao rolar para cima, sem empurrar `Assistir a seguir` para fora da entrada.
+- **Home / cache:** o snapshot válido da sessão é reaproveitado no primeiro paint e reconciliado em seguida com as autoridades atuais.
+- **Pra Você:** todos os entrypoints legados (`r321/r382/r383/r384/r385`) passam a apontar para o owner r388. O renderer e o loader voltam a operar sobre o mesmo estado.
+- **Pra Você / dados:** `100% novos` continua usando `cinetracker_discover_fresh_v387` + auditoria `cinetracker_discover_filter_v391`; `Da sua Watchlist` continua usando `cinetracker_discover_watch_v391`.
+- **Sem reload:** Visto, Watchlist e Trocar permanecem por estado local/Optimistic UI.
+- **Escopo congelado:** Perfil, Esportes, Top 10, Configurações e Android não foram alterados.
+
+Build de hospedagem: `apps/web/build-r394.mjs`; gate oficial: `apps/web/build-r394-official.mjs`.
+
 ## Web 1.0.184 / r393
 
 - **Home:** Histórico continua renderizado antes do conteúdo, mas a entrada fica ancorada em Assistir a seguir / Watchlist; rolar para cima revela o Histórico.

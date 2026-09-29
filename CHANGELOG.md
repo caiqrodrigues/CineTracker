@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.185 — 2026-09-29 — Web r394
+
+### Escopo exclusivo: Home + Descobrir / Pra Você
+- Corrige a regressão reproduzida no vídeo em que a Home abria no topo do Histórico e, após o Histórico assíncrono crescer, `Assistir a seguir` era empurrado várias telas para baixo.
+- A âncora da Home agora é reaplicada depois da conclusão do carregamento crítico de Séries + Histórico, preservando o Histórico acima da posição inicial e o acesso por scroll para cima.
+- Reaproveita o cache válido da sessão no primeiro paint da Home e continua reconciliando com as autoridades atuais em background, sem reload.
+- Corrige a dupla autoridade do Pra Você: a navegação real ainda passava por `__ctR382LoadForYou`/r321, enquanto o renderer já era r388. Isso deixava os placeholders permanentes porque loader e renderer escreviam estados diferentes.
+- Todos os entrypoints legados de Pra Você passam a apontar para o loader r388. A tela real volta a chamar `cinetracker_discover_watch_v391`, `cinetracker_discover_fresh_v387` e `cinetracker_discover_filter_v391`.
+- Mantida a exclusão estrita de Vistos/Watchlist em 100% Novos e as ações otimistas sem full-page reload.
+
+### Evidência da regressão
+- Nos logs da gravação r393, o fluxo quebrado chamou `cinetracker_discover_filter_v333` e não chamou as RPCs v391/v387 esperadas pelo owner atual.
+- O novo gate Chromium valida o entrypoint r321/r382 real, não apenas a chamada direta de `window.__ctR388.loadForYou`, e reproduz Histórico alto antes do bloco principal.
+
+### Não alterado
+- Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
+
+### Release
+- Web: 1.0.185 / r394-official-1.0.185.
+- Android: 1.0.20 / versionCode 10062 preservado.
+
+
 ## 1.0.184 — 2026-09-28 — Web r393
 
 ### Escopo exclusivo: Home + Descobrir / Pra Você

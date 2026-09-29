@@ -1,15 +1,25 @@
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-09-28
+**Atualizado em:** 2026-09-29
 
 ## Matriz oficial
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.184** | revision `r393-official-1.0.184`, package `1.0.184` | release Web atual |
+| Web | **1.0.185** | revision `r394-official-1.0.185`, package `1.0.185` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.185 / r394
+
+- Home ancora o primeiro bloco principal somente depois que o Histórico assíncrono estabiliza, mantendo o Histórico acima para scroll.
+- Home reaproveita cache válido da sessão no primeiro paint e reconcilia com as autoridades atuais.
+- Pra Você unifica os entrypoints r321/r382/r383/r384/r385 no loader r388, eliminando placeholders permanentes causados por estado divergente.
+- Fresh/Watchlist continuam em v387/v391 com auditoria pessoal estrita; ações seguem sem reload.
+- Android permanece 1.0.20 / 10062.
+
+Assets oficiais: app-v394.js / app-v394.css; build: apps/web/build-r394-official.mjs; regressões: apps/web/test-r394.mjs e apps/web/test-r394-browser.mjs.
 
 ## Web 1.0.184 / r393
 
