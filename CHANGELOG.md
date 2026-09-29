@@ -1,3 +1,25 @@
+## Web 1.0.194 / r403 — 2026-09-29
+
+### Home / Séries
+- `cinetracker_home_series_v403` mantém a autoridade da r402 e corrige Raw/SmackDown: episódio recente lançado e não visto passa a classificar a série em **Assistir a seguir / Continuar assistindo**, não mais em **Em dia**.
+- Contagem `available_episodes` e próximo episódio continuam vindo da autoridade server-side, sem backlog histórico de WWE.
+
+### Home / Filmes
+- `cinetracker_home_movies_v402` permanece como payload leve e foi validado com 1.381 filmes.
+- O frontend passa a aceitar todas as formas reais do payload (objeto com `rows`, envelope `data`, array direto e array unitário), aumenta o timeout do RPC e possui owner finito para recuperar a seção caso um renderer legado a apague.
+- Paint de filmes e séries é interrompido quando a semi-aba deixa de estar ativa, evitando trabalho escondido na main thread e reduzindo congelamentos.
+- A semi-aba ativa passa a ser lida primeiro do DOM visível, evitando estado legado stale selecionar Séries enquanto Filmes está aberto.
+
+### Descobrir / Pra Você
+- Diário e 100% Novos mantêm **+ Watchlist + Visto + Trocar**; Da sua Watchlist mantém **Visto + Trocar**.
+- CSS r403 força grid de 3/2 ações dentro da largura do card, impedindo o botão **Trocar** de ficar cortado.
+- `cinetracker_discover_foryou_v396` continua como payload canônico e as ações permanecem locais/otimistas, sem reload.
+
+### Estabilidade / release
+- Runtime r402 é aposentado no bundle final para eliminar disputa de loaders entre r402 e r403.
+- Sem `MutationObserver`, `setInterval`, `while(true)`, `window.location.reload()` ou `router.refresh()`.
+- Web 1.0.194 / r403; Android preservado.
+
 ## Web 1.0.193 / r402 — 2026-09-29
 
 ### Home / Séries
