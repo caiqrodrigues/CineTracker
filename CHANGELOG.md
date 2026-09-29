@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.0.188 — 2026-09-29 — Web r397
+
+### Home
+- Corrige a entrada da Home: o Histórico continua escondido acima, mas a posição inicial só é alinhada depois do bloco principal existir, evitando abrir no final do Histórico.
+- Corrige Filmes > Assistir a seguir / Watchlist: os 1.381 itens já devolvidos pelo RPC v393 deixam de desaparecer quando um renderer legado falha; o paint passa a ser defensivo e em lotes delimitados.
+- Mantém as seis ordenações da Watchlist de filmes sem full-page reload.
+- Raw, SmackDown e outras séries recorrentes continuam classificadas em Em dia, mas exibem o próximo episódio lançado não visto e a ação de marcar como assistido.
+- ct-refresh-tv-state-user v3 prioriza séries recorrentes, consulta a temporada atual e atualiza o catálogo recente em vez de caminhar pelas temporadas históricas antigas.
+
+### Descobrir / Pra Você
+- r397 assume também o entrypoint real após r395/r396 e rebinda os owners antigos que ainda podiam vencer depois do boot.
+- cinetracker_discover_foryou_v396 continua como payload canônico; fallback é limitado às seis RPCs server-side já existentes.
+- Um recovery delimitado observa apenas o estado preso sem cards e dispara o loader canônico; não existe loop ilimitado.
+- Indicação do Dia, Da sua Watchlist e 100% Novos voltam a produzir cards com Visto, Watchlist e Trocar pelo renderer r388/Optimistic UI.
+- Nenhum window.location.reload() ou router.refresh() foi introduzido.
+
+### Backend / produção
+- Edge Function ct-refresh-tv-state-user publicada como versão 3 no Supabase ativo.
+- Escopo da r397 permanece Home + Descobrir/Pra Você; Perfil, Esportes, Top 10, Configurações e Android permanecem preservados.
+
+### Validação
+- Gate estático cobre identidade r397, renderer defensivo de Filmes, episódios recorrentes e ausência de reload/loop ilimitado.
+- Gate Chromium reproduz a falha do renderer de Filmes, valida a âncora da Home, valida Raw com próximo episódio e exige sete cards + ações no Pra Você.
+- Android permanece 1.0.20 / versionCode 10062.
+
+### Release
+- Web: 1.0.188 / r397-official-1.0.188.
+- Commit/push: main.
+
 ## 1.0.187 — 2026-09-29 — Web r396
 
 ### Descobrir / Pra Você
