@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.0.190 — 2026-09-29 — Web r399
+
+### Travamento inicial
+- Corrige a regressão da r398 que instalou um `MutationObserver` global em `document.documentElement` e chamava novamente o owner da Home a cada mutação do DOM.
+- O ciclo removido era: render da Home → mutação → observer → nova entrada da Home → novo render/timers → nova mutação.
+- O runtime r399 não possui observer global e usa somente um probe de boot finito e idempotente.
+
+### Home
+- Séries continuam usando `cinetracker_home_series_v391` como autoridade.
+- Raw/SmackDown continuam recebendo refresh da temporada atual, mas o refresh é adiado para depois do primeiro paint, possui uma única task em voo e TTL de 5 minutos.
+- Filmes mantêm o fallback `cinetracker_watchlist_full_v376`.
+- A Watchlist de filmes é pintada em blocos pequenos via `requestAnimationFrame`, sem `setInterval` de alta frequência e sem bloquear a main thread.
+- A âncora inicial permanece em Assistir a seguir / Watchlist, com apenas alinhamentos delimitados.
+
+### Descobrir / Pra Você
+- O owner r399 usa listener em `window` na fase de captura para vencer o handler legado r397 que interceptava a aba Pra Você antes da correção r398.
+- `cinetracker_discover_foryou_v396` continua como payload canônico; fallback continua limitado.
+- Visto, Watchlist e Trocar permanecem otimistas e protegidos por trava por slot.
+- Nenhum full-page reload foi adicionado.
+
+### Validação
+- Novo gate estático falha se `MutationObserver`, `setInterval`, `window.location.reload()` ou `router.refresh()` reaparecerem no runtime r399.
+- Novo gate Chromium mede reentrada da Home e falha se a RPC de Séries entrar em loop; também exige 7 cards e 18 ações em Pra Você.
+- Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
+
+### Release
+- Web: 1.0.190 / r399-official-1.0.190.
+- Build: `apps/web/build-r399.mjs`.
+- Gate: `apps/web/build-r399-official.mjs`.
+
 ## 1.0.189 — 2026-09-29 — Web r398
 
 ### Home
