@@ -6,10 +6,20 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.196** | revision `r405-official-1.0.196`, package `1.0.196` | release Web atual |
+| Web | **1.0.198** | revision `r407-official-1.0.198`, package `1.0.198` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | Home Movies `cinetracker_home_movies_v405` + autoridades existentes | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.198 / r407
+
+- Home abre e retorna em **Assistir a seguir**, com Histórico preservado acima; owners de scroll antigos delegam ao r407.
+- O clique Séries/Filmes da r374 passa a acionar o owner vivo; Filmes entra no loader paginado r406/v405 imediatamente.
+- Pra Você usa `cinetracker_discover_foryou_v396` em um único owner e mantém **Trocar** nos sete slots.
+- Timers tardios de ownership foram reduzidos; nenhum observer/interval/full-page reload foi adicionado.
+- Android permanece 1.0.20 / 10062.
+
+Assets oficiais: app-v407.js / app-v407.css; build: apps/web/build-r407-official.mjs; regressões: apps/web/test-r407.mjs e apps/web/test-r407-browser.mjs.
 
 ## Web 1.0.196 / r405
 
