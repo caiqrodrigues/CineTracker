@@ -1,3 +1,14 @@
+## Web 1.0.189 / r398
+
+- **Home / entrada:** abre ancorada no bloco principal; Histórico continua escondido acima e acessível ao rolar para cima.
+- **Home / Filmes:** fallback direto em `cinetracker_watchlist_full_v376` impede **Assistir a seguir / Watchlist** de ficar vazio quando o loader anterior não preenche memória.
+- **Home / Raw e SmackDown:** refresh atualiza a temporada corrente e reaplica `cinetracker_home_series_v391`; séries recorrentes continuam em **Em dia**, mostrando o episódio recente não visto.
+- **Descobrir / Pra Você:** owner independente r398 consome `cinetracker_discover_foryou_v396` e pinta cards/botões sem depender do estado validado legado.
+- **Ações:** Visto, Watchlist e Trocar usam estado local otimista e trava por slot, sem full-page reload.
+- **Escopo:** Perfil, Esportes, Top 10, Configurações e Android preservados.
+
+Build de hospedagem: `apps/web/build-r398.mjs`; gate oficial: `apps/web/build-r398-official.mjs`.
+
 ## Web 1.0.188 / r397
 
 - **Home / entrada:** Histórico permanece acima e acessível ao rolar para cima, mas o primeiro enquadramento ocorre somente depois que o bloco principal foi realmente pintado.
