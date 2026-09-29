@@ -17,7 +17,7 @@ for(const required of [
  "history.scrollRestoration='manual'",
  "[['watchlist','+ Watchlist'],['seen','✓ Visto'],['swap','↻ Trocar']]",
  "[['seen','✓ Visto'],['swap','↻ Trocar']]",
- "for(const ms of [0,80,220,520,1000])",
+ "for(const ms of [0,40,120,280,600,1000,1600])",
  "const locks=new Set()",
  "scheduleOwnerCheck",
  "baseLoadMovies"
