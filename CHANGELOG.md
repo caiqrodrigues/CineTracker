@@ -1,3 +1,26 @@
+## Web 1.0.195 / r404 — 2026-09-29
+
+### Home / Filmes
+- A Watchlist deixa de depender de uma resposta única com 1.381 itens: `cinetracker_home_movies_v404` pagina a fonte em blocos de 120, mantém o total exato e libera o primeiro paint sem esperar a lista completa.
+- As páginas restantes são carregadas em sequência delimitada e pintadas em lotes ociosos; falha de rede encerra em estado explícito em vez de manter `Carregando Watchlist…` indefinidamente.
+- A semi-aba ativa passa a reconhecer também o botão visível por rótulo Séries/Filmes, impedindo estado legado stale de bloquear o paint de Filmes.
+
+### Descobrir / Pra Você
+- O owner r404 escolhe o container realmente visível do Descobrir e ignora roots antigos ocultos, corrigindo o caso do vídeo em que os cards apareciam pelo renderer legado sem o botão Trocar.
+- Indicação do Dia e 100% Novos exibem **+ Watchlist + Visto + Trocar**; Da sua Watchlist exibe **Visto + Trocar**.
+- A posse do renderer é recuperada por uma sequência finita de verificações até 45 s, sem observer contínuo, e cada Trocar altera somente o slot clicado.
+- Ações continuam locais/otimistas e sem full-page reload.
+
+### Raw / SmackDown
+- `cinetracker_home_series_v404` separa **backlog total não visto** de **episódio recente pendente**.
+- Produção validada: Raw = **1.499 episódios restantes totais / 1 recente pendente**; SmackDown = **1.187 totais / 1 recente pendente**.
+- Enquanto existir o episódio recente pendente, Raw/SmackDown ficam em **Continuar assistindo**. Depois que esse episódio for marcado como visto, passam para **Em dia**, mesmo que o backlog histórico continue alto.
+
+### Estabilidade / release
+- Sem `MutationObserver`, `setInterval`, `while(true)`, `window.location.reload()` ou `router.refresh()` no runtime r404.
+- Web 1.0.195 / r404; Android preservado em 1.0.20 / 10062.
+- Migration: `20260929223000_r404_home_movies_paged_recurring_backlog.sql`.
+
 ## Web 1.0.194 / r403 — 2026-09-29
 
 ### Home / Séries
