@@ -6,10 +6,19 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.185** | revision `r394-official-1.0.185`, package `1.0.185` | release Web atual |
+| Web | **1.0.195** | revision `r404-official-1.0.195`, package `1.0.195` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | payload Home r6 + `shown_recommendations` + histórico esportivo com presença em estádio | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.195 / r404
+
+- Home Filmes usa paginação server-side de 120 itens, preservando o total real de 1.381 e evitando o loading permanente.
+- Pra Você usa o container visível como owner e mantém todos os botões Trocar nos sete slots.
+- Raw/SmackDown separam backlog total não visto do episódio recente pendente; somente o recente define Continuar versus Em dia.
+- Android permanece 1.0.20 / 10062.
+
+Assets oficiais: app-v404.js / app-v404.css; build: apps/web/build-r404-official.mjs; regressões: apps/web/test-r404.mjs e apps/web/test-r404-browser.mjs.
 
 ## Web 1.0.185 / r394
 
