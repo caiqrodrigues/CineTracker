@@ -1,4 +1,4 @@
-name: Verify Web 1.0.184 r393 Home and Pra Voce
+name: Verify Web 1.0.185 r394 Home and Pra Voce
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r393:
+  web_r394:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -18,15 +18,15 @@ jobs:
         run: |
           set -euo pipefail
           node --check runtime-r388-home-foryou-final.js
-          node --check runtime-r392-home-hard-authority.js
-          node --check build-r393.mjs
-          node --check test-r393.mjs
-          node --check test-r393-browser.mjs
-          node build-r393-official.mjs
-          CT_R393_SKIP_BUILD=1 node test-r393.mjs
-          CT_R393_SKIP_BUILD=1 node test-r393-browser.mjs
-          node --check dist/app-v393.js
-          grep -Fq "window.__ctR393Marker='hidden-history-anchor+lightweight-movies+foryou-db-first-bounded'" dist/app-v393.js
+          node --check runtime-r394-home-foryou-entrypoint-fix.js
+          node --check build-r394.mjs
+          node --check test-r394.mjs
+          node --check test-r394-browser.mjs
+          node build-r394-official.mjs
+          CT_R394_SKIP_BUILD=1 node test-r394.mjs
+          CT_R394_SKIP_BUILD=1 node test-r394-browser.mjs
+          node --check dist/app-v394.js
+          grep -Fq "window.__ctR394Marker='home-after-history-anchor+foryou-entrypoint-authority'" dist/app-v394.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +36,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r393, android]
+    needs: [web_r394, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -45,10 +45,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.184"' <<<"$BODY" && grep -Fq '"revision": "r393-official-1.0.184"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v393.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.185"' <<<"$BODY" && grep -Fq '"revision": "r394-official-1.0.185"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v394.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR393Marker='hidden-history-anchor+lightweight-movies+foryou-db-first-bounded'" <<<"$JS" && grep -Fq 'app-v393.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR394Marker='home-after-history-anchor+foryou-entrypoint-authority'" <<<"$JS" && grep -Fq 'app-v394.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
