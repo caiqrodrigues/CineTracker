@@ -12,6 +12,9 @@ const n=(v:any)=>{const x=Number(v);return Number.isFinite(x)?x:0};
 const rows=(v:any)=>Array.isArray(v)?v:[];
 const today=()=>new Date().toISOString().slice(0,10);
 const epKey=(s:any,e:any)=>n(s)+':'+n(e);
+const sportsLike=(m:any)=>/(^|\\b)(wwe|raw|smackdown|nxt|formula\\s*1|formula\\s*one|ufc)(\\b|$)/i.test(String(m?.title||m?.raw_tmdb?.name||''));
+const currentSportsSeason=(show:any)=>n(show?.last_episode_to_air?.season_number)||n(rows(show?.seasons).filter((x:any)=>n(x?.season_number)>0).sort((a:any,b:any)=>n(b.season_number)-n(a.season_number))[0]?.season_number);
+const recentCatalog=(catalog:any[])=>rows(catalog).some((e:any)=>{const d=Date.parse(e?.air_date||'')||0;return d>0&&Date.now()-d<=28*86400000});
 const stale=(m:any)=>{
   const next=String(m?.raw_tmdb?.next_episode_to_air?.air_date||'').slice(0,10);
   if(next&&next<=today())return true;
@@ -61,7 +64,7 @@ Deno.serve(async(req:Request)=>{
     if(de)return json({error:'dashboard unavailable'},500);
     const dash=rows(dashboard).filter((x:any)=>String(x.media_type)==='tv'&&n(x.watched_episodes)>0);
     const mediaIds=[...new Set(dash.map((x:any)=>n(x.media_id)).filter((x:number)=>x>0))];
-    if(!mediaIds.length)return json({ok:true,processed:0,refreshed:0,episodes_cached:0,skipped:0,version:'tv-state-refresh-v2'});
+    if(!mediaIds.length)return json({ok:true,processed:0,refreshed:0,sports_refreshed:0,episodes_cached:0,skipped:0,version:'tv-state-refresh-v3'});
 
     const {data:media,error:me}=await admin.from('media')
       .select('id,tmdb_id,media_type,title,original_title,poster_path,runtime_minutes,total_episodes,raw_tmdb,updated_at')
@@ -95,25 +98,26 @@ Deno.serve(async(req:Request)=>{
 
     const priority=new Map(dash.map((x:any)=>[n(x.media_id),(x.is_up_to_date?1000:0)+(x.is_in_progress?500:0)+n(x.watched_episodes)]));
     const needs=(m:any)=>{
-      const watched=stateMap.get(m.__tmdb)||new Set<string>(),show=m.raw_tmdb||{};
+      const watched=stateMap.get(m.__tmdb)||new Set<string>(),show=m.raw_tmdb||{},cat=catMap.get(m.__tmdb)||[];
+      if(sportsLike(m))return stale(m)||!recentCatalog(cat);
       const sn=firstNeededSeason(show,watched);
       if(sn<=0)return stale(m);
-      const candidate=cachedCandidate(catMap.get(m.__tmdb)||[],show,watched);
+      const candidate=cachedCandidate(cat,show,watched);
       return stale(m)||!cacheComplete(candidate);
     };
-    const work=tvRows.filter(needs).sort((a:any,b:any)=>(priority.get(b.id)||0)-(priority.get(a.id)||0)).slice(0,80);
+    const work=tvRows.filter(needs).sort((a:any,b:any)=>Number(sportsLike(b))-Number(sportsLike(a))||(priority.get(b.id)||0)-(priority.get(a.id)||0)).slice(0,80);
 
     const {data:token,error:te}=await admin.rpc('cinetracker_tmdb_token');
     if(te||!token)return json({error:'tmdb token unavailable'},500);
     const headers={Authorization:`Bearer ${token}`,Accept:'application/json'};
 
-    let refreshed=0,failed=0,episodesCached=0,nextEpisodes=0;
+    let refreshed=0,failed=0,episodesCached=0,nextEpisodes=0,sportsRefreshed=0;
     for(let i=0;i<work.length;i+=6){
       await Promise.all(work.slice(i,i+6).map(async(m:any)=>{
         try{
-          const tmdbId=m.__tmdb,watched=stateMap.get(tmdbId)||new Set<string>();
+          const tmdbId=m.__tmdb,watched=stateMap.get(tmdbId)||new Set<string>(),sports=sportsLike(m);
           let show=m.raw_tmdb||{},didShowFetch=false;
-          if(stale(m)||!rows(show?.seasons).length||!show?.last_episode_to_air){
+          if(sports||stale(m)||!rows(show?.seasons).length||!show?.last_episode_to_air){
             const rs=await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}?language=pt-BR`,{headers});
             if(!rs.ok)throw new Error(`TMDB show ${rs.status}`);
             show=await rs.json();didShowFetch=true;
@@ -135,19 +139,22 @@ Deno.serve(async(req:Request)=>{
               genres,media_kind:anime?'anime':'series',raw_tmdb:raw,updated_at:new Date().toISOString()
             };
             const {error:ue}=await admin.from('media').update(patch).eq('id',m.id);if(ue)throw ue;
-            refreshed++;
+            refreshed++;if(sports)sportsRefreshed++;
           }
 
-          const sn=firstNeededSeason(show,watched);if(!(sn>0))return;
+          const sn=sports?currentSportsSeason(show):firstNeededSeason(show,watched);if(!(sn>0))return;
           const cached=cachedCandidate(catMap.get(tmdbId)||[],show,watched);
-          if(cacheComplete(cached))return;
+          if(!sports&&cacheComplete(cached))return;
+          if(sports&&cacheComplete(cached)&&recentCatalog(catMap.get(tmdbId)||[]))return;
 
           const rr=await fetch(`https://api.themoviedb.org/3/tv/${tmdbId}/season/${sn}?language=pt-BR`,{headers});
           if(!rr.ok)throw new Error(`TMDB season ${rr.status}`);
           const season=await rr.json(),limit=releasedLimit(show,sn),now=new Date().toISOString();
           const eps=rows(season?.episodes).filter((ep:any)=>{
             const en=n(ep?.episode_number),air=String(ep?.air_date||'').slice(0,10);
-            return en>0&&en<=limit&&air&&air<=today();
+            if(!(en>0&&en<=limit&&air&&air<=today()))return false;
+            if(!sports)return true;
+            const d=Date.parse(air)||0;return d>0&&Date.now()-d<=35*86400000;
           });
           if(eps.length){
             const payload=eps.map((ep:any)=>({
@@ -167,8 +174,8 @@ Deno.serve(async(req:Request)=>{
       }));
     }
     return json({
-      ok:true,processed:work.length,refreshed,failed,episodes_cached:episodesCached,next_episodes_cached:nextEpisodes,
-      skipped:Math.max(0,tvRows.length-work.length),version:'tv-state-refresh-v2'
+      ok:true,processed:work.length,refreshed,sports_refreshed:sportsRefreshed,failed,episodes_cached:episodesCached,next_episodes_cached:nextEpisodes,
+      skipped:Math.max(0,tvRows.length-work.length),version:'tv-state-refresh-v3'
     });
   }catch(e){return json({error:String(e)},500)}
 });
