@@ -1,3 +1,21 @@
+## Web 1.0.198 / r407 — 2026-09-29
+
+### Home
+- Corrige a entrada e a reentrada que ficavam no final do Histórico: a restauração automática de scroll do navegador fica em modo manual e os owners r374/r393/r404 delegam para uma única âncora semântica em **Assistir a seguir**.
+- O clique capturado de Séries/Filmes na r374 agora entrega a navegação ao owner vivo depois de trocar a aba. Em **Filmes**, o loader r406/v405 é disparado imediatamente, eliminando a Watchlist vazia até repaint tardio.
+- Regras e dados de Séries da r406 são preservados; esta release não muda classificação nem cálculo de episódios.
+
+### Descobrir / Pra Você
+- `cinetracker_discover_foryou_v396` passa a ser consumido por um único owner final, com prefetch em segundo plano depois da Home estabilizar.
+- Indicação do Dia e 100% Novos exibem **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist exibe **✓ Visto + ↻ Trocar**.
+- Closures tardios r404/r406 delegam ao r407 e deixam de apagar o botão **Trocar** depois que os cards aparecem.
+- Ações usam estado local otimista e trava por slot, sem recarregar a página.
+
+### Estabilidade
+- Removidos bursts tardios de ownership de até 46 segundos; permanecem somente timers curtos e delimitados.
+- Sem `MutationObserver` global, `setInterval`, loop infinito, `window.location.reload()` ou `router.refresh()`.
+- Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
+
 ## 1.0.197 — r406\n\n### Corrigido\n- Contagem de episódios disponíveis restaurada para a autoridade de episódios recentes; removida a sobrescrita r404 que transformava backlog histórico de Raw/SmackDown em `available_episodes`.\n- Raw e SmackDown com episódio recente liberado e não visto passam para **Assistir a seguir**.\n- Home > Filmes deixa de esvaziar a Watchlist quando o estado legado da aba diverge da view visível.\n- Descobrir > Pra Você completa os botões ausentes em todos os sete slots.\n- Renderização continua em lotes via `requestAnimationFrame` e timers são finitos; sem full page reload.\n\n## Web 1.0.196 / r405 — 2026-09-29
 
 ### Home / Filmes
