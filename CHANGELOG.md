@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.0.187 — 2026-09-29 — Web r396
+
+### Descobrir / Pra Você
+- Remove do caminho crítico a sequência de RPCs + auditorias cliente que deixava os sete slots presos em `Buscando indicação…`.
+- Adiciona `cinetracker_discover_foryou_v396`, que devolve em uma única chamada os três pools de Watchlist e os três pools de 100% Novos.
+- Adiciona `cinetracker_discover_watch_unseen_v396`, filtrando no banco Watchlist já assistida, progresso de episódios e estados AlreadySeen/Completed/InProgress/UpToDate.
+- `100% Novos` usa diretamente `cinetracker_discover_fresh_v387`, cuja própria SQL já elimina vistos e Watchlist; a auditoria redundante v391 deixa de bloquear o paint.
+- `Indicação do Dia` é selecionada somente do Fresh já validado.
+- r396 substitui apenas o loader do owner r388/r395; renderer, botões e Optimistic UI aprovados permanecem intactos.
+- Timeout de 5 s termina em estado explícito de falha/vazio; não existe spinner infinito.
+- Nenhum `window.location.reload()`, `router.refresh()`, loop ilimitado ou recursão foi introduzido.
+
+### Backend / produção
+- Migration `r396_discover_foryou_single_payload` aplicada no projeto Supabase ativo.
+- Escopo SQL é `SECURITY INVOKER` padrão e mantém `auth.uid()` como autoridade do usuário.
+
+### Validação
+- Gate estático exige RPC único v396, barreira de Watchlist não vista, ausência de auditoria cliente no runtime r396 e identidade 1.0.187/r396.
+- Gate Chromium exige exatamente uma chamada ao payload v396 e sete cards pintados, além de confirmar que o loader legado não executa.
+- Gate r395 continua executado para preservar o owner de navegação; r394 continua preservado pela cadeia anterior.
+- Android permanece 1.0.20 / versionCode 10062.
+
+### Release
+- Web: 1.0.187 / r396-official-1.0.187.
+- Commit/push: main.
+
+
 ## 1.0.186 — 2026-09-29 — Web r395
 
 ### Escopo exclusivo: Descobrir / Pra Você
