@@ -47,7 +47,7 @@ var route=window.route,localDay=window.localDay,shell=window.shell,setApp=window
  for(const n of ['Berlin','The Walking Dead','Magnatas do Crime','Stuart Não Consegue Salvar o Universo'])ok(cont.textContent.includes(n),'missing '+n);
  ok(cont.textContent.includes('Filmado com uma Plateia ao Vivo')&&cont.textContent.includes('2026-09-24')&&cont.textContent.includes('7.5'),'Stuart first-paint metadata incomplete');
  ok(!cont.textContent.includes('Série Antiga')&&dust.textContent.includes('Série Antiga'),'dust classification broken');
- ok(firstMs<700,'Home first paint too slow '+firstMs);ok(homeTmdbCalls===0,'Home performed client TMDB enrichment before first paint');ok(!window.__mockRpcCalls.includes('cinetracker_home_active_v380'),'Home used stale active v380');ok(!document.body.textContent.includes('LEGACY_EPISODE_LOADING'),'legacy async episode renderer owned Home');
+ ok(firstMs<700,'Home first paint too slow '+firstMs);ok(homeTmdbCalls===0,'Home performed client TMDB enrichment before first paint');ok(!window.__mockRpcCalls.includes('cinetracker_home_active_v380'),'Home used stale active v380');ok(!document.getElementById('app').textContent.includes('LEGACY_EPISODE_LOADING'),'legacy async episode renderer owned Home');
  for(let i=0;i<50&&!document.body.textContent.includes('Matrix Revolutions');i++)await sleep(10);
  ok(document.body.textContent.includes('Berlin')&&document.body.textContent.includes('Matrix Revolutions'),'history did not load');
  const initialTop=cont.querySelectorAll('.media-row').length+'|'+dust.querySelectorAll('.media-row').length;await sleep(60);
