@@ -15,6 +15,7 @@ let [html,js,css,sw,releaseRaw,bridge]=await Promise.all([
 ]);
 
 const once=(s,a,b,label)=>{const n=s.split(a).length-1;if(n!==1)throw new Error('r405 expected one '+label+', found '+n);return s.replace(a,b)};
+const last=(s,a,b,label)=>{const n=s.split(a).length-1;if(n<1)throw new Error('r405 expected at least one '+label+', found '+n);const i=s.lastIndexOf(a);return s.slice(0,i)+b+s.slice(i+a.length)};
 const maybe=(s,a,b,label)=>{const n=s.split(a).length-1;if(n>1)throw new Error('r405 expected max one '+label+', found '+n);return {text:n===1?s.replace(a,b):s,hit:n===1}};
 new Function(bridge);
 for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])if(bridge.includes(bad))throw new Error('r405 forbidden bridge pattern: '+bad);
@@ -71,7 +72,7 @@ m=maybe(js,
  "if(wanted==='foryou'){if(window.__ctR405?.loadForYou)return await window.__ctR405.loadForYou(false);await window.__ctR321?.loadForYou?.(false);if(seq===discoverSeq)paintForYou336()}",
  'r336 Pra Voce switch delegation');js=m.text;optionalHits+=m.hit?1:0;
 
-js=once(js,
+js=last(js,
  "const p=normalizeForYou(await timeout(rpcCall('cinetracker_discover_foryou_v396',{p_watch_limit:30,p_fresh_limit:30}),8000));",
  "const packs=await Promise.all([\n   timeout(rpcCall('cinetracker_discover_watch_unseen_v396',{p_kind:'movie',p_limit:18}),7000),\n   timeout(rpcCall('cinetracker_discover_watch_unseen_v396',{p_kind:'series',p_limit:18}),7000),\n   timeout(rpcCall('cinetracker_discover_watch_unseen_v396',{p_kind:'anime',p_limit:18}),7000),\n   timeout(rpcCall('cinetracker_discover_fresh_v387',{p_kind:'movie',p_limit:18}),7000),\n   timeout(rpcCall('cinetracker_discover_fresh_v387',{p_kind:'series',p_limit:18}),7000),\n   timeout(rpcCall('cinetracker_discover_fresh_v387',{p_kind:'anime',p_limit:18}),7000)\n  ]);\n  const p=normalizeForYou({watch:{movie:packs[0],series:packs[1],anime:packs[2]},fresh:{movie:packs[3],series:packs[4],anime:packs[5]}});",
  'parallel Pra Voce authorities'
