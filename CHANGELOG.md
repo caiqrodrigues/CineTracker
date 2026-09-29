@@ -1,3 +1,29 @@
+## Web 1.0.193 / r402 — 2026-09-29
+
+### Home / Séries
+- Cria `cinetracker_home_series_v402` para corrigir a contagem de episódios disponíveis.
+- Séries normais deixam de considerar episódios do catálogo sem `air_date` como já liberados.
+- Quando o metadata TMDB possui contagem liberada válida, ela tem precedência sobre a quantidade bruta do catálogo; histórico assistido continua sendo o piso para metadata atrasado.
+- O frontend exibe `available_episodes` diretamente, eliminando divergência com a função legada de texto.
+- Raw e SmackDown mantêm a janela recorrente de 21 dias e exigem data real do episódio, sem reintroduzir backlog histórico.
+
+### Home / Filmes
+- Cria `cinetracker_home_movies_v402`, mantendo o payload leve da r401.
+- Normaliza a resposta RPC antes de ler `rows`, cobrindo objeto direto, array unitário e envelope `data`.
+- **Assistir a seguir / Watchlist** continua com carregamento fatiado e sem bloquear a main thread.
+
+### Descobrir / Pra Você
+- O owner r402 assume os dois entrypoints vivos herdados da r288: `window.__ctR288PaintForYou` e `window.__ctR288LoadDiscover`.
+- Somente a aba `foryou` é redirecionada; demais abas do Descobrir continuam delegadas ao loader original.
+- `cinetracker_discover_foryou_v396` permanece como payload canônico e a posse do renderer é reafirmada por sequência finita de timers.
+- Visto, Watchlist e Trocar continuam locais/otimistas e sem reload de página.
+
+### Estabilidade / validação
+- Mantido paint em lotes pequenos via `requestIdleCallback`/frame.
+- Proibidos no runtime r402: `MutationObserver`, `setInterval`, `while(true)`, `window.location.reload()` e `router.refresh()`.
+- Testes r402 cobrem owner vivo r288, fim do skeleton, Watchlist de filmes e resposta RPC envelopada.
+- Web 1.0.193 / r402; Android permanece sem alteração.
+
 ## Web 1.0.192 / r401 — 2026-09-29
 
 ### Home / Séries
