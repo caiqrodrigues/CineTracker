@@ -15,6 +15,7 @@ let [html,js,css,sw,releaseRaw,bridge]=await Promise.all([
 ]);
 
 const once=(s,a,b,label)=>{const n=s.split(a).length-1;if(n!==1)throw new Error('r405 expected one '+label+', found '+n);return s.replace(a,b)};
+const maybe=(s,a,b,label)=>{const n=s.split(a).length-1;if(n>1)throw new Error('r405 expected max one '+label+', found '+n);return {text:n===1?s.replace(a,b):s,hit:n===1}};
 new Function(bridge);
 for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])if(bridge.includes(bad))throw new Error('r405 forbidden bridge pattern: '+bad);
 
@@ -43,22 +44,32 @@ js=once(js,
 );
 
 js=once(js,
+ "async function loadForYou395(force=false){\n if(!isForYou())return false;",
+ "async function loadForYou395(force=false){\n if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force);\n if(!isForYou())return false;",
+ 'r395 local owner delegation'
+);
+
+js=once(js,
+ "async function loadForYou396(force=false){\n if(!isForYou())return false;if(task)return task;",
+ "async function loadForYou396(force=false){\n if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force);\n if(!isForYou())return false;if(task)return task;",
+ 'r396 local owner delegation'
+);
+
+let optionalHits=0,m;
+m=maybe(js,
  "async function loadForYou321(force=false){\n if(typeof window.__ctR382LoadForYou==='function')",
  "async function loadForYou321(force=false){\n if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force);\n if(typeof window.__ctR382LoadForYou==='function')",
- 'r321 Pra Voce closure delegation'
-);
+ 'r321 Pra Voce closure delegation');js=m.text;optionalHits+=m.hit?1:0;
 
-js=once(js,
+m=maybe(js,
  "function paintForYou336(){\n if(routeNow()!=='discover')return false;",
  "function paintForYou336(){\n if(window.__ctR405?.renderForYou)return window.__ctR405.renderForYou();\n if(routeNow()!=='discover')return false;",
- 'r336 Pra Voce painter delegation'
-);
+ 'r336 Pra Voce painter delegation');js=m.text;optionalHits+=m.hit?1:0;
 
-js=once(js,
+m=maybe(js,
  "if(wanted==='foryou'){await window.__ctR321?.loadForYou?.(false);if(seq===discoverSeq)paintForYou336()}",
  "if(wanted==='foryou'){if(window.__ctR405?.loadForYou)return await window.__ctR405.loadForYou(false);await window.__ctR321?.loadForYou?.(false);if(seq===discoverSeq)paintForYou336()}",
- 'r336 Pra Voce switch delegation'
-);
+ 'r336 Pra Voce switch delegation');js=m.text;optionalHits+=m.hit?1:0;
 
 js=once(js,
  "const p=normalizeForYou(await timeout(rpcCall('cinetracker_discover_foryou_v396',{p_watch_limit:30,p_fresh_limit:30}),8000));",
@@ -95,8 +106,9 @@ const prev=JSON.parse(releaseRaw),release={
  scope:'home-movies+discover-foryou',
  home_series:'r404-unchanged',
  home_movies:'v405-true-sql-paging-120+live-r388-closure-delegation',
- discover_foryou:'watch-unseen-v396+fresh-v387-parallel+live-r321-r336-r388-closure-delegation',
+ discover_foryou:'watch-unseen-v396+fresh-v387-parallel+r395-r396-local-owner-delegation+r405-bounded-rebind',
  discover_actions:'daily3-watch2-fresh3-local-optimistic-slot-lock-no-reload',
+ optional_legacy_patches:optionalHits,
  raw_smackdown:'unchanged-r404',
  profile:'untouched',sports:'untouched',top10:'untouched',settings:'untouched',android:'1.0.20/10062'
 };
@@ -122,11 +134,9 @@ for(const required of [
  "cinetracker_home_movies_v405",
  "if(window.__ctR405?.loadMovies)return window.__ctR405.loadMovies(force)",
  "if(window.__ctR405?.renderForYou)return window.__ctR405.renderForYou()",
- "if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force)",
- "async function loadForYou321(force=false)",
- "function paintForYou336()",
- "if(wanted==='foryou'){if(window.__ctR405?.loadForYou)",
+ "async function loadForYou395(force=false){\n if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force);",
+ "async function loadForYou396(force=false){\n if(window.__ctR405?.loadForYou)return window.__ctR405.loadForYou(force);",
  "cinetracker_discover_watch_unseen_v396",
  "cinetracker_discover_fresh_v387"
 ])if(!builtJs.includes(required))throw new Error('r405 missing assembled authority: '+required);
-console.log('WEB_R405_READY live movie closure + complete Pra Voce Trocar authority');
+console.log('WEB_R405_READY live movie closure + complete Pra Voce Trocar authority; optional legacy patches='+optionalHits);

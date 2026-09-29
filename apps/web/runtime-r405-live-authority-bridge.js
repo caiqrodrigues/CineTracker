@@ -26,10 +26,13 @@ const api={
   for(const n of ['__ctR388','__ctR395','__ctR396'])if(window[n]&&typeof window[n]==='object'){window[n].loadForYou=api.loadForYou;if('renderForYou' in window[n])window[n].renderForYou=api.renderForYou}
   window.__ctR288PaintForYou=api.renderForYou;
   window.__ctR288LoadDiscover=function(tab='foryou',force=false){return String(tab||'foryou')==='foryou'?api.loadForYou(force):(typeof base288Discover==='function'?base288Discover.call(this,tab,force):false)};
+  document.documentElement.dataset.ct405Owner='1';
   return true
  }
 };
 window.__ctR405Marker='home-movies-real-closure+foryou-real-closure+complete-swap';
 window.__ctR405=api;
 api.bind();
+queueMicrotask(()=>api.bind());
+for(const ms of [0,60,180,500,1200,2500])setTimeout(()=>api.bind(),ms);
 })();
