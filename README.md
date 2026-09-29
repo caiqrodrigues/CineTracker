@@ -1,3 +1,15 @@
+## Web 1.0.193 / r402
+
+- **Home / contagem de episódios:** `cinetracker_home_series_v402` usa a contagem de episódios efetivamente liberados pelo TMDB como autoridade para séries normais. Episódios do catálogo sem `air_date` não entram mais como disponíveis.
+- **Contagem exibida:** o texto “episódios disponíveis para ver” usa diretamente `available_episodes` do payload v402, sem recalcular pelo renderer legado.
+- **Raw / SmackDown:** preservam a regra especial de séries recorrentes; backlog antigo continua ignorado e somente episódios recentes, com data real e não vistos, entram como disponíveis.
+- **Home / Filmes:** `cinetracker_home_movies_v402` mantém o payload enxuto e normaliza respostas RPC em objeto, array unitário ou envelope `data`; **Assistir a seguir / Watchlist** preserva a lista completa.
+- **Descobrir / Pra Você:** o r402 assume também os owners vivos `window.__ctR288PaintForYou` e `window.__ctR288LoadDiscover`, impedindo o loader antigo de restaurar “Buscando indicação…” depois do payload canônico.
+- **Estabilidade:** renderização continua fatiada por idle/frame; recuperação é finita e delimitada, sem `MutationObserver`, `setInterval`, `window.location.reload()` ou `router.refresh()`.
+- **Escopo:** Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.
+
+Build de hospedagem: `apps/web/build-r402.mjs`; gate oficial: `apps/web/build-r402-official.mjs`.
+
 ## Web 1.0.192 / r401
 
 - **Home Séries:** `cinetracker_home_series_v401` calcula episódios disponíveis pela quantidade realmente lançada no TMDB menos o progresso assistido, sem depender de catálogo parcial.
