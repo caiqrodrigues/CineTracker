@@ -1,3 +1,14 @@
+## Web 1.0.194 / r403
+
+- **Home / Séries:** Raw e SmackDown com episódio recente disponível passam para **Assistir a seguir / Continuar assistindo** via `cinetracker_home_series_v403`; backlog histórico continua ignorado.
+- **Home / Filmes:** `cinetracker_home_movies_v402` segue leve, com normalização robusta do payload, timeout ampliado e recuperação finita da seção. A fonte de produção foi validada com **1.381** filmes.
+- **Anti-congelamento:** renderização em lotes só continua enquanto a semi-aba correspondente está ativa; o runtime r402 anterior é aposentado para não disputar renderização com r403.
+- **Descobrir / Pra Você:** Diário e 100% Novos exibem **Watchlist + Visto + Trocar**; Da sua Watchlist exibe **Visto + Trocar**. O layout usa grid fixo para que o terceiro botão não seja cortado.
+- **Sem reload:** mutações continuam por estado local/Optimistic UI, sem `window.location.reload()` ou `router.refresh()`.
+- **Escopo:** Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.
+
+Build de hospedagem: `apps/web/build-r403.mjs`; gate oficial: `apps/web/build-r403-official.mjs`.
+
 ## Web 1.0.193 / r402
 
 - **Home / contagem de episódios:** `cinetracker_home_series_v402` usa a contagem de episódios efetivamente liberados pelo TMDB como autoridade para séries normais. Episódios do catálogo sem `air_date` não entram mais como disponíveis.
