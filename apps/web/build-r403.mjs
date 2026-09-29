@@ -9,6 +9,7 @@ const once=(s,a,b,l)=>{const n=s.split(a).length-1;if(n!==1)throw new Error('r40
 new Function(runtime);
 for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])if(runtime.includes(bad))throw new Error('r403 forbidden runtime pattern: '+bad);
 for(const required of ['cinetracker_home_series_v403','cinetracker_home_movies_v402','cinetracker_discover_foryou_v396','scheduleMovieOwner403'])if(!runtime.includes(required))throw new Error('r403 missing runtime authority: '+required);
+js=once(js,"if(window.__ctR402?.version==='1.0.193')return;","return;/* r403 retired r402 runtime */",'retire r402 runtime');
 js=once(js,"window.__ctWebBuild='1.0.193';window.__ctOfficialVersion='1.0.193';","window.__ctWebBuild='1.0.194';window.__ctOfficialVersion='1.0.194';",'version');
 js=once(js,"const REVISION='r402-official-1.0.193';","const REVISION='r403-official-1.0.194';",'revision');
 js=once(js,"const version='1.0.193',revision='r402-official-1.0.193';","const version='1.0.194',revision='r403-official-1.0.194';",'footer');
