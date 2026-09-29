@@ -1,4 +1,4 @@
-name: Verify Web 1.0.186 r395 Discover Pra Voce
+name: Verify Web 1.0.187 r396 Discover Pra Voce
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r395:
+  web_r396:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -19,14 +19,15 @@ jobs:
           set -euo pipefail
           node --check runtime-r388-home-foryou-final.js
           node --check runtime-r395-discover-foryou-owner.js
-          node --check build-r395.mjs
-          node --check test-r395.mjs
-          node --check test-r395-browser.mjs
-          node build-r395-official.mjs
-          CT_R395_SKIP_BUILD=1 node test-r395.mjs
-          CT_R395_SKIP_BUILD=1 node test-r395-browser.mjs
-          node --check dist/app-v395.js
-          grep -Fq "window.__ctR395Marker='discover-foryou-r388-single-route-owner+legacy-v333-bypass'" dist/app-v395.js
+          node --check runtime-r396-discover-foryou-fast.js
+          node --check build-r396.mjs
+          node --check test-r396.mjs
+          node --check test-r396-browser.mjs
+          node build-r396-official.mjs
+          CT_R396_SKIP_BUILD=1 node test-r396.mjs
+          CT_R396_SKIP_BUILD=1 node test-r396-browser.mjs
+          node --check dist/app-v396.js
+          grep -Fq "window.__ctR396Marker='discover-foryou-single-canonical-payload-v396'" dist/app-v396.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +37,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r395, android]
+    needs: [web_r396, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -45,10 +46,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.186"' <<<"$BODY" && grep -Fq '"revision": "r395-official-1.0.186"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v395.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.187"' <<<"$BODY" && grep -Fq '"revision": "r396-official-1.0.187"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v396.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR395Marker='discover-foryou-r388-single-route-owner+legacy-v333-bypass'" <<<"$JS" && grep -Fq 'app-v395.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR396Marker='discover-foryou-single-canonical-payload-v396'" <<<"$JS" && grep -Fq 'app-v396.js' <<<"$HTML"; then exit 0; fi
             fi
             sleep 5
           done
