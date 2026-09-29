@@ -1,3 +1,12 @@
+## Web 1.0.199 / r408
+
+- **Home:** entrada e retorno ancoram uma única vez em **Assistir a seguir** depois do paint real; Histórico continua acessível acima.
+- **Home / Filmes:** Watchlist dispara diretamente o loader r406/v405 e não depende de repaint tardio.
+- **Descobrir / Pra Você:** r408 mantém **Trocar** nos sete slots mesmo após painters legados tardios.
+- **Estabilidade:** somente timers finitos; sem observer global, interval, loop infinito ou full-page reload.
+
+Build: `apps/web/build-r408.mjs`; gate: `apps/web/build-r408-official.mjs`; regressões: `apps/web/test-r408.mjs` e `apps/web/test-r408-browser.mjs`.
+
 ## Web 1.0.198 / r407
 
 - **Home / entrada:** Home abre e retorna em **Assistir a seguir**, mantendo o Histórico acima para acesso por rolagem. A restauração automática do navegador deixa de empurrar a viewport para o fim do Histórico.

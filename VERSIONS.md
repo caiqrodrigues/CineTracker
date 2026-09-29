@@ -6,10 +6,19 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.198** | revision `r407-official-1.0.198`, package `1.0.198` | release Web atual |
+| Web | **1.0.199** | revision `r408-official-1.0.199`, package `1.0.199` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | Home Movies `cinetracker_home_movies_v405` + autoridades existentes | produção compartilhada |
 | Windows | — | — | não lançado |
+
+## Web 1.0.199 / r408
+
+- Home ancora uma única vez **Assistir a seguir** após o paint real e não retorna ao final do Histórico.
+- Filmes dispara diretamente o loader paginado v405.
+- Pra Você usa owner final r408 e recupera os botões completos após repaint legado tardio.
+- Android permanece 1.0.20 / 10062.
+
+Assets oficiais: app-v408.js / app-v408.css; build: apps/web/build-r408-official.mjs; regressões: apps/web/test-r408.mjs e apps/web/test-r408-browser.mjs.
 
 ## Web 1.0.198 / r407
 

@@ -1,3 +1,19 @@
+## Web 1.0.199 / r408 — 2026-09-29
+
+### Home
+- Entrada e retorno alinham uma única vez o bloco real **Assistir a seguir** depois que ele existe no DOM; o Histórico permanece acima e deixa de ocupar a viewport.
+- O alinhamento é absoluto, finito e cancelado por interação manual, eliminando a disputa que devolvia a Home ao fim do Histórico.
+- Filmes chama diretamente o loader r406/v405 após ativar a semi-aba, garantindo o primeiro paint da Watchlist sem depender de estado legado.
+
+### Descobrir / Pra Você
+- Owner final sobre `cinetracker_discover_foryou_v396`. Indicação do Dia e 100% Novos exibem **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist exibe **✓ Visto + ↻ Trocar**.
+- Verificação finita recupera o renderer final caso um painter legado tardio tente remover **Trocar**.
+- Ações seguem otimistas e com trava por slot, sem reload.
+
+### Estabilidade
+- Sem MutationObserver global, setInterval, loop ilimitado, window.location.reload() ou router.refresh().
+- Perfil, Esportes, Top 10, Configurações, regras de Séries e Android não foram alterados.
+
 ## Web 1.0.198 / r407 — 2026-09-29
 
 ### Home
