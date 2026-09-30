@@ -1,3 +1,9 @@
+## r412 — Web 1.0.203
+- Filtro global de recomendação/descoberta: filmes/especiais abaixo de 40 min, YouTube/web originals e novelas/Soap são inelegíveis.
+- Novos RPCs v412 para Fresh, Watchlist recomendada e Home Séries; exclusões pessoais/WWE preservadas.
+- Pra Você mantém 7 botões **Trocar** e substituição local delimitada.
+- Android permanece 1.0.20 / 10062.
+
 ## r411 — Web 1.0.202
 - Escopo exclusivo: Descobrir > Pra Você.
 - Seis pools diretos v396/v387 em paralelo; RPC composto v396 removido do caminho ativo após timeout real de produção.
@@ -24,9 +30,9 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.202** | revision `r411-official-1.0.202`, package `1.0.202` | release Web atual |
+| Web | **1.0.203** | revision `r412-official-1.0.203`, package `1.0.203` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
-| Backend / Supabase | produção compartilhada | Home Movies `cinetracker_home_movies_v405` + autoridades existentes | produção compartilhada |
+| Backend / Supabase | produção compartilhada | elegibilidade `cinetracker_recommendation_eligible_v412` + pools v412 + Home Movies v405 | produção compartilhada |
 | Windows | — | — | não lançado |
 
 ## Web 1.0.199 / r408
