@@ -2,7 +2,7 @@
 
 - **Escopo exclusivo:** Descobrir > Pra Você.
 - O clique real da aba r319 deixa de executar o builder legado r309; os closures locais de carga e paint delegam diretamente para a autoridade r410/r409 antes de qualquer HTML antigo.
-- O painter r288 também é bloqueado para não sobrescrever o resultado atual com botões cinza ou sem **Trocar**.
+- O bundle final já não contém o painter r288; r410 bloqueia os caminhos legados r309/r319 que ainda estão presentes e conseguiam sobrescrever o resultado.
 - Indicação do Dia e 100% Novos exibem **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist exibe **✓ Visto + ↻ Trocar**.
 - Os botões usam o estilo interativo `chip`, ficam explicitamente habilitados e mantêm ações locais/otimistas sem full-page reload.
 - Fontes de dados preservadas: `cinetracker_discover_foryou_v396`, com fallback v396/v387.

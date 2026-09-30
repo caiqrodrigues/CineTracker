@@ -12,7 +12,6 @@ for(const need of [
  "async function loadForYou319(force=false){\n if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);",
  "async function buildForYou(force=false){\n if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);",
  "function paintForYou(){\n if(window.__ctR410?.renderForYou)return window.__ctR410.renderForYou();",
- "paintForYou263=function(){\n if(window.__ctR410?.renderForYou)return window.__ctR410.renderForYou();",
  "class=\"chip ct410-action\"",
  "aria-disabled=\"false\"",
  "cinetracker_discover_foryou_v396",

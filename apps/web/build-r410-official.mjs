@@ -12,7 +12,6 @@ ok(app.includes("window.__ctWebBuild='1.0.201'")&&app.includes("const REVISION='
 ok(app.includes("async function loadForYou319(force=false){\n if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);"),'r319 local load owner');
 ok(app.includes("async function buildForYou(force=false){\n if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);"),'r309 local build owner');
 ok(app.includes("function paintForYou(){\n if(window.__ctR410?.renderForYou)return window.__ctR410.renderForYou();"),'r309 local paint blocked');
-ok(app.includes("paintForYou263=function(){\n if(window.__ctR410?.renderForYou)return window.__ctR410.renderForYou();"),'r288 local paint blocked');
 ok(app.includes('class="chip ct410-action"')&&app.includes('↻ Trocar'),'active complete actions');
 ok(app.includes('cinetracker_discover_foryou_v396')&&app.includes('cinetracker_discover_watch_unseen_v396')&&app.includes('cinetracker_discover_fresh_v387'),'canonical sources');
 ok(html.includes('app-v410.js')&&!html.includes('app-v409.js'),'html');

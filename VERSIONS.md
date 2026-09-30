@@ -1,6 +1,6 @@
 ## r410 — Web 1.0.201
 - Escopo exclusivo: Descobrir > Pra Você.
-- Owner local r319/r309/r288 delegado antes do paint legado.
+- Owners locais r319/r309 delegados antes do paint legado; r288 já não está presente no bundle final.
 - 7 botões **Trocar** e ações completas com estilo ativo `chip`.
 - Fontes v396/v387 preservadas; demais áreas e Android intactos.
 

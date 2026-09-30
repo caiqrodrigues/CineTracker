@@ -3,7 +3,7 @@
 ### Fixed
 - Escopo exclusivo em **Descobrir > Pra Você**.
 - Corrigido o owner real r319: `loadForYou319` e o caminho `loadDiscover319('foryou')` delegam antes de chamar o builder legado r309.
-- `buildForYou`/painter r309 e painter r288 deixam de poder sobrescrever o renderer atual depois que os cards aparecem.
+- `buildForYou` e painter r309 deixam de poder sobrescrever o renderer atual depois que os cards aparecem; o painter r288 já não existe no bundle final.
 - Os 7 slots usam ações completas e ativas: **+ Watchlist / ✓ Visto / ↻ Trocar** no Diário/100% Novos e **✓ Visto / ↻ Trocar** na Watchlist.
 - Botões deixam de herdar apresentação cinza/inativa: passam a usar `chip ct410-action`, sem `disabled`, `inert` ou bloqueio de pointer.
 - Mantido o payload canônico v396 e fallback v396/v387; nenhuma mudança de banco foi necessária.

@@ -36,11 +36,6 @@ js=every(js,
  "if(t==='foryou')return window.__ctR410?.loadForYou?window.__ctR410.loadForYou(force):loadForYou319(force);",
  'r319 loadDiscover foryou delegation'
 );
-js=every(js,
- "paintForYou263=function(){\n const host=discoverHost263(),d=discover263.forYou;if(!host||!d)return;",
- "paintForYou263=function(){\n if(window.__ctR410?.renderForYou)return window.__ctR410.renderForYou();\n const host=discoverHost263(),d=discover263.forYou;if(!host||!d)return;",
- 'r288 paintForYou local closure'
-);
 js=once(js,
  "'<button type=\"button\" data-ct409-action=\"'+a+'\" data-ct409-slot=\"'+name+'\">'+l+'</button>'",
  "'<button type=\"button\" class=\"chip ct410-action\" aria-disabled=\"false\" data-ct409-action=\"'+a+'\" data-ct409-slot=\"'+name+'\">'+l+'</button>'",
