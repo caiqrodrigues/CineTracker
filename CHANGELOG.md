@@ -1,3 +1,15 @@
+## [1.0.204] - 2026-09-30
+
+### Added
+- Bloqueio global de **Reality / Reality TV (TMDB 10764)** em recomendações e descoberta, preservando os filtros r412 de curta-metragem abaixo de 40 min, YouTube/web originals, novelas/Soap, WWE, vistos e Watchlist.
+- Novas autoridades Supabase `cinetracker_recommendation_eligible_v413`, `cinetracker_discover_fresh_v413`, `cinetracker_discover_watch_unseen_v413` e `cinetracker_home_series_v413`.
+
+### Fixed
+- Home Séries não exibe mais o fim do Histórico antes de saltar para **Assistir a seguir**: o canvas da Home fica oculto somente durante o alinhamento inicial e é revelado já na posição correta.
+- `Descobrir > Pra Você` reafirma r411 como owner final e recompõe de forma delimitada os botões **↻ Trocar** ausentes; Diário/100% Novos = **+ Watchlist / ✓ Visto / ↻ Trocar** e Da sua Watchlist = **✓ Visto / ↻ Trocar**.
+- Em alta, Populares, Novidades, Lançamentos, Mais Aguardados e Mais bem avaliados passam pela elegibilidade r413 com substituição ordenada do candidato bloqueado.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou laços ilimitados.
+
 ## [1.0.203] - 2026-09-30
 
 ### Added
