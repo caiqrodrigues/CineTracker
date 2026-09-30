@@ -1,3 +1,14 @@
+## Web 1.0.203 / r412
+
+- Recomendações e descoberta agora aplicam um filtro único e estrito: **runtime mínimo de 40 min para filmes/especiais**, exclusão de **YouTube/web originals** e exclusão de **novelas/Soap (TMDB 10766)**.
+- `Pra Você` usa os RPCs v412 para Filme/Série/Anime, mantém exclusão de vistos/Watchlist/WWE e substitui candidatos bloqueados pelo próximo elegível.
+- Em alta, Populares, Novidades, Lançamentos, Mais Aguardados e Mais bem avaliados validam candidatos com detalhes TMDB de forma limitada e cacheada antes do paint.
+- Home Séries delega para `cinetracker_home_series_v412`; Raw/SmackDown continuam disponíveis no fluxo de episódios.
+- Os 7 slots de `Pra Você` mantêm **Trocar** visível e ativo; Diário/100% Novos exibem **+ Watchlist + ✓ Visto + ↻ Trocar** e Da sua Watchlist exibe **✓ Visto + ↻ Trocar**.
+- Sem full-page reload, observer global, intervalo contínuo ou loop ilimitado.
+
+Build: `apps/web/build-r412.mjs`; gate: `apps/web/build-r412-official.mjs`; regressão: `apps/web/test-r412.mjs`; migration: `20260930143000_r412_global_recommendation_eligibility.sql`.
+
 ## Web 1.0.202 / r411
 
 - **Escopo exclusivo:** Descobrir > Pra Você.
