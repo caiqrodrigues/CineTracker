@@ -1,3 +1,14 @@
+## Web 1.0.202 / r411
+
+- **Escopo exclusivo:** Descobrir > Pra Você.
+- A r411 remove o RPC composto v396 do caminho ativo porque a produção registrou `statement timeout` nele.
+- Filme/Série/Anime de **Da sua Watchlist** e **100% Novos** são carregados por seis RPCs diretos em paralelo, com timeout delimitado de 12 s e pintura progressiva.
+- Os pools válidos permanecem filtrados pelas autoridades server-side existentes; nenhum dado de Home, Perfil, Esportes ou Top 10 foi alterado.
+- Indicação do Dia e 100% Novos: **+ Watchlist + ✓ Visto + ↻ Trocar**. Da sua Watchlist: **✓ Visto + ↻ Trocar**.
+- Botões ficam explicitamente ativos; `Trocar` altera somente o slot clicado e não usa reload, observer contínuo, intervalo ou loop ilimitado.
+
+Build: `apps/web/build-r411.mjs`; gate: `apps/web/build-r411-official.mjs`; regressões: `apps/web/test-r411.mjs` e `apps/web/test-r411-browser.mjs`.
+
 ## Web 1.0.201 / r410
 
 - **Escopo exclusivo:** Descobrir > Pra Você.

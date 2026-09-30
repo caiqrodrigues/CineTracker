@@ -1,3 +1,9 @@
+## r411 — Web 1.0.202
+- Escopo exclusivo: Descobrir > Pra Você.
+- Seis pools diretos v396/v387 em paralelo; RPC composto v396 removido do caminho ativo após timeout real de produção.
+- Timeout delimitado de 12 s por pool, paint progressivo e **7 botões Trocar** quando os sete slots possuem item.
+- Home, Séries, Perfil, Esportes, Top 10, Configurações, backend e Android intactos.
+
 ## r410 — Web 1.0.201
 - Escopo exclusivo: Descobrir > Pra Você.
 - Owners locais r319/r309 delegados antes do paint legado; r288 já não está presente no bundle final.
@@ -12,13 +18,13 @@
 
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-09-29
+**Atualizado em:** 2026-09-30
 
 ## Matriz oficial
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.201** | revision `r410-official-1.0.201`, package `1.0.201` | release Web atual |
+| Web | **1.0.202** | revision `r411-official-1.0.202`, package `1.0.202` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | Home Movies `cinetracker_home_movies_v405` + autoridades existentes | produção compartilhada |
 | Windows | — | — | não lançado |

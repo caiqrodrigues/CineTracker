@@ -1,3 +1,15 @@
+## [1.0.202] - 2026-09-30
+
+### Fixed
+- Escopo exclusivo em **Descobrir > Pra Você**.
+- Removido do caminho ativo o RPC composto `cinetracker_discover_foryou_v396`, que no aparelho real estava retornando HTTP 500 por `statement timeout`.
+- Os seis pools de Filme/Série/Anime passam a carregar diretamente e em paralelo por `cinetracker_discover_watch_unseen_v396` e `cinetracker_discover_fresh_v387`.
+- Timeout do cliente passa de 4,5 s para 12 s por pool; o paint é progressivo e aceita respostas parciais sem deixar a tela em "Recomendações indisponíveis".
+- Loaders legados r396-r410 delegam antes de executar seus próprios caminhos, impedindo repaints/erros antigos de retomarem a tela.
+- Indicação do Dia e 100% Novos exibem **+ Watchlist / ✓ Visto / ↻ Trocar**; Da sua Watchlist exibe **✓ Visto / ↻ Trocar**.
+- `Trocar` permanece local, delimitado e sem recursão; Visto/Watchlist continuam otimistas e sem full-page reload.
+- Home, Séries, Perfil, Esportes, Top 10, Configurações, backend e Android não foram alterados.
+
 ## [1.0.201] - 2026-09-29
 
 ### Fixed
