@@ -1,3 +1,12 @@
+## Web 1.0.205 / r414 — 2026-09-30
+
+### Corrigido
+- Corrigido exclusivamente o desaparecimento do botão **↻ Trocar** em `Descobrir > Pra Você`.
+- O runtime identifica os sete slots visíveis mesmo quando um painter legado recria o DOM sem o terceiro/segundo botão.
+- Indicação do Dia e 100% Novos recebem **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist recebe **✓ Visto + ↻ Trocar**.
+- O botão é reativado de forma finita após paints conhecidos e delega a troca ao owner r411, sem `MutationObserver`, `setInterval`, loop ilimitado ou full-page reload.
+- Nenhuma regra de Home, recomendações, filtros, Reality, Perfil, Esportes, Top 10, backend ou Android foi alterada.
+
 ## [1.0.204] - 2026-09-30
 
 ### Added

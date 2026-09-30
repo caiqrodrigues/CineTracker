@@ -1,3 +1,13 @@
+## Web 1.0.205 / r414
+
+- **Escopo exclusivo:** corrigir os botões **↻ Trocar** ausentes em `Descobrir > Pra Você`.
+- O reparo atua tanto no DOM canônico r411 quanto no DOM legado que ainda pode vencer o paint visual, sem reconstruir Home ou outras telas.
+- Indicação do Dia e 100% Novos ficam com **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist fica com **✓ Visto + ↻ Trocar**.
+- O clique em **Trocar** delega primeiro ao owner r411 e mantém fallbacks locais existentes, sem reload de página.
+- Dados, filtros globais de elegibilidade, exclusão de Reality, Home, Perfil, Esportes, Top 10, backend e Android permanecem exatamente na r413.
+
+Build: `apps/web/build-r414.mjs`; gate: `apps/web/build-r414-official.mjs`; regressão: `apps/web/test-r414.mjs`.
+
 ## Web 1.0.204 / r413
 
 - Home Séries entra sem mostrar o fim do Histórico: o conteúdo da Home é revelado somente depois do alinhamento síncrono em **Assistir a seguir**; Histórico permanece acessível acima por rolagem.
