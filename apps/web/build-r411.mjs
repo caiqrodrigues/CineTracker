@@ -20,7 +20,7 @@ if(runtime.includes('cinetracker_discover_foryou_v396'))throw new Error('r411 ru
 for(const n of ['396','397','398','399','400','401','402','403','404']){
  const a='async function loadForYou'+n+'(force=false){';
  const b=a+'if(window.__ctR411?.loadForYou)return window.__ctR411.loadForYou(force);';
- js=every(js,a,b,'legacy loadForYou'+n);
+ if(js.includes(a))js=js.replaceAll(a,b);
 }
 js=every(js,
  "async function loadForYou(force=false){if(!authReady()||routeNow()!=='discover')return false;",

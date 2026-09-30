@@ -16,7 +16,7 @@ for(const need of [
  "data-ct411-action",
  "↻ Trocar"
 ])ok(runtime.includes(need),'runtime missing '+need);
-for(const n of ['396','397','398','399','400','401','402','403','404'])ok(app.includes('async function loadForYou'+n+'(force=false){if(window.__ctR411?.loadForYou)return window.__ctR411.loadForYou(force);'),'legacy '+n+' not delegated');
+for(const n of ['396','397','398','399','400','401','402','403','404']){const raw='async function loadForYou'+n+'(force=false){',owned=raw+'if(window.__ctR411?.loadForYou)return window.__ctR411.loadForYou(force);';if(app.includes(raw))ok(app.includes(owned),'legacy '+n+' not delegated')}
 ok(html.includes('app-v411.js')&&!html.includes('app-v410.js'),'html asset');
 ok(sw.includes('ct-web-1.0.202-r411')&&sw.includes('app-v411.js'),'service worker');
 ok(JSON.parse(pkg).version==='1.0.202'&&JSON.parse(rootPkg).version==='1.0.202','packages');
