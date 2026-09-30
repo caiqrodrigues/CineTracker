@@ -25,7 +25,7 @@ for(const n of ['396','397','398','399','400','401','402','403','404']){
 js=every(js,
  "async function loadForYou(force=false){if(!authReady()||routeNow()!=='discover')return false;",
  "async function loadForYou(force=false){if(window.__ctR411?.loadForYou)return window.__ctR411.loadForYou(force);if(!authReady()||routeNow()!=='discover')return false;",
- 'r407/r408/r409 load owner',3
+ 'r407/r408/r409 load owner',1
 );
 js=every(js,
  "async function loadForYou(force=false){if(!baseLoadForYou)return false;",
