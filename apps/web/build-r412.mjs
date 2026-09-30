@@ -27,12 +27,6 @@ js=once(js,
 );
 
 js=once(js,
- "  const [p,raw]=await Promise.all([personal319(true),source319(tab,force)]);\n  if(token!==state.loadToken||routeNow()!=='discover'||String(discover?.tab)!==tab)return false;\n  return paintPublic319(raw,tab,p);",
- "  const [p,raw]=await Promise.all([personal319(true),source319(tab,force)]);\n  if(token!==state.loadToken||routeNow()!=='discover'||String(discover?.tab)!==tab)return false;\n  const personalCandidates=strict319(raw,p,true);\n  const eligibleCandidates=window.__ctR412Eligibility?await window.__ctR412Eligibility.filterRows(personalCandidates,{limit:36,maxScan:80,requireOriginDetail:true,excludeWwe:true}):personalCandidates;\n  if(token!==state.loadToken||routeNow()!=='discover'||String(discover?.tab)!==tab)return false;\n  return paintPublic319(eligibleCandidates,tab,p);",
- 'r319 public strict eligibility'
-);
-
-js=once(js,
  "window.__ctWebBuild='1.0.202';window.__ctOfficialVersion='1.0.202';",
  "window.__ctWebBuild='1.0.203';window.__ctOfficialVersion='1.0.203';",
  'version'
