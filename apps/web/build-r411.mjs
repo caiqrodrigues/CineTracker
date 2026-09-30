@@ -27,10 +27,9 @@ js=every(js,
  "async function loadForYou(force=false){if(window.__ctR411?.loadForYou)return window.__ctR411.loadForYou(force);if(!authReady()||routeNow()!=='discover')return false;",
  'r407/r408/r409 load owner',1
 );
-js=every(js,
+if(js.includes("async function loadForYou(force=false){if(!baseLoadForYou)return false;"))js=js.replaceAll(
  "async function loadForYou(force=false){if(!baseLoadForYou)return false;",
- "async function loadForYou(force=false){if(window.__ctR411?.loadForYou)return window.__ctR411.loadForYou(force);if(!baseLoadForYou)return false;",
- 'r406 load owner'
+ "async function loadForYou(force=false){if(window.__ctR411?.loadForYou)return window.__ctR411.loadForYou(force);if(!baseLoadForYou)return false;"
 );
 js=once(js,
  "async function loadForYou(force=false){\n const o=owner();if(!o)return false;",
