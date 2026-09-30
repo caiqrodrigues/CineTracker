@@ -1,0 +1,13 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+if(process.env.CT_R410_SKIP_BUILD!=='1')await import('./build-r410.mjs');
+process.env.CT_R409_SKIP_BUILD='1';
+await import('./test-r409-browser.mjs');
+const app=await readFile(resolve('dist/app-v410.js'),'utf8');
+const ok=(v,m)=>{if(!v)throw new Error(m)};
+ok(app.includes("async function loadForYou319(force=false){\n if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);"),'live r319 closure not delegated');
+ok(app.includes("async function buildForYou(force=false){\n if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);"),'legacy r309 builder not delegated');
+ok(app.includes("function paintForYou(){\n if(window.__ctR410?.renderForYou)return window.__ctR410.renderForYou();"),'legacy r309 painter not blocked');
+ok(app.includes('class="chip ct410-action" aria-disabled="false" data-ct409-action='),'actions not active');
+ok(app.includes("window.__ctR410Marker='r319-local-closure+legacy-painter-block+active-complete-actions'"),'r410 owner absent');
+console.log('R410_BROWSER_OWNER_OK');

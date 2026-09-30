@@ -1,3 +1,9 @@
+## r410 — Web 1.0.201
+- Escopo exclusivo: Descobrir > Pra Você.
+- Owner local r319/r309/r288 delegado antes do paint legado.
+- 7 botões **Trocar** e ações completas com estilo ativo `chip`.
+- Fontes v396/v387 preservadas; demais áreas e Android intactos.
+
 ## r409 — Web 1.0.200
 - Home start sem restauração do fim do Histórico.
 - Episódio assistido com transição otimista instantânea de Home/Histórico/próximo episódio.
@@ -12,7 +18,7 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.199** | revision `r408-official-1.0.199`, package `1.0.199` | release Web atual |
+| Web | **1.0.201** | revision `r410-official-1.0.201`, package `1.0.201` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | Home Movies `cinetracker_home_movies_v405` + autoridades existentes | produção compartilhada |
 | Windows | — | — | não lançado |
