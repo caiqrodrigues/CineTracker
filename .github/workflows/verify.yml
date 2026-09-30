@@ -1,4 +1,4 @@
-name: Verify Web 1.0.201 r410 Pra Voce
+name: Verify Web 1.0.202 r411 Pra Voce
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r410:
+  web_r411:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -17,24 +17,24 @@ jobs:
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check build-r410.mjs
-          node --check build-r410-official.mjs
-          node --check test-r410.mjs
-          node --check test-r410-browser.mjs
-          node --check runtime-r410-discover-foryou-owner.js
-          node build-r410-official.mjs
-          CT_R410_SKIP_BUILD=1 node test-r410.mjs
-          CT_R410_SKIP_BUILD=1 node test-r410-browser.mjs
-          node --check dist/app-v410.js
-          grep -Fq "window.__ctR410Marker='r319-local-closure+legacy-painter-block+active-complete-actions'" dist/app-v410.js
-          grep -Fq "async function loadForYou319(force=false){" dist/app-v410.js
-          grep -Fq "if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);" dist/app-v410.js
-          grep -Fq 'class="chip ct410-action"' dist/app-v410.js
-          grep -Fq 'data-ct409-action="swap"' dist/app-v410.js
-          grep -Fq '↻ Trocar' dist/app-v410.js
-          ! grep -Fq "window.location.reload(" runtime-r410-discover-foryou-owner.js
-          ! grep -Fq "router.refresh(" runtime-r410-discover-foryou-owner.js
-          ! grep -Fq "while(true)" runtime-r410-discover-foryou-owner.js
+          node --check build-r411.mjs
+          node --check build-r411-official.mjs
+          node --check test-r411.mjs
+          node --check test-r411-browser.mjs
+          node --check runtime-r411-discover-foryou-progressive.js
+          node build-r411-official.mjs
+          CT_R411_SKIP_BUILD=1 node test-r411.mjs
+          CT_R411_SKIP_BUILD=1 node test-r411-browser.mjs
+          node --check dist/app-v411.js
+          grep -Fq "window.__ctR411Marker='progressive-six-pools-12s-no-composite-complete-actions'" dist/app-v411.js
+          grep -Fq "async function loadForYou396(force=false){" dist/app-v411.js
+          grep -Fq "if(window.__ctR411?.loadForYou)return window.__ctR411.loadForYou(force);" dist/app-v411.js
+          grep -Fq 'data-ct411-action' dist/app-v411.js
+          grep -Fq 'data-ct411-action="swap"' dist/app-v411.js
+          grep -Fq '↻ Trocar' dist/app-v411.js
+          ! grep -Fq "window.location.reload(" runtime-r411-discover-foryou-progressive.js
+          ! grep -Fq "router.refresh(" runtime-r411-discover-foryou-progressive.js
+          ! grep -Fq "while(true)" runtime-r411-discover-foryou-progressive.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -44,7 +44,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r410, android]
+    needs: [web_r411, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -53,13 +53,13 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.201"' <<<"$BODY" && grep -Fq '"revision": "r410-official-1.0.201"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v410.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.202"' <<<"$BODY" && grep -Fq '"revision": "r411-official-1.0.202"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v411.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR410Marker='r319-local-closure+legacy-painter-block+active-complete-actions'" <<<"$JS" \
-                && grep -Fq 'class="chip ct410-action"' <<<"$JS" \
-                && grep -Fq 'async function loadForYou319(force=false)' <<<"$JS" \
-                && grep -Fq 'app-v410.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR411Marker='progressive-six-pools-12s-no-composite-complete-actions'" <<<"$JS" \
+                && grep -Fq 'data-ct411-action' <<<"$JS" \
+                && grep -Fq 'async function loadForYou396(force=false)' <<<"$JS" \
+                && grep -Fq 'app-v411.js' <<<"$HTML"; then
                 exit 0
               fi
             fi
