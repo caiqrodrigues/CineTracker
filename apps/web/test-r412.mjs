@@ -15,7 +15,7 @@ ok(html.includes('app-v412.js')&&!html.includes('app-v411.js'),'html');
 ok(sw.includes('ct-web-1.0.203-r412'),'sw');
 ok(JSON.parse(pkg).version==='1.0.203'&&JSON.parse(rootPkg).version==='1.0.203','packages');
 ok(JSON.parse(releaseRaw).version==='1.0.203','release');
-ok(migration.includes('p_require_movie_runtime')&&migration.includes('runtime_minutes < 40'),'migration runtime floor');
+ok(migration.includes('p_require_movie_runtime')&&migration.includes('runtime_minutes<40'),'migration runtime floor');
 
 const details={
  'movie:1':{id:1,runtime:15,production_companies:[],genres:[],keywords:{keywords:[]}},
