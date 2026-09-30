@@ -1,3 +1,18 @@
+## [1.0.203] - 2026-09-30
+
+### Added
+- Regra global de elegibilidade r412 para recomendações e descoberta: filmes, animações em formato de filme e especiais com runtime conhecido inferior a **40 minutos** são descartados antes do paint.
+- Bloqueio de produções vinculadas a **YouTube, YouTube Originals, YouTube Premium/Red**, web series, web videos e vlogs por network, produtora, homepage e keywords.
+- Bloqueio de **novelas / telenovelas / Soap** por gênero TMDB 10766, gênero textual e media kind.
+- Novas autoridades Supabase `cinetracker_recommendation_eligible_v412`, `cinetracker_discover_fresh_v412`, `cinetracker_discover_watch_unseen_v412` e `cinetracker_home_series_v412`.
+- Substituição dinâmica e delimitada: candidatos inválidos são pulados e o próximo candidato elegível é escolhido sem recursão ou loop infinito.
+
+### Fixed
+- `Descobrir > Pra Você` usa os pools estritos v412 e mantém os **7 botões ↻ Trocar** visíveis/ativos: Diário, 3 slots da Watchlist e 3 slots de 100% Novos.
+- Em alta, Populares, Novidades, Lançamentos, Mais Aguardados e Mais bem avaliados passam pela mesma elegibilidade antes do paint, preservando exclusões de vistos/Watchlist/WWE já existentes.
+- Home Séries passa pela autoridade v412 sem remover Raw/SmackDown do acompanhamento de episódios.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou laços ilimitados.
+
 ## [1.0.202] - 2026-09-30
 
 ### Fixed
