@@ -14,7 +14,7 @@ for(const need of [
  "name.startsWith('watch:')?'2':'3'",
  "owner=window.__ctR411",
  "owner.swap(name)",
- "window.__ctR363?.handle({action:'swap',name})",
+ "window.__ctR363.handle({action:'swap',name})",
  "name.replace(/^watch:/,'watchIndex:').replace(/^fresh:/,'freshIndex:')"
 ])ok(runtime.includes(need),'runtime missing '+need);
 ok(app.includes("window.__ctR413Marker='no-history-flash+7-swap-owner+reality-10764+strict-r412-preserved'"),'r413 marker lost');
