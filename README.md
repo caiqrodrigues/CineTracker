@@ -1,3 +1,12 @@
+## Web 1.0.206 / r415
+
+- **Home Séries:** não mostra mais o Histórico antigo antes de ir para **Assistir a seguir**. A entrada espera a geometria estabilizar, alinha uma única vez e só então exibe a lista.
+- **Descobrir > Pra Você:** **↻ Trocar** é inserido na própria linha de botões que está visível no DOM, cobrindo Diário + 3 Watchlist + 3 de 100% Novos sem depender do painter que venceu a corrida.
+- **Perfil:** nenhuma mudança visual. O primeiro paint reaproveita cache quando disponível e a atualização principal usa apenas `cinetracker_profile_v380`; chamadas legadas pesadas deixam de controlar a entrada do Perfil.
+- Timers são finitos, ações permanecem locais e não há full-page reload.
+
+Build: `apps/web/build-r415.mjs`; gate: `apps/web/build-r415-official.mjs`; regressão: `apps/web/test-r415.mjs`.
+
 ## Web 1.0.205 / r414
 
 - **Escopo exclusivo:** corrigir os botões **↻ Trocar** ausentes em `Descobrir > Pra Você`.

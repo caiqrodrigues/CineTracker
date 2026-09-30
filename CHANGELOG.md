@@ -1,3 +1,12 @@
+## Web 1.0.206 / r415 — 2026-09-30
+
+### Corrigido
+- **Home > Séries:** a tela permanece visualmente bloqueada enquanto o Histórico e a seção **Assistir a seguir** estabilizam; só então alinha e revela a Home, eliminando o primeiro paint no fim do Histórico e o salto posterior.
+- **Descobrir > Pra Você:** o reparo deixa de depender de wrappers/slots específicos e atua na linha de ações realmente visível. Os sete slots populados recebem **↻ Trocar**: Diário e 100% Novos ficam com **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist fica com **✓ Visto + ↻ Trocar**.
+- **Perfil:** o visual aprovado permanece intacto, mas o carregamento passa a ter owner único, cache-first e uma única chamada principal a `cinetracker_profile_v380`; os RPCs legados pesados `cinetracker_profile_payload_v0997`, `cinetracker_profile_media_dashboard_v0991` e `cinetracker_profile_quick_stats_v1` não fazem parte do novo caminho de entrada.
+- Enriquecimento esportivo do Perfil é assíncrono e delimitado, sem bloquear o primeiro paint.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver` novo, `setInterval` ou loop ilimitado.
+
 ## Web 1.0.205 / r414 — 2026-09-30
 
 ### Corrigido

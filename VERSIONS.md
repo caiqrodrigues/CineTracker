@@ -1,3 +1,9 @@
+## r415 — Web 1.0.206
+- Home Séries só é revelada depois que **Assistir a seguir** e o Histórico estabilizam, sem flash/jump inicial.
+- Pra Você repara as linhas de ação realmente visíveis e garante **7 botões Trocar** quando os 7 slots têm item.
+- Perfil mantém o layout aprovado e usa owner cache-first + `cinetracker_profile_v380` como única carga principal.
+- Android permanece 1.0.20 / 10062.
+
 ## r413 — Web 1.0.204
 - Home entra diretamente em **Assistir a seguir**, sem flash do fim do Histórico.
 - Pra Você reafirma o owner r411 e garante os botões **Trocar** nos sete slots quando há item.
@@ -36,7 +42,7 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.204** | revision `r413-official-1.0.204`, package `1.0.204` | release Web atual |
+| Web | **1.0.206** | revision `r415-official-1.0.206`, package `1.0.206` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | elegibilidade `cinetracker_recommendation_eligible_v413` + pools v413 + Home Movies v405 | produção compartilhada |
 | Windows | — | — | não lançado |
