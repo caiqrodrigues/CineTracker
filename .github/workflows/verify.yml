@@ -1,4 +1,4 @@
-name: Verify Web 1.0.203 r412 Strict Recommendations
+name: Verify Web 1.0.204 r413 Home + ForYou + Reality
 on:
   push:
     branches: [main]
@@ -6,35 +6,37 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r412:
+  web_r413:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and strict recommendation regression gate
+      - name: Build and r413 regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check build-r412.mjs
-          node --check build-r412-official.mjs
-          node --check test-r412.mjs
-          node --check runtime-r412-global-recommendation-eligibility.js
-          node build-r412-official.mjs
-          CT_R412_SKIP_BUILD=1 node test-r412.mjs
-          node --check dist/app-v412.js
-          grep -Fq "window.__ctR412Marker='strict-40min-youtube-web-novela+server-v412+7-swap-repair'" dist/app-v412.js
-          grep -Fq 'cinetracker_discover_watch_unseen_v412' dist/app-v412.js
-          grep -Fq 'cinetracker_discover_fresh_v412' dist/app-v412.js
-          grep -Fq 'cinetracker_home_series_v412' dist/app-v412.js
-          grep -Fq 'data-ct411-action="swap"' dist/app-v412.js
-          grep -Fq 'const MIN_RUNTIME=40' dist/app-v412.js
-          ! grep -Fq "window.location.reload(" runtime-r412-global-recommendation-eligibility.js
-          ! grep -Fq "router.refresh(" runtime-r412-global-recommendation-eligibility.js
-          ! grep -Fq "while(true)" runtime-r412-global-recommendation-eligibility.js
-          ! grep -Fq "new MutationObserver" runtime-r412-global-recommendation-eligibility.js
-          ! grep -Fq "setInterval(" runtime-r412-global-recommendation-eligibility.js
+          node --check build-r413.mjs
+          node --check build-r413-official.mjs
+          node --check test-r413.mjs
+          node --check runtime-r413-home-foryou-reality.js
+          node build-r413-official.mjs
+          CT_R413_SKIP_BUILD=1 node test-r413.mjs
+          node --check dist/app-v413.js
+          grep -Fq "window.__ctR413Marker='no-history-flash+7-swap-owner+reality-10764+strict-r412-preserved'" dist/app-v413.js
+          grep -Fq 'cinetracker_discover_watch_unseen_v413' dist/app-v413.js
+          grep -Fq 'cinetracker_discover_fresh_v413' dist/app-v413.js
+          grep -Fq 'cinetracker_home_series_v413' dist/app-v413.js
+          grep -Fq 'window.__ctR413Eligibility.filterRows(personalCandidates' dist/app-v413.js
+          grep -Fq 'data-ct411-action="swap"' dist/app-v413.js
+          grep -Fq 'REALITY_GENRE_ID=10764' dist/app-v413.js
+          grep -Fq 'ct413HomeEntering' dist/app-v413.js
+          ! grep -Fq "window.location.reload(" runtime-r413-home-foryou-reality.js
+          ! grep -Fq "router.refresh(" runtime-r413-home-foryou-reality.js
+          ! grep -Fq "while(true)" runtime-r413-home-foryou-reality.js
+          ! grep -Fq "new MutationObserver" runtime-r413-home-foryou-reality.js
+          ! grep -Fq "setInterval(" runtime-r413-home-foryou-reality.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -44,7 +46,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r412, android]
+    needs: [web_r413, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -53,13 +55,14 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.203"' <<<"$BODY" && grep -Fq '"revision": "r412-official-1.0.203"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v412.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.204"' <<<"$BODY" && grep -Fq '"revision": "r413-official-1.0.204"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v413.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR412Marker='strict-40min-youtube-web-novela+server-v412+7-swap-repair'" <<<"$JS" \
-                && grep -Fq 'cinetracker_discover_fresh_v412' <<<"$JS" \
+              if grep -Fq "window.__ctR413Marker='no-history-flash+7-swap-owner+reality-10764+strict-r412-preserved'" <<<"$JS" \
+                && grep -Fq 'cinetracker_discover_fresh_v413' <<<"$JS" \
                 && grep -Fq 'data-ct411-action="swap"' <<<"$JS" \
-                && grep -Fq 'app-v412.js' <<<"$HTML"; then
+                && grep -Fq 'REALITY_GENRE_ID=10764' <<<"$JS" \
+                && grep -Fq 'app-v413.js' <<<"$HTML"; then
                 exit 0
               fi
             fi
