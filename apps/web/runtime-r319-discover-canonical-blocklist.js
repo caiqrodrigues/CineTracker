@@ -213,7 +213,12 @@ async function loadPublic319(tab,force=false){
  try{
   const [p,raw]=await Promise.all([personal319(true),source319(tab,force)]);
   if(token!==state.loadToken||routeNow()!=='discover'||String(discover?.tab)!==tab)return false;
-  return paintPublic319(raw,tab,p);
+  const personalCandidates=strict319(raw,p,true);
+  const eligibleCandidates=window.__ctR412Eligibility
+   ?await window.__ctR412Eligibility.filterRows(personalCandidates,{limit:36,maxScan:80,requireOriginDetail:true,excludeWwe:true})
+   :personalCandidates;
+  if(token!==state.loadToken||routeNow()!=='discover'||String(discover?.tab)!==tab)return false;
+  return paintPublic319(eligibleCandidates,tab,p);
  }catch(e){if(token===state.loadToken){const h=host();if(h)h.innerHTML='<div class="empty">Não foi possível carregar esta área agora.<br><button class="chip" type="button" data-ct319-retry>Tentar novamente</button></div>';loaded319()}return false}
 }
 
