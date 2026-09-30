@@ -12,30 +12,31 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
  readFile(resolve(root,'runtime-r410-discover-foryou-owner.js'),'utf8')
 ]);
 const once=(s,a,b,l)=>{const n=s.split(a).length-1;if(n!==1)throw new Error('r410 expected one '+l+', found '+n);return s.replace(a,b)};
+const every=(s,a,b,l)=>{const n=s.split(a).length-1;if(n<1)throw new Error('r410 expected at least one '+l+', found '+n);return s.replaceAll(a,b)};
 new Function(runtime);
 for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])if(runtime.includes(bad))throw new Error('r410 forbidden runtime pattern: '+bad);
 
-js=once(js,
+js=every(js,
  "async function buildForYou(force=false){\n if(!discover||routeNow()!=='discover')return false;",
  "async function buildForYou(force=false){\n if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);\n if(!discover||routeNow()!=='discover')return false;",
  'r309 buildForYou local closure'
 );
-js=once(js,
+js=every(js,
  "function paintForYou(){\n const h=host();if(!h||routeNow()!=='discover'||String(discover?.tab)!=='foryou')return false;",
  "function paintForYou(){\n if(window.__ctR410?.renderForYou)return window.__ctR410.renderForYou();\n const h=host();if(!h||routeNow()!=='discover'||String(discover?.tab)!=='foryou')return false;",
  'r309 paintForYou local closure'
 );
-js=once(js,
+js=every(js,
  "async function loadForYou319(force=false){\n loading319('Montando recomendações…');",
  "async function loadForYou319(force=false){\n if(window.__ctR410?.loadForYou)return window.__ctR410.loadForYou(force);\n loading319('Montando recomendações…');",
  'r319 loadForYou local closure'
 );
-js=once(js,
+js=every(js,
  "if(t==='foryou')return loadForYou319(force);",
  "if(t==='foryou')return window.__ctR410?.loadForYou?window.__ctR410.loadForYou(force):loadForYou319(force);",
  'r319 loadDiscover foryou delegation'
 );
-js=once(js,
+js=every(js,
  "paintForYou263=function(){\n const host=discoverHost263(),d=discover263.forYou;if(!host||!d)return;",
  "paintForYou263=function(){\n if(window.__ctR410?.renderForYou)return window.__ctR410.renderForYou();\n const host=discoverHost263(),d=discover263.forYou;if(!host||!d)return;",
  'r288 paintForYou local closure'
