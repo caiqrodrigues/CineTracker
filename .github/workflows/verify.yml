@@ -1,4 +1,4 @@
-name: Verify Web 1.0.199 r408 Home + Pra Voce
+name: Verify Web 1.0.200 r409 Home + Pra Voce
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r408:
+  web_r409:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -17,20 +17,24 @@ jobs:
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check runtime-r408-home-discover-owner.js
-          node --check build-r408.mjs
-          node --check build-r408-official.mjs
-          node --check test-r408.mjs
-          node --check test-r408-browser.mjs
-          node build-r408-official.mjs
-          node test-r408.mjs
-          node test-r408-browser.mjs
-          node --check dist/app-v408.js
-          grep -Fq "window.__ctR408Marker='home-semantic-one-shot+movie-direct-loader+foryou-self-heal-actions'" dist/app-v408.js
-          grep -Fq "cinetracker_home_movies_v405" dist/app-v408.js
-          grep -Fq "cinetracker_discover_foryou_v396" dist/app-v408.js
-          grep -Fq "scheduleOwnerCheck" dist/app-v408.js
-          grep -Fq "baseLoadMovies" dist/app-v408.js
+          node --check build-r409.mjs
+          node --check build-r409-official.mjs
+          node --check test-r409.mjs
+          node --check test-r409-browser.mjs
+          node build-r409-official.mjs
+          CT_R409_SKIP_BUILD=1 node test-r409.mjs
+          CT_R409_SKIP_BUILD=1 node test-r409-browser.mjs
+          node --check dist/app-v409.js
+          grep -Fq "window.__ctR409Marker='instant-episode-history-next+foryou-primary-fallback-complete-actions'" dist/app-v409.js
+          grep -Fq "cinetracker_home_movies_v405" dist/app-v409.js
+          grep -Fq "cinetracker_home_series_v406" dist/app-v409.js
+          grep -Fq "cinetracker_home_history_v324" dist/app-v409.js
+          grep -Fq "cinetracker_discover_foryou_v396" dist/app-v409.js
+          grep -Fq "data-ct409-action" dist/app-v409.js
+          grep -Fq "↻ Trocar" dist/app-v409.js
+          ! grep -Fq "window.location.reload(" apps/web/runtime-r409-part*.txt
+          ! grep -Fq "router.refresh(" apps/web/runtime-r409-part*.txt
+          ! grep -Fq "while(true)" apps/web/runtime-r409-part*.txt
   android:
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +44,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r408, android]
+    needs: [web_r409, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -49,10 +53,15 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.199"' <<<"$BODY" && grep -Fq '"revision": "r408-official-1.0.199"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v408.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.200"' <<<"$BODY" && grep -Fq '"revision": "r409-official-1.0.200"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v409.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR408Marker='home-semantic-one-shot+movie-direct-loader+foryou-self-heal-actions'" <<<"$JS" && grep -Fq 'cinetracker_home_movies_v405' <<<"$JS" && grep -Fq 'app-v408.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR409Marker='instant-episode-history-next+foryou-primary-fallback-complete-actions'" <<<"$JS" \
+                && grep -Fq 'cinetracker_home_movies_v405' <<<"$JS" \
+                && grep -Fq 'data-ct409-action' <<<"$JS" \
+                && grep -Fq 'app-v409.js' <<<"$HTML"; then
+                exit 0
+              fi
             fi
             sleep 5
           done
