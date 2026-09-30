@@ -1,3 +1,13 @@
+## Web 1.0.204 / r413
+
+- Home Séries entra sem mostrar o fim do Histórico: o conteúdo da Home é revelado somente depois do alinhamento síncrono em **Assistir a seguir**; Histórico permanece acessível acima por rolagem.
+- `Descobrir > Pra Você` usa r411 como owner final e garante **↻ Trocar** em todos os slots com item: Diário e 100% Novos = **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist = **✓ Visto + ↻ Trocar**.
+- A elegibilidade global preserva **runtime mínimo de 40 min**, bloqueio de **YouTube/web originals**, **novelas/Soap** e passa a excluir também **Reality / Reality TV (TMDB 10764)**.
+- Fresh, Watchlist recomendada e Home Séries usam os RPCs v413; as abas públicas usam o filtro cliente r413 e pulam silenciosamente candidatos bloqueados.
+- Sem full-page reload, observer global, intervalo contínuo ou loop ilimitado.
+
+Build: `apps/web/build-r413.mjs`; gate: `apps/web/build-r413-official.mjs`; regressão: `apps/web/test-r413.mjs`; migration: `20260930170000_r413_reality_home_entry_foryou_actions.sql`.
+
 ## Web 1.0.203 / r412
 
 - Recomendações e descoberta agora aplicam um filtro único e estrito: **runtime mínimo de 40 min para filmes/especiais**, exclusão de **YouTube/web originals** e exclusão de **novelas/Soap (TMDB 10766)**.
