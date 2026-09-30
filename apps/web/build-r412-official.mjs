@@ -20,5 +20,5 @@ ok(html.includes('app-v412.js')&&!html.includes('app-v411.js'),'html asset');
 ok(sw.includes('ct-web-1.0.203-r412')&&sw.includes('app-v412.js'),'sw');
 ok(JSON.parse(pkg).version==='1.0.203'&&JSON.parse(rootPkg).version==='1.0.203','packages');
 const rel=JSON.parse(releaseRaw);ok(rel.version==='1.0.203'&&rel.revision==='r412-official-1.0.203','release');
-for(const need of ['cinetracker_recommendation_eligible_v412','p_require_movie_runtime','runtime_minutes < 40','youtube','10766','novela'])ok(migration.toLowerCase().includes(need.toLowerCase()),'migration missing '+need);
+for(const need of ['cinetracker_recommendation_eligible_v412','p_require_movie_runtime','runtime_minutes<40','youtube','10766','novela'])ok(migration.toLowerCase().includes(need.toLowerCase()),'migration missing '+need);
 console.log('WEB_R412_OFFICIAL_OK');
