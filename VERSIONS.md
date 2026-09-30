@@ -1,3 +1,9 @@
+## r413 — Web 1.0.204
+- Home entra diretamente em **Assistir a seguir**, sem flash do fim do Histórico.
+- Pra Você reafirma o owner r411 e garante os botões **Trocar** nos sete slots quando há item.
+- Elegibilidade v413 preserva curta <40 min, YouTube/web, novelas/Soap e adiciona exclusão de **Reality / TMDB 10764**.
+- Android permanece 1.0.20 / 10062.
+
 ## r412 — Web 1.0.203
 - Filtro global de recomendação/descoberta: filmes/especiais abaixo de 40 min, YouTube/web originals e novelas/Soap são inelegíveis.
 - Novos RPCs v412 para Fresh, Watchlist recomendada e Home Séries; exclusões pessoais/WWE preservadas.
@@ -30,9 +36,9 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.203** | revision `r412-official-1.0.203`, package `1.0.203` | release Web atual |
+| Web | **1.0.204** | revision `r413-official-1.0.204`, package `1.0.204` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
-| Backend / Supabase | produção compartilhada | elegibilidade `cinetracker_recommendation_eligible_v412` + pools v412 + Home Movies v405 | produção compartilhada |
+| Backend / Supabase | produção compartilhada | elegibilidade `cinetracker_recommendation_eligible_v413` + pools v413 + Home Movies v405 | produção compartilhada |
 | Windows | — | — | não lançado |
 
 ## Web 1.0.199 / r408
