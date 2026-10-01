@@ -18,8 +18,8 @@ for(const need of ['window.__ctR422Marker','cinetracker_shown_recommendations_re
 
 const removeKnown=(needle,label)=>{
  const n=js.split(needle).length-1;
- if(n>1)throw new Error('r422 ambiguous '+label+', found '+n);
- if(n===1)js=js.replace(needle,'');
+ if(n)js=js.replaceAll(needle,'');
+ return n;
 };
 const observers=[
  ["const ct244Observer=new MutationObserver(ct244Schedule);\nct244Observer.observe(document.documentElement,{childList:true,subtree:true});",'r244 document observer'],
