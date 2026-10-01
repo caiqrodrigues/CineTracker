@@ -1,3 +1,9 @@
+## 1.0.219 — r428 (2026-10-01)
+- Pra Você: owner visível da composição, cards + ações reconstruídos quando necessário.
+- Trocar: ação nativa r388 preservada por slot.
+- Sem reload, MutationObserver, setInterval ou loop ilimitado.
+- Android permanece 1.0.20 / 10062.
+
 ## 1.0.216 — r425 (2026-10-01)
 - Home sem tela vazia durante carregamento.
 - F1 media_id=865: total 1.280 sessões/episódios importados de 2015-2026.
