@@ -10,7 +10,7 @@ const [js,rt,rel,pkg,rootPkg,html,sw]=await Promise.all([
  readFile('dist/service-worker.js','utf8')
 ]);
 const ok=(v,m)=>{if(!v)throw new Error('R431 '+m)};
-for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh(')])ok(!rt.includes(bad),'forbidden '+bad);
+for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh(')]) ok(!rt.includes(bad),'forbidden '+bad);
 ok(!rt.includes('cinetracker:data-changed')&&!rt.includes("addEventListener('online'"),'automatic refresh triggers removed');
 ok(rt.includes("owner:'r309'")&&rt.includes('ct309-swap'),'r309 sole owner');
 ok(!js.includes('window.__ctR430')&&!js.includes('const recentP=Promise.resolve(S.loadRecent296?.())'),'retired r430/recent blocker absent');
