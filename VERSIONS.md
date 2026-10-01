@@ -1,3 +1,10 @@
+## 1.0.215 — r424 (2026-10-01)
+- Home Séries usa cinetracker_home_series_v424 para tratar Fórmula 1, Raw e SmackDown como séries recorrentes quando existe próximo episódio.
+- Entrada da Home Séries é protegida contra o primeiro paint do Histórico; a tela só é revelada após o payload atual e o alinhamento de Assistir a seguir.
+- Perfil repinta tempos pelos RPCs canônicos de Séries e Esportes, incluindo o runtime das sessões F1 nos dois contabilizadores.
+- Séries/Filmes do Perfil passam a ser listas verticais sem arraste horizontal, com **Ver mais** para listas longas.
+- Android permanece 1.0.20 / 10062.
+
 ## 1.0.214 — r423 (2026-10-01)
 - Fórmula 1 usa um owner direto nas três superfícies reais: Série, Esportes e F1 Hub.
 - f1_episode_map_v423 é a autoridade de correspondência sessão ↔ episódio; o writer r423 grava estado de série e esporte na mesma ação.
