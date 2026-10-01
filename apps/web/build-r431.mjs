@@ -15,7 +15,7 @@ const start='/* CineTracker Web 1.0.221 r430';
 const cut=js.indexOf(start);
 if(cut<0)throw new Error('r431 missing r430 runtime');
 js=js.slice(0,cut);
-js=js.replace(/Promise\\.resolve\\(S\\.loadRecent296\\?\\.\\(\\)\\)\\.catch\\(\\(\\)=>null\\)/g,'Promise.resolve(null)');
+js=js.replaceAll('S.loadRecent296?.()','null');
 js=js.replace(/recentP\\.then\\(\\(\\)=>null\\)\\.then\\(\\(\\)=>freshP\\)/g,'freshP');
 js=js.replace(/const \\[a,fullWatch,freshParts\\]=await Promise\\.all\\(\\[authorityP,watchP,freshP,recentP\\.then\\(\\(\\)=>null\\)\\.then\\(\\)=>freshP\\]\\);/g,"const [a,fullWatch,freshParts]=await Promise.all([authorityP,watchP,freshP]);");
 if(js.includes("S.loadRecent296?.()"))throw new Error('r431 blocking recent loader survived');
