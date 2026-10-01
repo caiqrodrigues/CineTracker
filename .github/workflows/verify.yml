@@ -29,7 +29,9 @@ jobs:
           grep -Fq 'cinetracker_sport_stats_v421' dist/app-v421.js
           grep -Fq 'cinetracker_f1_episode_watch_set_v421' dist/app-v421.js
           grep -Fq "window.__ctR421?.toggleF1?.(watch)" dist/app-v421.js
-          grep -Fq "window.__ctR421.filterRecommendations(list,{limit:24,maxScan:72})" dist/app-v421.js
+          grep -Fq 'cinetracker_discover_watch_unseen_v421' dist/app-v421.js
+          grep -Fq 'cinetracker_discover_fresh_v421' dist/app-v421.js
+          grep -Fq 'sanitizeForYou421' dist/app-v421.js
           ! grep -Fq "window.__ctR420?.toggleF1?.(watch)" dist/app-v421.js
           ! grep -Fq "const hist=await loadF1History311(false);" dist/app-v421.js
           ! grep -Fq "window.location.reload(" runtime-r421-standup-f1-profile.js

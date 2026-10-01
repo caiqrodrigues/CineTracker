@@ -72,6 +72,19 @@ async function filterRecommendations421(input,opts={}){
  if(typeof e?.filterRows==='function')return e.filterRows(input,{limit:Number(opts.limit)||24,maxScan:Number(opts.maxScan)||Math.max(72,Number(opts.limit)||24),requireOriginDetail:true,excludeWwe:true});
  return deepFilter421(input,opts);
 }
+async function sanitizeForYou421(){
+ if(routeNow()!=='discover'||!window.__ctR411?.getForYou)return false;
+ const fy=window.__ctR411.getForYou();if(!fy||typeof fy!=='object')return false;let changed=false;
+ for(const group of ['watch','fresh'])for(const type of ['movie','series','anime']){
+  const pool=rows(fy?.[group]?.[type]);if(!pool.length)continue;
+  const clean=await filterRecommendations421(pool,{limit:pool.length,maxScan:pool.length});
+  if(clean.length!==pool.length){fy[group][type].splice(0,fy[group][type].length,...clean);if(fy.idx?.[group])fy.idx[group][type]=0;changed=true}
+ }
+ const daily=rows(fy.daily);if(daily.length&&await standupWithDetail421(daily[0])){fy.daily.splice(0,fy.daily.length);changed=true}
+ if(changed&&typeof window.__ctR411.renderForYou==='function')window.__ctR411.renderForYou(false);
+ return changed;
+}
+function scheduleForYouSanitize421(){for(const ms of[300,900,1800,3600,6500])setTimeout(()=>void sanitizeForYou421(),ms)}
 
 /* PROFILE — preserve the existing markup; only correct values and make every returned card reachable. */
 let profileTask421=null,profileRun421=0;
@@ -173,11 +186,11 @@ async function toggleF1421(btn){
 
 const baseRenderProfile421=typeof renderProfile==='function'?renderProfile:null;
 if(baseRenderProfile421)renderProfile=async function(){const out=await baseRenderProfile421.apply(this,arguments);if(routeNow()==='profile')void loadProfile421();return out};
-window.addEventListener('click',e=>{const t=e.target;if(!t?.closest)return;if(t.closest('[data-nav="profile"]'))setTimeout(()=>void loadProfile421(),0);if(t.closest('[data-ct311-f1-race]'))scheduleF1Sync421()},true);
+window.addEventListener('click',e=>{const t=e.target;if(!t?.closest)return;if(t.closest('[data-nav="profile"]'))setTimeout(()=>void loadProfile421(),0);if(t.closest('[data-nav="discover"],[data-ct319-tab="foryou"],[data-ct263-tab="foryou"],[data-discover-tab="foryou"]'))scheduleForYouSanitize421();if(t.closest('[data-ct311-f1-race]'))scheduleF1Sync421()},true);
 window.addEventListener('popstate',()=>setTimeout(()=>{if(routeNow()==='profile')void loadProfile421();if(q('[data-ct311-f1-modal]'))scheduleF1Sync421()},0));
 window.addEventListener('cinetracker:data-changed',()=>{if(routeNow()==='profile')void loadProfile421()});
-function boot421(n=0){bindEligibility421();if(routeNow()==='profile')void loadProfile421();if(q('[data-ct311-f1-modal]'))scheduleF1Sync421();if(n<30&&(!window.__ctR412Eligibility||!window.__ctR411))setTimeout(()=>boot421(n+1),120)}
-window.__ctR421={version:'1.0.212',scope:'standup-hard-block+f1-series-only+profile-watchlist-truth+full-rails',isStandup:isStandup421,filterRecommendations:filterRecommendations421,bindEligibility:bindEligibility421,loadProfile:loadProfile421,patchProfile:patchProfile421,syncF1:syncF1421,scheduleF1Sync:scheduleF1Sync421,toggleF1:toggleF1421};
+function boot421(n=0){bindEligibility421();if(routeNow()==='profile')void loadProfile421();if(routeNow()==='discover')scheduleForYouSanitize421();if(q('[data-ct311-f1-modal]'))scheduleF1Sync421();if(n<30&&(!window.__ctR412Eligibility||!window.__ctR411))setTimeout(()=>boot421(n+1),120)}
+window.__ctR421={version:'1.0.212',scope:'standup-hard-block+f1-series-only+profile-watchlist-truth+full-rails',isStandup:isStandup421,filterRecommendations:filterRecommendations421,sanitizeForYou:sanitizeForYou421,bindEligibility:bindEligibility421,loadProfile:loadProfile421,patchProfile:patchProfile421,syncF1:syncF1421,scheduleF1Sync:scheduleF1Sync421,toggleF1:toggleF1421};
 window.__ctR421Marker='standup-detail-filter+f1-media-865-only+profile-watchlist-nonzero+profile-full-rails';
 bindEligibility421();queueMicrotask(()=>boot421(0));
 })();

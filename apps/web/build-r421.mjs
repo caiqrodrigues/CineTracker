@@ -22,13 +22,9 @@ const f1LegacyHistory="const hist=await loadF1History311(false);";
 if(!js.includes(f1LegacyHistory))throw new Error('r421 missing legacy F1 history read');
 js=js.replace(f1LegacyHistory,"const hist=[];");
 
-const fyPool="const list=unwrapRows(value).filter(x=>key(x));";
-if(!js.includes(fyPool))throw new Error('r421 missing r411 pool line');
-js=js.replace(fyPool,"let list=unwrapRows(value).filter(x=>key(x));if(window.__ctR421?.filterRecommendations)list=await window.__ctR421.filterRecommendations(list,{limit:24,maxScan:72});");
-
-const topLine="const movies=strict319(raw.movies,p,false).slice(0,10),series=strict319(raw.series,p,false).slice(0,10);";
-if(!js.includes(topLine))throw new Error('r421 missing Top 10 line');
-js=js.replace(topLine,"const movieBase=strict319(raw.movies,p,false),seriesBase=strict319(raw.series,p,false);const movies=(window.__ctR421?.filterRecommendations?await window.__ctR421.filterRecommendations(movieBase,{limit:10,maxScan:40}):movieBase).slice(0,10),series=(window.__ctR421?.filterRecommendations?await window.__ctR421.filterRecommendations(seriesBase,{limit:10,maxScan:40}):seriesBase).slice(0,10);");
+for(const pool of ['cinetracker_discover_watch_unseen_v420','cinetracker_discover_fresh_v420'])if(!js.includes(pool))throw new Error('r421 missing '+pool);
+js=js.replaceAll('cinetracker_discover_watch_unseen_v420','cinetracker_discover_watch_unseen_v421')
+     .replaceAll('cinetracker_discover_fresh_v420','cinetracker_discover_fresh_v421');
 
 js=js.replace("window.__ctWebBuild='1.0.211';window.__ctOfficialVersion='1.0.211';","window.__ctWebBuild='1.0.212';window.__ctOfficialVersion='1.0.212';")
      .replace("const REVISION='r420-official-1.0.211';","const REVISION='r421-official-1.0.212';")

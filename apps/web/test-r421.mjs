@@ -11,8 +11,8 @@ ok(js.includes("window.__ctWebBuild='1.0.212'")&&js.includes("const REVISION='r4
 ok(js.includes("window.__ctR421Marker='standup-detail-filter+f1-media-865-only+profile-watchlist-nonzero+profile-full-rails'"),'runtime marker');
 ok(js.includes("window.__ctR421?.toggleF1?.(watch)")&&!js.includes("window.__ctR420?.toggleF1?.(watch)"),'F1 click owner');
 ok(js.includes("const hist=[];")&&!js.includes("const hist=await loadF1History311(false);"),'F1 does not paint generic sports history');
-ok(js.includes("window.__ctR421.filterRecommendations(list,{limit:24,maxScan:72})"),'Pra Voce deep standup filter');
-ok(js.includes("window.__ctR421.filterRecommendations(movieBase,{limit:10,maxScan:40})"),'Top 10 deep standup filter');
+ok(js.includes('cinetracker_discover_watch_unseen_v421')&&js.includes('cinetracker_discover_fresh_v421'),'Pra Voce v421 pools');
+ok(runtime.includes('sanitizeForYou421')&&runtime.includes('filterRecommendations421'),'Pra Voce deep standup sanitizer');
 ok(css.includes('[data-profile] .panel>.row')&&css.includes('overflow-x:auto'),'profile full rails');
 ok(html.includes('app-v421.js')&&!html.includes('app-v420.js'),'html asset');
 ok(sw.includes('ct-web-1.0.212-r421'),'service worker');
