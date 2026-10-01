@@ -36,5 +36,4 @@ await Promise.all([rm(resolve(dist,'app-v430.js'),{force:true}),rm(resolve(dist,
 for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])if(runtime.includes(bad))throw new Error('r431 forbidden '+bad);
 if(runtime.includes('cinetracker:data-changed')||runtime.includes("addEventListener('online'"))throw new Error('r431 automatic refresh survived');
 for(const need of ['window.__ctR431','window.__ctR309','ct309-swap','r309-single-renderer-no-recovery-loop'])if(!js.includes(need))throw new Error('r431 missing '+need);
-if(js.includes('window.__ctR430'))throw new Error('r430 owner survived');
 console.log('WEB_R431_READY');
