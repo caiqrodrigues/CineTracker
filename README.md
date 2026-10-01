@@ -1,3 +1,11 @@
+## 1.0.219 — r428 (2026-10-01)
+- **Descobrir > Pra Você:** r428 assume a composição visível do bloco.
+- Recria as ações quando o renderer legado remove a linha de botões.
+- **Trocar** volta a aparecer e delega ao handler nativo r388.
+- Cards ausentes acionam o loader/renderizador atual do Pra Você.
+- Escopo exclusivo em Pra Você; demais áreas preservadas.
+- Android permanece **1.0.20 / versionCode 10062**.
+
 ## 1.0.218 — r427 (2026-10-01)
 - **Descobrir > Pra Você:** reconhece o renderer r388 que ainda podia vencer no DOM real.
 - Recupera o carregamento dos cards pelo owner r388 quando ele é o renderer visível.
