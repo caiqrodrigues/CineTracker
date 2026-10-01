@@ -1,4 +1,4 @@
-name: Verify Web 1.0.218 r427 Discover Pra Voce
+name: Verify Web 1.0.219 r428 Discover Pra Voce
 on:
   push:
     branches: [main]
@@ -6,33 +6,33 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r427:
+  web_r428:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r427 regression gate
+      - name: Build and r428 regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check build-r427.mjs
-          node --check build-r427-official.mjs
-          node --check test-r427.mjs
+          node --check build-r428.mjs
+          node --check build-r428-official.mjs
+          node --check test-r428.mjs
           node --check runtime-r427-discover-foryou-visible-owner.js
-          node build-r427-official.mjs
-          CT_R427_SKIP_BUILD=1 node test-r427.mjs
+          node build-r428-official.mjs
+          CT_R428_SKIP_BUILD=1 node test-r428.mjs
           node --check dist/app-v427.js
-          grep -Fq "window.__ctR427" dist/app-v427.js
+          grep -Fq "window.__ctR428" dist/app-v427.js
           grep -Fq "data-ct388-foryou" dist/app-v427.js
           grep -Fq "__ctR388LoadForYou" dist/app-v427.js
           grep -Fq "ct427-swap" dist/app-v427.js
           ! grep -Fq "window.location.reload(" runtime-r427-discover-foryou-visible-owner.js
-          ! grep -Fq "router.refresh(" runtime-r427-discover-foryou-visible-owner.js
-          ! grep -Fq "while(true)" runtime-r427-discover-foryou-visible-owner.js
-          ! grep -Fq "new MutationObserver" runtime-r427-discover-foryou-visible-owner.js
-          ! grep -Fq "setInterval(" runtime-r427-discover-foryou-visible-owner.js
+          ! grep -Fq "router.refresh(" runtime-r428-discover-foryou-visible-owner.js
+          ! grep -Fq "while(true)" runtime-r428-discover-foryou-visible-owner.js
+          ! grep -Fq "new MutationObserver" runtime-r428-discover-foryou-visible-owner.js
+          ! grep -Fq "setInterval(" runtime-r428-discover-foryou-visible-owner.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -42,7 +42,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r427, android]
+    needs: [web_r428, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -51,10 +51,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.218"' <<<"$BODY" && grep -Fq '"revision": "r427-official-1.0.218"' <<<"$BODY"; then
+            if grep -Fq '"version": "1.0.219"' <<<"$BODY" && grep -Fq '"revision": "r428-official-1.0.219"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v427.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR427" <<<"$JS" && grep -Fq 'data-ct388-foryou' <<<"$JS" && grep -Fq 'app-v427.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR428" <<<"$JS" && grep -Fq 'data-ct388-foryou' <<<"$JS" && grep -Fq 'app-v427.js' <<<"$HTML"; then
                 exit 0
               fi
             fi
