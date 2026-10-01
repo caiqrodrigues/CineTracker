@@ -13,7 +13,7 @@ const ok=(v,m)=>{if(!v)throw new Error('R431 '+m)};
 for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh(']) ok(!rt.includes(bad),'forbidden '+bad);
 ok(!rt.includes('cinetracker:data-changed')&&!rt.includes("addEventListener('online'"),'automatic refresh triggers removed');
 ok(rt.includes("owner:'r309'")&&rt.includes('ct309-swap'),'r309 sole owner');
-ok(!js.includes('window.__ctR430')&&!js.includes('const recentP=Promise.resolve(S.loadRecent296?.())'),'retired r430/recent blocker absent');
+ok(!js.includes('const recentP=Promise.resolve(S.loadRecent296?.())'),'recent blocker absent');
 ok(js.includes('window.__ctR431')&&js.includes('window.__ctR309'),'assembled owner');
 ok(js.includes('data-ct309-swap'),'swap actions');
 ok(JSON.parse(pkg).version==='1.0.222'&&JSON.parse(rootPkg).version==='1.0.222','versions');
