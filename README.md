@@ -1,5 +1,5 @@
 ## 1.0.213 — r422 (2026-10-01)
-- Auditoria Web de estabilidade/performance: reconciliação de foreground e navegação coalescida, sem observers globais contínuos e sem full-page reload.
+- Auditoria Web de estabilidade/performance: reconciliação de foreground e navegação coalescida, sem adicionar observer global contínuo e sem full-page reload.
 - Descobrir preserva os filtros existentes e adiciona nota TMDB >= 7.5, ano > 1990 e exclusão de títulos exclusivamente Drama/Documentário.
 - Pra Você reutiliza o histórico persistente de recomendações r296 por 7 dias; a r411 continua dona do DOM e o botão **Trocar** atua apenas no card clicado.
 - Perfil mantém dados/ordem/fontes e usa um único controle para Estatísticas + Esportes assistidos.
