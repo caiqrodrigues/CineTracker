@@ -1,3 +1,17 @@
+## 1.0.219 — r428 (2026-10-01)
+
+### Fixed
+- **Descobrir > Pra Você:** o r428 passa a ser dono da composição visível do bloco, em vez de apenas reativar botões que já existiam.
+- Quando o renderer legado recria um slot, o r428 recompõe a linha de ações correspondente: **Watchlist + Visto + Trocar** nos blocos novos e **Visto + Trocar** na Watchlist.
+- **Trocar** usa os atributos nativos data-ct388-action/data-ct388-slot e delega ao handler r388 existente, mantendo a troca somente no slot clicado.
+- Cards ausentes acionam o loader/renderizador r388 do próprio Pra Você antes da normalização das ações.
+- Botões cinza/desabilitados são reativados no DOM visível sem reload de página, MutationObserver, setInterval ou loop ilimitado.
+
+### Scope
+- Web: exclusivamente **Descobrir > Pra Você**.
+- Home, Perfil, Esportes, Top 10, Configurações, Supabase e Android permanecem fora do escopo.
+- Android permanece **1.0.20 / versionCode 10062**.
+
 ## 1.0.218 — r427 (2026-10-01)
 
 ### Fixed
