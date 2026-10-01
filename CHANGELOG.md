@@ -1,3 +1,11 @@
+## 1.0.220 / r429 — Descobrir > Pra Você — 2026-10-01
+
+- r411 passa a ser o único owner ativo do Pra Você.
+- Removidos do build os recovery owners r427/r428 que provocavam repaints/reinicializações sucessivas.
+- Eliminado o ciclo que fazia a URL avançar em `?ct_refresh=` e reiniciava a tela.
+- Mantidas as ações nativas Watchlist, Visto e Trocar do renderer r411.
+- Home, Perfil, Esportes e Android permanecem inalterados.
+
 ## 1.0.219 — r428 (2026-10-01)
 
 ### Fixed
