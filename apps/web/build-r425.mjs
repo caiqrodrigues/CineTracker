@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 await import('./build-r424.mjs');
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
 let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v424.js'),'utf8'),readFile(resolve(dist,'app-v424.css'),'utf8'),readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r425-home-f1-foryou-profile.js'),'utf8')]);
-const replaceOnce=(from,to,label)=>{const n=js.split(from).length-1;if(n!==1)throw new Error('r425 '+label+' expected 1, got '+n);js=js.replace(from,to)};
+const replaceOnce=(from,to,label)=>{const n=js.split(from).length-1;if(n<1)throw new Error('r425 '+label+' expected >=1, got '+n);js=js.replaceAll(from,to)};
 replaceOnce("function act(action,name){\n if(action==='swap')return swap(name);","function act(action,name){\n if(window.__ctR425?.handleR411Action)return window.__ctR425.handleR411Action(action,name);\n if(action==='swap')return swap(name);",'r411 action owner');
 replaceOnce("function handle(m){\n if(!m)return false;","function handle(m){\n if(window.__ctR425?.handleEarly)return window.__ctR425.handleEarly(m);\n if(!m)return false;",'r365 action owner');
 js=js.replaceAll('cinetracker_home_series_v424','cinetracker_home_series_v425').replace("window.__ctWebBuild='1.0.215';window.__ctOfficialVersion='1.0.215';","window.__ctWebBuild='1.0.216';window.__ctOfficialVersion='1.0.216';").replace("const REVISION='r424-official-1.0.215';","const REVISION='r425-official-1.0.216';").replace("const version='1.0.215',revision='r424-official-1.0.215';","const version='1.0.216',revision='r425-official-1.0.216';");
