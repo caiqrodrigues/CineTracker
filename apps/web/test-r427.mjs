@@ -12,7 +12,7 @@ const [js,runtime,releaseRaw,pkgRaw,rootPkgRaw,html,sw]=await Promise.all([
 ]);
 const ok=(v,m)=>{if(!v)throw new Error('R427 '+m)};
 new Function(runtime);
-for(const bad of['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])ok(!runtime.includes(bad),'forbidden '+bad);
+for(const bad of["new MutationObserver","setInterval(","while(true)","window.location.reload(","router.refresh("])ok(!runtime.includes(bad),'forbidden '+bad);
 ok(runtime.includes('data-ct388-foryou'),'recognizes live r388 renderer');
 ok(runtime.includes('__ctR388LoadForYou'),'recovers r388 loader');
 ok(runtime.includes("b.dataset.ct388Action==='swap'"),'recognizes native r388 swap');
