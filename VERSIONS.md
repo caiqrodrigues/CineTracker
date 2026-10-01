@@ -1,5 +1,5 @@
 ## 1.0.213 — r422 (2026-10-01)
-- Estabilidade: remove observers globais redundantes, coalesce retorno do background/navegação e impede refetch storm.
+- Estabilidade: remove observers globais redundantes comprovados, coalesce retorno do background/navegação e impede refetch storm.
 - Descobrir: nota >=7.5, ano >1990 e bloqueio exclusivo Drama/Documentário sobre a elegibilidade já existente.
 - Pra Você: histórico persistente de 7 dias reaproveitado e Trocar local/estável nos sete slots.
 - Perfil: um único collapse para Estatísticas + Esportes, preservando 4+4+2 e fontes atuais.
