@@ -11,7 +11,7 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
  readFile(resolve(dist,'release.json'),'utf8'),
  readFile(resolve(root,'runtime-r427-discover-foryou-visible-owner.js'),'utf8')
 ]);
-const ok=(v,m)=>{if(!v)throw new Error('r427 '+m)};
+const ok=(v,m)=>{if(!v)throw new Error('r428 '+m)};
 new Function(runtime);
 for(const bad of ["new MutationObserver","setInterval(","while(true)","window.location.reload(","router.refresh("]) { ok(!runtime.includes(bad),'forbidden '+bad); }
 ok(runtime.includes('data-ct388-foryou'),'r388 visible root');
