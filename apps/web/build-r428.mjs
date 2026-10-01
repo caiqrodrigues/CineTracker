@@ -5,8 +5,8 @@ await import('./build-r427.mjs');
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
 let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
  readFile(resolve(dist,'index.html'),'utf8'),
- readFile(resolve(dist,'app-v428.js'),'utf8'),
- readFile(resolve(dist,'app-v428.css'),'utf8'),
+ readFile(resolve(dist,'app-v427.js'),'utf8'),
+ readFile(resolve(dist,'app-v427.css'),'utf8'),
  readFile(resolve(dist,'service-worker.js'),'utf8'),
  readFile(resolve(dist,'release.json'),'utf8'),
  readFile(resolve(root,'runtime-r427-discover-foryou-visible-owner.js'),'utf8')
@@ -17,12 +17,12 @@ for(const bad of ["new MutationObserver","setInterval(","while(true)","window.lo
 ok(runtime.includes('data-ct388-foryou'),'r388 visible root');
 ok(runtime.includes('__ctR388LoadForYou'),'r388 loader');
 ok(runtime.includes("b.dataset.ct388Action==='swap'"),'r388 swap');
-js=js.replaceAll('1.0.219','1.0.219').replaceAll('r426-official-1.0.219','r427-official-1.0.219');
+js=js.replaceAll('1.0.219','1.0.218').replaceAll('r428-official-1.0.219','r427-official-1.0.218');
 js+='\n'+runtime+'\n';
-html=html.replaceAll('app-v428.js','app-v428.js').replaceAll('app-v428.css','app-v428.css').replaceAll('v1.0.219','v1.0.219').replaceAll('r426-official-1.0.219','r427-official-1.0.219');
-sw=sw.replaceAll('ct-web-1.0.219-r426','ct-web-1.0.219-r427').replaceAll('app-v428.js','app-v428.js').replaceAll('app-v428.css','app-v428.css');
-css+='\n/* CineTracker Web 1.0.219 r427 — Descobrir > Pra Você visible-owner recovery. */\n';
-const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.219',revision:'r427-official-1.0.219',base:'r426+r427-visible-foryou-owner',scope:'discover-foryou-only',discover_foryou:'r388 is explicitly recognized as a live renderer; its loader is recovered when it owns the visible DOM and its native swap actions are re-enabled',discover_actions:'visible Trocar buttons are reactivated without replacing the native r388 click owner',home:'unchanged-r426',profile:'unchanged-r426',sports:'unchanged-r426',android:'1.0.20/10062'};
+html=html.replaceAll('app-v427.js','app-v428.js').replaceAll('app-v427.css','app-v428.css').replaceAll('v1.0.219','v1.0.218').replaceAll('r428-official-1.0.219','r427-official-1.0.218');
+sw=sw.replaceAll('ct-web-1.0.219-r426','ct-web-1.0.218-r427').replaceAll('app-v427.js','app-v427.js').replaceAll('app-v427.css','app-v427.css');
+css+='\n/* CineTracker Web 1.0.218 r427 — Descobrir > Pra Você visible-owner recovery. */\n';
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.218',revision:'r427-official-1.0.218',base:'r426+r427-visible-foryou-owner',scope:'discover-foryou-only',discover_foryou:'r388 is explicitly recognized as a live renderer; its loader is recovered when it owns the visible DOM and its native swap actions are re-enabled',discover_actions:'visible Trocar buttons are reactivated without replacing the native r388 click owner',home:'unchanged-r426',profile:'unchanged-r426',sports:'unchanged-r426',android:'1.0.20/10062'};
 await Promise.all([
  writeFile(resolve(dist,'app-v428.js'),js),
  writeFile(resolve(dist,'app-v428.css'),css),
@@ -30,7 +30,7 @@ await Promise.all([
  writeFile(resolve(dist,'service-worker.js'),sw),
  writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))
 ]);
-await Promise.all([rm(resolve(dist,'app-v428.js'),{force:true}),rm(resolve(dist,'app-v428.css'),{force:true})]);
+await Promise.all([rm(resolve(dist,'app-v427.js'),{force:true}),rm(resolve(dist,'app-v427.css'),{force:true})]);
 const built=await readFile(resolve(dist,'app-v428.js'),'utf8');
 for(const need of ['window.__ctR427','data-ct388-foryou','__ctR388LoadForYou','ct427-swap','Trocar'])ok(built.includes(need),'assembled '+need);
 console.log('WEB_R428_READY');
