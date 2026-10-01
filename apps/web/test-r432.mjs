@@ -1,0 +1,17 @@
+import {readFile} from 'node:fs/promises';
+if(process.env.CT_R432_SKIP_BUILD!=='1')await import('./build-r432.mjs');
+const [js,rt,rel,pkg,rootPkg,html,sw]=await Promise.all([readFile('dist/app-v432.js','utf8'),readFile('runtime-r432-discover-foryou-stable.js','utf8'),readFile('dist/release.json','utf8'),readFile('package.json','utf8'),readFile('../../package.json','utf8'),readFile('dist/index.html','utf8'),readFile('dist/service-worker.js','utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('R432 '+m)};
+ok(!js.includes('location.reload('),'reload removed');
+ok(!js.includes('router.refresh('),'router refresh removed');
+ok(!js.includes('ct_refresh='),'URL refresh removed');
+ok(!js.includes('/* CineTracker Web 1.0.177 r386'),'r386 removed');
+ok(!js.includes('/* CineTracker Web 1.0.186 r395'),'r395 removed');
+ok(!js.includes('/* CineTracker Web 1.0.187 r396'),'r396 removed');
+ok(rt.includes("owner:'r309'")&&rt.includes('data-ct309-swap'),'r309 owner');
+ok(!rt.includes('setInterval(')&&!rt.includes('MutationObserver'),'r432 recovery has no periodic recovery');
+ok(JSON.parse(pkg).version==='1.0.223'&&JSON.parse(rootPkg).version==='1.0.223','versions');
+const r=JSON.parse(rel);ok(r.version==='1.0.223'&&r.revision==='r432-official-1.0.223'&&r.scope==='discover-foryou-only','release');
+ok(html.includes('app-v432.js')&&!html.includes('app-v431.js'),'html');
+ok(sw.includes('ct-web-1.0.223-r432')&&sw.includes('app-v432.js'),'service worker');
+console.log('R432_STATIC_OK');
