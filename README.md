@@ -1,3 +1,13 @@
+## 1.0.214 — r423 (2026-10-01)
+- **Fórmula 1 (media_id=865) passa a ter um owner único e efetivo nas três superfícies reais:** detalhe da Série, Esportes e F1 Hub delegam diretamente para a autoridade r423, removendo a corrida entre owners r416/r417/r422.
+- **Série:** o handler lexical real de episódio intercepta somente Fórmula 1; o card/progresso muda imediatamente por Optimistic UI e a persistência grava também o evento esportivo correspondente.
+- **Esportes:** o fluxo real r255 (cinetracker_sport_mark_watched_v1) passa a sincronizar Fórmula 1 com o episódio da série; os demais esportes continuam usando exatamente o writer anterior.
+- **F1 Hub:** o capture handler real chama r423 diretamente; marcar/desmarcar grava o mesmo estado de episódio + esporte e repinta pelo estado da série.
+- A tabela canônica f1_episode_map_v423 alinha temporada/round/session com o número exato do episódio usado pela série. cinetracker_f1_reconcile_v423 corrige divergências antigas sem repetir gravações de tempo já existentes.
+- O runtime da sessão entra nos **dois contabilizadores**: tempo de Série e tempo de Esportes.
+- Sem full-page reload, MutationObserver, setInterval, while(true) ou recursão ilimitada. Android permanece **1.0.20 / 10062** e não foi alterado.
+
+Build: apps/web/build-r423.mjs; gate: apps/web/build-r423-official.mjs; regressão: apps/web/test-r423.mjs; migration: 20261001220000_r423_f1_hard_sync.sql.
 ## 1.0.213 — r422 (2026-10-01)
 - Fórmula 1 passa a ter sincronização dupla e atômica: cada sessão é o episódio correspondente da série `media_id=865` e, ao mesmo tempo, um evento assistido em Esportes.
 - Marcar/desmarcar pelo detalhe da série, pela tela de Esportes ou pelo F1 Hub converge em `cinetracker_f1_watch_sync_v422`; o estado de uma superfície reaparece nas outras sem full-page reload.

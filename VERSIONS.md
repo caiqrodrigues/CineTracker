@@ -1,3 +1,10 @@
+## 1.0.214 — r423 (2026-10-01)
+- Fórmula 1 usa um owner direto nas três superfícies reais: Série, Esportes e F1 Hub.
+- f1_episode_map_v423 é a autoridade de correspondência sessão ↔ episódio; o writer r423 grava estado de série e esporte na mesma ação.
+- O fluxo r255 de Esportes para formula_1 agora converge para o mesmo writer; os demais esportes permanecem inalterados.
+- Reconciliação da temporada atual corrige divergências anteriores sem duplicar marcações já sincronizadas.
+- Tempo de cada sessão entra nos contadores de Séries e Esportes.
+- Android permanece 1.0.20 / 10062.
 ## 1.0.213 — r422 (2026-10-01)
 - Fórmula 1 passa a ter sincronização dupla e atômica: cada sessão é o episódio correspondente da série `media_id=865` e, ao mesmo tempo, um evento assistido em Esportes.
 - Marcar/desmarcar pelo detalhe da série, pela tela de Esportes ou pelo F1 Hub converge em `cinetracker_f1_watch_sync_v422`; o estado de uma superfície reaparece nas outras sem full-page reload.

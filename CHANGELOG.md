@@ -1,3 +1,18 @@
+## 1.0.214 — r423 (2026-10-01)
+
+### Fixed
+- Corrigida a causa real da Fórmula 1 não sincronizar: os handlers lexicais efetivamente usados pela Série, Esportes e F1 Hub agora delegam diretamente para r423, sem depender de reatribuições tardias de funções.
+- Marcar/desmarcar uma sessão F1 em qualquer uma das três superfícies persiste o mesmo episódio da série media_id=865 e o mesmo evento no histórico esportivo.
+- O fluxo real de Esportes r255 deixa de passar por um RPC legado inexistente para F1 e sincroniza pelo writer canônico.
+- O mapa f1_episode_map_v423 mantém temporada, rodada, tipo de sessão e número de episódio alinhados; a reconciliação da temporada atual repara estados antigos divergentes sem duplicar play events já existentes.
+- Optimistic UI/rollback preservados; sem reload global, observer contínuo, intervalo agressivo ou loop ilimitado.
+
+### Accounting
+- Cada sessão F1 assistida contabiliza o runtime em **Séries** e também em **Esportes**, conforme solicitado.
+
+### Scope
+- Perfil, Descobrir, Home fora da invalidação de dados F1, demais esportes e Android não tiveram regra visual ou funcional alterada.
+- Android permanece **1.0.20 / 10062**.
 ## 1.0.213 — r422 (2026-10-01)
 - Fórmula 1 passa a ter sincronização dupla e atômica: cada sessão é o episódio correspondente da série `media_id=865` e, ao mesmo tempo, um evento assistido em Esportes.
 - Marcar/desmarcar pelo detalhe da série, pela tela de Esportes ou pelo F1 Hub converge em `cinetracker_f1_watch_sync_v422`; o estado de uma superfície reaparece nas outras sem full-page reload.
