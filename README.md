@@ -1,3 +1,9 @@
+## 1.0.218 — r427 (2026-10-01)
+- **Descobrir > Pra Você:** reconhece o renderer r388 que ainda podia vencer no DOM real.
+- Recupera o carregamento dos cards pelo owner r388 quando ele é o renderer visível.
+- Reativa **↻ Trocar** sem substituir o handler nativo, mantendo a ação funcional.
+- Escopo exclusivo em Pra Você; Home, Perfil, Esportes e Android preservados.
+
 ## 1.0.217 — r426 (2026-10-01)
 - Perfil > Histórico diário oferece **↶ Desmarcar visto** por item.
 - Descobrir > Pra Você usa um único owner de **Trocar** para os botões visíveis.

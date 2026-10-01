@@ -1,0 +1,16 @@
+/* CineTracker Web 1.0.218 r427 — Descobrir > Pra Você visible-owner recovery only. */
+(()=>{'use strict';
+if(window.__ctR427?.version==='1.0.218')return;
+const q=(s,r=document)=>r?.querySelector?.(s)||null,qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
+const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
+const root=()=>q('[data-ct388-foryou]')?.parentElement||q('[data-ct411-foryou]')?.parentElement||q('[data-ct336-foryou]')?.parentElement||q('[data-ct288-foryou]')?.parentElement||q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]');
+const isFY=()=>routeNow()==='discover'&&(!!q('[data-ct388-foryou],[data-ct411-foryou],[data-ct336-foryou],[data-ct288-foryou]')||String(window.__ctR288R263?.discover263?.tab||'')==='foryou');
+const normalize=()=>{if(!isFY())return 0;const r=root();if(!r)return 0;let n=0;for(const b of qa('button',r)){const txt=String(b.textContent||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();const swap=txt.includes('trocar')||b.dataset.ct388Action==='swap'||b.dataset.ct411Action==='swap'||b.dataset.ct409Action==='swap';if(!swap)continue;b.type='button';b.hidden=false;b.disabled=false;b.removeAttribute('hidden');b.removeAttribute('disabled');b.removeAttribute('inert');b.setAttribute('aria-disabled','false');b.classList.add('ct427-swap');b.style.setProperty('display','flex','important');b.style.setProperty('visibility','visible','important');b.style.setProperty('pointer-events','auto','important');b.style.setProperty('opacity','1','important');b.style.setProperty('cursor','pointer','important');n++}document.documentElement.dataset.ct427SwapCount=String(n);document.documentElement.dataset.ct427ForYou='active';return n};
+const load=async(force=false)=>{if(routeNow()!=='discover')return false;let ok=false;try{if(typeof window.__ctR388LoadForYou==='function')ok=!!(await window.__ctR388LoadForYou(!!force))}catch{}if(!ok)try{if(typeof window.__ctR411?.loadForYou==='function')ok=!!(await window.__ctR411.loadForYou(!!force))}catch{}normalize();return ok};
+const schedule=()=>{for(const ms of [0,80,200,450,900,1600,3000,5000])setTimeout(()=>{if(isFY()){const count=normalize();if(ms===0||count===0)void load(false)}},ms)};
+window.addEventListener('click',e=>{const t=e.target;if(!t?.closest)return;if(t.closest('[data-nav="discover"],[data-ct319-tab="foryou"],[data-ct263-tab="foryou"],[data-discover-tab="foryou"]'))schedule()},true);
+window.addEventListener('popstate',schedule);window.addEventListener('cinetracker:data-changed',()=>{if(isFY())schedule()});
+const style=document.createElement('style');style.id='ct427-style';style.textContent='[data-ct388-foryou] .ct427-swap,[data-ct411-foryou] .ct427-swap,[data-ct336-foryou] .ct427-swap,[data-ct288-foryou] .ct427-swap{display:flex!important;visibility:visible!important;pointer-events:auto!important;opacity:1!important;cursor:pointer!important}';document.head.appendChild(style);
+window.__ctR427={version:'1.0.218',scope:'discover-foryou-only',load,schedule,normalize};
+queueMicrotask(()=>{if(isFY())schedule()});
+})();

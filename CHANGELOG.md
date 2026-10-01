@@ -1,3 +1,18 @@
+## 1.0.218 — r427 (2026-10-01)
+
+### Fixed
+- **Descobrir > Pra Você:** corrigida a causa do renderer errado continuar vencendo no aparelho.
+- O r427 reconhece explicitamente o DOM real do renderer **r388**, além dos owners r411/r336/r288.
+- Quando o r388 é o owner visível, seu loader `__ctR388LoadForYou` é recuperado para repintar os cards reais de Pra Você.
+- Os botões nativos `data-ct388-action="swap"` são reconhecidos e reativados sem substituir o handler nativo de **↻ Trocar**.
+- **Trocar** deixa de ficar cinza/desabilitado: remove `disabled`, `hidden` e `inert`, forçando visibilidade e interação apenas no escopo de Pra Você.
+- A correção usa apenas tentativas temporizadas e delimitadas; não cria MutationObserver, setInterval, loop infinito, reload de página ou router.refresh.
+
+### Scope
+- Web: exclusivamente **Descobrir > Pra Você**.
+- Home, Perfil, Esportes, Top 10, Configurações, backend e Android permanecem fora do escopo.
+- Android permanece **1.0.20 / versionCode 10062**.
+
 ## 1.0.217 — r426 (2026-10-01)
 
 ### Fixed
