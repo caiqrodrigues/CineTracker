@@ -1,3 +1,10 @@
+## 1.0.209 — r418 (2026-10-01)
+- Home Séries arma a proteção antes do boot e só revela a tela já ancorada em **Assistir a seguir**, eliminando o flash/salto pelo fim do Histórico.
+- Descobrir > Pra Você repara os botões **Trocar** diretamente nas linhas de ação visíveis; Indicação do Dia e 100% Novos ficam com Watchlist + Visto + Trocar, e Da sua Watchlist com Visto + Trocar.
+- Perfil preserva integralmente o layout e passa a ler Tempo/Eventos assistidos pela autoridade relacional `cinetracker_sport_stats_v418`.
+- F1 Hub passa a persistir cada sessão como episódio da série Fórmula 1 (media_id 865), com Optimistic UI e espelho da sessão F1.
+- Sem full-page reload, MutationObserver global, setInterval ou loop infinito. Android permanece 1.0.20 / 10062.
+
 ## r417 — Web 1.0.208
 - Home Séries mantém o canvas oculto até a geometria final de **Assistir a seguir** estabilizar.
 - Pra Você garante **7 botões Trocar** nos sete slots populados do DOM realmente visível.
@@ -55,7 +62,7 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.208** | revision `r417-official-1.0.208`, package `1.0.208` | release Web atual |
+| Web | **1.0.209** | revision `r418-official-1.0.209`, package `1.0.209` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | elegibilidade `cinetracker_recommendation_eligible_v413` + pools v413 + Home Movies v405 | produção compartilhada |
 | Windows | — | — | não lançado |
