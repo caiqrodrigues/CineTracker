@@ -1,4 +1,4 @@
-name: Verify Web 1.0.214 r423 F1 Hard Sync
+name: Verify Web 1.0.215 r424 F1 Hard Sync
 on:
   push:
     branches: [main]
@@ -6,33 +6,33 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r423:
+  web_r424:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r423 regression gate
+      - name: Build and r424 regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check build-r423.mjs
-          node --check build-r423-official.mjs
-          node --check test-r423.mjs
-          node --check runtime-r423-f1-hard-sync.js
-          node build-r423-official.mjs
-          CT_R423_SKIP_BUILD=1 node test-r423.mjs
-          node --check dist/app-v423.js
-          grep -Fq "window.__ctR423Marker='f1-hard-owner-series+sports+f1hub+dual-time+direct-lexical-delegation'" dist/app-v423.js
-          grep -Fq 'cinetracker_f1_watch_sync_v423' dist/app-v423.js
-          grep -Fq 'window.__ctR423?.toggleF1Hub?.(watch)' dist/app-v423.js
-          grep -Fq 'window.__ctR423.sportRpc(btn,args423)' dist/app-v423.js
-          ! grep -Fq "window.location.reload(" runtime-r423-f1-hard-sync.js
-          ! grep -Fq "router.refresh(" runtime-r423-f1-hard-sync.js
-          ! grep -Fq "while(true)" runtime-r423-f1-hard-sync.js
-          ! grep -Fq "new MutationObserver" runtime-r423-f1-hard-sync.js
-          ! grep -Fq "setInterval(" runtime-r423-f1-hard-sync.js
+          node --check build-r424.mjs
+          node --check build-r424-official.mjs
+          node --check test-r424.mjs
+          node --check runtime-r424-f1-hard-sync.js
+          node build-r424-official.mjs
+          CT_R423_SKIP_BUILD=1 node test-r424.mjs
+          node --check dist/app-v424.js
+          grep -Fq "window.__ctR423Marker='f1-hard-owner-series+sports+f1hub+dual-time+direct-lexical-delegation'" dist/app-v424.js
+          grep -Fq 'cinetracker_f1_watch_sync_v423' dist/app-v424.js
+          grep -Fq 'window.__ctR423?.toggleF1Hub?.(watch)' dist/app-v424.js
+          grep -Fq 'window.__ctR423.sportRpc(btn,args423)' dist/app-v424.js
+          ! grep -Fq "window.location.reload(" runtime-r424-f1-hard-sync.js
+          ! grep -Fq "router.refresh(" runtime-r424-f1-hard-sync.js
+          ! grep -Fq "while(true)" runtime-r424-f1-hard-sync.js
+          ! grep -Fq "new MutationObserver" runtime-r424-f1-hard-sync.js
+          ! grep -Fq "setInterval(" runtime-r424-f1-hard-sync.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -42,7 +42,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r423, android]
+    needs: [web_r424, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -51,12 +51,12 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.214"' <<<"$BODY" && grep -Fq '"revision": "r423-official-1.0.214"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v423.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.215"' <<<"$BODY" && grep -Fq '"revision": "r424-official-1.0.215"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v424.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
               if grep -Fq "window.__ctR423Marker='f1-hard-owner-series+sports+f1hub+dual-time+direct-lexical-delegation'" <<<"$JS" \
                 && grep -Fq 'cinetracker_f1_watch_sync_v423' <<<"$JS" \
-                && grep -Fq 'app-v423.js' <<<"$HTML"; then
+                && grep -Fq 'app-v424.js' <<<"$HTML"; then
                 exit 0
               fi
             fi
