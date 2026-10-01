@@ -1,3 +1,14 @@
+## 1.0.221 / r430 — Descobrir > Pra Você — 2026-10-01
+
+- **Descobrir > Pra Você** passa a ter um único renderer real: r309.
+- r411 deixa de participar do bundle final; ele não pode mais sobrescrever os cards, ações ou estado do Pra Você.
+- r427/r428/r429 deixam de participar do bundle final como recovery owners.
+- **Trocar**, **Visto** e **Watchlist** voltam a ser renderizados pelo mesmo renderer que carrega os dados, eliminando cards com ações cinzas ou sem Trocar.
+- O carregamento usa as três categorias reais de Pra Você — Filme, Série e Anime — e preserva os blocos Indicação do Dia, Da sua Watchlist e 100% novos.
+- Removida a cadeia de recuperação periódica responsável pelas repinturas repetidas.
+- Não há reload de página, router.refresh, setInterval, MutationObserver ou loop de recuperação no novo owner.
+- Escopo exclusivo: **Descobrir > Pra Você**. Home, Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.
+
 ## 1.0.220 / r429 — Descobrir > Pra Você — 2026-10-01
 
 - r411 passa a ser o único owner ativo do Pra Você.
