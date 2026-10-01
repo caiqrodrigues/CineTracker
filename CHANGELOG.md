@@ -1,3 +1,12 @@
+## 1.0.213 — r422 (2026-10-01)
+- Auditoria de estabilidade remove seis `MutationObserver` globais redundantes do bundle Web e consolida os reparos herdados de Pra Você em uma única reconciliação coalescente. O retorno após background usa um único `visibilitychange`, yield por `requestAnimationFrame` e debounce, sem tempestade de refetch.
+- Descobrir reaproveita a autoridade de elegibilidade existente e acrescenta somente as regras ausentes: nota TMDB mínima **7.5**, lançamento posterior a **1990** e bloqueio quando os gêneros são exclusivamente Drama/Documentário. Os filtros já existentes de curtas, YouTube/web, novelas, Reality, stand-up, WWE, vistos e Watchlist permanecem preservados.
+- Pra Você mantém a r411 como renderer ativo, reutiliza o histórico persistente r296 para a janela móvel de **7 dias**, impede duplicatas simultâneas e mantém a matriz nativa de ações. **Trocar** altera somente o slot clicado, com trava local e sem full-page reload.
+- Perfil preserva métricas, ordem e fontes atuais; o controle já existente de Estatísticas passa a recolher/expandir também **Esportes assistidos**, mantendo o grid 4+4+2 e números tabulares.
+- O scroll horizontal já existente de temporadas, gráficos, relacionados e trilhos do Perfil é mantido local ao container e recebe scrollbar discreta; cards ganham apenas sombra ambiente no hover, sem alteração de proporção.
+- Fórmula 1 não foi reimplementada: a captura legada r418 apenas delega ao writer r421 da série `media_id=865`, sem voltar ao histórico esportivo genérico. Android permanece **1.0.20 / 10062**.
+- Gates adicionados cobrem build/sintaxe, regras de elegibilidade, **30 s em background**, navegação rápida, 7 botões Trocar, troca de um único slot, ausência de refetch storm e ausência de `MutationObserver` global no bundle final.
+
 ## 1.0.212 — r421 (2026-10-01)
 - Descobrir bloqueia stand-up em duas camadas: elegibilidade SQL v421 e validação de detalhes TMDB antes do paint no Pra Você, abas públicas e Top 10. Curtas <40 min, YouTube/web, novelas, Reality, WWE, vistos e Watchlist continuam bloqueados pelas regras existentes.
 - Fórmula 1 passa a usar exclusivamente a série `media_id=865` no F1 Hub: o estado visual é lido do progresso de episódios e a escrita usa `cinetracker_f1_episode_watch_set_v421`; o histórico esportivo genérico deixa de pintar as sessões.
