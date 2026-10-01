@@ -1,4 +1,4 @@
-name: Verify Web 1.0.212 r421 Standup F1 Profile
+name: Verify Web 1.0.213 r422 Audit Performance
 on:
   push:
     branches: [main]
@@ -6,39 +6,43 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r421:
+  web_r422:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r421 regression gate
+      - name: Build and r422 regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check build-r421.mjs
-          node --check build-r421-official.mjs
-          node --check test-r421.mjs
-          node --check runtime-r421-standup-f1-profile.js
-          node build-r421-official.mjs
-          CT_R421_SKIP_BUILD=1 node test-r421.mjs
-          node --check dist/app-v421.js
-          grep -Fq "window.__ctR421Marker='standup-detail-filter+f1-media-865-only+profile-watchlist-nonzero+profile-full-rails'" dist/app-v421.js
-          grep -Fq 'cinetracker_profile_watchlist_runtime_v421' dist/app-v421.js
-          grep -Fq 'cinetracker_sport_stats_v421' dist/app-v421.js
-          grep -Fq 'cinetracker_f1_episode_watch_set_v421' dist/app-v421.js
-          grep -Fq "window.__ctR421?.toggleF1?.(watch)" dist/app-v421.js
-          grep -Fq 'cinetracker_discover_watch_unseen_v421' dist/app-v421.js
-          grep -Fq 'cinetracker_discover_fresh_v421' dist/app-v421.js
-          grep -Fq 'sanitizeForYou421' dist/app-v421.js
-          ! grep -Fq "window.__ctR420?.toggleF1?.(watch)" dist/app-v421.js
-          ! grep -Fq "const hist=await loadF1History311(false);" dist/app-v421.js
-          ! grep -Fq "window.location.reload(" runtime-r421-standup-f1-profile.js
-          ! grep -Fq "router.refresh(" runtime-r421-standup-f1-profile.js
-          ! grep -Fq "while(true)" runtime-r421-standup-f1-profile.js
-          ! grep -Fq "new MutationObserver" runtime-r421-standup-f1-profile.js
-          ! grep -Fq "setInterval(" runtime-r421-standup-f1-profile.js
+          node --check build-r422.mjs
+          node --check build-r422-official.mjs
+          node --check test-r422.mjs
+          node --check runtime-r422-audit-performance.js
+          node build-r422-official.mjs
+          CT_R422_SKIP_BUILD=1 node test-r422.mjs
+          CHROME_BIN="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME_BIN"
+          export CHROME_BIN
+          CT_R422_SKIP_BUILD=1 node test-r422-browser.mjs
+          node --check dist/app-v422.js
+          grep -Fq "window.__ctR422Marker='coalesced-foreground+strict-7.5-1990-drama-doc+persisted-7d-foryou+stable-actions+profile-unified-collapse'" dist/app-v422.js
+          grep -Fq 'cinetracker_profile_watchlist_runtime_v421' dist/app-v422.js
+          grep -Fq 'cinetracker_sport_stats_v421' dist/app-v422.js
+          grep -Fq 'cinetracker_f1_episode_watch_set_v421' dist/app-v422.js
+          grep -Fq "window.__ctR421?.toggleF1?.(watch)" dist/app-v422.js
+          grep -Fq 'cinetracker_discover_watch_unseen_v421' dist/app-v422.js
+          grep -Fq 'cinetracker_discover_fresh_v421' dist/app-v422.js
+          grep -Fq 'sanitizeForYou' dist/app-v422.js
+          ! grep -Fq "window.__ctR420?.toggleF1?.(watch)" dist/app-v422.js
+          ! grep -Fq "const hist=await loadF1History311(false);" dist/app-v422.js
+          ! grep -Fq "window.location.reload(" runtime-r422-audit-performance.js
+          ! grep -Fq "router.refresh(" runtime-r422-audit-performance.js
+          ! grep -Fq "while(true)" runtime-r422-audit-performance.js
+          ! grep -Fq "new MutationObserver" runtime-r422-audit-performance.js
+          ! grep -Fq "setInterval(" runtime-r422-audit-performance.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +52,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r421, android]
+    needs: [web_r422, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -57,13 +61,13 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.212"' <<<"$BODY" && grep -Fq '"revision": "r421-official-1.0.212"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v421.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.213"' <<<"$BODY" && grep -Fq '"revision": "r422-official-1.0.213"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v422.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR421Marker='standup-detail-filter+f1-media-865-only+profile-watchlist-nonzero+profile-full-rails'" <<<"$JS" \
+              if grep -Fq "window.__ctR422Marker='coalesced-foreground+strict-7.5-1990-drama-doc+persisted-7d-foryou+stable-actions+profile-unified-collapse'" <<<"$JS" \
                 && grep -Fq 'cinetracker_profile_watchlist_runtime_v421' <<<"$JS" \
                 && grep -Fq 'cinetracker_f1_episode_watch_set_v421' <<<"$JS" \
-                && grep -Fq 'app-v421.js' <<<"$HTML"; then
+                && grep -Fq 'app-v422.js' <<<"$HTML"; then
                 exit 0
               fi
             fi
