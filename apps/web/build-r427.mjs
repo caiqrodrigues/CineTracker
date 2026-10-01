@@ -13,7 +13,7 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
 ]);
 const ok=(v,m)=>{if(!v)throw new Error('r427 '+m)};
 new Function(runtime);
-for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh(')])ok(!runtime.includes(bad),'forbidden '+bad);
+for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh(')]) { ok(!runtime.includes(bad),'forbidden '+bad); }
 ok(runtime.includes('data-ct388-foryou'),'r388 visible root');
 ok(runtime.includes('__ctR388LoadForYou'),'r388 loader');
 ok(runtime.includes("b.dataset.ct388Action==='swap'"),'r388 swap');
