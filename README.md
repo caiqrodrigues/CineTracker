@@ -1,3 +1,11 @@
+## 1.0.213 — r422 (2026-10-01)
+- Auditoria Web de estabilidade/performance: reconciliação de foreground e navegação coalescida, sem observers globais contínuos e sem full-page reload.
+- Descobrir preserva os filtros existentes e adiciona nota TMDB >= 7.5, ano > 1990 e exclusão de títulos exclusivamente Drama/Documentário.
+- Pra Você reutiliza o histórico persistente de recomendações r296 por 7 dias; a r411 continua dona do DOM e o botão **Trocar** atua apenas no card clicado.
+- Perfil mantém dados/ordem/fontes e usa um único controle para Estatísticas + Esportes assistidos.
+- Fórmula 1 permanece série `media_id=865`; Android não foi alterado.
+- Build: `apps/web/build-r422.mjs`; gate: `apps/web/build-r422-official.mjs`; browser: `apps/web/test-r422-browser.mjs`.
+
 ## 1.0.212 — r421 (2026-10-01)
 - Descobrir bloqueia stand-up em duas camadas: elegibilidade SQL v421 e validação de detalhes TMDB antes do paint no Pra Você, abas públicas e Top 10. Curtas <40 min, YouTube/web, novelas, Reality, WWE, vistos e Watchlist continuam bloqueados pelas regras existentes.
 - Fórmula 1 passa a usar exclusivamente a série `media_id=865` no F1 Hub: o estado visual é lido do progresso de episódios e a escrita usa `cinetracker_f1_episode_watch_set_v421`; o histórico esportivo genérico deixa de pintar as sessões.
