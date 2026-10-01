@@ -32,5 +32,5 @@ await Promise.all([
 ]);
 await Promise.all([rm(resolve(dist,'app-v427.js'),{force:true}),rm(resolve(dist,'app-v427.css'),{force:true})]);
 const built=await readFile(resolve(dist,'app-v428.js'),'utf8');
-for(const need of ['window.__ctR428','data-ct388-foryou','__ctR388LoadForYou','ct427-swap','Trocar'])ok(built.includes(need),'assembled '+need);
+for(const need of ['window.__ctR428','data-ct388-foryou','__ctR388LoadForYou','ct428-action','Trocar'])ok(built.includes(need),'assembled '+need);
 console.log('WEB_R428_READY');
