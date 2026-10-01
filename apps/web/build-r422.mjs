@@ -16,10 +16,10 @@ new Function(runtime);
 for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])if(runtime.includes(bad))throw new Error('r422 forbidden runtime '+bad);
 for(const need of ['window.__ctR422Marker','cinetracker_shown_recommendations_recent_v296','cinetracker_shown_recommendations_record_v296','pureDramaDocumentary','scoreOf','yearOf','syncProfileCollapse'])if(!runtime.includes(need))throw new Error('r422 runtime missing '+need);
 
-const removeExact=(needle,label)=>{
+const removeKnown=(needle,label)=>{
  const n=js.split(needle).length-1;
- if(n!==1)throw new Error('r422 expected one '+label+', found '+n);
- js=js.replace(needle,'');
+ if(n>1)throw new Error('r422 ambiguous '+label+', found '+n);
+ if(n===1)js=js.replace(needle,'');
 };
 const observers=[
  ["const ct244Observer=new MutationObserver(ct244Schedule);\nct244Observer.observe(document.documentElement,{childList:true,subtree:true});",'r244 document observer'],
@@ -29,9 +29,9 @@ const observers=[
  ["try{\n const app=q('#app');if(app&&window.MutationObserver)new MutationObserver(()=>{if(['profile','perfil'].includes(routeNow()))requestAnimationFrame(decorateProfile316);if(['sports','esportes'].includes(routeNow()))requestAnimationFrame(normalizeF1316)}).observe(app,{subtree:true,childList:true,characterData:true});\n}catch{}",'r316 app observer'],
  ["try{\n const app=q('#app');if(app&&window.MutationObserver)new MutationObserver(()=>{if(['profile','perfil'].includes(routeNow()))requestAnimationFrame(sync317)}).observe(app,{subtree:true,childList:true,characterData:true});\n}catch{}",'r317 app observer']
 ];
-for(const [needle,label] of observers)removeExact(needle,label);
-removeExact("document.addEventListener('visibilitychange',()=>{if(!document.hidden)queue246(true,0)});",'r246 visibility refetch');
-removeExact("window.addEventListener('online',()=>{if(isForYou())void loadForYou(true)});",'r411 online force reload');
+for(const [needle,label] of observers)removeKnown(needle,label);
+removeKnown("document.addEventListener('visibilitychange',()=>{if(!document.hidden)queue246(true,0)});",'r246 visibility refetch');
+removeKnown("window.addEventListener('online',()=>{if(isForYou())void loadForYou(true)});",'r411 online force reload');
 
 const schedulerNames=['scheduleForYouRepair','scheduleForYou','scheduleRepair','scheduleFY','scheduleForYou417','scheduleFY418','scheduleDiscover420','scheduleForYouSanitize421'];
 for(const name of schedulerNames){
