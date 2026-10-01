@@ -1,3 +1,4 @@
+- **1.0.221 / r430** — Descobrir > Pra Você passa a usar exclusivamente o renderer r309; r411/r427/r428/r429 removidos do bundle final; ações Watchlist/Visto/Trocar preservadas no renderer único.
 - **1.0.220 / r429** — Descobrir > Pra Você isolado no owner r411; recovery r427/r428 removido do build; ciclo de atualização/repaint removido.
 ## 1.0.219 — r428 (2026-10-01)
 - Pra Você: owner visível da composição, cards + ações reconstruídos quando necessário.
