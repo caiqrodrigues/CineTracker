@@ -1,0 +1,11 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';if(process.env.CT_R426_SKIP_BUILD!=='1')await import('./build-r426.mjs');
+const [js,runtime,migration,sportMigration,releaseRaw,pkgRaw,rootPkgRaw,html,sw]=await Promise.all([readFile(resolve('dist/app-v426.js'),'utf8'),readFile(resolve('runtime-r426-profile-history-foryou-f1.js'),'utf8'),readFile(resolve('../../supabase/migrations/20261001223000_r426_profile_history_f1_stability.sql'),'utf8'),readFile(resolve('../../supabase/migrations/20261001224000_r426_sport_history_undo.sql'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('package.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/service-worker.js'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('R426 '+m)};new Function(runtime);for(const bad of['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])ok(!runtime.includes(bad),'forbidden '+bad);
+ok(runtime.includes('cinetracker_activity_items_by_day_v426')&&runtime.includes('cinetracker_unmark_history_item_v426')&&runtime.includes('cinetracker_unmark_sport_history_v426'),'history undo');
+ok(runtime.includes('data-ct426-swap')&&runtime.includes('window.__ctR411?.swap'),'single For You swap owner');
+ok(runtime.includes('cinetracker_f1_progress_v426')&&runtime.includes('watched_released_episodes'),'F1 released progress');
+ok(runtime.includes('stopImmediatePropagation')&&runtime.includes('__ctR424?.loadProfile'),'profile authority');
+ok(migration.includes('cinetracker_activity_items_by_day_v426')&&migration.includes('cinetracker_f1_progress_v426'),'migration');
+ok(sportMigration.includes('cinetracker_unmark_sport_history_v426'),'sport migration');
+ok(JSON.parse(pkgRaw).version==='1.0.217'&&JSON.parse(rootPkgRaw).version==='1.0.217','versions');
+const rel=JSON.parse(releaseRaw);ok(rel.version==='1.0.217'&&rel.revision==='r426-official-1.0.217','release');ok(html.includes('app-v426.js')&&!html.includes('app-v425.js'),'html');ok(sw.includes('ct-web-1.0.217-r426'),'service worker');console.log('R426_STATIC_OK');

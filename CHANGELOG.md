@@ -1,3 +1,21 @@
+## 1.0.217 — r426 (2026-10-01)
+
+### Fixed
+- Perfil > Histórico diário usa uma RPC direta e oferece **↶ Desmarcar visto** por filme, episódio e evento esportivo.
+- Descobrir > Pra Você passa a ter um único owner de clique para **Trocar**, reaplicado em passagens finitas após paints e navegação.
+- Perfil deixa de aceitar repaints concorrentes das estatísticas esportivas no evento de sincronização; r424 fica como autoridade canônica.
+- Fórmula 1 passa a exibir **vistos / episódios já exibidos** da temporada corrente; o denominador não é derivado da quantidade de vistos/importados.
+
+### Banco
+- `cinetracker_activity_items_by_day_v426`
+- `cinetracker_unmark_history_item_v426`
+- `cinetracker_unmark_sport_history_v426`
+- `cinetracker_f1_progress_v426`
+
+### Scope
+- Web: Perfil, Histórico diário, Descobrir > Pra Você e Fórmula 1.
+- Android permanece **1.0.20 / versionCode 10062**.
+
 ## 1.0.216 — r425 (2026-10-01)
 
 ### Fixed

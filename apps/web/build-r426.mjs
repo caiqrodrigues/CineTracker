@@ -1,0 +1,11 @@
+import {readFile,writeFile,rm} from 'node:fs/promises';import {resolve,dirname} from 'node:path';import {fileURLToPath} from 'node:url';
+await import('./build-r425.mjs');const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v425.js'),'utf8'),readFile(resolve(dist,'app-v425.css'),'utf8'),readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r426-profile-history-foryou-f1.js'),'utf8')]);
+if((js.match(/__ctWebBuild='1\.0\.216'/g)||[]).length!==1)throw new Error('r426 base web version mismatch');
+js=js.replaceAll('1.0.216','1.0.217').replaceAll('r425-official-1.0.216','r426-official-1.0.217')+'\n'+runtime+'\n';
+html=html.replaceAll('app-v425.js','app-v426.js').replaceAll('app-v425.css','app-v426.css').replaceAll('v1.0.216','v1.0.217').replaceAll('r425-official-1.0.216','r426-official-1.0.217');
+sw=sw.replaceAll('ct-web-1.0.216-r425','ct-web-1.0.217-r426').replaceAll('app-v425.js','app-v426.js').replaceAll('app-v425.css','app-v426.css');
+css+='\n/* CineTracker Web 1.0.217 r426 — Profile history undo, stable For You swap, F1 released progress. */\n';
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.217',revision:'r426-official-1.0.217',base:'r425+r426-profile-history-foryou-f1',scope:'profile-history-undo+foryou-swap+f1-released-progress',f1:'current-season released sessions are the progress denominator',discover:'Trocar has one capture owner on visible Pra Voce buttons',profile:'daily history uses a direct RPC and supports exact-item undo',android:'unchanged-1.0.20/10062'};
+await Promise.all([writeFile(resolve(dist,'app-v426.js'),js),writeFile(resolve(dist,'app-v426.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
+await Promise.all([rm(resolve(dist,'app-v425.js'),{force:true}),rm(resolve(dist,'app-v425.css'),{force:true})]);console.log('WEB_R426_READY');

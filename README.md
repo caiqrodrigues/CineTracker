@@ -1,3 +1,10 @@
+## 1.0.217 — r426 (2026-10-01)
+- Perfil > Histórico diário oferece **↶ Desmarcar visto** por item.
+- Descobrir > Pra Você usa um único owner de **Trocar** para os botões visíveis.
+- Perfil mantém uma única autoridade para as estatísticas esportivas após alterações de dados.
+- Fórmula 1 usa **vistos / episódios já exibidos** da temporada corrente.
+- Android preservado em **1.0.20 / versionCode 10062**.
+
 ## 1.0.216 — r425 (2026-10-01)
 - Home Séries deixa de ficar visualmente vazia durante o carregamento.
 - Fórmula 1 passa a exibir **1.280 episódios**; com 77 vistos, ficam **1.203 restantes**.
