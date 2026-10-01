@@ -1,0 +1,27 @@
+import {readFile,writeFile,rm} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r426.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
+ readFile(resolve(dist,'index.html'),'utf8'),
+ readFile(resolve(dist,'app-v426.js'),'utf8'),
+ readFile(resolve(dist,'app-v426.css'),'utf8'),
+ readFile(resolve(dist,'service-worker.js'),'utf8'),
+ readFile(resolve(dist,'release.json'),'utf8')
+]);
+const stable="/* CineTracker Web 1.0.220 r429 — Descobrir > Pra Você single-owner stabilization. */\n(()=>{'use strict';\nif(window.__ctR429?.version==='1.0.220')return;\nconst isDiscover=()=>{try{return typeof route==='function'&&route()==='discover'}catch{return location.pathname==='/discover'}};\nconst isForYou=()=>{if(!isDiscover())return false;try{return String(window.__ctR288R263?.discover263?.tab||'')==='foryou'||!!document.querySelector('[data-ct411-foryou],[data-ct319-tab=\"foryou\"].active,[data-ct263-tab=\"foryou\"].active,[data-discover-tab=\"foryou\"].active')}catch{return false}};\nconst owner=()=>window.__ctR411&&typeof window.__ctR411==='object'?window.__ctR411:null;\nconst activate=()=>{const o=owner();if(!o||!isForYou())return false;try{if(typeof o.bind==='function')o.bind();if(typeof o.enterForYou==='function')return !!o.enterForYou(false)}catch{}return false};\nconst rebind=()=>{const o=owner();if(!o)return false;\ntry{if(window.__ctR319&&typeof window.__ctR319==='object'&&typeof o.loadForYou==='function'){window.__ctR319.loadForYou=o.loadForYou;if(typeof window.__ctR319.loadDiscover==='function'){const fn=o.loadForYou;const w=function(tab='foryou',force=false){return String(tab||'foryou')==='foryou'?fn(force):window.__ctR319.__ctR429Base?.(tab,force)};w.__ctR429Owner=true;if(!window.__ctR319.__ctR429Base)window.__ctR319.__ctR429Base=window.__ctR319.loadDiscover;window.__ctR319.loadDiscover=w}}}catch{}\ntry{if(typeof window.__ctR288LoadDiscover==='function'&&!window.__ctR288LoadDiscover.__ctR429Owner){const base=window.__ctR288LoadDiscover,fn=o.loadForYou;const w=function(tab='foryou',force=false){return String(tab||'foryou')==='foryou'?fn(force):base.call(this,tab,force)};w.__ctR429Owner=true;window.__ctR288LoadDiscover=w}}catch{}\nreturn true};\nwindow.addEventListener('click',e=>{const t=e.target;if(!t?.closest)return;\nif(t.closest('[data-ct319-tab=\"foryou\"],[data-ct263-tab=\"foryou\"],[data-discover-tab=\"foryou\"]')){queueMicrotask(()=>{rebind();activate()});return}\nif(t.closest('[data-nav=\"discover\"]'))queueMicrotask(()=>{rebind();if(isForYou())activate()});\n},true);\nwindow.addEventListener('popstate',()=>{if(isForYou()){rebind();activate()}});\nwindow.addEventListener('online',()=>{if(isForYou()){rebind();activate()}});\nwindow.addEventListener('cinetracker:data-changed',()=>{if(isForYou())rebind()});\nrebind();\nqueueMicrotask(()=>{if(isForYou())activate()});\nwindow.__ctR429={version:'1.0.220',scope:'discover-foryou-only',owner:'r411',activate,rebind};\n})();";
+new Function(stable);
+for(const bad of ['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh(','location.assign(','location.replace('])if(stable.includes(bad))throw new Error('r429 forbidden '+bad);
+if(!stable.includes('window.__ctR411')||!stable.includes('owner:\'r411\''))throw new Error('r429 r411 owner missing');
+js=js.replaceAll('1.0.217','1.0.220').replaceAll('r426-official-1.0.217','r429-official-1.0.220')+'\n'+stable+'\n';
+html=html.replaceAll('app-v426.js','app-v429.js').replaceAll('app-v426.css','app-v429.css').replaceAll('v1.0.217','v1.0.220').replaceAll('r426-official-1.0.217','r429-official-1.0.220');
+sw=sw.replaceAll('ct-web-1.0.217-r426','ct-web-1.0.220-r429').replaceAll('app-v426.js','app-v429.js').replaceAll('app-v426.css','app-v429.css');
+css+='\n/* CineTracker Web 1.0.220 r429 — Descobrir > Pra Você single owner r411; r427/r428 recovery removed. */\n';
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.220',revision:'r429-official-1.0.220',base:'r426+r429-single-foryou-owner',scope:'discover-foryou-only',discover_foryou:'r411 is the sole live Pra Você owner; r427/r428 recovery renderers are excluded from the build',discover_actions:'native r411 Watchlist/Visto/Trocar actions are preserved',home:'unchanged-r426',profile:'unchanged-r426',sports:'unchanged-r426',android:'1.0.20/10062'};
+await Promise.all([writeFile(resolve(dist,'app-v429.js'),js),writeFile(resolve(dist,'app-v429.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
+await Promise.all([rm(resolve(dist,'app-v426.js'),{force:true}),rm(resolve(dist,'app-v426.css'),{force:true})]);
+const built=await readFile(resolve(dist,'app-v429.js'),'utf8');
+for(const need of ['window.__ctR429','window.__ctR411','discover-foryou-only','Trocar'])if(!built.includes(need))throw new Error('r429 assembled '+need);
+if(built.includes('runtime-r427-discover-foryou-visible-owner')||built.includes('ct428-action'))throw new Error('r429 contains retired recovery owner');
+console.log('WEB_R429_READY');
