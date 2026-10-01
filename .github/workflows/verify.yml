@@ -1,4 +1,4 @@
-name: Verify Web 1.0.206 r415 Home ForYou Profile stability
+name: Verify Web 1.0.208 r417 Home ForYou Profile F1
 on:
   push:
     branches: [main]
@@ -6,41 +6,40 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r415:
+  web_r417:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r415 stability regression gate
+      - name: Build and r417 regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check build-r415.mjs
-          node --check build-r415-official.mjs
-          node --check test-r415.mjs
-          node --check runtime-r415-home-foryou-profile-stability.js
-          node build-r415-official.mjs
-          CT_R415_SKIP_BUILD=1 node test-r415.mjs
-          node --check dist/app-v415.js
-          grep -Fq "window.__ctR415Marker='stable-series-entry+visible-functional-7-swap+single-v380-profile'" dist/app-v415.js
-          grep -Fq "window.__ctR414Marker='foryou-swap-only-visible-functional-legacy-dom-repair'" dist/app-v415.js
-          grep -Fq 'cinetracker_discover_watch_unseen_v413' dist/app-v415.js
-          grep -Fq 'cinetracker_discover_fresh_v413' dist/app-v415.js
-          grep -Fq 'cinetracker_home_series_v413' dist/app-v415.js
-          grep -Fq 'REALITY_GENRE_ID=10764' dist/app-v415.js
-          grep -Fq 'data-ct415-swap' dist/app-v415.js
-          grep -Fq '↻ Trocar' dist/app-v415.js
-          grep -Fq "rpc('cinetracker_profile_v380'" dist/app-v415.js
-          ! grep -Fq "window.location.reload(" runtime-r415-home-foryou-profile-stability.js
-          ! grep -Fq "router.refresh(" runtime-r415-home-foryou-profile-stability.js
-          ! grep -Fq "while(true)" runtime-r415-home-foryou-profile-stability.js
-          ! grep -Fq "new MutationObserver" runtime-r415-home-foryou-profile-stability.js
-          ! grep -Fq "setInterval(" runtime-r415-home-foryou-profile-stability.js
-          ! grep -Fq "rpc('cinetracker_profile_payload_v0997'" runtime-r415-home-foryou-profile-stability.js
-          ! grep -Fq "rpc('cinetracker_profile_media_dashboard_v0991'" runtime-r415-home-foryou-profile-stability.js
-          ! grep -Fq "rpc('cinetracker_profile_quick_stats_v1'" runtime-r415-home-foryou-profile-stability.js
+          node --check build-r417.mjs
+          node --check build-r417-official.mjs
+          node --check test-r417.mjs
+          node --check runtime-r417-home-foryou-profile-f1.js
+          node build-r417-official.mjs
+          CT_R417_SKIP_BUILD=1 node test-r417.mjs
+          node --check dist/app-v417.js
+          grep -Fq "window.__ctR417Marker='final-home-series-anchor+visible-7-swap+profile-sports-rpc+f1-media-865-series'" dist/app-v417.js
+          grep -Fq "window.__ctR416Marker='profile-persistent-first-paint+foryou-r411-final-owner+f1-series-optimistic-watch'" dist/app-v417.js
+          grep -Fq 'cinetracker_discover_watch_unseen_v413' dist/app-v417.js
+          grep -Fq 'cinetracker_discover_fresh_v413' dist/app-v417.js
+          grep -Fq 'cinetracker_home_series_v413' dist/app-v417.js
+          grep -Fq 'REALITY_GENRE_ID=10764' dist/app-v417.js
+          grep -Fq 'data-ct417-swap' dist/app-v417.js
+          grep -Fq '↻ Trocar' dist/app-v417.js
+          grep -Fq "rpc('cinetracker_sport_stats_v1'" dist/app-v417.js
+          grep -Fq "rpc('cinetracker_mark_watch_v0994'" dist/app-v417.js
+          grep -Fq 'const F1_MEDIA_ID=865' dist/app-v417.js
+          ! grep -Fq "window.location.reload(" runtime-r417-home-foryou-profile-f1.js
+          ! grep -Fq "router.refresh(" runtime-r417-home-foryou-profile-f1.js
+          ! grep -Fq "while(true)" runtime-r417-home-foryou-profile-f1.js
+          ! grep -Fq "new MutationObserver" runtime-r417-home-foryou-profile-f1.js
+          ! grep -Fq "setInterval(" runtime-r417-home-foryou-profile-f1.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -50,7 +49,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r415, android]
+    needs: [web_r417, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -59,15 +58,15 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.206"' <<<"$BODY" && grep -Fq '"revision": "r415-official-1.0.206"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v415.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.208"' <<<"$BODY" && grep -Fq '"revision": "r417-official-1.0.208"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v417.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR415Marker='stable-series-entry+visible-functional-7-swap+single-v380-profile'" <<<"$JS" \
-                && grep -Fq "window.__ctR414Marker='foryou-swap-only-visible-functional-legacy-dom-repair'" <<<"$JS" \
-                && grep -Fq 'cinetracker_discover_fresh_v413' <<<"$JS" \
-                && grep -Fq 'REALITY_GENRE_ID=10764' <<<"$JS" \
-                && grep -Fq 'data-ct415-swap' <<<"$JS" \
-                && grep -Fq 'app-v415.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR417Marker='final-home-series-anchor+visible-7-swap+profile-sports-rpc+f1-media-865-series'" <<<"$JS" \
+                && grep -Fq "window.__ctR416Marker='profile-persistent-first-paint+foryou-r411-final-owner+f1-series-optimistic-watch'" <<<"$JS" \
+                && grep -Fq 'cinetracker_sport_stats_v1' <<<"$JS" \
+                && grep -Fq 'data-ct417-swap' <<<"$JS" \
+                && grep -Fq 'const F1_MEDIA_ID=865' <<<"$JS" \
+                && grep -Fq 'app-v417.js' <<<"$HTML"; then
                 exit 0
               fi
             fi
