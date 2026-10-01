@@ -1,3 +1,16 @@
+## 1.0.215 — r424 (2026-10-01)
+
+### Fixed
+- Home > Séries deixa de iniciar visualmente no fim do Histórico: a entrada da aba segura a primeira pintura antiga, busca a autoridade atual e revela a tela já posicionada em Assistir a seguir.
+- Fórmula 1 (media_id=865) passa a obedecer a semântica de série na Home; quando existe próximo episódio não visto, entra em **Assistir a seguir**. Raw e SmackDown recorrentes recebem a mesma correção.
+- Perfil passa a repintar os tempos a partir de cinetracker_profile_stats e os tempos esportivos a partir de cinetracker_sport_stats_v421 após entrada e alterações de dados. O tempo das sessões F1 já persistido nos dois domínios volta a aparecer nos dois contabilizadores.
+- Listas de Séries e Filmes no Perfil deixam de usar arraste horizontal: os cards quebram em múltiplas linhas, permanecem inteiros e listas longas exibem **Ver mais**.
+- Sem full-page reload, MutationObserver, setInterval ou loop ilimitado.
+
+### Scope
+- Android permanece **1.0.20 / 10062**.
+- Descobrir, Top 10, Esportes fora da sincronização F1 e demais áreas visuais não tiveram alterações nesta r424.
+
 ## 1.0.214 — r423 (2026-10-01)
 
 ### Fixed
