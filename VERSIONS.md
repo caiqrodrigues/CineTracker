@@ -1,3 +1,4 @@
+- **1.0.220 / r429** — Descobrir > Pra Você isolado no owner r411; recovery r427/r428 removido do build; ciclo de atualização/repaint removido.
 ## 1.0.219 — r428 (2026-10-01)
 - Pra Você: owner visível da composição, cards + ações reconstruídos quando necessário.
 - Trocar: ação nativa r388 preservada por slot.
