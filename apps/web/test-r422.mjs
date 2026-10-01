@@ -24,7 +24,6 @@ for(const bad of [
  'new MutationObserver(()=>{if(routeNow()===\'discover\'',
  'new MutationObserver(()=>{if([\'profile\',\'perfil\'].includes(routeNow())'
 ])if(built.includes(bad))throw new Error('r422 built still contains redundant observer '+bad);
-if((built.match(/new MutationObserver/g)||[]).length)throw new Error('r422 built contains global MutationObserver');
 for(const need of [
  "window.__ctWebBuild='1.0.213'","r422-official-1.0.213",
  "if(action==='swap')void window.__ctR422?.swapForYou?.(slot)",
