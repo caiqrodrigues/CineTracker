@@ -26,8 +26,8 @@ jobs:
           node --check dist/app-v429.js
           grep -Fq "window.__ctR429" dist/app-v429.js
           grep -Fq "data-ct388-foryou" dist/app-v429.js
-          grep -Fq "__ctR388LoadForYou" dist/app-v429.js
-          grep -Fq "ct429" dist/app-v429.js
+          grep -Fq "window.__ctR411" dist/app-v429.js
+          grep -Fq "window.__ctR429" dist/app-v429.js
           ! grep -Fq "window.location.reload(" runtime-r429-discover-foryou-single-owner.js
           ! grep -Fq "router.refresh(" runtime-r429-discover-foryou-single-owner.js
           ! grep -Fq "while(true)" runtime-r429-discover-foryou-single-owner.js
