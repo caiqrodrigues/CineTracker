@@ -20,17 +20,17 @@ jobs:
           node --check build-r431.mjs
           node --check build-r431-official.mjs
           node --check test-r431.mjs
-          node --check runtime-r431-discover-foryou-single-renderer.js
+          node --check runtime-r431-discover-foryou-stable.js
           node build-r431-official.mjs
           node --check dist/app-v431.js
           grep -Fq "window.__ctR431" dist/app-v431.js
           grep -Fq "window.__ctR309" dist/app-v431.js
           grep -Fq "data-ct309-swap" dist/app-v431.js
-          ! grep -Fq "window.location.reload(" runtime-r431-discover-foryou-single-renderer.js
-          ! grep -Fq "router.refresh(" runtime-r431-discover-foryou-single-renderer.js
-          ! grep -Fq "while(true)" runtime-r431-discover-foryou-single-renderer.js
-          ! grep -Fq "new MutationObserver" runtime-r431-discover-foryou-single-renderer.js
-          ! grep -Fq "setInterval(" runtime-r431-discover-foryou-single-renderer.js
+          ! grep -Fq "window.location.reload(" runtime-r431-discover-foryou-stable.js
+          ! grep -Fq "router.refresh(" runtime-r431-discover-foryou-stable.js
+          ! grep -Fq "while(true)" runtime-r431-discover-foryou-stable.js
+          ! grep -Fq "new MutationObserver" runtime-r431-discover-foryou-stable.js
+          ! grep -Fq "setInterval(" runtime-r431-discover-foryou-stable.js
   android:
     runs-on: ubuntu-latest
     steps:
