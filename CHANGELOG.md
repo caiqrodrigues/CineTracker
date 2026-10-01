@@ -1,3 +1,15 @@
+## 1.0.222 / r431 — Descobrir > Pra Você — 2026-10-01
+
+- Corrigido o carregamento preso em **“Montando recomendações…” / “Buscando indicação…”**: a montagem não espera mais `loadRecent296`.
+- Removidos gatilhos automáticos de `cinetracker:data-changed` e `online` que reconstruíam o Pra Você sem ação do usuário.
+- O clique da aba Pra Você interrompe owners legados posteriores antes que repintem o bloco.
+- **Trocar** continua no renderer único r309 e altera somente o slot selecionado.
+- Sem full-page reload, `router.refresh()`, `setInterval`, `MutationObserver` ou loop de recuperação.
+- Escopo exclusivo: **Descobrir > Pra Você**. Home, Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.
+- Android permanece **1.0.20 / versionCode 10062**.
+
+Build: `apps/web/build-r431.mjs`; gate: `apps/web/build-r431-official.mjs`; regressão: `apps/web/test-r431.mjs`.
+
 ## 1.0.221 / r430 — Descobrir > Pra Você — 2026-10-01
 
 - **Descobrir > Pra Você** passa a ter um único renderer real: r309.

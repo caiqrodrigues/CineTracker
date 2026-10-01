@@ -1,3 +1,9 @@
+## 1.0.222 — r431 (2026-10-01)
+- **Descobrir > Pra Você:** corrigido o carregamento preso em “Montando recomendações…”; `loadRecent296` deixou de bloquear a montagem.
+- Removido auto-refresh por eventos `cinetracker:data-changed`/online; a tela só é reconstruída por entrada explícita, navegação ou ação do usuário.
+- **Trocar** permanece no renderer único r309 e o clique da aba impede owners legados de repintarem o bloco.
+- Escopo exclusivo em Pra Você; demais áreas preservadas.
+
 ## 1.0.219 — r428 (2026-10-01)
 - **Descobrir > Pra Você:** r428 assume a composição visível do bloco.
 - Recria as ações quando o renderer legado remove a linha de botões.
