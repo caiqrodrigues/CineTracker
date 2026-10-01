@@ -1,3 +1,10 @@
+## 1.0.215 — r424 (2026-10-01)
+- Home Séries inicia diretamente na composição correta de **Assistir a seguir**, sem expor o fim do Histórico durante o carregamento.
+- Fórmula 1, Raw e SmackDown são tratados como séries recorrentes na Home quando há próximo episódio disponível.
+- Perfil usa os contadores canônicos de tempo de Séries e Esportes; o runtime F1 sincronizado aparece nos dois contabilizadores.
+- Listas de Séries e Filmes do Perfil são verticais, sem arraste lateral; listas longas usam **Ver mais**.
+- Android preservado em **1.0.20 / versionCode 10062**.
+
 ## 1.0.214 — r423 (2026-10-01)
 - **Fórmula 1 (media_id=865) passa a ter um owner único e efetivo nas três superfícies reais:** detalhe da Série, Esportes e F1 Hub delegam diretamente para a autoridade r423, removendo a corrida entre owners r416/r417/r422.
 - **Série:** o handler lexical real de episódio intercepta somente Fórmula 1; o card/progresso muda imediatamente por Optimistic UI e a persistência grava também o evento esportivo correspondente.
