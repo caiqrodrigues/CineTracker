@@ -23,7 +23,7 @@ jobs:
           node --check runtime-r431-discover-foryou-single-renderer.js
           node build-r431-official.mjs
           node --check dist/app-v431.js
-          grep -Fq "window.__ctR430" dist/app-v431.js
+          grep -Fq "window.__ctR431" dist/app-v431.js
           grep -Fq "window.__ctR309" dist/app-v431.js
           grep -Fq "data-ct309-swap" dist/app-v431.js
           ! grep -Fq "window.location.reload(" runtime-r431-discover-foryou-single-renderer.js
@@ -52,7 +52,7 @@ jobs:
             if grep -Fq '"version": "1.0.222"' <<<"$BODY" && grep -Fq '"revision": "r431-official-1.0.222"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v431.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR430" <<<"$JS" && grep -Fq 'data-ct309-swap' <<<"$JS" && grep -Fq 'app-v431.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR431" <<<"$JS" && grep -Fq 'data-ct309-swap' <<<"$JS" && grep -Fq 'app-v431.js' <<<"$HTML"; then
                 exit 0
               fi
             fi
