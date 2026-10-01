@@ -7,6 +7,8 @@
 - Cards ausentes acionam o loader/renderizador r388 do próprio Pra Você antes da normalização das ações.
 - Botões cinza/desabilitados são reativados no DOM visível sem reload de página, MutationObserver, setInterval ou loop ilimitado.
 
+- Vercel: o commit final r428 recebeu status **success** para o deploy Web.
+
 ### Scope
 - Web: exclusivamente **Descobrir > Pra Você**.
 - Home, Perfil, Esportes, Top 10, Configurações, Supabase e Android permanecem fora do escopo.
