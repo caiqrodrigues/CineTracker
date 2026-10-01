@@ -1,0 +1,16 @@
+import {readFile,writeFile,rm} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r424.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v424.js'),'utf8'),readFile(resolve(dist,'app-v424.css'),'utf8'),readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r425-home-f1-foryou-profile.js'),'utf8')]);
+const replaceOnce=(from,to,label)=>{const n=js.split(from).length-1;if(n!==1)throw new Error('r425 '+label+' expected 1, got '+n);js=js.replace(from,to)};
+replaceOnce("function act(action,name){\n if(action==='swap')return swap(name);","function act(action,name){\n if(window.__ctR425?.handleR411Action)return window.__ctR425.handleR411Action(action,name);\n if(action==='swap')return swap(name);",'r411 action owner');
+replaceOnce("function handle(m){\n if(!m)return false;","function handle(m){\n if(window.__ctR425?.handleEarly)return window.__ctR425.handleEarly(m);\n if(!m)return false;",'r365 action owner');
+js=js.replaceAll('cinetracker_home_series_v424','cinetracker_home_series_v425').replace("window.__ctWebBuild='1.0.215';window.__ctOfficialVersion='1.0.215';","window.__ctWebBuild='1.0.216';window.__ctOfficialVersion='1.0.216';").replace("const REVISION='r424-official-1.0.215';","const REVISION='r425-official-1.0.216';").replace("const version='1.0.215',revision='r424-official-1.0.215';","const version='1.0.216',revision='r425-official-1.0.216';");
+js+='\n'+runtime+'\n';html=html.replaceAll('app-v424.js','app-v425.js').replaceAll('app-v424.css','app-v425.css').replaceAll('v1.0.215','v1.0.216').replaceAll('r424-official-1.0.215','r425-official-1.0.216');
+sw=sw.replaceAll('ct-web-1.0.215-r424','ct-web-1.0.216-r425').replaceAll('app-v424.js','app-v425.js').replaceAll('app-v424.css','app-v425.css');
+css+='\n/* CineTracker Web 1.0.216 r425 — Home first paint, F1 total, local Discover mutations and canonical Profile stats. */\n';
+const prev=JSON.parse(releaseRaw),release={...prev,version:'1.0.216',revision:'r425-official-1.0.216',base:'r424+r425-home-f1-foryou-profile',scope:'home-no-blank+f1-1280+foryou-single-slot+profile-sports-canonical',f1:'Formula 1 media_id 865 uses 1,280 imported 2015-2026 session episodes',discover:'Pra Voce mutations replace only the clicked slot without global repaint',profile:'legacy sports stat RPC aliases converge to cinetracker_sport_stats_v421',android:'unchanged-1.0.20/10062'};
+await Promise.all([writeFile(resolve(dist,'app-v425.js'),js),writeFile(resolve(dist,'app-v425.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
+await Promise.all([rm(resolve(dist,'app-v424.js'),{force:true}),rm(resolve(dist,'app-v424.css'),{force:true})]);console.log('WEB_R425_READY');

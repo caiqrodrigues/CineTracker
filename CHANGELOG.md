@@ -1,3 +1,16 @@
+## 1.0.216 — r425 (2026-10-01)
+
+### Fixed
+- Home > Séries deixa de ocultar a tela inteira enquanto aguarda os dados.
+- Fórmula 1 (media_id=865) passa a usar 1.280 sessões importadas de 2015-2026; os 77 vistos deixam 1.203 restantes.
+- Descobrir > Pra Você deixa de disparar repaint global ao marcar Visto ou Watchlist; somente o slot acionado é removido e substituído.
+- Aliases legados de estatísticas esportivas no Perfil convergem para cinetracker_sport_stats_v421.
+- Sem full-page reload, MutationObserver, setInterval ou loop ilimitado.
+
+### Scope
+- Home, F1, Pra Você e Perfil Web.
+- Android permanece **1.0.20 / 10062**.
+
 ## 1.0.215 — r424 (2026-10-01)
 
 ### Fixed

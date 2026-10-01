@@ -1,3 +1,10 @@
+## 1.0.216 — r425 (2026-10-01)
+- Home sem tela vazia durante carregamento.
+- F1 media_id=865: total 1.280 sessões/episódios importados de 2015-2026.
+- Pra Você usa mutação otimista por slot, sem repaint global.
+- Perfil usa uma única fonte para estatísticas esportivas.
+- Android permanece 1.0.20 / 10062.
+
 ## 1.0.215 — r424 (2026-10-01)
 - Home Séries usa cinetracker_home_series_v424 para tratar Fórmula 1, Raw e SmackDown como séries recorrentes quando existe próximo episódio.
 - Entrada da Home Séries é protegida contra o primeiro paint do Histórico; a tela só é revelada após o payload atual e o alinhamento de Assistir a seguir.

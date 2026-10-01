@@ -1,0 +1,14 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+if(process.env.CT_R425_SKIP_BUILD!=='1')await import('./build-r425.mjs');
+const [js,runtime,migration,releaseRaw,pkgRaw,rootPkgRaw,html,sw]=await Promise.all([readFile(resolve('dist/app-v425.js'),'utf8'),readFile(resolve('runtime-r425-home-f1-foryou-profile.js'),'utf8'),readFile(resolve('../../supabase/migrations/20261001240000_r425_home_f1_foryou_profile.sql'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('package.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/service-worker.js'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('R425 '+m)};new Function(runtime);
+for(const bad of['new MutationObserver','setInterval(','while(true)','window.location.reload(','router.refresh('])ok(!runtime.includes(bad),'forbidden '+bad);
+ok(js.includes('cinetracker_home_series_v425')&&!js.includes('cinetracker_home_series_v424'),'Home RPC authority');
+ok(js.includes('handleR411Action')&&js.includes('handleEarly'),'Discover hooks');
+ok(runtime.includes('F1_TOTAL=1280')&&runtime.includes('available_episodes'),'F1 total');
+ok(runtime.includes('cinetracker_sport_stats_v421'),'Profile canonical stats');
+ok(runtime.includes('suppressData'),'local mutation guard');
+ok(migration.includes('cinetracker_home_series_v425')&&migration.includes('1280')&&migration.includes('865'),'migration');
+ok(JSON.parse(pkgRaw).version==='1.0.216'&&JSON.parse(rootPkgRaw).version==='1.0.216','versions');
+const rel=JSON.parse(releaseRaw);ok(rel.version==='1.0.216'&&rel.revision==='r425-official-1.0.216','release');ok(html.includes('app-v425.js')&&!html.includes('app-v424.js'),'html');ok(sw.includes('ct-web-1.0.216-r425'),'service worker');
+console.log('R425_STATIC_OK');

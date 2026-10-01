@@ -1,3 +1,10 @@
+## 1.0.216 — r425 (2026-10-01)
+- Home Séries deixa de ficar visualmente vazia durante o carregamento.
+- Fórmula 1 passa a exibir **1.280 episódios**; com 77 vistos, ficam **1.203 restantes**.
+- Pra Você altera somente o slot clicado em Visto/Watchlist/Trocar, sem repaint global.
+- Perfil converge estatísticas esportivas para `cinetracker_sport_stats_v421`.
+- Android preservado em **1.0.20 / versionCode 10062**.
+
 ## 1.0.215 — r424 (2026-10-01)
 - Home Séries inicia diretamente na composição correta de **Assistir a seguir**, sem expor o fim do Histórico durante o carregamento.
 - Fórmula 1, Raw e SmackDown são tratados como séries recorrentes na Home quando há próximo episódio disponível.
