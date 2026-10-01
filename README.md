@@ -1,3 +1,12 @@
+## Web 1.0.208 / r417
+
+- **Home Séries:** só aparece depois que **Assistir a seguir** e a altura real da Home estabilizam; não mostra mais o fim do Histórico antes de ancorar.
+- **Descobrir > Pra Você:** o DOM efetivamente visível recebe **↻ Trocar** nos 7 slots populados, inclusive após repaint legado tardio.
+- **Perfil:** layout preservado; os números de **Tempo assistido** e **Eventos assistidos** em Esportes são reidratados por `cinetracker_sport_stats_v1`.
+- **Fórmula 1:** continua sendo a série importada `media_id=865`; cada sessão marcada é um episódio e muda de estado imediatamente, sem reload.
+
+Build: `apps/web/build-r417.mjs`; gate: `apps/web/build-r417-official.mjs`; regressão: `apps/web/test-r417.mjs`.
+
 ## Web 1.0.207 / r416
 
 - **Perfil:** nenhuma mudança visual; snapshot persistente por usuário entra no primeiro paint e o payload canônico `cinetracker_profile_v380` revalida em segundo plano.

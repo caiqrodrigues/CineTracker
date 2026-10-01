@@ -1,3 +1,13 @@
+## Web 1.0.208 / r417 — 2026-10-01
+
+### Corrigido
+- **Home > Séries:** o canvas fica oculto até a geometria final de **Assistir a seguir** e a altura total da Home permanecerem estáveis; o alinhamento é reaplicado de forma finita após a revelação, eliminando a abertura no fim do Histórico e o salto tardio.
+- **Descobrir > Pra Você:** a correção atua na linha de ações realmente visível, independentemente do painter legado que venceu. Os sete slots populados recebem **↻ Trocar** funcional; Diário/100% Novos mantêm **+ Watchlist + ✓ Visto + ↻ Trocar** e Da sua Watchlist mantém **✓ Visto + ↻ Trocar**.
+- **Perfil:** sem alteração visual. **Tempo assistido** e **Eventos assistidos** de Esportes passam a ser repostos pela autoridade `cinetracker_sport_stats_v1`; produção possui 86 registros / 11.490 minutos e não pode mais ser sobrescrita por payload legado zerado.
+- **Fórmula 1:** `media_id=865` é reafirmada como série. Marcar uma sessão atualiza o card e o contador imediatamente, persiste por `cinetracker_mark_watch_v0994` como episódio e só depois faz o espelho opcional da sessão F1.
+- Mantidos Optimistic UI, rollback em falha, timers finitos e ausência de `MutationObserver` novo, `setInterval`, loop ilimitado ou full-page reload.
+- Android preservado em **1.0.20 / 10062**.
+
 ## Web 1.0.207 / r416 — 2026-10-01
 
 ### Corrigido

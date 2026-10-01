@@ -1,3 +1,10 @@
+## r417 — Web 1.0.208
+- Home Séries mantém o canvas oculto até a geometria final de **Assistir a seguir** estabilizar.
+- Pra Você garante **7 botões Trocar** nos sete slots populados do DOM realmente visível.
+- Perfil preserva layout e restaura os contadores reais de Esportes via `cinetracker_sport_stats_v1`.
+- Fórmula 1 usa exclusivamente a autoridade de série `media_id=865` para marcar sessões como episódios.
+- Android permanece 1.0.20 / 10062.
+
 ## r416 — Web 1.0.207
 - Perfil preserva o visual e ganha first paint por snapshot persistente + refresh canônico v380.
 - Pra Você usa a r411 como owner final e mantém **7 botões Trocar** quando os sete slots possuem item.
@@ -48,7 +55,7 @@
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.207** | revision `r416-official-1.0.207`, package `1.0.207` | release Web atual |
+| Web | **1.0.208** | revision `r417-official-1.0.208`, package `1.0.208` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | elegibilidade `cinetracker_recommendation_eligible_v413` + pools v413 + Home Movies v405 | produção compartilhada |
 | Windows | — | — | não lançado |
