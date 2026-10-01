@@ -46,7 +46,7 @@ async function doAction425(action,name,key){
  try{
   if(action==='swap')return !!api.swap?.(name);
   if(!remove425(st,action,resolved))return false;
-  suppressData=true;api.renderForYou?.(false);
+  suppressData=true;
   let replaced=false;try{replaced=!!api.swap?.(name)}catch{}
   if(!replaced)api.renderForYou?.(false);
   await (window.__ctR365?.persistDirect?window.__ctR365.persistDirect(action,resolved):Promise.reject(new Error('Persistência indisponível')));
