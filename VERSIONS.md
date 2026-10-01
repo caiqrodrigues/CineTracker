@@ -1,3 +1,9 @@
+## r416 — Web 1.0.207
+- Perfil preserva o visual e ganha first paint por snapshot persistente + refresh canônico v380.
+- Pra Você usa a r411 como owner final e mantém **7 botões Trocar** quando os sete slots possuem item.
+- Fórmula 1 persiste sessão como episódio da série importada com Optimistic UI e espelho no estado canônico F1.
+- Android permanece 1.0.20 / 10062.
+
 ## r415 — Web 1.0.206
 - Home Séries só é revelada depois que **Assistir a seguir** e o Histórico estabilizam, sem flash/jump inicial.
 - Pra Você repara as linhas de ação realmente visíveis e garante **7 botões Trocar** quando os 7 slots têm item.
@@ -36,13 +42,13 @@
 
 # CineTracker — Versionamento por sistema
 
-**Atualizado em:** 2026-09-30
+**Atualizado em:** 2026-10-01
 
 ## Matriz oficial
 
 | Sistema | Versão | Identidade técnica | Estado |
 |---|---:|---|---|
-| Web | **1.0.206** | revision `r415-official-1.0.206`, package `1.0.206` | release Web atual |
+| Web | **1.0.207** | revision `r416-official-1.0.207`, package `1.0.207` | release Web atual |
 | Android | **1.0.20** | `versionName 1.0.20`, `versionCode 10062` | produção, preservado pela r313 |
 | Backend / Supabase | produção compartilhada | elegibilidade `cinetracker_recommendation_eligible_v413` + pools v413 + Home Movies v405 | produção compartilhada |
 | Windows | — | — | não lançado |

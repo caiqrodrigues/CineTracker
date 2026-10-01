@@ -1,3 +1,12 @@
+## Web 1.0.207 / r416 — 2026-10-01
+
+### Corrigido
+- **Perfil:** preservado o renderer visual aprovado; um snapshot persistente por usuário é pintado imediatamente e `cinetracker_profile_v380` atualiza os dados em segundo plano, reduzindo o loading longo sem mudar layout, cards ou ordem.
+- **Descobrir > Pra Você:** a r411 volta a ser a autoridade final do DOM visível. Os sete slots populados usam os botões nativos da r411, incluindo **↻ Trocar**; painters legados deixam de ser a última pintura da aba.
+- **Fórmula 1 como série:** a marcação de sessão/episódio passa a ser otimista e imediata, persiste em `cinetracker_mark_watch_v0994` como episódio da série importada `media_id=865`, envia a quantidade de episódios já exibidos para o estado Em dia/Em progresso e espelha a sessão em `cinetracker_f1_session_watch_set_v314`.
+- A marcação da F1 invalida Home/Perfil por evento local e reconcilia o estado em segundo plano, sem full-page reload.
+- Sem novo `MutationObserver`, `setInterval`, `while(true)`, `window.location.reload()` ou `router.refresh()`.
+
 ## Web 1.0.206 / r415 — 2026-09-30
 
 ### Corrigido

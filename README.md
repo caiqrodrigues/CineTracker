@@ -1,3 +1,12 @@
+## Web 1.0.207 / r416
+
+- **Perfil:** nenhuma mudança visual; snapshot persistente por usuário entra no primeiro paint e o payload canônico `cinetracker_profile_v380` revalida em segundo plano.
+- **Descobrir > Pra Você:** a r411 é reafirmada como renderer final e os sete slots populados mantêm o botão nativo **↻ Trocar** visível e funcional.
+- **Fórmula 1:** as sessões da página tratada como série agora marcam **Assistido** de forma otimista, persistem como episódio da série importada e sincronizam o estado canônico de sessão F1.
+- Home/Perfil são invalidados localmente após a marcação, sem reload global.
+
+Build: `apps/web/build-r416.mjs`; gate: `apps/web/build-r416-official.mjs`; regressão: `apps/web/test-r416.mjs`.
+
 ## Web 1.0.206 / r415
 
 - **Home Séries:** não mostra mais o Histórico antigo antes de ir para **Assistir a seguir**. A entrada espera a geometria estabilizar, alinha uma única vez e só então exibe a lista.
