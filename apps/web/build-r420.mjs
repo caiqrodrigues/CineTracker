@@ -15,9 +15,9 @@ js=js.replace(f1Legacy,"const watch=target.closest('[data-ct311-f1-watch]');if(w
 const f1Mount="back.__ct311Race=race;document.body.appendChild(back);";
 if(!js.includes(f1Mount))throw new Error('r420 missing r311 F1 modal mount');
 js=js.replace(f1Mount,f1Mount+"queueMicrotask(()=>{try{window.__ctR420?.scheduleF1Sync?.()}catch{}});");
-const fyPools="const id=group+':'+type,name=group==='watch'?'cinetracker_discover_watch_unseen_v396':'cinetracker_discover_fresh_v387';";
-if(!js.includes(fyPools))throw new Error('r420 missing r411 pool authority');
-js=js.replace(fyPools,"const id=group+':'+type,name=group==='watch'?'cinetracker_discover_watch_unseen_v420':'cinetracker_discover_fresh_v420';");
+for(const pool of ['cinetracker_discover_watch_unseen_v413','cinetracker_discover_fresh_v413'])if(!js.includes(pool))throw new Error('r420 missing '+pool);
+js=js.replaceAll('cinetracker_discover_watch_unseen_v413','cinetracker_discover_watch_unseen_v420')
+     .replaceAll('cinetracker_discover_fresh_v413','cinetracker_discover_fresh_v420');
 const profileLimit='rows.slice(0,10).map(mediaCard)';
 const profileLimitCount=js.split(profileLimit).length-1;
 if(profileLimitCount<1)throw new Error('r420 profile card limit source missing');
