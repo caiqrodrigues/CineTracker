@@ -1,3 +1,10 @@
+## 1.0.213 — r422 (2026-10-01)
+- Estabilidade: remove observers globais redundantes, coalesce retorno do background/navegação e impede refetch storm.
+- Descobrir: nota >=7.5, ano >1990 e bloqueio exclusivo Drama/Documentário sobre a elegibilidade já existente.
+- Pra Você: histórico persistente de 7 dias reaproveitado e Trocar local/estável nos sete slots.
+- Perfil: um único collapse para Estatísticas + Esportes, preservando 4+4+2 e fontes atuais.
+- F1: media_id=865 preservado como série; Android **1.0.20 / 10062** inalterado.
+
 ## 1.0.212 — r421 (2026-10-01)
 - Descobrir bloqueia stand-up em duas camadas: elegibilidade SQL v421 e validação de detalhes TMDB antes do paint no Pra Você, abas públicas e Top 10. Curtas <40 min, YouTube/web, novelas, Reality, WWE, vistos e Watchlist continuam bloqueados pelas regras existentes.
 - Fórmula 1 passa a usar exclusivamente a série `media_id=865` no F1 Hub: o estado visual é lido do progresso de episódios e a escrita usa `cinetracker_f1_episode_watch_set_v421`; o histórico esportivo genérico deixa de pintar as sessões.
