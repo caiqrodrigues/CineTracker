@@ -31,15 +31,14 @@ async function enterHome(kind,force=false){
  try{
   if(!(await waitAuth()))throw new Error('AUTH_NOT_READY');if(run!==homeRun||routeNow()!=='home')return false;
   if(kind==='movies'){
-   if(window.__ctR461?.enterMovies){window.__ctR461.enterMovies();return true}
-   if(window.__ctR399?.ensureMovies){await window.__ctR399.ensureMovies(true);return true}
-   throw new Error('MOVIES_OWNER_UNAVAILABLE');
+   const load=window.__ctR461?.loadMovies;if(typeof load!=='function')throw new Error('MOVIES_OWNER_UNAVAILABLE');
+   const ok=await timeout(load(true),22000);if(run!==homeRun||routeNow()!=='home')return false;setHomeTab('movies');
+   document.documentElement.dataset.ct465HomeMovies=ok===false?'incomplete':'ready';return ok!==false;
   }
-  if(window.__ctR399?.refreshSeries)await window.__ctR399.refreshSeries(true);
-  if(run!==homeRun||routeNow()!=='home')return false;
-  if(window.__ctR461?.enterSeries){window.__ctR461.enterSeries();return true}
-  if(window.__ctR399?.enterHome){window.__ctR399.enterHome('series');return true}
-  throw new Error('SERIES_OWNER_UNAVAILABLE');
+  const load=window.__ctR388?.loadSeries;if(typeof load!=='function')throw new Error('SERIES_OWNER_UNAVAILABLE');
+  await timeout(load(true),12000);if(run!==homeRun||routeNow()!=='home')return false;
+  window.__ctR388?.renderSeries?.();setHomeTab('series');window.__ctR458?.settleSeries?.();
+  document.documentElement.dataset.ct465HomeSeries='ready';return true;
  }catch(e){document.documentElement.dataset.ct465HomeError=String(e?.message||e);return false}
  finally{if(run===homeRun)homeBusy=false}
 }

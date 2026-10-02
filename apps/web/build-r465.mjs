@@ -9,77 +9,45 @@ let [html,js,css,sw,releaseRaw,...runtimeParts]=await Promise.all([
  ...Array.from({length:7},(_,i)=>readFile(resolve(root,`runtime-r465-part${i+1}.inc`),'utf8'))
 ]);
 const runtime=runtimeParts.join('');
-const patch=(from,to,label)=>{if(!js.includes(from))throw new Error('r465 missing '+label);js=js.replace(from,to)};
-const patchAll=(from,to,label)=>{if(!js.includes(from))throw new Error('r465 missing '+label);js=js.replaceAll(from,to)};
+const inject=(signature,body,label)=>{const n=js.split(signature).length-1;if(n!==1)throw new Error(`r465 ${label} expected 1, found ${n}`);js=js.replace(signature,signature+body)};
+const injectAfter=(marker,signature,body,label)=>{const m=js.indexOf(marker);if(m<0)throw new Error('r465 missing '+label+' marker');const i=js.indexOf(signature,m);if(i<0)throw new Error('r465 missing '+label);const p=i+signature.length;js=js.slice(0,p)+body+js.slice(p)};
 
-// Home: old capture owners can run before a later listener and abort while auth is still warming up.
-patch(
- "const hb=t.closest('[data-home-tab]');if(hb&&routeNow()==='home'){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();const kind=String(hb.dataset.homeTab||'series')==='movies'?'movies':'series';try{window.__ctR371?.applyTab?.(kind)}catch{}lastRouteSig='';setTimeout(()=>settleRoute399(true),0);return}",
- "const hb=t.closest('[data-home-tab]');if(false&&hb&&routeNow()==='home'){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();const kind=String(hb.dataset.homeTab||'series')==='movies'?'movies':'series';try{window.__ctR371?.applyTab?.(kind)}catch{}lastRouteSig='';setTimeout(()=>settleRoute399(true),0);return}",
- 'r399 home click owner'
-);
-patch(
- "const home=t.closest('[data-home-tab],.home-tabs button');if(home&&routeNow()==='home'){const k=homeKind461(home);if(k){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();k==='movies'?enterMovies461():enterSeries461();return}}",
- "const home=t.closest('[data-home-tab],.home-tabs button');if(false&&home&&routeNow()==='home'){const k=homeKind461(home);if(k){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();k==='movies'?enterMovies461():enterSeries461();return}}",
- 'r461 home click owner'
-);
+// All still-live Home/Pra Você generations converge into r465.
+// Several legacy capture listeners call stopImmediatePropagation before later listeners can observe the click.
+inject('async function loadMovies456(force=false){',"if(window.__ctR465?.enterHome)return window.__ctR465.enterHome('movies',false);",'r456 movies');
+inject('async function loadFY456(force=false){',"if(window.__ctR465?.loadForYou)return window.__ctR465.loadForYou(force);",'r456 foryou load');
+inject('function paintFY456(){',"if(window.__ctR465?.paintForYou)return window.__ctR465.paintForYou();",'r456 foryou paint');
 
-// Pra Você: disable all known lexical re-entry points. r465 owns the visible host and rebinding alone is not enough for closures.
-patch(
- "const fy=t.closest('[data-ct319-tab=\"foryou\"]');if(fy&&routeNow()==='discover'){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();lastRouteSig='';enterForYou399();return}",
- "const fy=t.closest('[data-ct319-tab=\"foryou\"]');if(false&&fy&&routeNow()==='discover'){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();lastRouteSig='';enterForYou399();return}",
- 'r399 foryou click owner'
-);
-patch(
- "if(isForYou()&&(q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]'))){const sig='discover:foryou';if(!force&&sig===lastRouteSig&&q('[data-ct399-foryou]'))return true;lastRouteSig=sig;return enterForYou399()}",
- "if(false&&isForYou()&&(q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]'))){const sig='discover:foryou';if(!force&&sig===lastRouteSig&&q('[data-ct399-foryou]'))return true;lastRouteSig=sig;return enterForYou399()}",
- 'r399 foryou route settle'
-);
-patch(
- "if(isForYou()){fyRun++;fyTask=null;setTimeout(()=>void loadForYou399(true),80)}",
- "if(false&&isForYou()){fyRun++;fyTask=null;setTimeout(()=>void loadForYou399(true),80)}",
- 'r399 foryou data changed'
-);
-patch(
- "if(routeNow()==='discover'&&isForYouControl(t)){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();activate()}",
- "if(false&&routeNow()==='discover'&&isForYouControl(t)){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();activate()}",
- 'r464 foryou click owner'
-);
-patch(
- "for(const ev of ['pointerdown','touchstart'])window.addEventListener(ev,e=>{if(routeNow()==='discover'&&isForYouControl(e.target))setTimeout(()=>activate(),0)},{capture:true,passive:true});",
- "for(const ev of ['pointerdown','touchstart'])window.addEventListener(ev,e=>{if(false&&routeNow()==='discover'&&isForYouControl(e.target))setTimeout(()=>activate(),0)},{capture:true,passive:true});",
- 'r464 foryou pointer owner'
-);
-patch(
- "window.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&routeNow()==='discover'&&isForYouControl(e.target))setTimeout(()=>activate(),0)},true);",
- "window.addEventListener('keydown',e=>{if(false&&(e.key==='Enter'||e.key===' ')&&routeNow()==='discover'&&isForYouControl(e.target))setTimeout(()=>activate(),0)},true);",
- 'r464 foryou key owner'
-);
-patch(
- "window.addEventListener('popstate',()=>setTimeout(()=>{if(isForYou())activate()},0));",
- "window.addEventListener('popstate',()=>setTimeout(()=>{if(false&&isForYou())activate()},0));",
- 'r464 foryou popstate owner'
-);
-patch(
- "window.addEventListener('cinetracker:data-changed',()=>setTimeout(()=>{if(isForYou())void load(true)},0));",
- "window.addEventListener('cinetracker:data-changed',()=>setTimeout(()=>{if(false&&isForYou())void load(true)},0));",
- 'r464 foryou data owner'
-);
-patch(
- "for(const ms of [0,250,800,1800])setTimeout(()=>{if(isForYou())activate()},ms);",
- "for(const ms of [0,250,800,1800])setTimeout(()=>{if(false&&isForYou())activate()},ms);",
- 'r464 foryou auto owner'
-);
+inject('function enterMovies457(){',"if(window.__ctR465?.enterHome)return window.__ctR465.enterHome('movies',false);",'r457 movies');
+inject('async function fyLoad457(force=false){',"if(window.__ctR465?.loadForYou)return window.__ctR465.loadForYou(force);",'r457 foryou load');
+inject('function fyPaint457(){',"if(window.__ctR465?.paintForYou)return window.__ctR465.paintForYou();",'r457 foryou paint');
+
+inject('function scheduleSeries458(){',"if(window.__ctR465?.enterHome){void window.__ctR465.enterHome('series',false);return}",'r458 series schedule');
+inject('function ensureForYou458(){',"if(window.__ctR465?.loadForYou){void window.__ctR465.loadForYou(false);return true}",'r458 foryou ensure');
+
+inject('function enterMovies460(){',"if(window.__ctR465?.enterHome)return window.__ctR465.enterHome('movies',false);",'r460 movies');
+inject('function enterSeries460(){',"if(window.__ctR465?.enterHome)return window.__ctR465.enterHome('series',false);",'r460 series');
+inject('async function loadForYou460(force=false){',"if(window.__ctR465?.loadForYou)return window.__ctR465.loadForYou(force);",'r460 foryou load');
+
+// r461 remains the low-level v405 movie pager used by r465, so only entrypoints/FY delegate.
+inject('function enterSeries461(){',"if(window.__ctR465?.enterHome)return window.__ctR465.enterHome('series',false);",'r461 series entry');
+inject('function enterMovies461(){',"if(window.__ctR465?.enterHome)return window.__ctR465.enterHome('movies',false);",'r461 movies entry');
+inject('async function loadFY461(force=false){',"if(window.__ctR465?.loadForYou)return window.__ctR465.loadForYou(force);",'r461 foryou load');
+inject('function paintFY461(){',"if(window.__ctR465?.paintForYou)return window.__ctR465.paintForYou();",'r461 foryou paint');
+
+// r464 uses generic names, so target only the r464 runtime segment.
+injectAfter("window.__ctR464Marker='discover-foryou-visible-owner-v421'",'async function load(force=false){',"if(window.__ctR465?.loadForYou)return window.__ctR465.loadForYou(force);",'r464 foryou load');
+injectAfter("window.__ctR464Marker='discover-foryou-visible-owner-v421'",'function render(){',"if(window.__ctR465?.paintForYou)return window.__ctR465.paintForYou();",'r464 foryou render');
 
 js+='\n'+runtime+'\n';
 html=html.replaceAll('app-v464.js','app-v465.js').replaceAll('app-v464.css','app-v465.css').replaceAll('v1.0.254','v1.0.255').replaceAll('r464-official-1.0.254','r465-official-1.0.255');
 sw=sw.replaceAll('app-v464.js','app-v465.js').replaceAll('app-v464.css','app-v465.css').replaceAll('ct-web-1.0.254-r464','ct-web-1.0.255-r465');
 const release=JSON.parse(releaseRaw);Object.assign(release,{
- version:'1.0.255',revision:'r465-official-1.0.255',base:'r464+real-device-recovery',
+ version:'1.0.255',revision:'r465-official-1.0.255',base:'r464+real-device-owner-convergence',
  scope:'home-series+home-movies+discover-foryou+profile-lists+daily-history-undo',
- home_series:'r465 waits for an authenticated session before delegating to the current v452 renderer',
- home_movies:'r465 waits for auth before invoking the v405 paged Watchlist owner',
- discover_foryou:'r465 owns the visible discover host; six v421 pools render seven slots with active Watchlist/Visto/Trocar actions',
+ home_series:'r465 waits for auth, calls the current r388 Home renderer whose RPC was upgraded to v452, then paints/settles Series',
+ home_movies:'all live legacy entrypoints converge to r465; r465 waits for auth and invokes the r461 v405 pager directly',
+ discover_foryou:'all live r456/r457/r458/r460/r461/r464 loaders converge to the r465 visible-host renderer over six v421 pools',
  profile:'13-card summary plus 14th Ver mais; favorite actors use cinetracker_profile_actors_v465 to escape the legacy 10-row cap',
  history:'per-row minimal undo uses the correct media or sport v426 RPC with optimistic removal and rollback',
  f1:'r464 unchanged',android:'unchanged-1.0.20/10062'
@@ -92,7 +60,10 @@ await Promise.all([rm(resolve(dist,'app-v464.js'),{force:true}),rm(resolve(dist,
 for(const need of [
  "window.__ctR465Marker='real-device-home-discover-profile-history'",'cinetracker_home_movies_v405','cinetracker_home_series_v452',
  'cinetracker_discover_watch_unseen_v421','cinetracker_discover_fresh_v421','cinetracker_profile_actors_v465',
- 'cinetracker_unmark_history_item_v426','cinetracker_unmark_sport_history_v426','data-ct465-fy-action="swap"','data-ct465-undo="1"'
+ 'cinetracker_unmark_history_item_v426','cinetracker_unmark_sport_history_v426','data-ct465-fy-action="swap"','data-ct465-undo="1"',
+ "async function loadFY456(force=false){if(window.__ctR465?.loadForYou)",
+ "function enterMovies460(){if(window.__ctR465?.enterHome)",
+ "function enterSeries461(){if(window.__ctR465?.enterHome)"
 ])if(!js.includes(need))throw new Error('r465 missing '+need);
 for(const bad of ['window.location.reload(','router.refresh(','while(true)','new MutationObserver','setInterval('])if(runtime.includes(bad))throw new Error('r465 forbidden '+bad);
 console.log('WEB_R465_READY');

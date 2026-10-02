@@ -24,10 +24,21 @@ ok(runtime.includes("if(kind==='sport')")&&runtime.includes("p_event_id:eventId"
 ok(runtime.includes("p_item_type:itemType")&&runtime.includes("p_season_number:itemType==='episode'"),'media undo arguments incomplete');
 ok(runtime.includes("if(row)row.remove()")&&runtime.includes("parent.insertBefore(row,next)"),'undo is not optimistic with rollback');
 ok(migration.includes('security invoker')&&migration.includes('fa.user_id=auth.uid()')&&migration.includes("revoke all on function public.cinetracker_profile_actors_v465(integer) from public,anon")&&migration.includes('grant execute on function public.cinetracker_profile_actors_v465(integer) to authenticated'),'actor RPC security');
-for(const old of [
- "if(false&&hb&&routeNow()==='home')","if(false&&home&&routeNow()==='home')","if(false&&fy&&routeNow()==='discover')",
- "if(false&&isForYou()&&(q('[data-ct319-content]')","if(false&&routeNow()==='discover'&&isForYouControl(t))",
- "if(false&&routeNow()==='discover'&&isForYouControl(e.target))"
-])ok(js.includes(old),'legacy owner not neutralized '+old);
+for(const owner of [
+ "async function loadMovies456(force=false){if(window.__ctR465?.enterHome)",
+ "async function loadFY456(force=false){if(window.__ctR465?.loadForYou)",
+ "function enterMovies457(){if(window.__ctR465?.enterHome)",
+ "async function fyLoad457(force=false){if(window.__ctR465?.loadForYou)",
+ "function scheduleSeries458(){if(window.__ctR465?.enterHome)",
+ "function ensureForYou458(){if(window.__ctR465?.loadForYou)",
+ "function enterMovies460(){if(window.__ctR465?.enterHome)",
+ "function enterSeries460(){if(window.__ctR465?.enterHome)",
+ "async function loadForYou460(force=false){if(window.__ctR465?.loadForYou)",
+ "function enterSeries461(){if(window.__ctR465?.enterHome)",
+ "function enterMovies461(){if(window.__ctR465?.enterHome)",
+ "async function loadFY461(force=false){if(window.__ctR465?.loadForYou)"
+])ok(js.includes(owner),'live owner does not converge: '+owner);
+const r464=js.indexOf("window.__ctR464Marker='discover-foryou-visible-owner-v421'");
+ok(r464>=0&&js.indexOf("async function load(force=false){if(window.__ctR465?.loadForYou)",r464)>r464,'r464 load does not converge');
 for(const bad of ['window.location.reload(','router.refresh(','while(true)','new MutationObserver','setInterval('])ok(!runtime.includes(bad),'forbidden '+bad);
 console.log('R465_STATIC_OK');

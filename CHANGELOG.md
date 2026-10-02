@@ -1,9 +1,9 @@
 ## 1.0.256 — r466 (2026-10-02)\n\n### Corrigido\n- Build r465 quebrava antes de publicar por exigir um owner r399 já removido do bundle final; r466 torna esses cortes compatíveis com a base real e exige apenas os owners ainda ativos.\n- Histórico: `media_id` de filmes/episódios deixa de passar por `Number()`; UUID é enviado integralmente para `cinetracker_unmark_history_item_v426`.\n- Home: owner r461 de abas é neutralizado antes do runtime autenticado, preservando o carregamento inicial de Séries e a Watchlist v405 de Filmes.\n- Descobrir > Pra Você: reentradas r399/r461/r464 são neutralizadas quando presentes; owner visível v421 preserva os 7 slots e botões `Trocar`.\n- Perfil: 13 cards + 14º `Ver mais` preservados, inclusive Atores via RPC v465.\n\n### Validação\n- Gate r466 exige bundle, assets, RPCs atuais, Trocar delimitado, Perfil 13+Ver mais e desmarcação UUID sem coerção numérica.\n- Android preservado em 1.0.20 / versionCode 10062.\n\n## 1.0.255 — r465 (2026-10-02)
 
 ### Corrigido
-- Home Séries: owner final aguarda sessão autenticada antes de delegar a `cinetracker_home_series_v452`, evitando primeiro carregamento vazio.
-- Home Filmes: clique real passa pelo owner r465 após autenticação e delega à Watchlist paginada `cinetracker_home_movies_v405`; owners r399/r461 que podiam abortar cedo foram neutralizados.
-- Descobrir > Pra Você: r465 escolhe o container realmente visível, neutraliza reentradas legadas r399/r464 e carrega Filme/Série/Anime de Watchlist e 100% Novos pelos pools v421.
+- Home Séries: owners ainda vivos convergem para r465; após autenticação, o renderer r388 (já promovido para `cinetracker_home_series_v452`) recarrega e repinta a lista.
+- Home Filmes: r456/r457/r460/r461 convergem para r465; após autenticação, r465 chama diretamente o paginador r461 sobre `cinetracker_home_movies_v405`.
+- Descobrir > Pra Você: loaders/painters r456/r457/r458/r460/r461/r464 convergem para r465; o renderer escolhe o container realmente visível e carrega Filme/Série/Anime de Watchlist e 100% Novos pelos pools v421.
 - Pra Você: todos os 7 slots têm linha de ações completa; Indicação do Dia e 100% Novos têm Watchlist/Visto/Trocar, e Da sua Watchlist tem Visto/Trocar. Troca por slot é delimitada e protegida contra cliques concorrentes.
 - Perfil: exatamente 13 cards na visão resumida e o 14º elemento é Ver mais quando há conteúdo adicional.
 - Atores Favoritos: removida a dependência do limite legado de 10; novo RPC `cinetracker_profile_actors_v465` retorna até 14 linhas e o total real para montar 13 + Ver mais.
