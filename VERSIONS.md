@@ -1,3 +1,9 @@
+## 1.0.224 / r433
+- Pra Você: corrige tela preta causada por captura de `discover263` antes do boot.
+- Estado do Descobrir e owners auxiliares passam a ser resolvidos dinamicamente.
+- Ações Watchlist/Visto/Trocar continuam no r309.
+- Escopo exclusivo: Pra Você; Android permanece **1.0.20 / 10062**.
+
 - **1.0.222 / r431** — Descobrir > Pra Você: remove bloqueio por `loadRecent296`, elimina auto-refresh por `data-changed/online` e mantém r309 como renderer/owner único de Trocar.
 - **1.0.221 / r430** — Descobrir > Pra Você passa a usar exclusivamente o renderer r309; r411/r427/r428/r429 removidos do bundle final; ações Watchlist/Visto/Trocar preservadas no renderer único.
 - **1.0.220 / r429** — Descobrir > Pra Você isolado no owner r411; recovery r427/r428 removido do build; ciclo de atualização/repaint removido.
