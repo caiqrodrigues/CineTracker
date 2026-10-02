@@ -1,3 +1,9 @@
+## 1.0.230 — r439 (2026-10-02)
+- **Descobrir > Pra Você:** corrigida a montagem do bundle r438 para usar os marcadores reais do bundle r437.
+- Mantida a remoção dos owners legados que provocavam o ciclo de repintura.
+- r309/r432 continua como único renderer ativo de Pra Você.
+- Home r404/r405, Perfil, Esportes, F1 e Android preservados.
+
 ## 1.0.229 — r438 (2026-10-02)
 - **Descobrir > Pra Você:** eliminado o ciclo de repintura causado pelos owners legados r395–r410 que ainda permaneciam no bundle final.
 - r309/r432 permanece como único renderer ativo de Pra Você.

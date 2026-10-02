@@ -1,4 +1,4 @@
-name: Verify Web 1.0.229 r438 Descobrir Pra Voce
+name: Verify Web 1.0.230 r439 Descobrir Pra Voce
 on:
   push:
     branches: [main]
@@ -6,28 +6,28 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r438:
+  web_r439:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r438 regression gate
+      - name: Build and r439 regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check build-r438.mjs
-          node --check build-r438-official.mjs
-          node --check test-r438.mjs
-          node build-r438-official.mjs
-          node --check dist/app-v438.js
-          grep -Fq "window.__ctR431" dist/app-v438.js
-          grep -Fq "window.__ctR309" dist/app-v438.js
-          grep -Fq "data-ct309-swap" dist/app-v438.js
-          ! grep -Fq "CineTracker Web 1.0.186 r395" dist/app-v438.js
-          ! grep -Fq "CineTracker Web 1.0.197 r406" dist/app-v438.js
-          ! grep -Fq "CineTracker Web 1.0.201 r410" dist/app-v438.js
+          node --check build-r439.mjs
+          node --check build-r439-official.mjs
+          node --check test-r439.mjs
+          node build-r439-official.mjs
+          node --check dist/app-v439.js
+          grep -Fq "window.__ctR431" dist/app-v439.js
+          grep -Fq "window.__ctR309" dist/app-v439.js
+          grep -Fq "data-ct309-swap" dist/app-v439.js
+          ! grep -Fq "CineTracker Web 1.0.186 r395" dist/app-v439.js
+          ! grep -Fq "CineTracker Web 1.0.197 r406" dist/app-v439.js
+          ! grep -Fq "CineTracker Web 1.0.201 r410" dist/app-v439.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -37,7 +37,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r438, android]
+    needs: [web_r439, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -46,10 +46,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.229"' <<<"$BODY" && grep -Fq '"revision": "r438-official-1.0.229"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v438.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.230"' <<<"$BODY" && grep -Fq '"revision": "r439-official-1.0.230"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v439.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR431" <<<"$JS" && grep -Fq 'data-ct309-swap' <<<"$JS" && grep -Fq 'app-v438.js' <<<"$HTML" && ! grep -Fq 'CineTracker Web 1.0.186 r395' <<<"$JS" && ! grep -Fq 'CineTracker Web 1.0.197 r406' <<<"$JS" && ! grep -Fq 'CineTracker Web 1.0.201 r410' <<<"$JS"; then
+              if grep -Fq "window.__ctR431" <<<"$JS" && grep -Fq 'data-ct309-swap' <<<"$JS" && grep -Fq 'app-v439.js' <<<"$HTML" && ! grep -Fq 'CineTracker Web 1.0.186 r395' <<<"$JS" && ! grep -Fq 'CineTracker Web 1.0.197 r406' <<<"$JS" && ! grep -Fq 'CineTracker Web 1.0.201 r410' <<<"$JS"; then
                 exit 0
               fi
             fi

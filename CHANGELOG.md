@@ -1,3 +1,14 @@
+## 1.0.230 / r439 — Descobrir > Pra Você — 2026-10-02
+
+- Corrigida a montagem da correção r438: o bundle base já não continha o marcador r411, então a faixa de remoção agora termina corretamente em r412.
+- Mantido o corte dos owners legados r395–r403 e r406–r410.
+- Mantidas as barreiras contra repaint automático dos runtimes r412–r418 e r426.
+- r309/r432 permanece como único renderer ativo de Pra Você.
+- **Trocar**, Watchlist e Visto permanecem no owner r309.
+- Escopo exclusivo: **Descobrir > Pra Você**.
+
+Build: apps/web/build-r439.mjs; gate: apps/web/build-r439-official.mjs; regressão: apps/web/test-r439.mjs.
+
 ## 1.0.229 / r438 — Descobrir > Pra Você — 2026-10-02
 
 - Corrigido o ciclo de repintura/recarregamento visual que fazia a tela de **Pra Você** reiniciar aproximadamente a cada 2 segundos.
