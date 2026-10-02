@@ -1,3 +1,13 @@
+## 1.0.231 / r440 — Descobrir > Pra Você — 2026-10-02
+
+- Corrigidos os identificadores reais dos runtimes r412–r418 na montagem do bundle.
+- O corte dos owners r395–r403 e r406–r410 permanece.
+- As rotinas de reparo automático r412–r418/r426 continuam impedidas de reconstruir Pra Você.
+- r309/r432 permanece como único renderer ativo, incluindo **Trocar**, Watchlist e Visto.
+- Nenhuma alteração funcional em Home, Perfil, Esportes, F1 ou Android.
+
+Build: apps/web/build-r440.mjs; gate: apps/web/build-r440-official.mjs; regressão: apps/web/test-r440.mjs.
+
 ## 1.0.230 / r439 — Descobrir > Pra Você — 2026-10-02
 
 - Corrigida a montagem da correção r438: o bundle base já não continha o marcador r411, então a faixa de remoção agora termina corretamente em r412.

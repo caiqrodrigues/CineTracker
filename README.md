@@ -1,3 +1,8 @@
+## 1.0.231 — r440 (2026-10-02)
+- Corrigidos os marcadores internos dos runtimes r412–r418 usados na montagem do corte de owners legados.
+- **Descobrir > Pra Você** permanece com r309/r432 como único renderer ativo.
+- Escopo exclusivo em Pra Você; Home r404/r405, Perfil, Esportes, F1 e Android preservados.
+
 ## 1.0.230 — r439 (2026-10-02)
 - **Descobrir > Pra Você:** corrigida a montagem do bundle r438 para usar os marcadores reais do bundle r437.
 - Mantida a remoção dos owners legados que provocavam o ciclo de repintura.

@@ -1,3 +1,7 @@
+## 1.0.231 / r440
+- Correção dos marcadores de montagem da proteção anti-repaint do Pra Você.
+- Android 1.0.20 / 10062 preservado.
+
 ## 1.0.230 / r439
 - Correção de montagem do corte de owners legados do Pra Você.
 - Home r404/r405 preservada; Android 1.0.20 / 10062.
