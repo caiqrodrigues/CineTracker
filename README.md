@@ -1,3 +1,11 @@
+## 1.0.223 — r432 (2026-10-01)
+- **Descobrir > Pra Você:** removido o reload legado r386 que ainda podia reiniciar a aplicação.
+- Removidos os owners legados r395/r396 do bundle final.
+- Removidos os gatilhos de entrada/repaint de Pra Você dos runtimes r397/r403/r404/r406/r407/r408.
+- Eventos de dados e conexão não podem mais reconstruir Pra Você automaticamente enquanto a aba está ativa.
+- **r309 permanece como único renderer e owner das ações Watchlist, Visto e ↻ Trocar.**
+- Escopo exclusivo: **Descobrir > Pra Você**. Home, Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.
+
 ## 1.0.222 — r431 (2026-10-01)
 - **Descobrir > Pra Você:** corrigido o carregamento preso em “Montando recomendações…”; `loadRecent296` deixou de bloquear a montagem.
 - Removido auto-refresh por eventos `cinetracker:data-changed`/online; a tela só é reconstruída por entrada explícita, navegação ou ação do usuário.
