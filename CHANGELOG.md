@@ -1,3 +1,11 @@
+## 1.0.241 / r451 — URL canônica sem ct_refresh — 2026-10-02
+
+- Removido `ct_refresh` da URL antes do boot da aplicação com `history.replaceState`, sem recarregar a página.
+- `history.pushState` e `history.replaceState` passam a eliminar somente `ct_refresh` de futuras navegações internas, preservando qualquer outro parâmetro e hash.
+- Corrigida a regressão da r450, que partiu da base r444 e deixou de carregar a proteção já existente na r445.
+- Removido o workflow temporário `activate-web-r450.yml`, que poderia reativar a r450 em pushes posteriores.
+- Nenhum `window.location.reload()`, `router.refresh()`, polling, `setInterval` ou `MutationObserver` adicionado.
+
 ## 1.0.240 / r450 — Descobrir > Pra Você — 2026-10-02
 
 - Escopo exclusivo em Descobrir > Pra Você.

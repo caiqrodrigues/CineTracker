@@ -1,3 +1,7 @@
+## Web 1.0.241 / r451 — URL canônica
+
+`ct_refresh` é removido antes do boot e também de navegações History API, sem full-page reload. A r451 parte da r450 e preserva Home, Perfil, Esportes, F1 e Descobrir.
+
 ## Web 1.0.240 / r450 — Pra Você
 
 Owner RPC-first único sobre a base limpa r444; 7 slots e ações completas.

@@ -1,3 +1,8 @@
+## Web 1.0.241 / r451
+
+- URL canônica sem `ct_refresh`, sem reload.
+- r450 preservada como base funcional; workflow temporário de reativação removido.
+
 ## Web 1.0.240 / r450
 
 - Descobrir > Pra Você corrigido; demais áreas preservadas na base r444.
