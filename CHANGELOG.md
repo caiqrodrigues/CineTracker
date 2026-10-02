@@ -1,3 +1,12 @@
+## 1.0.247 / r457 — estabilidade final de Home Filmes, Pra Você, Perfil e F1 — 2026-10-02
+
+- Home > Filmes passa a manter a seleção de Filmes após os handlers legados e dispara a Watchlist v405 sem retornar sozinho para Séries.
+- Descobrir > Pra Você passa a ter owner único r457 sobre os seis pools filtrados v421, com timeout ampliado e os sete slots sempre renderizando **Trocar** junto às ações corretas.
+- Perfil reafirma exatamente 13 cards em Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores; o 14º elemento é o botão **Ver mais** de meia largura. O desfazer do histórico diário r426 é preservado.
+- Fórmula 1 passa a pintar o progresso visível por `cinetracker_f1_progress_v426`, usando somente sessões efetivamente liberadas e assistidas; a sincronização Série ↔ Esportes ↔ F1Hub r423/r452 permanece intacta.
+- Validação de produção confirmou no banco 77 sessões F1 liberadas em 2026 e 75 assistidas no estado atual, eliminando o 77/77 stale.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado.
+
 ## 1.0.246 / r456 — Watchlist, Pra Você e progresso F1 — 2026-10-02
 
 - Home > Filmes usa diretamente `cinetracker_home_movies_v405`: primeira página de 120 itens aparece imediatamente e as demais páginas entram em lotes assíncronos delimitados, sem congelar a main thread.

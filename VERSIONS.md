@@ -1,3 +1,11 @@
+## Web 1.0.247 / r457
+
+- Home Filmes: seleção estável + Watchlist v405.
+- Pra Você: owner único v421 + Trocar nos 7 slots.
+- Perfil: 13 cards + meio-card Ver mais + histórico diário com desfazer.
+- F1: progresso visível por cinetracker_f1_progress_v426; sincronização tripla preservada.
+- Android: 1.0.20 / versionCode 10062, sem alterações.
+
 ## Web 1.0.246 / r456
 
 - Home Filmes: Watchlist v405 com paginação assíncrona delimitada.

@@ -1,4 +1,4 @@
-name: Verify Web 1.0.246 r456
+name: Verify Web 1.0.247 r457
 on:
   push:
     branches: [main]
@@ -6,27 +6,27 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r456:
+  web_r457:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r456 regression gate
+      - name: Build and r457 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v456.js
-          grep -Fq "window.__ctR456Marker='watchlist-v405+foryou-v421+f1-v452'" apps/web/dist/app-v456.js
-          grep -Fq "cinetracker_home_movies_v405" apps/web/dist/app-v456.js
-          grep -Fq "cinetracker_discover_fresh_v421" apps/web/dist/app-v456.js
-          grep -Fq "data-ct456-action=\"swap\"" apps/web/dist/app-v456.js
-          grep -Fq "cinetracker_home_series_v452" apps/web/dist/app-v456.js
-          grep -Fq "const PROFILE_LIMIT=13" apps/web/dist/app-v456.js
-          ! grep -Fq "window.location.reload(" apps/web/dist/app-v456.js
-          ! grep -Fq "router.refresh(" apps/web/dist/app-v456.js
+          node --check apps/web/dist/app-v457.js
+          grep -Fq "window.__ctR457Marker='home-movies-sticky+foryou-v421-owner+profile-13-half+f1-v426-progress'" apps/web/dist/app-v457.js
+          grep -Fq "cinetracker_home_movies_v405" apps/web/dist/app-v457.js
+          grep -Fq "cinetracker_discover_fresh_v421" apps/web/dist/app-v457.js
+          grep -Fq "data-ct457-action=\"swap\"" apps/web/dist/app-v457.js
+          grep -Fq "const PROFILE_LIMIT_457=13" apps/web/dist/app-v457.js
+          grep -Fq "cinetracker_f1_progress_v426" apps/web/dist/app-v457.js
+          ! grep -Fq "window.location.reload(" apps/web/dist/app-v457.js
+          ! grep -Fq "router.refresh(" apps/web/dist/app-v457.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,19 +36,19 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r456, android]
+    needs: [web_r457, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r456 production
+      - name: Wait for r457 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.246"' <<<"$BODY" && grep -Fq '"revision": "r456-official-1.0.246"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v456.js?ct=$CT" || true)"
-              if grep -Fq "window.__ctR456Marker='watchlist-v405+foryou-v421+f1-v452'" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.247"' <<<"$BODY" && grep -Fq '"revision": "r457-official-1.0.247"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v457.js?ct=$CT" || true)"
+              if grep -Fq "window.__ctR457Marker='home-movies-sticky+foryou-v421-owner+profile-13-half+f1-v426-progress'" <<<"$JS"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5

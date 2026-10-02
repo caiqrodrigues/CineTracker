@@ -1,3 +1,7 @@
+## Web 1.0.247 / r457 — estabilidade final Web
+
+Home > Filmes mantém a aba selecionada e carrega a Watchlist v405 sem regressar para Séries. Descobrir > Pra Você usa um único owner sobre os pools v421 e mantém **Trocar** nos 7 slots. O Perfil mostra exatamente 13 cards + meio-card **Ver mais** nas cinco listas principais e preserva **Desmarcar visto** no histórico diário. A Fórmula 1 usa o progresso canônico v426 para exibir assistidos/liberados, mantendo a sincronização Série + Esportes + F1Hub.
+
 ## Web 1.0.246 / r456 — Watchlist + Pra Você + F1 canônico
 
 A Web recupera a Watchlist de Filmes diretamente da autoridade SQL v405, carrega o **Pra Você** por seis pools v421 filtrados e mantém **Trocar** nos sete slots. O progresso da Fórmula 1 é repintado pela autoridade v452 da temporada atual. O Perfil r455 permanece intacto com 13 cards, meio-card **Ver mais** e desfazer item do histórico diário.
