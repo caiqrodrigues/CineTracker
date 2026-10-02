@@ -1,3 +1,12 @@
+## Web 1.0.254 / r464 — Descobrir > Pra Você
+
+- Correção exclusiva de **Descobrir > Pra Você**.
+- O r464 assume o clique e a renderização visível da aba, neutralizando a reentrada r399 que mantinha “Montando/Buscando recomendações” ou repintava os controles incompletos.
+- Os seis pools `cinetracker_discover_watch_unseen_v421` / `cinetracker_discover_fresh_v421` alimentam 7 slots: Indicação do Dia, Filme/Série/Anime da Watchlist e Filme/Série/Anime de 100% Novos.
+- Indicação do Dia e 100% Novos exibem **+ Watchlist + ✓ Visto + ↻ Trocar**; Da sua Watchlist exibe **✓ Visto + ↻ Trocar**.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)`.
+- Home, Perfil, Esportes, F1 e Android permanecem inalterados.
+
 ## Web 1.0.252 / r462 — Fórmula 1 realmente unificada
 
 ## Web 1.0.253 / r463
