@@ -1,3 +1,11 @@
+## 1.0.237 / r446 — Bloqueio de refresh automático — 2026-10-02
+
+- Removida exclusivamente a chamada automática de `render()` disparada pelo evento `online`.
+- Isso impede que eventos repetidos de conectividade reinicializem a tela durante o uso/teste.
+- Nenhuma lógica de Descobrir > Pra Você, Home, Perfil, Esportes, F1, Supabase ou Android foi alterada.
+- Mantidos os bloqueios existentes de `window.location.reload()`, `router.refresh()`, `setInterval` e loops infinitos.
+- Build: `apps/web/build-r446.mjs`; regressão: `apps/web/test-r446.mjs`.
+
 ## 1.0.236 / r445 — Descobrir > Pra Você — 2026-10-02
 
 - Eliminada a reentrada concorrente do loader de Pra Você: somente uma execução de buildForYou pode estar ativa por vez.
