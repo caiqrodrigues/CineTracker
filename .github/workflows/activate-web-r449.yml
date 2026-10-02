@@ -1,0 +1,75 @@
+name: Activate Web r449
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+concurrency:
+  group: activate-web-r449
+  cancel-in-progress: false
+jobs:
+  activate:
+    if: github.actor != 'github-actions[bot]' || !contains(github.event.head_commit.message, 'activate r449')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Activate r449 package scripts and docs
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          for(const file of ['package.json','apps/web/package.json']){
+            const p=JSON.parse(fs.readFileSync(file,'utf8'));
+            p.version='1.0.240';
+            if(file==='apps/web/package.json'){
+              p.scripts.build='node build-r449.mjs';
+              p.scripts.verify='node test-r449.mjs';
+              p.scripts['test:r449']='node test-r449.mjs';
+            }
+            fs.writeFileSync(file,JSON.stringify(p));
+          }
+          const prepend=(file,text)=>{
+            const old=fs.readFileSync(file,'utf8');
+            if(!old.startsWith(text.split('\n')[0]))fs.writeFileSync(file,text+old);
+          };
+          prepend('CHANGELOG.md',`## 1.0.240 / r449 — Descobrir > Pra Você — 2026-10-02
+
+- Escopo exclusivo em Descobrir > Pra Você.
+- Owner único RPC-first para os 7 slots, usando v396 com fallback v396/v387 por categoria.
+- Indicação do Dia e 100% Novos: + Watchlist, ✓ Visto e ↻ Trocar.
+- Da sua Watchlist: somente ✓ Visto e ↻ Trocar; removido o botão Watchlist cinza/desabilitado.
+- Trocar altera somente o slot clicado, com trava síncrona por slot.
+- Sem full-page reload, router.refresh, MutationObserver, setInterval ou loop infinito.
+- Home, Perfil, Esportes, F1 e Android inalterados.
+
+`);
+          prepend('README.md',`## Web 1.0.240 / r449 — Pra Você
+
+Pra Você usa um único owner RPC-first. São 7 slots; Diário/100% Novos exibem Watchlist + Visto + Trocar e Da sua Watchlist exibe Visto + Trocar. Escopo exclusivo da Web/Pra Você.
+
+`);
+          prepend('VERSIONS.md',`## Web 1.0.240 / r449
+
+- Descobrir > Pra Você: owner RPC-first único; 7 slots; Trocar em todos os slots elegíveis; sem botão Watchlist cinza em Da sua Watchlist.
+- Demais áreas inalteradas.
+
+`);
+          NODE
+      - name: Validate r449
+        run: |
+          npm run build
+          npm run verify
+      - name: Commit activation
+        shell: bash
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json apps/web/package.json CHANGELOG.md README.md VERSIONS.md
+          git commit -m "fix: activate r449 Pra Voce"
+          git push origin main
