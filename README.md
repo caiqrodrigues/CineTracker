@@ -1,3 +1,7 @@
+## Web 1.0.240 / r450 — Pra Você
+
+Owner RPC-first único sobre a base limpa r444; 7 slots e ações completas.
+
 ## 1.0.238 — r447 (2026-10-02)
 - Bloqueadas as reentradas automáticas legadas que podiam reinicializar a tela em intervalos curtos.
 - Renderização manual e ações existentes permanecem inalteradas.

@@ -1,3 +1,7 @@
+## Web 1.0.240 / r450
+
+- Descobrir > Pra Você corrigido; demais áreas preservadas na base r444.
+
 ## 1.0.239 / r448
 - Bloqueio exclusivo do refresh automático periódico de Pra Você.
 - Schedulers legados r420/r421/r426 desativados.

@@ -1,3 +1,15 @@
+## 1.0.240 / r450 — Descobrir > Pra Você — 2026-10-02
+
+- Escopo exclusivo em Descobrir > Pra Você.
+
+- Build parte da base limpa r444 e aplica somente o owner RPC-first novo.
+
+- Diário e 100% Novos: Watchlist + Visto + Trocar.
+
+- Da sua Watchlist: Visto + Trocar, sem botão Watchlist cinza.
+
+- Sem full-page reload, router.refresh, MutationObserver, setInterval ou loop infinito.
+
 ## 1.0.239 / r448 — Bloqueio do refresh automático periódico — 2026-10-02
 
 - Desativados exclusivamente os schedulers automáticos legados de Pra Você em r420, r421 e r426, que reentravam na tela em aproximadamente 1,5–1,8 s.
