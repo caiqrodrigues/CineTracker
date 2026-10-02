@@ -9,7 +9,7 @@ const ok=(v,m)=>{if(!v)throw new Error('R463 '+m)};const r=JSON.parse(rel),p=JSO
 ok(r.version==='1.0.253'&&r.revision==='r463-official-1.0.253','release');
 ok(p.version==='1.0.253'&&rp.version==='1.0.253','versions');
 ok(html.includes('app-v463.js')&&sw.includes('app-v463.js')&&sw.includes('ct-web-1.0.253-r463'),'assets');
-for(const need of ['waitAuth399','cinetracker_home_series_v452','cinetracker_home_movies_v405','cinetracker_discover_watch_unseen_v421','cinetracker_discover_fresh_v421','data-ct399-action','data-ct399-movie-retry'])ok(r399.includes(need),'r399 missing '+need);
+for(const need of ['waitAuth399','cinetracker_home_series_v452','cinetracker_home_movies_v405','cinetracker_discover_watch_unseen_v421','cinetracker_discover_fresh_v421','data-ct399-action','↻ Trocar','swap','data-ct399-movie-retry'])ok(r399.includes(need),'r399 missing '+need);
 for(const old of ['cinetracker_watchlist_full_v376','cinetracker_home_series_v391','cinetracker_discover_foryou_v396','cinetracker_discover_watch_unseen_v396','cinetracker_discover_fresh_v387'])ok(!r399.includes(old),'r399 legacy '+old);
 ok(r455.includes('const PROFILE_LIMIT=13')&&r455.includes('row.appendChild(more)')&&r455.includes("trigger.style.display='none'"),'profile 13+more');
 ok(r461.includes('window.__ctR455?.applyProfile?.()')&&!r461.includes("ct461ProfileLists='uncropped'")&&!r461.includes('[data-profile] [hidden]{display:revert!important}'),'r461 profile delegation');
