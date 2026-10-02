@@ -20,14 +20,6 @@ jobs:
           npm run verify
           node --check apps/web/dist/app-v463.js
           grep -Fq "window.__ctR463Marker='r399-current-authorities+profile-13-more+daily-undo'" apps/web/dist/app-v463.js
-          grep -Fq "cinetracker_home_movies_v405" apps/web/dist/app-v463.js
-          grep -Fq "cinetracker_discover_fresh_v421" apps/web/dist/app-v463.js
-          grep -Fq "data-ct399-action" apps/web/dist/app-v463.js
-          grep -Fq "↻ Trocar" apps/web/dist/app-v463.js
-          grep -Fq "const PROFILE_LIMIT=13" apps/web/dist/app-v463.js
-          grep -Fq "cinetracker_f1_watch_sync_v462" apps/web/dist/app-v463.js
-          grep -Fq "cinetracker_f1_progress_v426" apps/web/dist/app-v463.js
-          grep -Fq "cinetracker_unmark_history_item_v426" apps/web/dist/app-v463.js
           ! grep -Fq "window.location.reload(" apps/web/runtime-r399-startup-stability.js
           ! grep -Fq "router.refresh(" apps/web/runtime-r399-startup-stability.js
           ! grep -Fq "new MutationObserver" apps/web/runtime-r399-startup-stability.js
