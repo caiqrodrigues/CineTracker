@@ -1,3 +1,8 @@
+## 1.0.238 — r447 (2026-10-02)
+- Bloqueadas as reentradas automáticas legadas que podiam reinicializar a tela em intervalos curtos.
+- Renderização manual e ações existentes permanecem inalteradas.
+- Build: `apps/web/build-r447.mjs`; regressão: `apps/web/test-r447.mjs`.
+
 ## 1.0.237 — r446 (2026-10-02)
 - Removida somente a renderização automática disparada por eventos `online`, evitando reinicializações da tela durante o uso.
 - **Descobrir > Pra Você, Home, Perfil, Esportes, F1 e Android permanecem sem alteração.**
