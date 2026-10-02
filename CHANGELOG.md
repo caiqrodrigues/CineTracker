@@ -1,3 +1,14 @@
+## 1.0.228 / r437 — Descobrir > Pra Você — 2026-10-02
+
+- Corrigido o **pisca/recarregamento visual** durante a montagem de Pra Você.
+- `paintForYou()` agora é idempotente: se as sete recomendações não mudaram, o DOM não é recriado.
+- O placeholder de carregamento não é reinserido por chamadas concorrentes antigas.
+- O token de geração existente continua cancelando respostas obsoletas, sem adicionar loop ou observer.
+- **↻ Trocar**, **+ Watchlist** e **✓ Visto** permanecem no owner r309.
+- Escopo exclusivo: **Descobrir > Pra Você**. Home, Perfil, Esportes, Top 10, Configurações, Supabase e Android permanecem inalterados.
+
+Build: apps/web/build-r437.mjs; gate: apps/web/build-r437-official.mjs; regressão: apps/web/test-r437.mjs.
+
 ## 1.0.227 / r436 — Descobrir > Pra Você — 2026-10-02
 
 - Corrigido o efeito de **piscando/recarregando** ao abrir **Pra Você**.
