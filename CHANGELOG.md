@@ -1,3 +1,16 @@
+## 1.0.252 / r462 — sincronização canônica Fórmula 1 — 2026-10-02
+
+- Cria `cinetracker_f1_watch_sync_v462` como writer canônico de uma sessão F1 para Série (mídia 865), Esportes e F1 Hub.
+- Corrige a causa que ainda deixava Esportes fora da Série: o overload real `cinetracker_sport_mark_watched_v1(event_id,...)` agora detecta Fórmula 1, resolve o episódio no mapa e delega ao writer v462.
+- Série → Esportes/F1 Hub e F1 Hub → Série/Esportes ficam protegidos por triggers canônicos; metadado de ownership impede recursão entre triggers.
+- A escrita evita criar novo play de Série quando o episódio já está visto, impedindo duplicação de tempo por reconciliação.
+- O histórico esportivo é deduplicado por sessão mapeada no momento da escrita e conserva duração canônica da sessão.
+- Runtime r462 amplia a captura do botão real da Série, aplica Optimistic UI e reamarra os handlers finais do r423 ao writer v462.
+- Progresso visível continua vindo de `cinetracker_f1_progress_v426`; nenhuma reconciliação periódica é adicionada.
+- Migration `20261002193000_r462_f1_true_three_way_sync.sql` aplicada no Supabase de produção e registrada no repositório.
+- Android permanece 1.0.20 / 10062, sem alteração nesta release Web.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado no runtime r462.
+
 ## 1.0.251 / r461 — owner efetivo das telas ainda reproduzidas — 2026-10-02
 
 - Home Séries recebe preboot real: a view fica invisível antes do primeiro paint e só é revelada após localizar e ancorar em **Continuar assistindo**; o Histórico deixa de aparecer primeiro.
