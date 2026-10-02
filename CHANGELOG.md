@@ -1,3 +1,16 @@
+## 1.0.223 / r432 — Descobrir > Pra Você — 2026-10-01
+
+- Corrigido o ciclo que fazia Pra Você reconstruir os cards repetidamente.
+- Removido do bundle o runtime r386 obsoleto que podia reiniciar a aplicação.
+- Removidos os owners legados r395/r396.
+- Runtimes r397/r403/r404/r406/r407/r408 deixam de disputar o renderer do Pra Você.
+- Eventos `cinetracker:data-changed` e `online` são bloqueados durante Pra Você para impedir repaints automáticos.
+- **r309 é o único renderer efetivo:** cards, Watchlist, Visto e **↻ Trocar** permanecem no mesmo owner.
+- Escopo exclusivo: **Descobrir > Pra Você**; demais áreas preservadas.
+- Android permanece inalterado.
+
+Build: `apps/web/build-r432.mjs`; gate: `apps/web/build-r432-official.mjs`; regressão: `apps/web/test-r432.mjs`.
+
 ## 1.0.222 / r431 — Descobrir > Pra Você — 2026-10-01
 
 - Corrigido o carregamento preso em **“Montando recomendações…” / “Buscando indicação…”**: a montagem não espera mais `loadRecent296`.
