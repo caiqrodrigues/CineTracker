@@ -1,3 +1,12 @@
+## 1.0.248 / r458 — finalização orientada pelo vídeo — 2026-10-02
+
+- Corrige o ciclo recursivo de timers da aba Filmes introduzido na r457; a aba permanece em Filmes e chama a Watchlist v405 somente por verificações finitas.
+- Home Séries zera a posição antiga imediatamente e converge para **Continuar assistindo** assim que o painel existe, sem restaurar o fim do Histórico.
+- Descobrir > Pra Você reafirma de forma finita o owner r457 e exige **Trocar** visível nos 7 slots.
+- Perfil mantém exatamente 13 cards + meio-card **Ver mais** nas cinco listas pedidas e preserva **Desmarcar visto** no histórico diário.
+- Fórmula 1 repinta o progresso autenticado por `cinetracker_f1_progress_v426` e agenda a correção também ao abrir a série; sincronização Série ↔ Esportes ↔ F1Hub permanece preservada.
+- Sem reload global, MutationObserver, setInterval ou loop ilimitado.
+
 ## 1.0.247 / r457 — estabilidade final de Home Filmes, Pra Você, Perfil e F1 — 2026-10-02
 
 - Home > Filmes passa a manter a seleção de Filmes após os handlers legados e dispara a Watchlist v405 sem retornar sozinho para Séries.

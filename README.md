@@ -1,3 +1,7 @@
+## Web 1.0.248 / r458 — finalização Web
+
+A Home Séries converge para Continuar assistindo, Home Filmes mantém a aba e a Watchlist sem timer recursivo, Pra Você mantém Trocar nos 7 slots, Perfil preserva 13 + Ver mais e desfazer diário, e F1 usa o progresso autenticado canônico com sincronização Série/Esportes/F1Hub.
+
 ## Web 1.0.247 / r457 — estabilidade final Web
 
 Home > Filmes mantém a aba selecionada e carrega a Watchlist v405 sem regressar para Séries. Descobrir > Pra Você usa um único owner sobre os pools v421 e mantém **Trocar** nos 7 slots. O Perfil mostra exatamente 13 cards + meio-card **Ver mais** nas cinco listas principais e preserva **Desmarcar visto** no histórico diário. A Fórmula 1 usa o progresso canônico v426 para exibir assistidos/liberados, mantendo a sincronização Série + Esportes + F1Hub.
