@@ -34,7 +34,7 @@ addEventListener('popstate',()=>{const next=clean(null);if(next)nativeReplace(hi
 window.__ctR451={version:'1.0.241',scope:'canonical-url-only',ctRefreshRemoved:true};
 })();`;
 
-const early='<script>'+runtime.replace(/<\\/script/gi,'<\\/script')+'</script>';
+const early='<script>'+runtime.replaceAll('</script','<\\/script')+'</script>';
 if(!html.includes('<head>'))throw new Error('r451 missing head');
 html=html.replace('<head>','<head>'+early);
 js+='\n'+runtime+'\n';
