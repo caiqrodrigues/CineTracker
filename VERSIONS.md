@@ -1,3 +1,8 @@
+## 1.0.239 / r448
+- Bloqueio exclusivo do refresh automático periódico de Pra Você.
+- Schedulers legados r420/r421/r426 desativados.
+- Android 1.0.20 / 10062 preservado.
+
 ## 1.0.235 / r444
 - Pra Você: build final limpo e owner único r309/r432.
 - Android 1.0.20 / 10062 preservado.

@@ -1,3 +1,10 @@
+## 1.0.239 / r448 — Bloqueio do refresh automático periódico — 2026-10-02
+
+- Desativados exclusivamente os schedulers automáticos legados de Pra Você em r420, r421 e r426, que reentravam na tela em aproximadamente 1,5–1,8 s.
+- Mantidos os disparos manuais, ações dos cards, RPCs, renderer, Watchlist, Visto e Trocar.
+- Nenhuma alteração em Home, Perfil, Esportes, F1, Android ou regras de recomendação.
+- Build: apps/web/build-r448.mjs; regressão: apps/web/test-r448.mjs.
+
 ## 1.0.238 / r447 — Bloqueio do refresh automático — 2026-10-02
 
 - Bloqueadas somente as rotinas automáticas legadas de reentrada de Pra Você em r426/r427/r428.

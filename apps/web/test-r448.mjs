@@ -1,0 +1,16 @@
+import {readFile} from 'node:fs/promises';
+const js=await readFile(new URL('./dist/app-v448.js',import.meta.url),'utf8');
+const html=await readFile(new URL('./dist/index.html',import.meta.url),'utf8');
+const release=JSON.parse(await readFile(new URL('./dist/release.json',import.meta.url),'utf8'));
+const ok=(v,m)=>{if(!v)throw new Error(m)};
+ok(release.version==='1.0.239','release version');
+ok(release.revision==='r448-official-1.0.239','release revision');
+ok(js.includes('function scheduleDiscover420(){}'),'r420 periodic scheduler disabled');
+ok(js.includes('function scheduleForYouSanitize421(){}'),'r421 periodic scheduler disabled');
+ok(js.includes('function scheduleFY(){}'),'r426 periodic scheduler disabled');
+ok(!js.includes('function scheduleDiscover420(){const token='),'r420 scheduler survived');
+ok(!js.includes('function scheduleForYouSanitize421(){for(const ms of'),'r421 scheduler survived');
+ok(!js.includes('function scheduleFY(){const s=++fySeq;'),'r426 scheduler survived');
+ok(!js.includes('window.location.reload(')&&!js.includes('router.refresh('),'page reload API survived');
+ok(html.includes('app-v448.js')&&!html.includes('app-v447.js'),'html points to r448');
+console.log('TEST_R448_OK');
