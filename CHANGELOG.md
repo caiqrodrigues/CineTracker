@@ -8,6 +8,8 @@
 - Runtime r462 amplia a captura do botão real da Série, aplica Optimistic UI e reamarra os handlers finais do r423 ao writer v462.
 - Progresso visível continua vindo de `cinetracker_f1_progress_v426`; nenhuma reconciliação periódica é adicionada.
 - Migration `20261002193000_r462_f1_true_three_way_sync.sql` aplicada no Supabase de produção e registrada no repositório.
+- Hotfix `20261002194500_r462_f1_hub_delete_guard_fix.sql` aplicado: desmarcação direta no F1 Hub propaga para Série/Esportes sem reentrância dos writes canônicos.
+- Validação transacional no Supabase confirmou: writer canônico marca/desmarca os três domínios; Esportes por `event_id` propaga para Série/F1 Hub; F1 Hub direto propaga para Série/Esportes. Os testes foram executados com `ROLLBACK`, sem alterar o histórico do usuário.
 - Android permanece 1.0.20 / 10062, sem alteração nesta release Web.
 - Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado no runtime r462.
 
