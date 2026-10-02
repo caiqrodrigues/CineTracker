@@ -1,3 +1,7 @@
+## 1.0.235 / r444
+- Pra Você: build final limpo e owner único r309/r432.
+- Android 1.0.20 / 10062 preservado.
+
 ## 1.0.234 / r443
 - Pra Você: corte final dos patches dependentes de r411.
 - Android 1.0.20 / 10062 preservado.

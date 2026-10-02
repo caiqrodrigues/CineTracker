@@ -1,3 +1,13 @@
+## 1.0.235 / r444 — Descobrir > Pra Você — 2026-10-02
+
+- Criado build r444 limpo, partindo diretamente do r437 e usando versões explícitas.
+- Removidos owners legados r395–r403 e r406–r410 do bundle final.
+- Desativados os reparos automáticos de Pra Você dos r412–r415, r417 e r418.
+- r309/r432 permanece como único renderer ativo de Pra Você, incluindo Trocar, Watchlist e Visto.
+- Nenhuma alteração funcional em Home, Perfil, Esportes, F1 ou Android.
+
+Build: apps/web/build-r444.mjs; gate: apps/web/build-r444-official.mjs; regressão: apps/web/test-r444.mjs.
+
 ## 1.0.234 / r443 — Descobrir > Pra Você — 2026-10-02
 
 - Removidos os patches de `isFY` de r416/r426; ambos dependiam do owner r411, que já não existe no bundle final.

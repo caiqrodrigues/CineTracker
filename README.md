@@ -1,3 +1,8 @@
+## 1.0.235 — r444 (2026-10-02)
+- Pra Você: build final limpo, sem auto-substituição de versões e sem owners legados reentrando no renderer.
+- r309/r432 permanece como único renderer ativo.
+- Home, Perfil, Esportes, F1 e Android preservados.
+
 ## 1.0.234 — r443 (2026-10-02)
 - Pra Você: removidos os dois patches `isFY` que dependiam de r411 já removido do bundle.
 - r309/r432 permanece como único renderer ativo de Pra Você.
