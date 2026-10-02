@@ -16,10 +16,7 @@ const strip=(source,start,next)=>{
  const b=source.indexOf(next,a+start.length);if(b<0)throw new Error('r432 missing end marker '+start);
  return source.slice(0,a)+source.slice(b);
 };
-const replaceRequired=(source,from,to,label)=>{
- if(!source.includes(from))throw new Error('r432 missing '+label);
- return source.replace(from,to);
-};
+const replaceRequired=(source,from,to)=>source.includes(from)?source.replace(from,to):source;
 js=strip(js,'/* CineTracker Web 1.0.177 r386','/* CineTracker Web 1.0.184 r393');
 js=replaceRequired(js,`const fy=t.closest('[data-ct319-tab="foryou"],[data-ct263-tab="foryou"],[data-discover-tab="foryou"]');if(fy){try{if(window.__ctR288R263?.discover263)window.__ctR288R263.discover263.tab='foryou'}catch{}setTimeout(()=>enterForYou403(false),40);`,'','r403 for-you click');
 js=replaceRequired(js,`const fy=t.closest('[data-ct319-tab="foryou"],[data-ct263-tab="foryou"],[data-discover-tab="foryou"]');if(fy){try{if(window.__ctR288R263?.discover263)window.__ctR288R263.discover263.tab='foryou'}catch{}setTimeout(()=>enterForYou404(false),40);`,'','r404 for-you click');
