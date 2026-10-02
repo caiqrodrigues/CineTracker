@@ -1,3 +1,16 @@
+## 1.0.250 / r460 — correção final Web dos cinco pontos reportados — 2026-10-02
+
+- Home > Filmes: o clique em **Filmes** passa a ser a autoridade final depois dos handlers legados; a aba não retorna sozinha para Séries.
+- Home > Filmes: a Watchlist v405 aguarda autenticação/owner e faz recuperação delimitada em até três tentativas, sem reload e sem congelar a main thread.
+- Descobrir > Pra Você: recuperação finita do owner r457/v421, com até três tentativas delimitadas e validação explícita dos **7 botões Trocar**.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores ficam com exatamente **13 cards**; o 14º elemento é um botão **Ver mais** de meia largura dentro do próprio rail.
+- Perfil > Histórico diário: clique no dia do gráfico abre diretamente o renderer r426, mantendo **↶ Desmarcar visto** em cada filme, episódio e evento esportivo.
+- Fórmula 1: o progresso visível passa a ler somente `cinetracker_f1_progress_v426`; removida da entrada a reconciliação automática r423 que não deve ser necessária para apenas pintar o contador. Os writers r423 continuam sincronizando Série ↔ Esportes ↔ F1Hub e os dois tempos.
+- Produção validada no banco antes do patch: temporada 2026 possui **77 sessões liberadas e 75 assistidas**; episódios 76 e 77 estão não assistidos.
+- r460 parte da r458 para eliminar o listener de captura r459 que podia bloquear owners posteriores de Home/Pra Você.
+- Android permanece 1.0.20 / 10062.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado no runtime r460.
+
 ## 1.0.249 / r459 — correção dura orientada pelo vídeo — 2026-10-02
 
 - Home Séries recebe proteção de preboot: a view só é revelada quando **Continuar assistindo** existe e a posição é corrigida, eliminando a abertura no fim do Histórico.

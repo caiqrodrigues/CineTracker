@@ -1,3 +1,9 @@
+## Web 1.0.250 / r460
+- Home Filmes permanece selecionado e carrega Watchlist v405 com recuperação delimitada.
+- Pra Você exige sete ações Trocar.
+- Perfil limita cinco rails a 13 cards + meio-card Ver mais e mantém desfazer no histórico diário.
+- F1 usa progresso atual v426 sem reconciliação automática de boot; sincronização Série/Esportes/F1Hub r423 preservada.
+
 # CineTracker Web — 1.0.0
 
 **Package:** `1.0.0`  

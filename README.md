@@ -1,3 +1,7 @@
+## Web 1.0.250 / r460 — Home Filmes, Pra Você, Perfil e F1
+
+A r460 corrige os cinco pontos ainda reproduzidos: **Filmes** não volta para Séries e a Watchlist v405 recebe recuperação delimitada; **Pra Você** carrega pelos pools v421 e exige os 7 botões **Trocar**; o Perfil mostra **13 cards + meio-card Ver mais** nas cinco listas; o histórico diário do gráfico abre com **Desmarcar visto** por item; e a Fórmula 1 pinta o estado atual pela autoridade v426 sem reconciliação automática no boot, mantendo os writers Série + Esportes + F1Hub da r423.
+
 ## Web 1.0.249 / r459 — correção dura orientada pelo vídeo
 
 Home Séries não expõe mais o fim do Histórico antes de ancorar em **Continuar assistindo**. Home Filmes mantém a aba selecionada e recupera a Watchlist v405. Descobrir > Pra Você usa o owner v421 com sete ações **Trocar**. O Perfil mostra 13 cards + meio-card **Ver mais** nas cinco listas pedidas e mantém **Desmarcar visto** no histórico diário. A Fórmula 1 reconcilia o estado r423 e pinta o progresso autenticado r426, mantendo Série + Esportes + F1Hub sincronizados e contabilizados nos dois tempos.

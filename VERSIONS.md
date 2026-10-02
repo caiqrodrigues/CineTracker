@@ -1,3 +1,12 @@
+## Web 1.0.250 / r460
+
+- Home Filmes: aba persistente + Watchlist v405 com retry finito.
+- Pra Você: owner r457/v421 + 7 botões Trocar.
+- Perfil: 13 cards + meio-card Ver mais nas cinco listas solicitadas.
+- Histórico diário: Desmarcar visto em cada item via r426.
+- F1: 75/77 atual pela autoridade v426; escrita tripla r423 preservada.
+- Android: 1.0.20 / 10062, sem alterações.
+
 ## Web 1.0.249 / r459
 
 - Home Séries: preboot oculto até **Continuar assistindo**, sem flash do fim do Histórico.
