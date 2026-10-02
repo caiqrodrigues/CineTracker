@@ -1,1 +1,1 @@
-{"name":"cinetracker","private":true,"version":"1.0.251","scripts":{"build":"cd apps/web && npm run build","verify":"cd apps/web && npm run verify"},"engines":{"node":">=20"}}
+{"name":"cinetracker","private":true,"version":"1.0.252","scripts":{"build":"cd apps/web && npm run build","verify":"cd apps/web && npm run verify"},"engines":{"node":">=20"}}
