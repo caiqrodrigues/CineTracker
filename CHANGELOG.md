@@ -1,4 +1,4 @@
-## 1.0.255 — r465 (2026-10-02)
+## 1.0.256 — r466 (2026-10-02)\n\n### Corrigido\n- Build r465 quebrava antes de publicar por exigir um owner r399 já removido do bundle final; r466 torna esses cortes compatíveis com a base real e exige apenas os owners ainda ativos.\n- Histórico: `media_id` de filmes/episódios deixa de passar por `Number()`; UUID é enviado integralmente para `cinetracker_unmark_history_item_v426`.\n- Home: owner r461 de abas é neutralizado antes do runtime autenticado, preservando o carregamento inicial de Séries e a Watchlist v405 de Filmes.\n- Descobrir > Pra Você: reentradas r399/r461/r464 são neutralizadas quando presentes; owner visível v421 preserva os 7 slots e botões `Trocar`.\n- Perfil: 13 cards + 14º `Ver mais` preservados, inclusive Atores via RPC v465.\n\n### Validação\n- Gate r466 exige bundle, assets, RPCs atuais, Trocar delimitado, Perfil 13+Ver mais e desmarcação UUID sem coerção numérica.\n- Android preservado em 1.0.20 / versionCode 10062.\n\n## 1.0.255 — r465 (2026-10-02)
 
 ### Corrigido
 - Home Séries: owner final aguarda sessão autenticada antes de delegar a `cinetracker_home_series_v452`, evitando primeiro carregamento vazio.

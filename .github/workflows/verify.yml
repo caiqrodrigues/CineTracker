@@ -1,4 +1,4 @@
-name: Verify Web 1.0.255 r465
+name: Verify Web 1.0.256 r466
 on:
   push:
     branches: [main]
@@ -6,20 +6,20 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r465:
+  web_r466:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r465 regression gate
+      - name: Build and r466 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v465.js
-          grep -Fq "window.__ctR465Marker='real-device-home-discover-profile-history'" apps/web/dist/app-v465.js
+          node --check apps/web/dist/app-v466.js
+          grep -Fq "window.__ctR466Marker='r465-recovery-build-fixed+uuid-history-undo'" apps/web/dist/app-v466.js
           for f in apps/web/runtime-r465-part{1..7}.inc; do
             ! grep -Fq "window.location.reload(" "$f"
             ! grep -Fq "router.refresh(" "$f"
@@ -36,20 +36,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r465, android]
+    needs: [web_r466, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r465 production
+      - name: Wait for r466 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.255"' <<<"$BODY" && grep -Fq '"revision": "r465-official-1.0.255"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v465.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.256"' <<<"$BODY" && grep -Fq '"revision": "r466-official-1.0.256"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v466.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR465Marker='real-device-home-discover-profile-history'" <<<"$JS" && grep -Fq 'app-v465.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR466Marker='r465-recovery-build-fixed+uuid-history-undo'" <<<"$JS" && grep -Fq 'app-v466.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
