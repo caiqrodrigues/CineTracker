@@ -1,3 +1,12 @@
+## Web 1.0.248 / r458
+
+- Home Séries: posição inicial em Continuar assistindo.
+- Home Filmes: Watchlist v405 sem cascata recursiva.
+- Pra Você: Trocar nos 7 slots com reassert finito.
+- Perfil: 13 cards + meio-card Ver mais; desfazer diário preservado.
+- F1: progresso canônico autenticado e sincronização tripla preservada.
+- Android: 1.0.20 / 10062, sem alterações.
+
 ## Web 1.0.247 / r457
 
 - Home Filmes: seleção estável + Watchlist v405.
