@@ -1,3 +1,14 @@
+## 1.0.225 / r434 — Descobrir > Pra Você — 2026-10-02
+
+- Corrigido exclusivamente o primeiro clique em Pra Você, que ainda podia cair no owner legado antes de discover263.tab ser definido.
+- O runtime r434 intercepta a entrada da aba no capture phase, define discover.tab = 'foryou' e discover.type = 'all' antes de chamar o renderer r309.
+- O mesmo owner r309 continua responsável pelos cards e pelas ações Watchlist, Visto e ↻ Trocar.
+- Incluídas variantes de seletor da aba para cobrir o DOM real servido no Web sem alterar as demais abas.
+- Sem full-page reload, router.refresh, MutationObserver, setInterval ou loop infinito.
+- Escopo exclusivo: Descobrir > Pra Você. Home, Perfil, Esportes, Top 10, Configurações, Supabase e Android permanecem inalterados.
+
+Build: apps/web/build-r434.mjs; gate: apps/web/build-r434-official.mjs; regressão: apps/web/test-r434.mjs.
+
 ## 1.0.224 / r433 — Descobrir > Pra Você — 2026-10-01
 
 - Corrigida a tela preta introduzida no r432.
