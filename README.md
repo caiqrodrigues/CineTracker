@@ -1,3 +1,8 @@
+## 1.0.237 — r446 (2026-10-02)
+- Removida somente a renderização automática disparada por eventos `online`, evitando reinicializações da tela durante o uso.
+- **Descobrir > Pra Você, Home, Perfil, Esportes, F1 e Android permanecem sem alteração.**
+- Build: `apps/web/build-r446.mjs`; regressão: `apps/web/test-r446.mjs`.
+
 ## 1.0.236 / r445 — Descobrir > Pra Você — 2026-10-02
 
 - Eliminada a reentrada concorrente do loader de Pra Você: somente uma execução de buildForYou pode estar ativa por vez.
