@@ -1,3 +1,12 @@
+## 1.0.246 / r456 — Watchlist, Pra Você e progresso F1 — 2026-10-02
+
+- Home > Filmes usa diretamente `cinetracker_home_movies_v405`: primeira página de 120 itens aparece imediatamente e as demais páginas entram em lotes assíncronos delimitados, sem congelar a main thread.
+- Descobrir > Pra Você usa os pools filtrados `cinetracker_discover_watch_unseen_v421` e `cinetracker_discover_fresh_v421` em paralelo; os sete slots exibem **Trocar** de forma estável.
+- Mantidos os filtros rígidos já consolidados no v421 (curtas, YouTube/web, novelas, reality, stand-up, WWE e exclusões pessoais conforme o bloco).
+- Fórmula 1 passa a repintar o progresso da temporada atual pela verdade canônica de `cinetracker_home_series_v452`, eliminando o 77/77 stale quando ainda existem sessões não vistas.
+- Perfil r455 preservado: 13 cards por lista + meio-card **Ver mais** e **↶ Desmarcar visto** no histórico diário.
+- Sem full-page reload, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado.
+
 ## 1.0.245 / r455 — Perfil: 13 cards, Ver mais e desfazer histórico — 2026-10-02
 
 - Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores exibem exatamente 13 cards na visão resumida do Perfil.

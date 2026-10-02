@@ -1,3 +1,7 @@
+## Web 1.0.246 / r456 — Watchlist + Pra Você + F1 canônico
+
+A Web recupera a Watchlist de Filmes diretamente da autoridade SQL v405, carrega o **Pra Você** por seis pools v421 filtrados e mantém **Trocar** nos sete slots. O progresso da Fórmula 1 é repintado pela autoridade v452 da temporada atual. O Perfil r455 permanece intacto com 13 cards, meio-card **Ver mais** e desfazer item do histórico diário.
+
 ## Web 1.0.245 / r455 — Perfil 13 cards + Ver mais e desfazer histórico
 
 As listas de **Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores** no Perfil mostram exatamente **13 cards** e, quando há mais conteúdo, um **14º controle de meia largura** no tamanho vertical do card com **Ver mais**, que aciona o fluxo de expansão já existente. No histórico diário aberto pelo gráfico, cada item visto mantém a ação **↶ Desmarcar visto** da autoridade r426, inclusive episódios, filmes e eventos esportivos, sem reload global.

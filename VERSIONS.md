@@ -1,3 +1,11 @@
+## Web 1.0.246 / r456
+
+- Home Filmes: Watchlist v405 com paginação assíncrona delimitada.
+- Pra Você: pools v421 + ações completas com Trocar.
+- F1: progresso atual pela autoridade v452.
+- Perfil: r455 preservado (13 cards + Ver mais + desfazer histórico).
+- Android: 1.0.20 / versionCode 10062, sem alterações.
+
 ## Web 1.0.245 / r455
 
 - Perfil limitado a 13 cards por lista na visão resumida.
