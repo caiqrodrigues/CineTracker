@@ -20,18 +20,25 @@ function homeKind457(){
  const b=q('[data-home-tab].active,[data-home-tab][aria-selected="true"]');
  return String(b?.dataset?.homeTab||'series')==='movies'?'movies':'series';
 }
-function setHomeKind457(kind){
+function applyHomeKind457(kind){
  if(routeNow()!=='home')return false;
  kind=kind==='movies'?'movies':'series';
  try{if(window.__ctR371&&typeof window.__ctR371==='object')window.__ctR371.activeTab=kind}catch{}
  for(const b of qa('[data-home-tab]')){const on=String(b.dataset.homeTab||'series')===kind;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')}
  for(const v of qa('[data-home-view]')){const on=String(v.dataset.homeView||'series')===kind;v.hidden=!on;v.style.display=on?'':'none'}
  try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{}
+ document.documentElement.dataset.ct457HomeKind=kind;
+ return true;
+}
+function setHomeKind457(kind){
+ kind=kind==='movies'?'movies':'series';
+ if(!applyHomeKind457(kind))return false;
  if(kind==='movies'){
   const token=++homeToken457;
-  later(()=>{if(token!==homeToken457||routeNow()!=='home'||homeKind457()!=='movies')return;setHomeKind457('movies');void window.__ctR456?.loadMovies?.(false)},[0,80,260,700,1500]);
+  later(()=>{if(token!==homeToken457||routeNow()!=='home'||homeKind457()!=='movies')return;applyHomeKind457('movies');void window.__ctR456?.loadMovies?.(false)},[80,260,700,1500]);
+ }else{
+  homeToken457++;
  }
- document.documentElement.dataset.ct457HomeKind=kind;
  return true;
 }
 function enterMovies457(){
