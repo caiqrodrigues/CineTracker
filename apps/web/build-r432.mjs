@@ -21,8 +21,6 @@ const replaceRequired=(source,from,to,label)=>{
  return source.replace(from,to);
 };
 js=strip(js,'/* CineTracker Web 1.0.177 r386','/* CineTracker Web 1.0.184 r393');
-js=strip(js,'/* CineTracker Web 1.0.186 r395','/* CineTracker Web 1.0.187 r396');
-js=strip(js,'/* CineTracker Web 1.0.187 r396','/* CineTracker Web 1.0.188 r397');
 js=replaceRequired(js,`const fy=t.closest('[data-ct319-tab="foryou"],[data-ct263-tab="foryou"],[data-discover-tab="foryou"]');if(fy){try{if(window.__ctR288R263?.discover263)window.__ctR288R263.discover263.tab='foryou'}catch{}setTimeout(()=>enterForYou403(false),40);`,'','r403 for-you click');
 js=replaceRequired(js,`const fy=t.closest('[data-ct319-tab="foryou"],[data-ct263-tab="foryou"],[data-discover-tab="foryou"]');if(fy){try{if(window.__ctR288R263?.discover263)window.__ctR288R263.discover263.tab='foryou'}catch{}setTimeout(()=>enterForYou404(false),40);`,'','r404 for-you click');
 js=replaceRequired(js,`const fy=t.closest('[data-ct319-tab="foryou"],[data-ct263-tab="foryou"],[data-discover-tab="foryou"]');if(fy)for(const ms of [80,300,900,2200,5000,12000,30000,46000])setTimeout(()=>{bind();void loadForYou(false)},ms)`,'','r406 for-you timers');
