@@ -1,3 +1,14 @@
+## 1.0.236 / r445 — Descobrir > Pra Você — 2026-10-02
+
+- Eliminada a reentrada concorrente do loader de Pra Você: somente uma execução de buildForYou pode estar ativa por vez.
+- Chamadas automáticas repetidas durante a mesma montagem são coalescidas; nova montagem automática fica bloqueada por 15 segundos.
+- O estado e o DOM de Pra Você deixam de ser reconstruídos por chamadas concorrentes.
+- O parâmetro externo ct_refresh é removido com history.replaceState, sem recarregar a página.
+- Trocar, Watchlist e Visto permanecem sob a autoridade r309.
+- Escopo exclusivo em Descobrir > Pra Você; Home, Perfil, Esportes, F1 e Android preservados.
+
+Build: apps/web/build-r445.mjs; gate: apps/web/build-r445-official.mjs; regressão: apps/web/test-r445.mjs.
+
 ## 1.0.235 — r444 (2026-10-02)
 - Pra Você: build final limpo, sem auto-substituição de versões e sem owners legados reentrando no renderer.
 - r309/r432 permanece como único renderer ativo.
