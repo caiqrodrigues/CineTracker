@@ -1,3 +1,7 @@
+## 1.0.229 / r438
+- Pra Você: corta owners legados e reentradas automáticas; r309/r432 fica como owner único.
+- Home r404/r405 preservada; Android 1.0.20 / 10062.
+
 ## 1.0.226 / r435
 - Pra Você: corrige o proxy quebrado de `discover263` que causava tela preta.
 - Pra Você: bridge estável `window.__ctR309Api` para o owner real.

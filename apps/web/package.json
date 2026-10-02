@@ -1,30 +1,16 @@
 {
   "name": "cinetracker-web",
   "private": true,
-  "version": "1.0.228",
+  "version": "1.0.229",
   "type": "module",
   "scripts": {
-    "build": "node build-r437.mjs",
+    "build": "node build-r438.mjs",
     "build:legacy": "node build-r405.mjs",
-    "verify": "node build-r437-official.mjs",
-    "test:r427": "node test-r427.mjs",
-    "release:r427": "node build-r427-official.mjs",
-    "test:r428": "node test-r428.mjs",
-    "release:r428": "node build-r428-official.mjs",
-    "test:r429": "node test-r429.mjs",
-    "release:r429": "node build-r429-official.mjs",
-    "test:r430": "node test-r430.mjs",
-    "release:r430": "node build-r430-official.mjs",
-    "test:r431": "node test-r431.mjs",
-    "release:r431": "node build-r431-official.mjs",
-    "test:r432": "node test-r432.mjs",
-    "release:r432": "node build-r432-official.mjs",
-    "test:r436": "node test-r436.mjs",
-    "release:r436": "node build-r436-official.mjs",
+    "verify": "node build-r438-official.mjs",
     "test:r437": "node test-r437.mjs",
-    "release:r437": "node build-r437-official.mjs"
+    "release:r437": "node build-r437-official.mjs",
+    "test:r438": "node test-r438.mjs",
+    "release:r438": "node build-r438-official.mjs"
   },
-  "devDependencies": {
-    "playwright": "^1.55.0"
-  }
+  "devDependencies": {"playwright": "^1.55.0"}
 }

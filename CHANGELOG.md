@@ -1,3 +1,15 @@
+## 1.0.229 / r438 — Descobrir > Pra Você — 2026-10-02
+
+- Corrigido o ciclo de repintura/recarregamento visual que fazia a tela de **Pra Você** reiniciar aproximadamente a cada 2 segundos.
+- Removidos do bundle final os owners legados r395–r403 e r406–r410, que continuavam reentrando no carregamento/renderização do Pra Você.
+- Desativadas as rotinas automáticas de reparo de Pra Você dos runtimes r412–r418 e r426; elas não alteram mais o DOM dessa aba.
+- r404/r405 permanecem somente como autoridades de Home; o bridge de Pra Você delega diretamente ao r309.
+- r309/r432 permanece como único renderer/owner ativo de Pra Você.
+- **Trocar**, **+ Watchlist** e **✓ Visto** continuam no renderer r309.
+- Escopo exclusivo: **Descobrir > Pra Você**; Home, Perfil, Esportes, F1 e Android preservados.
+
+Build: apps/web/build-r438.mjs; gate: apps/web/build-r438-official.mjs; regressão: apps/web/test-r438.mjs.
+
 ## 1.0.228 / r437 — Descobrir > Pra Você — 2026-10-02
 
 - Corrigido o **pisca/recarregamento visual** durante a montagem de Pra Você.

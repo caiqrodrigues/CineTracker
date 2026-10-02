@@ -1,3 +1,10 @@
+## 1.0.229 — r438 (2026-10-02)
+- **Descobrir > Pra Você:** eliminado o ciclo de repintura causado pelos owners legados r395–r410 que ainda permaneciam no bundle final.
+- r309/r432 permanece como único renderer ativo de Pra Você.
+- **Trocar**, Watchlist e Visto continuam no owner r309.
+- Home preserva as autoridades r404/r405; Perfil, Esportes, F1 e Android permanecem sem alteração.
+- Build: apps/web/build-r438.mjs; gate: apps/web/build-r438-official.mjs; regressão: apps/web/test-r438.mjs.
+
 ## 1.0.228 — r437 (2026-10-02)
 - **Descobrir > Pra Você:** corrigido o pisca causado por repaints idênticos e reset repetido do loader.
 - O DOM é preservado quando as recomendações não mudam.
