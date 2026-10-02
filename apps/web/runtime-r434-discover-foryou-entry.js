@@ -3,7 +3,7 @@
 'use strict';
 if(window.__ctR434?.version==='1.0.225')return;
 const q=(s,r=document)=>r?.querySelector?.(s)||null;
-const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return String(location.pathname||'').replace(/^\\//,'')||'home'}};
+const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return String(location.pathname||'').replace(/^\//,'')||'home'}};
 const discoverState=()=>window.__ctR288R263?.discover263||null;
 const owner=()=>window.__ctR309&&typeof window.__ctR309.buildForYou==='function'?window.__ctR309:null;
 const isDiscover=()=>routeNow()==='discover';
