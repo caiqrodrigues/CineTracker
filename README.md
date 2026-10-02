@@ -1,3 +1,7 @@
+## Web 1.0.249 / r459 — correção dura orientada pelo vídeo
+
+Home Séries não expõe mais o fim do Histórico antes de ancorar em **Continuar assistindo**. Home Filmes mantém a aba selecionada e recupera a Watchlist v405. Descobrir > Pra Você usa o owner v421 com sete ações **Trocar**. O Perfil mostra 13 cards + meio-card **Ver mais** nas cinco listas pedidas e mantém **Desmarcar visto** no histórico diário. A Fórmula 1 reconcilia o estado r423 e pinta o progresso autenticado r426, mantendo Série + Esportes + F1Hub sincronizados e contabilizados nos dois tempos.
+
 ## Web 1.0.248 / r458 — finalização Web
 
 A Home Séries converge para Continuar assistindo, Home Filmes mantém a aba e a Watchlist sem timer recursivo, Pra Você mantém Trocar nos 7 slots, Perfil preserva 13 + Ver mais e desfazer diário, e F1 usa o progresso autenticado canônico com sincronização Série/Esportes/F1Hub.

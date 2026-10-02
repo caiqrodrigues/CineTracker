@@ -1,3 +1,14 @@
+## 1.0.249 / r459 — correção dura orientada pelo vídeo — 2026-10-02
+
+- Home Séries recebe proteção de preboot: a view só é revelada quando **Continuar assistindo** existe e a posição é corrigida, eliminando a abertura no fim do Histórico.
+- Home Filmes passa a ter owner de clique em captura: permanece em **Filmes**, zera o scroll e carrega a Watchlist por `cinetracker_home_movies_v405`, com uma única recuperação delimitada.
+- Descobrir > Pra Você converge para o owner r457/v421, com um único retry delimitado e exigência de **7 botões Trocar** nos sete slots.
+- Perfil limita exatamente **13 cards** em Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores; o 14º elemento é um **Ver mais** clicável com metade da largura do card.
+- Histórico diário do Perfil reafirma o renderer r426 e o botão **↶ Desmarcar visto** em cada filme, episódio e evento esportivo.
+- Fórmula 1 reconcilia o mapa/sincronização r423 antes de pintar o progresso autenticado r426; Série, Esportes e F1Hub continuam escrevendo o mesmo estado e contabilizando tempo nos dois domínios.
+- Android permanece 1.0.20 / 10062.
+- Sem full-page reload, `router.refresh()`, MutationObserver, setInterval ou loop ilimitado.
+
 ## 1.0.248 / r458 — finalização orientada pelo vídeo — 2026-10-02
 
 - Corrige o ciclo recursivo de timers da aba Filmes introduzido na r457; a aba permanece em Filmes e chama a Watchlist v405 somente por verificações finitas.

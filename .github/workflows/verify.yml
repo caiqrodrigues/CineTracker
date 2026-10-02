@@ -1,4 +1,4 @@
-name: Verify Web 1.0.248 r458
+name: Verify Web 1.0.249 r459
 on:
   push:
     branches: [main]
@@ -6,27 +6,31 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r458:
+  web_r459:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r458 regression gate
+      - name: Build and r459 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v458.js
-          grep -Fq "window.__ctR458Marker='finite-home-tabs+foryou-7-swap+profile-13-half+f1-75-of-77+daily-undo'" apps/web/dist/app-v458.js
-          grep -Fq "cinetracker_home_movies_v405" apps/web/dist/app-v458.js
-          grep -Fq "cinetracker_discover_fresh_v421" apps/web/dist/app-v458.js
-          grep -Fq "data-ct457-action=\"swap\"" apps/web/dist/app-v458.js
-          grep -Fq "const PROFILE_LIMIT_457=13" apps/web/dist/app-v458.js
-          grep -Fq "cinetracker_f1_progress_v426" apps/web/dist/app-v458.js
-          ! grep -Fq "window.location.reload(" apps/web/dist/app-v458.js
-          ! grep -Fq "router.refresh(" apps/web/dist/app-v458.js
+          node --check apps/web/dist/app-v459.js
+          grep -Fq "window.__ctR459Marker='hard-home-tabs+watchlist-v405+foryou-v421+profile-13-half+daily-undo+f1-r423-r426'" apps/web/dist/app-v459.js
+          grep -Fq "cinetracker_home_movies_v405" apps/web/dist/app-v459.js
+          grep -Fq "cinetracker_discover_fresh_v421" apps/web/dist/app-v459.js
+          grep -Fq "data-ct457-action=\"swap\"" apps/web/dist/app-v459.js
+          grep -Fq "const PROFILE_LIMIT_459=13" apps/web/dist/app-v459.js
+          grep -Fq "cinetracker_f1_watch_sync_v423" apps/web/dist/app-v459.js
+          grep -Fq "cinetracker_f1_progress_v426" apps/web/dist/app-v459.js
+          grep -Fq "cinetracker_unmark_history_item_v426" apps/web/dist/app-v459.js
+          ! grep -Fq "window.location.reload(" apps/web/runtime-r459-video-hard-owner.js
+          ! grep -Fq "router.refresh(" apps/web/runtime-r459-video-hard-owner.js
+          ! grep -Fq "new MutationObserver" apps/web/runtime-r459-video-hard-owner.js
+          ! grep -Fq "setInterval(" apps/web/runtime-r459-video-hard-owner.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,19 +40,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r458, android]
+    needs: [web_r459, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r458 production
+      - name: Wait for r459 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.248"' <<<"$BODY" && grep -Fq '"revision": "r458-official-1.0.248"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v458.js?ct=$CT" || true)"
-              if grep -Fq "window.__ctR458Marker='finite-home-tabs+foryou-7-swap+profile-13-half+f1-75-of-77+daily-undo'" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "1.0.249"' <<<"$BODY" && grep -Fq '"revision": "r459-official-1.0.249"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v459.js?ct=$CT" || true)"
+              HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
+              if grep -Fq "window.__ctR459Marker='hard-home-tabs+watchlist-v405+foryou-v421+profile-13-half+daily-undo+f1-r423-r426'" <<<"$JS" && grep -Fq 'app-v459.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5

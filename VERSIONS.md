@@ -1,3 +1,12 @@
+## Web 1.0.249 / r459
+
+- Home Séries: preboot oculto até **Continuar assistindo**, sem flash do fim do Histórico.
+- Home Filmes: aba Filmes persistente + Watchlist v405 com recuperação delimitada.
+- Pra Você: owner r457/v421 + 7 botões Trocar.
+- Perfil: exatamente 13 cards + meio-card Ver mais nas cinco listas; desfazer diário r426.
+- F1: reconciliação r423 + progresso autenticado r426; Série/Esportes/F1Hub e dois contadores sincronizados.
+- Android: 1.0.20 / 10062, sem alterações.
+
 ## Web 1.0.248 / r458
 
 - Home Séries: posição inicial em Continuar assistindo.
