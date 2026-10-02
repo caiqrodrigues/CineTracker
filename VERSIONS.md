@@ -1,3 +1,10 @@
+## Web 1.0.245 / r455
+
+- Perfil limitado a 13 cards por lista na visão resumida.
+- 14º elemento é o botão de meia largura **Ver mais**, ligado ao fluxo nativo da seção.
+- Histórico diário mantém botão **↶ Desmarcar visto** por item.
+- Home, Descobrir, Esportes, F1 e Android 1.0.20 / 10062 preservados.
+
 ## Web 1.0.244 / r454
 
 - Recuperado o boot/tela preta da r453.

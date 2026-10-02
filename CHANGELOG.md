@@ -1,3 +1,13 @@
+## 1.0.245 / r455 — Perfil: 13 cards, Ver mais e desfazer histórico — 2026-10-02
+
+- Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores exibem exatamente 13 cards na visão resumida do Perfil.
+- Quando existem mais itens, o 14º elemento visual é um botão **Ver mais** com metade da largura padrão do card (75 px sobre o card-base de 150 px) e a mesma altura visual do rail.
+- O novo botão delega ao **Ver mais** nativo de cada seção; não expande dados por um caminho paralelo.
+- O histórico diário aberto pelo gráfico reafirma o renderer r426, exibindo **↶ Desmarcar visto** em cada filme, episódio e evento esportivo.
+- Desmarcar remove somente o item exato e dispara atualização local por `cinetracker:data-changed`, sem full-page reload.
+- Home, Descobrir, Esportes, Fórmula 1 e Android permanecem inalterados.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado no runtime r455.
+
 ## 1.0.244 / r454 — Recuperação da tela preta no boot — 2026-10-02
 
 - Corrigida a tela preta introduzida pela r453.

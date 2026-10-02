@@ -1,3 +1,7 @@
+## Web 1.0.245 / r455 — Perfil 13 cards + Ver mais e desfazer histórico
+
+As listas de **Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores** no Perfil mostram exatamente **13 cards** e, quando há mais conteúdo, um **14º controle de meia largura** no tamanho vertical do card com **Ver mais**, que aciona o fluxo de expansão já existente. No histórico diário aberto pelo gráfico, cada item visto mantém a ação **↶ Desmarcar visto** da autoridade r426, inclusive episódios, filmes e eventos esportivos, sem reload global.
+
 ## Web 1.0.244 / r454 — boot recuperado sem patch destrutivo
 
 A r454 elimina a tela preta da r453 voltando à base funcional r452 e desativando apenas os gatilhos automáticos de verificação de release. Nenhum bloco de runtime é removido; Fórmula 1, Home, Descobrir, Perfil e Esportes permanecem na autoridade r452.
