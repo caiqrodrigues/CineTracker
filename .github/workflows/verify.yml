@@ -19,7 +19,7 @@ jobs:
           npm run build
           npm run verify
           node --check apps/web/dist/app-v458.js
-          grep -Fq "window.__ctR458Marker='home-movies-sticky+foryou-v421-owner+profile-13-half+f1-v426-progress'" apps/web/dist/app-v458.js
+          grep -Fq "window.__ctR458Marker='finite-home-tabs+foryou-7-swap+profile-13-half+f1-75-of-77+daily-undo'" apps/web/dist/app-v458.js
           grep -Fq "cinetracker_home_movies_v405" apps/web/dist/app-v458.js
           grep -Fq "cinetracker_discover_fresh_v421" apps/web/dist/app-v458.js
           grep -Fq "data-ct457-action=\"swap\"" apps/web/dist/app-v458.js
@@ -48,7 +48,7 @@ jobs:
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
             if grep -Fq '"version": "1.0.248"' <<<"$BODY" && grep -Fq '"revision": "r458-official-1.0.248"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v458.js?ct=$CT" || true)"
-              if grep -Fq "window.__ctR458Marker='home-movies-sticky+foryou-v421-owner+profile-13-half+f1-v426-progress'" <<<"$JS"; then exit 0; fi
+              if grep -Fq "window.__ctR458Marker='finite-home-tabs+foryou-7-swap+profile-13-half+f1-75-of-77+daily-undo'" <<<"$JS"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
