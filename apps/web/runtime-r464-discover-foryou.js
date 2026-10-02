@@ -9,7 +9,7 @@ const rows=v=>Array.isArray(v)?v:[];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
 const rpcCall=(name,args)=>{if(typeof rpc!=='function')return Promise.reject(new Error('rpc unavailable'));return Promise.resolve(rpc(name,args))};
-const unwrap=v=>v&&typeof v==='object'&&!Array.isArray(v)&&v.data!=null?v.data:v;
+const unwrap=v=>Array.isArray(v)&&v.length===1&&v[0]&&typeof v[0]==='object'?unwrap(v[0]):v&&typeof v==='object'&&!Array.isArray(v)&&v.data!=null?unwrap(v.data):v;
 const timeout=(p,ms)=>Promise.race([Promise.resolve(p),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 const root464=()=>q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]')||q('[data-discover-content]');
 const normalizeText=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
@@ -72,14 +72,16 @@ async function load(force=false){
  setForYouState();if(routeNow()!=='discover')return false;if(loadTask&&!force)return loadTask;
  const token=++loadToken;if(!q('[data-ct464-foryou]',root464()))renderLoading();
  loadTask=(async()=>{
-  const kinds=['movie','series','anime'];
-  const specs=[...kinds.map(k=>['watch',k]),...kinds.map(k=>['fresh',k])];
-  const settled=await Promise.allSettled(specs.map(([g,k])=>fetchPool(g,k)));
-  if(token!==loadToken||routeNow()!=='discover')return false;
-  const next=emptyState();
-  settled.forEach((r,i)=>{if(r.status==='fulfilled')next[specs[i][0]][specs[i][1]]=rows(r.value)});
-  state=next;chooseDaily();render();
+  const kinds=['movie','series','anime'],specs=[...kinds.map(k=>['watch',k]),...kinds.map(k=>['fresh',k])];let next=emptyState();
+  for(const delay of [0,300,900]){
+   if(delay)await new Promise(r=>setTimeout(r,delay));if(token!==loadToken||routeNow()!=='discover')return false;
+   const settled=await Promise.allSettled(specs.map(([g,k])=>fetchPool(g,k)));next=emptyState();
+   settled.forEach((r,i)=>{if(r.status==='fulfilled')next[specs[i][0]][specs[i][1]]=rows(r.value)});
+   if(kinds.some(k=>next.watch[k].length||next.fresh[k].length))break;
+  }
+  if(token!==loadToken||routeNow()!=='discover')return false;state=next;chooseDaily();render();
   document.documentElement.dataset.ct464PoolCounts=JSON.stringify({watch:Object.fromEntries(kinds.map(k=>[k,state.watch[k].length])),fresh:Object.fromEntries(kinds.map(k=>[k,state.fresh[k].length]))});
+  if(!kinds.some(k=>state.watch[k].length||state.fresh[k].length))document.documentElement.dataset.ct464ForYou='empty';
   return true;
  })().catch(()=>{if(token===loadToken){state=emptyState();render();document.documentElement.dataset.ct464ForYou='error'}return false}).finally(()=>{if(token===loadToken)loadTask=null});
  return loadTask;
@@ -124,6 +126,9 @@ window.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&routeNo
 window.addEventListener('popstate',()=>setTimeout(()=>{if(isForYou())activate()},0));
 window.addEventListener('cinetracker:data-changed',()=>setTimeout(()=>{if(isForYou())void load(true)},0));
 for(const n of ['__ctR378LoadForYou','__ctR379LoadForYou','__ctR380LoadForYou','__ctR382LoadForYou','__ctR383LoadForYou','__ctR384LoadForYou','__ctR385LoadForYou','__ctR388LoadForYou'])window[n]=load;
+for(const o of [window.__ctR309,window.__ctR309Api])if(o&&typeof o==='object'){o.buildForYou=load;o.swap=swap}
+if(window.__ctR449&&typeof window.__ctR449==='object'){window.__ctR449.load=load;window.__ctR449.paint=render;window.__ctR449.swap=swap}
+if(window.__ctR461&&typeof window.__ctR461==='object'){window.__ctR461.loadForYou=load;window.__ctR461.paintForYou=render}
 for(const ms of [0,250,800,1800])setTimeout(()=>{if(isForYou())activate()},ms);
 window.__ctR464={version:'1.0.254',scope:'discover-foryou-only',load,render,swap,activate};
 })();
