@@ -1,3 +1,7 @@
+## 1.0.233 / r442
+- Pra Você: montagem robusta por identificador de runtime.
+- Android 1.0.20 / 10062 preservado.
+
 ## 1.0.232 / r441
 - Pra Você: montagem final simplificada e estabilizada.
 - Android 1.0.20 / 10062 preservado.

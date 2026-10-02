@@ -1,3 +1,11 @@
+## 1.0.233 / r442 — Descobrir > Pra Você — 2026-10-02
+
+- Tornada robusta a identificação dos runtimes r412–r418/r426 durante a montagem do bundle.
+- O corte dos owners legados permanece exclusivo de Pra Você.
+- r309/r432 continua como único renderer ativo, incluindo Trocar, Watchlist e Visto.
+
+Build: apps/web/build-r442.mjs; gate: apps/web/build-r442-official.mjs; regressão: apps/web/test-r442.mjs.
+
 ## 1.0.232 / r441 — Descobrir > Pra Você — 2026-10-02
 
 - Removido o patch textual frágil do click handler r404; ele não era necessário porque a autoridade local isForYou=false já impede qualquer carregamento legado.
