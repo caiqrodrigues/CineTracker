@@ -1,3 +1,10 @@
+## 1.0.238 / r447 — Bloqueio do refresh automático — 2026-10-02
+
+- Bloqueadas somente as rotinas automáticas legadas de reentrada de Pra Você em r426/r427/r428.
+- Mantida a remoção da renderização automática causada pelo evento `online`.
+- Nenhuma ação manual, renderer, botão, RPC, Home, Perfil, Esportes, F1 ou Android foi alterado.
+- Build: `apps/web/build-r447.mjs`; regressão: `apps/web/test-r447.mjs`.
+
 ## 1.0.237 / r446 — Bloqueio de refresh automático — 2026-10-02
 
 - Removida exclusivamente a chamada automática de `render()` disparada pelo evento `online`.
