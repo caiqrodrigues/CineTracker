@@ -1,3 +1,10 @@
+## 1.0.227 — r436 (2026-10-02)
+- **Descobrir > Pra Você:** eliminado o pisca causado por montagens concorrentes e repaints idênticos.
+- A tela mantém o DOM existente quando a recomendação não mudou.
+- **Trocar**, Watchlist e Visto continuam no owner r309.
+- Escopo exclusivo em Pra Você; demais áreas e Android preservados.
+- Build: apps/web/build-r436.mjs; gate: apps/web/build-r436-official.mjs; regressão: apps/web/test-r436.mjs.
+
 ## 1.0.225 — r434 (2026-10-02)
 
 - Descobrir > Pra Você: corrigido o primeiro clique que ainda podia entregar a aba ao renderer legado e resultar em tela preta.
