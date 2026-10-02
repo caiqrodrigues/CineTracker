@@ -1,0 +1,15 @@
+import {readFile} from 'node:fs/promises';
+if(process.env.CT_R435_SKIP_BUILD!=='1')await import('./build-r435.mjs');
+const [js,rel,pkg,rootPkg,html,sw]=await Promise.all([readFile('dist/app-v435.js','utf8'),readFile('dist/release.json','utf8'),readFile('package.json','utf8'),readFile('../../package.json','utf8'),readFile('dist/index.html','utf8'),readFile('dist/service-worker.js','utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('R435 '+m)};
+const r=JSON.parse(rel),local=JSON.parse(pkg),root=JSON.parse(rootPkg);
+ok(r.version==='1.0.226'&&r.revision==='r435-official-1.0.226','release identity');
+ok(local.version==='1.0.226'&&root.version==='1.0.226','versions');
+ok(html.includes('app-v435.js')&&!html.includes('app-v434.js'),'html asset');
+ok(sw.includes('ct-web-1.0.226-r435')&&sw.includes('app-v435.js'),'service worker asset');
+ok(js.includes('const discover=new Proxy({}, {get(_t,p){try{return window.__ctR288R263?.discover263?.[p]}'),'real discover263 proxy');
+ok(!js.includes("dynamicProxy('__ctR288R263.discover263')"),'broken dotted proxy removed');
+ok(js.includes('window.__ctR309Api={buildForYou'),'r309 API bridge');
+ok(js.includes('data-ct309-swap'),'Trocar action');
+ok(!js.includes('window.location.reload(')&&!js.includes('router.refresh('),'forbidden refresh');
+console.log('R435_STATIC_OK');

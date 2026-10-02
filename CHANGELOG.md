@@ -1,3 +1,14 @@
+## 1.0.226 / r435 — Descobrir > Pra Você — 2026-10-02
+
+- Corrigida a tela preta do **Pra Você** causada pelo proxy que tratava `__ctR288R263.discover263` como uma propriedade literal com ponto no nome.
+- O renderer r309 agora recebe e altera o objeto real `window.__ctR288R263.discover263`.
+- Exposto um bridge estável `window.__ctR309Api` para o owner do Pra Você durante o boot, evitando dependência de estado intermediário do marcador r309.
+- Cards, filtros, Watchlist, Visto e **↻ Trocar** continuam no renderer r309; nenhuma regra de recomendação foi alterada.
+- Escopo exclusivo: **Descobrir > Pra Você**. Home, Perfil, Esportes, Top 10, Configurações, Supabase e Android permanecem inalterados.
+- Sem full-page reload, `router.refresh()`, `MutationObserver`, `setInterval` ou loop infinito.
+
+Build: `apps/web/build-r435.mjs`; gate: `apps/web/build-r435-official.mjs`; regressão: `apps/web/test-r435.mjs`.
+
 ## 1.0.225 / r434 — Descobrir > Pra Você — 2026-10-02
 
 - Corrigido exclusivamente o primeiro clique em Pra Você, que ainda podia cair no owner legado antes de discover263.tab ser definido.

@@ -1,12 +1,12 @@
 {
   "name": "cinetracker-web",
   "private": true,
-  "version": "1.0.225",
+  "version": "1.0.226",
   "type": "module",
   "scripts": {
-    "build": "node build-r434.mjs",
+    "build": "node build-r435.mjs",
     "build:legacy": "node build-r405.mjs",
-    "verify": "node build-r434-official.mjs",
+    "verify": "node build-r435-official.mjs",
     "test:r427": "node test-r427.mjs",
     "release:r427": "node build-r427-official.mjs",
     "test:r428": "node test-r428.mjs",

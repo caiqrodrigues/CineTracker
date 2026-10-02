@@ -1,3 +1,9 @@
+## 1.0.226 / r435
+- Pra Você: corrige o proxy quebrado de `discover263` que causava tela preta.
+- Pra Você: bridge estável `window.__ctR309Api` para o owner real.
+- Cards e ações Watchlist/Visto/Trocar permanecem no r309.
+- Escopo exclusivo: Pra Você; Android permanece 1.0.20 / 10062.
+
 ## 1.0.225 / r434
 - Pra Você: primeiro clique agora define discover.tab='foryou' antes do renderer r309.
 - Corrige a tela preta causada pela entrada ainda passar ao owner legado.
