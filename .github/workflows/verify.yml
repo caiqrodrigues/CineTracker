@@ -1,4 +1,4 @@
-name: Verify Web 1.0.224 r433 Descobrir Pra Voce
+name: Verify Web 1.0.225 r434 Descobrir Pra Voce
 on:
   push:
     branches: [main]
@@ -6,25 +6,25 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r433:
+  web_r434:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r433 regression gate
+      - name: Build and r434 regression gate
         working-directory: apps/web
         run: |
           set -euo pipefail
-          node --check build-r433.mjs
-          node --check build-r433-official.mjs
-          node --check test-r433.mjs
-          node build-r433-official.mjs
-          node --check dist/app-v433.js
-          grep -Fq "window.__ctR431" dist/app-v433.js
-          grep -Fq "window.__ctR309" dist/app-v433.js
-          grep -Fq "data-ct309-swap" dist/app-v433.js
+          node --check build-r434.mjs
+          node --check build-r434-official.mjs
+          node --check test-r434.mjs
+          node build-r434-official.mjs
+          node --check dist/app-v434.js
+          grep -Fq "window.__ctR431" dist/app-v434.js
+          grep -Fq "window.__ctR309" dist/app-v434.js
+          grep -Fq "data-ct309-swap" dist/app-v434.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r433, android]
+    needs: [web_r434, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -43,10 +43,10 @@ jobs:
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.224"' <<<"$BODY" && grep -Fq '"revision": "r433-official-1.0.224"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v433.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.225"' <<<"$BODY" && grep -Fq '"revision": "r434-official-1.0.225"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v434.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR431" <<<"$JS" && grep -Fq 'data-ct309-swap' <<<"$JS" && grep -Fq 'app-v433.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR431" <<<"$JS" && grep -Fq 'data-ct309-swap' <<<"$JS" && grep -Fq 'app-v434.js' <<<"$HTML"; then
                 exit 0
               fi
             fi
