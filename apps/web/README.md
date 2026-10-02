@@ -1,3 +1,8 @@
+## Web 1.0.252 / r462
+- F1 usa `cinetracker_f1_watch_sync_v462` como writer único entre Série, Esportes e F1 Hub.
+- O overload esportivo por `event_id` agora sincroniza a Série e o F1 Hub; Série e F1 Hub sincronizam Esportes.
+- Cada sessão F1 mantém tempo em Séries e em Esportes, sem full-page reload.
+
 ## Web 1.0.251 / r461
 - Home Séries: preboot + âncora em Continuar assistindo antes de revelar a view.
 - Home Filmes: Watchlist direta por cinetracker_home_movies_v405.
