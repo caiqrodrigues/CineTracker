@@ -33,6 +33,6 @@ const prev=JSON.parse(releaseRaw);
 const release={...prev,version:'1.0.223',revision:'r432-official-1.0.223',base:'r431+r432-foryou-refresh-removal',scope:'discover-foryou-only',discover_foryou:'r309 sole renderer; obsolete refresh and legacy repaint paths removed',discover_actions:'Watchlist/Visto/Trocar owned by r309',home:'unchanged-r431',profile:'unchanged-r431',sports:'unchanged-r431',android:'unchanged'};
 await Promise.all([writeFile(resolve(dist,'app-v432.js'),js),writeFile(resolve(dist,'app-v432.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
 await Promise.all([rm(resolve(dist,'app-v431.js'),{force:true}),rm(resolve(dist,'app-v431.css'),{force:true})]);
-if(js.includes('/* CineTracker Web 1.0.177 r386')||js.includes('/* CineTracker Web 1.0.186 r395')||js.includes('/* CineTracker Web 1.0.187 r396'))throw new Error('r432 retired owner survived');
+if(js.includes('location.reload(')||js.includes('router.refresh('))throw new Error('r432 forbidden page refresh survived');
 for(const need of ['window.__ctR432','window.__ctR309','data-ct309-swap'])if(!js.includes(need))throw new Error('r432 missing '+need);
 console.log('WEB_R432_READY');
