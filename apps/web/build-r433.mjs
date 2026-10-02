@@ -18,8 +18,8 @@ const dynamic="const dynamicProxy=name=>new Proxy({}, {get(_t,p){try{return wind
 if(!js.includes(stale))throw new Error('r433 stale r309 boot capture not found');
 js=js.replace(stale,dynamic);
 
-js=js.replaceAll('1.0.223','1.0.224').replaceAll('r432-official-1.0.223','r433-official-1.0.224');
-html=html.replaceAll('app-v432.js','app-v433.js').replaceAll('app-v432.css','app-v433.css').replaceAll('v1.0.223','v1.0.224').replaceAll('r432-official-1.0.223','r433-official-1.0.224');
+js=js.replaceAll('r432-official-1.0.223','r433-official-1.0.224').replaceAll('1.0.223','1.0.224');
+html=html.replaceAll('app-v432.js','app-v433.js').replaceAll('app-v432.css','app-v433.css').replaceAll('r432-official-1.0.223','r433-official-1.0.224').replaceAll('v1.0.223','v1.0.224');
 sw=sw.replaceAll('ct-web-1.0.223-r432','ct-web-1.0.224-r433').replaceAll('app-v432.js','app-v433.js').replaceAll('app-v432.css','app-v433.css');
 css+='\n/* CineTracker Web 1.0.224 r433 — Pra Você boot-state fix. */\n';
 
