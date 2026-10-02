@@ -1,4 +1,4 @@
-name: Verify Web 1.0.235 r444 Descobrir Pra Voce
+name: Verify Web 1.0.241 r451 Canonical URL
 on:
   push:
     branches: [main]
@@ -6,28 +6,25 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r444:
+  web_r451:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r444 regression gate
-        working-directory: apps/web
+      - name: Build and r451 regression gate
         run: |
           set -euo pipefail
-          node --check build-r444.mjs
-          node --check build-r444-official.mjs
-          node --check test-r444.mjs
-          node build-r444-official.mjs
-          node --check dist/app-v444.js
-          grep -Fq "window.__ctR431" dist/app-v444.js
-          grep -Fq "window.__ctR309" dist/app-v444.js
-          grep -Fq "data-ct309-swap" dist/app-v444.js
-          ! grep -Fq "CineTracker Web 1.0.186 r395" dist/app-v444.js
-          ! grep -Fq "CineTracker Web 1.0.197 r406" dist/app-v444.js
-          ! grep -Fq "CineTracker Web 1.0.201 r410" dist/app-v444.js
+          npm run build
+          npm run verify
+          node --check apps/web/dist/app-v451.js
+          grep -Fq "window.__ctR451" apps/web/dist/app-v451.js
+          grep -Fq "u.searchParams.delete('ct_refresh')" apps/web/dist/app-v451.js
+          grep -Fq "history.pushState=" apps/web/dist/app-v451.js
+          grep -Fq "history.replaceState=" apps/web/dist/app-v451.js
+          ! grep -Fq "window.location.reload(" apps/web/dist/app-v451.js
+          ! grep -Fq "router.refresh(" apps/web/dist/app-v451.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -37,19 +34,22 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r444, android]
+    needs: [web_r451, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - run: |
+      - name: Wait for r451 production
+        run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.235"' <<<"$BODY" && grep -Fq '"revision": "r444-official-1.0.235"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v444.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.241"' <<<"$BODY" && grep -Fq '"revision": "r451-official-1.0.241"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v451.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR431" <<<"$JS" && grep -Fq 'data-ct309-swap' <<<"$JS" && grep -Fq 'app-v444.js' <<<"$HTML" && ! grep -Fq 'CineTracker Web 1.0.186 r395' <<<"$JS" && ! grep -Fq 'CineTracker Web 1.0.197 r406' <<<"$JS" && ! grep -Fq 'CineTracker Web 1.0.201 r410' <<<"$JS"; then exit 0; fi
+              if grep -Fq "window.__ctR451" <<<"$JS" && grep -Fq "u.searchParams.delete('ct_refresh')" <<<"$JS" && grep -Fq 'app-v451.js' <<<"$HTML"; then
+                exit 0
+              fi
             fi
             sleep 5
           done
