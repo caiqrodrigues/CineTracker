@@ -1,3 +1,7 @@
+## Web 1.0.251 / r461 — correção efetiva do estado reproduzido
+
+A r461 deixa de apenas reamarrar owners antigos e assume diretamente os pontos ainda reproduzidos: Home Séries entra escondida até **Continuar assistindo** estar ancorado; Filmes pagina a Watchlist v405; Pra Você usa renderer próprio com **Trocar** nos 7 slots; Perfil repinta tempos canônicos e não corta listas; F1 liga os controles reais da Série/F1Hub ao writer r423 e reafirma o owner esportivo r422.
+
 ## Web 1.0.250 / r460 — Home Filmes, Pra Você, Perfil e F1
 
 A r460 corrige os cinco pontos ainda reproduzidos: **Filmes** não volta para Séries e a Watchlist v405 recebe recuperação delimitada; **Pra Você** carrega pelos pools v421 e exige os 7 botões **Trocar**; o Perfil mostra **13 cards + meio-card Ver mais** nas cinco listas; o histórico diário do gráfico abre com **Desmarcar visto** por item; e a Fórmula 1 pinta o estado atual pela autoridade v426 sem reconciliação automática no boot, mantendo os writers Série + Esportes + F1Hub da r423.

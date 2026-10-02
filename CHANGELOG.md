@@ -1,3 +1,14 @@
+## 1.0.251 / r461 — owner efetivo das telas ainda reproduzidas — 2026-10-02
+
+- Home Séries recebe preboot real: a view fica invisível antes do primeiro paint e só é revelada após localizar e ancorar em **Continuar assistindo**; o Histórico deixa de aparecer primeiro.
+- Home Filmes deixa de depender do owner legado para a Watchlist: r461 pagina diretamente `cinetracker_home_movies_v405`, pinta os primeiros 120 itens e continua o restante em lotes delimitados.
+- Descobrir > Pra Você recebe renderer próprio r461 sobre os seis pools v421; os sete slots têm linha de ações fora do card e **↻ Trocar** visível/funcional.
+- Perfil volta a pintar os tempos pelos RPCs canônicos `cinetracker_profile_stats` e `cinetracker_sport_stats_v421`; listas deixam de ocultar/cortar cards e removem os limitadores sintéticos das releases anteriores.
+- Fórmula 1: os cliques reais de episódio da Série e F1Hub são capturados diretamente pelo writer r423; o owner esportivo r422 é religado no final do bundle; progresso usa `cinetracker_f1_progress_v426`.
+- Estado de produção validado antes da release: temporada F1 atual = 77 sessões liberadas, 75 assistidas no estado de Série; Watchlist e filtros v421 permanecem as autoridades atuais.
+- Android permanece 1.0.20 / 10062.
+- Runtime r461 não introduz reload global, observer contínuo, intervalo contínuo ou loop ilimitado.
+
 ## 1.0.250 / r460 — correção final Web dos cinco pontos reportados — 2026-10-02
 
 - Home > Filmes: o clique em **Filmes** passa a ser a autoridade final depois dos handlers legados; a aba não retorna sozinha para Séries.

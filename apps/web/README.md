@@ -1,3 +1,10 @@
+## Web 1.0.251 / r461
+- Home Séries: preboot + âncora em Continuar assistindo antes de revelar a view.
+- Home Filmes: Watchlist direta por cinetracker_home_movies_v405.
+- Pra Você: renderer r461 com 7 slots e Trocar sempre visível.
+- Perfil: tempos canônicos e listas sem corte/ocultação.
+- F1: Série/F1Hub em r423, Esportes em r422, progresso em v426.
+
 ## Web 1.0.250 / r460
 - Home Filmes permanece selecionado e carrega Watchlist v405 com recuperação delimitada.
 - Pra Você exige sete ações Trocar.
