@@ -1,3 +1,10 @@
+## 1.0.224 — r433 (2026-10-01)
+- **Descobrir > Pra Você:** corrigida a tela preta causada pelo estado `discover263` capturado antes do boot.
+- r309 passa a resolver dinamicamente o estado e os owners do Descobrir depois da inicialização.
+- **Trocar**, **Watchlist** e **Visto** permanecem no renderer único r309.
+- Escopo exclusivo em Pra Você; Home, Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.
+- Build: `apps/web/build-r433.mjs`; gate: `apps/web/build-r433-official.mjs`; regressão: `apps/web/test-r433.mjs`.
+
 ## 1.0.223 — r432 (2026-10-01)
 - **Descobrir > Pra Você:** removido o reload legado r386 que ainda podia reiniciar a aplicação.
 - Removidos os owners legados r395/r396 do bundle final.
