@@ -1,3 +1,7 @@
+## 1.0.232 / r441
+- Pra Você: montagem final simplificada e estabilizada.
+- Android 1.0.20 / 10062 preservado.
+
 ## 1.0.231 / r440
 - Correção dos marcadores de montagem da proteção anti-repaint do Pra Você.
 - Android 1.0.20 / 10062 preservado.

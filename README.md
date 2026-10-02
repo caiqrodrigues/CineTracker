@@ -1,3 +1,8 @@
+## 1.0.232 — r441 (2026-10-02)
+- Pra Você: removido o último patch textual frágil do click legado.
+- r309/r432 permanece como único renderer ativo de Pra Você.
+- Home r404/r405, Perfil, Esportes, F1 e Android preservados.
+
 ## 1.0.231 — r440 (2026-10-02)
 - Corrigidos os marcadores internos dos runtimes r412–r418 usados na montagem do corte de owners legados.
 - **Descobrir > Pra Você** permanece com r309/r432 como único renderer ativo.

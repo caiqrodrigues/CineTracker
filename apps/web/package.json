@@ -1,9 +1,1 @@
-{
-  "name":"cinetracker-web","private":true,"version":"1.0.231","type":"module",
-  "scripts":{
-    "build":"node build-r440.mjs","build:legacy":"node build-r405.mjs","verify":"node build-r440-official.mjs",
-    "test:r439":"node test-r439.mjs","release:r439":"node build-r439-official.mjs",
-    "test:r440":"node test-r440.mjs","release:r440":"node build-r440-official.mjs"
-  },
-  "devDependencies":{"playwright":"^1.55.0"}
-}
+{"name":"cinetracker-web","private":true,"version":"1.0.232","type":"module","scripts":{"build":"node build-r441.mjs","build:legacy":"node build-r405.mjs","verify":"node build-r441-official.mjs","test:r440":"node test-r440.mjs","release:r440":"node build-r440-official.mjs","test:r441":"node test-r441.mjs","release:r441":"node build-r441-official.mjs"},"devDependencies":{"playwright":"^1.55.0"}}

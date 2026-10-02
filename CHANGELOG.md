@@ -1,3 +1,12 @@
+## 1.0.232 / r441 — Descobrir > Pra Você — 2026-10-02
+
+- Removido o patch textual frágil do click handler r404; ele não era necessário porque a autoridade local isForYou=false já impede qualquer carregamento legado.
+- r309/r432 permanece como único renderer ativo de Pra Você.
+- Trocar, Watchlist e Visto permanecem no owner r309.
+- Escopo exclusivo em Pra Você; demais áreas preservadas.
+
+Build: apps/web/build-r441.mjs; gate: apps/web/build-r441-official.mjs; regressão: apps/web/test-r441.mjs.
+
 ## 1.0.231 / r440 — Descobrir > Pra Você — 2026-10-02
 
 - Corrigidos os identificadores reais dos runtimes r412–r418 na montagem do bundle.
