@@ -1,4 +1,4 @@
-name: Verify Web 1.0.242 r452 Formula 1 Sync
+name: Verify Web 1.0.243 r453 Refresh Stability
 on:
   push:
     branches: [main]
@@ -6,26 +6,26 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r452:
+  web_r453:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r452 regression gate
+      - name: Build and r453 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v452.js
-          grep -Fq "window.__ctR452Marker='f1-current-season-home+series-to-sports-database-sync'" apps/web/dist/app-v452.js
-          grep -Fq "cinetracker_home_series_v452" apps/web/dist/app-v452.js
-          grep -Fq "function normalizeF1Home425(){return false}" apps/web/dist/app-v452.js
-          grep -Fq "window.__ctR451" apps/web/dist/app-v452.js
-          grep -Fq "u.searchParams.delete('ct_refresh')" apps/web/dist/app-v452.js
-          ! grep -Fq "window.location.reload(" apps/web/dist/app-v452.js
-          ! grep -Fq "router.refresh(" apps/web/dist/app-v452.js
+          node --check apps/web/dist/app-v453.js
+          grep -Fq "window.__ctR453Marker='legacy-release-location-replace-disabled'" apps/web/dist/app-v453.js
+          grep -Fq "async function checkRelease161(reason='manual'){return false}" apps/web/dist/app-v453.js
+          grep -Fq "window.__ctR452Marker='f1-current-season-home+series-to-sports-database-sync'" apps/web/dist/app-v453.js
+          grep -Fq "cinetracker_home_series_v452" apps/web/dist/app-v453.js
+          grep -Fq "window.__ctR452Marker='f1-current-season-home+series-to-sports-database-sync'" apps/web/dist/app-v453.js
+          ! grep -Fq "window.location.reload(" apps/web/dist/app-v453.js
+          ! grep -Fq "router.refresh(" apps/web/dist/app-v453.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -35,20 +35,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r452, android]
+    needs: [web_r453, android]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Wait for r452 production
+      - name: Wait for r453 production
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.242"' <<<"$BODY" && grep -Fq '"revision": "r452-official-1.0.242"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v452.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.243"' <<<"$BODY" && grep -Fq '"revision": "r453-official-1.0.243"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v453.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR452Marker='f1-current-season-home+series-to-sports-database-sync'" <<<"$JS" && grep -Fq 'app-v452.js' <<<"$HTML"; then
+              if grep -Fq "window.__ctR453Marker='legacy-release-location-replace-disabled'" <<<"$JS" && ! grep -Fq "location.replace(u.toString())" <<<"$JS" && grep -Fq 'app-v453.js' <<<"$HTML"; then
                 exit 0
               fi
             fi

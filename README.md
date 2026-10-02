@@ -1,3 +1,7 @@
+## Web 1.0.243 / r453 — refresh automático removido
+
+Correção exclusiva do pisca/reload periódico: o verificador legado de release não força mais `location.replace` nem agenda rechecagem automática no boot/foco/visibilidade/navegação. Home, Descobrir, Perfil, Fórmula 1, Esportes e Android permanecem inalterados.
+
 ## Web 1.0.242 / r452 — Fórmula 1 sincronizada
 
 Fórmula 1 (`media_id=865`) usa a temporada atual como uma série real na Home e mantém o estado assistido sincronizado com Esportes. O backlog histórico de 1.280 episódios não participa mais do estado atual. Marcar pela série continua contabilizando em Séries e também espelha o evento no histórico esportivo.

@@ -1,3 +1,11 @@
+## 1.0.243 / r453 — Correção exclusiva do refresh/pisca automático — 2026-10-02
+
+- Corrigida somente a causa do recarregamento/pisca cíclico da página.
+- O verificador legado `checkRelease161` não executa mais `location.replace(...ct_refresh...)` após o boot.
+- Removidos exclusivamente os gatilhos automáticos desse verificador em foco, visibilidade, navegação e timer de boot.
+- Nenhuma regra de Home, Descobrir, Perfil, Fórmula 1, Esportes, recomendações ou Android foi alterada.
+- Mantidas as proibições de `window.location.reload()` e `router.refresh()`.
+
 ## 1.0.242 / r452 — Fórmula 1 como Série + Esporte — 2026-10-02
 
 - Removida a regra incorreta de 1.280 episódios liberados da Fórmula 1 na Home.
