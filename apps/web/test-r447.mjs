@@ -1,0 +1,15 @@
+import {readFile} from 'node:fs/promises';
+const js=await readFile(new URL('./dist/app-v447.js',import.meta.url),'utf8');
+const html=await readFile(new URL('./dist/index.html',import.meta.url),'utf8');
+const release=JSON.parse(await readFile(new URL('./dist/release.json',import.meta.url),'utf8'));
+const ok=(v,m)=>{if(!v)throw new Error(m)};
+ok(release.version==='1.0.238','release version');
+ok(release.revision==='r447-official-1.0.238','release revision');
+ok(js.includes("window.addEventListener('online',()=>{});"),'online guard');
+ok(js.includes('function scheduleFY(){}'),'r426 guard');
+ok(js.includes('const schedule=()=>{};'),'r427 guard');
+ok(js.includes('const ct428Schedule=()=>{};'),'r428 guard');
+ok(!js.includes("window.addEventListener('online',()=>{if(session)void render()});"),'online rerender removed');
+ok(!js.includes('window.location.reload(')&&!js.includes('router.refresh('),'forbidden page refresh');
+ok(html.includes('app-v447.js'),'html points to r447');
+console.log('TEST_R447_OK');
