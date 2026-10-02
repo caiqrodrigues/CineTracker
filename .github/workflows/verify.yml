@@ -1,4 +1,4 @@
-name: Verify Web 1.0.254 r464
+name: Verify Web 1.0.255 r465
 on:
   push:
     branches: [main]
@@ -6,24 +6,27 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r464:
+  web_r465:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r464 regression gate
+      - name: Build and r465 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v464.js
-          grep -Fq "window.__ctR464Marker='discover-foryou-visible-owner-v421'" apps/web/dist/app-v464.js
-          ! grep -Fq "window.location.reload(" apps/web/runtime-r464-discover-foryou.js
-          ! grep -Fq "router.refresh(" apps/web/runtime-r464-discover-foryou.js
-          ! grep -Fq "new MutationObserver" apps/web/runtime-r464-discover-foryou.js
-          ! grep -Fq "setInterval(" apps/web/runtime-r464-discover-foryou.js
+          node --check apps/web/dist/app-v465.js
+          grep -Fq "window.__ctR465Marker='real-device-home-discover-profile-history'" apps/web/dist/app-v465.js
+          for f in apps/web/runtime-r465-part{1..7}.inc; do
+            ! grep -Fq "window.location.reload(" "$f"
+            ! grep -Fq "router.refresh(" "$f"
+            ! grep -Fq "new MutationObserver" "$f"
+            ! grep -Fq "setInterval(" "$f"
+            ! grep -Fq "while(true)" "$f"
+          done
   android:
     runs-on: ubuntu-latest
     steps:
@@ -33,20 +36,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r464, android]
+    needs: [web_r465, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r464 production
+      - name: Wait for r465 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.254"' <<<"$BODY" && grep -Fq '"revision": "r464-official-1.0.254"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v464.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.255"' <<<"$BODY" && grep -Fq '"revision": "r465-official-1.0.255"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v465.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR464Marker='discover-foryou-visible-owner-v421'" <<<"$JS" && grep -Fq 'app-v464.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR465Marker='real-device-home-discover-profile-history'" <<<"$JS" && grep -Fq 'app-v465.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5

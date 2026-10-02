@@ -1,3 +1,20 @@
+## 1.0.255 — r465 (2026-10-02)
+
+### Corrigido
+- Home Séries: owner final aguarda sessão autenticada antes de delegar a `cinetracker_home_series_v452`, evitando primeiro carregamento vazio.
+- Home Filmes: clique real passa pelo owner r465 após autenticação e delega à Watchlist paginada `cinetracker_home_movies_v405`; owners r399/r461 que podiam abortar cedo foram neutralizados.
+- Descobrir > Pra Você: r465 escolhe o container realmente visível, neutraliza reentradas legadas r399/r464 e carrega Filme/Série/Anime de Watchlist e 100% Novos pelos pools v421.
+- Pra Você: todos os 7 slots têm linha de ações completa; Indicação do Dia e 100% Novos têm Watchlist/Visto/Trocar, e Da sua Watchlist tem Visto/Trocar. Troca por slot é delimitada e protegida contra cliques concorrentes.
+- Perfil: exatamente 13 cards na visão resumida e o 14º elemento é Ver mais quando há conteúdo adicional.
+- Atores Favoritos: removida a dependência do limite legado de 10; novo RPC `cinetracker_profile_actors_v465` retorna até 14 linhas e o total real para montar 13 + Ver mais.
+- Histórico diário: `Desmarcar visto` virou controle mínimo na mesma linha de cada item. Esportes usam `cinetracker_unmark_sport_history_v426`; filmes/episódios usam `cinetracker_unmark_history_item_v426` com todos os argumentos nomeados.
+- Desmarcação é otimista e recoloca a linha se a persistência falhar, sem recarregar a página.
+
+### Banco / validação
+- Migration `20261002212000_r465_profile_actors_summary.sql` registrada; a função já foi aplicada no Supabase de produção e validada com 21 atores totais / 14 retornados para a visão resumida.
+- Runtime r465 não introduz `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)`.
+- Android preservado em 1.0.20 / versionCode 10062.
+
 ## 1.0.254 — r464 (2026-10-02)
 
 ### Descobrir > Pra Você

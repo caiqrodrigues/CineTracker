@@ -1,3 +1,12 @@
+## Web 1.0.255 / r465 — recuperação real de Home, Pra Você, Perfil e Histórico
+
+- Home Séries aguarda a sessão autenticada antes de carregar pela autoridade `cinetracker_home_series_v452`; a tela inicial deixa de ficar vazia por corrida de boot.
+- Home Filmes aguarda autenticação antes de acionar a Watchlist paginada `cinetracker_home_movies_v405`, eliminando o estado infinito de “Carregando Watchlist…”.
+- Descobrir > Pra Você usa somente o container visível e os seis pools v421; os 7 slots exibem ações ativas e `↻ Trocar` nos blocos aplicáveis.
+- Perfil mostra no máximo 13 cards por seção e o 14º elemento é `Ver mais`; Atores Favoritos usa `cinetracker_profile_actors_v465` para escapar do limite legado de 10.
+- Histórico diário usa um botão mínimo `↶` na mesma linha do item; filmes/episódios e esportes chamam seus RPCs v426 corretos com remoção otimista e rollback em falha.
+- Sem full-page reload, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado. Android permanece 1.0.20 / 10062.
+
 ## Web 1.0.254 / r464 — Descobrir > Pra Você
 
 - Correção exclusiva de **Descobrir > Pra Você**.
