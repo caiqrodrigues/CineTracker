@@ -1,3 +1,7 @@
+## Web 1.0.244 / r454 — boot recuperado sem patch destrutivo
+
+A r454 elimina a tela preta da r453 voltando à base funcional r452 e desativando apenas os gatilhos automáticos de verificação de release. Nenhum bloco de runtime é removido; Fórmula 1, Home, Descobrir, Perfil e Esportes permanecem na autoridade r452.
+
 ## Web 1.0.243 / r453 — refresh automático removido
 
 Correção exclusiva do pisca/reload periódico: o verificador legado de release não força mais `location.replace` nem agenda rechecagem automática no boot/foco/visibilidade/navegação. Home, Descobrir, Perfil, Fórmula 1, Esportes e Android permanecem inalterados.

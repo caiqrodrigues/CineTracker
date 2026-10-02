@@ -1,4 +1,4 @@
-name: Verify Web 1.0.243 r453 Refresh Stability
+name: Verify Web 1.0.244 r454 Boot Recovery
 on:
   push:
     branches: [main]
@@ -6,26 +6,28 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r453:
+  web_r454:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r453 regression gate
+      - name: Build and r454 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v453.js
-          grep -Fq "window.__ctR453Marker='legacy-release-location-replace-disabled'" apps/web/dist/app-v453.js
-          grep -Fq "async function checkRelease161(reason='manual'){return false}" apps/web/dist/app-v453.js
-          grep -Fq "window.__ctR452Marker='f1-current-season-home+series-to-sports-database-sync'" apps/web/dist/app-v453.js
-          grep -Fq "cinetracker_home_series_v452" apps/web/dist/app-v453.js
-          grep -Fq "window.__ctR452Marker='f1-current-season-home+series-to-sports-database-sync'" apps/web/dist/app-v453.js
-          ! grep -Fq "window.location.reload(" apps/web/dist/app-v453.js
-          ! grep -Fq "router.refresh(" apps/web/dist/app-v453.js
+          node --check apps/web/dist/app-v454.js
+          grep -Fq "window.__ctR454Marker='boot-recovered-preserve-runtime'" apps/web/dist/app-v454.js
+          grep -Fq "async function checkRelease161(" apps/web/dist/app-v454.js
+          grep -Fq "async function globalSearch(" apps/web/dist/app-v454.js
+          grep -Fq "window.__ctR452Marker='f1-current-season-home+series-to-sports-database-sync'" apps/web/dist/app-v454.js
+          grep -Fq "cinetracker_home_series_v452" apps/web/dist/app-v454.js
+          ! grep -Fq "__ctR453ReleaseGuard" apps/web/dist/app-v454.js
+          ! grep -Fq "location.replace(u.toString())" apps/web/dist/app-v454.js
+          ! grep -Fq "window.location.reload(" apps/web/dist/app-v454.js
+          ! grep -Fq "router.refresh(" apps/web/dist/app-v454.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -35,23 +37,46 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r453, android]
+    needs: [web_r454, android]
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
-      - name: Wait for r453 production
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - name: Wait for r454 production
         run: |
           set -euo pipefail
           for i in $(seq 1 300); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.243"' <<<"$BODY" && grep -Fq '"revision": "r453-official-1.0.243"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v453.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.244"' <<<"$BODY" && grep -Fq '"revision": "r454-official-1.0.244"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v454.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR453Marker='legacy-release-location-replace-disabled'" <<<"$JS" && ! grep -Fq "location.replace(u.toString())" <<<"$JS" && grep -Fq 'app-v453.js' <<<"$HTML"; then
-                exit 0
+              if grep -Fq "window.__ctR454Marker='boot-recovered-preserve-runtime'" <<<"$JS" && grep -Fq 'app-v454.js' <<<"$HTML"; then
+                break
               fi
             fi
+            if [ "$i" -eq 300 ]; then exit 1; fi
             sleep 5
           done
-          exit 1
+      - name: Chromium production boot smoke
+        run: |
+          set -euo pipefail
+          cd apps/web
+          npm install --ignore-scripts
+          npx playwright install --with-deps chromium
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          const page=await browser.newPage();
+          const fatal=[];
+          page.on('pageerror',e=>{ if(e?.name==='SyntaxError'||e?.name==='ReferenceError') fatal.push(String(e)); });
+          await page.goto('https://mycinetracker.vercel.app/?smoke=r454',{waitUntil:'domcontentloaded',timeout:60000});
+          await page.waitForTimeout(3000);
+          const visible=await page.locator('body').innerText().catch(()=> '');
+          if(!visible.trim()) throw new Error('R454 production black screen: body has no visible text');
+          if(fatal.length) throw new Error('R454 fatal JS error: '+fatal.join(' | '));
+          await browser.close();
+          console.log('R454_PRODUCTION_BOOT_OK');
+          NODE

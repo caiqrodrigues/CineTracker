@@ -1,3 +1,13 @@
+## 1.0.244 / r454 — Recuperação da tela preta no boot — 2026-10-02
+
+- Corrigida a tela preta introduzida pela r453.
+- A r454 volta a montar diretamente sobre a r452 estável e remove somente os disparos automáticos do verificador de release, sem apagar blocos inteiros do runtime.
+- `checkRelease161`, `globalSearch` e todo o restante do código entre essas rotinas permanecem intactos; o patch destrutivo da r453 foi eliminado.
+- `location.replace(...ct_refresh...)` foi substituído por atualização de URL via History API, sem recarregar a página.
+- Fórmula 1 r452, Home, Descobrir, Perfil e Esportes permanecem funcionalmente inalterados.
+- Adicionado gate para impedir remoção destrutiva de runtime e smoke real de produção com Chromium verificando conteúdo visível e erros fatais de JavaScript.
+- Android permanece 1.0.20 / 10062.
+
 ## 1.0.243 / r453 — Correção exclusiva do refresh/pisca automático — 2026-10-02
 
 - Corrigida somente a causa do recarregamento/pisca cíclico da página.

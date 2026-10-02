@@ -1,3 +1,10 @@
+## Web 1.0.244 / r454
+
+- Recuperado o boot/tela preta da r453.
+- Base funcional volta a ser r452.
+- Verificador automático de release é neutralizado sem remover blocos de runtime.
+- F1 r452 e Android 1.0.20 / 10062 preservados.
+
 ## Web 1.0.242 / r452
 
 - F1 current-season authority na Home.
