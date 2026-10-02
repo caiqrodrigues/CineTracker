@@ -1,3 +1,12 @@
+## Web 1.0.252 / r462
+
+- Fórmula 1 passa a ter writer canônico único: Série, Esportes e F1 Hub convergem para o mesmo episódio 865.
+- Marcar/desmarcar em Esportes pelo event id agora também grava/remove o episódio correspondente da Série e o estado do F1 Hub.
+- Marcar/desmarcar pela Série ou F1 Hub também sincroniza o histórico esportivo.
+- Tempo da sessão continua contabilizado separadamente nos contadores de Séries e Esportes, sem duplicar uma mesma ação dentro do mesmo domínio.
+- Runtime r462 mantém Optimistic UI e trava por controle, sem reload global, observer contínuo ou loop infinito.
+- Android permanece 1.0.20 / 10062, sem alterações.
+
 ## Web 1.0.250 / r460
 
 - Home Filmes: aba persistente + Watchlist v405 com retry finito.
