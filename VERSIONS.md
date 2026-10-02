@@ -1,3 +1,11 @@
+## Web 1.0.242 / r452
+
+- F1 current-season authority na Home.
+- Removido backlog fixo de 1.280 episódios da classificação atual.
+- Série F1 espelha marcações no histórico esportivo via banco.
+- Backfill de divergências históricas aplicado.
+- Android 1.0.20 / 10062 preservado.
+
 ## Web 1.0.241 / r451
 
 - URL canônica sem `ct_refresh`, sem reload.
