@@ -1,3 +1,13 @@
+## 1.0.242 / r452 — Fórmula 1 como Série + Esporte — 2026-10-02
+
+- Removida a regra incorreta de 1.280 episódios liberados da Fórmula 1 na Home.
+- A Home passa a usar somente o mapa canônico da temporada atual em `f1_episode_map_v423`: total da temporada, sessões já exibidas, assistidas e próxima sessão disponível.
+- Fórmula 1 entra em `Continuar assistindo` somente quando existe sessão atual já exibida e ainda não vista; sem sessão pendente, fica em `Em dia`.
+- Toda marcação de episódio F1 em Séries passa a espelhar no histórico esportivo por trigger de banco, preservando a contagem de tempo em Séries e Esportes.
+- Backfill executado para reparar divergências históricas entre `episode_progress` e `user_sport_watch_history`.
+- Escopo restrito à Fórmula 1 Web; Descobrir, Perfil, demais séries/esportes e Android preservados.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado.
+
 ## 1.0.241 / r451 — URL canônica sem ct_refresh — 2026-10-02
 
 - Removido `ct_refresh` da URL antes do boot da aplicação com `history.replaceState`, sem recarregar a página.
