@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';
+const js=await readFile(new URL('./dist/app-v446.js',import.meta.url),'utf8');
+const html=await readFile(new URL('./dist/index.html',import.meta.url),'utf8');
+const release=JSON.parse(await readFile(new URL('./dist/release.json',import.meta.url),'utf8'));
+const ok=(v,m)=>{if(!v)throw new Error(m)};
+ok(release.version==='1.0.237','release version');
+ok(release.revision==='r446-official-1.0.237','release revision');
+ok(js.includes("window.addEventListener('online',()=>{});"),'online render disabled');
+ok(!js.includes("window.addEventListener('online',()=>{if(session)void render()});"),'online render handler removed');
+ok(!js.includes('window.location.reload(')&&!js.includes('router.refresh('),'forbidden page refresh');
+ok(html.includes('app-v446.js'),'html points to r446');
+console.log('TEST_R446_OK');
