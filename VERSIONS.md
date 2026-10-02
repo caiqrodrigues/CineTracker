@@ -1,3 +1,4 @@
+- Web: **1.0.254 / r464-official-1.0.254** — Descobrir > Pra Você com owner visível único e 7 ações Trocar.
 ## Web 1.0.253 / r463
 
 - Home Séries: o primeiro owner de clique r399 aguarda autenticação de forma finita e usa diretamente `cinetracker_home_series_v452`, eliminando a tela vazia causada pela autoridade v391 aposentada.
