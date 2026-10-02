@@ -104,7 +104,6 @@ async function ensureMovies399(force=false){
  }finally{moviesTask=null}})();return moviesTask;
 }
 
-function seriesCard399
 function seriesCard399(x){
  const hasEpisode=Number(x?.next_episode_number||0)>0&&(x?.home_bucket==='continue'||x?.home_bucket==='dust'||sportsLike(x));
  if(hasEpisode){const y={...x,season_number:Number(x.next_season_number||0),episode_number:Number(x.next_episode_number||0),episode_title:x.next_episode_title||('Episódio '+Number(x.next_episode_number||0)),episode_rating:x.next_episode_rating,episode_air_date:x.next_episode_air_date};try{if(typeof ct274Row==='function')return ct274Row(y,{meta:typeof ct274EpisodeMeta==='function'?ct274EpisodeMeta(y):'',sub:typeof ct274AvailableText==='function'?ct274AvailableText(x):'',action:typeof ct274EpisodeWatchAction==='function'?ct274EpisodeWatchAction(x):'',attrs:typeof ct274EpisodeAttrs==='function'?ct274EpisodeAttrs(y,x.home_bucket):''})}catch{}}
@@ -129,7 +128,6 @@ async function refreshSports399(){
   if(fresh.length&&routeNow()==='home'){series399=fresh;renderSeries399();scheduleAlign399('series',false)}return true;
  }catch{return false}finally{sportsTask=null}})();return sportsTask;
 }
-async function refreshSeries399
 async function refreshSeries399(force=false){
  if(seriesTask)return seriesTask;
  seriesTask=(async()=>{try{
@@ -145,7 +143,6 @@ async function refreshSeries399(force=false){
  }finally{seriesTask=null}})();
  const result=await seriesTask;if(force||rows(result).some(sportsLike))setTimeout(()=>{void refreshSports399()},1200);return result;
 }
-function enterHome399
 function enterHome399(kind=activeHome()){
  if(routeNow()!=='home'||!q('[data-home]'))return false;
  if(kind==='movies'){renderMovies399();void ensureMovies399(false)}else{renderSeries399();void refreshSeries399(false)}
@@ -187,7 +184,6 @@ async function payloadForYou399(){
  if(!kinds.some(k=>out.watch[k].length||out.fresh[k].length))throw new Error('foryou-empty');
  return out;
 }
-async function loadForYou399
 async function loadForYou399(force=false){
  if(!isForYou())return false;if(fyTask)return fyTask;const token=++fyRun,root=q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]');
  if(root&&!q('[data-ct399-foryou]',root))root.innerHTML='<div data-ct399-foryou><div class="panel"><div class="empty">Buscando indicação…</div></div></div>';document.documentElement.dataset.ct399ForYou='loading';

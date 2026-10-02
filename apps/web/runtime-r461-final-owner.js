@@ -135,7 +135,6 @@ function unclipProfile461(){
  if(!changed)try{changed=!!window.__ctR460?.applyProfile?.()}catch{}
  if(changed)root.dataset.ct461ProfileLists='13+half-more';return changed;
 }
-async function loadProfile461
 async function loadProfile461(){
  if(routeNow()!=='profile'||!authReady())return false;if(profileTask461)return profileTask461;const seq=++profileSeq461;
  profileTask461=(async()=>{const [statsRaw,sportsRaw]=await Promise.all([timeout(rpc('cinetracker_profile_stats',{}),7000).catch(()=>null),timeout(rpc('cinetracker_sport_stats_v421',{}),7000).catch(()=>null)]);if(seq!==profileSeq461||routeNow()!=='profile')return false;const stats=Array.isArray(statsRaw)?statsRaw[0]:statsRaw,sports=Array.isArray(sportsRaw)?sportsRaw[0]:sportsRaw;patchProfileStats461(stats||{},sports||{});unclipProfile461();return true})().finally(()=>{profileTask461=null});return profileTask461;
