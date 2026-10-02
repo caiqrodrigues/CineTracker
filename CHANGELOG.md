@@ -1,3 +1,14 @@
+## 1.0.224 / r433 — Descobrir > Pra Você — 2026-10-01
+
+- Corrigida a tela preta introduzida no r432.
+- Causa: o renderer r309 capturava `discover263` antes do boot, quando o objeto ainda não existia, e permanecia com esse estado vazio durante toda a sessão.
+- r433 passa a resolver `discover263`, os hooks de RPC e os owners auxiliares dinamicamente após o boot, preservando o mesmo renderer e as mesmas ações.
+- **Trocar**, **Watchlist** e **Visto** continuam exclusivamente no owner r309.
+- Escopo exclusivo: **Descobrir > Pra Você**. Home, Perfil, Esportes, Top 10, Configurações e Android permanecem inalterados.
+- Sem full-page reload, router.refresh, MutationObserver, setInterval ou loop infinito.
+
+Build: `apps/web/build-r433.mjs`; gate: `apps/web/build-r433-official.mjs`; regressão: `apps/web/test-r433.mjs`.
+
 ## 1.0.223 / r432 — Descobrir > Pra Você — 2026-10-01
 
 - Corrigido o ciclo que fazia Pra Você reconstruir os cards repetidamente.
