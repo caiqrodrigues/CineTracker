@@ -1,3 +1,14 @@
+## 1.0.227 / r436 — Descobrir > Pra Você — 2026-10-02
+
+- Corrigido o efeito de **piscando/recarregando** ao abrir **Pra Você**.
+- A montagem das recomendações agora usa **single-flight**: chamadas simultâneas compartilham a mesma execução e não recriam a tela várias vezes.
+- paintForYou deixa de substituir o DOM quando o conteúdo não mudou, preservando cards, botões e estado visual.
+- **↻ Trocar**, **+ Watchlist** e **✓ Visto** permanecem no owner r309.
+- Escopo exclusivo: **Descobrir > Pra Você**. Home, Perfil, Esportes, Top 10, Configurações, Supabase e Android permanecem inalterados.
+- Sem full-page reload, router.refresh(), MutationObserver, setInterval ou loop infinito.
+
+Build: apps/web/build-r436.mjs; gate: apps/web/build-r436-official.mjs; regressão: apps/web/test-r436.mjs.
+
 ## 1.0.226 / r435 — Descobrir > Pra Você — 2026-10-02
 
 - Corrigida a tela preta do **Pra Você** causada pelo proxy que tratava `__ctR288R263.discover263` como uma propriedade literal com ponto no nome.
