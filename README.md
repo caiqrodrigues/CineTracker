@@ -1,3 +1,7 @@
+## Web 1.0.242 / r452 — Fórmula 1 sincronizada
+
+Fórmula 1 (`media_id=865`) usa a temporada atual como uma série real na Home e mantém o estado assistido sincronizado com Esportes. O backlog histórico de 1.280 episódios não participa mais do estado atual. Marcar pela série continua contabilizando em Séries e também espelha o evento no histórico esportivo.
+
 ## Web 1.0.241 / r451 — URL canônica
 
 `ct_refresh` é removido antes do boot e também de navegações History API, sem full-page reload. A r451 parte da r450 e preserva Home, Perfil, Esportes, F1 e Descobrir.
