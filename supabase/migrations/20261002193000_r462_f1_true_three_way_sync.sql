@@ -28,7 +28,7 @@ begin
   );
   return case when tg_op='DELETE' then old else new end;
 end
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.cinetracker_f1_series_to_hub_v462()
  RETURNS trigger
@@ -64,7 +64,7 @@ begin
   end if;
   return new;
 end
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.cinetracker_f1_watch_sync_v462(p_season integer, p_episode integer, p_watched boolean DEFAULT true, p_watched_at timestamp with time zone DEFAULT now(), p_event_id bigint DEFAULT NULL::bigint, p_attended_in_person boolean DEFAULT false, p_stadium_name text DEFAULT NULL::text, p_source text DEFAULT 'web-r462'::text)
  RETURNS jsonb
@@ -242,7 +242,7 @@ begin
     'provider_event_id',v_canonical,'source','f1-dual-r462'
   );
 end
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.cinetracker_sport_mark_watched_v1(p_event_id bigint, p_watched boolean DEFAULT true, p_duration_minutes integer DEFAULT NULL::integer, p_watched_at timestamp with time zone DEFAULT now())
  RETURNS jsonb
@@ -307,7 +307,7 @@ begin
   update public.profiles set updated_at=now() where id=v_profile;
   return jsonb_build_object('event_id',p_event_id,'is_watched',true,'duration_minutes',v_duration,'watched_at',coalesce(p_watched_at,now()),'sports_stats',public.cinetracker_sport_stats_v1());
 end
-$function$
+$function$;
 
 CREATE OR REPLACE FUNCTION public.cinetracker_sport_mark_watched_v1(p_provider text, p_provider_event_id text, p_watched boolean DEFAULT true, p_duration_minutes integer DEFAULT NULL::integer, p_watched_at timestamp with time zone DEFAULT now())
  RETURNS jsonb
@@ -328,7 +328,7 @@ begin
     v_event_id,coalesce(p_watched,true),p_duration_minutes,coalesce(p_watched_at,now())
   );
 end
-$function$
+$function$;
 
 
 revoke all on function public.cinetracker_f1_watch_sync_v462(integer,integer,boolean,timestamptz,bigint,boolean,text,text) from public;
