@@ -1,3 +1,11 @@
+## 1.0.225 — r434 (2026-10-02)
+
+- Descobrir > Pra Você: corrigido o primeiro clique que ainda podia entregar a aba ao renderer legado e resultar em tela preta.
+- O estado discover263 agora é definido para foryou antes da execução do owner r309.
+- Trocar, Watchlist e Visto continuam no owner r309.
+- Escopo exclusivo em Pra Você; demais áreas e Android preservados.
+- Build: apps/web/build-r434.mjs; gate: apps/web/build-r434-official.mjs; regressão: apps/web/test-r434.mjs.
+
 ## 1.0.224 — r433 (2026-10-01)
 - **Descobrir > Pra Você:** corrigida a tela preta causada pelo estado `discover263` capturado antes do boot.
 - r309 passa a resolver dinamicamente o estado e os owners do Descobrir depois da inicialização.
