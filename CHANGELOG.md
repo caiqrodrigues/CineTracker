@@ -1,3 +1,21 @@
+## 1.0.254 — r464 (2026-10-02)
+
+### Descobrir > Pra Você
+- Escopo exclusivo no Pra Você.
+- Neutraliza os três pontos de reentrada do owner r399 para Pra Você: clique da aba, settle automático da rota e repaint por `cinetracker:data-changed`.
+- Introduz owner visível r464, que usa exclusivamente os pools v421 e encerra o carregamento em tempo finito.
+- Renderiza os 7 slots esperados e mantém os botões ativos: **Watchlist**, **Visto** e **Trocar**, conforme o tipo de slot.
+- `Trocar` altera somente o slot clicado e usa trava síncrona por slot para evitar race condition em cliques rápidos.
+- Ações Visto/Watchlist atualizam a UI imediatamente e delegam a persistência existente, sem recarregar a página.
+- Sem full-page reload, observer permanente, intervalo permanente, recursão sem trava ou `while(true)`.
+- Home, Perfil, Esportes, Fórmula 1 e Android não foram alterados.
+
+### Build / validação
+- Web: **1.0.254 / r464-official-1.0.254**.
+- Build: `apps/web/build-r464.mjs`.
+- Regressão: `apps/web/test-r464.mjs`.
+- Android preservado em **1.0.20 / versionCode 10062**.
+
 ## 1.0.252 / r462 — sincronização canônica Fórmula 1 — 2026-10-02
 
 ## 1.0.253 — r463 (2026-10-02)
