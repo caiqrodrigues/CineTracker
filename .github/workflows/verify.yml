@@ -53,7 +53,7 @@ jobs:
             if grep -Fq '"version": "1.0.252"' <<<"$BODY" && grep -Fq '"revision": "r462-official-1.0.252"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v462.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR460Marker='movies-sticky+watchlist-v405+foryou-7-swap+profile-13-half+daily-undo+f1-75-of-77-no-reconcile'" <<<"$JS" && grep -Fq 'app-v462.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR462Marker='f1-v462-series+sports+f1hub+double-time'" <<<"$JS" && grep -Fq 'app-v462.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
