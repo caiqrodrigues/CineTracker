@@ -1,4 +1,4 @@
-name: Verify Web 1.0.252 r462
+name: Verify Web 1.0.253 r463
 on:
   push:
     branches: [main]
@@ -6,31 +6,31 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r462:
+  web_r463:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r462 regression gate
+      - name: Build and r463 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v462.js
-          grep -Fq "window.__ctR462Marker='f1-v462-series+sports+f1hub+double-time'" apps/web/dist/app-v462.js
-          grep -Fq "cinetracker_home_movies_v405" apps/web/dist/app-v462.js
-          grep -Fq "cinetracker_discover_fresh_v421" apps/web/dist/app-v462.js
-          grep -Fq "data-ct457-action=\"swap\"" apps/web/dist/app-v462.js
-          grep -Fq "const PROFILE_LIMIT_460=13" apps/web/dist/app-v462.js
-          grep -Fq "cinetracker_f1_watch_sync_v462" apps/web/dist/app-v462.js
-          grep -Fq "cinetracker_f1_progress_v426" apps/web/dist/app-v462.js
-          grep -Fq "cinetracker_unmark_history_item_v426" apps/web/dist/app-v462.js
-          ! grep -Fq "window.location.reload(" apps/web/runtime-r462-f1-real-sync.js
-          ! grep -Fq "router.refresh(" apps/web/runtime-r462-f1-real-sync.js
-          ! grep -Fq "new MutationObserver" apps/web/runtime-r462-f1-real-sync.js
-          ! grep -Fq "setInterval(" apps/web/runtime-r462-f1-real-sync.js
+          node --check apps/web/dist/app-v463.js
+          grep -Fq "window.__ctR463Marker='r399-current-authorities+profile-13-more+daily-undo'" apps/web/dist/app-v463.js
+          grep -Fq "cinetracker_home_movies_v405" apps/web/dist/app-v463.js
+          grep -Fq "cinetracker_discover_fresh_v421" apps/web/dist/app-v463.js
+          grep -Fq "data-ct399-action=\"swap\"" apps/web/dist/app-v463.js
+          grep -Fq "const PROFILE_LIMIT=13" apps/web/dist/app-v463.js
+          grep -Fq "cinetracker_f1_watch_sync_v462" apps/web/dist/app-v463.js
+          grep -Fq "cinetracker_f1_progress_v426" apps/web/dist/app-v463.js
+          grep -Fq "cinetracker_unmark_history_item_v426" apps/web/dist/app-v463.js
+          ! grep -Fq "window.location.reload(" apps/web/runtime-r399-startup-stability.js
+          ! grep -Fq "router.refresh(" apps/web/runtime-r399-startup-stability.js
+          ! grep -Fq "new MutationObserver" apps/web/runtime-r399-startup-stability.js
+          ! grep -Fq "setInterval(" apps/web/runtime-r399-startup-stability.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -40,20 +40,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r462, android]
+    needs: [web_r463, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r462 production
+      - name: Wait for r463 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.252"' <<<"$BODY" && grep -Fq '"revision": "r462-official-1.0.252"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v462.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.253"' <<<"$BODY" && grep -Fq '"revision": "r463-official-1.0.253"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v463.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR462Marker='f1-v462-series+sports+f1hub+double-time'" <<<"$JS" && grep -Fq 'app-v462.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR463Marker='r399-current-authorities+profile-13-more+daily-undo'" <<<"$JS" && grep -Fq 'app-v463.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5

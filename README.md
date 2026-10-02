@@ -1,5 +1,15 @@
 ## Web 1.0.252 / r462 — Fórmula 1 realmente unificada
 
+## Web 1.0.253 / r463
+
+- Home Séries: o primeiro owner de clique r399 aguarda autenticação de forma finita e usa diretamente `cinetracker_home_series_v452`, eliminando a tela vazia causada pela autoridade v391 aposentada.
+- Home Filmes: a Watchlist passa pelo owner real r399 e pagina `cinetracker_home_movies_v405` em lotes de 120; a primeira página pinta imediatamente e há retry explícito em falha.
+- Descobrir > Pra Você: o owner real r399 usa exclusivamente os seis pools v421; cards e os sete botões **Trocar** são pintados pelo mesmo renderer, sem depender dos loaders v396/v387 aposentados.
+- Perfil: as listas voltam a mostrar exatamente 13 cards completos; o 14º elemento é o botão clicável de meia largura **Ver mais**. O r461 deixa de desocultar todos os cards.
+- Histórico diário do Perfil: preservado o botão **↶ Desmarcar visto** por item via r426, com atualização local sem reload.
+- Android permanece 1.0.20 / 10062, sem alterações.
+
+
 A r462 substitui a cadeia parcial de writers da Fórmula 1 por uma autoridade única no backend. O mesmo episódio pode ser marcado/desmarcado pela **Série**, por **Esportes** ou pelo **F1 Hub** e o estado é espelhado nas três superfícies. O runtime preserva atualização otimista e o tempo da sessão entra tanto no domínio de Séries quanto no de Esportes, sem reload global.
 
 ## Web 1.0.251 / r461 — correção efetiva do estado reproduzido

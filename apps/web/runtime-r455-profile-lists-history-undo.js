@@ -22,9 +22,9 @@ function applyPanel455(panel){
  qa('[data-ct455-more]',row).forEach(x=>x.remove());
  qa('[data-ct424-more]',panel).forEach(x=>x.remove());
  const cards=cardsIn(row);if(!cards.length)return false;
+ const trigger=nativeMore(panel);if(trigger){trigger.dataset.ct455NativeMore='1';trigger.style.display='none'}
  cards.forEach((card,i)=>{card.hidden=i>=PROFILE_LIMIT;card.style.display=i>=PROFILE_LIMIT?'none':''});
  if(cards.length<=PROFILE_LIMIT){panel.dataset.ct455ProfileLimit='all';return true}
- const trigger=nativeMore(panel);
  const more=document.createElement('button');
  more.type='button';more.dataset.ct455More='1';more.className='ct455-profile-more';more.setAttribute('aria-label','Ver mais '+panelTitle(panel));
  more.innerHTML='<span class="ct455-profile-more-icon" aria-hidden="true">›</span><span>Ver mais</span>';

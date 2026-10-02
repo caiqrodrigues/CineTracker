@@ -1,5 +1,18 @@
 ## 1.0.252 / r462 — sincronização canônica Fórmula 1 — 2026-10-02
 
+## 1.0.253 — r463 (2026-10-02)
+
+### Corrigido
+- Home Séries deixa de depender do r399/v391 e usa v452 após recuperação finita da sessão.
+- Home Filmes carrega a Watchlist v405 paginada no primeiro owner de clique, encerrando o loading infinito.
+- Pra Você usa os pools v421 no owner r399, com ações completas e sete botões Trocar.
+- Perfil mantém 13 cards + 14º Ver mais; r461 não força mais os cards ocultos a reaparecer.
+- Histórico diário mantém Desmarcar visto por item sem recarregar a página.
+
+### Preservado
+- F1 r462, incluindo o hotfix de sincronização mais recente, e Android 1.0.20 / 10062.
+
+
 - Cria `cinetracker_f1_watch_sync_v462` como writer canônico de uma sessão F1 para Série (mídia 865), Esportes e F1 Hub.
 - Corrige a causa que ainda deixava Esportes fora da Série: o overload real `cinetracker_sport_mark_watched_v1(event_id,...)` agora detecta Fórmula 1, resolve o episódio no mapa e delega ao writer v462.
 - Série → Esportes/F1 Hub e F1 Hub → Série/Esportes ficam protegidos por triggers canônicos; metadado de ownership impede recursão entre triggers.
