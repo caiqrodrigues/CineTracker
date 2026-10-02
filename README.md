@@ -1,3 +1,10 @@
+## 1.0.228 — r437 (2026-10-02)
+- **Descobrir > Pra Você:** corrigido o pisca causado por repaints idênticos e reset repetido do loader.
+- O DOM é preservado quando as recomendações não mudam.
+- **Trocar**, Watchlist e Visto continuam no owner r309.
+- Escopo exclusivo em Pra Você; demais áreas e Android preservados.
+- Build: apps/web/build-r437.mjs; gate: apps/web/build-r437-official.mjs; regressão: apps/web/test-r437.mjs.
+
 ## 1.0.227 — r436 (2026-10-02)
 - **Descobrir > Pra Você:** eliminado o pisca causado por montagens concorrentes e repaints idênticos.
 - A tela mantém o DOM existente quando a recomendação não mudou.
