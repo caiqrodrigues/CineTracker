@@ -1,3 +1,9 @@
+## 1.0.225 / r434
+- Pra Você: primeiro clique agora define discover.tab='foryou' antes do renderer r309.
+- Corrige a tela preta causada pela entrada ainda passar ao owner legado.
+- Watchlist/Visto/Trocar permanecem no r309.
+- Escopo exclusivo: Pra Você; Android permanece 1.0.20 / 10062.
+
 ## 1.0.224 / r433
 - Pra Você: corrige tela preta causada por captura de `discover263` antes do boot.
 - Estado do Descobrir e owners auxiliares passam a ser resolvidos dinamicamente.
