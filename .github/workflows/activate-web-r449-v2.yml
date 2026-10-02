@@ -1,0 +1,35 @@
+name: Activate Web r449 v2
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+jobs:
+  activate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Patch release files
+        run: |
+          node -e "const fs=require('fs');for(const f of ['package.json','apps/web/package.json']){const p=JSON.parse(fs.readFileSync(f));p.version='1.0.240';if(f.startsWith('apps/')){p.scripts.build='node build-r449.mjs';p.scripts.verify='node test-r449.mjs';p.scripts['test:r449']='node test-r449.mjs'}fs.writeFileSync(f,JSON.stringify(p))}"
+          grep -q '^## 1.0.240 / r449' CHANGELOG.md || { printf '%s\n\n' '## 1.0.240 / r449 — Descobrir > Pra Você — 2026-10-02' '- Escopo exclusivo em Descobrir > Pra Você.' '- Owner único RPC-first para os 7 slots.' '- Diário e 100% Novos: Watchlist + Visto + Trocar.' '- Da sua Watchlist: Visto + Trocar, sem botão Watchlist cinza.' '- Sem full-page reload, router.refresh, MutationObserver, setInterval ou loop infinito.' | cat - CHANGELOG.md > /tmp/c && mv /tmp/c CHANGELOG.md; }
+          grep -q '^## Web 1.0.240 / r449' README.md || { printf '%s\n\n' '## Web 1.0.240 / r449 — Pra Você' 'Owner RPC-first único; 7 slots; Trocar em todos os slots elegíveis; Watchlist mostra somente Visto + Trocar.' | cat - README.md > /tmp/r && mv /tmp/r README.md; }
+          grep -q '^## Web 1.0.240 / r449' VERSIONS.md || { printf '%s\n\n' '## Web 1.0.240 / r449' '- Descobrir > Pra Você corrigido com owner RPC-first único e ações completas.' | cat - VERSIONS.md > /tmp/v && mv /tmp/v VERSIONS.md; }
+      - name: Validate r449
+        run: |
+          npm run build
+          npm run verify
+      - name: Commit activation
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add package.json apps/web/package.json CHANGELOG.md README.md VERSIONS.md
+          git commit -m "fix: activate r449 Pra Voce"
+          git push origin main
