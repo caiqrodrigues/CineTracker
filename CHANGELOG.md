@@ -1,3 +1,11 @@
+## 1.0.234 / r443 — Descobrir > Pra Você — 2026-10-02
+
+- Removidos os patches de `isFY` de r416/r426; ambos dependiam do owner r411, que já não existe no bundle final.
+- Mantidos os cortes efetivos dos owners r395–r403 e r406–r410 e as barreiras r412–r415/r417/r418.
+- r309/r432 continua como único renderer ativo de Pra Você, com Trocar, Watchlist e Visto.
+
+Build: apps/web/build-r443.mjs; gate: apps/web/build-r443-official.mjs; regressão: apps/web/test-r443.mjs.
+
 ## 1.0.233 / r442 — Descobrir > Pra Você — 2026-10-02
 
 - Tornada robusta a identificação dos runtimes r412–r418/r426 durante a montagem do bundle.

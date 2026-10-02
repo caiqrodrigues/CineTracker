@@ -1,3 +1,8 @@
+## 1.0.234 — r443 (2026-10-02)
+- Pra Você: removidos os dois patches `isFY` que dependiam de r411 já removido do bundle.
+- r309/r432 permanece como único renderer ativo de Pra Você.
+- Home, Perfil, Esportes, F1 e Android preservados.
+
 ## 1.0.233 — r442 (2026-10-02)
 - Pra Você: montagem agora identifica runtimes legados pelo número r, sem depender da versão semântica histórica.
 - r309/r432 permanece como único renderer ativo de Pra Você.
