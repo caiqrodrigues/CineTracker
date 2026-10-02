@@ -1,3 +1,7 @@
+## Web 1.0.252 / r462 — Fórmula 1 realmente unificada
+
+A r462 substitui a cadeia parcial de writers da Fórmula 1 por uma autoridade única no backend. O mesmo episódio pode ser marcado/desmarcado pela **Série**, por **Esportes** ou pelo **F1 Hub** e o estado é espelhado nas três superfícies. O runtime preserva atualização otimista e o tempo da sessão entra tanto no domínio de Séries quanto no de Esportes, sem reload global.
+
 ## Web 1.0.251 / r461 — correção efetiva do estado reproduzido
 
 A r461 deixa de apenas reamarrar owners antigos e assume diretamente os pontos ainda reproduzidos: Home Séries entra escondida até **Continuar assistindo** estar ancorado; Filmes pagina a Watchlist v405; Pra Você usa renderer próprio com **Trocar** nos 7 slots; Perfil repinta tempos canônicos e não corta listas; F1 liga os controles reais da Série/F1Hub ao writer r423 e reafirma o owner esportivo r422.
