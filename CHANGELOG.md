@@ -1,3 +1,16 @@
+## 1.0.257 — r467 (2026-10-03)
+
+### Corrigido
+- Home Séries volta ao owner r399/r463 que aguarda autenticação e carrega `cinetracker_home_series_v452`; a sobreposição r465/r466 que deixava a tela vazia foi removida do bundle.
+- Home Filmes volta ao paginador estável `cinetracker_home_movies_v405`; removido o conflito r465/r466 que chamava o loader r461 sem colocar o estado interno em Filmes e deixava “Assistir a seguir / Watchlist” vazio.
+- Descobrir > Pra Você volta à base r464/r399 com pools `cinetracker_discover_watch_unseen_v421` e `cinetracker_discover_fresh_v421`; os overrides r465/r466 não são mais publicados.
+- Perfil limita cada lista aplicável a exatamente 13 cards e usa o 14º elemento como botão compacto **Ver mais**. Atores Favoritos usa `cinetracker_profile_actors_v465`, eliminando o teto legado de 10.
+- Histórico diário coloca um botão mínimo ↶ na mesma linha de cada item. A desmarcação volta a enviar `media_id` numérico, conforme a assinatura real `bigint` de `cinetracker_unmark_history_item_v426`, com remoção otimista e rollback em falha.
+
+### Preservado / validação
+- Fórmula 1 r462 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+- Runtime r467 não usa `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)`.
+
 ## 1.0.256 — r466 (2026-10-02)\n\n### Corrigido\n- Build r465 quebrava antes de publicar por exigir um owner r399 já removido do bundle final; r466 torna esses cortes compatíveis com a base real e exige apenas os owners ainda ativos.\n- Histórico: `media_id` de filmes/episódios deixa de passar por `Number()`; UUID é enviado integralmente para `cinetracker_unmark_history_item_v426`.\n- Home: owner r461 de abas é neutralizado antes do runtime autenticado, preservando o carregamento inicial de Séries e a Watchlist v405 de Filmes.\n- Descobrir > Pra Você: reentradas r399/r461/r464 são neutralizadas quando presentes; owner visível v421 preserva os 7 slots e botões `Trocar`.\n- Perfil: 13 cards + 14º `Ver mais` preservados, inclusive Atores via RPC v465.\n\n### Validação\n- Gate r466 exige bundle, assets, RPCs atuais, Trocar delimitado, Perfil 13+Ver mais e desmarcação UUID sem coerção numérica.\n- Android preservado em 1.0.20 / versionCode 10062.\n\n## 1.0.255 — r465 (2026-10-02)
 
 ### Corrigido

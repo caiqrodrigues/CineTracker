@@ -1,3 +1,12 @@
+## Web 1.0.257 / r467 — recuperação de Home/Pra Você e correção do Perfil/Histórico
+
+- Home Séries restaura o carregamento autenticado v452 da base r463.
+- Home Filmes restaura a Watchlist paginada v405, sem o conflito de estado introduzido pela r465/r466.
+- Descobrir > Pra Você volta à base r464/r399 sobre os pools v421, removendo a sobreposição que deixou a aba sem carregar.
+- Perfil mostra exatamente 13 cards e o 14º item é o controle compacto **Ver mais**; Atores Favoritos usa o total real do RPC v465.
+- Histórico diário usa ↶ na mesma linha de cada registro e desmarca pelo contrato real `bigint` do RPC v426, com Optimistic UI e rollback.
+- F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 1.0.256 / r466 — recuperação publicada e desfazer UUID\n\n- Corrige a montagem que impedia a r465 de sequer gerar o bundle: r466 parte da base r464 estável e neutraliza somente os owners legados efetivamente presentes.\n- Home Séries e Home Filmes usam o owner autenticado finito da recuperação r465; Filmes continua na Watchlist paginada `cinetracker_home_movies_v405`.\n- Descobrir > Pra Você usa o host visível e pools v421; os cards carregados exibem ações ativas e `↻ Trocar` em todos os slots aplicáveis.\n- Perfil mantém exatamente 13 cards na visão resumida e usa o 14º elemento como `Ver mais`; Atores Favoritos usa `cinetracker_profile_actors_v465`.\n- Histórico diário mantém o controle mínimo `↶` na mesma linha e agora preserva `media_id` UUID como texto ao desmarcar, corrigindo o clique que não persistia.\n- Sem full-page reload, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado. Android permanece 1.0.20 / 10062.\n\n## Web 1.0.255 / r465 — recuperação real de Home, Pra Você, Perfil e Histórico
 
 - Home Séries faz os owners legados convergirem para r465, aguarda a sessão e usa o renderer r388 já promovido para `cinetracker_home_series_v452`; o primeiro carregamento deixa de depender da corrida de boot.
