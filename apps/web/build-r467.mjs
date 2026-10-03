@@ -31,7 +31,7 @@ for(const need of [
  "window.__ctR467Marker='restore-r464-home-foryou+profile-13-more+numeric-history-undo'",
  "window.__ctR464Marker='discover-foryou-visible-owner-v421'",'cinetracker_home_series_v452','cinetracker_home_movies_v405',
  'cinetracker_discover_watch_unseen_v421','cinetracker_discover_fresh_v421','cinetracker_profile_actors_v465',
- 'cinetracker_activity_items_by_day_v426','cinetracker_unmark_history_item_v426','cinetracker_unmark_sport_history_v426','data-ct467-undo="1"','data-ct467-more="1"'
+ 'cinetracker_activity_items_by_day_v426','cinetracker_unmark_history_item_v426','cinetracker_unmark_sport_history_v426','data-ct467-undo="1"',"more.dataset.ct467More='1'"
 ])if(!js.includes(need))throw new Error('r467 missing '+need);
 for(const retired of ["window.__ctR465Marker='real-device-home-discover-profile-history'","window.__ctR466Marker='r465-recovery-build-fixed+uuid-history-undo'"])if(js.includes(retired))throw new Error('r467 retained broken override '+retired);
 console.log('WEB_R467_READY');
