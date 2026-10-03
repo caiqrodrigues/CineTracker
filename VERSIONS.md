@@ -1,3 +1,4 @@
+- Web: **1.0.257 / r467-official-1.0.257** — restaura Home/Pra Você estáveis, corrige Perfil 13+Ver mais e histórico diário com desmarcação bigint funcional.
 - Web: **1.0.256 / r466-official-1.0.256** — recuperação de Home/Pra Você/Perfil publicada sobre r464 e desfazer diário compatível com UUID.\n- Web: **1.0.255 / r465-official-1.0.255** — Home autenticada, Pra Você visível, Perfil 13+Ver mais e desfazer diário funcional.
 - Web: **1.0.254 / r464-official-1.0.254** — Descobrir > Pra Você com owner visível único e 7 ações Trocar.
 ## Web 1.0.253 / r463
