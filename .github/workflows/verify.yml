@@ -1,4 +1,4 @@
-name: Verify Web 1.0.257 r467
+name: Verify Web 1.0.258 r468
 on:
   push:
     branches: [main]
@@ -6,21 +6,21 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r467:
+  web_r468:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r467 regression gate
+      - name: Build and r468 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v467.js
-          grep -Fq "window.__ctR467Marker='restore-r464-home-foryou+profile-13-more+numeric-history-undo'" apps/web/dist/app-v467.js
-          for f in apps/web/runtime-r467-profile-history-recovery.js; do
+          node --check apps/web/dist/app-v468.js
+          grep -Fq "window.__ctR468Marker='canonical-ctSession-sbRpc-route-bridge'" apps/web/dist/app-v468.js
+          for f in apps/web/runtime-r468-canonical-runtime-bridge.js; do
             ! grep -Fq "window.location.reload(" "$f"
             ! grep -Fq "router.refresh(" "$f"
             ! grep -Fq "new MutationObserver" "$f"
@@ -36,20 +36,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r467, android]
+    needs: [web_r468, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r467 production
+      - name: Wait for r468 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.257"' <<<"$BODY" && grep -Fq '"revision": "r467-official-1.0.257"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v467.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.258"' <<<"$BODY" && grep -Fq '"revision": "r468-official-1.0.258"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v468.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR467Marker='restore-r464-home-foryou+profile-13-more+numeric-history-undo'" <<<"$JS" && grep -Fq 'app-v467.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR468Marker='canonical-ctSession-sbRpc-route-bridge'" <<<"$JS" && grep -Fq 'app-v468.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
