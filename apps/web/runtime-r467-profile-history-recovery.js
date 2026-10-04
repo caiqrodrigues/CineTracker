@@ -7,8 +7,9 @@ const rows=v=>Array.isArray(v)?v:[];
 const num=v=>Number.isFinite(Number(v))?Number(v):0;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
-const authReady=()=>{try{return!!session?.access_token&&typeof rpc==='function'}catch{return false}};
+const routeNow=()=>{try{if(typeof window.__ctR469Route==='function')return String(window.__ctR469Route()||'');return String(typeof route==='function'?route():'')}catch{return''}};
+const authReady=()=>{try{if(typeof window.__ctR469Session==='function'&&typeof window.__ctR469Rpc==='function')return!!window.__ctR469Session()?.access_token;return!!session?.access_token&&typeof rpc==='function'}catch{return false}};
+const rpcCall467=(name,args)=>{try{if(typeof window.__ctR469Rpc==='function')return Promise.resolve(window.__ctR469Rpc(name,args));if(typeof rpc==='function')return Promise.resolve(rpc(name,args))}catch(e){return Promise.reject(e)}return Promise.reject(new Error('RPC_UNAVAILABLE'))};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const timeout=(p,ms)=>Promise.race([Promise.resolve(p),new Promise((_,rej)=>setTimeout(()=>rej(new Error('TIMEOUT')),ms))]);
 const dataOf=v=>v&&typeof v==='object'&&!Array.isArray(v)&&Object.prototype.hasOwnProperty.call(v,'data')?v.data:v;
@@ -45,7 +46,9 @@ function makeMore467(panel,row,total){
 }
 function applyPanel467(panel){
  if(!wantedPanel467(panel))return false;const row=cardRow467(panel);if(!row)return false;
- qa('[data-ct467-more]',row).forEach(x=>x.remove());
+ qa('[data-ct467-more],[data-ct465-more],[data-ct457-more],[data-ct455-more],[data-ct424-more]',panel).forEach(x=>x.remove());
+ for(const b of qa('button',row))if(norm(b.textContent).includes('ver mais'))b.remove();
+ const headerMore=nativeMore467(panel);if(headerMore){headerMore.dataset.ct467NativeMore='1';headerMore.style.display='none'}
  const cards=cardsIn467(row),total=Math.max(headerCount467(panel),cards.length);
  if(!cards.length)return false;
  cards.forEach((card,i)=>{card.hidden=i>=PROFILE_LIMIT;card.style.display=i>=PROFILE_LIMIT?'none':''});
@@ -55,7 +58,7 @@ async function hydrateActors467(){
  if(routeNow()!=='profile'||actorsTask467)return actorsTask467||false;
  actorsTask467=(async()=>{try{
   if(!(await waitAuth467()))return false;
-  const raw=dataOf(await timeout(Promise.resolve(rpc('cinetracker_profile_actors_v465',{p_limit:50})),7000)),list=rows(raw?.rows),total=num(raw?.count);
+  const raw=dataOf(await timeout(rpcCall467('cinetracker_profile_actors_v465',{p_limit:50}),7000)),list=rows(raw?.rows),total=num(raw?.count);
   if(routeNow()!=='profile'||!list.length)return false;actorCache467=list;
   const root=q('[data-profile]');if(!root)return false;
   const panel=qa('section.panel,.panel',root).find(p=>['atores','atores favoritos'].includes(norm(panelTitle467(p))));if(!panel)return false;
@@ -88,7 +91,7 @@ async function openDay467(day){
  ov.innerHTML='<div class="ct171-activity-box"><div class="panel-head"><div><small>HISTÓRICO</small><h2>'+esc(new Date(day+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}))+'</h2></div><button type="button" class="btn" data-ct467-history-close>✕ Fechar</button></div><div data-ct467-history-items><div class="ct321-loading">Carregando histórico...</div></div></div>';document.body.appendChild(ov);
  try{
   if(!(await waitAuth467()))throw new Error('AUTH_NOT_READY');
-  const raw=dataOf(await timeout(Promise.resolve(rpc('cinetracker_activity_items_by_day_v426',{p_day:day,p_tz:typeof tz==='function'?tz():'America/Sao_Paulo'})),7000)),list=rows(raw),box=q('[data-ct467-history-items]',ov);
+  const raw=dataOf(await timeout(rpcCall467('cinetracker_activity_items_by_day_v426',{p_day:day,p_tz:typeof tz==='function'?tz():'America/Sao_Paulo'}),7000)),list=rows(raw),box=q('[data-ct467-history-items]',ov);
   if(box)box.innerHTML=list.map(historyRow467).join('')||'<div class="empty">Nenhum item registrado neste dia.</div>';
  }catch(e){const box=q('[data-ct467-history-items]',ov);if(box)box.innerHTML='<div class="error">Não foi possível carregar o histórico agora.</div>';document.documentElement.dataset.ct467HistoryError=String(e?.message||e)}
 }
@@ -99,10 +102,10 @@ async function undoHistory467(btn){
   const kind=String(btn.dataset.kind||'');
   if(kind==='sport'){
    const eventId=num(btn.dataset.eventId);if(!eventId)throw new Error('EVENT_ID_REQUIRED');
-   await rpc('cinetracker_unmark_sport_history_v426',{p_event_id:eventId});
+   await rpcCall467('cinetracker_unmark_sport_history_v426',{p_event_id:eventId});
   }else{
    const mediaId=num(btn.dataset.mediaId),itemType=kind;if(!mediaId||!['movie','episode'].includes(itemType))throw new Error('MEDIA_ITEM_REQUIRED');
-   await rpc('cinetracker_unmark_history_item_v426',{p_media_id:mediaId,p_item_type:itemType,p_season_number:itemType==='episode'?num(btn.dataset.season):null,p_episode_number:itemType==='episode'?num(btn.dataset.episode):null});
+   await rpcCall467('cinetracker_unmark_history_item_v426',{p_media_id:mediaId,p_item_type:itemType,p_season_number:itemType==='episode'?num(btn.dataset.season):null,p_episode_number:itemType==='episode'?num(btn.dataset.episode):null});
   }
   window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'r467-history-undo'}}));return true;
  }catch(e){if(parent&&row){if(next&&next.parentNode===parent)parent.insertBefore(row,next);else parent.appendChild(row)}btn.disabled=false;btn.removeAttribute('aria-busy');try{toast('Não foi possível desmarcar como visto.')}catch{}document.documentElement.dataset.ct467UndoError=String(e?.message||e);return false}

@@ -7,9 +7,9 @@ const q=(s,r=document)=>r?.querySelector?.(s)||null;
 const qa=(s,r=document)=>[...(r?.querySelectorAll?.(s)||[])];
 const rows=v=>Array.isArray(v)?v:[];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};
-const rpcCall=(name,args)=>{if(typeof rpc!=='function')return Promise.reject(new Error('rpc unavailable'));return Promise.resolve(rpc(name,args))};
-const authReady399=()=>{try{return!!session?.access_token&&typeof rpc==='function'}catch{return false}};
+const routeNow=()=>{try{if(typeof window.__ctR469Route==='function')return String(window.__ctR469Route()||'');return String(typeof route==='function'?route():'')}catch{return''}};
+const rpcCall=(name,args)=>{try{if(typeof window.__ctR469Rpc==='function')return Promise.resolve(window.__ctR469Rpc(name,args));if(typeof rpc==='function')return Promise.resolve(rpc(name,args))}catch(e){return Promise.reject(e)}return Promise.reject(new Error('rpc unavailable'))};
+const authReady399=()=>{try{if(typeof window.__ctR469Session==='function'&&typeof window.__ctR469Rpc==='function')return!!window.__ctR469Session()?.access_token;return!!session?.access_token&&typeof rpc==='function'}catch{return false}};
 const unwrapRpc399=v=>v&&typeof v==='object'&&!Array.isArray(v)&&v.data!=null?v.data:v;
 async function waitAuth399(){
  for(const ms of [0,80,160,320,600,1000,1600]){if(ms)await new Promise(r=>setTimeout(r,ms));if(authReady399())return true}

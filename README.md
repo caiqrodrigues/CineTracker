@@ -1,3 +1,11 @@
+## Web 1.0.259 / r469 — owners ligados diretamente ao runtime atual
+
+- Home Séries e Home Filmes deixam de depender do timing dos aliases legados: r399 lê rota, sessão e RPC pelos hooks r469 ligados diretamente a `ctSession` e `sbRpc`.
+- Descobrir > Pra Você usa os mesmos hooks diretos no owner r464 e mantém os pools v421 e os 7 slots existentes.
+- Perfil usa o owner r467 com exatamente 13 cards quando há conteúdo suficiente e somente um 14º controle compacto **Ver mais**; controles legados duplicados e o **Ver mais** do cabeçalho são removidos/ocultados. Atores Favoritos hidrata pelo v465.
+- Histórico diário usa o RPC v426 pelo caminho direto; o botão mínimo **↶** permanece na mesma linha do item, com Optimistic UI e rollback.
+- F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 1.0.258 / r468 — ponte canônica de autenticação/RPC
 
 - A base Web atual usa `ctSession` e `sbRpc`; r399/r464/r467 aguardavam `session`/`rpc` e, por isso, os loaders corrigidos não chegavam ao Supabase.

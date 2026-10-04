@@ -1,3 +1,16 @@
+## 1.0.259 — r469 (2026-10-04)
+
+### Corrigido
+- Home > Séries: r399 passa a consultar `ctSession`/`sbRpc` por hooks diretos r469 e volta a executar `cinetracker_home_series_v452` no carregamento inicial e ao retornar à aba.
+- Home > Filmes > Assistir a seguir: paginação `cinetracker_home_movies_v405` usa o mesmo caminho direto, sem reload.
+- Descobrir > Pra Você: owner r464 usa o runtime atual diretamente e volta a carregar os seis pools v421, mantendo os 7 slots e ações existentes.
+- Perfil: limite de 13 cards é reaplicado com um único 14º **Ver mais**; botões legados duplicados são removidos e o controle nativo do cabeçalho fica oculto. Atores Favoritos carrega por `cinetracker_profile_actors_v465`.
+- Histórico diário: abrir o dia e desmarcar item usam os RPCs v426 pelo caminho direto. O **↶** permanece minimalista e na mesma linha; remoção otimista e rollback continuam sem reload.
+
+### Preservado
+- Fórmula 1 r462 e Android 1.0.20 / versionCode 10062.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` no runtime r469.
+
 ## 1.0.258 — r468 (2026-10-04)
 
 ### Corrigido
