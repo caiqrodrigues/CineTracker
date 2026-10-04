@@ -1,3 +1,12 @@
+## Web 1.0.260 / r470 — restauração da base estável e Perfil sem disputa
+
+- r470 volta a publicar Home e Descobrir sobre a base r464/r399, sem as pontes r468/r469 que sobrescreviam aliases globais de rota/autenticação/RPC.
+- Home Séries usa v452; Home Filmes/Watchlist usa v405; Descobrir > Pra Você usa os seis pools v421 e mantém os 7 slots.
+- Estatísticas do Perfil não são mais substituídas por zero quando uma chamada de estatísticas falha ou expira.
+- As listas do Perfil mostram 13 cards e um único 14º **Ver mais** quando existe conteúdo adicional; Atores Favoritos usa `cinetracker_profile_actors_v465`.
+- O histórico diário usa v426, com **↶** minimalista na mesma linha e Optimistic UI com rollback.
+- F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 1.0.259 / r469 — owners ligados diretamente ao runtime atual
 
 - Home Séries e Home Filmes deixam de depender do timing dos aliases legados: r399 lê rota, sessão e RPC pelos hooks r469 ligados diretamente a `ctSession` e `sbRpc`.
