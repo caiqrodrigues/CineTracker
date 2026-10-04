@@ -1,4 +1,4 @@
-name: Verify Web 1.0.260 r470
+name: Verify Web 1.0.261 r471
 on:
   push:
     branches: [main]
@@ -6,21 +6,24 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r470:
+  web_r471:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r470 regression gate
+      - name: Build and r471 closure regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v470.js
-          grep -Fq "window.__ctR470Marker='stable-r464-aliases+profile-stats-nonzero+13-more+actors-v465+history-v426'" apps/web/dist/app-v470.js
-          for f in apps/web/runtime-r470-stable-recovery.js; do
+          node --check apps/web/dist/app-v471.js
+          grep -Fq "window.__ctR471Marker='closure-core+home-r399-visible+discover-r464-core+profile-dashboard-13+history-v426'" apps/web/dist/app-v471.js
+          grep -Fq 'window.__ctCoreR471=Object.freeze' apps/web/dist/app-v471.js
+          ! grep -Fq 'data-ct461-preboot' apps/web/dist/index.html
+          ! grep -Fq 'data-ct461-series-gate' apps/web/dist/app-v471.css
+          for f in apps/web/runtime-r471-closure-authority.js; do
             ! grep -Fq "window.location.reload(" "$f"
             ! grep -Fq "router.refresh(" "$f"
             ! grep -Fq "new MutationObserver" "$f"
@@ -36,20 +39,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r470, android]
+    needs: [web_r471, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r470 production
+      - name: Wait for r471 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.260"' <<<"$BODY" && grep -Fq '"revision": "r470-official-1.0.260"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v470.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.261"' <<<"$BODY" && grep -Fq '"revision": "r471-official-1.0.261"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v471.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR470Marker='stable-r464-aliases+profile-stats-nonzero+13-more+actors-v465+history-v426'" <<<"$JS" && grep -Fq 'app-v470.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR471Marker='closure-core+home-r399-visible+discover-r464-core+profile-dashboard-13+history-v426'" <<<"$JS" && grep -Fq 'app-v471.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
