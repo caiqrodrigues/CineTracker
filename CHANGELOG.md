@@ -1,3 +1,19 @@
+## 1.0.258 — r468 (2026-10-04)
+
+### Corrigido
+- Corrigida a causa comum que impedia os owners r399/r464/r467 de executarem: a base atual autentica em `ctSession` e chama o banco por `sbRpc`, enquanto esses runtimes aguardavam os aliases `session` e `rpc`. A r468 cria uma ponte dinâmica para os nomes canônicos e uma rota compatível baseada no DOM atual.
+- Home > Séries volta a disparar `cinetracker_home_series_v452` após a sessão autenticada ficar disponível, incluindo o carregamento inicial e a volta para a semi-aba Séries.
+- Home > Filmes > Assistir a seguir / Watchlist volta a disparar o paginador `cinetracker_home_movies_v405` sem reload.
+- Descobrir > Pra Você volta a disparar os seis pools v421 somente quando a aba Pra Você está ativa.
+- Perfil volta a aplicar o limite de exatamente 13 cards e o 14º item `Ver mais`; Atores Favoritos volta a hidratar por `cinetracker_profile_actors_v465`. Controles `Ver mais` do cabeçalho são ocultados nas listas governadas para evitar duplicidade.
+- Perfil > Histórico diário volta a alcançar `cinetracker_activity_items_by_day_v426`; o botão mínimo ↶ permanece na mesma linha de cada item e a desmarcação continua otimista com rollback por `cinetracker_unmark_history_item_v426` / `cinetracker_unmark_sport_history_v426`.
+
+### Diagnóstico / validação
+- No intervalo do vídeo de 04/10/2026, o Supabase registrou chamadas autenticadas do navegador, porém nenhuma chamada aos RPCs v405/v421/v426/v452/v465, confirmando que o bloqueio ocorria no cliente antes do banco.
+- Os RPCs v405/v421/v426/v452/v465 foram confirmados no banco de produção com as assinaturas esperadas; nenhuma migration nova foi necessária.
+- F1 r462 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+- Runtime r468 não usa `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)`.
+
 ## 1.0.257 — r467 (2026-10-03)
 
 ### Corrigido
