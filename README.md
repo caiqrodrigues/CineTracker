@@ -1,3 +1,13 @@
+## Web 1.0.261 / r471 — autoridade lexical restaurada
+
+- Corrige a causa estrutural das regressões recentes: os runtimes anexados depois do fechamento da aplicação não enxergavam a sessão, rota e RPCs mantidos dentro da closure original.
+- A r471 cria uma API interna mínima dentro da closure, sem expor token e sem sobrescrever `window.rpc`, `window.route` ou `window.session`.
+- Home > Séries remove o gate r461 que podia manter a tela invisível e volta ao owner r399/v452; Home > Filmes mantém a Watchlist paginada v405.
+- Descobrir > Pra Você mantém o renderer r464 e os seis pools v421, agora ligados à autoridade real de rota/autenticação/RPC, com os 7 slots e ações existentes.
+- Perfil usa o dashboard completo para Séries, Filmes, Séries Favoritas e Filmes Favoritos e o RPC v465 para Atores: exatamente 13 cards e um 14º **Ver mais** quando houver mais itens.
+- O clique do gráfico diário é religado dentro da closure ao histórico v426; cada linha usa um botão mínimo **↶** com Optimistic UI e rollback.
+- F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 1.0.260 / r470 — restauração da base estável e Perfil sem disputa
 
 - r470 volta a publicar Home e Descobrir sobre a base r464/r399, sem as pontes r468/r469 que sobrescreviam aliases globais de rota/autenticação/RPC.
