@@ -1,3 +1,19 @@
+## 1.0.260 — r470 (2026-10-04)
+
+### Corrigido
+- Removidas da publicação as pontes r468/r469 que sobrescreviam `rpc`, `route` e `session` e estavam interrompendo Home, Descobrir, Perfil e Histórico no navegador real.
+- Home > Séries volta à base funcional r464/r399 e ao RPC `cinetracker_home_series_v452`, incluindo entrada inicial e retorno à semi-aba.
+- Home > Filmes > Assistir a seguir volta à paginação `cinetracker_home_movies_v405`.
+- Descobrir > Pra Você volta ao owner r464 com os seis pools v421 e os 7 slots existentes.
+- Perfil: r461 não transforma falha/timeout de estatísticas em valores zerados; o último valor válido permanece visível até uma resposta válida substituir o estado.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos, Watchlists aplicáveis e Atores usam 13 cards na visão resumida e um único 14º controle **Ver mais** quando o total excede 13.
+- Atores Favoritos hidrata pelo `cinetracker_profile_actors_v465`, usando o total real e até 50 registros para que o 14º **Ver mais** exista quando aplicável.
+- Histórico diário volta a usar diretamente os RPCs v426; cada item possui botão mínimo **↶** na mesma linha, com remoção otimista e rollback em falha.
+
+### Preservado / validação
+- Fórmula 1 r462 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` no runtime r470.
+
 ## 1.0.259 — r469 (2026-10-04)
 
 ### Corrigido
