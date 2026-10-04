@@ -1,3 +1,4 @@
+- Web: **1.0.260 / r470-official-1.0.260** — restaura r464/r399 para Home e Pra Você, impede estatísticas do Perfil de zerarem em falha, aplica 13 + Ver mais inclusive Atores v465 e restaura histórico diário v426 com ↶ por linha.
 - Web: **1.0.259 / r469-official-1.0.259** — owners Home/Pra Você/Perfil/Histórico ligados diretamente a ctSession/sbRpc; Perfil deduplicado para 13 + um Ver mais e undo v426 funcional.
 - Web: **1.0.258 / r468-official-1.0.258** — restaura a execução real dos owners de Home/Pra Você/Perfil/Histórico conectando `ctSession`/`sbRpc` aos aliases esperados; mantém 13+Ver mais e ↶ por linha.
 - Web: **1.0.257 / r467-official-1.0.257** — restaura Home/Pra Você estáveis, corrige Perfil 13+Ver mais e histórico diário com desmarcação bigint funcional.
