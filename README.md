@@ -1,3 +1,12 @@
+## Web 1.0.258 / r468 — ponte canônica de autenticação/RPC
+
+- A base Web atual usa `ctSession` e `sbRpc`; r399/r464/r467 aguardavam `session`/`rpc` e, por isso, os loaders corrigidos não chegavam ao Supabase.
+- r468 cria uma ponte dinâmica para a sessão e RPC canônicos e reativa os owners existentes sem duplicar a regra de negócio.
+- Home Séries volta a usar v452; Home Filmes/Watchlist volta a usar v405; Descobrir > Pra Você volta aos seis pools v421.
+- Perfil aplica 13 cards + 14º `Ver mais` e Atores Favoritos volta ao v465.
+- Histórico diário volta ao v426 e mantém ↶ minimalista na mesma linha com Optimistic UI e rollback.
+- Nenhuma alteração de schema; F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 1.0.257 / r467 — recuperação de Home/Pra Você e correção do Perfil/Histórico
 
 - Home Séries restaura o carregamento autenticado v452 da base r463.
