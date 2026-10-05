@@ -20,6 +20,11 @@ const once=(source,needle,replacement,label)=>{
  if(count!==1)throw new Error('r471 expected one '+label+', found '+count);
  return source.replace(needle,replacement);
 };
+const retire=(source,needle,replacement,label)=>{
+ const count=source.split(needle).length-1;
+ if(count>1)throw new Error('r471 expected at most one '+label+', found '+count);
+ return count===1?source.replace(needle,replacement):source;
+};
 
 const r464Start=js.lastIndexOf('/* CineTracker Web 1.0.254 r464');
 if(r464Start<0)throw new Error('r471 could not locate appended r464 runtime');
@@ -42,13 +47,13 @@ const coreBridge=`window.__ctCoreR471=Object.freeze({
 js=once(js,'boot();',coreBridge+'\nboot();','core closure bridge');
 
 const r399Settle="if(isForYou()&&(q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]'))){const sig='discover:foryou';if(!force&&sig===lastRouteSig&&q('[data-ct399-foryou]'))return true;lastRouteSig=sig;return enterForYou399()}";
-js=once(js,r399Settle,"if(false&&isForYou()&&(q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]'))){const sig='discover:foryou';if(!force&&sig===lastRouteSig&&q('[data-ct399-foryou]'))return true;lastRouteSig=sig;return enterForYou399()}",'r399 automatic For You owner');
+js=retire(js,r399Settle,"if(false&&isForYou()&&(q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]'))){const sig='discover:foryou';if(!force&&sig===lastRouteSig&&q('[data-ct399-foryou]'))return true;lastRouteSig=sig;return enterForYou399()}",'r399 automatic For You owner');
 
 const r399Click="const fy=t.closest('[data-ct319-tab=\"foryou\"]');if(fy&&routeNow()==='discover'){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();lastRouteSig='';enterForYou399();return}";
-js=once(js,r399Click,"const fy=t.closest('[data-ct319-tab=\"foryou\"]');if(false&&fy&&routeNow()==='discover'){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();lastRouteSig='';enterForYou399();return}",'r399 For You click owner');
+js=retire(js,r399Click,"const fy=t.closest('[data-ct319-tab=\"foryou\"]');if(false&&fy&&routeNow()==='discover'){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();lastRouteSig='';enterForYou399();return}",'r399 For You click owner');
 
 const r399Refresh="if(isForYou()){fyRun++;fyTask=null;setTimeout(()=>void loadForYou399(true),80)}";
-js=once(js,r399Refresh,"if(false&&isForYou()){fyRun++;fyTask=null;setTimeout(()=>void loadForYou399(true),80)}",'r399 For You data refresh');
+js=retire(js,r399Refresh,"if(false&&isForYou()){fyRun++;fyTask=null;setTimeout(()=>void loadForYou399(true),80)}",'r399 For You data refresh');
 
 discover=once(
  discover,
