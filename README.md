@@ -1,7 +1,7 @@
 ## Web 1.0.263 / r473 — dados canônicos restaurados
 
-- Home Séries/Histórico: r388/r399 usam `view`, `ctSession` e `sbRpc` reais da aplicação, restaurando Séries, Continuar Assistindo e Histórico.
-- Home Filmes: Watchlist paginada v405 usa a mesma autoridade autenticada.
+- Home Séries/Histórico: r388 e r404/r405 usam `view`, `ctSession` e `sbRpc` reais da aplicação, restaurando Séries, Continuar Assistindo e Histórico.
+- Home Filmes: Watchlist paginada v405 do owner r404/r405 usa a mesma autoridade autenticada.
 - Descobrir > Pra Você: r464/v421 volta a carregar pela sessão/RPC canônicas, sem aliases globais concorrentes.
 - Perfil: as cinco listas solicitadas mostram **12 cards + 13º Ver mais** quando houver itens adicionais.
 - **Ver mais** abre uma tela completa com a lista; não expande a linha.
