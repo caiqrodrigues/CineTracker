@@ -1,3 +1,4 @@
+- Web: **1.0.265 / r475-official-1.0.265** — elimina gates/loaders concorrentes de Home, reduz Pra Você a uma única onda v421, cria listas canônicas paginadas do Perfil com 12 + 13º Ver mais e torna o histórico diário v475 confiável.
 - Web: **1.0.264 / r474-official-1.0.264** — Home monta imediatamente e preserva o âncora após o Histórico; Filmes mantém Watchlist v405 visível; Pra Você usa host visível + carga v421 single-flight; Perfil fica em 12 cards + 13º Ver mais com owner único.
 - Web: **1.0.263 / r473-official-1.0.263** — reconecta r388/r399/r464 diretamente à closure viva; restaura Home Séries/Histórico, Watchlist v405 e Pra Você v421; Perfil passa para 12 cards + 13º Ver mais em tela completa.
 - Web: **1.0.262 / r472-official-1.0.262** — recupera Home Séries/Histórico e Watchlist v405, reafirma Pra Você r464/v421, corrige Jogos no Estádio v296 e aplica 13 cards + 14º Ver mais abrindo tela completa separada.

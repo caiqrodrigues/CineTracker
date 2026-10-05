@@ -1,3 +1,20 @@
+## 1.0.265 — r475 (2026-10-05)
+
+### Corrigido
+- Home > Séries: removido o gate r424 que ainda ocultava a view e aposentados os fetches legados v391/v393 do r388 para mídia. O r388 fica responsável somente pelo frame/Histórico e o r399 passa a ser a única autoridade de Séries via `cinetracker_home_series_v452`.
+- Home > Filmes: removido o loader legado concorrente do r388; a Watchlist fica exclusivamente no paginador `cinetracker_home_movies_v405` do r399.
+- Descobrir > Pra Você: removidas as três ondas automáticas de retry. O r464 faz uma única carga dos seis pools v421, com timeout compatível com o tempo real do banco e sem criar tempestade de RPCs.
+- Perfil: criada a autoridade paginada `cinetracker_profile_list_v475`, separando corretamente histórico de Séries, histórico de Filmes, Séries Favoritas e Filmes Favoritos. Favorito sem histórico não entra mais na lista de Filmes/Séries assistidos.
+- Perfil: cada uma das cinco listas exibe exatamente **12 cards + 13º Ver mais** quando houver conteúdo adicional. Atores Favoritos usa o total real do v465.
+- Perfil > Ver mais: abre tela completa separada e pagina a lista canônica; não expande a linha original.
+- Perfil > Watchlist: contagens e telas completas de Filmes/Séries usam a mesma fonte canônica paginada v475, removendo a dependência do dashboard limitado do Perfil.
+- Perfil > histórico diário: criado `cinetracker_activity_items_by_day_v475`, com `event_id` de esporte, timeout de 20s no cliente e requisições isoladas por dia. O botão ↶ continua otimista e usa os writers v426.
+- r425 deixa de interromper o evento de atualização do Perfil antes do owner final, e o normalizador de listas r424 foi aposentado para eliminar repaints concorrentes.
+
+### Preservado / validação
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` no runtime r475.
+- F1 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 1.0.264 — r474 (2026-10-05)
 
 ### Corrigido

@@ -1,3 +1,14 @@
+## Web 1.0.265 / r475 — Home/Descobrir estáveis e Perfil canônico
+
+- Home Séries usa um único owner de dados: r399 + `cinetracker_home_series_v452`; r388 mantém apenas frame e Histórico.
+- Home Filmes/Watchlist usa exclusivamente a paginação `cinetracker_home_movies_v405`.
+- Descobrir > Pra Você carrega os seis pools v421 em uma única onda, sem retries automáticos concorrentes.
+- Perfil separa histórico de Séries, histórico de Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos usando fontes canônicas.
+- Cada lista do Perfil mostra **12 cards + 13º Ver mais** quando aplicável; o Ver mais abre tela completa separada e paginada.
+- Watchlists do Perfil usam a fonte v475, sem depender do dashboard truncado legado.
+- Histórico diário usa v475 com timeout compatível com produção e mantém ↶ Desmarcar visto com Optimistic UI/rollback.
+- F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 1.0.264 / r474 — Home imediato, Pra Você estável e Perfil 12+13
 
 - Home Séries monta o frame imediatamente e continua usando v452.
