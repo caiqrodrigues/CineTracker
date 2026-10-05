@@ -61,7 +61,7 @@ js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweigh
 ],'r388');
 
 /* r424 was still hiding Home Series and mutating Profile rows after the newer owners. */
-js=patchRuntime(js,"window.__ctR424Marker='home-f1-guard+profile-stats-vertical-lists';",[
+js=patchRuntime(js,"window.__ctR424={version:'1.0.215',scope:'home-series-f1+profile-time-authority+profile-vertical-lists'",[
  [
   "function normalizeProfileLists424(){",
   "function normalizeProfileLists424(){return false}\nfunction normalizeProfileLists424Retired(){",
