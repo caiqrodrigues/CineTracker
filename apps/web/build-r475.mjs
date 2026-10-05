@@ -50,15 +50,19 @@ js=patchGlobal(
 /* r424 can still run legacy entry hooks, but r475 never allows an active Series view
    to stay visually hidden. Frame/data ownership stays with r388/r399. */
 
-/* r425 still reveals the Home during legacy entry, but it must not overwrite the
-   semantic Series/Watchlist anchor with a delayed absolute scroll-to-top. */
-js=patchRuntime(js,"window.__ctR425Marker='home-no-blank+f1-1280+foryou-single-slot-optimistic+profile-sports-canonical';",[
-  [
-    "function homeEntry425(){if(routeNow()!=='home')return;try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{};for(const ms of[0,40,120,250,600,1200])setTimeout(revealHome425,ms)}",
-    "function homeEntry425(){if(routeNow()!=='home')return;for(const ms of[0,40,120,250,600,1200])setTimeout(revealHome425,ms)}",
-    'remove delayed absolute Home scroll'
-  ]
-],'r425');
+/* r425 may still reveal Home, but r475 strips any absolute scroll from its
+   legacy entry function so it cannot beat the semantic r374/r399 anchor later. */
+{
+ const anchor="window.__ctR425Marker='home-no-blank+f1-1280+foryou-single-slot-optimistic+profile-sports-canonical';",at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);
+ if(at<0||start<0||close<0)throw new Error('r475 r425 bounds');
+ let region=js.slice(start,close+6),fnStart=region.indexOf('function homeEntry425(){'),fnEnd=region.indexOf('function current425',fnStart);
+ if(fnStart<0||fnEnd<0)throw new Error('r475 r425 homeEntry bounds');
+ let fn=region.slice(fnStart,fnEnd);
+ fn=fn.replace(/try\s*\{\s*window\.scrollTo\([\s\S]*?\)\s*\}\s*catch\s*\{\s*\}\s*;?/g,'');
+ if(fn.includes('window.scrollTo'))throw new Error('r475 r425 Home scroll still present');
+ region=region.slice(0,fnStart)+fn+region.slice(fnEnd);
+ js=js.slice(0,start)+region+js.slice(close+6);
+}
 
 /* r388 owns the stable Home frame/history. Route all rich row generation back
    through the lexical closure bridge and re-anchor after async History repaint. */
