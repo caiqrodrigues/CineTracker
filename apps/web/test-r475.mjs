@@ -21,7 +21,7 @@ const region=anchor=>{const at=js.indexOf(anchor);yes(at>=0,'anchor '+anchor);co
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
-const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
+const r472Start=js.indexOf('/* CineTracker Web 1.0.262 r472'),r472Close=js.indexOf('\n})();',r472Start);yes(r472Start>=0&&r472Close>=0,'r472 bounds');const r472=js.slice(r472Start,r472Close+6);
 yes(js.includes("window.__ctR475Marker='home-complete-rich-anchor+discover-strict-fresh-v475+profile-fast-lists-fullscreen'"),'r475 marker');
 yes(js.includes("window.__ctR475HomeAnchor={version:'1.0.265',schedule}")&&js.includes('[80,260,620,980,1380]'),'bounded final Home semantic anchor');
 yes(js.includes('homeMovieRow:item=>')&&js.includes('homeSeriesRow:(item,episode=false)=>')&&js.includes('homeHistoryRows:(items,kind,payload)=>'),'lexical rich row bridge');
