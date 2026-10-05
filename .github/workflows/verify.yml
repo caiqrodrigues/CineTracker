@@ -19,11 +19,15 @@ jobs:
           npm run build
           npm run verify
           node --check apps/web/dist/app-v473.js
-          grep -Fq "window.__ctR473Marker='canonical-view-ctSession-sbRpc+home-r388-r399+foryou-r464+profile-12-separate-more'" apps/web/dist/app-v473.js
+          grep -Fq "window.__ctR473Marker='canonical-view-ctSession-sbRpc+home-r388-r404-r405+foryou-r464+profile-12-separate-more'" apps/web/dist/app-v473.js
           grep -Fq 'window.__ctCoreR473=__ctCoreR473' apps/web/dist/app-v473.js
           grep -Fq 'cinetracker_home_series_v452' apps/web/dist/app-v473.js
           grep -Fq 'cinetracker_home_movies_v405' apps/web/dist/app-v473.js
           grep -Fq 'cinetracker_home_history_v391' apps/web/dist/app-v473.js
+          grep -Fq 'window.__ctR388?.loadSeries?.(true)' apps/web/dist/app-v473.js
+          grep -Fq 'window.__ctR388?.loadMovies?.(true)' apps/web/dist/app-v473.js
+          ! grep -Fq 'window.__ctR399?.refreshSeries?.(true)' apps/web/dist/app-v473.js
+          ! grep -Fq 'window.__ctR399?.ensureMovies?.(true)' apps/web/dist/app-v473.js
           grep -Fq 'const PROFILE_LIMIT=12;' apps/web/dist/app-v473.js
           grep -Fq 'cinetracker_discover_watch_unseen_v421' apps/web/dist/app-v473.js
           grep -Fq 'cinetracker_discover_fresh_v421' apps/web/dist/app-v473.js
