@@ -13,11 +13,13 @@ let [html,js,css,sw,releaseRaw]=await Promise.all([
   readFile(resolve(dist,'release.json'),'utf8')
 ]);
 
-function patchRuntime(source,marker,patches,label){
-  const start=source.indexOf(marker);
-  if(start<0)throw new Error('r473 missing '+label+' marker');
-  const next=source.indexOf('/* CineTracker Web',start+marker.length);
-  const end=next<0?source.length:next;
+function patchRuntime(source,anchor,patches,label){
+  const at=source.indexOf(anchor);
+  if(at<0)throw new Error('r473 missing '+label+' anchor');
+  const start=source.lastIndexOf('(()=>{',at);
+  const close=source.indexOf('\n})();',at);
+  if(start<0||close<0)throw new Error('r473 invalid '+label+' runtime bounds');
+  const end=close+6;
   let region=source.slice(start,end);
   for(const [needle,replacement,name] of patches){
     const count=region.split(needle).length-1;
@@ -27,13 +29,13 @@ function patchRuntime(source,marker,patches,label){
   return source.slice(0,start)+region+source.slice(end);
 }
 
-js=patchRuntime(js,'/* CineTracker Web 1.0.184 r393',[
+js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';",[
   ["const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};",
    "const routeNow=()=>{try{return String(window.__ctCoreR471?.route?.()||'')}catch{return''}};\nconst rpc=(name,args={})=>{if(!window.__ctCoreR471?.rpc)return Promise.reject(new Error('rpc unavailable'));return Promise.resolve(window.__ctCoreR471.rpc(name,args))};",
    'r388 route/rpc bridge']
 ],'r388');
 
-js=patchRuntime(js,'/* CineTracker Web 1.0.190 r399',[
+js=patchRuntime(js,"window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';",[
   ["const routeNow=()=>{try{if(typeof window.__ctR469Route==='function')return String(window.__ctR469Route()||'');return String(typeof route==='function'?route():'')}catch{return''}};",
    "const routeNow=()=>{try{return String(window.__ctCoreR471?.route?.()||'')}catch{return''}};",
    'route bridge'],
@@ -45,23 +47,27 @@ js=patchRuntime(js,'/* CineTracker Web 1.0.190 r399',[
    'auth bridge']
 ],'r399');
 
-js=patchRuntime(js,'/* CineTracker Web 1.0.254 r464',[
+js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';",[
   ["const rpcCall=(name,args)=>{try{if(!window.__ctCoreR471?.authReady?.())return Promise.reject(new Error('auth-not-ready'));return Promise.resolve(window.__ctCoreR471.rpc(name,args))}catch(e){return Promise.reject(e)}};",
    "const rpcCall=(name,args)=>{try{if(!window.__ctCoreR471?.rpc)return Promise.reject(new Error('rpc unavailable'));return Promise.resolve(window.__ctCoreR471.rpc(name,args))}catch(e){return Promise.reject(e)}};",
    'rpc without broken auth gate']
 ],'r464');
 
-js=patchRuntime(js,'/* CineTracker Web 1.0.261 r471',[
-  ['const PROFILE_LIMIT=13;','const PROFILE_LIMIT=12;','profile limit']
-],'r471');
-
-js=patchRuntime(js,'/* CineTracker Web 1.0.262 r472',[
-  ['const PROFILE_LIMIT=13;','const PROFILE_LIMIT=12;','profile limit'],
-  ["root.dataset.ct472Profile='13+separate-more';","root.dataset.ct472Profile='12+separate-more';",'profile dataset'],
-  ["window.__ctR472Marker='home-r388-r399+foryou-r464+profile-13-separate-more+stadium-v296';",
-   "window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';",
-   'marker']
-],'r472');
+{
+  const count=js.split('const PROFILE_LIMIT=13;').length-1;
+  if(count!==2)throw new Error('r473 expected two Profile limits, found '+count);
+  js=js.replaceAll('const PROFILE_LIMIT=13;','const PROFILE_LIMIT=12;');
+}
+{
+  const needle="root.dataset.ct472Profile='13+separate-more';";
+  if(js.split(needle).length-1!==1)throw new Error('r473 profile dataset count');
+  js=js.replace(needle,"root.dataset.ct472Profile='12+separate-more';");
+}
+{
+  const needle="window.__ctR472Marker='home-r388-r399+foryou-r464+profile-13-separate-more+stadium-v296';";
+  if(js.split(needle).length-1!==1)throw new Error('r473 r472 marker count');
+  js=js.replace(needle,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
+}
 
 html=html.replaceAll('app-v472.js','app-v473.js').replaceAll('app-v472.css','app-v473.css').replaceAll('v1.0.262','v1.0.263').replaceAll('r472-official-1.0.262','r473-official-1.0.263');
 css+='\n/* CineTracker Web 1.0.263 r473 — restore lexical Home/Discover owners and Profile 12+more. */\n';
@@ -90,10 +96,11 @@ await Promise.all([
 ]);
 await Promise.all([rm(resolve(dist,'app-v472.js'),{force:true}),rm(resolve(dist,'app-v472.css'),{force:true})]);
 
-const r388=js.slice(js.indexOf('/* CineTracker Web 1.0.184 r393'),js.indexOf('/* CineTracker Web',js.indexOf('/* CineTracker Web 1.0.184 r393')+10));
-const r399=js.slice(js.indexOf('/* CineTracker Web 1.0.190 r399'),js.indexOf('/* CineTracker Web',js.indexOf('/* CineTracker Web 1.0.190 r399')+10));
-const r464=js.slice(js.indexOf('/* CineTracker Web 1.0.254 r464'),js.indexOf('/* CineTracker Web',js.indexOf('/* CineTracker Web 1.0.254 r464')+10));
-const r472=js.slice(js.indexOf('/* CineTracker Web 1.0.262 r472'));
+const runtimeRegion=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);if(at<0||start<0||close<0)throw new Error('r473 missing runtime '+anchor);return js.slice(start,close+6)};
+const r388=runtimeRegion("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
+const r399=runtimeRegion("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
+const r464=runtimeRegion("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
+const r472=runtimeRegion("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
 if(!r388.includes("window.__ctCoreR471?.route?.()")||!r388.includes("window.__ctCoreR471.rpc(name,args)"))throw new Error('r473 r388 bridge missing');
 if(!r399.includes("window.__ctCoreR471?.route?.()")||!r399.includes("window.__ctCoreR471.rpc(name,args)")||r399.includes('__ctR469'))throw new Error('r473 r399 bridge invalid');
 if(!r464.includes("window.__ctCoreR471.rpc(name,args)")||r464.includes("authReady?.()"))throw new Error('r473 r464 bridge invalid');
