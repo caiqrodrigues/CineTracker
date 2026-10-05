@@ -49,11 +49,7 @@ js=patchRuntime(js,"if(window.__ctR424?.version==='1.0.215')return;",[
  ["patchVisibleProfileStats424(stats,sports);normalizeProfileLists424();return{stats,sports};","patchVisibleProfileStats424(stats,null);try{window.__ctR476?.paintProfile?.()}catch{}return{stats,sports:null};",'retire sports/list repaint']
 ],'r424');
 
-/* r462 was appended outside the lexical closure. Give its F1 writer/progress calls the live RPC bridge. */
-js=patchRuntime(js,"window.__ctR462Marker='f1-v462-series+sports+f1hub+double-time';",[
- ["rpc('cinetracker_f1_watch_sync_v462'","window.__ctCoreR471.rpc('cinetracker_f1_watch_sync_v462'",'F1 writer bridge'],
- ["rpc('cinetracker_f1_progress_v426'","window.__ctCoreR471.rpc('cinetracker_f1_progress_v426'",'F1 progress bridge']
-],'r462');
+/* F1 Home uses the r477 writer directly; the existing F1 Hub runtime remains untouched. */
 
 /* Movies return to the same compact rich row geometry used by Series. */
 js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';",[
@@ -109,13 +105,11 @@ await Promise.all([rm(resolve(dist,'app-v476.js'),{force:true}),rm(resolve(dist,
 const region=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);if(at<0||start<0||close<0)throw new Error('r477 missing runtime '+anchor);return js.slice(start,close+6)};
 const r415=region("window.__ctR415Marker='stable-series-entry+visible-functional-7-swap+single-v380-profile';");
 const r424=region("if(window.__ctR424?.version==='1.0.215')return;");
-const r462=region("window.__ctR462Marker='f1-v462-series+sports+f1hub+double-time';");
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
 const r476=region("window.__ctR476Marker='home-visible-card-watchlist+foryou-v476-strict-smart+profile-12-header-more-full'");
 if(r415.includes("document.documentElement.dataset.ct415HomeEntering='series'")||r415.includes('elapsed>=9000')&&r415.includes('homeEntering=true'))throw new Error('r477 r415 Home gate still active');
-if(!r462.includes("window.__ctCoreR471.rpc('cinetracker_f1_watch_sync_v462'")||!r462.includes("window.__ctCoreR471.rpc('cinetracker_f1_progress_v426'"))throw new Error('r477 F1 bridge missing');
 if(!r388.includes("homeMovieRow?.(y)")||!r399.includes("homeMovieRow?.(y)")||r388.includes("classList.add('ct476-movie-grid')")||r399.includes("classList.add('ct476-movie-grid')"))throw new Error('r477 compact Movies missing');
 if(!r464.includes('cinetracker_discover_watch_unseen_v421')||!r464.includes('cinetracker_discover_fresh_v421')||r464.includes('cinetracker_discover_watch_smart_v476'))throw new Error('r477 v421 Discover missing');
 if(!r476.includes("b.hidden=total<=LIMIT")||!js.includes("window.__ctR477Marker='home-no-nine-second-gate+compact-movies+f1-home-writer+foryou-v421+profile-12-header-only+sports-v296'"))throw new Error('r477 Profile/runtime marker missing');
