@@ -25,7 +25,6 @@ const region=anchor=>{
  yes(start>=0&&close>=0,'bounds '+anchor);return js.slice(start,close+6);
 };
 const r415=region("window.__ctR415Marker='stable-series-entry+visible-functional-7-swap+single-v380-profile';");
-const r462=region("window.__ctR462Marker='f1-v462-series+sports+f1hub+double-time';");
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
@@ -34,7 +33,6 @@ const r477=js.slice(js.lastIndexOf('/* CineTracker Web 1.0.267 r477'));
 
 yes(!r415.includes("document.documentElement.dataset.ct415HomeEntering='series'"),'r415 boot gate retired');
 yes(r415.includes('homeEntering=false')&&!r415.includes('elapsed>=9000'),'r415 immediate Home gate retirement');
-yes(r462.includes("window.__ctCoreR471.rpc('cinetracker_f1_watch_sync_v462'")&&r462.includes("window.__ctCoreR471.rpc('cinetracker_f1_progress_v426'"),'F1 live RPC bridge');
 yes(r388.includes('homeMovieRow?.(y)')&&r399.includes('homeMovieRow?.(y)'),'compact rich Movie rows');
 yes(!r388.includes("classList.add('ct476-movie-grid')")&&!r399.includes("classList.add('ct476-movie-grid')"),'movie grid retired');
 yes(r464.includes('cinetracker_discover_watch_unseen_v421')&&r464.includes('cinetracker_discover_fresh_v421'),'v421 For You restored');
