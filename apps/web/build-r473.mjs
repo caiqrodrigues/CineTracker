@@ -139,11 +139,12 @@ const runtimeRegion=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(
 const r388=runtimeRegion("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=runtimeRegion("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=runtimeRegion("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
-const r472=runtimeRegion("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
 if(!r388.includes("window.__ctCoreR471?.route?.()")||!r388.includes("window.__ctCoreR471.rpc(name,args)"))throw new Error('r473 r388 bridge missing');
 if(!r399.includes("window.__ctCoreR471?.route?.()")||!r399.includes("window.__ctCoreR471.rpc(name,args)")||r399.includes('__ctR469'))throw new Error('r473 r399 bridge invalid');
 if(!r464.includes("window.__ctCoreR471.rpc(name,args)")||r464.includes("authReady?.()"))throw new Error('r473 r464 bridge invalid');
-if(!r472.includes('const PROFILE_LIMIT=12;')||!r472.includes("profile-12-separate-more"))throw new Error('r473 Profile limit invalid');
+const profileLimit12Count=js.split('const PROFILE_LIMIT=12;').length-1;
+if(profileLimit12Count!==3||js.includes('const PROFILE_LIMIT=13;')||!js.includes("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';")||!js.includes("root.dataset.ct472Profile='12+separate-more';"))throw new Error('r473 Profile limit invalid');
+if(!js.includes('data-ct472-all-screen')||!js.includes('openFullList'))throw new Error('r473 separate full-list behavior missing');
 for(const need of ['cinetracker_home_series_v452','cinetracker_home_movies_v405','cinetracker_home_history_v391','cinetracker_discover_watch_unseen_v421','cinetracker_discover_fresh_v421'])if(!js.includes(need))throw new Error('r473 missing '+need);
-for(const bad of ['window.location.reload(','router.refresh(','new MutationObserver','setInterval(','while(true)'])if(r472.includes(bad))throw new Error('r473 forbidden '+bad);
+for(const bad of ['window.location.reload(','router.refresh(','new MutationObserver','setInterval(','while(true)'])if(homeRuntime.includes(bad)||r464.includes(bad))throw new Error('r473 forbidden '+bad);
 console.log('WEB_R473_READY live owners + Profile 12+more');
