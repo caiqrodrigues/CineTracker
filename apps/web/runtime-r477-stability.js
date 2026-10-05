@@ -69,7 +69,7 @@ window.addEventListener('click',e=>{
 },true);
 
 /* Profile sports: one final authority, hidden while the two counts are reconciled. */
-let sportsSeq=0,sportsTask=null,sportsCache=null;
+let sportsSeq=0,sportsTask=null,sportsCache=null,profileSettleSeq=0;
 function sportsPanel(){
  const root=q('[data-profile]');if(!root)return null;
  return qa('section.panel,.panel',root).find(p=>norm(q('.panel-head h2,.panel-head h3,h2,h3',p)?.textContent||'').includes('esportes assistidos'))||null;
@@ -119,12 +119,12 @@ async function loadSports(force=false){
  return sportsTask;
 }
 function settleProfile(force=false){
- const seq=++sportsSeq;
+ const seq=++profileSettleSeq;
  for(const ms of [0,60,160,360,700,1200])setTimeout(()=>{
-  if(seq!==sportsSeq||routeNow()!=='profile')return;
+  if(seq!==profileSettleSeq||routeNow()!=='profile')return;
   try{window.__ctR476?.paintProfile?.()}catch{}
-  hideSports();
-  if(ms===160||ms===700)void loadSports(force);
+  if(ms<160)hideSports();else if(sportsCache)paintSports(sportsCache);
+  if(ms===160)void loadSports(force);
  },ms);
 }
 window.addEventListener('pointerdown',e=>{
