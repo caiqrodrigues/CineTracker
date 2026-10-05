@@ -1,3 +1,13 @@
+## Web 1.0.267 / r477 — Home rápido, F1 funcional, Pra Você v421 e Perfil estável
+
+- Home Séries não fica mais preto aguardando o gate de ~9 segundos; o frame aparece imediatamente e os dados continuam em v452.
+- O check da Fórmula 1 no Home grava pelo writer canônico v462 e atualiza Série/Esportes/F1 Hub sem recarregar a página.
+- Home Filmes mantém Histórico acima e Watchlist v405 no padrão compacto das linhas de Home, sem cards gigantes.
+- Descobrir > Pra Você volta aos pools estáveis v421, com carga finita e filtro WWE preservado.
+- Perfil usa exatamente 12 cards em Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos. Não existe card extra de **Ver mais**; somente o botão compacto no cabeçalho abre a lista completa.
+- Esportes assistidos deixa de alternar entre writers: Eventos assistidos/Jogos no Estádio são reconciliados pela autoridade v296.
+- Histórico diário/desmarcação, F1 Hub, Esportes e Android 1.0.20 / 10062 permanecem preservados.
+
 ## Web 1.0.266 / r476 — Home imediata, recomendações estritas e Perfil com Ver mais no cabeçalho
 
 - Home Séries deixa de entrar preta: shell e frame aparecem imediatamente e a autoridade v452 continua carregando os dados.
