@@ -28,6 +28,12 @@ function patchRuntime(source,anchor,patches,label){
   }
   return source.slice(0,start)+region+source.slice(end);
 }
+function patchGlobal(source,needle,replacement,label){
+  const count=source.split(needle).length-1;
+  if(count!==1)throw new Error('r474 expected one '+label+', found '+count);
+  return source.replace(needle,replacement);
+}
+
 
 /* Home frame/history: paint immediately and keep the active primary section anchored
    after the asynchronous History repaint. */
@@ -68,53 +74,41 @@ js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';"
 
 /* r472 remains the final visible owner, but must not race itself. Profile summaries
    paint from the already-loaded profile cache immediately, then hydrate from canonical RPCs. */
-js=patchRuntime(js,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';",[
-  [
-    "const k=kind==='movies'?'movies':'series';if(routeNow()!=='home')return false;if(homeTasks[k]&&!force)return homeTasks[k];",
-    "const k=kind==='movies'?'movies':'series';if(routeNow()!=='home')return false;if(homeTasks[k])return homeTasks[k];",
-    'Home single flight'
-  ],
-  [
-    "if(mediaTask&&!force)return mediaTask;",
-    "if(mediaTask)return mediaTask;",
-    'media single flight'
-  ],
-  [
-    "if(actorTask&&!force)return actorTask;",
-    "if(actorTask)return actorTask;",
-    'actors single flight'
-  ],
-  [
-    "function nativeMore(panel){return qa('button',panel).find(b=>!b.dataset.ct472More&&norm(b.textContent).includes('ver mais'))||null}",
-    "function nativeMore(panel){return qa('button,a,[role=\"button\"]',panel).find(b=>!b.dataset.ct472More&&norm(b.textContent).includes('ver mais'))||null}",
-    'native more selector'
-  ],
-  [
-    "if(stadiumTask&&!force)return stadiumTask;",
-    "if(stadiumTask)return stadiumTask;",
-    'stadium single flight'
-  ],
-  [
-    "async function applyProfile(force=false){\n if(routeNow()!=='profile')return false;\n await Promise.allSettled([loadMedia(force),loadActors(force),loadStadium(force)]);if(routeNow()!=='profile')return false;\n for(const key of ['series','movies','seriesFav','movieFav','actors'])renderSummary(key);\n try{window.__ctR471?.openDay&&core.setActivityOpen?.(window.__ctR471.openDay)}catch{}\n const root=q('[data-profile]');if(root)root.dataset.ct472Profile='12+separate-more';return true;\n}",
-    "async function applyProfile(force=false){\n if(routeNow()!=='profile')return false;\n for(const key of ['series','movies','seriesFav','movieFav','actors'])renderSummary(key);\n const stadiumPromise=loadStadium(force);\n await Promise.allSettled([loadMedia(force),loadActors(force)]);if(routeNow()!=='profile')return false;\n for(const key of ['series','movies','seriesFav','movieFav','actors'])renderSummary(key);\n void stadiumPromise;\n try{window.__ctR471?.openDay&&core.setActivityOpen?.(window.__ctR471.openDay)}catch{}\n const root=q('[data-profile]');if(root)root.dataset.ct472Profile='12+separate-more';return true;\n}",
-    'nonblocking Profile summary'
-  ],
-  [
-    "bounded(()=>{if(token!==profileToken||routeNow()!=='profile')return;void applyProfile(force)},[80,220,520,1100,2200,4200,7000,10000]);",
-    "bounded(()=>{if(token!==profileToken||routeNow()!=='profile')return;void applyProfile(force)},[40,120,280,600,1200,2400,4200,7000,10000,13000,16000]);",
-    'Profile bounded reassert'
-  ]
-],'r472');
+js=patchGlobal(
+  js,
+  "const k=kind==='movies'?'movies':'series';if(routeNow()!=='home')return false;if(homeTasks[k]&&!force)return homeTasks[k];",
+  "const k=kind==='movies'?'movies':'series';if(routeNow()!=='home')return false;if(homeTasks[k])return homeTasks[k];",
+  'r472 Home single flight'
+);
+js=patchGlobal(js,"if(mediaTask&&!force)return mediaTask;","if(mediaTask)return mediaTask;",'r472 media single flight');
+js=patchGlobal(js,"if(actorTask&&!force)return actorTask;","if(actorTask)return actorTask;",'r472 actors single flight');
+js=patchGlobal(
+  js,
+  "function nativeMore(panel){return qa('button',panel).find(b=>!b.dataset.ct472More&&norm(b.textContent).includes('ver mais'))||null}",
+  "function nativeMore(panel){return qa('button,a,[role=\\\"button\\\"]',panel).find(b=>!b.dataset.ct472More&&norm(b.textContent).includes('ver mais'))||null}",
+  'r472 native more selector'
+);
+js=patchGlobal(js,"if(stadiumTask&&!force)return stadiumTask;","if(stadiumTask)return stadiumTask;",'r472 stadium single flight');
+js=patchGlobal(
+  js,
+  "async function applyProfile(force=false){\n if(routeNow()!=='profile')return false;\n await Promise.allSettled([loadMedia(force),loadActors(force),loadStadium(force)]);if(routeNow()!=='profile')return false;\n for(const key of ['series','movies','seriesFav','movieFav','actors'])renderSummary(key);\n try{window.__ctR471?.openDay&&core.setActivityOpen?.(window.__ctR471.openDay)}catch{}\n const root=q('[data-profile]');if(root)root.dataset.ct472Profile='12+separate-more';return true;\n}",
+  "async function applyProfile(force=false){\n if(routeNow()!=='profile')return false;\n for(const key of ['series','movies','seriesFav','movieFav','actors'])renderSummary(key);\n const stadiumPromise=loadStadium(force);\n await Promise.allSettled([loadMedia(force),loadActors(force)]);if(routeNow()!=='profile')return false;\n for(const key of ['series','movies','seriesFav','movieFav','actors'])renderSummary(key);\n void stadiumPromise;\n try{window.__ctR471?.openDay&&core.setActivityOpen?.(window.__ctR471.openDay)}catch{}\n const root=q('[data-profile]');if(root)root.dataset.ct472Profile='12+separate-more';return true;\n}",
+  'r472 nonblocking Profile summary'
+);
+js=patchGlobal(
+  js,
+  "bounded(()=>{if(token!==profileToken||routeNow()!=='profile')return;void applyProfile(force)},[80,220,520,1100,2200,4200,7000,10000]);",
+  "bounded(()=>{if(token!==profileToken||routeNow()!=='profile')return;void applyProfile(force)},[40,120,280,600,1200,2400,4200,7000,10000,13000,16000]);",
+  'r472 Profile bounded reassert'
+);
 
-/* Retire the legacy r455 list limiter only. Its daily-history bridge stays active.
-   r472 now exclusively owns 12 cards + the 13th separate Ver mais. */
-js=patchRuntime(js,"window.__ctR455={version:'1.0.245'",[
-  [
-    "function applyProfile455(){\n if(routeNow()!=='profile')return false;const root=q('[data-profile]');if(!root)return false;\n let changed=false;for(const panel of qa('section.panel,.panel',root)){if(applyPanel455(panel))changed=true}\n root.dataset.ct455ProfileLists='13+half-more';return changed;\n}",
-    "function applyProfile455(){return false}",
-    'retire list limiter'
-  ]
-],'r455');
+/* Retire the legacy r455 list limiter only. Its daily-history bridge stays active. */
+js=patchGlobal(
+  js,
+  "function applyProfile455(){\n if(routeNow()!=='profile')return false;const root=q('[data-profile]');if(!root)return false;\n let changed=false;for(const panel of qa('section.panel,.panel',root)){if(applyPanel455(panel))changed=true}\n root.dataset.ct455ProfileLists='13+half-more';return changed;\n}",
+  "function applyProfile455(){return false}",
+  'r455 list limiter'
+);
 
 js+='\nwindow.__ctR474Marker=\'home-immediate+history-anchor+foryou-visible-singleflight+profile-12-13\';\n';
 
