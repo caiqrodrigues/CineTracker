@@ -1,10 +1,10 @@
 ## 1.0.265 — r475 (2026-10-05)
 
 ### Corrigido
-- Home > Séries: aposentado o gate visual r424 que escondia a view enquanto aguardava um owner externo. O Home agora recupera também frames incompletos, não apenas a ausência total do container, e mantém Séries em `cinetracker_home_series_v452`.
+- Home > Séries: a ocultação visual legada deixa de poder manter a view ativa preta; o Home recupera também frames incompletos, não apenas a ausência total do container, e mantém Séries em `cinetracker_home_series_v452`.
 - Home > Séries e Histórico: r388/r399 voltam a gerar as linhas ricas pelo renderer lexical ct274, via ponte mínima da closure, eliminando o fallback de texto simples e preservando Histórico v391.
 - Home > Filmes: a Watchlist completa continua paginada por `cinetracker_home_movies_v405`, mas volta ao visual rico com poster/metadados/ação. Após repaint tardio do Histórico, a semi-aba Filmes termina ancorada em **Assistir a seguir / Watchlist**, sem ser empurrada para Filmes vistos.
-- Home: a recuperação delimitada r472 deixa de executar `scrollTo(0)` repetidamente depois da escolha da semi-aba; o âncora final volta a ser responsabilidade do owner r399.
+- Home: os resets absolutos legados deixam de sobrescrever o âncora semântico. O owner r399/r374 mantém Séries em **Assistir a seguir** e Filmes em **Assistir a seguir / Watchlist** mesmo após repaints tardios.
 - Descobrir > Pra Você: preservado o owner r464 e a exceção **Da sua Watchlist** em v421. **Indicação do Dia** e **100% Novos** passam a usar `cinetracker_discover_fresh_v475`, que exclui mídia conhecida tanto pelo TMDB real quanto por aliases/localizado/original, cobrindo duplicatas legadas como os filmes de Harry Potter já vistos.
 - Perfil: as quatro listas de mídia passam a usar o RPC leve e completo `cinetracker_profile_lists_v475`, evitando o dashboard pesado que falhava/estourava tempo e fazia **Filmes Favoritos** ficar parcial.
 - Perfil: permanecem **12 cards + 13º Ver mais**. Todos os controles legados de cabeçalho são ocultados e o card **Ver mais** passa sempre pela tela completa independente do r472; isso corrige inclusive Atores Favoritos.
