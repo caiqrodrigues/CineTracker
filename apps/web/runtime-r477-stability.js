@@ -127,6 +127,10 @@ function settleProfile(force=false){
   if(ms===160)void loadSports(force);
  },ms);
 }
+window.addEventListener('click',e=>{
+ if(e.target?.closest?.('[data-nav="home"]'))for(const ms of [0,20,60,120,250])setTimeout(()=>{delete document.documentElement.dataset.ct413HomeEntering;delete document.documentElement.dataset.ct415HomeEntering;bootHome('series')},ms);
+ const tab=e.target?.closest?.('[data-home-tab]');if(tab){const k=String(tab.dataset.homeTab||'series')==='movies'?'movies':'series';for(const ms of [0,20,60,120])setTimeout(()=>{delete document.documentElement.dataset.ct413HomeEntering;delete document.documentElement.dataset.ct415HomeEntering;bootHome(k)},ms)}
+},true);
 window.addEventListener('pointerdown',e=>{
  if(e.target?.closest?.('[data-nav="home"]'))for(const ms of [0,30,90])setTimeout(()=>bootHome('series'),ms);
  const tab=e.target?.closest?.('[data-home-tab]');if(tab){const k=String(tab.dataset.homeTab||'series')==='movies'?'movies':'series';for(const ms of [0,30])setTimeout(()=>bootHome(k),ms)}
