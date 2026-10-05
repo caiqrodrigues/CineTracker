@@ -1,3 +1,17 @@
+## 1.0.263 — r473 (2026-10-05)
+
+### Corrigido
+- Home > Séries: corrigida a causa dos painéis vazios e liberados os gates legados r417/r424/r461 que podiam manter a view invisível. Os owners realmente presentes no bundle final (r388 e r404/r405) deixam de depender dos aliases legados `route/rpc/session` e passam a usar a autoridade canônica da aplicação: `view`, `ctSession` e `sbRpc`.
+- Home > Histórico: o loader r388 de `cinetracker_home_history_v391` passa pelo mesmo caminho autenticado canônico, restaurando o histórico sem recarga global.
+- Home > Filmes: a Watchlist paginada `cinetracker_home_movies_v405` do r404/r405 passa a usar a sessão/RPC reais da aplicação.
+- Descobrir > Pra Você: o renderer r464/v421 passa a usar a mesma autoridade canônica e deixa de falhar por ausência dos aliases retirados nas versões anteriores.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos exibem exatamente 12 cards na visão resumida e um 13º card **Ver mais** apenas quando há conteúdo adicional.
+- Perfil > Ver mais: o controle abre a tela completa da lista; não expande cards na mesma linha.
+
+### Preservado / validação
+- Nenhum `window.location.reload()`, `router.refresh()`, observer permanente, intervalo permanente ou loop ilimitado foi adicionado.
+- Histórico diário/desmarcar v426, F1 r462 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 1.0.262 — r472 (2026-10-05)
 
 ### Corrigido
