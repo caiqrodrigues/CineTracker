@@ -1,3 +1,20 @@
+## 1.0.261 — r471 (2026-10-04)
+
+### Corrigido
+- Corrigida a causa estrutural comum a Home, Descobrir, Perfil e Histórico: `session`, `rpc`, `route` e o estado do Perfil vivem na closure original, enquanto alguns runtimes recentes eram anexados depois do fechamento dessa closure e portanto não conseguiam executar os loaders reais.
+- Introduzida uma ponte interna mínima `__ctCoreR471` dentro da closure original. Ela expõe somente operações necessárias aos owners externos, sem expor token e sem substituir `window.rpc`, `window.route` ou `window.session`.
+- Home > Séries: removido o gate visual r461 que podia manter toda a view invisível; o owner r399, que executa dentro da closure, volta a carregar `cinetracker_home_series_v452` na entrada e ao retornar à semi-aba.
+- Home > Filmes: o mesmo owner r399 continua responsável pela Watchlist paginada via `cinetracker_home_movies_v405`.
+- Descobrir > Pra Você: o renderer r464 é reconectado à rota/autenticação/RPC reais e permanece como owner visível dos seis pools v421; as três reentradas r399 para Pra Você são neutralizadas para impedir repaint concorrente.
+- Perfil: Séries, Filmes, Séries Favoritas e Filmes Favoritos usam o dashboard completo `cinetracker_profile_media_dashboard_v0991`; Atores usa `cinetracker_profile_actors_v465`. A visão resumida renderiza exatamente 13 cards e, somente quando o total excede 13, um único 14º card **Ver mais**.
+- Perfil > gráfico diário: o callback lexical de clique é religado ao loader r471 e passa a consultar `cinetracker_activity_items_by_day_v426`.
+- Histórico diário: cada item recebe um botão mínimo **↶** na mesma linha. A remoção é otimista, possui trava contra cliques concorrentes e rollback em erro; filmes/episódios usam `cinetracker_unmark_history_item_v426` e esportes usam `cinetracker_unmark_sport_history_v426`.
+
+### Preservado / validação
+- Cards do Perfil mantêm proporção 2:3 e título truncado.
+- Nenhum `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` foi introduzido nos runtimes r471/r464 publicados.
+- Fórmula 1 r462 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 1.0.260 — r470 (2026-10-04)
 
 ### Corrigido
