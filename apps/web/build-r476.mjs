@@ -110,14 +110,6 @@ js=patchRuntime(js,'/* CineTracker Web 1.0.262 r472',[
   'retire r472 profile scheduler']
 ],'r472');
 
-js=patchRuntime(js,"if(window.__ctR457?.version==='1.0.247')return;",[
- ['const PROFILE_LIMIT_457=13;','const PROFILE_LIMIT_457=999999;','retire r457 large More']
-],'r457');
-
-js=patchRuntime(js,"window.__ctR460Marker='movies-sticky+watchlist-v405+foryou-7-swap+profile-13-half+daily-undo+f1-75-of-77-no-reconcile';",[
- ['const PROFILE_LIMIT_460=13;','const PROFILE_LIMIT_460=999999;','retire r460 large More']
-],'r460');
-
 new Function(runtime);
 for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval('])if(runtime.includes(bad))throw new Error('r476 forbidden '+bad);
 js+='\n'+runtime+'\n';
