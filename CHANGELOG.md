@@ -1,3 +1,19 @@
+## 1.0.267 — r477 (2026-10-05)
+
+### Corrigido
+- Home > Séries: removido o gate r415 que mantinha a entrada visualmente presa por até ~9 segundos. O shell/frame passa a ficar visível imediatamente, enquanto r399/v452 continua carregando os dados.
+- Home > Fórmula 1: o check compacto da linha do Home passa a usar diretamente o writer canônico `cinetracker_f1_watch_sync_v462`, com Optimistic UI, trava contra clique concorrente e atualização local sem reload. O runtime r462 também volta a enxergar o RPC real da closure.
+- Home > Filmes: a Watchlist v405 volta ao mesmo padrão compacto/rico das linhas de Séries, removendo os cards gigantes introduzidos pela r476.
+- Descobrir > Pra Você: restaurados os pools estáveis `cinetracker_discover_watch_unseen_v421` e `cinetracker_discover_fresh_v421`, com retry finito mais curto e filtro defensivo WWE mantido.
+- Perfil > Esportes assistidos: removidas as repinturas concorrentes r415/r424. `Eventos assistidos` e `Jogos no Estádio` passam a ser reconciliados por uma única autoridade v296, evitando alternância/pisca entre versões.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos ficam limitados a exatamente 12 cards na visão resumida. O card grande de **Ver mais** continua removido; somente o botão compacto no cabeçalho abre a tela completa da categoria.
+- Perfil: o owner final r476 é reaplicado após repaints legados e há trava visual para impedir um 13º card residual.
+
+### Preservado / validação
+- Histórico diário e **↶ Desmarcar visto** v426 preservados.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` no runtime r477.
+- Android 1.0.20 / versionCode 10062 permanece inalterado.
+
 ## 1.0.266 — r476 (2026-10-05)
 
 ### Corrigido
