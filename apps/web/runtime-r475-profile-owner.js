@@ -30,7 +30,7 @@ const state={
 };
 let profileTask=null,profileScheduleToken=0,stadiumTask=null;
 const fullLocks=new Set(),undoLocks=new WeakSet();
-let dayTask=null,dayToken=0;
+const dayTasks=new Map();let dayToken=0;
 
 function panelByLabel(label){
  const root=q('[data-profile]'),wanted=norm(label);if(!root)return null;
@@ -189,13 +189,13 @@ async function openDay(day){
  const ov=document.createElement('div');ov.className='ct171-activity-overlay';
  ov.innerHTML='<div class="ct171-activity-box"><div class="panel-head"><div><small>HISTÓRICO</small><h2>'+esc(new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}))+'</h2></div><button type="button" class="btn" data-ct171-activity-close>✕ Fechar</button></div><div data-ct171-activity-items><div class="ct321-loading">Carregando histórico...</div></div></div>';
  document.body.appendChild(ov);
- if(dayTask)return dayTask;
- dayTask=(async()=>{try{
+ if(dayTasks.has(d))return dayTasks.get(d);
+ const task=(async()=>{try{
   const list=arrayFrom(await timeout(core.rpc('cinetracker_activity_items_by_day_v475',{p_day:d,p_tz:core.tz?.()||'America/Sao_Paulo'}),20000));
   if(token!==dayToken||!ov.isConnected)return false;const box=q('[data-ct171-activity-items]',ov);
   if(box)box.innerHTML=list.map(activityHtml).join('')||'<div class="empty">Nenhum item registrado neste dia.</div>';return true;
  }catch(e){if(token===dayToken){const box=q('[data-ct171-activity-items]',ov);if(box)box.innerHTML='<div class="error">Não foi possível carregar o histórico agora. <button type="button" class="chip" data-ct475-day-retry="'+esc(d)+'">Tentar novamente</button></div>'}return false}
- finally{dayTask=null}})();return dayTask;
+ finally{if(dayTasks.get(d)===task)dayTasks.delete(d)}})();dayTasks.set(d,task);return task;
 }
 async function undo(btn){
  if(!btn||undoLocks.has(btn))return false;undoLocks.add(btn);btn.disabled=true;btn.setAttribute('aria-busy','true');
