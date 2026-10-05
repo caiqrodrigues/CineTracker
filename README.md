@@ -1,3 +1,12 @@
+## Web 1.0.263 / r473 — dados canônicos restaurados
+
+- Home Séries/Histórico: r388/r399 usam `view`, `ctSession` e `sbRpc` reais da aplicação, restaurando Séries, Continuar Assistindo e Histórico.
+- Home Filmes: Watchlist paginada v405 usa a mesma autoridade autenticada.
+- Descobrir > Pra Você: r464/v421 volta a carregar pela sessão/RPC canônicas, sem aliases globais concorrentes.
+- Perfil: as cinco listas solicitadas mostram **12 cards + 13º Ver mais** quando houver itens adicionais.
+- **Ver mais** abre uma tela completa com a lista; não expande a linha.
+- Histórico diário v426, F1 e Android 1.0.20 / 10062 permanecem preservados.
+
 ## Web 1.0.262 / r472 — owners visíveis recuperados
 
 - Home > Séries volta a combinar o frame/Histórico r388 com Séries v452 do r399, aposentando o handler r461 que ainda podia esconder a view sem acesso à closure.
