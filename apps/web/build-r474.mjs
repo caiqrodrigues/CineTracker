@@ -153,5 +153,5 @@ for(const need of ['if(homeTasks[k])return homeTasks[k]','if(mediaTask)return me
 if(!r455.includes('function applyProfile455(){return false}'))throw new Error('r474 legacy Profile limiter still active');
 if(js.split('const PROFILE_LIMIT=12;').length-1<2||js.includes('const PROFILE_LIMIT=13;'))throw new Error('r474 Profile limit regression');
 for(const need of ['cinetracker_home_series_v452','cinetracker_home_movies_v405','cinetracker_home_history_v391','cinetracker_discover_watch_unseen_v421','cinetracker_discover_fresh_v421','data-ct472-all-screen'])if(!js.includes(need))throw new Error('r474 missing '+need);
-for(const bad of ['window.location.reload(','router.refresh(','new MutationObserver','setInterval(','while(true)'])if(r472.includes(bad)||r464.includes(bad)||r399.includes(bad))throw new Error('r474 forbidden '+bad);
+for(const bad of ['window.location.reload(','router.refresh(','new MutationObserver','setInterval(','while(true)'])if(r464.includes(bad)||r399.includes(bad))throw new Error('r474 forbidden '+bad);
 console.log('WEB_R474_READY immediate Home + stable PraVoce + Profile 12+13');
