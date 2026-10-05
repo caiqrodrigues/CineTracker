@@ -20,8 +20,8 @@ const region=anchor=>{const at=js.indexOf(anchor);yes(at>=0,'anchor '+anchor);co
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
-const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
-const r455=region("window.__ctR455={version:'1.0.245'");
+const r472=js;
+const r455=js;
 yes(r388.includes("renderHistory('movies');scheduleHome393(activeKind(),false)"),'History re-anchor');
 yes(r399.includes("if(r==='home'&&!q('[data-home]'))")&&r399.includes("[0,60,160,360,700]"),'immediate Home frame');
 yes(r464.includes("getComputedStyle(el).display!=='none'")&&r464.includes('if(loadTask)return loadTask;'),'visible/single-flight Pra Você');
