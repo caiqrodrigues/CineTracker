@@ -1,3 +1,18 @@
+## 1.0.262 — r472 (2026-10-05)
+
+### Corrigido
+- Home > Séries: aposentado o owner r461 de navegação que ainda podia ocultar a view fora da closure sem conseguir carregar os dados. O frame e o Histórico permanecem no r388, enquanto o owner r399 dentro da closure reafirma `cinetracker_home_series_v452` com recuperação delimitada.
+- Home > Filmes: a semi-aba Filmes reafirma o paginador `cinetracker_home_movies_v405` do r399 e preserva o frame/Histórico do r388, eliminando o estado permanente de “Carregando Watchlist…”.
+- Descobrir > Pra Você: removida a concorrência visível do r461; o r464 volta a ser o renderer efetivo dos seis pools v421 e recebe recuperação delimitada após navegação/clique.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos exibem no máximo 13 cards na visão resumida e um único 14º card **Ver mais** quando existe conteúdo adicional.
+- Perfil > Ver mais: o 14º card aciona a tela completa já existente da lista; quando esse fluxo nativo não está disponível, abre uma tela completa separada de fallback. A expansão inline foi removida.
+- Perfil > Jogos no Estádio: o valor passa a ser pintado pela autoridade `cinetracker_sports_stadium_summary_v296`, com fallback pelo histórico esportivo v296 e sem substituir um valor válido quando o RPC falha. A produção foi validada com 171 eventos assistidos e 1 evento presencial.
+- Perfil > gráfico diário e **↶ Desmarcar visto** permanecem na autoridade r471/v426, sem alteração da persistência otimista.
+
+### Preservado / validação
+- Nenhum `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` foi introduzido no runtime r472.
+- Fórmula 1 r462 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 1.0.261 — r471 (2026-10-04)
 
 ### Corrigido
