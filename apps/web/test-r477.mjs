@@ -37,7 +37,7 @@ yes(r388.includes('homeMovieRow?.(y)')&&r399.includes('homeMovieRow?.(y)'),'comp
 yes(!r388.includes("classList.add('ct476-movie-grid')")&&!r399.includes("classList.add('ct476-movie-grid')"),'movie grid retired');
 yes(r464.includes('cinetracker_discover_watch_unseen_v421')&&r464.includes('cinetracker_discover_fresh_v421'),'v421 For You restored');
 yes(!r464.includes('cinetracker_discover_watch_smart_v476')&&!r464.includes('cinetracker_discover_fresh_v476'),'v476 empty pools retired');
-yes(r476.includes('const LIMIT=12')&&r476.includes('data-ct476-header-more'),'12 cards + compact header More');
+yes(js.includes('const LIMIT=12')&&js.includes('data-ct476-header-more'),'12 cards + compact header More');
 yes(r477.includes('[data-ct476-profile-row]>.card:nth-child(n+13)')&&r477.includes('cinetracker_sports_stadium_summary_v296'),'hard 12 cap + stable sports');
 yes(r477.includes('data-ct266-watch="episode"')&&r477.includes("cinetracker_f1_watch_sync_v462"),'Home F1 compact check interception');
 yes(js.includes('cinetracker_profile_lists_v476'),'complete Profile lists preserved');
