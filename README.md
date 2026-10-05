@@ -1,3 +1,11 @@
+## Web 1.0.266 / r476 — Home imediata, recomendações estritas e Perfil com Ver mais no cabeçalho
+
+- Home Séries deixa de entrar preta: shell e frame aparecem imediatamente e a autoridade v452 continua carregando os dados.
+- Home Filmes mantém o Histórico, ancora automaticamente em **Assistir a seguir / Watchlist** e mostra a Watchlist v405 em cards 2:3.
+- Pra Você usa filtros v476 para excluir vistos, Watchlist e favoritos de Indicação do Dia/100% Novos e bloquear WWE/NXT; **Da sua Watchlist** usa afinidade com o histórico recente e troca ponderada, não ordem de inclusão.
+- Perfil mantém exatamente 12 cards em Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos. O card grande **Ver mais** foi removido; somente o botão compacto no cabeçalho abre a lista completa correta.
+- Assistido por dia/desmarcar visto, Esportes, F1 e Android 1.0.20 / 10062 permanecem preservados.
+
 ## Web 1.0.265 / r475 — Home rico, Pra Você estrito e Perfil completo
 
 - Home Séries recupera frame incompleto e a view ativa não pode mais permanecer visualmente escondida/preta.
