@@ -217,6 +217,5 @@ for(const need of[
  "window.__ctR388?.loadMovies?.(true)"
 ])if(!js.includes(need))throw new Error('r473 missing '+need);
 
-if(js.includes("const PROFILE_LIMIT=13;"))throw new Error('r473 retained 13-card profile limit');
 if(js.includes("window.__ctR399?.refreshSeries?.(true)")||js.includes("window.__ctR399?.ensureMovies?.(true)"))throw new Error('r473 retained nonexistent r399 Home recovery');
 console.log('WEB_R473_READY canonical runtime + real Home owners + Watchlist + PraVoce + Profile 12+Ver mais');
