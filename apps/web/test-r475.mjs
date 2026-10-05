@@ -2,8 +2,9 @@ import {readFile} from 'node:fs/promises';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
-const [js,html,sw,releaseRaw,pkgRaw,rootPkgRaw]=await Promise.all([
+const [js,css,html,sw,releaseRaw,pkgRaw,rootPkgRaw]=await Promise.all([
  readFile(resolve(dist,'app-v475.js'),'utf8'),
+ readFile(resolve(dist,'app-v475.css'),'utf8'),
  readFile(resolve(dist,'index.html'),'utf8'),
  readFile(resolve(dist,'service-worker.js'),'utf8'),
  readFile(resolve(dist,'release.json'),'utf8'),
@@ -19,12 +20,11 @@ yes(sw.includes('app-v475.js')&&sw.includes('app-v475.css'),'service worker asse
 const region=anchor=>{const at=js.indexOf(anchor);yes(at>=0,'anchor '+anchor);const s=js.lastIndexOf('(()=>{',at),e=js.indexOf('\n})();',at);yes(s>=0&&e>=0,'bounds '+anchor);return js.slice(s,e+6)};
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
-const r424=region("window.__ctR424={version:'1.0.215'");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
 const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
 yes(js.includes("window.__ctR475Marker='home-complete-rich-anchor+discover-strict-fresh-v475+profile-fast-lists-fullscreen'"),'r475 marker');
 yes(js.includes('homeMovieRow:item=>')&&js.includes('homeSeriesRow:(item,episode=false)=>')&&js.includes('homeHistoryRows:(items,kind,payload)=>'),'lexical rich row bridge');
-yes(r424.includes("view.style.removeProperty('visibility')")&&!r424.includes('const token=++homeGate424;hideHomeSeries424();'),'Series gate retired');
+yes(css.includes('[data-home-view="series"]:not(.hidden):not([hidden]){visibility:visible!important;opacity:1!important}'),'active Series visibility guard');
 yes(r388.includes('homeHistoryRows?.')&&r388.includes('homeMovieRow?.')&&r388.includes('homeSeriesRow?.'),'r388 rich rows');
 yes(r388.includes("window.__ctR399?.enterHome?.(activeKind())"),'History repaint re-anchor');
 yes(r399.includes('!q(\'[data-home-view="series"]\')')&&r399.includes('!q(\'[data-home-view="movies"]\')'),'complete Home frame check');
