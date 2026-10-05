@@ -32,9 +32,9 @@ ok(js.includes("const routeNow=()=>{try{return String(window.__ctCoreR471?.route
 ok(js.includes("window.__ctCoreR471?.authReady?.()")&&js.includes("window.__ctCoreR471.rpc(name,args)"),'r464 RPC is not using core bridge');
 ok(js.includes("window.__ctR464Marker='discover-foryou-visible-owner-v421'"),'r464 visible owner missing');
 ok(js.includes('cinetracker_discover_watch_unseen_v421')&&js.includes('cinetracker_discover_fresh_v421'),'v421 For You pools missing');
-ok(js.includes("if(false&&isForYou()&&(q('[data-ct319-content]')"),'r399 automatic For You owner not retired');
-ok(js.includes("if(false&&fy&&routeNow()==='discover')"),'r399 For You click owner not retired');
-ok(js.includes("if(false&&isForYou()){fyRun++;fyTask=null;"),'r399 For You data repaint not retired');
+ok(!js.includes("if(isForYou()&&(q('[data-ct319-content]')||q('[data-ct315-content]')||q('[data-ct263-discover-content]'))){const sig='discover:foryou'"),'active r399 automatic For You owner survived');
+ok(!js.includes("const fy=t.closest('[data-ct319-tab=\"foryou\"]');if(fy&&routeNow()==='discover')"),'active r399 For You click owner survived');
+ok(!js.includes("if(isForYou()){fyRun++;fyTask=null;setTimeout(()=>void loadForYou399(true),80)}"),'active r399 For You data repaint survived');
 
 for(const need of [
  "window.__ctR471Marker='closure-core+home-r399-visible+discover-r464-core+profile-dashboard-13+history-v426'",
