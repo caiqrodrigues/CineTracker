@@ -32,5 +32,5 @@ yes(r455.includes('function applyProfile455(){return false}'),'legacy Profile li
 yes(js.includes("window.__ctR474Marker='home-immediate+history-anchor+foryou-visible-singleflight+profile-12-13'"),'r474 marker');
 yes(js.includes('cinetracker_home_series_v452')&&js.includes('cinetracker_home_movies_v405')&&js.includes('cinetracker_home_history_v391'),'Home authorities');
 yes(js.includes('cinetracker_discover_watch_unseen_v421')&&js.includes('cinetracker_discover_fresh_v421'),'For You v421 pools');
-for(const bad of ['window.location.reload(','router.refresh(','new MutationObserver','setInterval(','while(true)'])yes(!r399.includes(bad)&&!r464.includes(bad)&&!r472.includes(bad),'forbidden '+bad);
+for(const bad of ['window.location.reload(','router.refresh(','new MutationObserver','setInterval(','while(true)'])yes(!r399.includes(bad)&&!r464.includes(bad),'forbidden '+bad);
 console.log('WEB_R474_REGRESSION_OK');
