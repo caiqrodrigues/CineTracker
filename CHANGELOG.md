@@ -1,3 +1,19 @@
+## 1.0.264 — r474 (2026-10-05)
+
+### Corrigido
+- Home > Séries: o frame do Home passa a ser montado imediatamente quando a rota entra em `home`, sem aguardar as recuperações tardias. O owner r399 continua usando `cinetracker_home_series_v452`.
+- Home > Histórico: quando o histórico v391 termina depois das listas, o Home reaplica o âncora da semi-aba ativa. Isso impede o Histórico de empurrar **Continuar Assistindo** ou a Watchlist para fora da área visível.
+- Home > Filmes: a Watchlist v405 permanece como seção ativa após o repaint tardio do histórico.
+- Descobrir > Pra Você: r464 passa a renderizar no container de Discover realmente visível e usa somente um carregamento v421 em andamento por vez, eliminando os carregamentos que se cancelavam mutuamente.
+- Perfil: r472 passa a ser o único owner das listas resumidas. Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos mostram exatamente **12 cards + 13º Ver mais** quando houver conteúdo adicional.
+- Perfil: controles nativos **Ver mais** do cabeçalho também são reconhecidos quando são links ou elementos com `role=button`, evitando duplicidade com o 13º card.
+- Perfil: a visão resumida é pintada imediatamente a partir do cache já disponível e depois hidratada pelos RPCs canônicos, sem aguardar a estatística de estádio.
+- Perfil: o limiter legado r455 foi aposentado somente para as listas; o vínculo do histórico diário/desmarcação permanece preservado.
+
+### Preservado / validação
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` nos owners corrigidos.
+- Fórmula 1 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 1.0.263 — r473 (2026-10-05)
 
 ### Corrigido
