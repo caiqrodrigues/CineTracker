@@ -1,3 +1,13 @@
+## Web 1.0.265 / r475 — Home rico, Pra Você estrito e Perfil completo
+
+- Home Séries recupera frame incompleto e não usa mais o gate r424 que podia deixar a view preta.
+- Séries/Histórico e Filmes voltam ao visual rico ct274; Watchlist de Filmes continua completa via v405.
+- Ao trocar para Filmes, o estado final fica ancorado em **Assistir a seguir / Watchlist**, mesmo depois do carregamento do Histórico.
+- Descobrir > Pra Você mantém o fluxo que voltou a funcionar, mas **Indicação do Dia** e **100% Novos** usam v475 com exclusão por TMDB + aliases; **Da sua Watchlist** continua como exceção.
+- Perfil usa `cinetracker_profile_lists_v475` para Séries, Filmes e favoritos completos, mantendo **12 cards + 13º Ver mais**.
+- O **Ver mais** abre sempre a tela completa independente, inclusive em Atores Favoritos, e os controles duplicados do cabeçalho são ocultados.
+- Esportes, F1, histórico diário/desmarcação e Android 1.0.20 / 10062 permanecem preservados.
+
 ## Web 1.0.264 / r474 — Home imediato, Pra Você estável e Perfil 12+13
 
 - Home Séries monta o frame imediatamente e continua usando v452.
