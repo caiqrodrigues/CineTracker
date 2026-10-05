@@ -68,12 +68,7 @@ js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';"
  ["for(const delay of [0,300,900]){","for(const delay of [0,250]){",'bounded fast retry']
 ],'r464');
 
-/* Exactly twelve cards remain in the summary. Only the compact header control opens all. */
-js=patchRuntime(js,"window.__ctR476Marker='home-visible-card-watchlist+foryou-v476-strict-smart+profile-12-header-more-full';",[
- ["const moreLabels={series:'Ver mais séries',movies:'Ver mais filmes',seriesFav:'Ver mais séries favoritas',movieFav:'Ver mais filmes favoritos',actors:'Ver mais atores'};",
-  "const moreLabels={series:'Ver mais Séries',movies:'Ver mais Filmes',seriesFav:'Ver mais Séries Favoritas',movieFav:'Ver mais Filmes Favoritos',actors:'Ver mais Atores Favoritos'};",'full header labels'],
- ["b.dataset.ct476HeaderMore=key;b.textContent=moreLabels[key];b.hidden=total===0;","b.dataset.ct476HeaderMore=key;b.textContent=moreLabels[key];b.hidden=total<=LIMIT;",'More only when there is more']
-],'r476');
+/* r476 already owns exactly twelve cards + compact header More; keep that behavior intact. */
 
 new Function(runtime);
 for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])if(runtime.includes(bad))throw new Error('r477 forbidden '+bad);
@@ -108,10 +103,9 @@ const r424=region("if(window.__ctR424?.version==='1.0.215')return;");
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
-const r476=region("window.__ctR476Marker='home-visible-card-watchlist+foryou-v476-strict-smart+profile-12-header-more-full'");
 if(r415.includes("document.documentElement.dataset.ct415HomeEntering='series'")||r415.includes('elapsed>=9000')&&r415.includes('homeEntering=true'))throw new Error('r477 r415 Home gate still active');
 if(!r388.includes("homeMovieRow?.(y)")||!r399.includes("homeMovieRow?.(y)")||r388.includes("classList.add('ct476-movie-grid')")||r399.includes("classList.add('ct476-movie-grid')"))throw new Error('r477 compact Movies missing');
 if(!r464.includes('cinetracker_discover_watch_unseen_v421')||!r464.includes('cinetracker_discover_fresh_v421')||r464.includes('cinetracker_discover_watch_smart_v476'))throw new Error('r477 v421 Discover missing');
-if(!r476.includes("b.hidden=total<=LIMIT")||!js.includes("window.__ctR477Marker='home-no-nine-second-gate+compact-movies+f1-home-writer+foryou-v421+profile-12-header-only+sports-v296'"))throw new Error('r477 Profile/runtime marker missing');
+if(!js.includes('const LIMIT=12')||!js.includes('data-ct476-header-more')||!js.includes("window.__ctR477Marker='home-no-nine-second-gate+compact-movies+f1-home-writer+foryou-v421+profile-12-header-only+sports-v296'"))throw new Error('r477 Profile/runtime marker missing');
 for(const need of ['cinetracker_profile_lists_v476','cinetracker_sports_stadium_summary_v296','cinetracker_activity_items_by_day_v426','cinetracker_unmark_history_item_v426'])if(!js.includes(need))throw new Error('r477 missing '+need);
 console.log('WEB_R477_READY');
