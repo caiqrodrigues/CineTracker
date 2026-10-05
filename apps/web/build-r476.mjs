@@ -105,7 +105,7 @@ js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';"
 ],'r464');
 
 js=patchRuntime(js,'/* CineTracker Web 1.0.262 r472',[
- ["function scheduleProfile(force=false){\n const token=++profileToken;\n bounded(()=>{if(token!==profileToken||routeNow()!=='profile')return;void applyProfile(force)},[80,220,520,1100,2200,4200,7000,10000]);\n}",
+ ["function scheduleProfile(force=false){\n const token=++profileToken;\n bounded(()=>{if(token!==profileToken||routeNow()!=='profile')return;void applyProfile(force)},[40,120,280,600,1200,2400,4200,7000,10000,13000,16000]);\n}",
   "function scheduleProfile(){return false}",
   'retire r472 profile scheduler']
 ],'r472');
