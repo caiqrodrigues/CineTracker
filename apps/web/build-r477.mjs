@@ -28,22 +28,21 @@ function patchRuntime(source,anchor,patches,label){
  return source.slice(0,start)+region+source.slice(end);
 }
 
-/* r415 caused the exact ~9 second black Home entry. Retire that visual gate only. */
-js=patchRuntime(js,"window.__ctR415Marker='stable-series-entry+visible-functional-7-swap+single-v380-profile';",[
- [`function beginSeriesEntry(){
- const token=++homeToken;homeEntering=true;homeStartedAt=Date.now();lastTop=null;stableSamples=0;clearTimeout(homeTimer);delete document.documentElement.dataset.ct413HomeEntering;document.documentElement.dataset.ct415HomeEntering='series';
- try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{try{window.scrollTo(0,0)}catch{}}
- homeTimer=setTimeout(()=>homeProbe(token),0);return token;
-}`,
- `function beginSeriesEntry(){
- const token=++homeToken;homeEntering=false;homeStartedAt=Date.now();lastTop=null;stableSamples=0;clearTimeout(homeTimer);homeTimer=0;delete document.documentElement.dataset.ct413HomeEntering;delete document.documentElement.dataset.ct415HomeEntering;
- try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{try{window.scrollTo(0,0)}catch{}}
- queueMicrotask(()=>{if(routeNow()!=='home')return;const target=continueSection();if(target)alignSeriesTarget(target)});return token;
-}`,'retire nine second entry gate'],
- ["document.documentElement.dataset.ct415HomeEntering='series';","delete document.documentElement.dataset.ct415HomeEntering;",'retire boot gate'],
- ["decorateProfileDom();return true;","decorateProfileDom();queueMicrotask(()=>{try{window.__ctR476?.paintProfile?.()}catch{}});return true;",'reapply final Profile lists'],
- ["profilePaint(data);void updateSportsProfile(run);return data;","profilePaint(data);return data;",'retire r415 sports repaint']
-],'r415');
+/* r415 caused the exact ~9 second black Home entry. Retire the visual marker/timer defensively,
+   without depending on the exact historical function formatting. */
+{
+ const anchor="window.__ctR415Marker='stable-series-entry+visible-functional-7-swap+single-v380-profile';";
+ const at=js.indexOf(anchor);
+ if(at<0)throw new Error('r477 missing r415 anchor');
+ const rs=js.lastIndexOf('(()=>{',at),rc=js.indexOf('\n})();',at);
+ if(rs<0||rc<0)throw new Error('r477 invalid r415 bounds');
+ let region=js.slice(rs,rc+6);
+ region=region.replaceAll("document.documentElement.dataset.ct415HomeEntering='series';","delete document.documentElement.dataset.ct415HomeEntering;");
+ region=region.replace(/elapsed\s*>=\s*9000/g,'elapsed>=0');
+ region=region.replace(/homeEntering\s*=\s*true/g,'homeEntering=false');
+ region=region.replace("profilePaint(data);void updateSportsProfile(run);return data;","profilePaint(data);return data;");
+ js=js.slice(0,rs)+region+js.slice(rc+6);
+}
 
 /* r424 may still refresh main time stats, but it no longer rewrites Sports or Profile lists. */
 js=patchRuntime(js,"if(window.__ctR424?.version==='1.0.215')return;",[
