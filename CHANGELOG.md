@@ -1,3 +1,20 @@
+## 1.0.266 — r476 (2026-10-05)
+
+### Corrigido
+- Home > Séries: removido o gate legado r424 que escondia a view durante o carregamento e causava entrada preta. A Home passa a pintar shell/frame visível imediatamente e mantém r399/v452 como autoridade de Séries.
+- Home > Filmes: Histórico permanece no topo, mas a entrada em Filmes ancora em **Assistir a seguir / Watchlist**. A Watchlist v405 volta ao padrão visual de cards 2:3, com renderização progressiva para a lista completa.
+- Descobrir > Pra Você: Indicação do Dia e 100% Novos passam ao filtro v476, que bloqueia mídias já assistidas, em andamento, concluídas, em dia, na Watchlist ou favoritas por TMDB ID e aliases normalizados; também inclui play-events na evidência de vistos.
+- Descobrir > Pra Você: filtro WWE ampliado para WWE, NXT, Raw, SmackDown, WrestleMania, Royal Rumble, SummerSlam, Survivor Series e eventos relacionados.
+- Descobrir > Da sua Watchlist: passa ao pool inteligente v476, ordenado por afinidade de gêneros com o consumo recente e nota, mantendo variação ponderada no **Trocar** em vez de percorrer a lista em ordem.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos usam a autoridade completa `cinetracker_profile_lists_v476`, incluindo histórico por play-events e todos os atores favoritos.
+- Perfil: removido o card grande de **Ver mais**. Cada quadro mantém exatamente 12 cards do mesmo tamanho e somente o botão compacto de **Ver mais** no cabeçalho.
+- Perfil > Ver mais: o botão compacto abre uma tela separada com todos os itens da categoria correta, renderizados progressivamente em lotes para não travar a main thread.
+- Perfil > Assistido por dia e **↶ Desmarcar visto** preservados sem alteração.
+
+### Preservado / validação
+- Esportes, Fórmula 1 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+- Nenhum `window.location.reload()`, `router.refresh()`, `setInterval` ou `while(true)` foi introduzido pela r476.
+
 ## 1.0.265 — r475 (2026-10-05)
 
 ### Corrigido
