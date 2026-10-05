@@ -1,3 +1,13 @@
+## Web 1.0.262 / r472 — owners visíveis recuperados
+
+- Home > Séries volta a combinar o frame/Histórico r388 com Séries v452 do r399, aposentando o handler r461 que ainda podia esconder a view sem acesso à closure.
+- Home > Filmes reafirma a Watchlist paginada v405 no clique/entrada da semi-aba e mantém o Histórico do Home.
+- Descobrir > Pra Você volta ao renderer r464 sobre os seis pools v421, com recuperação delimitada após a navegação.
+- Perfil mostra 13 cards + um único 14º **Ver mais** nas cinco listas. O **Ver mais** abre uma tela completa de todos os cards; não expande mais a mesma linha.
+- **Jogos no Estádio** usa a autoridade v296 e fallback do histórico; o banco de produção confirma 1 evento presencial.
+- Histórico diário v426 e **↶ Desmarcar visto** permanecem preservados.
+- F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 1.0.261 / r471 — autoridade lexical restaurada
 
 - Corrige a causa estrutural das regressões recentes: os runtimes anexados depois do fechamento da aplicação não enxergavam a sessão, rota e RPCs mantidos dentro da closure original.
