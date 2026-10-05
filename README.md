@@ -1,3 +1,12 @@
+## Web 1.0.263 / r473 — owners ligados à closure viva
+
+- Home Séries/Histórico e Home Filmes/Watchlist deixam de depender dos hooks r469 removidos e usam diretamente `__ctCoreR471`.
+- Séries permanecem em v452, Watchlist de Filmes em v405 e Histórico do Home em v391.
+- Descobrir > Pra Você mantém r464/v421, removendo o gate de autenticação obsoleto que impedia os pools de carregar.
+- Perfil mostra exatamente **12 cards + 13º Ver mais** nas cinco listas solicitadas.
+- O **Ver mais** abre a tela completa da lista; não expande a mesma linha.
+- F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 1.0.262 / r472 — owners visíveis recuperados
 
 - Home > Séries volta a combinar o frame/Histórico r388 com Séries v452 do r399, aposentando o handler r461 que ainda podia esconder a view sem acesso à closure.
