@@ -1,4 +1,4 @@
-- Web: **1.0.263 / r473-official-1.0.263** — corrige Home Séries/Histórico, Watchlist de Filmes e Pra Você usando view/ctSession/sbRpc canônicos; Perfil com 12 cards + 13º Ver mais em tela completa.
+- Web: **1.0.263 / r473-official-1.0.263** — corrige Home Séries/Histórico pelos owners r388/r404, Watchlist v405 pelo r404/r405 e Pra Você r464 usando view/ctSession/sbRpc canônicos; Perfil com 12 cards + 13º Ver mais em tela completa.
 - Web: **1.0.262 / r472-official-1.0.262** — recupera Home Séries/Histórico e Watchlist v405, reafirma Pra Você r464/v421, corrige Jogos no Estádio v296 e aplica 13 cards + 14º Ver mais abrindo tela completa separada.
 - Web: **1.0.261 / r471-official-1.0.261** — corrige a fronteira de closure que isolava owners anexados; Home r399/v452+v405, Pra Você r464/v421, Perfil com 13 + Ver mais nas cinco listas e histórico diário v426 com ↶ por linha.
 - Web: **1.0.260 / r470-official-1.0.260** — restaura r464/r399 para Home e Pra Você, impede estatísticas do Perfil de zerarem em falha, aplica 13 + Ver mais inclusive Atores v465 e restaura histórico diário v426 com ↶ por linha.
