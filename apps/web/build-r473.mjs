@@ -64,9 +64,9 @@ js=patchRuntime(js,'/* CineTracker Web 1.0.184 r393',region=>{
   "const routeNow=()=>{try{return String(typeof route==='function'?route():'')}catch{return''}};",
   "const routeNow=()=>{try{return String(window.__ctCoreR473?.route?.()||'')}catch{return''}};",
   'r388 route');
- const direct=(region.match(/(?<![\\w.])rpc\\(/g)||[]).length;
+ const direct=(region.match(/(?<![\w.])rpc\(/g)||[]).length;
  if(direct!==9)throw new Error('r473 expected 9 direct r388 rpc calls, found '+direct);
- region=region.replace(/(?<![\\w.])rpc\\(/g,'window.__ctCoreR473.rpc(');
+ region=region.replace(/(?<![\w.])rpc\(/g,'window.__ctCoreR473.rpc(');
  region=once(region,
   "if(typeof ensureMedia!=='function'||typeof rpc!=='function')throw new Error('Writer de assistidos indisponível');",
   "if(typeof ensureMedia!=='function'||!window.__ctCoreR473?.authReady?.())throw new Error('Writer de assistidos indisponível');",
