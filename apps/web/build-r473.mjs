@@ -92,7 +92,7 @@ js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';"
 
 {
   const count=js.split('const PROFILE_LIMIT=13;').length-1;
-  if(count!==2)throw new Error('r473 expected two Profile limits, found '+count);
+  if(count!==3)throw new Error('r473 expected three Profile limits, found '+count);
   js=js.replaceAll('const PROFILE_LIMIT=13;','const PROFILE_LIMIT=12;');
 }
 {
