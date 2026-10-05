@@ -50,20 +50,6 @@ js=patchGlobal(
 /* r424 can still run legacy entry hooks, but r475 never allows an active Series view
    to stay visually hidden. Frame/data ownership stays with r388/r399. */
 
-/* r425 may still reveal Home, but r475 strips any absolute scroll from its
-   legacy entry function so it cannot beat the semantic r374/r399 anchor later. */
-{
- const anchor="window.__ctR425Marker='home-no-blank+f1-1280+foryou-single-slot-optimistic+profile-sports-canonical';",at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);
- if(at<0||start<0||close<0)throw new Error('r475 r425 bounds');
- let region=js.slice(start,close+6),fnStart=region.indexOf('function homeEntry425(){'),fnEnd=region.indexOf('function current425',fnStart);
- if(fnStart<0||fnEnd<0)throw new Error('r475 r425 homeEntry bounds');
- let fn=region.slice(fnStart,fnEnd);
- fn=fn.replace(/try\s*\{\s*window\.scrollTo\([\s\S]*?\)\s*\}\s*catch\s*\{\s*\}\s*;?/g,'');
- if(fn.includes('window.scrollTo'))throw new Error('r475 r425 Home scroll still present');
- region=region.slice(0,fnStart)+fn+region.slice(fnEnd);
- js=js.slice(0,start)+region+js.slice(close+6);
-}
-
 /* r388 owns the stable Home frame/history. Route all rich row generation back
    through the lexical closure bridge and re-anchor after async History repaint. */
 js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';",[
@@ -179,7 +165,31 @@ js=patchRuntime(js,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12
  js=js.slice(0,start)+region+js.slice(close+6);
 }
 
-js+="\nwindow.__ctR475Marker='home-complete-rich-anchor+discover-strict-fresh-v475+profile-fast-lists-fullscreen';\n";
+js+=`\n/* CineTracker Web 1.0.265 r475 — final bounded Home semantic anchor after legacy entry timers. */
+(()=>{
+'use strict';
+if(window.__ctR475HomeAnchor?.version==='1.0.265')return;
+let token=0,userMoved=false;
+const routeNow=()=>{try{return String(window.__ctCoreR471?.route?.()||'')}catch{return''}};
+const schedule=kind=>{
+ const wanted=kind==='movies'?'movies':'series',run=++token;userMoved=false;
+ for(const ms of [80,260,620,980,1380])setTimeout(()=>{
+  if(run!==token||userMoved||routeNow()!=='home')return;
+  try{window.__ctR399?.enterHome?.(wanted)}catch{}
+ },ms);
+ return run;
+};
+window.addEventListener('click',e=>{
+ const tab=e.target?.closest?.('[data-home-tab]');
+ if(tab){schedule(String(tab.dataset.homeTab||'series'));return}
+ if(e.target?.closest?.('[data-nav="home"]'))schedule('series');
+},true);
+for(const ev of ['wheel','touchmove'])window.addEventListener(ev,()=>{if(routeNow()==='home'){userMoved=true;token++}},{capture:true,passive:true});
+window.addEventListener('keydown',e=>{if(routeNow()==='home'&&['PageUp','PageDown','ArrowUp','ArrowDown','Home','End',' '].includes(e.key)){userMoved=true;token++}},true);
+window.addEventListener('popstate',()=>setTimeout(()=>{if(routeNow()==='home')schedule('series')},0));
+window.__ctR475HomeAnchor={version:'1.0.265',schedule};
+})();
+window.__ctR475Marker='home-complete-rich-anchor+discover-strict-fresh-v475+profile-fast-lists-fullscreen';\n`;
 
 html=html.replaceAll('app-v474.js','app-v475.js').replaceAll('app-v474.css','app-v475.css').replaceAll('v1.0.264','v1.0.265').replaceAll('r474-official-1.0.264','r475-official-1.0.265');
 css+="\n/* CineTracker Web 1.0.265 r475 — complete rich Home, strict fresh discovery and reliable Profile full lists. */\n[data-home-view=\"series\"]:not(.hidden):not([hidden]){visibility:visible!important;opacity:1!important}\n";
@@ -212,13 +222,12 @@ await Promise.all([rm(resolve(dist,'app-v474.js'),{force:true}),rm(resolve(dist,
 
 const region=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);if(at<0||start<0||close<0)throw new Error('r475 missing runtime '+anchor);return js.slice(start,close+6)};
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
-const r425=region("window.__ctR425Marker='home-no-blank+f1-1280+foryou-single-slot-optimistic+profile-sports-canonical';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
 const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
 if(!js.includes('homeMovieRow:item=>')||!js.includes('homeSeriesRow:(item,episode=false)=>')||!js.includes('ensureHomeShell:()=>'))throw new Error('r475 lexical Home presentation bridge missing');
+if(!js.includes("window.__ctR475HomeAnchor={version:'1.0.265',schedule}")||!js.includes('[80,260,620,980,1380]'))throw new Error('r475 final bounded Home anchor missing');
 if(!css.includes('[data-home-view="series"]:not(.hidden):not([hidden]){visibility:visible!important;opacity:1!important}'))throw new Error('r475 active Series visibility guard missing');
-if(r425.includes('window.scrollTo({top:0,left:0,behavior:\'auto\'})'))throw new Error('r475 r425 still resets Home to absolute top');
 if(!r388.includes('homeHistoryRows?.')||!r388.includes('homeMovieRow?.')||!r388.includes('homeSeriesRow?.'))throw new Error('r475 r388 rich rows missing');
 if(!r399.includes('!q(\'[data-home-view="series"]\')')||!r399.includes('homeMovieRow?.')||!r399.includes('homeSeriesRow?.'))throw new Error('r475 r399 frame/rich recovery missing');
 if(!r464.includes("cinetracker_discover_fresh_v475")||!r464.includes("cinetracker_discover_watch_unseen_v421"))throw new Error('r475 Discover pools invalid');
