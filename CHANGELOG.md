@@ -1,7 +1,8 @@
 ## 1.0.263 — r473 (2026-10-05)
 
 ### Corrigido
-- Home > Séries: corrigida a causa dos painéis vazios e liberados os gates legados r417/r424/r461 que podiam manter a view invisível. Os owners realmente presentes no bundle final (r388 e r404/r405) deixam de depender dos aliases legados `route/rpc/session` e passam a usar a autoridade canônica da aplicação: `view`, `ctSession` e `sbRpc`.
+- Home > Séries: corrigida a causa dos painéis vazios e liberados os gates legados r417/r424/r461 que podiam manter a view invisível.
+- A recuperação r472 deixa de chamar o inexistente `window.__ctR399` (r399 não faz parte da cadeia final r396→r402) e passa a acionar os owners realmente publicados. Os owners realmente presentes no bundle final (r388 e r404/r405) deixam de depender dos aliases legados `route/rpc/session` e passam a usar a autoridade canônica da aplicação: `view`, `ctSession` e `sbRpc`.
 - Home > Histórico: o loader r388 de `cinetracker_home_history_v391` passa pelo mesmo caminho autenticado canônico, restaurando o histórico sem recarga global.
 - Home > Filmes: a Watchlist paginada `cinetracker_home_movies_v405` do r404/r405 passa a usar a sessão/RPC reais da aplicação.
 - Descobrir > Pra Você: o renderer r464/v421 passa a usar a mesma autoridade canônica e deixa de falhar por ausência dos aliases retirados nas versões anteriores.
