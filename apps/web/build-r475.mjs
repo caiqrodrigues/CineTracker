@@ -47,26 +47,8 @@ js=patchGlobal(
   'core Home presentation bridge'
 );
 
-/* The r424 visibility gate is retired. It was hiding Séries while waiting for an
-   external owner and could leave the already-created Home frame visually empty. */
-js=patchRuntime(js,"window.__ctR424={version:'1.0.215'",[
-  [
-`async function gateHomeSeries424(){
- if(routeNow()!=='home'||activeHome()!=='series')return false;
- const token=++homeGate424;hideHomeSeries424();
- try{await timeout(Promise.resolve(window.__ctR399?.refreshSeries?.(true)),5200)}catch{}
- if(routeNow()==='home'&&activeHome()==='series')revealHomeSeries424(token);
- return true;
-}`,
-`async function gateHomeSeries424(){
- if(routeNow()!=='home'||activeHome()!=='series')return false;
- const view=q('[data-home-view="series"]');if(view){view.style.removeProperty('visibility');view.removeAttribute('aria-hidden');view.dataset.ct424HomeReady='1'}
- try{void window.__ctR399?.refreshSeries?.(false)}catch{}
- return true;
-}`,
-    'retire hidden Series gate'
-  ]
-],'r424');
+/* r424 can still run legacy entry hooks, but r475 never allows an active Series view
+   to stay visually hidden. Frame/data ownership stays with r388/r399. */
 
 /* r388 owns the stable Home frame/history. Route all rich row generation back
    through the lexical closure bridge and re-anchor after async History repaint. */
@@ -180,7 +162,7 @@ js=patchRuntime(js,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12
 js+="\nwindow.__ctR475Marker='home-complete-rich-anchor+discover-strict-fresh-v475+profile-fast-lists-fullscreen';\n";
 
 html=html.replaceAll('app-v474.js','app-v475.js').replaceAll('app-v474.css','app-v475.css').replaceAll('v1.0.264','v1.0.265').replaceAll('r474-official-1.0.264','r475-official-1.0.265');
-css+="\n/* CineTracker Web 1.0.265 r475 — complete rich Home, strict fresh discovery and reliable Profile full lists. */\n";
+css+="\n/* CineTracker Web 1.0.265 r475 — complete rich Home, strict fresh discovery and reliable Profile full lists. */\n[data-home-view=\"series\"]:not(.hidden):not([hidden]){visibility:visible!important;opacity:1!important}\n";
 sw=sw.replaceAll('app-v474.js','app-v475.js').replaceAll('app-v474.css','app-v475.css').replaceAll('ct-web-1.0.264-r474','ct-web-1.0.265-r475');
 
 const release=JSON.parse(releaseRaw);
@@ -189,7 +171,7 @@ Object.assign(release,{
  revision:'r475-official-1.0.265',
  base:'r474+r475-home-discovery-profile',
  scope:'home-series-frame+movie-watchlist-rich-anchor+discover-strict-fresh+profile-full-list',
- home_series:'r424 hidden gate retired; incomplete Home frame rebuilt; r399 v452 renders rich rows through the lexical presentation bridge',
+ home_series:'active Series view cannot remain hidden; incomplete Home frame is rebuilt; r399 v452 renders rich rows through the lexical presentation bridge',
  home_movies:'v405 full Watchlist remains complete, rich ct274 visual restored and Filmes intent finishes anchored at Assistir a seguir / Watchlist after History repaint',
  discover_foryou:'working r464 owner preserved; Watchlist slots remain v421 while daily/100% Novos use strict alias-aware v475 fresh pools',
  profile_lists:'cinetracker_profile_lists_v475 supplies complete lightweight media lists; 12 cards plus 13th Ver mais; all legacy header More controls hidden; own More always opens a separate full-list screen',
@@ -211,11 +193,10 @@ await Promise.all([rm(resolve(dist,'app-v474.js'),{force:true}),rm(resolve(dist,
 const region=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);if(at<0||start<0||close<0)throw new Error('r475 missing runtime '+anchor);return js.slice(start,close+6)};
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
-const r424=region("window.__ctR424={version:'1.0.215'");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
 const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
 if(!js.includes('homeMovieRow:item=>')||!js.includes('homeSeriesRow:(item,episode=false)=>')||!js.includes('ensureHomeShell:()=>'))throw new Error('r475 lexical Home presentation bridge missing');
-if(!r424.includes("view.style.removeProperty('visibility')")||r424.includes('hideHomeSeries424();'))throw new Error('r475 r424 hidden gate still active');
+if(!css.includes('[data-home-view="series"]:not(.hidden):not([hidden]){visibility:visible!important;opacity:1!important}'))throw new Error('r475 active Series visibility guard missing');
 if(!r388.includes('homeHistoryRows?.')||!r388.includes('homeMovieRow?.')||!r388.includes('homeSeriesRow?.'))throw new Error('r475 r388 rich rows missing');
 if(!r399.includes('!q(\'[data-home-view="series"]\')')||!r399.includes('homeMovieRow?.')||!r399.includes('homeSeriesRow?.'))throw new Error('r475 r399 frame/rich recovery missing');
 if(!r464.includes("cinetracker_discover_fresh_v475")||!r464.includes("cinetracker_discover_watch_unseen_v421"))throw new Error('r475 Discover pools invalid');
