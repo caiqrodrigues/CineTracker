@@ -50,6 +50,16 @@ js=patchGlobal(
 /* r424 can still run legacy entry hooks, but r475 never allows an active Series view
    to stay visually hidden. Frame/data ownership stays with r388/r399. */
 
+/* r425 still reveals the Home during legacy entry, but it must not overwrite the
+   semantic Series/Watchlist anchor with a delayed absolute scroll-to-top. */
+js=patchRuntime(js,"window.__ctR425Marker='home-no-blank+f1-1280+foryou-single-slot-optimistic+profile-sports-canonical';",[
+  [
+    "function homeEntry425(){if(routeNow()!=='home')return;try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{};for(const ms of[0,40,120,250,600,1200])setTimeout(revealHome425,ms)}",
+    "function homeEntry425(){if(routeNow()!=='home')return;for(const ms of[0,40,120,250,600,1200])setTimeout(revealHome425,ms)}",
+    'remove delayed absolute Home scroll'
+  ]
+],'r425');
+
 /* r388 owns the stable Home frame/history. Route all rich row generation back
    through the lexical closure bridge and re-anchor after async History repaint. */
 js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';",[
@@ -198,11 +208,13 @@ await Promise.all([rm(resolve(dist,'app-v474.js'),{force:true}),rm(resolve(dist,
 
 const region=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);if(at<0||start<0||close<0)throw new Error('r475 missing runtime '+anchor);return js.slice(start,close+6)};
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
+const r425=region("window.__ctR425Marker='home-no-blank+f1-1280+foryou-single-slot-optimistic+profile-sports-canonical';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
 const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
 if(!js.includes('homeMovieRow:item=>')||!js.includes('homeSeriesRow:(item,episode=false)=>')||!js.includes('ensureHomeShell:()=>'))throw new Error('r475 lexical Home presentation bridge missing');
 if(!css.includes('[data-home-view="series"]:not(.hidden):not([hidden]){visibility:visible!important;opacity:1!important}'))throw new Error('r475 active Series visibility guard missing');
+if(r425.includes('window.scrollTo({top:0,left:0,behavior:\'auto\'})'))throw new Error('r475 r425 still resets Home to absolute top');
 if(!r388.includes('homeHistoryRows?.')||!r388.includes('homeMovieRow?.')||!r388.includes('homeSeriesRow?.'))throw new Error('r475 r388 rich rows missing');
 if(!r399.includes('!q(\'[data-home-view="series"]\')')||!r399.includes('homeMovieRow?.')||!r399.includes('homeSeriesRow?.'))throw new Error('r475 r399 frame/rich recovery missing');
 if(!r464.includes("cinetracker_discover_fresh_v475")||!r464.includes("cinetracker_discover_watch_unseen_v421"))throw new Error('r475 Discover pools invalid');
