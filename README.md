@@ -1,3 +1,13 @@
+## Web 1.0.264 / r474 — Home imediato, Pra Você estável e Perfil 12+13
+
+- Home Séries monta o frame imediatamente e continua usando v452.
+- O Histórico v391 não desloca mais a seção principal após terminar de carregar.
+- Home Filmes mantém a Watchlist v405 visível mesmo quando o Histórico termina depois.
+- Descobrir > Pra Você usa o host visível e um único carregamento dos pools v421 por vez.
+- Perfil usa um único owner para as cinco listas: **12 cards + 13º Ver mais**.
+- O 13º **Ver mais** abre a tela completa; o controle duplicado no cabeçalho é ocultado mesmo quando for link/role button.
+- Histórico diário/desmarcação, F1 e Android 1.0.20 / 10062 permanecem preservados.
+
 ## Web 1.0.263 / r473 — owners ligados à closure viva
 
 - Home Séries/Histórico e Home Filmes/Watchlist deixam de depender dos hooks r469 removidos e usam diretamente `__ctCoreR471`.
