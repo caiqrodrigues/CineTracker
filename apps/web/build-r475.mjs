@@ -120,11 +120,6 @@ js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';"
    hide every legacy header control, and always open the independent full-list screen. */
 js=patchRuntime(js,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';",[
   [
-    "try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{}",
-    "/* r475: r399 owns the Home primary-section anchor; bounded recovery never resets it. */",
-    'remove competing Home top reset'
-  ],
-  [
 `async function loadMedia(force=false){
  if(mediaTask)return mediaTask;
  mediaTask=(async()=>{try{const dash=arrayFrom(await timeout(core.rpc('cinetracker_profile_media_dashboard_v0991',{}),8000));if(dash.length||force)mediaLists=makeMediaLists(dash);return mediaLists}catch{return mediaLists||fallbackMediaLists()}finally{mediaTask=null}})();return mediaTask;
@@ -158,6 +153,17 @@ js=patchRuntime(js,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12
     'independent full-list screen'
   ]
 ],'r472');
+
+{
+ const anchor="window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';",at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);
+ if(at<0||start<0||close<0)throw new Error('r475 r472 scroll bounds');
+ let region=js.slice(start,close+6);
+ const pattern=/try\s*\{\s*window\.scrollTo\(\{\s*top\s*:\s*0\s*,\s*left\s*:\s*0\s*,\s*behavior\s*:\s*['"]auto['"]\s*\}\)\s*\}\s*catch\s*\{\s*\}/;
+ if(pattern.test(region))region=region.replace(pattern,"/* r475: r399 owns the Home primary-section anchor; bounded recovery never resets it. */");
+ else if(region.includes('window.scrollTo'))throw new Error('r475 could not neutralize r472 Home scroll reset');
+ else if(!region.includes('r399 owns the Home primary-section anchor'))region=region.replace('function setHomeKind(kind){',"function setHomeKind(kind){\n /* r475: r399 owns the Home primary-section anchor; bounded recovery never resets it. */");
+ js=js.slice(0,start)+region+js.slice(close+6);
+}
 
 js+="\nwindow.__ctR475Marker='home-complete-rich-anchor+discover-strict-fresh-v475+profile-fast-lists-fullscreen';\n";
 
