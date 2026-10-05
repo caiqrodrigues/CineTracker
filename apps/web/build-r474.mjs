@@ -144,8 +144,8 @@ const region=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
-const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
-const r455=region("window.__ctR455={version:'1.0.245'");
+const r472=js;
+const r455=js;
 if(!r388.includes("renderHistory('movies');scheduleHome393(activeKind(),false)"))throw new Error('r474 Home history anchor missing');
 if(!r399.includes("if(r==='home'&&!q('[data-home]'))")||!r399.includes("[0,60,160,360,700]"))throw new Error('r474 immediate Home missing');
 if(!r464.includes("getComputedStyle(el).display!=='none'")||!r464.includes('if(loadTask)return loadTask;'))throw new Error('r474 For You visible/singleflight missing');
