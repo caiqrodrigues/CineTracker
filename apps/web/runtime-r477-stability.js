@@ -31,7 +31,7 @@ const f1Locks=new WeakSet();
 function f1HomeAction(target){
  const btn=target?.closest?.('[data-ct266-watch="episode"]');if(!btn)return null;
  const row=btn.closest('[data-ct274-episode-card],.ct274-media-card,.media-row');
- const title=norm(btn.dataset.title||q('b,strong',row)?.textContent||row?.textContent||'');
+ const title=norm([q('b,strong',row)?.textContent,btn.dataset.title,row?.textContent].filter(Boolean).join(' '));
  if(!(title==='formula 1'||title.startsWith('formula 1 ')||title==='formula one'||title.startsWith('formula one ')))return null;
  const season=num(btn.dataset.season||row?.dataset?.ct274Season),episode=num(btn.dataset.episode||row?.dataset?.ct274Episode);
  return season>0&&episode>0?{btn,row,season,episode}:null;
