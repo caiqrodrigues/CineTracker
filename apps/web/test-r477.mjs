@@ -32,7 +32,7 @@ const r476=region("window.__ctR476Marker='home-visible-card-watchlist+foryou-v47
 const r477=js.slice(js.lastIndexOf('/* CineTracker Web 1.0.267 r477'));
 
 yes(!r415.includes("document.documentElement.dataset.ct415HomeEntering='series'"),'r415 boot gate retired');
-yes(r415.includes('homeEntering=false')&&!r415.includes('elapsed>=9000'),'r415 immediate Home gate retirement');
+yes(!r415.includes("document.documentElement.dataset.ct415HomeEntering='series'"),'r415 Home entry marker retired');
 yes(r388.includes('homeMovieRow?.(y)')&&r399.includes('homeMovieRow?.(y)'),'compact rich Movie rows');
 yes(!r388.includes("classList.add('ct476-movie-grid')")&&!r399.includes("classList.add('ct476-movie-grid')"),'movie grid retired');
 yes(r464.includes('cinetracker_discover_watch_unseen_v421')&&r464.includes('cinetracker_discover_fresh_v421'),'v421 For You restored');
