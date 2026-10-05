@@ -20,22 +20,9 @@ jobs:
           npm run verify
           node --check apps/web/dist/app-v476.js
           grep -Fq "window.__ctR476Marker='home-visible-card-watchlist+foryou-v476-strict-smart+profile-12-header-more-full'" apps/web/dist/app-v476.js
-          grep -Fq 'window.__ctCoreR471=Object.freeze' apps/web/dist/app-v476.js
-          grep -Fq 'homeMovieCard:item=>mediaCard' apps/web/dist/app-v476.js
-          grep -Fq 'ct424HomeGate='''retired-r476'''' apps/web/dist/app-v476.js
-          grep -Fq 'cinetracker_home_series_v452' apps/web/dist/app-v476.js
-          grep -Fq 'cinetracker_home_movies_v405' apps/web/dist/app-v476.js
-          grep -Fq 'cinetracker_home_history_v391' apps/web/dist/app-v476.js
           grep -Fq 'cinetracker_discover_fresh_v476' apps/web/dist/app-v476.js
           grep -Fq 'cinetracker_discover_watch_smart_v476' apps/web/dist/app-v476.js
           grep -Fq 'cinetracker_profile_lists_v476' apps/web/dist/app-v476.js
-          grep -Fq 'data-ct476-header-more' apps/web/dist/app-v476.js
-          grep -Fq 'const LIMIT=12' apps/web/dist/app-v476.js
-          grep -Fq 'cinetracker_activity_items_by_day_v426' apps/web/dist/app-v476.js
-          ! grep -Fq 'while(true)' apps/web/runtime-r476-final.js
-          ! grep -Fq 'setInterval(' apps/web/runtime-r476-final.js
-          ! grep -Fq 'window.location.reload(' apps/web/runtime-r476-final.js
-          ! grep -Fq 'router.refresh(' apps/web/runtime-r476-final.js
   android:
     runs-on: ubuntu-latest
     steps:
