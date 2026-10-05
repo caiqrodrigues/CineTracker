@@ -1,3 +1,16 @@
+## 1.0.263 — r473 (2026-10-05)
+
+### Corrigido
+- Home > Séries: r388 e r399 deixam de depender dos hooks removidos da r469 e passam a usar diretamente a ponte viva `__ctCoreR471` para rota e RPC. Isso restaura o frame, Histórico, Continuar Assistindo e demais seções, com Séries em `cinetracker_home_series_v452` e histórico em `cinetracker_home_history_v391`.
+- Home > Filmes: o paginador `cinetracker_home_movies_v405` do r399 usa a mesma ponte viva, restaurando Assistir a seguir / Watchlist.
+- Descobrir > Pra Você: o r464 continua como owner único, mas deixa de bloquear os pools v421 em um `authReady` obsoleto e chama o RPC real pela ponte da closure.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos passam a exibir exatamente 12 cards e, quando houver mais conteúdo, um único 13º card **Ver mais**.
+- Perfil > Ver mais: preservada a abertura em tela completa separada; não há expansão inline.
+
+### Preservado / validação
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` no patch r473.
+- F1 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 1.0.262 — r472 (2026-10-05)
 
 ### Corrigido
