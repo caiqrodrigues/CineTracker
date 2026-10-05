@@ -120,21 +120,9 @@ js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';"
    hide every legacy header control, and always open the independent full-list screen. */
 js=patchRuntime(js,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';",[
   [
-`async function loadMedia(force=false){
- if(mediaTask)return mediaTask;
- mediaTask=(async()=>{try{const dash=arrayFrom(await timeout(core.rpc('cinetracker_profile_media_dashboard_v0991',{}),8000));if(dash.length||force)mediaLists=makeMediaLists(dash);return mediaLists}catch{return mediaLists||fallbackMediaLists()}finally{mediaTask=null}})();return mediaTask;
-}`,
-`async function loadMedia(force=false){
- if(mediaTask)return mediaTask;
- mediaTask=(async()=>{try{
-  const raw=unwrap(await timeout(core.rpc('cinetracker_profile_lists_v475',{}),8000))||{},next={
-   series:rows(raw?.series),movies:rows(raw?.movies),seriesFav:rows(raw?.series_favorites),movieFav:rows(raw?.movie_favorites)
-  };
-  if(force||next.series.length||next.movies.length||next.seriesFav.length||next.movieFav.length)mediaLists=next;
-  return mediaLists||next;
- }catch{return mediaLists||fallbackMediaLists()}finally{mediaTask=null}})();return mediaTask;
-}`,
-    'lightweight Profile lists'
+    "core.rpc('cinetracker_profile_media_dashboard_v0991',{})",
+    "core.rpc('cinetracker_profile_lists_v475',{})",
+    'lightweight Profile list payload'
   ],
   [
     "function hideNativeMore(panel){const b=nativeMore(panel);if(!b)return null;b.dataset.ct472NativeMore='1';b.hidden=true;b.style.display='none';b.setAttribute('aria-hidden','true');b.tabIndex=-1;panel.__ct472NativeMore=b;return b}",
