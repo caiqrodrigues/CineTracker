@@ -28,6 +28,20 @@ function patchRuntime(source,anchor,patches,label){
   }
   return source.slice(0,start)+region+source.slice(end);
 }
+function patchCommentRuntime(source,comment,patches,label){
+  const start=source.indexOf(comment);
+  if(start<0)throw new Error('r475 missing '+label+' comment');
+  const close=source.indexOf('\n})();',start);
+  if(close<0)throw new Error('r475 invalid '+label+' comment bounds');
+  const end=close+6;
+  let region=source.slice(start,end);
+  for(const [needle,replacement,name] of patches){
+    const count=region.split(needle).length-1;
+    if(count!==1)throw new Error('r475 expected one '+label+' '+name+', found '+count);
+    region=region.replace(needle,replacement);
+  }
+  return source.slice(0,start)+region+source.slice(end);
+}
 function patchGlobal(source,needle,replacement,label){
   const count=source.split(needle).length-1;
   if(count!==1)throw new Error('r475 expected one '+label+', found '+count);
@@ -118,7 +132,7 @@ js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';"
 
 /* r472 is the sole Profile summary owner. Use the dedicated lightweight list RPC,
    hide every legacy header control, and always open the independent full-list screen. */
-js=patchRuntime(js,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';",[
+js=patchCommentRuntime(js,'/* CineTracker Web 1.0.262 r472',[
   [
     "core.rpc('cinetracker_profile_media_dashboard_v0991',{})",
     "core.rpc('cinetracker_profile_lists_v475',{})",
@@ -143,8 +157,8 @@ js=patchRuntime(js,"window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12
 ],'r472');
 
 {
- const anchor="window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';",at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);
- if(at<0||start<0||close<0)throw new Error('r475 r472 scroll bounds');
+ const start=js.indexOf('/* CineTracker Web 1.0.262 r472'),close=js.indexOf('\n})();',start);
+ if(start<0||close<0)throw new Error('r475 r472 scroll bounds');
  let region=js.slice(start,close+6);
  const pattern=/try\s*\{\s*window\.scrollTo\(\{\s*top\s*:\s*0\s*,\s*left\s*:\s*0\s*,\s*behavior\s*:\s*['"]auto['"]\s*\}\)\s*\}\s*catch\s*\{\s*\}/;
  if(pattern.test(region))region=region.replace(pattern,"/* r475: r399 owns the Home primary-section anchor; bounded recovery never resets it. */");
@@ -212,7 +226,7 @@ const region=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
-const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-12-separate-more+stadium-v296';");
+const r472Start=js.indexOf('/* CineTracker Web 1.0.262 r472'),r472Close=js.indexOf('\n})();',r472Start),r472=js.slice(r472Start,r472Close+6);
 if(!js.includes('homeMovieRow:item=>')||!js.includes('homeSeriesRow:(item,episode=false)=>')||!js.includes('ensureHomeShell:()=>'))throw new Error('r475 lexical Home presentation bridge missing');
 if(!js.includes("window.__ctR475HomeAnchor={version:'1.0.265',schedule}")||!js.includes('[80,260,620,980,1380]'))throw new Error('r475 final bounded Home anchor missing');
 if(!css.includes('[data-home-view="series"]:not(.hidden):not([hidden]){visibility:visible!important;opacity:1!important}'))throw new Error('r475 active Series visibility guard missing');
