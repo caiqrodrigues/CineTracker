@@ -1,3 +1,18 @@
+## 0.3.15 — r488 (2026-10-06)
+
+### Corrigido com autoridade única
+- Home > Séries: removida a disputa entre os carregadores r388/r399 e as camadas de reassert r485/r486/r487. r388 e r399 passam a compartilhar uma única chamada single-flight de `cinetracker_home_series_v452`, reduzindo consultas redundantes ao Supabase.
+- Home > Séries: o skeleton `animate-pulse` agora faz parte do próprio primeiro frame do Home e é reaplicado imediatamente após a montagem; a tela preta deixa de depender de timers posteriores para ser substituída.
+- Home > Filmes: mantida a paginação v405, com uma única regra visual final para cards compactos e uniformes, pôster estritamente 2:3, `object-fit: cover` e título truncado.
+- Descobrir > Top 10: a geometria do renderer r321 é travada em 2:3 no container do pôster e `object-fit: cover` na imagem interna, inclusive no grid desktop de 10 itens.
+- Descobrir > Pra Você: r464 volta a ser o único owner visível. O pool usa v485 como fonte primária, v421 como fallback delimitado e inicia o fallback TMDB de forma especulativa; candidatos TMDB só entram após filtro estrito v322/v320 de vistos/Watchlist e bloqueios de WWE/NXT, YouTube, reality, stand-up e filmes abaixo de 40 minutos.
+- Perfil: r476 permanece como único owner das cinco listas, com `LIMIT=12` e `slice(0, LIMIT)`. Camadas r485/r486/r487 que reaplicavam a tela foram removidas do bundle final; cards legados de Ver mais são podados e permanece somente o botão minimalista do cabeçalho.
+
+### Validação / preservado
+- Bundle r488 falha o build se os markers r485/r486/r487 continuarem presentes.
+- Sem `window.location.reload()`, `router.refresh()`, `while(true)`, `setInterval` ou `MutationObserver` no runtime r488.
+- F1, Esportes, histórico diário/Desmarcar visto e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 0.3.14 — r487 (2026-10-06)
 
 ### Corrigido

@@ -1,3 +1,13 @@
+## Web 0.3.15 / r488 — autoridade única para Home, Descobrir e Perfil
+
+- Home Séries compartilha uma única consulta v452 entre r388/r399 e pinta skeleton `animate-pulse` no próprio primeiro frame.
+- Home Filmes mantém v405 e cards compactos uniformes em 2:3 com título truncado.
+- Pra Você mantém r464 como único owner, usa v485 → v421 e TMDB especulativo com filtro estrito de estado do usuário antes do paint.
+- Top 10 trava container e imagem em 2:3/`object-fit: cover`.
+- Perfil mantém exatamente 12 cards nas cinco listas e somente o **Ver mais** minimalista do cabeçalho.
+- As camadas concorrentes r485/r486/r487 não entram mais no bundle final.
+- F1, Esportes, histórico diário e Android permanecem inalterados.
+
 ## Web 0.3.14 / r487 — Home sem tela preta, cards 2:3 e Perfil em 12
 
 - Home Séries exibe skeleton `animate-pulse` imediatamente enquanto v452/v391 atualizam os dados.
