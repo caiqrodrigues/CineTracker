@@ -19,10 +19,11 @@ yes(html.includes('data-ct479-preboot')&&!html.includes("if(!localStorage.getIte
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 yes(!r388.includes('localGet(HS,6*60*60*1000)')&&!r388.includes('localGet(HH,6*60*60*1000)'),'no stale Home first paint');
 const r457=region("window.__ctR457Marker='home-movies-sticky+foryou-v421-owner+profile-13-half+f1-v426-progress';");
-const r459=region("window.__ctR459Marker='hard-home-tabs+watchlist-v405+foryou-v421+profile-13-half+daily-undo+f1-r423-r426';");
+const A459="window.__ctR459Marker='hard-home-tabs+watchlist-v405+foryou-v421+profile-13-half+daily-undo+f1-r423-r426';";
+const r459=js.includes(A459)?region(A459):'';
 const r460=region("window.__ctR460Marker='movies-sticky+watchlist-v405+foryou-7-swap+profile-13-half+daily-undo+f1-75-of-77-no-reconcile';");
-yes(!r459.includes('html[data-ct459-boot="1"]'),'r459 black gate retired');
-yes(r457.includes('__ctR464')&&r459.includes('__ctR464')&&r460.includes('__ctR464'),'legacy Discover converges');
+yes(!js.includes('html[data-ct459-boot="1"] [data-home-view="series"]{visibility:hidden!important}'),'r459 black gate retired');
+yes(r457.includes('__ctR464')&&r460.includes('__ctR464')&&(!r459||r459.includes('__ctR464')),'legacy Discover converges');
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
 const fetchBlock=r464.slice(r464.indexOf('async function fetchPool'),r464.indexOf('function chooseDaily'));
 yes(fetchBlock.includes('cinetracker_discover_fresh_v484')&&fetchBlock.includes('cinetracker_discover_watch_smart_v484'),'v484 pools');
