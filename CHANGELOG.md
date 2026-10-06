@@ -1,3 +1,17 @@
+## 0.3.14 — r487 (2026-10-06)
+
+### Corrigido
+- Home > Séries: skeletons `animate-pulse` passam a aparecer imediatamente antes do frame/data load; r388/v452/v391 continuam como autoridades e o carregamento permanece delimitado, sem tela preta nem reload de página.
+- Home > Filmes: a Watchlist v405 volta ao padrão solicitado de cards compactos e uniformes, com pôster estritamente 2:3, título truncado e grid responsivo.
+- Descobrir > Pra Você: v485 permanece como fonte primária; v421 entra apenas como fallback delimitado. Se os dois retornarem vazios, o cliente consulta TMDB, enriquece um conjunto limitado, remove WWE/NXT, YouTube, reality, stand-up e filmes abaixo de 40 minutos e aplica `cinetracker_discover_filter_v320` para bloquear itens vistos/Watchlist antes de renderizar.
+- Descobrir > Top 10: card/pôster permanecem travados em 2:3 e imagens usam `object-fit: cover`, eliminando achatamento.
+- Perfil: Filmes, Séries, Filmes Favoritos, Séries Favoritas e Atores Favoritos ficam com exatamente 12 cards visíveis na visão resumida. Cards grandes de **Ver mais** são removidos; permanece somente o botão minimalista do cabeçalho para abrir a lista completa.
+
+### Versão e preservação
+- A solicitação citava v0.3.9, porém a `main` já estava em 0.3.13; a publicação foi incrementada monotonicamente para **0.3.14**, sem downgrade.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)`.
+- F1, Esportes, histórico diário/Desmarcar visto e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 0.3.13 — r486 (2026-10-06)
 
 ### Corrigido

@@ -1,3 +1,12 @@
+## Web 0.3.14 / r487 — Home sem tela preta, cards 2:3 e Perfil em 12
+
+- Home Séries exibe skeleton `animate-pulse` imediatamente enquanto v452/v391 atualizam os dados.
+- Home Filmes mantém a Watchlist v405 em cards compactos, uniformes e 2:3, com título truncado.
+- Pra Você usa v485 como fonte principal, v421 como fallback delimitado e TMDB como último fallback fresh; candidatos TMDB passam pelos filtros de conteúdo e pelo bloqueio de vistos/Watchlist antes da renderização.
+- Top 10 mantém pôster/card 2:3 e `object-fit: cover`.
+- Perfil mostra exatamente 12 cards nas cinco listas solicitadas; somente o **Ver mais** minimalista do cabeçalho abre a lista completa.
+- F1, Esportes, histórico diário e Android permanecem inalterados.
+
 ## Web 0.3.13 / r486 — Home imediato, Watchlist em linhas, Pra Você v485, Top 10 2:3 e Perfil com 12
 
 - Home Séries pinta o frame/skeleton imediatamente e atualiza em seguida por v452/v391, sem tela preta durante a espera.
