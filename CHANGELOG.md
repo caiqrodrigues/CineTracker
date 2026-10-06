@@ -1,3 +1,21 @@
+## 0.3.10 — r483 (2026-10-06)
+
+### Finalização da especificação v0.3.8
+- Home > Séries mantém skeleton imediato e bootstrap do último estado válido, com atualização viva por `cinetracker_home_series_v452` e Histórico v391 sem reposicionamentos atrasados.
+- Home > Fórmula 1 mantém o check assíncrono pelo writer canônico `cinetracker_f1_watch_sync_v462`, com trava contra clique concorrente, Optimistic UI e atualização sem reload.
+- Home > Filmes restaura a Watchlist v405 em cards compactos padronizados 2:3, com largura fixa e título truncado, removendo a regressão de linhas da r482.
+- Descobrir > Pra Você mantém v480 como fonte estrita e usa somente v476 como fallback delimitado. Nenhum fallback pode ignorar exclusões de vistos, Watchlist, favoritos ou WWE/NXT.
+- Descobrir > Trocar preserva a rotação ponderada/randomizada pelos candidatos ranqueados e o cache local curto, sem iteração sequencial engessada.
+- Perfil preserva a fonte pura v480: Séries/Filmes somente por histórico real; Séries Favoritas, Filmes Favoritos e Atores Favoritos somente pelas respectivas categorias.
+- Perfil exibe no máximo 12 cards por seção. O card grande **Ver mais** foi removido novamente; somente o botão minimalista do cabeçalho permanece quando há conteúdo adicional.
+- Perfil > Ver mais força nova consulta completa ao banco antes da tela integral. Filmes mantém o alternador **Histórico / Watchlist** e a Watchlist paginada v405.
+- Perfil > Esportes preserva o último valor válido de TV/Estádio durante refresh v296, sem piscar para zero.
+
+### Validação / preservado
+- A especificação solicitada como v0.3.8 já havia sido versionada na r481; como a `main` já estava em 0.3.9, a finalização é publicada monotonicamente como 0.3.10, sem downgrade.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` no patch r483.
+- Histórico diário/desmarcação v426, F1 Hub, Esportes e Android 1.0.20 / versionCode 10062 permanecem preservados.
+
 ## 0.3.9 — r482 (2026-10-06)
 
 ### Corrigido

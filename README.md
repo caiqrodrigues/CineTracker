@@ -1,3 +1,16 @@
+## Web 0.3.10 / r483 — especificação v0.3.8 finalizada
+
+- Home Séries entra com skeleton/cache imediato e mantém v452 + Histórico v391 como autoridades.
+- F1 no Home marca visto de forma assíncrona pelo writer v462, sem reload.
+- Home Filmes usa a Watchlist v405 em cards compactos 2:3, com título truncado.
+- Pra Você usa somente caminhos estritos: v480 primário e v476 de fallback, ambos bloqueando vistos/Watchlist/favoritos e WWE/NXT.
+- Trocar permanece ponderado/randomizado e usa cache curto para resposta rápida.
+- Perfil mantém histórico, favoritos e atores isolados; cada resumo mostra até 12 cards.
+- O card grande Ver mais não existe. Somente o botão minimalista do cabeçalho abre a tela completa.
+- Filmes > Ver mais mantém **Histórico / Watchlist** e recarrega a lista integral do banco antes de abrir.
+- Contadores TV/Estádio preservam o último valor válido enquanto v296 atualiza.
+- Android 1.0.20 / 10062, F1 Hub e histórico diário permanecem inalterados.
+
 ## Web 0.3.9 / r482 — Home estável, Filmes compactos, indicação diária e Perfil 12+Ver mais
 
 - Home Séries não executa mais âncoras de scroll atrasadas após o repaint do Histórico, eliminando o efeito de piscar/subir/descer.

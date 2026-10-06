@@ -1,3 +1,4 @@
+- Web: **0.3.10 / r483-official-0.3.10** — finaliza a especificação v0.3.8 sobre a main atual: Home rápido/F1 sem reload, Watchlist Filmes 2:3, Pra Você estrito sem fallback v421, Perfil puro com 12 cards + Ver mais somente no cabeçalho e esportes estáveis.
 - Web: **0.3.9 / r482-official-0.3.9** — estabiliza Histórico/Home Séries sem reposicionamento atrasado, restaura Filmes em linhas compactas, adiciona fallback v421 para Indicação do Dia e reaplica 12 cards + 13º Ver mais no Perfil.
 - Web: **0.3.8 / r481-official-0.3.8** — skeletons e cache no Home, F1 sem reload, Watchlist Filmes 2:3, Descobrir com filtros estritos/cache/troca inteligente e Perfil isolado em 12 cards com Ver mais no cabeçalho e modal completo História/Watchlist.
 - Web: **1.0.270 / r480-official-1.0.270** — Home com bootstrap do último estado válido + refresh v452/v391, Pra Você v480 com memória local/banco de 7 dias e Perfil puro em 12 cards com Filmes Histórico/Watchlist.
