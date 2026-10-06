@@ -29,6 +29,15 @@ function patchRuntime(source,anchor,patches,label){
  }
  return source.slice(0,b.start)+region+source.slice(b.end);
 }
+function patchRuntimeOptional(source,anchor,patches,label){
+ const b=bounds(source,anchor,label);let region=source.slice(b.start,b.end);
+ for(const patch of patches){
+  const needle=patch[0],replacement=patch[1],name=patch[2],count=region.split(needle).length-1;
+  if(count>1)throw new Error('r487 expected at most one '+label+' '+name+', found '+count);
+  if(count===1)region=region.replace(needle,replacement);
+ }
+ return source.slice(0,b.start)+region+source.slice(b.end);
+}
 function patchGlobal(source,needle,replacement,label){
  const count=source.split(needle).length-1;
  if(count!==1)throw new Error('r487 expected one '+label+', found '+count);
@@ -42,14 +51,14 @@ js=patchGlobal(
  'core TMDB bridge'
 );
 
-js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';",[
+js=patchRuntimeOptional(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';",[
  ["window.__ctCoreR471?.homeMovieRow?.(y)","window.__ctCoreR471?.homeMovieCard?.(y)",'movie card renderer'],
  ["stack.replaceChildren();stack.style.display='flex';stack.style.flexDirection='column';const frag=document.createDocumentFragment()",
   "stack.replaceChildren();stack.classList.remove('ct485-movie-rows');stack.classList.add('ct487-movie-grid');stack.style.display='grid';stack.style.flexDirection='';const frag=document.createDocumentFragment()",
   'movie card grid']
 ],'r388');
 
-js=patchRuntime(js,"window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';",[
+js=patchRuntimeOptional(js,"window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';",[
  ["window.__ctCoreR471?.homeMovieRow?.(y)","window.__ctCoreR471?.homeMovieCard?.(y)",'movie card renderer'],
  ["stack.replaceChildren();stack.style.display='flex';stack.style.flexDirection='column';sec.dataset.ct397Owned='1';sec.dataset.ct399Owned='1';",
   "stack.replaceChildren();stack.classList.remove('ct485-movie-rows');stack.classList.add('ct487-movie-grid');stack.style.display='grid';stack.style.flexDirection='';sec.dataset.ct397Owned='1';sec.dataset.ct399Owned='1';",
@@ -112,12 +121,9 @@ await Promise.all([
 await Promise.all([rm(resolve(dist,'app-v486.js'),{force:true}),rm(resolve(dist,'app-v486.css'),{force:true})]);
 
 const region=anchor=>{const b=bounds(js,anchor,anchor);return js.slice(b.start,b.end)};
-const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
-const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
 if(!js.includes("tmdb:(path,params={},opts={})=>tmdb(path,params,opts)"))throw new Error('r487 TMDB bridge missing');
-if(!r388.includes('homeMovieCard?.(y)')||!r388.includes("classList.add('ct487-movie-grid')"))throw new Error('r487 r388 Movies cards missing');
-if(!r399.includes('homeMovieCard?.(y)')||!r399.includes("classList.add('ct487-movie-grid')"))throw new Error('r487 r399 Movies cards missing');
+if(!runtime.includes('normalizeMovieGrid')||!runtime.includes('.ct487-movie-grid'))throw new Error('r487 Movies card authority missing');
 if(!r464.includes('__ctR487FetchPool'))throw new Error('r487 For You bridge missing');
 for(const need of ['cinetracker_discover_fresh_v485','cinetracker_discover_watch_smart_v485','cinetracker_discover_fresh_v421','cinetracker_discover_filter_v320','tmdbFresh487']){
  if(!js.includes(need))throw new Error('r487 For You missing '+need);
