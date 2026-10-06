@@ -1,3 +1,19 @@
+## 1.0.270 — r480 (2026-10-06)
+
+### Corrigido
+- Home: Séries v452 e Histórico v391 passam a reaproveitar por até 6 horas o último snapshot válido apenas para o primeiro paint. O conteúdo aparece imediatamente e é atualizado em segundo plano pela autoridade atual; qualquer mutação invalida esse bootstrap para não exibir estado antigo.
+- Descobrir > Pra Você: os pools passam explicitamente pelos contratos v480, mantendo as exclusões estritas de vistos, favoritos e Watchlist herdadas de v476/v479.
+- Descobrir > Pra Você: além da memória no banco, adicionada memória local de exposição por 7 dias. Os pools e a Indicação do Dia priorizam itens ainda não exibidos antes de reutilizar um candidato recente.
+- Descobrir > Pra Você: Trocar, Marcar como visto e adicionar à Watchlist continuam atualizando o card localmente e a nova recomendação exibida também entra na memória, sem reload.
+- Perfil: a fonte final passa a ser `cinetracker_profile_lists_v480`, mantendo Séries e Filmes exclusivamente por histórico real; Séries Favoritas, Filmes Favoritos e Atores Favoritos permanecem categorias independentes.
+- Perfil: cada uma das cinco listas resumidas continua limitada a exatamente 12 cards quando houver pelo menos 12 itens.
+- Perfil > Filmes > Ver mais: preservada a tela completa separada, abrindo em **Histórico** e com seletor **Histórico / Watchlist** no topo.
+
+### Preservado / validação
+- Esportes não foi alterado pela r480.
+- F1, histórico diário/desmarcação v426 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+- Nenhum `window.location.reload()`, `router.refresh()`, `while(true)`, `setInterval` ou `MutationObserver` foi introduzido.
+
 ## 1.0.269 — r479 (2026-10-05)
 
 ### Corrigido

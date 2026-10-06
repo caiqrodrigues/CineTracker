@@ -1,3 +1,12 @@
+## Web 1.0.270 / r480 — Home imediato, Pra Você sem repetição e Perfil puro
+
+- Home reutiliza o último snapshot válido de Séries/Histórico somente no primeiro paint e atualiza v452/v391 em segundo plano, eliminando o intervalo vazio sem trocar a autoridade dos dados.
+- Pra Você usa os contratos v480 e combina a memória do banco com memória local de 7 dias para não voltar sempre aos mesmos cards.
+- Vistos, favoritos e Watchlist continuam bloqueados em Indicação do Dia/100% Novos; Da sua Watchlist continua sendo a exceção para itens da própria Watchlist, mas não para itens já vistos.
+- Perfil usa somente histórico real em Séries e Filmes; favoritos e atores permanecem separados.
+- As cinco listas do Perfil exibem 12 cards na visão resumida. **Ver mais** abre a tela completa; em Filmes existem **Histórico / Watchlist** no topo.
+- Esportes, F1, histórico diário e Android permanecem inalterados.
+
 ## Web 1.0.269 / r479 — Home estável, recomendações estritas, Perfil por histórico e Sports profissional
 
 - Home recebe um first paint visível enquanto a sessão é restaurada; Séries/Histórico continuam no fluxo r478/r399 e Filmes usa a Watchlist paginada v405.
