@@ -24,7 +24,7 @@ const r477=region("if(window.__ctR477?.version==='1.0.267')return;");
 const r481=region("window.__ctR481Marker='v038-home-skeleton+movie-2x3+smart-discover-cache+stable-sports+profile-12-header-only';");
 
 yes(!r388.includes('[40,140,360,760,1400]')&&!r399.includes('[120,420]')&&!r476.includes('[0,70,180,360,650,1000]'),'no delayed Home auto-scroll');
-yes(r481.includes('skeletonRows(5)')&&!r481.includes('for(const ms of [0,20,60,140])'),'compact single Home prime');
+yes(js.includes('ct481-movie-skeleton .ct481-sk-card{display:grid!important;grid-template-columns:44px minmax(0,1fr)!important'),'compact Movie loading skeleton');
 yes(js.includes('[data-home-view="movies"] .ct388-movie-stack{display:flex!important;flex-direction:column!important'),'compact Movies rows');
 yes(r464.includes('cinetracker_discover_fresh_v480')&&r464.includes('cinetracker_discover_watch_smart_v480'),'strict Discover primary');
 yes(r464.includes('cinetracker_discover_fresh_v421')&&r464.includes('cinetracker_discover_watch_unseen_v421'),'bounded Discover fallback');
