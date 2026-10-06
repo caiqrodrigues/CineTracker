@@ -41,24 +41,20 @@ js=once(js,
 
 /* Discover: fast pool cache, strict v480 backend, smart random swap among best-ranked candidates. */
 js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';",[
- [`async function fetchPool(group,kind){
- const name=group==='watch'?'cinetracker_discover_watch_smart_v480':'cinetracker_discover_fresh_v480';
- const limit=group==='watch'?30:48;
- try{return rows(unwrap(await timeout(rpcCall(name,{p_kind:kind,p_limit:limit}),7000)))}catch{return[]}
-}`,
- `const POOL_CACHE_TTL481=15*60*1000;
+ ["async function fetchPool(group,kind){",
+  `const POOL_CACHE_TTL481=15*60*1000;
 function poolKey481(group,kind){return 'ct481:foryou:'+group+':'+kind}
 function readPool481(group,kind){try{const x=JSON.parse(localStorage.getItem(poolKey481(group,kind))||'null');return x&&Date.now()-Number(x.at||0)<POOL_CACHE_TTL481&&Array.isArray(x.items)?x.items:[]}catch{return[]}}
 function savePool481(group,kind,items){try{localStorage.setItem(poolKey481(group,kind),JSON.stringify({at:Date.now(),items:rows(items)}))}catch{}}
 function clearPool481(){for(const g of ['watch','fresh'])for(const k of ['movie','series','anime'])try{localStorage.removeItem(poolKey481(g,k))}catch{}}
-async function fetchPool(group,kind){
- const name=group==='watch'?'cinetracker_discover_watch_smart_v480':'cinetracker_discover_fresh_v480';
- const limit=group==='watch'?30:48,cached=readPool481(group,kind);
- const live=timeout(rpcCall(name,{p_kind:kind,p_limit:limit}),2500).then(v=>rows(unwrap(v)));
- if(cached.length){void live.then(items=>{if(items.length)savePool481(group,kind,items)}).catch(()=>{});return cached}
- try{const items=await live;if(items.length)savePool481(group,kind,items);return items}catch{return cached}
-}`,
- 'fast cached pools'],
+async function fetchPool(group,kind){`,
+  'pool cache helpers'],
+ [" const limit=group==='watch'?30:48;",
+  " const limit=group==='watch'?30:48,cached=readPool481(group,kind);",
+  'cached pool read'],
+ [" try{return rows(unwrap(await timeout(rpcCall(name,{p_kind:kind,p_limit:limit}),7000)))}catch{return[]}",
+  " const live=timeout(rpcCall(name,{p_kind:kind,p_limit:limit}),2500).then(v=>rows(unwrap(v)));if(cached.length){void live.then(items=>{if(items.length)savePool481(group,kind,items)}).catch(()=>{});return cached}try{const items=await live;if(items.length)savePool481(group,kind,items);return items}catch{return cached}",
+  'fast cached pools'],
  ["const item=eligible[Math.floor(Math.random()*eligible.length)],key=keyOf(item);",
   "const smart=eligible.slice(0,Math.min(8,eligible.length)),item=smart[Math.floor(Math.random()*smart.length)],key=keyOf(item);",
   'smart randomized swap'],
