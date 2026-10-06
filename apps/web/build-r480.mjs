@@ -28,11 +28,11 @@ function patchRuntime(source,anchor,patches,label){
 }
 
 js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';",[
- ["let hSeries=[],hHistory=null,hMovies=[];",
-  "const cachedHome480=(key,max=6*60*60*1000)=>localGet(key,max)||cacheGet(key,max);\nlet hSeries=rows(cachedHome480(HS)),hHistory=cachedHome480(HH)||null,hMovies=[];",
+ ["async function renderHome388(){\n const kind=activeKind();",
+  "async function renderHome388(){\n if(!hSeries.length){const cached=localGet(HS,6*60*60*1000)||cacheGet(HS,6*60*60*1000);if(Array.isArray(cached)&&cached.length)hSeries=cached}\n if(!hHistory){const cached=localGet(HH,6*60*60*1000)||cacheGet(HH,6*60*60*1000);if(cached&&typeof cached==='object')hHistory=cached}\n const kind=activeKind();",
   "cached first paint"],
- ["hHistory=v;cacheSet(HH,v);if(routeNow()==='home'){renderHistory('episodes');renderHistory('movies')}",
-  "hHistory=v;cacheSet(HH,v);localSet(HH,v);if(routeNow()==='home'){renderHistory('episodes');renderHistory('movies')}",
+ ["if(v&&typeof v==='object'){hHistory=v;cacheSet(HH,v);if(routeNow()==='home'){renderHistory('episodes');renderHistory('movies');scheduleHome393(activeKind(),false)}}return hHistory",
+  "if(v&&typeof v==='object'){hHistory=v;cacheSet(HH,v);localSet(HH,v);if(routeNow()==='home'){renderHistory('episodes');renderHistory('movies');scheduleHome393(activeKind(),false)}}return hHistory",
   "persist history cache"]
 ],"r388");
 
