@@ -1,3 +1,11 @@
+## Web 0.3.16 / r489 — correção orientada pelo vídeo real
+
+- Home: um único painter, Continue antes do Histórico, skeleton imediato e v452 sem overwrite legado.
+- Filmes: Watchlist v405 em cards nativos 2:3, sem converter linhas via CSS.
+- Pra Você: uma RPC v489 retorna os seis pools de uma vez; sem cadeia de retries de ~12 s.
+- Perfil: resumo v489 leve com 12 cards em cada lista e totais completos; lista integral somente ao abrir Ver mais.
+- Esportes no Perfil: contadores ficam ocultos durante a leitura e aparecem uma única vez com a autoridade v296.
+- F1, Esportes, histórico diário e Android permanecem preservados.
 ## Web 0.3.15 / r488 — autoridade única para Home, Descobrir e Perfil
 
 - Home Séries compartilha uma única consulta v452 entre r388/r399 e pinta skeleton `animate-pulse` no próprio primeiro frame.

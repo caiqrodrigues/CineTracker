@@ -1,3 +1,18 @@
+## 0.3.16 — r489 (2026-10-06)
+
+### Correção baseada no vídeo real
+- Home > Séries: removida a dependência de reposicionamentos tardios. Continuar assistindo nasce estruturalmente antes do Histórico, com skeleton visível no primeiro frame. r388 passa a ser o único painter de dados da Home; r399/r476/r477/r481 apenas delegam para ele.
+- Home > Séries: cinetracker_home_series_v452 foi medido em produção em aproximadamente 1,5 s e Histórico v391 em aproximadamente 0,14 s; a espera de ~12 s do vídeo era concorrência de frontend, não lentidão do banco. O refresh pós-TMDB também deixa de reintroduzir a autoridade de Séries v391.
+- Home > Filmes: a Watchlist deixa de tentar transformar media-row em card via CSS. r489 gera markup próprio de card, pagina v405 e usa pôster 2:3 real, título truncado e ação de Visto em overlay.
+- Descobrir > Pra Você: criado cinetracker_foryou_payload_v489, uma única RPC para os seis pools. Validado no perfil real com Watchlist 30/30/30 e Novos 31/23/32; execução medida em ~1,18 s. A escada de três rodadas/atrasos foi removida.
+- Perfil: criado cinetracker_profile_summary_v489, que devolve exatamente 12 itens por cada uma das cinco listas e os totais completos em ~0,30 s. O payload completo v485 fica adiado até Ver mais, eliminando o paint legado 25/11/10 observado no vídeo.
+- Perfil > Esportes: neutralizadas as repinturas de Perfil r296/r298. A autoridade r477 esconde os contadores enquanto consulta v296 e só revela o valor final, evitando 0 → 81 → 171.
+- Perfil: as cinco listas resumidas usam grid sem rolagem horizontal e nunca exibem mais de 12 cards.
+- Top 10: preservado r321 com geometria final 2:3 e object-fit: cover.
+
+### Preservado
+- F1 writer/sincronização, tela de Esportes, histórico diário/Desmarcar visto e Android 1.0.20 / versionCode 10062 não foram alterados.
+- O runtime r489 não introduz window.location.reload(), router.refresh(), while(true), setInterval ou MutationObserver.
 ## 0.3.15 — r488 (2026-10-06)
 
 ### Corrigido com autoridade única
