@@ -1,3 +1,11 @@
+## Web 0.3.9 / r482 — Home estável, Filmes compactos, indicação diária e Perfil 12+Ver mais
+
+- Home Séries não executa mais âncoras de scroll atrasadas após o repaint do Histórico, eliminando o efeito de piscar/subir/descer.
+- Home Filmes mantém a Watchlist v405 e volta ao layout compacto em linhas, com miniatura pequena 2:3.
+- Pra Você mantém v480 como filtro estrito principal e usa v421 como fallback delimitado quando a consulta principal estoura o tempo, garantindo conteúdo para a Indicação do Dia.
+- Perfil mostra **12 cards + 13º Ver mais** nas cinco listas solicitadas; o 13º card abre a tela completa já existente e não expande inline.
+- Histórico diário, Esportes, F1 e Android 1.0.20 / 10062 permanecem inalterados.
+
 ## Web 0.3.8 / r481 — Home imediato, Descobrir estrito e Perfil isolado
 
 - Home Séries exibe skeletons imediatamente, usa cache de primeiro paint e atualiza Séries v452 + Histórico v391 em segundo plano.
