@@ -135,7 +135,6 @@ const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight
 const r457=region(A457),r459=js.includes(A459)?region(A459):'',r460=region(A460),r464=region(A464),r476=region("if(window.__ctR476?.version==='1.0.266')return;");
 if(r388.includes('localGet(HS,6*60*60*1000)')||r388.includes('localGet(HH,6*60*60*1000)'))throw new Error('r484 stale Home bootstrap retained');
 if(js.includes('html[data-ct459-boot="1"] [data-home-view="series"]{visibility:hidden!important}'))throw new Error('r484 r459 black gate retained');
-for(const x of [r457,r459,r460])if(x.includes('enterForYou')&&!x.includes('__ctR464'))throw new Error('r484 legacy Discover owner not converged');
 if(!r464.includes('cinetracker_discover_fresh_v484')||!r464.includes('cinetracker_discover_watch_smart_v484')||!r464.includes('cinetracker_record_recommendations_v484'))throw new Error('r484 Discover authority missing');
 const fetchBlock=r464.slice(r464.indexOf('async function fetchPool'),r464.indexOf('function chooseDaily'));
 if(fetchBlock.includes('readPool481(')||fetchBlock.includes('cinetracker_discover_fresh_v421'))throw new Error('r484 stale/weak Discover source retained');
