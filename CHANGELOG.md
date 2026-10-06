@@ -1,3 +1,21 @@
+## 0.3.11 — r484 (2026-10-06)
+
+### Corrigido
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos voltam a ser pintados pela fonte completa v480 e ficam com exatamente **12 cards de conteúdo**. O **Ver mais** permanece minimalista no cabeçalho e abre a tela completa separada.
+- Perfil > Atores Favoritos: removida a repintura parcial que deixava somente 10 atores; a fonte completa contém 21 atores para o perfil ativo e o resumo exibe 12.
+- Esportes: novos contratos v484 removem categorias U/Sub/Under 14–23 e também competições Junior/Juniors/Juniores. Nomes de clubes profissionais como Argentinos Juniors e Boca Juniors continuam permitidos quando a competição é profissional.
+- Descobrir > Pra Você: removido o timeout agressivo de 2,4 s e as ondas repetidas de seis RPCs. Os pools estritos v480/v476 têm janela delimitada de 9 s e são carregados uma única vez por abertura; o cache estrito continua sendo usado imediatamente quando existe.
+- Descobrir > Pra Você: nenhum fallback v421 volta a ser usado, preservando exclusão de vistos, Watchlist, favoritos, WWE/NXT, curtas e produções bloqueadas.
+- Home > Séries: autoridade passa a ser `cinetracker_home_series_v484`, mantendo bootstrap visível e sem reintroduzir âncoras/scroll atrasados.
+- Fórmula 1 como Série: mapa, progresso e Home passam ao contrato v484, que usa somente sessões antigas já consolidadas ou sessões recentes/futuras corroboradas por provedor esportivo real. A sessão espúria “Bahrain Grand Prix in Malaysia” deixa de contaminar a Série.
+- F1 2026 validada no banco: mapa confiável com 77 sessões, 75 já exibidas/assistidas e 0 pendentes no momento da publicação.
+- Home > Filmes: Watchlist v405 preservada, mas o grid gigante da r483 é sobrescrito pelo layout compacto rico em linhas, com miniatura 44×66 em proporção 2:3 e título truncado.
+- Troca Séries/Filmes continua resetando o scroll para o topo sem reload.
+
+### Preservado / validação
+- Histórico diário/desmarcação v426, sincronização F1 Série/Esportes/F1 Hub pelo writer v462 e Android 1.0.20 / versionCode 10062 permanecem preservados.
+- Nenhum `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` foi introduzido.
+
 ## 0.3.10 — r483 (2026-10-06)
 
 ### Finalização da especificação v0.3.8
