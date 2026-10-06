@@ -1,3 +1,13 @@
+## Web 1.0.268 / r478 — Home estável, Pra Você estrito e Perfil por histórico
+
+- Home não disputa mais Série/Filmes entre loaders antigos e atuais: r388 mantém frame/Histórico, r399 mantém Séries v452 e Watchlist de Filmes v405.
+- O primeiro acesso ao Home preserva o shell visível e evita o repaint que causava tela preta antes dos dados.
+- Pra Você volta aos filtros estritos v476: vistos, favoritos e Watchlist não entram em Indicação do Dia/100% Novos; Da sua Watchlist não sugere itens já vistos.
+- Os seis slots não-diários variam entre carregamentos em vez de reiniciar sempre no primeiro candidato elegível.
+- Perfil mostra 12 cards de **histórico real** em Séries e Filmes; Favoritos e Atores permanecem em listas próprias.
+- Ver mais de Filmes abre uma tela completa com abas **Histórico** e **Watchlist**; a Watchlist usa paginação v405.
+- Esportes, F1, histórico diário e Android permanecem inalterados.
+
 ## Web 1.0.267 / r477 — Home rápido, F1 funcional, Pra Você v421 e Perfil estável
 
 - Home Séries não fica mais preto aguardando o gate de ~9 segundos; o frame aparece imediatamente e os dados continuam em v452.

@@ -1,4 +1,4 @@
-name: Verify Web 1.0.267 r477
+name: Verify Web 1.0.268 r478
 on:
   push:
     branches: [main]
@@ -6,25 +6,25 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r477:
+  web_r478:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r477 Home F1 Discover Profile regression gate
+      - name: Build and r478 Home Discover Profile regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v477.js
-          grep -Fq "window.__ctR477Marker='home-no-nine-second-gate+compact-movies+f1-home-writer+foryou-v421+profile-12-header-only+sports-v296'" apps/web/dist/app-v477.js
-          grep -Fq 'cinetracker_discover_fresh_v421' apps/web/dist/app-v477.js
-          grep -Fq 'cinetracker_discover_watch_unseen_v421' apps/web/dist/app-v477.js
-          grep -Fq 'cinetracker_f1_watch_sync_v462' apps/web/dist/app-v477.js
-          grep -Fq 'cinetracker_profile_lists_v476' apps/web/dist/app-v477.js
-          grep -Fq 'cinetracker_sports_stadium_summary_v296' apps/web/dist/app-v477.js
+          node --check apps/web/dist/app-v478.js
+          grep -Fq "window.__ctR478Marker='home-single-first-paint+discover-v476-strict-rotation+profile-history-only+movies-history-watchlist-tabs'" apps/web/dist/app-v478.js
+          grep -Fq 'cinetracker_discover_fresh_v476' apps/web/dist/app-v478.js
+          grep -Fq 'cinetracker_discover_watch_smart_v476' apps/web/dist/app-v478.js
+          grep -Fq 'cinetracker_f1_watch_sync_v462' apps/web/dist/app-v478.js
+          grep -Fq 'cinetracker_profile_lists_v476' apps/web/dist/app-v478.js
+          grep -Fq 'cinetracker_sports_stadium_summary_v296' apps/web/dist/app-v478.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,20 +34,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r477, android]
+    needs: [web_r478, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r477 production
+      - name: Wait for r478 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "1.0.267"' <<<"$BODY" && grep -Fq '"revision": "r477-official-1.0.267"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v477.js?ct=$CT" || true)"
+            if grep -Fq '"version": "1.0.268"' <<<"$BODY" && grep -Fq '"revision": "r478-official-1.0.268"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v478.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR477Marker='home-no-nine-second-gate+compact-movies+f1-home-writer+foryou-v421+profile-12-header-only+sports-v296'" <<<"$JS" && grep -Fq 'app-v477.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR478Marker='home-single-first-paint+discover-v476-strict-rotation+profile-history-only+movies-history-watchlist-tabs'" <<<"$JS" && grep -Fq 'app-v478.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5

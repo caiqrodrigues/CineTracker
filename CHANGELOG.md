@@ -1,3 +1,23 @@
+## 1.0.268 — r478 (2026-10-05)
+
+### Corrigido
+- Home > Séries: removida a disputa do primeiro carregamento entre o renderer r388/v391 e o owner atual r399/v452. O r388 mantém somente frame/Histórico e não substitui mais um shell já visível, eliminando o flash preto/repaint antes dos dados corretos.
+- Home > Filmes: removida a disputa do loader legado v393 com a Watchlist canônica v405; o r399 continua como autoridade dos filmes.
+- Descobrir > Pra Você: restaurados os pools estritos v476. Indicação do Dia e 100% Novos excluem vistos, favoritos, Watchlist e aliases já conhecidos; Da sua Watchlist exclui itens já vistos. Os seis slots não-diários avançam de posição entre carregamentos em vez de sempre voltar ao primeiro candidato.
+- Perfil > Séries: a seção passa a mostrar exclusivamente séries com histórico real de episódios assistidos, ordenadas pelo histórico recente.
+- Perfil > Filmes: a seção passa a mostrar exclusivamente filmes com histórico real e data de visualização.
+- Perfil > Séries Favoritas, Filmes Favoritos e Atores Favoritos permanecem alimentados somente pelas respectivas categorias.
+- Todas as cinco listas resumidas continuam limitadas a exatamente 12 cards visíveis.
+- Perfil > Ver mais > Filmes: a tela completa abre em **Histórico** e adiciona a alternância **Histórico / Watchlist** no topo. A Watchlist é carregada de forma paginada pelo RPC v405 somente quando necessária.
+
+### Preservado
+- Botões e ações de Descobrir permanecem no renderer r464.
+- Esportes e Jogos no Estádio permanecem na autoridade r477/v296.
+- F1 permanece na sincronização r462/r477.
+- Histórico diário e Desmarcar visto permanecem na autoridade v426.
+- Android 1.0.20 / versionCode 10062 permanece inalterado.
+- Nenhum `window.location.reload()`, `router.refresh()`, loop infinito, `MutationObserver` ou `setInterval` foi adicionado.
+
 ## 1.0.267 — r477 (2026-10-05)
 
 ### Corrigido
