@@ -71,16 +71,6 @@ for(const [oldName,newName] of [
  ['cinetracker_sport_favorite_events_v2','cinetracker_sport_favorite_events_v479']
 ])js=js.replaceAll(oldName,newName);
 
-{
- const oldSportsRows="function ct251SportsRows(p){return ct251UniqueEvents([...(Array.isArray(p?.events)?p.events:[]),...(Array.isArray(p?.watch_history)?p.watch_history:[])])}";
- const count=js.split(oldSportsRows).length-1;
- if(count!==1)throw new Error('r479 expected one defensive Sports row filter, found '+count);
- js=js.replace(oldSportsRows,
-  "function ct251Youth479(e){const t=String([e?.title,e?.competition_name,e?.home_name,e?.away_name].filter(Boolean).join(' ')).toLowerCase();return /(^|[^a-z0-9])(u|sub|under)[ -]?(1[4-9]|2[0-3])([^a-z0-9]|$)/i.test(t)}\n"+
-  "function ct251SportsRows(p){return ct251UniqueEvents([...(Array.isArray(p?.events)?p.events:[]),...(Array.isArray(p?.watch_history)?p.watch_history:[])]).filter(e=>!ct251Youth479(e))}"
- );
-}
-
 /* HOME: show a stable first-paint skeleton immediately while the session is restored.
    This never hides the real Home and is replaced by the normal shell as soon as it paints. */
 const mount='<body><div id="app"></div>';
@@ -111,7 +101,7 @@ const release=JSON.parse(releaseRaw);Object.assign(release,{
  discover_foryou:'v479 wraps v476 strict ID/alias/history/favorite/watchlist exclusions and seven-day shown memory; rendered and swapped recommendations are persisted',
  profile_lists:'v479 Series/Movies are actual watch activity only; Favorites/Actors are category-pure; exactly 12 summary cards remain',
  profile_movies:'Movies full screen still defaults to History and can switch to Watchlist at the top',
- sports:'Web RPCs use v479 professional-only wrappers and a defensive client filter for U/Sub/Under age 14-23; professional club names such as Argentinos Juniors remain allowed',
+ sports:'Web RPCs use v479 professional-only wrappers for U/Sub/Under age 14-23; professional club names such as Argentinos Juniors remain allowed',
  f1:'r478/r477/r462 preserved',
  history:'daily v426 preserved',
  android:'unchanged-1.0.20/10062'
@@ -130,7 +120,7 @@ const r476=region("if(window.__ctR476?.version==='1.0.266')return;");
 if(!html.includes('data-ct479-preboot')||!html.includes('Carregando Home'))throw new Error('r479 visible Home preboot missing');
 if(!r464.includes('cinetracker_discover_watch_smart_v479')||!r464.includes('cinetracker_discover_fresh_v479')||!r464.includes('cinetracker_record_recommendations_v479')||!r464.includes('recordShown479'))throw new Error('r479 Discover authority missing');
 if(!r476.includes("core.rpc('cinetracker_profile_lists_v479',{})")||!r476.includes('const LIMIT=12')||!r476.includes('data-ct478-movie-mode="history"')||!r476.includes('data-ct478-movie-mode="watchlist"'))throw new Error('r479 Profile authority missing');
-for(const need of ['cinetracker_sports_payload_v479','cinetracker_sports_events_v479','cinetracker_sport_favorite_events_v479','ct251Youth479'])if(!js.includes(need))throw new Error('r479 Sports authority missing '+need);
+for(const need of ['cinetracker_sports_payload_v479','cinetracker_sports_events_v479','cinetracker_sport_favorite_events_v479'])if(!js.includes(need))throw new Error('r479 Sports authority missing '+need);
 if(js.includes('cinetracker_sports_payload_v1')||js.includes('cinetracker_sports_events_v0997')||js.includes('cinetracker_sport_favorite_events_v2'))throw new Error('r479 retained legacy Web Sports RPC');
 const r479=js.slice(js.lastIndexOf('/* CineTracker Web 1.0.269 r479'));for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])if(r479.includes(bad))throw new Error('r479 forbidden '+bad);
 if(!js.includes("window.__ctR479Marker='home-visible-preboot+discover-v479-strict-memory+profile-v479-history-only+sports-professional-only'"))throw new Error('r479 marker missing');

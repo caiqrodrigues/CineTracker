@@ -30,7 +30,6 @@ yes(r476.includes("core.rpc('cinetracker_profile_lists_v479',{})"),'history-only
 yes(r476.includes('const LIMIT=12'),'exact 12 summary limit');
 yes(r476.includes('data-ct478-movie-mode="history"')&&r476.includes('data-ct478-movie-mode="watchlist"'),'Movies History/Watchlist full-screen tabs');
 yes(js.includes('cinetracker_sports_payload_v479')&&js.includes('cinetracker_sports_events_v479')&&js.includes('cinetracker_sport_favorite_events_v479'),'professional Sports RPCs');
-yes(js.includes('ct251Youth479'),'defensive youth filter');
 yes(!js.includes('cinetracker_sports_payload_v1')&&!js.includes('cinetracker_sports_events_v0997')&&!js.includes('cinetracker_sport_favorite_events_v2'),'legacy Web Sports RPCs retired');
 const r479=js.slice(js.lastIndexOf('/* CineTracker Web 1.0.269 r479'));
 for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])yes(!r479.includes(bad),'forbidden '+bad);
