@@ -21,7 +21,7 @@ yes(html.includes('app-v486.js')&&html.includes('app-v486.css'),'assets');
 yes(sw.includes('app-v486.js')&&sw.includes('app-v486.css'),'service worker');
 
 const r485=region("window.__ctR485Marker='home-cache-visible+movies-compact-rows+discover-v485-direct+profile-v485-exact-12'");
-yes(r485.includes('homeRenderTask=null,lastHomeRenderAt=0'),'Home single flight');
+yes(r485.includes('window.__ctR486HomeRenderTask')&&r485.includes('window.__ctR486HomeRenderAt'),'Home single flight');
 yes(r485.includes("window.__ctR388?.renderHome?.()"),'immediate Home frame');
 yes(!r485.includes('.ct388-movie-stack.ct485-movie-rows'),'Movies rows survive repaint');
 yes(r485.includes("[data-ct321-top-content] .ct319-top-row")&&r485.includes('aspect-ratio:2/3!important'),'Top 10 2:3');
