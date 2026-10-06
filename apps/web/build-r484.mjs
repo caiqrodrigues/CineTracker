@@ -90,9 +90,7 @@ js=replaceNamedFunctionOptional(js,A455,'applyProfile455',"function applyProfile
 js=replaceNamedFunctionOptional(js,A455,'scheduleProfile455',"function scheduleProfile455(){return false}",'r455');
 js=replaceNamedFunctionOptional(js,"if(window.__ctR424?.version==='1.0.215')return;",'normalizeProfileLists424',"function normalizeProfileLists424(){return false}",'r424');
 
-js=patchRuntime(js,"window.__ctR415Marker='stable-series-entry+visible-functional-7-swap+single-v380-profile';",[
- [" decorateProfileDom();return true;"," decorateProfileDom();try{window.__ctR476?.paintProfile?.()}catch{};queueMicrotask(()=>{try{void window.__ctR476?.loadProfile?.(true)}catch{}});return true;","canonical Profile convergence"]
-],'r415');
+js=replaceNamedFunctionOptional(js,"window.__ctR415Marker='stable-series-entry+visible-functional-7-swap+single-v380-profile';",'profilePaint',"function profilePaint(data){\n if(!data||routeNow()!=='profile')return false;\n try{profileCache=data}catch{}\n try{ct163Write('profile',data)}catch{}\n try{ct168PaintProfile(data,'')}catch(e){const root=q('[data-profile]');if(root)root.dataset.ct415PaintError=String(e?.message||e)}\n try{window.__ctR312Test?.patchActors312?.(q('[data-profile]'),rows(data.favorite_actors))}catch{}\n decorateProfileDom();try{window.__ctR476?.paintProfile?.()}catch{};queueMicrotask(()=>{try{void window.__ctR476?.loadProfile?.(true)}catch{}});return true;\n}",'r415');
 
 const A464="window.__ctR464Marker='discover-foryou-visible-owner-v421';";
 js=replaceNamedFunction(js,A464,'fetchPool',"async function fetchPool(group,kind){\n const primary=group==='watch'?'cinetracker_discover_watch_smart_v484':'cinetracker_discover_fresh_v484';\n const fallback=group==='watch'?'cinetracker_discover_watch_smart_v476':'cinetracker_discover_fresh_v476';\n const limit=group==='watch'?30:48;\n try{const items=rows(unwrap(await timeout(rpcCall(primary,{p_kind:kind,p_limit:limit}),4500)));if(items.length)return items}catch{}\n try{return rows(unwrap(await timeout(rpcCall(fallback,{p_kind:kind,p_limit:limit}),5500)))}catch{return[]}\n}",'r464');
