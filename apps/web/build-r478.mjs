@@ -226,6 +226,6 @@ if(r388.includes('const critical=[loadSeries(false),loadHistory(false)]')||r388.
 if(!r464.includes('cinetracker_discover_watch_smart_v476')||!r464.includes('cinetracker_discover_fresh_v476')||!r464.includes("ct478:foryou-cycle")||r464.includes("if(loadTask&&!force)return loadTask"))throw new Error('r478 strict rotating Discover missing');
 for(const need of ['const LIMIT=12','seriesHistory=()=>','movieHistory=()=>','cinetracker_home_movies_v405','data-ct478-movie-mode="history"','data-ct478-movie-mode="watchlist"'])if(!r476.includes(need))throw new Error('r478 Profile missing '+need);
 if(!r477.includes('now-lastHomeBootAt<500'))throw new Error('r478 Home boot guard missing');
-for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])if(marker.includes(bad))throw new Error('r478 forbidden '+bad);
+const r478=js.slice(js.lastIndexOf('/* CineTracker Web 1.0.268 r478'));for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])if(r478.includes(bad))throw new Error('r478 forbidden '+bad);
 if(!js.includes("window.__ctR478Marker='home-single-first-paint+discover-v476-strict-rotation+profile-history-only+movies-history-watchlist-tabs'"))throw new Error('r478 marker missing');
 console.log('WEB_R478_READY');
