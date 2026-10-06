@@ -37,6 +37,14 @@ function replaceFunction(source,anchor,name,replacement,label){
  const next=region.replace(re,replacement);
  return source.slice(0,start)+next+source.slice(end);
 }
+function replaceArrowConst(source,anchor,name,replacement,label){
+ const {start,end}=runtimeBounds(source,anchor,label),region=source.slice(start,end);
+ const re=new RegExp('const\\s+'+name+'\\s*=\\s*[^=;]+=>\\s*\\{[\\s\\S]*?\\n\\};','m');
+ const found=region.match(re);
+ if(!found)throw new Error('r482 missing '+label+' arrow '+name);
+ const next=region.replace(re,replacement);
+ return source.slice(0,start)+next+source.slice(end);
+}
 
 /* HOME SERIES/HISTORY: retire every delayed automatic anchor/re-entry writer.
    Data authorities remain r399/v452 and r388/v391. */
@@ -68,18 +76,13 @@ js=replaceFunction(
 );
 
 
-js=patchRuntime(js,"window.__ctR475HomeAnchor={version:'1.0.265',schedule};",[
- [`const schedule=kind=>{
- const wanted=kind==='movies'?'movies':'series',run=++token;userMoved=false;
- for(const ms of [80,260,620,980,1380])setTimeout(()=>{
-  if(run!==token||userMoved||routeNow()!=='home')return;
-  try{window.__ctR399?.enterHome?.(wanted)}catch{}
- },ms);
- return run;
-};`,
-  `const schedule=kind=>{userMoved=false;return ++token};`,
-  'retire delayed Home re-entry']
-],'r475');
+js=replaceArrowConst(
+ js,
+ "window.__ctR475HomeAnchor={version:'1.0.265',schedule};",
+ 'schedule',
+ `const schedule=kind=>{userMoved=false;return ++token};`,
+ 'r475'
+);
 
 js=replaceFunction(
  js,
