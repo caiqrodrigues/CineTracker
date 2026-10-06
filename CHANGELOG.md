@@ -1,3 +1,18 @@
+## 0.3.12 — r485 (2026-10-06)
+
+### Corrigido
+- Home > Séries: restaurado o último snapshot válido por apenas 15 minutos para o primeiro paint, enquanto `cinetracker_home_series_v452` e `cinetracker_home_history_v391` continuam atualizando em segundo plano. Sem snapshot, o shell/skeleton é montado imediatamente, eliminando a tela preta durante a espera do banco.
+- Home > Filmes: mantida a paginação `cinetracker_home_movies_v405`, mas a Watchlist volta ao formato compacto de linha do Home, com poster 44x66 em 2:3, título truncado, metadados visíveis e ação à direita.
+- Descobrir > Pra Você: removida a cadeia pesada v421 → v476 → v480/v484 que estava estourando o statement timeout no Supabase. Os novos RPCs v485 consultam diretamente mídia/estados/histórico e alimentam os 7 slots sem retornar “Sem indicação elegível agora” por timeout.
+- Descobrir: v485 mantém exclusão de vistos, Watchlist e favoritos nos blocos novos; “Da sua Watchlist” parte somente da Watchlist ainda não vista. Também preserva os bloqueios de WWE/NXT, reality, stand-up, produções originárias do YouTube e filmes com menos de 40 minutos.
+- Perfil: `cinetracker_profile_lists_v485` lê diretamente histórico, favoritos e atores usando as tabelas indexadas, sem depender dos dashboards legados que estavam atingindo timeout.
+- Perfil: Filmes, Séries, Filmes Favoritos, Séries Favoritas e Atores Favoritos ficam limitados a exatamente 12 cards na visão resumida quando há 12 ou mais itens. O **Ver mais** permanece somente no cabeçalho e abre a tela completa separada.
+
+### Preservado / validação
+- Nenhuma alteração em F1, Esportes, histórico diário/Desmarcar visto ou Android.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` no runtime r485.
+- RPCs diretos v485 foram aplicados no Supabase de produção e validados com 48 candidatos em Filme, Série e Anime no caminho fresh.
+
 ## 0.3.11 — r484 (2026-10-06)
 
 ### Corrigido
