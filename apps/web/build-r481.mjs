@@ -72,9 +72,6 @@ async function fetchPool(group,kind){
  'r464 cached fetchPool'
 );
 js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';",[
- ["const item=eligible[Math.floor(Math.random()*eligible.length)],key=keyOf(item);",
-  "const smart=eligible.slice(0,Math.min(8,eligible.length)),item=smart[Math.floor(Math.random()*smart.length)],key=keyOf(item);",
-  'smart randomized swap'],
  ["window.addEventListener('cinetracker:data-changed',()=>setTimeout(()=>{if(isForYou())void load(true)},0));",
   "window.addEventListener('cinetracker:data-changed',()=>{clearPool481();setTimeout(()=>{if(isForYou())void load(true)},0)});",
   'pool cache invalidation']
@@ -148,7 +145,7 @@ const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';")
 const r476=region("if(window.__ctR476?.version==='1.0.266')return;");
 const r477=region("if(window.__ctR477?.version==='1.0.267')return;");
 if(!js.includes("ensureHomeShell:()=>"))throw new Error('r481 Home shell bridge missing');
-for(const need of ['POOL_CACHE_TTL481','cinetracker_discover_fresh_v480','cinetracker_discover_watch_smart_v480','Math.min(8,eligible.length)','clearPool481()'])if(!r464.includes(need))throw new Error('r481 Discover missing '+need);
+for(const need of ['POOL_CACHE_TTL481','cinetracker_discover_fresh_v480','cinetracker_discover_watch_smart_v480','Math.pow(Math.random(),2)','clearPool481()'])if(!r464.includes(need))throw new Error('r481 Discover missing '+need);
 for(const need of ['const LIMIT=12','async function openAll(key)','await loadProfile(true)','data-ct478-movie-mode="history"','data-ct478-movie-mode="watchlist"'])if(!r476.includes(need))throw new Error('r481 Profile missing '+need);
 for(const need of ['SPORTS_CACHE481','readSports481()','saveSports481(next)','if(sportsCache)paintSports(sportsCache)'])if(!r477.includes(need))throw new Error('r481 Sports missing '+need);
 for(const need of ['cinetracker_f1_watch_sync_v462','cinetracker_home_series_v452','cinetracker_home_movies_v405','cinetracker_home_history_v391'])if(!js.includes(need))throw new Error('r481 missing '+need);
