@@ -41,6 +41,8 @@ style.textContent=[
  '[data-home-view="movies"] .ct388-movie-stack>.ct274-media-card>[data-ct266-watch]{position:static!important;right:auto!important;bottom:auto!important;flex:0 0 32px!important;width:32px!important;min-width:32px!important;max-width:32px!important;height:32px!important;min-height:32px!important;max-height:32px!important;margin-left:auto!important}',
  '[data-home-view="movies"] .ct481-movie-skeleton{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}',
  '[data-home-view="movies"] .ct481-movie-skeleton .ct481-sk-row{width:100%!important}',
+ '[data-home-view="movies"] .ct481-movie-skeleton .ct481-sk-card{display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;gap:10px!important;align-items:center!important;width:100%!important;max-width:none!important}',
+ '[data-home-view="movies"] .ct481-movie-skeleton .ct481-sk-card-poster{width:44px!important;height:66px!important;aspect-ratio:2/3!important;border-radius:8px!important}',
  '[data-profile] .ct476-header-more{display:none!important}',
  '[data-profile] [data-ct476-profile-row]>.card:nth-child(n+14){display:none!important}',
  '[data-profile] .ct482-profile-more{display:block!important;flex:0 0 150px!important;width:150px!important;min-width:150px!important;max-width:150px!important}',
