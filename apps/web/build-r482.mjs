@@ -53,11 +53,7 @@ js=replaceFunction(
 js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';",[
  ["renderHistory('episodes');renderHistory('movies');scheduleHome393(activeKind(),false);setTimeout(()=>{try{window.__ctR399?.enterHome?.(activeKind())}catch{}},0)",
   "renderHistory('episodes');renderHistory('movies')",
-  'history repaint without primary repaint'],
- ["window.__ctCoreR471?.homeMovieCard?.(y)","window.__ctCoreR471?.homeMovieRow?.(y)",'compact movie row'],
- ["stack.replaceChildren();stack.classList.add('ct476-movie-grid');stack.style.display='grid';stack.style.flexDirection='';const frag=document.createDocumentFragment()",
-  "stack.replaceChildren();stack.classList.remove('ct476-movie-grid');stack.style.display='flex';stack.style.flexDirection='column';const frag=document.createDocumentFragment()",
-  'compact movie stack']
+  'history repaint without primary repaint']
 ],'r388');
 
 js=replaceFunction(
@@ -70,12 +66,7 @@ js=replaceFunction(
 }`,
  'r399'
 );
-js=patchRuntime(js,"window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';",[
- ["window.__ctCoreR471?.homeMovieCard?.(y)","window.__ctCoreR471?.homeMovieRow?.(y)",'compact movie row'],
- ["stack.replaceChildren();stack.classList.add('ct476-movie-grid');stack.style.display='grid';stack.style.flexDirection='';sec.dataset.ct397Owned='1';sec.dataset.ct399Owned='1';",
-  "stack.replaceChildren();stack.classList.remove('ct476-movie-grid');stack.style.display='flex';stack.style.flexDirection='column';sec.dataset.ct397Owned='1';sec.dataset.ct399Owned='1';",
-  'compact movie stack']
-],'r399');
+
 
 js=patchRuntime(js,"window.__ctR475HomeAnchor={version:'1.0.265',schedule};",[
  [`const schedule=kind=>{
@@ -266,8 +257,7 @@ const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';")
 const r476=region("if(window.__ctR476?.version==='1.0.266')return;");
 const r477=region("if(window.__ctR477?.version==='1.0.267')return;");
 const r481=region("window.__ctR481Marker='v038-home-skeleton+movie-2x3+smart-discover-cache+stable-sports+profile-12-header-only';");
-if(r388.includes('scheduleHome393(activeKind(),false)')||r388.includes("homeMovieCard?.(y)")||r399.includes("homeMovieCard?.(y)"))throw new Error('r482 retained Home repaint/card owner');
-if(!r388.includes("classList.remove('ct476-movie-grid')")||!r399.includes("classList.remove('ct476-movie-grid')"))throw new Error('r482 compact movie stack missing');
+if(r388.includes('scheduleHome393(activeKind(),false)'))throw new Error('r482 retained Home repaint anchor');
 if(r476.includes('[0,70,180,360,650,1000]'))throw new Error('r482 retained r476 Home anchor loop');
 if(!r464.includes('cinetracker_discover_fresh_v421')||!r464.includes('cinetracker_discover_watch_unseen_v421'))throw new Error('r482 Discover fallback missing');
 if(!r476.includes('summaryMoreCard')||!r476.includes('ct482-profile-more')||!r476.includes('const LIMIT=12')||!r476.includes('PROFILE_CACHE482'))throw new Error('r482 Profile 12+More/cache missing');
