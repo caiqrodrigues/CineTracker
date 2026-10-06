@@ -1,3 +1,20 @@
+## 0.3.13 — r486 (2026-10-06)
+
+### Corrigido
+- Home > Séries: o frame do Home passa a ser pintado imediatamente por r388 com trava single-flight. O usuário vê snapshot/skeleton de Séries e Histórico antes de v452/v391 concluir, eliminando a tela preta de ~10 s.
+- Home > Filmes: a Watchlist v405 volta ao layout compacto de linhas em toda repintura. O CSS não depende mais da classe transitória `ct485-movie-rows`, então nenhum repaint tardio retorna ao grid de cards da r481.
+- Descobrir > Pra Você: preservados os RPCs diretos `cinetracker_discover_fresh_v485` e `cinetracker_discover_watch_smart_v485`. Os RPCs foram validados no banco com 48 candidatos fresh para Filme, Série e Anime.
+- Descobrir > Top 10: preservados 10 itens por linha em desktop, mas pôster e card passam a respeitar geometria vertical real 2:3, sem altura fixa achatada.
+- Perfil: `cinetracker_profile_lists_v485` permanece como autoridade direta e Filmes, Séries, Filmes Favoritos, Séries Favoritas e Atores Favoritos ficam limitados a exatamente 12 cards visíveis na visão resumida; **Ver mais** continua separado no cabeçalho.
+
+### Diagnóstico de publicação
+- Os commits r482–r485 não chegaram à produção porque o check do Vercel foi bloqueado por `build-rate-limit`; por isso o vídeo ainda executava a r481 e chamava v480, apesar das correções posteriores já estarem na `main`.
+- O r486 consolida as correções sobre r485 e gera novos assets versionados, sem alterar F1, Esportes, histórico diário ou Android.
+
+### Preservado
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)`.
+- F1, Esportes, histórico diário/Desmarcar visto e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+
 ## 0.3.12 — r485 (2026-10-06)
 
 ### Corrigido
