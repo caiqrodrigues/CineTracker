@@ -1,3 +1,21 @@
+## 1.0.269 — r479 (2026-10-05)
+
+### Corrigido
+- Home: adicionada renderização visual imediata enquanto a sessão é restaurada, eliminando o intervalo de tela preta sem criar gate que esconda os dados reais. O owner r478/r399 continua responsável por Séries v452, Histórico e Watchlist v405.
+- Descobrir > Pra Você: os pools v479 preservam a exclusão estrita v476 por TMDB ID, aliases traduzidos/originais, histórico real, favoritos e Watchlist. Interstellar/Interestelar, Casino Royale e Harry Potter foram usados como regressão de identidade duplicada e ficaram fora dos pools elegíveis.
+- Descobrir > Pra Você: cada conjunto efetivamente exibido é persistido em `shown_recommendations`; itens vistos nos últimos 7 dias são rebaixados e a próxima abertura prioriza itens ainda não mostrados. Trocar e ações também registram a nova exposição.
+- Perfil > Séries e Filmes: passam a usar somente atividade real de visualização, ordenada pelo último item assistido. Estados de favorito/Watchlist deixam de qualificar essas duas listas como histórico.
+- Perfil > Séries Favoritas, Filmes Favoritos e Atores Favoritos: permanecem fontes independentes e puras.
+- Perfil: todas as cinco listas mantêm exatamente 12 cards na visão resumida quando há conteúdo suficiente; **Ver mais** continua abrindo a tela completa separada.
+- Perfil > Filmes > Ver mais: abre em **Histórico** e mantém o seletor superior **Histórico / Watchlist**, carregando a Watchlist completa via v405 somente quando necessário.
+- Esportes: Web passa a usar os RPCs v479, que excluem competições/equipes com categoria U/Sub/Under de 14 a 23 anos. O filtro não usa a palavra “Juniors”, portanto clubes profissionais como Argentinos Juniors não são removidos.
+- Backend v479 aplicado em produção e validado: 0 ocorrências dos exemplos bloqueados nos pools de filmes e 0 eventos de base nas respostas esportivas filtradas.
+
+### Preservado / validação
+- Nenhum `window.location.reload()`, `router.refresh()`, `while(true)`, `setInterval` ou `MutationObserver` foi introduzido pela r479.
+- Histórico diário/desmarcar v426 e F1 permanecem inalterados.
+- Android permanece 1.0.20 / versionCode 10062 e continua usando os contratos esportivos anteriores.
+
 ## 1.0.268 — r478 (2026-10-05)
 
 ### Corrigido

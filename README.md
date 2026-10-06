@@ -1,3 +1,12 @@
+## Web 1.0.269 / r479 — Home estável, recomendações estritas, Perfil por histórico e Sports profissional
+
+- Home recebe um first paint visível enquanto a sessão é restaurada; Séries/Histórico continuam no fluxo r478/r399 e Filmes usa a Watchlist paginada v405.
+- Pra Você usa os pools v479: vistos, favoritos e Watchlist são excluídos por ID e aliases; as recomendações exibidas entram em memória de 7 dias para reduzir repetição entre aberturas.
+- Séries e Filmes do Perfil são somente histórico real; Séries Favoritas, Filmes Favoritos e Atores Favoritos são listas independentes.
+- As cinco listas do Perfil mostram 12 cards na visão resumida; **Ver mais** abre a tela completa. Em Filmes, a tela completa possui **Histórico / Watchlist** no topo.
+- Sports Web usa respostas v479 sem categorias U/Sub/Under 14–23; nomes profissionais contendo “Juniors” continuam permitidos.
+- Android 1.0.20 / 10062, F1 e histórico diário v426 permanecem preservados.
+
 ## Web 1.0.268 / r478 — Home estável, Pra Você estrito e Perfil por histórico
 
 - Home não disputa mais Série/Filmes entre loaders antigos e atuais: r388 mantém frame/Histórico, r399 mantém Séries v452 e Watchlist de Filmes v405.
