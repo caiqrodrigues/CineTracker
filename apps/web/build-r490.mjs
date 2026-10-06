@@ -43,8 +43,6 @@ patch("function homeEntry425()",'r425',[
 ]);
 patch("function scheduleFY()",'r426-schedule',[['scheduleFY',"function scheduleFY(){return false}"]]);
 patch("async function stabilizeProfile()",'r426-profile',[['stabilizeProfile',"async function stabilizeProfile(){return false}"]]);
-js=disableRuntime(js,"window.__ctR427={",'r427');
-js=disableRuntime(js,"window.__ctR429={",'r429');
 patch("if(window.__ctR467?.version==='1.0.257')return;",'r467',[
  ['applyProfile467',"function applyProfile467(){return false}"],['scheduleProfile467',"function scheduleProfile467(){return false}"]
 ]);
