@@ -1,3 +1,14 @@
+## Web 0.3.11 / r484 — autoridade única e estabilidade final
+
+- Home Séries não usa mais o gate r459 de 4,2 s nem cache visual antigo: skeleton aparece imediatamente e v452/v391 pintam o estado vivo.
+- Home Filmes continua em v405; entradas legadas convergem para o owner atual.
+- Pra Você usa v484/v476 estritos, sem cache de candidatos antigos e sem owners v421 concorrentes; vistos, Watchlist e favoritos ficam fora dos blocos de descoberta, exceto a própria área Da sua Watchlist.
+- A memória de recomendações prioriza itens não mostrados nos últimos 7 dias e a ordem é embaralhada a cada abertura.
+- Perfil usa v484 puro: Séries/Filmes = histórico; Séries Favoritas/Filmes Favoritos/Atores = respectivas categorias.
+- Cada lista do Perfil mostra exatamente 12 cards. O Ver mais do cabeçalho abre a tela completa.
+- Filmes > Ver mais abre em Histórico e permite alternar no topo para Watchlist.
+- F1, Esportes, histórico diário e Android permanecem inalterados.
+
 ## Web 0.3.10 / r483 — especificação v0.3.8 finalizada
 
 - Home Séries entra com skeleton/cache imediato e mantém v452 + Histórico v391 como autoridades.
