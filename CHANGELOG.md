@@ -1,3 +1,18 @@
+## 0.3.11 — r484 (2026-10-06)
+
+### Corrigido
+- Home > Séries: removido o gate legado r459 que ainda escondia a view por até 4,2 s. Owners r457/r459/r460 agora convergem para r477/r399, mantendo v452 como autoridade e skeleton visível desde o primeiro paint.
+- Home > Séries/Histórico: removido o bootstrap visual de cache com até 6 h que podia exibir dados antigos antes da resposta viva; v452/v391 passam a substituir diretamente o skeleton.
+- Descobrir > Pra Você: owners legados r457/r459/r460 deixam de repintar pools v421 e passam a delegar ao r464. O r464 usa v484 primário e v476 estrito como fallback, sem reutilizar o cache local de candidatos r481.
+- Descobrir: v484 preserva os bloqueios de vistos, Watchlist, favoritos, aliases equivalentes e WWE/NXT do v476, prioriza itens não mostrados nos últimos 7 dias e embaralha candidatos a cada abertura. Interstellar/Interestelar, Casino Royale/Cassino Royale e Harry Potter ficam cobertos pela equivalência de títulos/estados já existente.
+- Perfil: r476/v484 passa a ser a autoridade única das cinco listas. Séries e Filmes usam somente histórico real; Séries Favoritas, Filmes Favoritos e Atores usam exclusivamente suas respectivas fontes.
+- Perfil: exatamente 12 cards na visão resumida; controles legados r455/r457/r459/r460 não podem mais adicionar cards/Ver mais concorrentes.
+- Perfil > Ver mais: permanece no cabeçalho e abre a lista completa em tela separada. Em Filmes, a tela abre em Histórico e permite alternar no topo entre Histórico e Watchlist.
+
+### Preservado / validação
+- F1, Esportes, histórico diário/Desmarcar visto e Android 1.0.20 / versionCode 10062 permanecem preservados.
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` no runtime r484.
+
 ## 0.3.10 — r483 (2026-10-06)
 
 ### Finalização da especificação v0.3.8
