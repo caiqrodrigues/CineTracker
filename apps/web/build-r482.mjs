@@ -31,7 +31,7 @@ function patchRuntime(source,anchor,patches,label){
 }
 function replaceFunction(source,anchor,name,replacement,label){
  const {start,end}=runtimeBounds(source,anchor,label),region=source.slice(start,end);
- const re=new RegExp('function\\s+'+name+'\\s*\\([^\\{]*\\)\\s*\\{[\\s\\S]*?\\n\\}','m');
+ const re=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\([^\\{]*\\)\\s*\\{[\\s\\S]*?\\n\\}','m');
  const found=region.match(re);
  if(!found)throw new Error('r482 missing '+label+' function '+name);
  const next=region.replace(re,replacement);
