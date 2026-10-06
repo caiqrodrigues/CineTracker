@@ -55,7 +55,7 @@ js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweigh
 ],'r388');
 
 /* r477 Home boot becomes single-flight enough to prevent first-entry shell churn. */
-js=patchRuntime(js,"window.__ctR477Marker='home-no-nine-second-gate+compact-movies+f1-home-writer+foryou-v421+profile-12-header-only+sports-v296';",[
+js=patchRuntime(js,"if(window.__ctR477?.version==='1.0.267')return;",[
  ["let homeRun=0;","let homeRun=0,lastHomeBootKind='',lastHomeBootAt=0;",'home guard state'],
  [`function bootHome(kind='series'){
  if(!(routeNow()==='home'||homeLocation()))return false;
@@ -105,7 +105,7 @@ js=patchRuntime(js,"window.__ctR464Marker='discover-foryou-visible-owner-v421';"
 
 /* PROFILE: summary/history semantics are separated from favorites/watchlist.
    Movies full-screen gets History/Watchlist tabs; summary remains recent history only. */
-js=patchRuntime(js,"window.__ctR476Marker='home-visible-card-watchlist+foryou-v476-strict-smart+profile-12-header-more-full';",[
+js=patchRuntime(js,"if(window.__ctR476?.version==='1.0.266')return;",[
  ["let profile=null,profileTask=null,profileSeq=0,allSeq=0;",
   "let profile=null,profileTask=null,profileSeq=0,allSeq=0,movieWatchlist=[],movieWatchTask=null;",
   'movie Watchlist state'],
@@ -220,8 +220,8 @@ await Promise.all([rm(resolve(dist,'app-v477.js'),{force:true}),rm(resolve(dist,
 const region=anchor=>{const at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);if(at<0||start<0||close<0)throw new Error('r478 missing runtime '+anchor);return js.slice(start,close+6)};
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
-const r476=region("window.__ctR476Marker='home-visible-card-watchlist+foryou-v476-strict-smart+profile-12-header-more-full';");
-const r477=region("window.__ctR477Marker='home-no-nine-second-gate+compact-movies+f1-home-writer+foryou-v421+profile-12-header-only+sports-v296';");
+const r476=region("if(window.__ctR476?.version==='1.0.266')return;");
+const r477=region("if(window.__ctR477?.version==='1.0.267')return;");
 if(r388.includes('const critical=[loadSeries(false),loadHistory(false)]')||r388.includes("try{setApp(shell('Home'"))throw new Error('r478 Home legacy repaint still active');
 if(!r464.includes('cinetracker_discover_watch_smart_v476')||!r464.includes('cinetracker_discover_fresh_v476')||!r464.includes("ct478:foryou-cycle")||r464.includes("if(loadTask&&!force)return loadTask"))throw new Error('r478 strict rotating Discover missing');
 for(const need of ['const LIMIT=12','seriesHistory=()=>','movieHistory=()=>','cinetracker_home_movies_v405','data-ct478-movie-mode="history"','data-ct478-movie-mode="watchlist"'])if(!r476.includes(need))throw new Error('r478 Profile missing '+need);
