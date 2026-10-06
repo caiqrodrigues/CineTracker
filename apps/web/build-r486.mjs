@@ -48,25 +48,19 @@ function patchRuntime(source,anchor,needle,replacement,label){
 
 const A485="window.__ctR485Marker='home-cache-visible+movies-compact-rows+discover-v485-direct+profile-v485-exact-12'";
 
-js=patchRuntime(
- js,A485,
- 'let homeSeq=0;',
- 'let homeSeq=0,homeRenderTask=null,lastHomeRenderAt=0;',
- 'r485 Home render lock'
-);
-
 js=replaceNamedFunction(
  js,A485,'prepareHome',
  `function prepareHome(kind='series'){
  const k=kind==='movies'?'movies':'series',now=Date.now();
  try{core.ensureHomeShell?.()}catch{}
  const missing=!q('[data-home-view="series"]')||!q('[data-home-view="movies"]');
- if(!homeRenderTask&&(missing||now-lastHomeRenderAt>5000)){
-  lastHomeRenderAt=now;
+ const last=Number(window.__ctR486HomeRenderAt||0);
+ if(!window.__ctR486HomeRenderTask&&(missing||now-last>5000)){
+  window.__ctR486HomeRenderAt=now;
   try{
    const task=window.__ctR388?.renderHome?.();
-   homeRenderTask=Promise.resolve(task).catch(()=>false).finally(()=>{homeRenderTask=null});
-  }catch{homeRenderTask=null}
+   window.__ctR486HomeRenderTask=Promise.resolve(task).catch(()=>false).finally(()=>{window.__ctR486HomeRenderTask=null});
+  }catch{window.__ctR486HomeRenderTask=null}
  }
  try{window.__ctR481?.prime?.(k)}catch{}
  try{window.__ctR477?.bootHome?.(k)}catch{}
@@ -131,7 +125,7 @@ await Promise.all([
 await Promise.all([rm(resolve(dist,'app-v485.js'),{force:true}),rm(resolve(dist,'app-v485.css'),{force:true})]);
 
 const r485=(()=>{const b=bounds(js,A485,'r485');return js.slice(b.start,b.end)})();
-if(!r485.includes('homeRenderTask=null,lastHomeRenderAt=0'))throw new Error('r486 Home lock missing');
+if(!r485.includes('window.__ctR486HomeRenderTask')||!r485.includes('window.__ctR486HomeRenderAt'))throw new Error('r486 Home lock missing');
 if(!r485.includes("window.__ctR388?.renderHome?.()"))throw new Error('r486 immediate Home renderer missing');
 if(r485.includes('.ct388-movie-stack.ct485-movie-rows'))throw new Error('r486 transient Movies selector retained');
 if(!r485.includes("aspect-ratio:2/3!important")||!r485.includes("[data-ct321-top-content] .ct319-top-row"))throw new Error('r486 Top 10 2:3 missing');
