@@ -1,4 +1,4 @@
-name: Verify Web 0.3.13 r486
+name: Verify Web 0.3.14 r487
 on:
   push:
     branches: [main]
@@ -6,41 +6,41 @@ on:
 permissions:
   contents: read
 jobs:
-  web_r486:
+  web_r487:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r486 visible UI regression gate
+      - name: Build and r487 requested UI regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v486.js
-          grep -Fq "window.__ctR486Marker='home-immediate-frame+movies-row-sticky+discover-v485+top10-2x3+profile-exact-12'" apps/web/dist/app-v486.js
-          grep -Fq 'cinetracker_home_series_v452' apps/web/dist/app-v486.js
-          grep -Fq 'cinetracker_home_history_v391' apps/web/dist/app-v486.js
-          grep -Fq 'cinetracker_home_movies_v405' apps/web/dist/app-v486.js
-          grep -Fq 'cinetracker_f1_watch_sync_v462' apps/web/dist/app-v486.js
-          grep -Fq 'cinetracker_discover_fresh_v485' apps/web/dist/app-v486.js
-          grep -Fq 'cinetracker_discover_watch_smart_v485' apps/web/dist/app-v486.js
-          grep -Fq 'cinetracker_profile_lists_v485' apps/web/dist/app-v486.js
-          grep -Fq 'localGet(HS,15*60*1000)' apps/web/dist/app-v486.js
-          grep -Fq 'const LIMIT=12' apps/web/dist/app-v486.js
-          grep -Fq 'ct476-header-more' apps/web/dist/app-v486.js
-          grep -Fq 'ct485-movie-rows' apps/web/dist/app-v486.js
-          grep -Fq 'nth-child(n+13)' apps/web/dist/app-v486.js
-          grep -Fq 'SPORTS_CACHE481' apps/web/dist/app-v486.js
+          node --check apps/web/dist/app-v487.js
+          grep -Fq "window.__ctR487Marker='home-pulse+movies-2x3+foryou-tmdb-fallback+top10-2x3+profile-exact-12'" apps/web/dist/app-v487.js
+          grep -Fq 'cinetracker_home_series_v452' apps/web/dist/app-v487.js
+          grep -Fq 'cinetracker_home_history_v391' apps/web/dist/app-v487.js
+          grep -Fq 'cinetracker_home_movies_v405' apps/web/dist/app-v487.js
+          grep -Fq 'cinetracker_f1_watch_sync_v462' apps/web/dist/app-v487.js
+          grep -Fq 'cinetracker_discover_fresh_v485' apps/web/dist/app-v487.js
+          grep -Fq 'cinetracker_discover_watch_smart_v485' apps/web/dist/app-v487.js
+          grep -Fq 'cinetracker_profile_lists_v485' apps/web/dist/app-v487.js
+          grep -Fq 'localGet(HS,15*60*1000)' apps/web/dist/app-v487.js
+          grep -Fq 'const LIMIT=12' apps/web/dist/app-v487.js
+          grep -Fq 'ct476-header-more' apps/web/dist/app-v487.js
+          grep -Fq 'ct487-movie-grid' apps/web/dist/app-v487.js
+          grep -Fq 'nth-child(n+13)' apps/web/dist/app-v487.js
+          grep -Fq 'SPORTS_CACHE481' apps/web/dist/app-v487.js
           grep -Fq 'data-ct479-preboot' apps/web/dist/index.html
-          FETCH_BLOCK="$(sed -n '/async function fetchPool(group,kind)/,/function chooseDaily/p' apps/web/dist/app-v486.js | tail -n +1)"
-          if grep -Eq 'cinetracker_discover_(fresh|watch_smart|watch_unseen)_v(421|476|480|484)' <<<"$FETCH_BLOCK"; then
-            echo 'nested Discover authority leaked into r486 fetchPool' >&2
-            exit 1
-          fi
-          if grep -Fq 'ct482-profile-more' apps/web/dist/app-v486.js; then
-            echo 'large Profile More card leaked into r486 bundle' >&2
+          grep -Fq 'cinetracker_discover_fresh_v421' apps/web/dist/app-v487.js
+          grep -Fq 'cinetracker_discover_filter_v320' apps/web/dist/app-v487.js
+          grep -Fq 'tmdbFresh487' apps/web/dist/app-v487.js
+          grep -Fq 'animate-pulse' apps/web/dist/app-v487.js
+          grep -Fq 'object-fit:cover!important' apps/web/dist/app-v487.js
+          if grep -Fq 'ct482-profile-more' apps/web/dist/app-v487.js; then
+            echo 'large Profile More card leaked into r487 bundle' >&2
             exit 1
           fi
   android:
@@ -52,20 +52,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r486, android]
+    needs: [web_r487, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r486 production
+      - name: Wait for r487 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.13"' <<<"$BODY" && grep -Fq '"revision": "r486-official-0.3.13"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v486.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.14"' <<<"$BODY" && grep -Fq '"revision": "r487-official-0.3.14"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v487.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR486Marker='home-immediate-frame+movies-row-sticky+discover-v485+top10-2x3+profile-exact-12'" <<<"$JS" && grep -Fq 'app-v486.js' <<<"$HTML" && grep -Fq 'data-ct479-preboot' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR487Marker='home-pulse+movies-2x3+foryou-tmdb-fallback+top10-2x3+profile-exact-12'" <<<"$JS" && grep -Fq 'app-v487.js' <<<"$HTML" && grep -Fq 'data-ct479-preboot' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
