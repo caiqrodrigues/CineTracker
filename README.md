@@ -1,3 +1,13 @@
+## Web 0.3.11 / r484 — Perfil 12, Sports profissional, Pra Você carregando e F1 confiável
+
+- Perfil mostra exatamente **12 cards** em Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos; **Ver mais** fica no cabeçalho e abre a lista completa em tela separada.
+- Esportes Web exclui categorias U/Sub/Under 14–23 e competições Junior/Juniors/Juniores sem bloquear clubes profissionais cujo nome contém “Juniors”.
+- Pra Você mantém somente os filtros estritos v480/v476, mas deixa de abandonar consultas válidas após 2,4 s e não dispara ondas repetidas de RPCs.
+- Home Séries usa v484 e reaproveita o primeiro paint/cache enquanto a consulta viva termina.
+- Fórmula 1 usa um mapa v484 corroborado por provedores esportivos para sessões recentes, eliminando a sessão espúria que estava alterando progresso e próximo episódio.
+- Home Filmes mantém a Watchlist paginada v405 em linhas compactas com miniatura 2:3, sem o grid gigante.
+- Histórico diário, F1 Hub, writer v462 e Android 1.0.20 / 10062 permanecem preservados.
+
 ## Web 0.3.10 / r483 — especificação v0.3.8 finalizada
 
 - Home Séries entra com skeleton/cache imediato e mantém v452 + Histórico v391 como autoridades.
