@@ -56,12 +56,14 @@ js=patchRuntime(js,"window.__ctR388Marker='r393-hidden-history-anchor+lightweigh
 ],'r388');
 
 const A459="window.__ctR459Marker='hard-home-tabs+watchlist-v405+foryou-v421+profile-13-half+daily-undo+f1-r423-r426';";
-js=replaceNamedFunction(js,A459,'scheduleSeries459',"function scheduleSeries459(){\n document.documentElement.removeAttribute('data-ct459-boot');\n try{return window.__ctR477?.bootHome?.('series')??window.__ctR399?.enterHome?.('series')??false}catch{return false}\n}",'r459');
-js=replaceNamedFunction(js,A459,'enterMovies459',"function enterMovies459(){\n document.documentElement.removeAttribute('data-ct459-boot');\n try{return window.__ctR477?.bootHome?.('movies')??window.__ctR399?.enterHome?.('movies')??false}catch{return false}\n}",'r459');
-js=replaceNamedFunction(js,A459,'enterForYou459',"function enterForYou459(){\n const s=fyState459();if(s){s.tab='foryou';s.type='all'}\n try{return window.__ctR464?.activate?.()??false}catch{return false}\n}",'r459');
-js=replaceNamedFunction(js,A459,'applyProfile459',"function applyProfile459(){try{return window.__ctR476?.paintProfile?.()??false}catch{return false}}",'r459');
-js=replaceNamedFunction(js,A459,'scheduleProfile459',"function scheduleProfile459(){\n if(routeNow()!=='profile')return false;bindHistory459();\n queueMicrotask(()=>{try{window.__ctR476?.paintProfile?.();void window.__ctR476?.loadProfile?.(true)}catch{}});\n return true\n}",'r459');
-js=patchRuntime(js,A459,[["html[data-ct459-boot=\"1\"] [data-home-view=\"series\"]{visibility:hidden!important}","","hidden Home gate"]],'r459');
+if(js.includes(A459)){
+ js=replaceNamedFunction(js,A459,'scheduleSeries459',"function scheduleSeries459(){\n document.documentElement.removeAttribute('data-ct459-boot');\n try{return window.__ctR477?.bootHome?.('series')??window.__ctR399?.enterHome?.('series')??false}catch{return false}\n}",'r459');
+ js=replaceNamedFunction(js,A459,'enterMovies459',"function enterMovies459(){\n document.documentElement.removeAttribute('data-ct459-boot');\n try{return window.__ctR477?.bootHome?.('movies')??window.__ctR399?.enterHome?.('movies')??false}catch{return false}\n}",'r459');
+ js=replaceNamedFunction(js,A459,'enterForYou459',"function enterForYou459(){\n const s=fyState459();if(s){s.tab='foryou';s.type='all'}\n try{return window.__ctR464?.activate?.()??false}catch{return false}\n}",'r459');
+ js=replaceNamedFunction(js,A459,'applyProfile459',"function applyProfile459(){try{return window.__ctR476?.paintProfile?.()??false}catch{return false}}",'r459');
+ js=replaceNamedFunction(js,A459,'scheduleProfile459',"function scheduleProfile459(){\n if(routeNow()!=='profile')return false;bindHistory459();\n queueMicrotask(()=>{try{window.__ctR476?.paintProfile?.();void window.__ctR476?.loadProfile?.(true)}catch{}});\n return true\n}",'r459');
+}
+js=js.replaceAll('html[data-ct459-boot="1"] [data-home-view="series"]{visibility:hidden!important}','');
 
 const A460="window.__ctR460Marker='movies-sticky+watchlist-v405+foryou-7-swap+profile-13-half+daily-undo+f1-75-of-77-no-reconcile';";
 js=replaceNamedFunction(js,A460,'enterSeries460',"function enterSeries460(){try{return window.__ctR477?.bootHome?.('series')??window.__ctR399?.enterHome?.('series')??false}catch{return false}}",'r460');
@@ -128,10 +130,11 @@ await Promise.all([rm(resolve(dist,'app-v483.js'),{force:true}),rm(resolve(dist,
 
 const region=anchor=>{const b=bounds(js,anchor,anchor);return js.slice(b.start,b.end)};
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
-const r457=region(A457),r459=region(A459),r460=region(A460),r464=region(A464),r476=region("if(window.__ctR476?.version==='1.0.266')return;");
+const r457=region(A457),r459=js.includes(A459)?region(A459):'',r460=region(A460),r464=region(A464),r476=region("if(window.__ctR476?.version==='1.0.266')return;");
 if(r388.includes('localGet(HS,6*60*60*1000)')||r388.includes('localGet(HH,6*60*60*1000)'))throw new Error('r484 stale Home bootstrap retained');
-if(r459.includes('html[data-ct459-boot="1"]'))throw new Error('r484 r459 black gate retained');
-for(const x of [r457,r459,r460])if(!x.includes('__ctR464'))throw new Error('r484 legacy Discover owner not converged');
+if(js.includes('html[data-ct459-boot="1"] [data-home-view="series"]{visibility:hidden!important}'))throw new Error('r484 r459 black gate retained');
+for(const x of [r457,r460])if(!x.includes('__ctR464'))throw new Error('r484 legacy Discover owner not converged');
+if(r459&& !r459.includes('__ctR464'))throw new Error('r484 r459 Discover owner not converged');
 if(!r464.includes('cinetracker_discover_fresh_v484')||!r464.includes('cinetracker_discover_watch_smart_v484')||!r464.includes('cinetracker_record_recommendations_v484'))throw new Error('r484 Discover authority missing');
 const fetchBlock=r464.slice(r464.indexOf('async function fetchPool'),r464.indexOf('function chooseDaily'));
 if(fetchBlock.includes('readPool481(')||fetchBlock.includes('cinetracker_discover_fresh_v421'))throw new Error('r484 stale/weak Discover source retained');
