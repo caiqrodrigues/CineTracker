@@ -1,3 +1,16 @@
+## 0.3.9 — r482 (2026-10-06)
+
+### Corrigido
+- Home > Séries: removidos os reposicionamentos automáticos atrasados que executavam após cada repaint de Histórico/Séries e faziam a página piscar e subir/descer. Séries v452 e Histórico v391 permanecem como fontes existentes; a troca de semi-aba continua resetando o scroll uma única vez.
+- Home > Filmes: removido o grid de cards grandes introduzido na r481. A Watchlist v405 volta ao layout compacto em linhas, com miniatura 2:3 pequena e título truncado; o estado de carregamento usa linhas compactas.
+- Descobrir > Pra Você: v480 continua sendo a fonte estrita primária. Quando v480 excede o tempo de resposta, o cliente usa fallback delimitado v421 para preencher Indicação do Dia e os demais slots, evitando a tela inteira em “Sem indicação elegível agora”.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos exibem exatamente 12 cards e, quando existem mais itens, um único 13º card **Ver mais**.
+- Perfil > Ver mais: o 13º card reutiliza a tela completa separada já existente; não expande a lista na mesma linha. O botão duplicado de cabeçalho fica oculto.
+
+### Preservado
+- Histórico diário, Esportes, Fórmula 1 e Android permanecem sem alterações.
+- Nenhum `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` foi introduzido.
+
 ## 0.3.8 — r481 (2026-10-06)
 
 ### Home
