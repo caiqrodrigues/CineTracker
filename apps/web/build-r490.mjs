@@ -41,9 +41,8 @@ patch("if(window.__ctR424?.version==='1.0.215')return;",'r424',[
 patch("function homeEntry425()",'r425',[
  ['homeEntry425',"function homeEntry425(){return false}"],['profileCanonical425',"function profileCanonical425(){return false}"]
 ]);
-patch("async function stabilizeProfile()",'r426',[
- ['scheduleFY',"function scheduleFY(){return false}"],['stabilizeProfile',"async function stabilizeProfile(){return false}"]
-]);
+patch("function scheduleFY()",'r426-schedule',[['scheduleFY',"function scheduleFY(){return false}"]]);
+patch("async function stabilizeProfile()",'r426-profile',[['stabilizeProfile',"async function stabilizeProfile(){return false}"]]);
 js=disableRuntime(js,"window.__ctR427={",'r427');
 js=disableRuntime(js,"window.__ctR429={",'r429');
 patch("if(window.__ctR467?.version==='1.0.257')return;",'r467',[
