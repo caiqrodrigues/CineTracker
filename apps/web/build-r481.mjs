@@ -95,8 +95,8 @@ js=patchRuntime(js,"if(window.__ctR477?.version==='1.0.267')return;",[
   if(sportsCache)paintSports(sportsCache);
   if(ms===0)void loadSports(force);`,
   'stable settle'],
- ["if(e.target?.closest?.('[data-nav="profile"]')){sportsCache=null;setTimeout(()=>settleProfile(true),0)}",
-  "if(e.target?.closest?.('[data-nav="profile"]')){sportsCache=readSports481()||sportsCache;setTimeout(()=>settleProfile(true),0)}",
+ [`if(e.target?.closest?.('[data-nav="profile"]')){sportsCache=null;setTimeout(()=>settleProfile(true),0)}`,
+  `if(e.target?.closest?.('[data-nav="profile"]')){sportsCache=readSports481()||sportsCache;setTimeout(()=>settleProfile(true),0)}`,
   'preserve cached sports on navigation']
 ],'r477');
 
