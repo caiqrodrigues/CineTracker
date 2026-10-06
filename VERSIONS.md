@@ -1,3 +1,4 @@
+- Web: **0.3.14 / r487-official-0.3.14** — Home com skeleton animate-pulse imediato, Watchlist Filmes em cards 2:3, Pra Você v485→v421→TMDB com filtro de usuário, Top 10 2:3/object-cover e Perfil com exatamente 12 cards por lista.
 - Web: **0.3.13 / r486-official-0.3.13** — Home Séries com frame imediato, Watchlist v405 em linhas persistentes, Pra Você v485 direto, Top 10 em 2:3 e Perfil com exatamente 12 cards por lista.
 - Web: **0.3.12 / r485-official-0.3.12** — elimina tela preta do Home com snapshot curto/skeleton imediato, restaura Watchlist de Filmes em linhas compactas, troca Descobrir por RPCs diretos v485 sem timeout e fixa Perfil em 12 cards por lista com Ver mais separado.
 - Web: **0.3.11 / r484-official-0.3.11** — remove gate/cache visual antigo do Home, converge owners legados, usa Descobrir v484/v476 estrito e não repetitivo, e torna Perfil v484 puro com 12 cards e Filmes Histórico/Watchlist no Ver mais.
