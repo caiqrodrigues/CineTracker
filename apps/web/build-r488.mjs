@@ -20,7 +20,13 @@ function bounds(source,anchor,label){
  if(start<0||close<0)throw new Error('r488 invalid '+label+' bounds');
  return{start,end:close+6};
 }
-function stripRuntime(source,anchor,label){const b=bounds(source,anchor,label);return source.slice(0,b.start)+source.slice(b.end)}
+function disableRuntime(source,anchor,label){
+ const b=bounds(source,anchor,label),region=source.slice(b.start,b.end);
+ if(!region.startsWith('(()=>{'))throw new Error('r488 invalid '+label+' opener');
+ let disabled='(()=>{return;'+region.slice(6);
+ disabled=disabled.replace(/window\.__ctR(485|486|487)Marker=/g,'window.__ctDisabledR$1Marker=');
+ return source.slice(0,b.start)+disabled+source.slice(b.end);
+}
 function replaceNamedFunction(source,anchor,name,replacement,label){
  const b=bounds(source,anchor,label),region=source.slice(b.start,b.end);
  const re=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\('),m=re.exec(region);
@@ -52,7 +58,7 @@ for(const [anchor,label] of [
  ["window.__ctR487Marker='home-pulse+movies-2x3+foryou-tmdb-fallback+top10-2x3+profile-exact-12'",'r487 runtime'],
  ["window.__ctR486Marker='home-immediate-frame+movies-row-sticky+discover-v485+top10-2x3+profile-exact-12'",'r486 runtime'],
  ["window.__ctR485Marker='home-cache-visible+movies-compact-rows+discover-v485-direct+profile-v485-exact-12'",'r485 runtime']
-])js=stripRuntime(js,anchor,label);
+])js=disableRuntime(js,anchor,label);
 
 const A388="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
 js=patchRuntime(js,A388,
