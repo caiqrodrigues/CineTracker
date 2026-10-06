@@ -91,35 +91,6 @@ js=replaceFunction(
  'r476'
 );
 
-/* HOME MOVIES: r481 loading becomes compact rows, not poster-sized blocks. */
-js=replaceFunction(
- js,
- "window.__ctR481Marker='v038-home-skeleton+movie-2x3+smart-discover-cache+stable-sports+profile-12-header-only';",
- 'paintMovieSkeleton',
- `function paintMovieSkeleton(){
- const stack=q('[data-home-view="movies"] [data-ct388-movie-watch] .ct388-movie-stack');if(!stack||moviesReady())return false;
- stack.classList.add('ct481-movie-skeleton');stack.innerHTML=skeletonRows(5);return true
-}`,
- 'r481'
-);
-js=replaceFunction(
- js,
- "window.__ctR481Marker='v038-home-skeleton+movie-2x3+smart-discover-cache+stable-sports+profile-12-header-only';",
- 'prime',
- `function prime(kind='series'){
- const k=kind==='movies'?'movies':'series',now=Date.now();
- if(window.__ctR482PrimeKind===k&&now-Number(window.__ctR482PrimeAt||0)<500)return true;
- window.__ctR482PrimeKind=k;window.__ctR482PrimeAt=now;
- if(!(routeNow()==='home'||homeLocation()))return false;
- try{core.ensureHomeShell?.()}catch{}
- try{window.__ctR477?.bootHome?.(k)}catch{}
- if(k==='movies')paintMovieSkeleton();else paintSeriesSkeleton();
- setTimeout(clearSkeletons,700);
- return true
-}`,
- 'r481'
-);
-
 /* DISCOVER: strict v480 remains primary. v421 is a bounded, tested fallback
    when the strict query hits statement_timeout, so Daily never collapses to empty. */
 js=replaceFunction(
@@ -257,6 +228,5 @@ if(r476.includes('[0,70,180,360,650,1000]'))throw new Error('r482 retained r476 
 if(!r464.includes('cinetracker_discover_fresh_v421')||!r464.includes('cinetracker_discover_watch_unseen_v421'))throw new Error('r482 Discover fallback missing');
 if(!r476.includes('summaryMoreCard')||!r476.includes('ct482-profile-more')||!r476.includes('const LIMIT=12')||!r476.includes('PROFILE_CACHE482'))throw new Error('r482 Profile 12+More/cache missing');
 if(!r477.includes('nth-child(n+14)'))throw new Error('r482 13th More hidden');
-if(!r481.includes('skeletonRows(5)')||r481.includes('for(const ms of [0,20,60,140])'))throw new Error('r482 Home/Movies r481 patch missing');
 if(!js.includes("window.__ctR482Marker='home-no-anchor-churn+movies-compact-rows+discover-v421-fallback+profile-12-plus-more'"))throw new Error('r482 marker missing');
 console.log('WEB_R482_READY targeted fixes');
