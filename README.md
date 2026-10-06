@@ -1,3 +1,12 @@
+## Web 0.3.12 / r485 — Home imediato, Watchlist em linhas e autoridades diretas
+
+- Home Séries usa snapshot válido de no máximo 15 minutos para pintar imediatamente e atualiza em seguida por v452/v391; quando não há snapshot, o skeleton aparece sem tela preta.
+- Home Filmes mantém v405 e volta ao padrão compacto de linhas do Home, com poster 2:3 pequeno, título truncado e ação à direita.
+- Pra Você usa os RPCs diretos v485, eliminando a cadeia de wrappers que estava causando timeout e slots vazios.
+- Fresh continua excluindo vistos, Watchlist e favoritos; Da sua Watchlist mostra somente itens ainda não vistos. Reality, WWE/NXT, stand-up, YouTube e filmes abaixo de 40 minutos continuam bloqueados.
+- Perfil usa a fonte direta v485 e mostra 12 cards em Filmes, Séries, Filmes Favoritos, Séries Favoritas e Atores Favoritos. O Ver mais permanece no cabeçalho e abre a lista completa separada.
+- F1, Esportes, histórico diário e Android permanecem inalterados.
+
 ## Web 0.3.11 / r484 — autoridade única e estabilidade final
 
 - Home Séries não usa mais o gate r459 de 4,2 s nem cache visual antigo: skeleton aparece imediatamente e v452/v391 pintam o estado vivo.
