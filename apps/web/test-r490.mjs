@@ -24,11 +24,11 @@ const checks=[
  ["if(window.__ctR420?.version==='1.0.211')return;",'loadProfile420'],
  ["if(window.__ctR421?.version==='1.0.212')return;",'loadProfile421'],
  ["if(window.__ctR424?.version==='1.0.215')return;",'loadProfile424'],
- ["function applyProfile467()",'applyProfile467'],
- ["function wakeHome()",'applyProfile'],
- ["function repairHome()",'applyProfile'],
- ["function primeHome()",'paintProfile'],
- ["function bootHome()",'settleProfile']
+ ["function applyProfile467",'applyProfile467'],
+ ["function wakeHome",'applyProfile'],
+ ["function repairHome",'applyProfile'],
+ ["function primeHome",'paintProfile'],
+ ["function bootHome",'settleProfile']
 ];
 for(const [a,n] of checks){const body=fn(region(a),n);yes(/return (false|null)/.test(body)||body.includes('bindDailyAuthority();return false'),'legacy writer retired '+n)}
 const r490=js.slice(js.lastIndexOf('/* CineTracker Web 0.3.17 r490'));
