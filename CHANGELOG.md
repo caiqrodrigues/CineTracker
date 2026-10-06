@@ -1,3 +1,21 @@
+## 0.3.17 — r490 (2026-10-06)
+
+### Corrigido a partir do segundo vídeo real
+- O vídeo comprovou que r489 estava executando, mas era sobrescrito depois por writers antigos. Foram neutralizados especificamente os writers visuais de Home/Descobrir/Perfil em r399, r413, r415, r416, r417, r418, r420, r421, r424, r425, r426, r427, r429, r467, r468, r469, r471, r472, r476, r477 e r481. Rotinas de F1 e histórico diário foram preservadas.
+- Home > Séries: r388 passa a ser o único renderer visível. Gates e alinhamentos tardios que escondiam/reposicionavam a Home foram retirados do caminho ativo.
+- Home > Filmes: permanece somente o grid nativo v405/r489 de cards 2:3; writers antigos que primeiro pintavam linhas e depois trocavam para grid deixam de executar.
+- Descobrir > Pra Você: novo `cinetracker_foryou_payload_v490` reduz o payload real de 628.157 bytes para 49.346 bytes, mantendo Watchlist 30/30/30 e Novos 31/23/32. O timeout mobile passa a ser finito de 9 s e não há mais cadeia concorrente de activators legados.
+- Perfil: a tela passa a ter um único paint coordenado por r490: base v380 + resumo v489 + esportes v421 + estádio v296. O banco foi validado com 249 séries, 962 filmes, 17 séries favoritas, 45 filmes favoritos e 21 atores; a visão resumida exibe exatamente 12 por seção.
+- Perfil > Esportes: writers que causavam 171 → 81 → 171 e Estádio 0 foram retirados. Autoridades verificadas: 171 eventos assistidos, 17.670 minutos e 1 jogo no estádio.
+- Perfil > Ver mais: permanece como botão minimalista no cabeçalho e usa a tela completa separada já existente.
+- Top 10: geometria 2:3 reforçada no renderer final, sem altura fixa achatada.
+- Service Worker: deixa de interceptar HTML/JS/CSS. O shell passa a ser de rede; somente imagens TMDB usam cache. Caches legados são removidos na ativação.
+- Rodapé: versão/revisão passam a refletir diretamente `0.3.17 / r490-official-0.3.17`, eliminando o r425 antigo exibido no vídeo.
+
+### Preservado
+- F1, rota de Esportes, histórico diário/Desmarcar visto e Android 1.0.20 / versionCode 10062 permanecem sem alteração funcional.
+- Sem `window.location.reload()`, `router.refresh()`, `while(true)`, `setInterval` ou `MutationObserver` no runtime r490.
+
 ## 0.3.16 — r489 (2026-10-06)
 
 ### Correção baseada no vídeo real

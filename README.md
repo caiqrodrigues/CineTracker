@@ -1,3 +1,11 @@
+## Web 0.3.17 / r490 — autoridade real das telas
+
+- Home usa somente r388 para Séries/Histórico/Filmes; repaints tardios legados foram retirados.
+- Pra Você usa payload compacto v490 (~49 KB no perfil real contra ~628 KB no v489), mantendo os sete slots e ações locais.
+- Perfil é pintado uma vez com v380 + summary v489 + sports v421 + stadium v296; cinco listas com 12 cards e totais completos.
+- O Service Worker não controla mais o shell da aplicação; somente imagens TMDB são cacheadas.
+- F1, Esportes, histórico diário e Android permanecem preservados.
+
 ## Web 0.3.16 / r489 — correção orientada pelo vídeo real
 
 - Home: um único painter, Continue antes do Histórico, skeleton imediato e v452 sem overwrite legado.
