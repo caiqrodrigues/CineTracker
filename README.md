@@ -1,3 +1,13 @@
+## Web 1.0.264 / r474 — Home estável, Pra Você estrito e Perfil 12 + Ver mais
+
+- Home pinta a estrutura imediatamente e usa r399/v452 para Séries, r399/v405 para Watchlist de Filmes e r388/v391 somente para Histórico.
+- Pra Você valida os candidatos contra o estado real do Perfil antes de mostrar: vistos/favoritos/watchlist não entram nos blocos novos, e vistos/favoritos não entram no bloco Da sua Watchlist.
+- As recomendações rotacionam a cada nova abertura para não repetir sempre os mesmos títulos.
+- Perfil: Séries e Filmes são exclusivamente histórico recente; Séries Favoritas, Filmes Favoritos e Atores Favoritos ficam separados.
+- As cinco listas exibem 12 cards + 13º **Ver mais** quando houver mais conteúdo.
+- Ver mais de Filmes abre tela completa com seletor **Histórico | Watchlist**.
+- F1, histórico diário e Android 1.0.20 / 10062 permanecem preservados.
+
 ## Web 1.0.263 / r473 — owners ligados à closure viva
 
 - Home Séries/Histórico e Home Filmes/Watchlist deixam de depender dos hooks r469 removidos e usam diretamente `__ctCoreR471`.
