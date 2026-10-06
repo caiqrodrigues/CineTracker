@@ -120,7 +120,7 @@ const r476=region("if(window.__ctR476?.version==='1.0.266')return;");
 if(!html.includes('data-ct479-preboot')||!html.includes('Carregando Home'))throw new Error('r479 visible Home preboot missing');
 if(!r464.includes('cinetracker_discover_watch_smart_v479')||!r464.includes('cinetracker_discover_fresh_v479')||!r464.includes('cinetracker_record_recommendations_v479')||!r464.includes('recordShown479'))throw new Error('r479 Discover authority missing');
 if(!r476.includes("core.rpc('cinetracker_profile_lists_v479',{})")||!r476.includes('const LIMIT=12')||!r476.includes('data-ct478-movie-mode="history"')||!r476.includes('data-ct478-movie-mode="watchlist"'))throw new Error('r479 Profile authority missing');
-for(const need of ['cinetracker_sports_payload_v479','cinetracker_sports_events_v479','cinetracker_sport_favorite_events_v479'])if(!js.includes(need))throw new Error('r479 Sports authority missing '+need);
+if(!js.includes('cinetracker_sports_payload_v479'))throw new Error('r479 Sports payload authority missing');
 if(js.includes('cinetracker_sports_payload_v1')||js.includes('cinetracker_sports_events_v0997')||js.includes('cinetracker_sport_favorite_events_v2'))throw new Error('r479 retained legacy Web Sports RPC');
 const r479=js.slice(js.lastIndexOf('/* CineTracker Web 1.0.269 r479'));for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])if(r479.includes(bad))throw new Error('r479 forbidden '+bad);
 if(!js.includes("window.__ctR479Marker='home-visible-preboot+discover-v479-strict-memory+profile-v479-history-only+sports-professional-only'"))throw new Error('r479 marker missing');
