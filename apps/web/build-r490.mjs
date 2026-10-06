@@ -43,30 +43,30 @@ patch("function homeEntry425()",'r425',[
 ]);
 patch("function scheduleFY()",'r426-schedule',[['scheduleFY',"function scheduleFY(){return false}"]]);
 patch("async function stabilizeProfile()",'r426-profile',[['stabilizeProfile',"async function stabilizeProfile(){return false}"]]);
-patch("function applyProfile467()",'r467',[
- ['applyProfile467',"function applyProfile467(){return false}"],['scheduleProfile467',"function scheduleProfile467(){return false}"]
+patch("function applyProfile467",'r467',[
+ ['applyProfile467',"function applyProfile467{return false}"],['scheduleProfile467',"function scheduleProfile467(){return false}"]
 ]);
-patch("function wake468()",'r468',[
- ['wake468',"function wake468(){installBridge468();return route468()}"],['authWake468',"async function authWake468(){installBridge468();return !!session468()?.access_token}"]
+patch("function wake468",'r468',[
+ ['wake468',"function wake468{installBridge468();return route468()}"],['authWake468',"async function authWake468(){installBridge468();return !!session468()?.access_token}"]
 ]);
-patch("function wake469()",'r469',[
- ['wake469',"function wake469(){install469();return route469()}"],['authWake469',"async function authWake469(){install469();return !!session469()?.access_token}"]
+patch("function wake469",'r469',[
+ ['wake469',"function wake469{install469();return route469()}"],['authWake469',"async function authWake469(){install469();return !!session469()?.access_token}"]
 ]);
-patch("function wakeHome()",'r471',[
- ['wakeHome',"function wakeHome(){releaseHomeGate();return true}"],['scheduleHome',"function scheduleHome(){releaseHomeGate();return true}"],
+patch("function wakeHome",'r471',[
+ ['wakeHome',"function wakeHome{releaseHomeGate();return true}"],['scheduleHome',"function scheduleHome(){releaseHomeGate();return true}"],
  ['loadMediaLists',"async function loadMediaLists(){return null}"],['loadActors',"async function loadActors(){return[]}"],
  ['applyProfile',"function applyProfile(){bindDailyAuthority();return false}"],['scheduleProfile',"function scheduleProfile(){bindDailyAuthority();return false}"]
 ]);
-patch("function repairHome()",'r472',[
- ['repairHome',"function repairHome(){return false}"],['scheduleHome',"function scheduleHome(){return false}"],['activateForYou',"function activateForYou(){return false}"],['scheduleForYou',"function scheduleForYou(){return false}"],
+patch("function repairHome",'r472',[
+ ['repairHome',"function repairHome{return false}"],['scheduleHome',"function scheduleHome(){return false}"],['activateForYou',"function activateForYou(){return false}"],['scheduleForYou',"function scheduleForYou(){return false}"],
  ['loadMedia',"async function loadMedia(){return null}"],['loadActors',"async function loadActors(){return[]}"],['loadStadium',"async function loadStadium(){return null}"],
  ['applyProfile',"function applyProfile(){return false}"],['scheduleProfile',"function scheduleProfile(){return false}"]
 ]);
-patch("function primeHome()",'r476',[
- ['primeHome',"function primeHome(){return false}"],['paintProfile',"function paintProfile(){return false}"],['loadProfile',"async function loadProfile(){return null}"],['scheduleProfile',"function scheduleProfile(){return false}"]
+patch("function primeHome",'r476',[
+ ['primeHome',"function primeHome{return false}"],['paintProfile',"function paintProfile(){return false}"],['loadProfile',"async function loadProfile(){return null}"],['scheduleProfile',"function scheduleProfile(){return false}"]
 ]);
-patch("function bootHome()",'r477',[
- ['bootHome',"function bootHome(){return false}"],['loadSports',"async function loadSports(){return null}"],['settleProfile',"function settleProfile(){return false}"]
+patch("function bootHome",'r477',[
+ ['bootHome',"function bootHome{return false}"],['loadSports',"async function loadSports(){return null}"],['settleProfile',"function settleProfile(){return false}"]
 ]);
 patch("function prime(kind='series')",'r481',[['prime',"function prime(){return false}"]]);
 const A464="window.__ctR464Marker='discover-foryou-visible-owner-v421';";
