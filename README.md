@@ -1,3 +1,12 @@
+## Web 0.3.13 / r486 — Home imediato, Watchlist em linhas, Pra Você v485, Top 10 2:3 e Perfil com 12
+
+- Home Séries pinta o frame/skeleton imediatamente e atualiza em seguida por v452/v391, sem tela preta durante a espera.
+- Home Filmes mantém v405 e força a Watchlist no layout compacto de linhas mesmo após repaints tardios.
+- Pra Você usa somente os RPCs diretos v485; Filme, Série e Anime foram validados com pools fresh de 48 candidatos.
+- Top 10 mantém 10 itens por linha, mas todos os pôsteres/cards ficam em proporção 2:3 real, sem achatamento vertical.
+- Perfil mostra exatamente 12 cards em Filmes, Séries, Filmes Favoritos, Séries Favoritas e Atores Favoritos; o **Ver mais** continua separado no cabeçalho e abre a lista completa.
+- F1, Esportes, histórico diário e Android permanecem inalterados.
+
 ## Web 0.3.12 / r485 — Home imediato, Watchlist em linhas e autoridades diretas
 
 - Home Séries usa snapshot válido de no máximo 15 minutos para pintar imediatamente e atualiza em seguida por v452/v391; quando não há snapshot, o skeleton aparece sem tela preta.
