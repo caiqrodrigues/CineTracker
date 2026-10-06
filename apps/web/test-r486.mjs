@@ -22,9 +22,9 @@ yes(sw.includes('app-v486.js')&&sw.includes('app-v486.css'),'service worker');
 const marker="window.__ctR486Marker='home-immediate-frame+movies-row-sticky+discover-v485+top10-2x3+profile-exact-12'";
 const at=js.indexOf(marker);
 yes(at>=0,'r486 marker');
-const start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);
-yes(start>=0&&close>=0,'r486 runtime bounds');
-const r486=js.slice(start,close+6);
+const start=js.lastIndexOf('/* CineTracker Web 0.3.13 r486',at);
+yes(start>=0,'r486 runtime start');
+const r486=js.slice(start);
 
 yes(r486.includes("window.__ctR388?.renderHome?.()"),'immediate Home frame');
 yes(r486.includes('let homeTask=null,homeSeq=0'),'Home single-flight');
