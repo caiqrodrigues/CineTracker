@@ -19,7 +19,7 @@ jobs:
           npm run build
           npm run verify
           node --check apps/web/dist/app-v488.js
-          grep -Fq "window.__ctR487Marker='single-authority+home-singleflight-skeleton+movies-2x3+foryou-strict-fallback+top10-2x3+profile-12'" apps/web/dist/app-v488.js
+          grep -Fq "window.__ctR488Marker='single-authority+home-singleflight-skeleton+movies-2x3+foryou-strict-fallback+top10-2x3+profile-12'" apps/web/dist/app-v488.js
           grep -Fq 'cinetracker_home_series_v452' apps/web/dist/app-v488.js
           grep -Fq 'cinetracker_home_history_v391' apps/web/dist/app-v488.js
           grep -Fq 'cinetracker_home_movies_v405' apps/web/dist/app-v488.js
@@ -73,7 +73,7 @@ jobs:
             if grep -Fq '"version": "0.3.15"' <<<"$BODY" && grep -Fq '"revision": "r488-official-0.3.15"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v488.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR487Marker='single-authority+home-singleflight-skeleton+movies-2x3+foryou-strict-fallback+top10-2x3+profile-12'" <<<"$JS" && grep -Fq 'app-v488.js' <<<"$HTML" && grep -Fq 'data-ct479-preboot' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR488Marker='single-authority+home-singleflight-skeleton+movies-2x3+foryou-strict-fallback+top10-2x3+profile-12'" <<<"$JS" && grep -Fq 'app-v488.js' <<<"$HTML" && grep -Fq 'data-ct479-preboot' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
