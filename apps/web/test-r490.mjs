@@ -24,11 +24,11 @@ const checks=[
  ["if(window.__ctR420?.version==='1.0.211')return;",'loadProfile420'],
  ["if(window.__ctR421?.version==='1.0.212')return;",'loadProfile421'],
  ["if(window.__ctR424?.version==='1.0.215')return;",'loadProfile424'],
- ["if(window.__ctR467?.version==='1.0.257')return;",'applyProfile467'],
- ["if(window.__ctR471?.version==='1.0.261')return;",'applyProfile'],
- ["if(window.__ctR472?.version==='1.0.262')return;",'applyProfile'],
- ["if(window.__ctR476?.version==='1.0.266')return;",'paintProfile'],
- ["if(window.__ctR477?.version==='1.0.267')return;",'settleProfile']
+ ["function applyProfile467()",'applyProfile467'],
+ ["function wakeHome()",'applyProfile'],
+ ["function repairHome()",'applyProfile'],
+ ["function primeHome()",'paintProfile'],
+ ["function bootHome()",'settleProfile']
 ];
 for(const [a,n] of checks){const body=fn(region(a),n);yes(/return (false|null)/.test(body)||body.includes('bindDailyAuthority();return false'),'legacy writer retired '+n)}
 const r490=js.slice(js.lastIndexOf('/* CineTracker Web 0.3.17 r490'));
