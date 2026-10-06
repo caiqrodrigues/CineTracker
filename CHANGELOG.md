@@ -6,10 +6,10 @@
 - Home > Filmes: mantida a paginação v405, com uma única regra visual final para cards compactos e uniformes, pôster estritamente 2:3, `object-fit: cover` e título truncado.
 - Descobrir > Top 10: a geometria do renderer r321 é travada em 2:3 no container do pôster e `object-fit: cover` na imagem interna, inclusive no grid desktop de 10 itens.
 - Descobrir > Pra Você: r464 volta a ser o único owner visível. O pool usa v485 como fonte primária, v421 como fallback delimitado e inicia o fallback TMDB de forma especulativa; candidatos TMDB só entram após filtro estrito v322/v320 de vistos/Watchlist e bloqueios de WWE/NXT, YouTube, reality, stand-up e filmes abaixo de 40 minutos.
-- Perfil: r476 permanece como único owner das cinco listas, com `LIMIT=12` e `slice(0, LIMIT)`. Camadas r485/r486/r487 que reaplicavam a tela foram removidas do bundle final; cards legados de Ver mais são podados e permanece somente o botão minimalista do cabeçalho.
+- Perfil: r476 permanece como único owner das cinco listas, com `LIMIT=12` e `slice(0, LIMIT)`. Camadas r485/r486/r487 que reaplicavam a tela são neutralizadas no início dos respectivos IIFEs e deixam de executar; cards legados de Ver mais são podados e permanece somente o botão minimalista do cabeçalho.
 
 ### Validação / preservado
-- Bundle r488 falha o build se os markers r485/r486/r487 continuarem presentes.
+- Bundle r488 falha o build se os markers ativos r485/r486/r487 continuarem presentes; as camadas antigas ficam inertes e não registram listeners/CSS.
 - Sem `window.location.reload()`, `router.refresh()`, `while(true)`, `setInterval` ou `MutationObserver` no runtime r488.
 - F1, Esportes, histórico diário/Desmarcar visto e Android 1.0.20 / versionCode 10062 permanecem inalterados.
 
