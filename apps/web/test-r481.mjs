@@ -19,7 +19,7 @@ yes(js.includes('cinetracker_home_series_v452')&&js.includes('cinetracker_home_m
 yes(js.includes('cinetracker_f1_watch_sync_v462')&&js.includes("p_source:'home-r477'"),'F1 Home async writer');
 yes(js.includes('aspect-ratio:2/3')&&js.includes('[data-home-view="movies"] .ct388-movie-stack'),'compact 2:3 movie cards');
 yes(js.includes('cinetracker_discover_fresh_v480')&&js.includes('cinetracker_discover_watch_smart_v480'),'strict Discover pools');
-yes(js.includes('POOL_CACHE_TTL481')&&js.includes('Math.min(8,eligible.length)')&&js.includes('clearPool481()'),'fast cached smart random recommendations');
+yes(js.includes('POOL_CACHE_TTL481')&&js.includes('Math.pow(Math.random(),2)')&&js.includes('clearPool481()'),'fast cached weighted-random recommendations');
 yes(js.includes('cinetracker_profile_lists_v480')&&js.includes('const LIMIT=12'),'pure 12-card Profile');
 yes(js.includes('async function openAll(key)')&&js.includes('await loadProfile(true)'),'full DB re-query on Ver mais');
 yes(js.includes('data-ct478-movie-mode="history"')&&js.includes('data-ct478-movie-mode="watchlist"'),'History/Watchlist modal toggle');
