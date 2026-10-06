@@ -1,3 +1,19 @@
+## 1.0.264 — r474 (2026-10-06)
+
+### Corrigido
+- Home: o frame é pintado imediatamente na primeira entrada; r388 mantém somente o frame/Histórico e r399 passa a ser o owner único dos dados de Séries e Watchlist de Filmes, eliminando a tela preta inicial e o repaint transitório com dados legados.
+- Home > Séries: carregamento permanece em `cinetracker_home_series_v452`; Home > Filmes permanece no paginador `cinetracker_home_movies_v405`; Histórico do Home permanece em `cinetracker_home_history_v391`.
+- Descobrir > Pra Você: cada pool é validado contra `cinetracker_profile_media_dashboard_v0991` antes de renderizar. Itens vistos, favoritos ou já na Watchlist são bloqueados de Indicação do Dia/100% Novos; itens vistos ou favoritos são bloqueados de Da sua Watchlist.
+- Descobrir > Pra Você: a seleção avança a cada nova abertura usando rotação persistida na sessão, evitando repetir sempre os mesmos títulos; o botão Trocar continua limitado e sem loop infinito.
+- Perfil > Séries e Filmes: passam a mostrar somente histórico recente, ordenado por `last_watched_at`; Watchlist deixa de contaminar essas duas listas.
+- Perfil > Séries Favoritas, Filmes Favoritos e Atores Favoritos: permanecem listas independentes.
+- Perfil: cada uma das cinco listas mostra exatamente 12 cards quando houver conteúdo suficiente e usa o 13º card como **Ver mais**.
+- Perfil > Ver mais > Filmes: a tela completa abre em **Histórico** e permite alternar para **Watchlist** no topo. Listas grandes são renderizadas em lotes via `requestAnimationFrame`, sem bloquear a main thread.
+
+### Preservado
+- Histórico diário/desmarcar r471/v426, Jogos no Estádio v296, F1 r462 e Android 1.0.20 / versionCode 10062.
+- Nenhum `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)` foi introduzido na r474.
+
 ## 1.0.263 — r473 (2026-10-05)
 
 ### Corrigido
