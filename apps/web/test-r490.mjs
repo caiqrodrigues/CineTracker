@@ -31,8 +31,8 @@ const checks=[
  ["if(window.__ctR477?.version==='1.0.267')return;",'settleProfile']
 ];
 for(const [a,n] of checks){const body=fn(region(a),n);yes(/return (false|null)/.test(body)||body.includes('bindDailyAuthority();return false'),'legacy writer retired '+n)}
-yes(region("window.__ctR427Marker='discover-foryou-visible-owner-v421';").includes("'use strict';\nreturn;"),'r427 disabled');
-yes(region("window.__ctR429Marker='discover-foryou-single-owner-v421';").includes("'use strict';\nreturn;"),'r429 disabled');
+yes(region("window.__ctR427={").includes("'use strict';\nreturn;"),'r427 disabled');
+yes(region("window.__ctR429={").includes("'use strict';\nreturn;"),'r429 disabled');
 const r490=js.slice(js.lastIndexOf('/* CineTracker Web 0.3.17 r490'));
 for(const need of ['cinetracker_profile_v380','cinetracker_profile_summary_v489','cinetracker_sport_stats_v421','cinetracker_sports_stadium_summary_v296','slice(0,12)','ct490-profile-grid','data-ct299-history'])yes(r490.includes(need),'r490 runtime '+need);
 for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])yes(!r490.includes(bad),'forbidden '+bad);
