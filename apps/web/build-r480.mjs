@@ -116,7 +116,7 @@ const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight
 const r399=region("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';");
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';");
 const r476=region("if(window.__ctR476?.version==='1.0.266')return;");
-if(!r388.includes('cachedHome480')||!r388.includes('localSet(HH,v)'))throw new Error('r480 Home bootstrap cache missing');
+if(!r388.includes('localGet(HS,6*60*60*1000)')||!r388.includes('localSet(HH,v)'))throw new Error('r480 Home bootstrap cache missing');
 if(!r399.includes("persistHome480('ct392:series',series399)"))throw new Error('r480 live Series cache missing');
 if(!r464.includes('cinetracker_discover_fresh_v480')||!r464.includes('cinetracker_discover_watch_smart_v480')||!r464.includes('RECENT_KEY480')||!r464.includes('remember480(items)')||!r464.includes('cinetracker_record_recommendations_v480'))throw new Error('r480 Discover memory missing');
 if(!r476.includes("core.rpc('cinetracker_profile_lists_v480',{})")||!r476.includes('const LIMIT=12')||!r476.includes('data-ct478-movie-mode="history"')||!r476.includes('data-ct478-movie-mode="watchlist"'))throw new Error('r480 Profile contract missing');
