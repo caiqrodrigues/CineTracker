@@ -1,3 +1,29 @@
+## 0.3.8 — r481 (2026-10-06)
+
+### Home
+- Primeiro paint da aba Séries passa a ter skeletons instantâneos e reutiliza o último snapshot válido enquanto v452/v391 atualizam em segundo plano; removido o caminho visual de tela preta.
+- Adicionados índices seguros para os hot paths de `media_overrides`, `watch_history`, `episode_progress`, recomendações exibidas e atores favoritos.
+- O check da Fórmula 1 no **Assistir a seguir** permanece no writer canônico `cinetracker_f1_watch_sync_v462`, com trava contra clique concorrente, atualização otimista e sem reload.
+- Home > Filmes > Watchlist foi padronizado em cards compactos com pôster 2:3, largura fixa e título truncado; paginação v405 preservada.
+
+### Descobrir > Pra Você
+- **Indicação do Dia** e **100% Novos** continuam estritamente excluindo mídias vistas, em Watchlist ou favoritadas, inclusive por aliases de título/TMDB.
+- WWE/NXT permanece bloqueado globalmente pelos filtros v476/v480.
+- O botão **Trocar** passa a sortear entre os melhores candidatos já ordenados por afinidade, sem iteração sequencial e sem laço ilimitado.
+- Pools de recomendação passam a usar cache local de 15 minutos como fallback instantâneo, com refresh assíncrono de 2,5 s e invalidação imediata após qualquer mutação do usuário.
+
+### Perfil
+- Séries e Filmes são somente histórico real; Séries Favoritas, Filmes Favoritos e Atores Favoritos continuam isolados em suas próprias fontes.
+- Todas as cinco listas resumidas ficam limitadas a 12 cards; cards grandes **Ver mais** permanecem removidos.
+- Mantido apenas o botão minimalista **Ver mais** no cabeçalho.
+- Ao abrir **Ver mais**, o Perfil força nova consulta completa ao banco antes de montar a tela integral.
+- Filmes > Ver mais mantém o alternador **Histórico / Watchlist**, com Watchlist completa paginada em v405.
+- Estatísticas de esportes passam a conservar e repintar imediatamente o último valor válido de TV/Estádio; a consulta v296 atualiza em segundo plano sem ocultar ou zerar os contadores.
+
+### Preservado
+- Sem `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)`.
+- F1 Hub, sincronização de esportes e Android 1.0.20 / versionCode 10062 preservados.
+
 ## 1.0.270 — r480 (2026-10-06)
 
 ### Corrigido

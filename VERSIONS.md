@@ -1,3 +1,4 @@
+- Web: **0.3.8 / r481-official-0.3.8** — skeletons e cache no Home, F1 sem reload, Watchlist Filmes 2:3, Descobrir com filtros estritos/cache/troca inteligente e Perfil isolado em 12 cards com Ver mais no cabeçalho e modal completo História/Watchlist.
 - Web: **1.0.270 / r480-official-1.0.270** — Home com bootstrap do último estado válido + refresh v452/v391, Pra Você v480 com memória local/banco de 7 dias e Perfil puro em 12 cards com Filmes Histórico/Watchlist.
 - Web: **1.0.269 / r479-official-1.0.269** — first paint visível no Home, Pra Você com exclusão por aliases/estado + memória de 7 dias, Perfil com histórico puro/12 cards e Filmes Histórico-Watchlist, Sports Web somente profissional.
 - Web: **1.0.268 / r478-official-1.0.268** — estabiliza o primeiro carregamento do Home, restaura filtros estritos e rotação do Pra Você e separa Perfil em histórico real/favoritos, com Filmes > Ver mais alternando Histórico/Watchlist.

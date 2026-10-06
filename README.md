@@ -1,3 +1,15 @@
+## Web 0.3.8 / r481 — Home imediato, Descobrir estrito e Perfil isolado
+
+- Home Séries exibe skeletons imediatamente, usa cache de primeiro paint e atualiza Séries v452 + Histórico v391 em segundo plano.
+- O check da F1 no Home grava pelo writer v462 sem reload e sincroniza Série/Esportes/F1Hub.
+- Home Filmes mantém Watchlist v405 e agora usa cards compactos de pôster **2:3**, com título truncado.
+- Pra Você mantém exclusão estrita de vistos/Watchlist/favoritos em Indicação do Dia e 100% Novos, bloqueia WWE/NXT e usa troca randomizada entre candidatos melhor ranqueados.
+- Pools do Pra Você têm fallback local de 15 minutos e refresh assíncrono para eliminar travas prolongadas em “Buscando recomendações”.
+- Perfil separa histórico, favoritos e atores; cada seção mostra no máximo 12 cards e somente o **Ver mais** minimalista do cabeçalho.
+- **Ver mais** refaz a consulta completa do banco antes de abrir a lista integral. Filmes mantém o toggle **Histórico / Watchlist**.
+- Contadores de esportes TV/Estádio preservam o último valor válido durante a atualização, eliminando oscilação para zero.
+- Android permanece 1.0.20 / 10062.
+
 ## Web 1.0.270 / r480 — Home imediato, Pra Você sem repetição e Perfil puro
 
 - Home reutiliza o último snapshot válido de Séries/Histórico somente no primeiro paint e atualiza v452/v391 em segundo plano, eliminando o intervalo vazio sem trocar a autoridade dos dados.
