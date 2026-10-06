@@ -76,14 +76,6 @@ js=replaceFunction(
 );
 
 
-js=replaceArrowConst(
- js,
- "window.__ctR475HomeAnchor={version:'1.0.265',schedule};",
- 'schedule',
- `const schedule=kind=>{userMoved=false;return ++token};`,
- 'r475'
-);
-
 js=replaceFunction(
  js,
  "if(window.__ctR476?.version==='1.0.266')return;",
