@@ -36,16 +36,20 @@ function replaceFirstNamed(source,name,replacement){
  return source.slice(0,m.index)+replacement+source.slice(i);
 }
 function stripDisabledIifes(source){
+ const retired=[380,381,382,383,384,385,386,389,390,391,392,393,394,395,396,397,398,400,401,402,403,404,405,406,407,408,410,411,412,414,427,429,430,431,432,434,445,449,456,457,458,459,460,461,467,468,469,470,481,482,484,488,489];
+ const groups=retired.map(n=>['window.__ctR'+n+'={','window.__ctR'+n+' = {','window.__ctR'+n+'Marker=','window.__ctR'+n+'Marker =']);
+ for(const n of [485,486,487])groups.push(['window.__ctDisabledR'+n+'Marker=','window.__ctDisabledR'+n+'Marker =']);
  let stripped=0;
- while(true){
-  const start=source.indexOf('(()=>{return;');
-  if(start<0)break;
-  const close=source.indexOf('\n})();',start);
-  if(close<0)throw new Error('r494 disabled IIFE boundary missing at '+start);
-  source=source.slice(0,start)+source.slice(close+6);
-  stripped++;
+ for(const needles of groups){
+  let at=-1;for(const needle of needles){at=source.indexOf(needle);if(at>=0)break}
+  if(at<0)continue;
+  let begin=source.lastIndexOf('\n(()=>{return;',at);if(begin>=0)begin++;else if(source.startsWith('(()=>{return;'))begin=0;
+  if(begin<0)continue;
+  const close=source.indexOf('\n})();',at);if(close<0)throw new Error('r494 disabled runtime close missing near '+needles[0]);
+  source=source.slice(0,begin)+source.slice(close+6);stripped++;
  }
- try{new Function(source)}catch(e){throw new Error('r494 JS invalid after dead-runtime strip: '+(e?.message||e))}
+ if(source.includes('(()=>{return;'))throw new Error('r494 untracked disabled runtime remains');
+ try{new Function(source)}catch(e){throw new Error('r494 JS invalid after marker-based dead-runtime strip: '+(e?.message||e))}
  return{source,stripped};
 }
 
