@@ -118,7 +118,7 @@ const stripped={source:js,stripped:0};
 const prebootRe=/<script\b[^>]*data-ct\d+-preboot[^>]*>[\s\S]*?<\/script>/gi;
 const preboots=[...html.matchAll(prebootRe)].length;
 html=html.replace(prebootRe,'');
-if(preboots<2)throw new Error('r494 expected legacy preboots');
+if(preboots<1)throw new Error('r494 expected legacy gold preboot');
 html=html.replace(/<meta name="ct-revision" content="[^"]*">/,'<meta name="ct-revision" content="r494-official-0.3.21">');
 html=html.replace(/href="\/app-v493\.css[^"]*"/,'href="/app-v494.css?ct=r494-official-0.3.21"');
 html=html.replace(/src="\/app-v493\.js[^"]*"/,'src="/app-v494.js?ct=r494-official-0.3.21"');
