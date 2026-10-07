@@ -104,11 +104,9 @@ const probe=`
   ok(!fy.textContent.includes('Sem indicação elegível agora'),'ForYou empty');
   ok(fy.querySelectorAll('[data-ct464-action="swap"]').length===7,'seven swaps');
   fy.querySelector('[data-ct464-slot="fresh:movie"] [data-ct464-action="swap"]').click();
-  await new Promise(r=>setTimeout(r,0));
   ok(fy.querySelector('[data-ct464-slot="fresh:movie"] [data-media]'),'swap retained card');
 
   document.querySelector('[data-ct319-content]').innerHTML='<div class="ct319-top-row"><div class="ct319-item"><article class="ct288-card"><button class="ct288-open"><div class="ct288-poster"></div></button></article></div></div>';
-  await new Promise(r=>requestAnimationFrame(()=>r()));
   const top=document.querySelector('.ct288-poster').getBoundingClientRect();
   ok(top.width>0&&Math.abs(top.height/top.width-1.5)<0.04,'Top10 2:3 '+top.width+'x'+top.height);
 
@@ -151,12 +149,12 @@ if(!bin)throw new Error('Chromium unavailable');
 
 const child=spawn(bin,[
  '--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage',
- '--virtual-time-budget=12000','--dump-dom','http://127.0.0.1:'+port+'/'
+ '--dump-dom','http://127.0.0.1:'+port+'/'
 ],{stdio:['ignore','pipe','pipe']});
 let out='',err='';
 child.stdout.on('data',d=>out+=d);
 child.stderr.on('data',d=>err+=d);
-const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},25000);
+const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},15000);
 const code=await new Promise(r=>child.on('close',r));
 clearTimeout(killer);
 await new Promise(r=>server.close(r));
