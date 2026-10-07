@@ -13,7 +13,13 @@ yes(pkg.version==='0.3.19'&&rootPkg.version==='0.3.19','package versions');
 yes(release.version==='0.3.19'&&release.revision==='r492-official-0.3.19','release');
 yes(html.includes('app-v492.js')&&html.includes('app-v492.css')&&sw.includes('ct-media-r492'),'assets');
 const retired=[380,381,382,383,384,385,386,389,390,391,392,393,394,395,396,397,398,400,401,402,403,404,405,406,407,408,410,411,412,414,427,429,430,431,432,434,445,449,456,457,458,459,460,461,467,468,469,470,481,482,484,488,489];
-for(const n of retired){const a='if(window.__ctR'+n+'?.version',at=js.indexOf(a),start=js.lastIndexOf('(()=>{',at);yes(at>=0&&start>=0&&js.slice(start,start+14)==='(()=>{return;if','legacy r'+n+' inert')}
+for(const n of retired){
+ const needles=['window.__ctR'+n+'={','window.__ctR'+n+' = {','window.__ctR'+n+'Marker=','window.__ctR'+n+'Marker ='];
+ let at=-1;for(const needle of needles){at=js.indexOf(needle);if(at>=0)break}
+ if(at<0)continue;
+ const start=js.lastIndexOf('(()=>{',at);
+ yes(start>=0&&js.startsWith('(()=>{return;',start),'legacy r'+n+' inert');
+}
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
 yes(fn(r388,'loadSeries').includes('cinetracker_home_series_v492'),'compact Series RPC');
 yes(fn(r388,'loadSeries').includes('p_limit_per_bucket'),'series per-bucket limit');

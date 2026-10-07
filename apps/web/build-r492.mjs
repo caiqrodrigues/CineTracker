@@ -9,7 +9,25 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
 ]);
 function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)throw new Error('r492 missing '+label+' anchor '+anchor);const start=source.lastIndexOf('(()=>{',at),close=source.indexOf('\n})();',at);if(start<0||close<0)throw new Error('r492 invalid '+label+' bounds');return{start,end:close+6}}
 function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r492 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r492 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
-function disableRuntime(n){const anchor='if(window.__ctR'+n+'?.version',at=js.indexOf(anchor);if(at<0)throw new Error('r492 legacy runtime r'+n+' not found');const start=js.lastIndexOf('(()=>{',at);if(start<0)throw new Error('r492 runtime start r'+n);js=js.slice(0,start)+'(()=>{return;'+js.slice(start+5)}
+function legacyRuntimeAnchor(n){
+ const needles=[
+  'window.__ctR'+n+'={',
+  'window.__ctR'+n+' = {',
+  'window.__ctR'+n+'Marker=',
+  'window.__ctR'+n+'Marker ='
+ ];
+ for(const needle of needles){const at=js.indexOf(needle);if(at>=0)return at}
+ return -1;
+}
+function disableRuntime(n){
+ const at=legacyRuntimeAnchor(n);
+ if(at<0){console.log('WEB_R492_LEGACY_ABSENT r'+n);return false}
+ const start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);
+ if(start<0||close<0)throw new Error('r492 invalid legacy runtime r'+n);
+ if(js.startsWith('(()=>{return;',start))return true;
+ js=js.slice(0,start)+'(()=>{return;'+js.slice(start+5);
+ return true;
+}
 const retired=[380,381,382,383,384,385,386,389,390,391,392,393,394,395,396,397,398,400,401,402,403,404,405,406,407,408,410,411,412,414,427,429,430,431,432,434,445,449,456,457,458,459,460,461,467,468,469,470,481,482,484,488,489];
 for(const n of retired)disableRuntime(n);
 const A388="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
@@ -42,6 +60,11 @@ await Promise.all([
  writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))
 ]);
 await Promise.all([rm(resolve(dist,'app-v491.js'),{force:true}),rm(resolve(dist,'app-v491.css'),{force:true})]);
-for(const n of retired){const a='if(window.__ctR'+n+'?.version',at=js.indexOf(a),start=js.lastIndexOf('(()=>{',at);if(at<0||start<0||js.slice(start,start+14)!=='(()=>{return;if')throw new Error('r492 active legacy r'+n)}
+for(const n of retired){
+ const at=legacyRuntimeAnchor(n);
+ if(at<0)continue;
+ const start=js.lastIndexOf('(()=>{',at);
+ if(start<0||!js.startsWith('(()=>{return;',start))throw new Error('r492 active legacy r'+n);
+}
 for(const need of ["window.__ctR492Marker='legacy-writers-retired+series-compact-progressive+movies-paged-progressive+profile-single-owner+foryou-single-owner'",'cinetracker_home_series_v492','data-ct492-series-more','data-ct492-movies-more','p_limit:pageSize','renderProfile491(seq)','cinetracker_foryou_payload_v490'])if(!js.includes(need))throw new Error('r492 missing '+need);
 console.log('WEB_R492_READY legacy writers retired and Home progressive');
