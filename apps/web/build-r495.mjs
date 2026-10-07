@@ -64,6 +64,16 @@ patch(A464,'r464',[
 /* r385 is retired by r492. build-r385 left this assignment outside its runtime IIFE, so disabling the IIFE alone made boot dereference an undefined owner. Remove the orphan bridge entirely. */
 js=js.replaceAll("window.__ctR385RenderHome=window.__ctR385.renderHome;","window.__ctR385RenderHome=undefined;");
 
+const A371R495="window.__ctR371Marker='home-tab-user-only+repaint-preserved+async-generation-cancel';";
+patch(A371R495,'r371-r495',[
+ ['applyTab',"function applyTab(kind){try{return window.__ctR495?.applyHomeTab?.(kind,false)??false}catch{return false}}"],
+ ['cancelPreviousHomeWork',"function cancelPreviousHomeWork(){return{generation:0,signal:null}}"],
+ ['selectByUser',"function selectByUser(kind){try{window.__ctR495?.applyHomeTab?.(kind,true)}catch{}return{generation:0,signal:null}}"],
+ ['preserveAfterPaint',"function preserveAfterPaint(){return true}"],
+ ['wrapSyncPaint',"function wrapSyncPaint(){return true}"],
+ ['wrapRender',"function wrapRender(){return true}"]
+]);
+
 const A388R495="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
 patch(A388R495,'r388-r495',[
  ['activeKind',"function activeKind(){return q('[data-home-tab].active')?.dataset?.homeTab==='movies'?'movies':'series'}"],
