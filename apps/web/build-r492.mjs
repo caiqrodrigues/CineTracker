@@ -19,10 +19,15 @@ function legacyRuntimeAnchor(n){
  for(const needle of needles){const at=js.indexOf(needle);if(at>=0)return at}
  return -1;
 }
+function rootIifeStart(source,at){
+ let start=source.lastIndexOf('\n(()=>{',at);
+ if(start>=0)return start+1;
+ return source.startsWith('(()=>{')?0:-1;
+}
 function disableRuntime(n){
  const at=legacyRuntimeAnchor(n);
  if(at<0){console.log('WEB_R492_LEGACY_ABSENT r'+n);return false}
- const start=js.lastIndexOf('(()=>{',at),close=js.indexOf('\n})();',at);
+ const start=rootIifeStart(js,at),close=js.indexOf('\n})();',at);
  if(start<0||close<0)throw new Error('r492 invalid legacy runtime r'+n);
  if(js.startsWith('(()=>{return;',start))return true;
  js=js.slice(0,start)+'(()=>{return;'+js.slice(start+5);
@@ -63,7 +68,7 @@ await Promise.all([rm(resolve(dist,'app-v491.js'),{force:true}),rm(resolve(dist,
 for(const n of retired){
  const at=legacyRuntimeAnchor(n);
  if(at<0)continue;
- const start=js.lastIndexOf('(()=>{',at);
+ const start=rootIifeStart(js,at);
  if(start<0||!js.startsWith('(()=>{return;',start))throw new Error('r492 active legacy r'+n);
 }
 for(const need of ["window.__ctR492Marker='legacy-writers-retired+series-compact-progressive+movies-paged-progressive+profile-single-owner+foryou-single-owner'",'cinetracker_home_series_v492','data-ct492-series-more','data-ct492-movies-more','p_limit:pageSize','renderProfile491(seq)','cinetracker_foryou_payload_v490'])if(!js.includes(need))throw new Error('r492 missing '+need);

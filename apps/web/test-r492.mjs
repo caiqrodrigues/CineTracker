@@ -17,7 +17,7 @@ for(const n of retired){
  const needles=['window.__ctR'+n+'={','window.__ctR'+n+' = {','window.__ctR'+n+'Marker=','window.__ctR'+n+'Marker ='];
  let at=-1;for(const needle of needles){at=js.indexOf(needle);if(at>=0)break}
  if(at<0)continue;
- const start=js.lastIndexOf('(()=>{',at);
+ let start=js.lastIndexOf('\n(()=>{',at);if(start>=0)start+=1;else if(js.startsWith('(()=>{'))start=0;
  yes(start>=0&&js.startsWith('(()=>{return;',start),'legacy r'+n+' inert');
 }
 const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
