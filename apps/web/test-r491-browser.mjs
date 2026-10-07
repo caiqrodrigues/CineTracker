@@ -106,7 +106,7 @@ const probe=`
   fy.querySelector('[data-ct464-slot="fresh:movie"] [data-ct464-action="swap"]').click();
   ok(fy.querySelector('[data-ct464-slot="fresh:movie"] [data-media]'),'swap retained card');
 
-  document.querySelector('[data-ct319-content]').innerHTML='<div class="ct319-top-row"><div class="ct319-item"><article class="ct288-card"><button class="ct288-open"><div class="ct288-poster"></div></button></article></div></div>';
+  document.querySelector('[data-ct319-content]').innerHTML='<div data-ct321-top-content><div class="ct319-top-row"><div class="ct319-item"><article class="ct288-card"><button class="ct288-open"><div class="ct288-poster"></div></button></article></div></div></div>';
   const top=document.querySelector('.ct288-poster').getBoundingClientRect();
   ok(top.width>0&&Math.abs(top.height/top.width-1.5)<0.04,'Top10 2:3 '+top.width+'x'+top.height);
 
@@ -118,7 +118,7 @@ const probe=`
 `;
 
 const html='<!doctype html><html><head><style>'+
-'body{margin:0}.hidden{display:none}.card{width:150px}.poster{width:100%}.ct319-item{width:120px}.ct288-poster{width:120px}'+
+'body{margin:0}.hidden{display:none}.card{width:150px}.poster{width:100%}.ct319-item{width:120px}.ct288-card,.ct288-open{display:block;width:120px}.ct288-poster{display:block;width:120px}'+
 '</style></head><body><div id="app"></div><div data-ct319-content></div>'+
 '<script src="/prelude.js"></script><script src="/core.js"></script><script src="/r464.js"></script><script src="/runtime.js"></script><script src="/probe.js"></script>'+
 '</body></html>';
