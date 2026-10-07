@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node build-r494.mjs",
     "build:legacy": "node build-r405.mjs",
-    "verify": "node test-r494.mjs && node test-r493-browser.mjs",
+    "verify": "node test-r493-browser.mjs && node test-r494.mjs",
     "test:r443": "node test-r443.mjs",
     "release:r443": "node build-r443-official.mjs",
     "test:r444": "node test-r444.mjs",
