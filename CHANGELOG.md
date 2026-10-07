@@ -3,7 +3,7 @@
 ### Correção estrutural do boot e remoção do fallback antigo
 - Removidos do HTML final os preboots históricos r461 e r479. O fallback dourado `CINETRACKER / HOME / Sua biblioteca / Carregando Home…` não existe mais no artefato de produção.
 - A restauração de sessão passa a ser local-first: uma sessão local válida libera o primeiro paint imediatamente; validação remota de `/auth/v1/user` acontece em segundo plano com limite de 2,5 s.
-- RPCs recebem recuperação única de 401 por refresh token e limite geral de rede, evitando travamento indefinido sem full-page reload.
+- O hotfix não reescreve a camada genérica de rede; os deadlines progressivos já existentes da r493 continuam responsáveis por Home/Perfil, reduzindo o risco de regressão em outras funcionalidades.
 - Runtimes históricos já aposentados continuam neutralizados e não executam; a limpeza física desses blocos fica fora do hotfix de recuperação para não arriscar cortar código vivo. Os preboots históricos executáveis são removidos do HTML final.
 - O gate Chromium carrega o **index e bundle finais reais**, simula a validação de autenticação travada e exige que Home atual apareça mesmo assim, sem UI dourada.
 - O mesmo gate navega Home Séries → Filmes → Perfil e exige Watchlist 2:3 e exatamente 12 cards nas cinco listas do Perfil.
