@@ -40,28 +40,12 @@ function stripDisabledIifes(source){
  while(true){
   const start=source.indexOf('(()=>{return;');
   if(start<0)break;
-  const open=source.indexOf('{',start);
-  let depth=0,mode='code',quote='',i=open;
-  for(;i<source.length;i++){
-   const c=source[i],n=source[i+1];
-   if(mode==='line'){if(c==='\n')mode='code';continue}
-   if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}
-   if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}
-   if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
-   if(c==='/'&&n==='/'){mode='line';i++;continue}
-   if(c==='/'&&n==='*'){mode='block';i++;continue}
-   if(c==="'"||c==='"'){mode='string';quote=c;continue}
-   if(c.charCodeAt(0)===96){mode='template';continue}
-   if(c==='{')depth++;
-   else if(c==='}'){depth--;if(depth===0){i++;break}}
-  }
-  if(depth!==0)throw new Error('r494 disabled IIFE unbalanced');
-  while(i<source.length&&/\\s/.test(source[i]))i++;
-  if(source.slice(i,i+4)!==')();')throw new Error('r494 disabled IIFE terminator missing');
-  i+=4;
-  source=source.slice(0,start)+source.slice(i);
+  const close=source.indexOf('\n})();',start);
+  if(close<0)throw new Error('r494 disabled IIFE boundary missing at '+start);
+  source=source.slice(0,start)+source.slice(close+6);
   stripped++;
  }
+ try{new Function(source)}catch(e){throw new Error('r494 JS invalid after dead-runtime strip: '+(e?.message||e))}
  return{source,stripped};
 }
 
