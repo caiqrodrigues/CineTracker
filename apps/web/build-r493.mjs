@@ -109,7 +109,7 @@ patch(A321,'r321',[
   void Promise.resolve(typeof ct171Providers==='function'?ct171Providers():[]).then(providers=>{
    if(token!==topToken||String(discover?.tab)!=='top10')return;
    const list=rows(providers),box=q('[data-ct321-providers]');
-   if(box)box.innerHTML=list.map(p=>'<button type="button" class="ct288-provider '+(Number(p.provider_id)===Number(state.topProvider)?'active':'')+'" data-ct321-provider="'+Number(p.provider_id)+'">'+(p.logo_path?'<span style="background-image:url(\''+img(p.logo_path,'w92')+'\')"></span>':'')+'<b>'+esc(p.provider_name||'Streaming')+'</b></button>').join('')||'<div class="empty">Nenhum streaming disponível.</div>';
+   if(box)box.innerHTML=list.map(p=>'<button type="button" class="ct288-provider '+(Number(p.provider_id)===Number(state.topProvider)?'active':'')+'" data-ct321-provider="'+Number(p.provider_id)+'">'+(p.logo_path?'<span><img alt="" src="'+img(p.logo_path,'w92')+'"></span>':'')+'<b>'+esc(p.provider_name||'Streaming')+'</b></button>').join('')||'<div class="empty">Nenhum streaming disponível.</div>';
   }).catch(()=>{});
   return paint;
  }`]
