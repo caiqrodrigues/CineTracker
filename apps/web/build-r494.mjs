@@ -111,7 +111,6 @@ const restoreAt=js.indexOf('async function restoreSession');
 if(restoreAt<0)throw new Error('r494 restoreSession anchor missing');
 js=js.slice(0,restoreAt)+authHelpers+'\n'+js.slice(restoreAt);
 js=replaceFirstNamed(js,'restoreSession',restoreSession);
-js=replaceFirstNamed(js,'api',api);
 
 const stripped={source:js,stripped:0};
 
