@@ -4,7 +4,7 @@
 - Removidos do HTML final os preboots históricos r461 e r479. O fallback dourado `CINETRACKER / HOME / Sua biblioteca / Carregando Home…` não existe mais no artefato de produção.
 - A restauração de sessão passa a ser local-first: uma sessão local válida libera o primeiro paint imediatamente; validação remota de `/auth/v1/user` acontece em segundo plano com limite de 2,5 s.
 - RPCs recebem recuperação única de 401 por refresh token e limite geral de rede, evitando travamento indefinido sem full-page reload.
-- IIFEs históricos já neutralizados nas releases anteriores são removidos fisicamente do JS final em vez de permanecerem como código morto `return;`.
+- Runtimes históricos já aposentados continuam neutralizados e não executam; a limpeza física desses blocos fica fora do hotfix de recuperação para não arriscar cortar código vivo. Os preboots históricos executáveis são removidos do HTML final.
 - O gate Chromium carrega o **index e bundle finais reais**, simula a validação de autenticação travada e exige que Home atual apareça mesmo assim, sem UI dourada.
 - O mesmo gate navega Home Séries → Filmes → Perfil e exige Watchlist 2:3 e exatamente 12 cards nas cinco listas do Perfil.
 - r493 continua responsável por Home progressiva, Perfil dividido em RPCs rápidas, Pra Você com snapshot e Top 10 progressivo; nenhuma dessas funcionalidades foi removida.

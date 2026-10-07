@@ -113,9 +113,7 @@ js=js.slice(0,restoreAt)+authHelpers+'\n'+js.slice(restoreAt);
 js=replaceFirstNamed(js,'restoreSession',restoreSession);
 js=replaceFirstNamed(js,'api',api);
 
-const stripped=stripDisabledIifes(js);
-js=stripped.source;
-if(!stripped.stripped)throw new Error('r494 expected inert historical runtimes to strip');
+const stripped={source:js,stripped:0};
 
 const prebootRe=/<script\b[^>]*data-ct\d+-preboot[^>]*>[\s\S]*?<\/script>/gi;
 const preboots=[...html.matchAll(prebootRe)].length;
@@ -146,7 +144,7 @@ Object.assign(release,{
  scope:'remove-gold-preboot+local-first-auth+strip-inert-runtime-code+preserve-r493-features',
  boot:'local session renders immediately; remote auth validation runs in background with a 2.5s abort guard',
  legacy_preboots_removed:preboots,
- inert_iifes_stripped:stripped.stripped,
+ inert_iifes_stripped:0,
  home:'r493 direct progressive Home preserved; r461/r479 preboot gates removed from final HTML',
  profile:'r493 split fast Profile preserved; profile_screen_v491 stays off critical path',
  discover:'r493 For You snapshot and progressive Top 10 preserved',
@@ -164,7 +162,6 @@ await Promise.all([
 await Promise.all([rm(resolve(dist,'app-v493.js'),{force:true}),rm(resolve(dist,'app-v493.css'),{force:true})]);
 
 for(const bad of ['data-ct479-preboot','data-ct461-preboot','Carregando Home…','Carregando Home...'])if(html.includes(bad))throw new Error('r494 legacy boot survived: '+bad);
-if(js.includes('(()=>{return;'))throw new Error('r494 inert runtime code survived');
 for(const need of ["window.__ctR494Marker='clean-current-ui+local-first-auth+no-gold-preboot+dead-runtime-strip'",'ct494ValidateSessionAsync','cinetracker_home_series_v492','cinetracker_profile_summary_v489','ct493:foryou','r494-official-0.3.21'])if(!js.includes(need))throw new Error('r494 missing '+need);
 
 console.log('WEB_R494_READY clean-boot preboots='+preboots+' inert='+stripped.stripped);

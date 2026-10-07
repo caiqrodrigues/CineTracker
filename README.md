@@ -2,7 +2,7 @@
 
 - O HTML de produção não contém mais os preboots r461/r479 nem o fallback dourado antigo.
 - Sessão local válida libera a interface atual imediatamente; validação remota não bloqueia mais o primeiro paint.
-- Código morto de runtimes já aposentados é removido fisicamente do bundle final.
+- Runtimes aposentados permanecem inertes; os preboots históricos executáveis são removidos fisicamente do HTML final. A limpeza estrutural do código morto será feita somente sobre uma build já estabilizada.
 - Home Séries/Filmes, Perfil 12 cards, Pra Você e Top 10 mantêm as autoridades r493.
 - O teste de navegador usa o index/bundle finais e simula autenticação remota travada para impedir a regressão mostrada no vídeo.
 

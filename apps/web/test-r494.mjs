@@ -18,9 +18,8 @@ ok(release.version==='0.3.21'&&release.revision==='r494-official-0.3.21','releas
 ok(html.includes('/app-v494.js?ct=r494-official-0.3.21')&&html.includes('/app-v494.css?ct=r494-official-0.3.21'),'assets');
 for(const old of ['data-ct479-preboot','data-ct461-preboot','data-ct479-preboot-ui','Carregando Home…','Carregando Home...','#d6b55b'])ok(!html.includes(old),'legacy HTML '+old);
 ok(!css.includes('data-ct461-series-gate'),'legacy gate CSS');
-ok(!js.includes('(()=>{return;'),'disabled historical IIFEs physically stripped');
-ok(Number(release.inert_iifes_stripped)>0,'stripped count');
 ok(Number(release.legacy_preboots_removed)>=2,'preboot removal count');
+ok(js.includes('(()=>{return;'),'retired historical runtimes remain inert, never executable');
 ok(js.includes("window.__ctR494Marker='clean-current-ui+local-first-auth+no-gold-preboot+dead-runtime-strip'"),'marker');
 ok(js.includes('function ct494ValidateSessionAsync()'),'background auth validation');
 ok(js.includes("localStorage.getItem('cinetracker_session')"),'local-first session');

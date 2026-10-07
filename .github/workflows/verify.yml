@@ -25,7 +25,6 @@ jobs:
           ! grep -Fq 'data-ct479-preboot' apps/web/dist/index.html
           ! grep -Fq 'data-ct461-preboot' apps/web/dist/index.html
           ! grep -Fq 'Carregando Home' apps/web/dist/index.html
-          ! grep -Fq '(()=>{return;' apps/web/dist/app-v494.js
           grep -Fq "window.__ctR494Marker='clean-current-ui+local-first-auth+no-gold-preboot+dead-runtime-strip'" apps/web/dist/app-v494.js
   android:
     runs-on: ubuntu-latest
