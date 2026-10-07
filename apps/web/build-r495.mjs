@@ -61,6 +61,9 @@ patch(A464,'r464',[
  ['activate',"function activate(){\n setForYouState();qa('[data-ct319-tab],[data-ct315-tab],[data-ct263-discover-tab],[data-discover-tab]').forEach(b=>{if(isForYouControl(b))b.classList.add('active')});\n if(document.documentElement.dataset.ct490ForYouReady==='1'){render();return true}\n if(!q('[data-ct464-foryou]',root464()))renderLoading();void load(false);return true;\n}"]
 ]);
 
+/* r385 is retired by r492. build-r385 left this assignment outside its runtime IIFE, so disabling the IIFE alone made boot dereference an undefined owner. Remove the orphan bridge entirely. */
+js=js.replaceAll("window.__ctR385RenderHome=window.__ctR385.renderHome;","window.__ctR385RenderHome=undefined;");
+
 const A388R495="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
 patch(A388R495,'r388-r495',[
  ['renderHome388',"async function renderHome388(){\n const kind=activeKind();try{if(!q('[data-home]'))setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class=\"page\" data-home></div>'))}catch{}\n paintFrame(kind);if(routeNow()!=='home')return false;\n if(kind==='series'){if(hSeries.length)renderSeries();if(hHistory)renderHistory('episodes');void loadSeries(false);void loadHistory(false)}else{if(hMovies.length)renderMoviesAll();if(hHistory)renderHistory('movies');void loadMovies(false);void loadHistory(false)}\n document.documentElement.dataset.ct388Home='r495-progressive';return true;\n}"]
