@@ -1,3 +1,20 @@
+## 0.3.19 — r492 (2026-10-07)
+
+### Estabilidade e carregamento corrigidos na causa
+- O vídeo de 07/10 confirmou que r491 ainda sofria com múltiplos owners históricos ativos. r492 torna inertes, antes da execução, os runtimes visuais obsoletos r380–r412 selecionados, r414, r427/r429–r434, r445/r449, r456–r461, r467–r470, r481/r482/r484/r488/r489. Eles deixam de registrar timers, listeners, loaders e repaints concorrentes.
+- Home > Séries: a biblioteca real possui 813 séries (5 Continuar, 21 Poeira, 48 Em dia, 583 Não iniciadas e 156 Concluídas). O novo RPC `cinetracker_home_series_v492` retorna 24 por categoria + totais: primeiro payload cai de ~384 KB / 813 itens para ~53 KB / 98 itens. **Carregar mais** aumenta o limite localmente sem reload.
+- Home > Séries: refresh de catálogo/TV é adiado para idle e limitado a uma execução por 10 minutos; após o refresh a tela continua usando o payload compacto v492, sem reintroduzir os 813 itens no DOM.
+- Home > Filmes: a Watchlist real possui 1.387 filmes. O primeiro paint passa a buscar somente 60 cards v405; páginas seguintes entram apenas por **Carregar mais filmes**, adicionadas ao grid existente sem `replaceChildren` de toda a coleção.
+- Home > Filmes: entrada na aba não aguarda a paginação completa; cards permanecem nativos 2:3 e o contador mostra carregados/total.
+- Perfil: r455 deixa de aplicar a antiga regra de 13 cards e os owners r457–r461/r467–r470/r482/r484/r488/r489 deixam de tocar a tela. O dispatcher r491 + `cinetracker_profile_screen_v491` permanece como único painter, com exatamente 12 cards por lista e **Ver mais** apenas no cabeçalho.
+- Descobrir > Pra Você: r464/v490 permanece como único owner; as gerações antigas que também carregavam/repaintavam recomendações ficam inertes.
+- Top 10: geometria 2:3/`object-fit: cover` da r491 permanece preservada.
+
+### Preservado
+- r462 e o writer F1 da r477 permanecem ativos; histórico diário/Desmarcar v426/r455 é preservado.
+- Rota de Esportes e Android 1.0.20 / versionCode 10062 não foram alterados.
+- Sem full-page reload, `router.refresh()`, `while(true)`, `setInterval` ou novo `MutationObserver`.
+
 ## 0.3.18 — r491 (2026-10-07)
 
 ### Corrigido e finalizado na autoridade real

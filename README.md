@@ -1,3 +1,12 @@
+## Web 0.3.19 / r492 — estabilidade por remoção de owners concorrentes
+
+- Home Séries: 24 itens por categoria no primeiro paint, totais preservados e carregamento adicional local; 813 itens deixam de ser materializados de uma vez.
+- Home Filmes: 60 cards 2:3 no primeiro paint e paginação sob demanda dos 1.387 itens, sem reconstruir todo o grid a cada página.
+- Pra Você: somente r464/v490 executa carregamento/renderização.
+- Perfil: somente o dispatcher r491 pinta a tela; cinco listas com exatamente 12 cards e botão **Ver mais** no cabeçalho.
+- Runtimes visuais históricos que registravam timers/listeners concorrentes ficam inertes no bundle r492.
+- F1 r462/r477, histórico diário, Esportes e Android permanecem preservados.
+
 ## Web 0.3.18 / r491 — autoridade no render principal
 
 - Home entra com skeleton real e é entregue diretamente ao r388/v452; writers tardios de Home foram aposentados.
