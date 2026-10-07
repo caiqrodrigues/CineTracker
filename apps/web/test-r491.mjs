@@ -25,7 +25,7 @@ yes(fn(r464,'load').includes('cinetracker_foryou_payload_v490'),'Pra Você compa
 yes(!fn(r464,'load').includes('Promise.allSettled(specs'),'Pra Você six-call fanout retired');
 const r471=region("window.__ctR471Marker='closure-core+home-r399-visible+discover-r464-core+profile-dashboard-13+history-v426';");
 yes(!fn(r471,'scheduleHome').includes('setTimeout'),'r471 Home timer retired');yes(!fn(r471,'scheduleProfile').includes('setTimeout'),'r471 Profile timer retired');
-const r472=region("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-13-separate-more+stadium-v296';");
+const r472=region("if(window.__ctR472?.version==='1.0.262')return;");
 yes(!fn(r472,'scheduleHome').includes('bounded('),'r472 Home ladder retired');yes(!fn(r472,'scheduleProfile').includes('bounded('),'r472 Profile ladder retired');yes(fn(r472,'scheduleForYou').includes('requestAnimationFrame'),'r472 one-frame ForYou entry');
 const r476=region("if(window.__ctR476?.version==='1.0.266')return;");yes(fn(r476,'paintProfile').includes('return false'),'r476 visual Profile owner retired');
 const r477=region("if(window.__ctR477?.version==='1.0.267')return;");yes(fn(r477,'bootHome').includes('return false'),'r477 Home owner retired');yes(fn(r477,'settleProfile').includes('return false'),'r477 Profile owner retired');
