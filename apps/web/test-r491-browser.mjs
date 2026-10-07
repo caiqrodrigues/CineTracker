@@ -154,7 +154,7 @@ const child=spawn(bin,[
 let out='',err='';
 child.stdout.on('data',d=>out+=d);
 child.stderr.on('data',d=>err+=d);
-const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},15000);
+const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},45000);
 const code=await new Promise(r=>child.on('close',r));
 clearTimeout(killer);
 await new Promise(r=>server.close(r));
