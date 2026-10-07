@@ -100,7 +100,7 @@ const probe=`
   await window.__ctR464.load(false);
   const fy=document.querySelector('[data-ct464-foryou]');
   ok(fy,'ForYou root');
-  ok(fy.querySelectorAll('[data-ct464-slot]').length===7,'ForYou seven slots');
+  const slotCount=fy.querySelectorAll('[data-ct464-slot]').length;ok(slotCount===7,'ForYou seven slots '+slotCount+' '+fy.innerHTML.slice(0,800));
   ok(!fy.textContent.includes('Sem indicação elegível agora'),'ForYou empty');
   ok(fy.querySelectorAll('[data-ct464-action="swap"]').length===7,'seven swaps');
   fy.querySelector('[data-ct464-slot="fresh:movie"] [data-ct464-action="swap"]').click();
