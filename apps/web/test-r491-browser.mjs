@@ -1,7 +1,8 @@
 import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {createServer} from 'node:http';
-import {spawn,execFileSync} from 'node:child_process';
+import {execFileSync} from 'node:child_process';
+import {chromium} from 'playwright';
 
 await import('./build-r491.mjs');
 
@@ -149,18 +150,22 @@ for(const x of ['google-chrome-stable','google-chrome','chromium','chromium-brow
 }
 if(!bin)throw new Error('Chromium unavailable');
 
-const child=spawn(bin,[
- '--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage',
- '--virtual-time-budget=5000','--dump-dom','http://127.0.0.1:'+port+'/'
-],{stdio:['ignore','pipe','pipe']});
-let out='',err='';
-child.stdout.on('data',d=>out+=d);
-child.stderr.on('data',d=>err+=d);
-const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},20000);
-const code=await new Promise(r=>child.on('close',r));
-clearTimeout(killer);
+const browser=await chromium.launch({
+ headless:true,
+ executablePath:bin,
+ args:['--no-sandbox','--disable-dev-shm-usage','--disable-gpu']
+});
+const page=await browser.newPage();
+const pageErrors=[];
+page.on('pageerror',e=>pageErrors.push(String(e?.stack||e)));
+await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
+await page.waitForFunction(()=>{
+ const v=document.documentElement.dataset.ct491browser||'';
+ return v==='ok'||v.startsWith('fail:')||v.startsWith('error:');
+},{timeout:12000});
+const state=await page.evaluate(()=>document.documentElement.dataset.ct491browser||'');
+const dom=state==='ok'?'':await page.content();
+await browser.close();
 await new Promise(r=>server.close(r));
-if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1200));
-const m=out.match(/data-ct491browser="([^"]*)"/);
-if(!m||m[1]!=='ok')throw new Error('R491_BROWSER '+(m?.[1]||'probe did not finish')+' DOM='+out.slice(-3500));
+if(state!=='ok')throw new Error('R491_BROWSER '+state+' PAGEERROR='+pageErrors.join(' | ')+' DOM='+dom.slice(-3500));
 console.log('R491_BROWSER_OK requested-screen DOM behavior');
