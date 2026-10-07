@@ -1,3 +1,10 @@
+## Web 0.3.21 / r494 — entrypoint limpo
+
+- O HTML de produção não contém mais o app inline dourado/amarelo legado.
+- O navegador recebe apenas o shell mínimo e os assets atuais `app-v494.css/js`.
+- Tokens/markup do bootstrap antigo são proibidos por gate de build.
+- Home, Filmes, Perfil, Top 10, Pra Você, F1, Esportes e histórico continuam nas autoridades atuais.
+
 ## Web 0.3.20 / r493 — Home e Perfil progressivos, sem bloqueio global
 
 - Home Séries e Histórico carregam de forma independente; Série não espera Histórico.

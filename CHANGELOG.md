@@ -1,3 +1,17 @@
+## 0.3.21 — r494 (2026-10-07)
+
+### Bootstrap legado removido
+- Removido fisicamente de `apps/web/index.html` o aplicativo inline antigo dourado/amarelo que reaparecia antes do bundle atual.
+- O entrypoint de produção agora é mínimo: somente `#app`, `app-v494.css` e `app-v494.js`; nenhum CSS/JS de aplicação fica inline.
+- O build falha se o HTML final voltar a conter `--gold:#d6b55b`, `MENU DIÁRIO`, `.auth-page`, `cloud-bar` ou o bootstrap antigo.
+- A paleta final é explicitamente azul/escura; o token visual legado dourado fica neutralizado.
+- As autoridades funcionais r493 de Home progressiva, Filmes v405, Perfil dividido, Top 10 e Pra Você permanecem preservadas.
+- Regressão Chromium r493 continua obrigatória e passou nesta release.
+
+### Preservado
+- F1, Esportes, histórico diário/Desmarcar e Android 1.0.20 / versionCode 10062.
+- Sem full-page reload, `router.refresh()`, `while(true)` ou `setInterval`.
+
 ## 0.3.20 — r493 (2026-10-07)
 
 ### Estabilidade real medida pelo vídeo
