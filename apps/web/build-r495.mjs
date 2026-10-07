@@ -137,9 +137,9 @@ const release=JSON.parse(releaseRaw);Object.assign(release,{
  top10:'strict 2:3 geometry enforced',f1:'preserved',sports:'sports route preserved',android:'unchanged-1.0.20/10062'
 });
 await Promise.all([
- writeFile(resolve(dist,'app-v490.js'),js),writeFile(resolve(dist,'app-v490.css'),css),writeFile(resolve(dist,'index.html'),html),
+ writeFile(resolve(dist,'app-v495.js'),js),writeFile(resolve(dist,'app-v495.css'),css),writeFile(resolve(dist,'index.html'),html),
  writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))
 ]);
 await Promise.all([rm(resolve(dist,'app-v492.js'),{force:true}),rm(resolve(dist,'app-v492.css'),{force:true})]);
 for(const need of ["window.__ctR495Marker='modern-runtime+old-owners-retired+progressive-home+fast-profile+strict-12'",'cinetracker_foryou_payload_v490','cinetracker_profile_screen_v495','cinetracker_profile_summary_v489','cinetracker_sports_stadium_summary_v296','r495-official-0.3.22'])if(!js.includes(need))throw new Error('r495 missing '+need);
-console.log('WEB_R490_READY real-video-authority');
+console.log('WEB_R495_READY modern-runtime-recovered');
