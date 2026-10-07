@@ -1,3 +1,11 @@
+## Web 0.3.21 / r494 — boot limpo e sem versão dourada antiga
+
+- O HTML de produção não contém mais os preboots r461/r479 nem o fallback dourado antigo.
+- Sessão local válida libera a interface atual imediatamente; validação remota não bloqueia mais o primeiro paint.
+- Código morto de runtimes já aposentados é removido fisicamente do bundle final.
+- Home Séries/Filmes, Perfil 12 cards, Pra Você e Top 10 mantêm as autoridades r493.
+- O teste de navegador usa o index/bundle finais e simula autenticação remota travada para impedir a regressão mostrada no vídeo.
+
 ## Web 0.3.20 / r493 — Home e Perfil progressivos, sem bloqueio global
 
 - Home Séries e Histórico carregam de forma independente; Série não espera Histórico.
