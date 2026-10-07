@@ -1,3 +1,18 @@
+## 0.3.20 — r493 (2026-10-07)
+
+### Estabilidade real medida pelo vídeo
+- Home > Séries deixa de depender do ciclo completo do r388/r371. O shell nasce imediatamente, `cinetracker_home_series_v492` e Histórico v391 rodam em paralelo e Séries pinta assim que seu payload compacto chega, sem esperar Histórico, sem scroll automático tardio e sem cascata de timers.
+- Home > Filmes troca de aba de forma síncrona e só então busca a primeira página v405. O primeiro paint mantém cards nativos estritamente 2:3 e paginação explícita; a aba nunca espera os 1.387 filmes.
+- Perfil remove `cinetracker_profile_screen_v491` do caminho crítico. As cinco listas v489 (~0,33 s), estatísticas, esportes/estádio e atividade são lidas em paralelo por RPCs menores; o payload legado v0997 de ~3,8 s deixa de bloquear a abertura da tela.
+- Perfil mantém exatamente 12 cards em Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos; o único **Ver mais** continua no cabeçalho.
+- Descobrir > Top 10 não espera mais a lista de streamings para iniciar o ranking. Página 1 de filmes/séries pinta primeiro; página 2 só completa em segundo plano se o filtro pessoal deixar menos de 10.
+- Descobrir > Pra Você passa a reutilizar snapshot válido da sessão/local imediatamente, v490 segue como autoridade primária e os pools v421 entram apenas como fallback delimitado. Um refresh não apaga cards válidos enquanto busca novos.
+- Teste Chromium r493 simula o cenário do vídeo: Histórico lento não bloqueia Séries, clique em Filmes troca imediatamente, primeira página aparece isoladamente e Perfil abre sem chamar `profile_screen_v491`.
+
+### Preservado
+- F1 r462/r477, rota de Esportes, histórico diário/Desmarcar e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+- Sem full-page reload, `router.refresh()`, `while(true)` ou `setInterval`.
+
 ## 0.3.19 — r492 (2026-10-07)
 
 ### Estabilidade e carregamento corrigidos na causa

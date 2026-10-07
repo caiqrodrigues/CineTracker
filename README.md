@@ -1,3 +1,13 @@
+## Web 0.3.20 / r493 — Home e Perfil progressivos, sem bloqueio global
+
+- Home Séries e Histórico carregam de forma independente; Série não espera Histórico.
+- Filmes troca de aba imediatamente e busca somente a primeira página v405, com cards 2:3.
+- Perfil não usa mais o payload monolítico v491 no primeiro paint; resumo, estatísticas, esportes e atividade são paralelos.
+- Cinco listas do Perfil continuam com exatamente 12 cards e **Ver mais** somente no cabeçalho.
+- Top 10 pinta página 1 antes de qualquer complemento; lista de streamings não bloqueia o ranking.
+- Pra Você mantém snapshot válido visível durante atualização e usa v490 → v421 de forma delimitada.
+- F1, Esportes, histórico diário e Android permanecem preservados.
+
 ## Web 0.3.19 / r492 — estabilidade por remoção de owners concorrentes
 
 - Home Séries: 24 itens por categoria no primeiro paint, totais preservados e carregamento adicional local; 813 itens deixam de ser materializados de uma vez.
