@@ -47,7 +47,7 @@ patch("window.__ctR471Marker='closure-core+home-r399-visible+discover-r464-core+
  ['loadMediaLists',"async function loadMediaLists(){return null}"],['loadActors',"async function loadActors(){return[]}"],
  ['applyProfile',"function applyProfile(){bindDailyAuthority();return false}"],['scheduleProfile',"function scheduleProfile(){bindDailyAuthority();return false}"]
 ]);
-patch("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-13-separate-more+stadium-v296';",'r472',[
+patch("if(window.__ctR472?.version==='1.0.262')return;",'r472',[
  ['repairHome',"function repairHome(){return false}"],['scheduleHome',"function scheduleHome(){return false}"],
  ['scheduleForYou',"function scheduleForYou(){requestAnimationFrame(()=>{if(routeNow()==='discover')void activateForYou(false)});return true}"],
  ['loadMedia',"async function loadMedia(){return null}"],['loadActors',"async function loadActors(){return[]}"],['loadStadium',"async function loadStadium(){return null}"],
