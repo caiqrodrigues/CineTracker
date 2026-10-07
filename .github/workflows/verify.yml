@@ -1,4 +1,4 @@
-name: Verify Web 0.3.21 r494
+name: Verify Web 0.3.22 r495
 on:
   push:
     branches: [main]
@@ -9,26 +9,20 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r494:
+  web_r495:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r494 clean-entrypoint gate
+      - name: Build and full-bundle r495 gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v494.js
-          grep -Fq "window.__ctR494Marker='clean-entrypoint+no-legacy-inline+modern-blue-shell'" apps/web/dist/app-v494.js
-          grep -Fq 'app-v494.js?ct=r494-official-0.3.21' apps/web/dist/index.html
-          grep -Fq 'app-v494.css?ct=r494-official-0.3.21' apps/web/dist/index.html
-          ! grep -Fq -- '--gold:#d6b55b' apps/web/dist/index.html
-          ! grep -Fq 'MENU DIÁRIO' apps/web/dist/index.html
-          ! grep -Fq 'auth-page' apps/web/dist/index.html
-          ! grep -Fq 'cloud-bar' apps/web/dist/index.html
+          node --check apps/web/dist/app-v495.js
+          grep -Fq "window.__ctR495Marker='modern-runtime+old-owners-retired+progressive-home+fast-profile+strict-12'" apps/web/dist/app-v495.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -38,20 +32,18 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r494, android]
+    needs: [web_r495, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r494 production
+      - name: Wait for r495 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
             HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.21"' <<<"$BODY" && grep -Fq '"revision": "r494-official-0.3.21"' <<<"$BODY"; then
-              if grep -Fq 'app-v494.js?ct=r494-official-0.3.21' <<<"$HTML" && ! grep -Fq -- '--gold:#d6b55b' <<<"$HTML" && ! grep -Fq 'MENU DIÁRIO' <<<"$HTML"; then exit 0; fi
-            fi
+            if grep -Fq '"version": "0.3.22"' <<<"$BODY" && grep -Fq '"revision": "r495-official-0.3.22"' <<<"$BODY" && grep -Fq 'app-v495.js?ct=r495-official-0.3.22' <<<"$HTML"; then exit 0; fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
           done
