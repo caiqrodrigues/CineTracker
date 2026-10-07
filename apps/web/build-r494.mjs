@@ -53,7 +53,7 @@ function stripDisabledIifes(source){
  return{source,stripped};
 }
 
-const authHelpers=String.raw`
+const authHelpers=`
 /* r494: local-first auth. Remote validation can never block first paint. */
 let ct494AuthRefreshTask=null;
 const ct494Deadline=(promise,ms)=>Promise.race([Promise.resolve(promise),new Promise((_,reject)=>setTimeout(()=>reject(new Error('auth timeout')),ms))]);
@@ -82,14 +82,14 @@ function ct494ValidateSessionAsync(){
  })()});
 }
 `;
-const restoreSession=String.raw`async function restoreSession(){
+const restoreSession=`async function restoreSession(){
  try{session=JSON.parse(localStorage.getItem('cinetracker_session')||'null')}catch{session=null}
  if(!session?.access_token){session=null;user=null;return false}
  user=session.user||user;
  ct494ValidateSessionAsync();
  return true;
 }`;
-const api=String.raw`async function api(path,options={}){
+const api=`async function api(path,options={}){
  if(!session?.access_token)throw new Error('Sessão necessária');
  const request=async()=>{
   const own=!options.signal,c=own?new AbortController():null,t=own?setTimeout(()=>c.abort(),15000):null;
@@ -135,6 +135,8 @@ js=js.replace(/const REVISION='[^']+';/,"const REVISION='r494-official-0.3.21';"
 js=js.replace(/CineTracker • v[^•<]+ • \${REVISION}/g,'CineTracker • v0.3.21 • ${REVISION}');
 
 sw=sw.replaceAll('app-v493.js','app-v494.js').replaceAll('app-v493.css','app-v494.css').replaceAll('r493','r494');
+
+try{new Function(js)}catch(e){throw new Error('r494 final bundle syntax: '+(e?.message||e))}
 
 const release=JSON.parse(releaseRaw);
 Object.assign(release,{
