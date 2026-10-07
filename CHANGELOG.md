@@ -1,3 +1,20 @@
+## 0.3.18 — r491 (2026-10-07)
+
+### Corrigido e finalizado na autoridade real
+- A r490 foi descartada como release: seus deployments de produção falharam e ela nunca chegou ao domínio público. A r491 volta à base r489 conhecida e aplica as correções na fronteira real do `render()`, em vez de tentar sobrescrever funções lexicais por uma IIFE externa.
+- Home > Séries: o dispatcher principal mostra skeleton imediatamente e entrega a tela diretamente ao owner r388/v452. Os writers tardios r237/r399/r413/r415/r417/r418/r424/r425/r471/r472/r476/r477/r481 deixam de repintar a Home.
+- Home > Filmes: preservado o renderer nativo r489/v405 e travada a geometria 2:3 dos cards; writers de Home que devolviam linhas/formatos antigos foram aposentados.
+- Descobrir > Pra Você: r464 passa a consumir somente o payload compacto v490 em uma chamada. Owners antigos de recomendação são aposentados e a entrada da aba usa somente uma ativação no próximo frame, sem escada de timers.
+- Descobrir > Top 10: imagem do pôster recebe 2:3 e `object-fit: cover` diretamente no elemento real.
+- Perfil: criada `cinetracker_profile_screen_v491`, que retorna em um payload estatísticas, atividade, cinco resumos e Esportes/Estádio. O `render()` principal aguarda esse payload e faz um único paint final.
+- Perfil: Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos exibem exatamente 12 cards; totais completos permanecem 249 / 962 / 17 / 45 / 21 e apenas o botão minimalista de cabeçalho **Ver mais** permanece.
+- Perfil > Esportes: valores atuais validados em 172 eventos assistidos e 1 jogo no estádio; writers antigos que causavam 0/81/valor final foram aposentados.
+- O gate r491 inclui teste Chromium de comportamento/DOM para Home, Filmes 2:3, sete slots do Pra Você, Top 10 2:3 e cinco listas de 12 cards do Perfil.
+
+### Preservado
+- F1, rota de Esportes, histórico diário/Desmarcar e Android 1.0.20 / versionCode 10062 permanecem preservados.
+- Sem `window.location.reload()`, `router.refresh()`, `while(true)`, `setInterval` ou novo `MutationObserver` na r491.
+
 ## 0.3.17 — r490 (2026-10-06)
 
 ### Corrigido a partir do segundo vídeo real

@@ -1,3 +1,13 @@
+## Web 0.3.18 / r491 — autoridade no render principal
+
+- Home entra com skeleton real e é entregue diretamente ao r388/v452; writers tardios de Home foram aposentados.
+- Filmes permanece em v405 com cards nativos 2:3.
+- Pra Você usa uma única RPC compacta v490 e exige os 7 slots preenchidos.
+- Perfil usa uma única RPC de tela v491 e só pinta quando estatísticas, cinco listas e Esportes/Estádio estão consistentes.
+- As cinco listas do Perfil exibem exatamente 12 cards e somente o **Ver mais** minimalista do cabeçalho.
+- O CI executa regressão Chromium de DOM/geometria além dos testes estáticos.
+- F1, Esportes, histórico diário e Android permanecem preservados.
+
 ## Web 0.3.17 / r490 — autoridade real das telas
 
 - Home usa somente r388 para Séries/Histórico/Filmes; repaints tardios legados foram retirados.

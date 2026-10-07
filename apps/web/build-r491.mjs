@@ -1,0 +1,103 @@
+import {readFile,writeFile,rm} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r489.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+let [html,js,css,releaseRaw,runtime]=await Promise.all([
+ readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v489.js'),'utf8'),readFile(resolve(dist,'app-v489.css'),'utf8'),
+ readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r491-final.js'),'utf8')
+]);
+function once(source,needle,replacement,label){const n=source.split(needle).length-1;if(n!==1)throw new Error('r491 expected one '+label+', found '+n);return source.replace(needle,replacement)}
+function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)throw new Error('r491 missing '+label+' anchor');const start=source.lastIndexOf('(()=>{',at),close=source.indexOf('\n})();',at);if(start<0||close<0)throw new Error('r491 invalid '+label+' bounds');return{start,end:close+6}}
+function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r491 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r491 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
+const patch=(anchor,label,defs)=>{for(const [name,body] of defs)js=replaceNamed(js,anchor,name,body,label)};
+patch("window.__ctR237='real-ui-single-finalizer';",'r237',[['home237',"async function home237(){return false}"]]);
+patch("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';",'r399',[
+ ['settleRoute399',"function settleRoute399(){return false}"],['bootProbe399',"function bootProbe399(){return false}"]
+]);
+patch("if(window.__ctR413?.version==='1.0.204')return;",'r413',[
+ ['beginHomeEntry',"function beginHomeEntry(){return false}"],['scheduleForYou',"function scheduleForYou(){return false}"],['probe',"function probe(){return false}"]
+]);
+patch("if(window.__ctR415?.version==='1.0.206')return;",'r415',[
+ ['homeProbe',"function homeProbe(){return false}"],['beginSeriesEntry',"function beginSeriesEntry(){return false}"],['repairForYou',"function repairForYou(){return false}"],['scheduleForYouRepair',"function scheduleForYouRepair(){return false}"],['updateSportsProfile',"async function updateSportsProfile(){return false}"],['renderProfile415',"async function renderProfile415(){return false}"],['bootProbe',"function bootProbe(){return false}"]
+]);
+patch("window.__ctR416Marker='profile-persistent-first-paint+foryou-r411-final-owner+f1-series-optimistic-watch'",'r416',[
+ ['ownFY',"function ownFY(){return false}"],['scheduleFY',"function scheduleFY(){return false}"],['pEnrich',"async function pEnrich(){return false}"],['renderProfile416',"async function renderProfile416(){return false}"],['probe',"function probe(){return false}"]
+]);
+patch("if(window.__ctR417?.version==='1.0.208')return;",'r417',[
+ ['beginHome417',"function beginHome417(){return false}"],['repairForYou417',"function repairForYou417(){return false}"],['scheduleForYou417',"function scheduleForYou417(){return false}"],['loadProfileSports417',"async function loadProfileSports417(){return false}"]
+]);
+patch("if(window.__ctR418?.version==='1.0.209')return;",'r418',[
+ ['startHome418',"function startHome418(){return false}"],['repairFY418',"function repairFY418(){return false}"],['scheduleFY418',"function scheduleFY418(){return false}"],['loadProfile418',"async function loadProfile418(){return false}"]
+]);
+patch("if(window.__ctR420?.version==='1.0.211')return;",'r420',[
+ ['scheduleDiscover420',"function scheduleDiscover420(){return false}"],['loadProfile420',"async function loadProfile420(){return false}"]
+]);
+patch("if(window.__ctR421?.version==='1.0.212')return;",'r421',[
+ ['scheduleForYouSanitize421',"function scheduleForYouSanitize421(){return false}"],['loadProfile421',"async function loadProfile421(){return false}"]
+]);
+patch("if(window.__ctR424?.version==='1.0.215')return;",'r424',[
+ ['normalizeProfileLists424',"function normalizeProfileLists424(){return false}"],['loadProfile424',"async function loadProfile424(){return false}"],['gateHomeSeries424',"async function gateHomeSeries424(){return false}"]
+]);
+patch("function homeEntry425()",'r425',[['homeEntry425',"function homeEntry425(){return false}"],['profileCanonical425',"function profileCanonical425(){return false}"]]);
+patch("function scheduleFY()",'r426-schedule',[['scheduleFY',"function scheduleFY(){return false}"]]);
+patch("async function stabilizeProfile()",'r426-profile',[['stabilizeProfile',"async function stabilizeProfile(){return false}"]]);
+patch("window.__ctR471Marker='closure-core+home-r399-visible+discover-r464-core+profile-dashboard-13+history-v426';",'r471',[
+ ['wakeHome',"function wakeHome(){releaseHomeGate();return true}"],['scheduleHome',"function scheduleHome(){releaseHomeGate();return true}"],
+ ['loadMediaLists',"async function loadMediaLists(){return null}"],['loadActors',"async function loadActors(){return[]}"],
+ ['applyProfile',"function applyProfile(){bindDailyAuthority();return false}"],['scheduleProfile',"function scheduleProfile(){bindDailyAuthority();return false}"]
+]);
+patch("window.__ctR472Marker='home-r388-r399+foryou-r464+profile-13-separate-more+stadium-v296';",'r472',[
+ ['repairHome',"function repairHome(){return false}"],['scheduleHome',"function scheduleHome(){return false}"],
+ ['scheduleForYou',"function scheduleForYou(){requestAnimationFrame(()=>{if(routeNow()==='discover')void activateForYou(false)});return true}"],
+ ['loadMedia',"async function loadMedia(){return null}"],['loadActors',"async function loadActors(){return[]}"],['loadStadium',"async function loadStadium(){return null}"],
+ ['applyProfile',"async function applyProfile(){return false}"],['scheduleProfile',"function scheduleProfile(){return false}"]
+]);
+patch("if(window.__ctR476?.version==='1.0.266')return;",'r476',[
+ ['primeHome',"function primeHome(){return false}"],['paintProfile',"function paintProfile(){return false}"],['scheduleProfile',"function scheduleProfile(){return false}"]
+]);
+patch("if(window.__ctR477?.version==='1.0.267')return;",'r477',[
+ ['bootHome',"function bootHome(){return false}"],['settleProfile',"function settleProfile(){return false}"]
+]);
+patch("if(window.__ctR481?.version==='0.3.8')return;",'r481',[['prime',"function prime(){return false}"]]);
+const A464="window.__ctR464Marker='discover-foryou-visible-owner-v421';";
+patch(A464,'r464',[
+ ['load',"async function load(force=false){\n setForYouState();if(routeNow()!=='discover')return false;if(loadTask)return loadTask;\n if(force&&document.documentElement.dataset.ct491ForYouReady==='1'){render();return true}\n const token=++loadToken;if(!q('[data-ct464-foryou]',root464()))renderLoading();\n loadTask=(async()=>{try{\n  const raw=unwrap(await timeout(rpcCall('cinetracker_foryou_payload_v490',{p_watch_limit:30,p_fresh_limit:48}),9000))||{},next=emptyState(),kinds=['movie','series','anime'];\n  for(const k of kinds){next.watch[k]=rows(raw?.watch?.[k]);next.fresh[k]=rows(raw?.fresh?.[k])}\n  if(!kinds.every(k=>next.watch[k].length&&next.fresh[k].length))throw new Error('RECOMMENDATION_POOL_INCOMPLETE');\n  if(token!==loadToken||routeNow()!=='discover')return false;state=next;chooseDaily();\n  let cycle=1;try{cycle=(Number(sessionStorage.getItem('ct491:foryou-cycle')||0)+1)%100000;sessionStorage.setItem('ct491:foryou-cycle',String(cycle))}catch{cycle=Date.now()%100000}\n  kinds.forEach((k,i)=>{state.idx.watch[k]=(cycle+i*3)%state.watch[k].length;state.idx.fresh[k]=(cycle+i*5+1)%state.fresh[k].length});\n  render();document.documentElement.dataset.ct491ForYouReady='1';document.documentElement.dataset.ct491ForYou='compact-v490';\n  document.documentElement.dataset.ct464PoolCounts=JSON.stringify({watch:Object.fromEntries(kinds.map(k=>[k,state.watch[k].length])),fresh:Object.fromEntries(kinds.map(k=>[k,state.fresh[k].length]))});return true;\n }catch(e){\n  if(token===loadToken){delete document.documentElement.dataset.ct491ForYouReady;document.documentElement.dataset.ct491ForYouError=String(e?.message||e);const root=root464();if(root)root.innerHTML='<div data-ct464-foryou><div class=\"panel\"><div class=\"empty\">Não foi possível carregar as indicações. <button type=\"button\" class=\"chip\" data-ct491-foryou-retry>Tentar novamente</button></div></div></div>'}\n  return false;\n }finally{if(token===loadToken)loadTask=null}})();return loadTask;\n}"],
+ ['activate',"function activate(){\n setForYouState();qa('[data-ct319-tab],[data-ct315-tab],[data-ct263-discover-tab],[data-discover-tab]').forEach(b=>{if(isForYouControl(b))b.classList.add('active')});\n if(document.documentElement.dataset.ct491ForYouReady==='1'){render();return true}\n if(!q('[data-ct464-foryou]',root464()))renderLoading();void load(false);return true;\n}"]
+]);
+const renderAnchor="async function render(){const seq=++navSeq;";
+const at=js.indexOf(renderAnchor);if(at<0||js.indexOf(renderAnchor,at+1)>=0)throw new Error('r491 core render anchor invalid');
+js=js.slice(0,at)+"\n/* CT_R491_CORE_START */\nasync function renderHome491(seq){\n setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home',\n  '<div class=\"page\" data-home><div class=\"home-tabs\"><button type=\"button\" class=\"chip active\" data-home-tab=\"series\">Séries</button><button type=\"button\" class=\"chip\" data-home-tab=\"movies\">Filmes</button></div><div data-home-view=\"series\" class=\"home-list\"><section class=\"home-section\" data-ct491-home-loading><div class=\"panel-head\"><h3>Continuar assistindo</h3><small>…</small></div><div class=\"ct491-home-skeleton animate-pulse\">'+Array.from({length:6},()=>'<div class=\"ct491-sk-row\"><i></i><span><b></b><small></small></span></div>').join('')+'</div></section></div><div data-home-view=\"movies\" class=\"home-list hidden\"></div></div>'));\n if(seq!==navSeq||route()!=='home')return false;\n await Promise.resolve();\n const owner=window.__ctR388?.renderHome;\n if(typeof owner!=='function')throw new Error('HOME_OWNER_UNAVAILABLE');\n const out=await owner();\n if(seq===navSeq&&route()==='home'){try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{window.scrollTo?.(0,0)}}\n return out;\n}\nfunction ct491Norm(v){return String(v??'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}\nfunction ct491ProfilePanel(label){\n const root=$('[data-profile]'),want=ct491Norm(label);if(!root)return null;\n return [...root.querySelectorAll('section.panel,.panel')].find(p=>ct491Norm(p.querySelector('.panel-head h2,.panel-head h3,h2,h3')?.textContent||'')===want)||null;\n}\nfunction ct491ActorCard(a){\n const id=Number(a?.tmdb_person_id||0),p=String(a?.profile_path||''),src=p?(p.startsWith('http')?p:img(p,'w185')):'';\n return '<article class=\"card ct491-profile-card\"><button type=\"button\" data-person=\"'+id+'\"><div class=\"poster\"'+(src?' style=\"background-image:url(\\''+esc(src)+'\\')\"':'')+'></div><div class=\"card-body\"><b>'+esc(a?.actor_name||'Ator')+'</b><small>Ator favorito</small></div></button></article>';\n}\nfunction ct491PatchProfileLists(summary){\n const specs=[\n  ['series','Séries','series','series'],\n  ['movies','Filmes','movies','movies'],\n  ['seriesFav','Séries Favoritas','series_favorites','series_favorites'],\n  ['movieFav','Filmes Favoritos','movie_favorites','movie_favorites'],\n  ['actors','Atores Favoritos','actors','actors']\n ];\n for(const [key,label,dataKey,countKey] of specs){\n  const panel=ct491ProfilePanel(label);if(!panel)continue;\n  const row=panel.querySelector(':scope > .row,:scope > .ct424-profile-list,:scope > [class*=\"rail\"],:scope > [class*=\"row\"]');if(!row)continue;\n  const data=Array.isArray(summary?.[dataKey])?summary[dataKey].slice(0,12):[],total=Number(summary?.counts?.[countKey]??data.length);\n  panel.querySelectorAll('[data-ct467-more],[data-ct465-more],[data-ct457-more],[data-ct455-more],[data-ct424-more],[data-ct471-more],[data-ct472-more],.ct455-profile-more,.ct457-profile-more,.ct460-profile-more,.ct471-more-card,.ct472-more-card').forEach(x=>x.remove());\n  panel.querySelectorAll('.panel-head button,.panel-head a').forEach(b=>{if(ct491Norm(b.textContent).includes('ver mais'))b.remove()});\n  row.className='row ct491-profile-grid';row.dataset.ct491ProfileGrid=key;row.dataset.ct476ProfileRow=key;\n  row.innerHTML=data.map(x=>key==='actors'?ct491ActorCard(x):mediaCard(x)).join('')||'<div class=\"empty\">Nenhum item nesta seção.</div>';\n  const small=panel.querySelector('.panel-head small');if(small)small.textContent=total.toLocaleString('pt-BR');\n  if(total>12){const b=document.createElement('button');b.type='button';b.className='chip ct476-header-more ct491-profile-more';b.dataset.ct476HeaderMore=key;b.textContent='Ver mais';b.setAttribute('aria-label','Ver mais '+label);(panel.querySelector('.panel-head')||panel).appendChild(b)}\n }\n}\nfunction ct491PatchSports(sports,stadium){\n const panel=ct491ProfilePanel('Esportes assistidos');if(!panel)return;\n const find=label=>[...panel.querySelectorAll('.stat,[data-stat],.stat-card,.profile-stat')].find(c=>ct491Norm(c.querySelector('small,label,.stat-label,.label')?.textContent||'')===ct491Norm(label));\n const val=card=>card?.querySelector('b,strong,.value,.stat-value');\n const time=find('Tempo assistido'),events=find('Eventos assistidos');let stadiumCard=find('Jogos no Estádio');\n if(time&&val(time))val(time).textContent=fmtMinutes(Number(sports?.sports_minutes||0));\n if(events&&val(events)){val(events).textContent=Number(sports?.watched_events||0).toLocaleString('pt-BR');events.dataset.ct299History='all';events.classList.add('ct299-clickable-stat');events.setAttribute('role','button');events.tabIndex=0}\n if(!stadiumCard){stadiumCard=document.createElement('div');stadiumCard.className='stat ct299-clickable-stat';stadiumCard.innerHTML='<small>Jogos no Estádio</small><b>0</b>';(panel.querySelector('.stats')||panel).appendChild(stadiumCard)}\n if(val(stadiumCard))val(stadiumCard).textContent=Number(stadium?.stadium_events||0).toLocaleString('pt-BR');\n stadiumCard.dataset.ct299History='stadium';stadiumCard.classList.add('ct299-clickable-stat');stadiumCard.setAttribute('role','button');stadiumCard.tabIndex=0;\n panel.dataset.ct491Sports=Number(sports?.watched_events||0)+':'+Number(stadium?.stadium_events||0);\n}\nasync function renderProfile491(seq){\n setApp(shell('Perfil','Estatísticas, biblioteca, favoritos e atividade.','profile','<div class=\"page\" data-profile><div class=\"ct491-profile-loading\"><div class=\"loader\">Carregando Perfil...</div></div></div>'));\n try{\n  const raw=await rpc('cinetracker_profile_screen_v491',{p_tz:tz()});\n  if(seq!==navSeq||route()!=='profile')return false;\n  const data=Array.isArray(raw)&&raw.length===1?raw[0]:raw||{},summary=data.summary||{},sports=data.sports||{},stadium=data.stadium||{};\n  const merged={stats:data.stats||{},series_stats:data.series_stats||{},remaining:data.remaining||{},activity:Array.isArray(data.activity)?data.activity:[],dashboard:[],favorite_actors:Array.isArray(summary.actors)?summary.actors:[],sports_stats:sports};\n  profileCache=merged;\n  if(typeof ct168PaintProfile!=='function')throw new Error('PROFILE_PAINTER_UNAVAILABLE');\n  ct168PaintProfile(merged,'');\n  ct491PatchProfileLists(summary);\n  ct491PatchSports(sports,stadium);\n  try{if(typeof ct169RenderActivity==='function')ct169RenderActivity(merged.activity)}catch{}\n  const root=$('[data-profile]');if(root){root.dataset.ct491Profile='ready';root.dataset.ct491Lists='12-exact'}\n  return true;\n }catch(e){\n  if(seq!==navSeq||route()!=='profile')return false;\n  const root=$('[data-profile]');if(root)root.innerHTML=fail('Falha ao carregar Perfil: '+(e?.message||e),'profile');\n  return false;\n }\n}\n/* CT_R491_CORE_END */\n"+'\n'+js.slice(at);
+js=once(js,"if(r==='home')return renderHome(seq);","if(r==='home')return renderHome491(seq);",'core Home dispatch');
+js=once(js,"if(r==='profile')return renderProfile(seq);","if(r==='profile')return renderProfile491(seq);",'core Profile dispatch');
+if(!js.includes('function ct168PaintProfile'))throw new Error('r491 missing ct168 profile painter');
+js=js.replace(/const REVISION='[^']+';/,"const REVISION='r491-official-0.3.18';");
+js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.18 • ${REVISION}');
+js=js.replace("navigator.serviceWorker.register('/service-worker.js')","navigator.serviceWorker.register('/service-worker.js',{updateViaCache:'none'})");
+new Function(runtime);js+='\n'+runtime+'\n';
+html=html.replaceAll('app-v489.js','app-v491.js').replaceAll('app-v489.css','app-v491.css').replaceAll('v0.3.16','v0.3.18').replaceAll('r489-official-0.3.16','r491-official-0.3.18');
+css+='\n/* CineTracker Web 0.3.18 r491 — real render-boundary authority. */\n';
+const sw=String.raw`const CT_MEDIA_CACHE='ct-media-r491';
+self.addEventListener('install',event=>{self.skipWaiting()});
+self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k!==CT_MEDIA_CACHE).map(k=>caches.delete(k)));await self.clients.claim()})())});
+self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;let url;try{url=new URL(req.url)}catch{return}if(!/image\.tmdb\.org$/.test(url.hostname))return;event.respondWith((async()=>{const cache=await caches.open(CT_MEDIA_CACHE),hit=await cache.match(req);const net=fetch(req).then(r=>{if(r&&r.ok)cache.put(req,r.clone());return r}).catch(()=>null);return hit||await net||Response.error()})())});
+`;
+const release=JSON.parse(releaseRaw);Object.assign(release,{
+ version:'0.3.18',revision:'r491-official-0.3.18',base:'r489+r491-render-boundary',
+ scope:'core-home-dispatch+compact-foryou+atomic-profile-screen+top10-2x3+legacy-writer-retirement',
+ home_series:'core render dispatch shows an immediate Continue skeleton then hands Home directly to r388/v452; delayed legacy Home writers are retired',
+ home_movies:'r388/v405 native ct489 cards remain authoritative with strict 2:3 geometry',
+ discover_foryou:'r464 reads one compact cinetracker_foryou_payload_v490 payload and legacy recommendation writers are retired; r472 only performs one requestAnimationFrame activation on entry',
+ profile:'core render dispatch reads one cinetracker_profile_screen_v491 payload, paints once, then synchronously replaces all five summaries with exactly 12 cards and complete totals',
+ profile_verified:'249 series, 962 movies, 17 series favorites, 45 movie favorites, 21 actors; 172 watched sports events; 1 stadium event',
+ top10:'r321 card images are forced to real 2:3 with object-fit cover',
+ service_worker:'app shell and JS/CSS are network-owned; only TMDB images are cached',
+ f1:'preserved',sports:'sports route preserved',history:'v426 daily open/undo preserved',android:'unchanged-1.0.20/10062'
+});
+await Promise.all([
+ writeFile(resolve(dist,'app-v491.js'),js),writeFile(resolve(dist,'app-v491.css'),css),writeFile(resolve(dist,'index.html'),html),
+ writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))
+]);
+await Promise.all([rm(resolve(dist,'app-v489.js'),{force:true}),rm(resolve(dist,'app-v489.css'),{force:true})]);
+for(const need of ["window.__ctR491Marker='core-render-boundary+home-r388+foryou-v490+profile-screen-v491+top10-2x3'",'renderHome491(seq)','renderProfile491(seq)','cinetracker_profile_screen_v491','cinetracker_foryou_payload_v490','ct491-profile-grid','r491-official-0.3.18'])if(!js.includes(need))throw new Error('r491 missing '+need);
+console.log('WEB_R491_READY render-boundary authority');

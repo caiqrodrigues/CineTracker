@@ -1,3 +1,4 @@
+- Web: **0.3.18 / r491-official-0.3.18** — render principal é a autoridade para Home e Perfil; Pra Você em payload compacto; 12 cards exatos; Top 10/Filmes 2:3; regressão Chromium obrigatória.
 - Web: **0.3.17 / r490-official-0.3.17** — segundo vídeo real: writers legados retirados, Home com único owner, Pra Você compacto, Perfil em paint único e Service Worker sem cache do shell.
 - Web: **0.3.16 / r489-official-0.3.16** — correção baseada no vídeo: Home com owner único e Continue antes do Histórico, Filmes com cards 2:3 nativos, Pra Você em uma RPC v489, Perfil com summary de 12 cards e Esportes sem flicker.
 - Web: **0.3.15 / r488-official-0.3.15** — neutraliza camadas concorrentes r485/r486/r487, usa Home v452 single-flight com skeleton no primeiro frame, Watchlist Filmes e Top 10 2:3, Pra Você v485→v421→TMDB filtrado e Perfil estritamente em 12 cards.
