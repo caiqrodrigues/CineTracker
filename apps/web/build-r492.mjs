@@ -30,7 +30,7 @@ function disableRuntime(n){
  const start=rootIifeStart(js,at),close=js.indexOf('\n})();',at);
  if(start<0||close<0)throw new Error('r492 invalid legacy runtime r'+n);
  if(js.startsWith('(()=>{return;',start))return true;
- js=js.slice(0,start)+'(()=>{return;'+js.slice(start+5);
+ js=js.slice(0,start)+'(()=>{return;'+js.slice(start+6);
  return true;
 }
 const retired=[380,381,382,383,384,385,386,389,390,391,392,393,394,395,396,397,398,400,401,402,403,404,405,406,407,408,410,411,412,414,427,429,430,431,432,434,445,449,456,457,458,459,460,461,467,468,469,470,481,482,484,488,489];
