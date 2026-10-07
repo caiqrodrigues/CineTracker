@@ -1,3 +1,18 @@
+## 0.3.21 — r494 (2026-10-07)
+
+### Correção estrutural do boot e remoção do fallback antigo
+- Removidos do HTML final os preboots históricos r461 e r479. O fallback dourado `CINETRACKER / HOME / Sua biblioteca / Carregando Home…` não existe mais no artefato de produção.
+- A restauração de sessão passa a ser local-first: uma sessão local válida libera o primeiro paint imediatamente; validação remota de `/auth/v1/user` acontece em segundo plano com limite de 2,5 s.
+- RPCs recebem recuperação única de 401 por refresh token e limite geral de rede, evitando travamento indefinido sem full-page reload.
+- IIFEs históricos já neutralizados nas releases anteriores são removidos fisicamente do JS final em vez de permanecerem como código morto `return;`.
+- O gate Chromium carrega o **index e bundle finais reais**, simula a validação de autenticação travada e exige que Home atual apareça mesmo assim, sem UI dourada.
+- O mesmo gate navega Home Séries → Filmes → Perfil e exige Watchlist 2:3 e exatamente 12 cards nas cinco listas do Perfil.
+- r493 continua responsável por Home progressiva, Perfil dividido em RPCs rápidas, Pra Você com snapshot e Top 10 progressivo; nenhuma dessas funcionalidades foi removida.
+
+### Preservado
+- F1, Esportes, histórico diário/Desmarcar e Android 1.0.20 / versionCode 10062 permanecem inalterados.
+- Nenhum `window.location.reload()`, `router.refresh()`, `while(true)` ou `setInterval` foi introduzido no runtime r494.
+
 ## 0.3.20 — r493 (2026-10-07)
 
 ### Estabilidade real medida pelo vídeo

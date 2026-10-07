@@ -1,3 +1,4 @@
+- Web: **0.3.21 / r494-official-0.3.21** — remove preboots dourados r461/r479, usa sessão local-first e elimina código morto de runtimes aposentados do bundle final; r493 funcional permanece preservado.
 - Web: **0.3.20 / r493-official-0.3.20** — Home progressiva sem owner de scroll/timer, Filmes v405 imediato/2:3, Perfil dividido em RPCs rápidas sem screen_v491, Top 10 página 1 primeiro e Pra Você com snapshot + fallback delimitado.
 - Web: **0.3.19 / r492-official-0.3.19** — remove tempestade de owners antigos; Home Séries compacta/progressiva, Filmes paginados sob demanda, Pra Você owner único e Perfil owner único com 12 cards.
 
