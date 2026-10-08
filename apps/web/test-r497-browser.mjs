@@ -70,9 +70,9 @@ const probe=`
  }catch(e){stage('fail:'+String(e?.stack||e)+' calls='+JSON.stringify(window.__ct497Calls||[]))}
 })();
 `;
-const scriptRe=/<script\\b[^>]*\\bsrc=["'][^"']*app-v497\\.js[^"']*["'][^>]*><\\/script>/i,liveScript=baseHtml.match(scriptRe)?.[0]||'';
-if(!liveScript)throw new Error('r497 browser fixture app script missing');
-const injected=baseHtml.replace(scriptRe,'<script src="/test-prelude.js"></script>'+liveScript+'<script defer src="/test-probe.js"></script>');
+const liveScript='<script defer src="/app-v497.js?ct=r497-official-0.3.24"></script>';
+if(!baseHtml.includes(liveScript))throw new Error('r497 browser fixture app script missing');
+const injected=baseHtml.replace(liveScript,'<script src="/test-prelude.js"></script>'+liveScript+'<script defer src="/test-probe.js"></script>');
 let lastStage='none';
 const server=createServer(async(req,res)=>{
  const u=new URL(req.url,'http://127.0.0.1'),path=u.pathname;
