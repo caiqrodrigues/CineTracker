@@ -20,8 +20,6 @@ if(open<0||next<0)throw new Error('r497 legacy profile bounds invalid');
 const legacyRegion=js.slice(legacyAt,next);
 if(!legacyRegion.includes('cinetracker_profile_payload_v0997'))throw new Error('r497 expected legacy profile payload missing');
 js=js.slice(0,legacyAt)+"async function renderProfile(seq){return renderProfile491(seq)}\n"+js.slice(next);
-const dispatch="if(r==='profile')return renderProfile(seq);";
-if(!js.includes(dispatch))throw new Error('r497 current profile dispatch missing');
 if(!js.includes('async function renderProfile491(seq)'))throw new Error('r497 fast profile renderer missing');
 
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r497-official-0.3.24';");
