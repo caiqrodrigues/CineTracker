@@ -23,15 +23,59 @@ css+='\n/* CineTracker Web 0.3.24 r497 — exact green r495 runtime, clean relea
 '.ct497-boot{min-height:100vh;display:flex;align-items:center;justify-content:center;gap:12px;background:#041017;color:#d8edf8;font:14px/1.35 Inter,system-ui,sans-serif}.ct497-boot-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;border:1px solid rgba(88,175,224,.42);background:rgba(88,175,224,.12);color:#7bc7f2;font-weight:800;animation:ct497Pulse 1.1s ease-in-out infinite}.ct497-boot b,.ct497-boot small{display:block}.ct497-boot small{margin-top:2px;color:#8ca9b8}@keyframes ct497Pulse{0%,100%{opacity:.55}50%{opacity:1}}\n'+
 ':root{--gold:#58afe0!important}\n';
 
+
+function ct497Bounds(source,anchor,label){
+ const at=source.indexOf(anchor);if(at<0)throw new Error('r497 missing '+label+' anchor');
+ const start=source.lastIndexOf('(()=>{',at),close=source.indexOf('\n})();',at);
+ if(start<0||close<0)throw new Error('r497 invalid '+label+' bounds');
+ return{start,end:close+6};
+}
+function ct497ReplaceNamed(source,anchor,name,replacement,label){
+ const b=ct497Bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);
+ if(!m)throw new Error('r497 missing '+label+' '+name);
+ const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;
+ for(;i<region.length;i++){const c=region[i],n=region[i+1];
+  if(mode==='line'){if(c==='\n')mode='code';continue}
+  if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}
+  if(mode==='string'){if(c==='\\\\'){i++;continue}if(c===quote)mode='code';continue}
+  if(mode==='template'){if(c==='\\\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
+  if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}
+  if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}
+  if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}
+ }
+ if(depth!==0)throw new Error('r497 unbalanced '+label+' '+name);
+ return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end);
+}
+const A464="window.__ctR464Marker='discover-foryou-visible-owner-v421';";
+const oldState=`const stateSaysForYou=()=>{
+ try{const t=String(window.__ctR288R263?.discover263?.tab||'');if(t)return t==='foryou'}catch{}
+ const active=qa('[data-ct319-tab].active,[data-ct315-tab].active,[data-ct263-discover-tab].active,[data-discover-tab].active').find(Boolean);
+ return active?isForYouControl(active):false;
+};`;
+const newState=`const stateSaysForYou=()=>{
+ try{const t=String(window.__ctR288R263?.discover263?.tab||'');if(t)return t==='foryou'}catch{}
+ return qa('[data-ct319-tab].active,[data-ct315-tab].active,[data-ct263-discover-tab].active,[data-discover-tab].active').some(isForYouControl);
+};`;
+if(!js.includes(oldState))throw new Error('r497 missing r464 stateSaysForYou');
+js=js.replace(oldState,newState);
+js=ct497ReplaceNamed(js,A464,'activate',`function activate(){
+ setForYouState();
+ const controls=qa('[data-ct319-tab],[data-ct315-tab],[data-ct263-discover-tab],[data-discover-tab]');
+ controls.forEach(b=>{const on=isForYouControl(b);b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
+ if(document.documentElement.dataset.ct490ForYouReady==='1'){render();return true}
+ if(!q('[data-ct464-foryou]',root464()))renderLoading();void load(false);return true;
+}`,'r464');
+document.documentElement;
+
 sw=sw.replaceAll('ct-media-r495','ct-media-r497');
 const release=JSON.parse(releaseRaw);Object.assign(release,{
  version:'0.3.24',
  revision:'r497-official-0.3.24',
  base:'r495-green-exact-runtime',
- scope:'modern-blue-r495-functional-base+broken-release-source-removal+full-browser-gate',
+ scope:'modern-blue-r495-functional-base+foryou-active-owner-fix+broken-release-source-removal+full-browser-gate',
  boot:'clean modern boot placeholder; no legacy yellow/gold bootstrap and no r496 early global owner',
  home:'r495 progressive Home preserved byte-for-byte except release identity',
- discover:'r495 Discover/Pra Você runtime preserved',
+ discover:'r495 v490 owner preserved; active-tab ambiguity fixed at build source so render always owns the selected Pra Você tab',
  profile:'r495 fast profile contract preserved; exactly 12 cards per summary',
  removed_release_sources:['r493','r494','r496'],
  legacy_runtime_policy:'r492 retirement guards preserved exactly because aggressive physical pruning changed movie rendering',
