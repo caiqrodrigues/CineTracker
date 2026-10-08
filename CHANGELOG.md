@@ -1,3 +1,18 @@
+## 0.3.24 — r497 (2026-10-08)
+
+### Recuperação segura após a tela preta da r496
+- A r497 parte diretamente da r495, última build com Chromium e produção verdes, e **não** herda o bootstrap/owners adicionados pela r496.
+- Produção permaneceu na r495 durante a validação da r497; nenhuma build quebrada é usada como base funcional.
+- Runtimes já explicitamente aposentados pelo r492/r495 deixam de apenas executar `return`: seus blocos IIFE são removidos fisicamente do bundle final, reduzindo parse/execução sem remover funcionalidades vivas.
+- Os fontes de release quebrados e não necessários r493, r494 e r496 são removidos do repositório. r495 continua sendo a base funcional e r492 permanece por ser dependência real do build.
+- O HTML inicial recebe somente um placeholder moderno azul/escuro e o bundle atual; nenhum bootstrap dourado/amarelo, `auth-page`, `cloud-bar` ou aplicação inline antiga volta a existir.
+- Home Séries/Filmes, Pra Você e Perfil mantêm exatamente a lógica funcional r495 já validada: carregamento progressivo, Filmes 2:3, sete slots e Perfil com 12 cards.
+- O novo gate Chromium marca `prelude` antes do bundle e falha explicitamente se o JavaScript bloquear antes do primeiro paint, evitando repetir o falso “READY” da r496.
+
+### Preservado
+- F1, Esportes, Top 10, histórico diário/Desmarcar e Android 1.0.20 / versionCode 10062 permanecem intactos.
+- Sem full-page reload, `router.refresh()` ou loops infinitos.
+
 ## 0.3.23 — r496 (2026-10-08)
 
 ### Fluidez e regressões do vídeo corrigidas
