@@ -37,6 +37,18 @@ js=js.slice(0,legacyProfileBounds.start)+"async function renderProfile(seq){retu
 if(!js.includes('async function renderProfile491(seq)'))throw new Error('r497 fast profile renderer missing');
 if(!js.includes('async function sportsPayload(force=false)'))throw new Error('r497 Sports authority was removed while replacing Profile');
 
+const ct497NavAuthority=String.raw`
+window.addEventListener('click',function ct497SingleNavOwner(e){
+ const nav=e.target?.closest?.('[data-nav]');
+ if(!nav)return;
+ const key=String(nav.dataset.nav||''),path=key==='home'?'/home':key==='discover'?'/discover':key==='sports'?'/sports':key==='profile'?'/profile':key==='configs'?'/configs':'';
+ if(!path)return;
+ e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
+ try{window.__ctCoreR471?.navigate?.(path,false)}catch{}
+},true);
+`;
+js=ct497NavAuthority+"\n"+js;
+
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r497-official-0.3.24';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.24 • ${REVISION}');
 js+='\nwindow.__ctR497Marker="stable-r495-exact-runtime+broken-release-sources-removed+modern-blue+full-browser-gate";\n';
