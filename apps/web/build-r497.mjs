@@ -13,20 +13,22 @@ let [html,js,css,sw,releaseRaw]=await Promise.all([
 ]);
 
 function ct497GlobalFunctionBounds(source,name){
- const m=new RegExp('(?:async\\\\s+)?function\\\\s+'+name+'\\\\s*\\\\(').exec(source);
- if(!m)throw new Error('r497 global function missing '+name);
- const open=source.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;
+ const asyncSig='async function '+name+'(',syncSig='function '+name+'(';
+ let start=source.indexOf(asyncSig),sig=asyncSig;
+ if(start<0){start=source.indexOf(syncSig);sig=syncSig}
+ if(start<0)throw new Error('r497 global function missing '+name);
+ const open=source.indexOf('{',start+sig.length);let depth=0,mode='code',quote='',i=open;
  for(;i<source.length;i++){const c=source[i],n=source[i+1];
-  if(mode==='line'){if(c==='\\n')mode='code';continue}
+  if(mode==='line'){if(c==='\n')mode='code';continue}
   if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}
-  if(mode==='string'){if(c==='\\\\'){i++;continue}if(c===quote)mode='code';continue}
-  if(mode==='template'){if(c==='\\\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
+  if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}
+  if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
   if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}
   if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}
   if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}
  }
  if(depth!==0)throw new Error('r497 global function unbalanced '+name);
- return{start:m.index,end:i};
+ return{start,end:i};
 }
 const legacyProfileBounds=ct497GlobalFunctionBounds(js,'renderProfile');
 const legacyProfileRegion=js.slice(legacyProfileBounds.start,legacyProfileBounds.end);
