@@ -37,6 +37,21 @@ js=js.slice(0,legacyProfileBounds.start)+"async function renderProfile(seq){retu
 if(!js.includes('async function renderProfile491(seq)'))throw new Error('r497 fast profile renderer missing');
 if(!js.includes('async function sportsPayload(force=false)'))throw new Error('r497 Sports authority was removed while replacing Profile');
 
+const r192FetchBounds=ct497GlobalFunctionBounds(js,'fetchProfile192');
+js=js.slice(0,r192FetchBounds.start)+"async function fetchProfile192(){return cachedProfile192()||null}"+js.slice(r192FetchBounds.end);
+const r192ScheduleBounds=ct497GlobalFunctionBounds(js,'scheduleProfileRefresh192');
+js=js.slice(0,r192ScheduleBounds.start)+"function scheduleProfileRefresh192(){clearTimeout(favoriteRefreshTimer192);favoriteRefreshTimer192=setTimeout(()=>{profileAt192=0;try{window.dispatchEvent(new CustomEvent('cinetracker:data-changed',{detail:{source:'favorite-r192'}}))}catch{};if(route192()==='profile')void Promise.resolve(renderProfile491(navSeq)).catch(()=>{})},120)}"+js.slice(r192ScheduleBounds.end);
+const r192ProfileAssign="renderProfile=async function(seq){\n    const cached=cachedProfile192();";
+const r192AssignAt=js.indexOf(r192ProfileAssign);
+if(r192AssignAt<0)throw new Error('r497 missing r192 Profile owner');
+const r192TryStart=js.lastIndexOf('try{',r192AssignAt),r192CatchEnd=js.indexOf('\n}catch{}',r192AssignAt);
+if(r192TryStart<0||r192CatchEnd<0)throw new Error('r497 invalid r192 Profile owner bounds');
+js=js.slice(0,r192TryStart)+"try{window.__ctR192ProfileOwnerRetired=true}catch{}"+js.slice(r192CatchEnd+9);
+const r192Boot="try{const bootBase192=boot;boot=async function(){const out=await bootBase192();setTimeout(()=>{if(session)void fetchProfile192(false).catch(()=>{})},80);return out}}catch{}";
+if(!js.includes(r192Boot))throw new Error('r497 missing r192 Profile boot prefetch');
+js=js.replace(r192Boot,"try{window.__ctR192ProfileBootRetired=true}catch{}");
+if(js.includes("rpc('cinetracker_profile_payload_v0997'")&&js.includes('async function fetchProfile192'))throw new Error('r497 r192 v0997 fetch survived');
+
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r497-official-0.3.24';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.24 • ${REVISION}');
 js+='\nwindow.__ctR497Marker="stable-r495-exact-runtime+broken-release-sources-removed+modern-blue+full-browser-gate";\n';
