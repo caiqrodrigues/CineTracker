@@ -38,6 +38,28 @@ function replaceNamed(source,anchor,name,replacement,label){const b=bounds(sourc
 function disableRuntime(source,anchor,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),needle="'use strict';",at=region.indexOf(needle);if(at<0)throw new Error('r495 missing strict '+label);const cut=at+needle.length;return source.slice(0,b.start)+region.slice(0,cut)+'\nreturn;\n'+region.slice(cut)+source.slice(b.end)}
 const patch=(anchor,label,defs)=>{for(const [name,body] of defs)js=replaceNamed(js,anchor,name,body,label)};
 
+/* r379 was a complete Home/Profile owner. Its responsibilities are superseded by r388/r464/r491 and keeping it alive can rebuild stale UI. */
+js=disableRuntime(js,"window.__ctR379Marker='home-stable-no-late-recompose+visible-meta-fast+fresh-v322-strict+profile-fast-cache';",'r379-retired-r495');
+
+/* r476 keeps only the full-list modal/header More. Its autonomous Home/Profile painters are retired. */
+patch("if(window.__ctR476?.version==='1.0.266')return;",'r476-autonomous-retired',[
+ ['primeHome',"function primeHome(){return false}"],
+ ['paintProfile',"function paintProfile(){return false}"],
+ ['loadProfile',"async function loadProfile(){return profile}"],
+ ['scheduleProfile',"function scheduleProfile(){return false}"]
+]);
+
+/* r477 keeps F1 watched actions. Home boot and Profile settle/repaint are retired. */
+patch("if(window.__ctR477?.version==='1.0.267')return;",'r477-autonomous-retired',[
+ ['bootHome',"function bootHome(){return false}"],
+ ['settleProfile',"function settleProfile(){return false}"]
+]);
+
+/* r481 contributes styling only. Its timer-based Home primer is retired. */
+patch("if(window.__ctR481?.version==='0.3.8')return;",'r481-primer-retired',[
+ ['prime',"function prime(){return false}"]
+]);
+
 /* Retire historical Home ownership while preserving unique search/discover helpers. */
 patch("window.__ctR335Marker='home-single-anchor-tab-lock+discover-no-top-filters+foryou-final-r329';",'r335-home-retired',[
  ['normalizeHistory335',"function normalizeHistory335(){return false}"],
