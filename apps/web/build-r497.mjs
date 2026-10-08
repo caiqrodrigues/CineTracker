@@ -99,8 +99,24 @@ if(!js.includes('cinetracker_sports_payload_v479'))throw new Error('r497 current
 const r379ProfileOwner='try{renderProfile=renderProfile379}catch{}';
 if(js.includes(r379ProfileOwner))js=js.replace(r379ProfileOwner,"try{window.__ctR379ProfileRetired=true}catch{}");
 
+const primaryNavAnchor="let searchTimer=0;";
+if(!js.includes(primaryNavAnchor))throw new Error('r497 primary navigation insertion anchor missing');
+const primaryNav497=`
+function ct497PrimaryNavigate(kind){
+ const k=String(kind||'home'),dest=pathFor(k);
+ if(location.pathname!==dest)history.pushState({},'',dest);
+ const seq=++navSeq;
+ if(k==='home'){document.documentElement.dataset.ct495HomeKind='series';return void Promise.resolve(window.__ctR388?.renderHome?.()).catch(()=>{})}
+ if(k==='discover')return void Promise.resolve(window.__ctR321?.renderDiscover?.(seq)).catch(()=>{})
+ if(k==='profile')return void Promise.resolve(renderProfile491(seq)).catch(()=>{})
+ if(k==='sports')return void Promise.resolve(renderSports(seq)).catch(()=>{})
+ if(k==='configs')return void Promise.resolve(renderConfigs(seq)).catch(()=>{})
+ return void render();
+}
+`;
+js=js.replace(primaryNavAnchor,primaryNav497+"\n"+primaryNavAnchor);
 const navLegacy="const nav=e.target.closest('[data-nav]');if(nav){e.preventDefault();go(pathFor(nav.dataset.nav));return}";
-const navSingle="const nav=e.target.closest('[data-nav]');if(nav){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();go(pathFor(nav.dataset.nav));return}";
+const navSingle="const nav=e.target.closest('[data-nav]');if(nav){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();ct497PrimaryNavigate(nav.dataset.nav);return}";
 if(!js.includes(navLegacy))throw new Error('r497 base navigation owner missing');
 js=js.replace(navLegacy,navSingle);
 
