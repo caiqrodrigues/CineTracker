@@ -28,9 +28,15 @@ const earlyForYouAuthority=String.raw`
 (()=>{'use strict';
  const norm=v=>String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
  const isFY=el=>{const b=el?.closest?.('[data-ct319-tab],[data-ct315-tab],[data-ct263-discover-tab],[data-discover-tab],button');if(!b)return false;return [b.dataset?.ct319Tab,b.dataset?.ct315Tab,b.dataset?.ct263DiscoverTab,b.dataset?.discoverTab,b.getAttribute?.('data-tab'),b.textContent].some(v=>{const x=norm(v);return x==='foryou'||x==='pra voce'||x==='para voce'})};
- const own=e=>{if(String(window.__ctCoreR471?.route?.()||'')!=='discover'||!isFY(e.target))return false;e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();try{if(window.__ctR288R263?.discover263)window.__ctR288R263.discover263.tab='foryou'}catch{};const run=()=>{try{window.__ctR464?.activate?.()}catch{}};queueMicrotask(run);return true};
- window.addEventListener('pointerdown',e=>{if(String(window.__ctCoreR471?.route?.()||'')==='discover'&&isFY(e.target)){e.stopImmediatePropagation();e.stopPropagation()}},true);
- window.addEventListener('touchstart',e=>{if(String(window.__ctCoreR471?.route?.()||'')==='discover'&&isFY(e.target)){e.stopImmediatePropagation();e.stopPropagation()}},{capture:true,passive:true});
+ const pathForNav=k=>k==='home'?'/home':k==='discover'?'/discover':k==='sports'?'/sports':k==='profile'?'/profile':'/configs';
+ const own=e=>{
+  const nav=e.target?.closest?.('[data-nav]');
+  if(nav){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();try{window.__ctCoreR471?.navigate?.(pathForNav(String(nav.dataset.nav||'')),false)}catch{}return true}
+  if(String(window.__ctCoreR471?.route?.()||'')!=='discover'||!isFY(e.target))return false;
+  e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();try{if(window.__ctR288R263?.discover263)window.__ctR288R263.discover263.tab='foryou'}catch{};const run=()=>{try{window.__ctR464?.activate?.()}catch{}};queueMicrotask(run);return true
+ };
+ window.addEventListener('pointerdown',e=>{if(e.target?.closest?.('[data-nav]')){e.stopImmediatePropagation();e.stopPropagation();return}if(String(window.__ctCoreR471?.route?.()||'')==='discover'&&isFY(e.target)){e.stopImmediatePropagation();e.stopPropagation()}},true);
+ window.addEventListener('touchstart',e=>{if(e.target?.closest?.('[data-nav]')){e.stopImmediatePropagation();e.stopPropagation();return}if(String(window.__ctCoreR471?.route?.()||'')==='discover'&&isFY(e.target)){e.stopImmediatePropagation();e.stopPropagation()}},{capture:true,passive:true});
  window.addEventListener('click',own,true);
  window.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&own(e)){}},true);
  window.__ctR496ForYouEarly=true;
@@ -69,5 +75,5 @@ const release=JSON.parse(releaseRaw);Object.assign(release,{
 });
 await Promise.all([writeFile(resolve(dist,'app-v496.js'),js),writeFile(resolve(dist,'app-v496.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
 await Promise.all([rm(resolve(dist,'app-v495.js'),{force:true}),rm(resolve(dist,'app-v495.css'),{force:true})]);
-for(const need of ["window.__ctR496Marker='fluid-home-native-movies+profile-split-no-monolith+foryou-snapshot+modern-blue-only'",'window.__ctR496ForYouEarly=true','ct496-movie-card','cinetracker_profile_summary_v489','cinetracker_profile_quick_stats_v1','ct496:foryou',"async function discoverRows(tab){if(tab==='foryou')return []",'r496-official-0.3.23'])if(!js.includes(need))throw new Error('r496 missing '+need);
+for(const need of ["window.__ctR496Marker='fluid-home-native-movies+profile-split-no-monolith+foryou-snapshot+modern-blue-only'",'window.__ctR496ForYouEarly=true','pathForNav','ct496-movie-card','cinetracker_profile_summary_v489','cinetracker_profile_quick_stats_v1','ct496:foryou',"async function discoverRows(tab){if(tab==='foryou')return []",'r496-official-0.3.23'])if(!js.includes(need))throw new Error('r496 missing '+need);
 console.log('WEB_R496_READY fluid-final');
