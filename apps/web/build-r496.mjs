@@ -80,6 +80,19 @@ js=replaceGlobalNamedOptional(js,'fullProfile193',"async function fullProfile193
    database work while Home/Profile is active. */
 js=js.replace("idle193(()=>{if(session)void knownMedia193(false)}, {timeout:2600});","idle193(()=>{if(session&&route193()==='discover')void knownMedia193(false)}, {timeout:2600});");
 
+/* The modern Profile already carries canonical counts/state. Legacy visual decorators may still
+   run, but they must not start their own database synchronization while Profile is mounted. */
+const A228="window.__ctR228V122='discover-metadata-series-settle-sports-source-counts-exact';";
+if(js.includes(A228))js=replaceNamed(js,A228,'sync',"function sync(){clearTimeout(timer);timer=setTimeout(()=>{discover();sports();statsToggle()},30)}",'r228 profile-count auto sync');
+const A228D="window.__ctR228dV122='exact-watchlist-counter-final-pass';";
+if(js.includes(A228D)){
+ js=replaceNamed(js,A228D,'sync',"async function sync(){return null}",'r228d exact-count auto sync');
+ js=replaceNamed(js,A228D,'queue',"function queue(){return null}",'r228d exact-count queue');
+}
+if(js.includes("async function ct171LoadSeen(force=false){")){
+ js=js.replace("async function ct171LoadSeen(force=false){","async function ct171LoadSeen(force=false){if(route()==='profile')return ct171SeenMap||new Map();");
+}
+
 for(const probe of ['cinetracker_profile_payload_v0997','cinetracker_profile_media_dashboard_v0991','cinetracker_known_media_v1','cinetracker_watchlist_full_v119']){
  let p=0,n=0;
  while(n<12){const i=js.indexOf(probe,p);if(i<0)break;console.log('R496_PROFILE_CTX '+probe+' #'+(++n)+' @'+i+' :: '+js.slice(Math.max(0,i-900),Math.min(js.length,i+1300)).replace(/\s+/g,' '));p=i+probe.length}
