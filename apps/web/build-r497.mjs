@@ -12,6 +12,18 @@ let [html,js,css,sw,releaseRaw]=await Promise.all([
  readFile(resolve(dist,'release.json'),'utf8')
 ]);
 
+const legacyProfile="async function renderProfile(seq){";
+const legacyAt=js.indexOf(legacyProfile);
+if(legacyAt<0)throw new Error('r497 legacy profile renderer not found');
+const open=js.indexOf('{',legacyAt),next=js.indexOf("async function renderConfigs",open);
+if(open<0||next<0)throw new Error('r497 legacy profile bounds invalid');
+const legacyRegion=js.slice(legacyAt,next);
+if(!legacyRegion.includes('cinetracker_profile_payload_v0997'))throw new Error('r497 expected legacy profile payload missing');
+js=js.slice(0,legacyAt)+"async function renderProfile(seq){return renderProfile491(seq)}\n"+js.slice(next);
+const dispatch="if(r==='profile')return renderProfile(seq);";
+if(!js.includes(dispatch))throw new Error('r497 current profile dispatch missing');
+if(!js.includes('async function renderProfile491(seq)'))throw new Error('r497 fast profile renderer missing');
+
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r497-official-0.3.24';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.24 • ${REVISION}');
 js+='\nwindow.__ctR497Marker="stable-r495-exact-runtime+broken-release-sources-removed+modern-blue+full-browser-gate";\n';
