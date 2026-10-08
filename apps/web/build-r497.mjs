@@ -12,15 +12,28 @@ let [html,js,css,sw,releaseRaw]=await Promise.all([
  readFile(resolve(dist,'release.json'),'utf8')
 ]);
 
-const legacyProfile="async function renderProfile(seq){";
-const legacyAt=js.indexOf(legacyProfile);
-if(legacyAt<0)throw new Error('r497 legacy profile renderer not found');
-const open=js.indexOf('{',legacyAt),next=js.indexOf("async function renderConfigs",open);
-if(open<0||next<0)throw new Error('r497 legacy profile bounds invalid');
-const legacyRegion=js.slice(legacyAt,next);
-if(!legacyRegion.includes('cinetracker_profile_payload_v0997'))throw new Error('r497 expected legacy profile payload missing');
-js=js.slice(0,legacyAt)+"async function renderProfile(seq){return renderProfile491(seq)}\n"+js.slice(next);
+function ct497GlobalFunctionBounds(source,name){
+ const m=new RegExp('(?:async\\\\s+)?function\\\\s+'+name+'\\\\s*\\\\(').exec(source);
+ if(!m)throw new Error('r497 global function missing '+name);
+ const open=source.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;
+ for(;i<source.length;i++){const c=source[i],n=source[i+1];
+  if(mode==='line'){if(c==='\\n')mode='code';continue}
+  if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}
+  if(mode==='string'){if(c==='\\\\'){i++;continue}if(c===quote)mode='code';continue}
+  if(mode==='template'){if(c==='\\\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
+  if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}
+  if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}
+  if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}
+ }
+ if(depth!==0)throw new Error('r497 global function unbalanced '+name);
+ return{start:m.index,end:i};
+}
+const legacyProfileBounds=ct497GlobalFunctionBounds(js,'renderProfile');
+const legacyProfileRegion=js.slice(legacyProfileBounds.start,legacyProfileBounds.end);
+if(!legacyProfileRegion.includes('cinetracker_profile_payload_v0997'))throw new Error('r497 expected legacy profile payload missing');
+js=js.slice(0,legacyProfileBounds.start)+"async function renderProfile(seq){return renderProfile491(seq)}"+js.slice(legacyProfileBounds.end);
 if(!js.includes('async function renderProfile491(seq)'))throw new Error('r497 fast profile renderer missing');
+if(!js.includes('async function sportsPayload(force=false)'))throw new Error('r497 Sports authority was removed while replacing Profile');
 
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r497-official-0.3.24';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.24 • ${REVISION}');
