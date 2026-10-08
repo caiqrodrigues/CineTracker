@@ -1,5 +1,6 @@
-import {readFile} from 'node:fs/promises';
-import {resolve} from 'node:path';
+import {readFile,mkdtemp,rm} from 'node:fs/promises';
+import {resolve,join} from 'node:path';
+import {tmpdir} from 'node:os';
 import {createServer} from 'node:http';
 import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r497.mjs');
@@ -99,13 +100,20 @@ const server=createServer(async(req,res)=>{
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
 let bin='';for(const x of ['google-chrome-stable','google-chrome','chromium','chromium-browser'])try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}
 if(!bin)throw new Error('Chromium unavailable');
-const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','http://127.0.0.1:'+port+'/home'],{stdio:['ignore','pipe','pipe']});
-let err='';child.stderr.on('data',d=>err+=d);
-const bootDeadline=Date.now()+20000;while(Date.now()<bootDeadline&&lastStage==='none')await new Promise(r=>setTimeout(r,50));
-if(lastStage==='none'){try{child.kill('SIGTERM')}catch{};await new Promise(r=>server.close(r));throw new Error('R497_BROWSER chromium did not reach prelude STDERR='+err.slice(-2000))}
+let err='',child=null;
+for(let attempt=1;attempt<=2&&lastStage==='none';attempt++){
+ const profile=await mkdtemp(join(tmpdir(),'ct497-chrome-'));
+ err='';
+ child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--no-first-run','--no-default-browser-check','--user-data-dir='+profile,'http://127.0.0.1:'+port+'/home'],{stdio:['ignore','pipe','pipe']});
+ child.stderr.on('data',d=>err+=d);
+ const bootDeadline=Date.now()+12000;while(Date.now()<bootDeadline&&lastStage==='none'&&child.exitCode==null)await new Promise(r=>setTimeout(r,50));
+ if(lastStage==='none'){try{child.kill('SIGTERM')}catch{};await Promise.race([new Promise(r=>child.once('close',r)),new Promise(r=>setTimeout(r,1500))]);await rm(profile,{recursive:true,force:true});child=null;continue}
+ await rm(profile,{recursive:true,force:true}).catch(()=>{});
+}
+if(lastStage==='none'){await new Promise(r=>server.close(r));throw new Error('R497_BROWSER chromium did not reach prelude after isolated retry STDERR='+err.slice(-2000))}
 const functionalDeadline=Date.now()+15000;while(Date.now()<functionalDeadline&&!/^ok$|^fail:/.test(lastStage))await new Promise(r=>setTimeout(r,50));
-try{child.kill('SIGTERM')}catch{}
-await Promise.race([new Promise(r=>child.on('close',r)),new Promise(r=>setTimeout(r,2000))]);
+try{child?.kill('SIGTERM')}catch{}
+if(child)await Promise.race([new Promise(r=>child.once('close',r)),new Promise(r=>setTimeout(r,2000))]);
 await new Promise(r=>server.close(r));
 if(lastStage!=='ok')throw new Error('R497_BROWSER stage='+lastStage+' STDERR='+err.slice(-2000));
 console.log('R497_FULL_BROWSER_OK');
