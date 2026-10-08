@@ -7,8 +7,21 @@ let [html,js,css,releaseRaw,runtime]=await Promise.all([
  readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v492.js'),'utf8'),readFile(resolve(dist,'app-v492.css'),'utf8'),
  readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r495-final-authority.js'),'utf8')
 ]);
-/* Boot-order guard: some preserved runtimes inspect r388 before its IIFE is evaluated. An empty namespace avoids a fatal property read; r388 later replaces it with the real owner. */
-js="window.__ctR388=window.__ctR388||{};\n"+js;
+/* Boot-order guard + first click authority. This code executes before every historical runtime listener. */
+const earlyHomeAuthority=String.raw`
+window.__ctR388=window.__ctR388||{};
+document.addEventListener('click',function ct495EarlyHomeTab(e){
+ const tab=e.target?.closest?.('[data-home-tab]');if(!tab||!document.querySelector('[data-home]'))return;
+ e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
+ const wanted=String(tab.dataset.homeTab||'series')==='movies'?'movies':'series',root=document.querySelector('[data-home]');
+ root.querySelectorAll('[data-home-tab]').forEach(b=>{const on=String(b.dataset.homeTab||'series')===wanted;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
+ root.querySelectorAll('[data-home-view]').forEach(v=>{const on=String(v.dataset.homeView||'')===wanted;v.hidden=!on;v.classList.toggle('hidden',!on);v.setAttribute('aria-hidden',on?'false':'true')});
+ document.documentElement.dataset.ct495HomeKind=wanted;
+ try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{window.scrollTo?.(0,0)}
+ queueMicrotask(()=>{try{if(wanted==='movies')void window.__ctR388?.loadMovies?.(false);else void window.__ctR388?.loadSeries?.(false)}catch{}});
+},true);
+`;
+js=earlyHomeAuthority+"\n"+js;
 function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)throw new Error('r495 missing '+label+' anchor');const start=source.lastIndexOf('(()=>{',at),close=source.indexOf('\n})();',at);if(start<0||close<0)throw new Error('r495 invalid '+label+' bounds');return{start,end:close+6}}
 function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r495 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r495 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
 function disableRuntime(source,anchor,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),needle="'use strict';",at=region.indexOf(needle);if(at<0)throw new Error('r495 missing strict '+label);const cut=at+needle.length;return source.slice(0,b.start)+region.slice(0,cut)+'\nreturn;\n'+region.slice(cut)+source.slice(b.end)}
