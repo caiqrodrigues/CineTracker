@@ -50,7 +50,8 @@ js=js.slice(0,r192TryStart)+"try{window.__ctR192ProfileOwnerRetired=true}catch{}
 const r192Boot="try{const bootBase192=boot;boot=async function(){const out=await bootBase192();setTimeout(()=>{if(session)void fetchProfile192(false).catch(()=>{})},80);return out}}catch{}";
 if(!js.includes(r192Boot))throw new Error('r497 missing r192 Profile boot prefetch');
 js=js.replace(r192Boot,"try{window.__ctR192ProfileBootRetired=true}catch{}");
-if(js.includes("rpc('cinetracker_profile_payload_v0997'")&&js.includes('async function fetchProfile192'))throw new Error('r497 r192 v0997 fetch survived');
+const r192CheckBounds=ct497GlobalFunctionBounds(js,'fetchProfile192');
+if(js.slice(r192CheckBounds.start,r192CheckBounds.end).includes('cinetracker_profile_payload_v0997'))throw new Error('r497 r192 v0997 fetch survived');
 
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r497-official-0.3.24';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.24 • ${REVISION}');
