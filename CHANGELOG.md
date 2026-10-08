@@ -1,3 +1,12 @@
+## 0.3.25 — r498 (2026-10-08)
+
+### Escopo estrito: Home + Descobrir/Pra Você + Top 10
+- Home Séries mantém IDs especiais/negativos: Fórmula 1 deixa de ser descartada e o bucket v492 é respeitado; o falso “Carregar mais · 4 de 5” deixa de aparecer.
+- Home Filmes mantém paginação v405 e recebe somente a geometria estática do card nativo: card inteiro 2:3, pôster cover, texto em overlay e ação Visto no card.
+- Pra Você usa cinetracker_foryou_payload_v498. O caso real A Odisseia / The Odyssey foi validado e deixa de entrar em 100% Novos quando já existe como visto sob outro TMDB ID.
+- Top 10 busca páginas 1 e 2 em paralelo, filtra e pinta uma única vez; logos de streaming ficam contidos.
+- Perfil, F1 writers, Esportes, histórico diário, Configurações e Android não foram alterados.
+
 ## 0.3.24 — r497 (2026-10-08)
 
 ### Recuperação segura após a tela preta da r496

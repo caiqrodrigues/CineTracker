@@ -1,0 +1,12 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';await import('./build-r498.mjs');
+const [js,css,html,releaseRaw,rootPkgRaw,webPkgRaw]=await Promise.all([readFile(resolve('dist/app-v498.js'),'utf8'),readFile(resolve('dist/app-v498.css'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('r498 '+m)},release=JSON.parse(releaseRaw),rootPkg=JSON.parse(rootPkgRaw),webPkg=JSON.parse(webPkgRaw);
+ok(rootPkg.version==='0.3.25'&&webPkg.version==='0.3.25','version');ok(release.version==='0.3.25'&&release.revision==='r498-official-0.3.25','release');
+ok(html.includes('app-v498.js?ct=r498-official-0.3.25')&&html.includes('app-v498.css?ct=r498-official-0.3.25'),'assets');
+ok(js.includes('window.__ctR498Marker="home-authority-id+movies-strict-2x3+foryou-alias-safe+top10-single-final-paint"'),'marker');
+ok(js.includes("id=tmdb!==0?'tmdb:'+String(tmdb)"),'negative/special id retained');ok(js.includes("if(x?.__ct391_authority&&['continue','dust','up_to_date','not_started','completed'].includes"),'authority bucket preserved');
+ok(js.includes("total>list.length&&list.length>=limit"),'false series load more blocked');ok(js.includes("cinetracker_foryou_payload_v498"),'ForYou v498');
+ok(js.includes("tmdbPage321('/discover/movie',{...common,page:1},'movie')")&&js.includes("tmdbPage321('/discover/movie',{...common,page:2},'movie')"),'Top10 pages 1+2');
+ok(!js.includes("if(shown.movies.length<10||shown.series.length<10)void (async()=>"),'Top10 partial repaint removed');
+ok(css.includes('.ct489-movie-card{position:relative!important')&&css.includes('aspect-ratio:2/3!important'),'movie card 2:3');ok(css.includes('[data-ct321-provider]>span>img')&&css.includes('object-fit:contain!important'),'provider logo constrained');
+console.log('WEB_R498_REGRESSION_OK');
