@@ -87,6 +87,11 @@ if(!js.includes('cinetracker_sports_payload_v479'))throw new Error('r497 current
 const r379ProfileOwner='try{renderProfile=renderProfile379}catch{}';
 if(js.includes(r379ProfileOwner))js=js.replace(r379ProfileOwner,"try{window.__ctR379ProfileRetired=true}catch{}");
 
+const navLegacy="const nav=e.target.closest('[data-nav]');if(nav){e.preventDefault();go(pathFor(nav.dataset.nav));return}";
+const navSingle="const nav=e.target.closest('[data-nav]');if(nav){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();go(pathFor(nav.dataset.nav));return}";
+if(!js.includes(navLegacy))throw new Error('r497 base navigation owner missing');
+js=js.replace(navLegacy,navSingle);
+
 const A464="window.__ctR464Marker='discover-foryou-visible-owner-v421';";
 const oldState=`const stateSaysForYou=()=>{
  try{const t=String(window.__ctR288R263?.discover263?.tab||'');if(t)return t==='foryou'}catch{}
