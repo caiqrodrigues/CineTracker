@@ -1,3 +1,11 @@
+## Web 0.3.25 / r498 — correção isolada de Home e Descobrir
+
+- Home Séries preserva IDs especiais e a classificação v492.
+- Home Filmes usa cards inteiros 2:3 mantendo a paginação v405.
+- Pra Você bloqueia vistos por identidade e aliases de título/original title.
+- Top 10 monta o conjunto final antes do paint e contém os logos dos streamings.
+- Perfil, F1, Esportes, histórico diário, Configurações e Android permanecem intactos.
+
 ## Web 0.3.24 / r497 — base verde + remoção física de código morto
 
 - Base funcional: r495, última release que passou o navegador completo antes do incidente r496.
