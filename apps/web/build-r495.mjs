@@ -18,7 +18,8 @@ window.addEventListener('click',function ct495EarlyHomeTab(e){
  root.querySelectorAll('[data-home-view]').forEach(v=>{const on=String(v.dataset.homeView||'')===wanted;v.hidden=!on;v.classList.toggle('hidden',!on);v.setAttribute('aria-hidden',on?'false':'true')});
  document.documentElement.dataset.ct495HomeKind=wanted;
  try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{window.scrollTo?.(0,0)}
- queueMicrotask(()=>{try{if(wanted==='movies')void window.__ctR388?.loadMovies?.(false);else void window.__ctR388?.loadSeries?.(false)}catch{}});
+ const start=()=>{try{const owner=window.__ctR388;if(wanted==='movies'){if(typeof owner?.loadMovies==='function'){void owner.loadMovies(false);return true}}else if(typeof owner?.loadSeries==='function'){void owner.loadSeries(false);return true}}catch{}return false};
+ if(!start())requestAnimationFrame(start);
 },true);
 `;
 js=earlyHomeAuthority+"\n"+js;
