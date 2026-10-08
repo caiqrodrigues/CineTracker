@@ -1,3 +1,13 @@
+## Web 0.3.24 / r497 — base verde + remoção física de código morto
+
+- Base funcional: r495, última release que passou o navegador completo antes do incidente r496.
+- A base funcional r495 é preservada sem poda estrutural arriscada. Apenas as autoridades atuais de Pra Você e Perfil recebem correções isoladas exigidas pelo gate completo.
+- r493/r494/r496 quebrados e não necessários deixam de fazer parte do caminho de release e do repositório.
+- Boot moderno azul/escuro; nenhum bootstrap amarelo/dourado.
+- Home, Filmes 2:3, Pra Você com 7 slots/Trocar e Perfil com exatamente 12 cards são obrigatórios no teste Chromium completo; RPCs legadas do Perfil são rejeitadas pelo gate.
+- Esportes é validado na autoridade v479; o writer quebrado r240 foi removido fisicamente do bundle.
+- F1, Top 10, histórico diário e Android permanecem preservados.
+
 ## Web 0.3.23 / r496 — autoridade fluida sem regressão visual
 
 - Home Séries usa snapshot + refresh delimitado; conteúdo principal não espera Histórico.

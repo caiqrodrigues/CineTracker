@@ -1,4 +1,4 @@
-name: Verify Web 0.3.23 r496
+name: Verify Web 0.3.24 r497
 on:
   push:
     branches: [main]
@@ -9,21 +9,22 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r496:
+  web_r497:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and full-bundle r496 gate
+      - name: Build and full-browser r497 gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v496.js
-          grep -Fq "window.__ctR496Marker='fluid-home-native-movies+profile-split-no-monolith+foryou-snapshot+modern-blue-only'" apps/web/dist/app-v496.js
-          ! grep -Fq "try{return ct274Row(y,{meta:ct274MovieMeta(y),action:ct274MovieWatchAction(y),attrs:ct274MovieAttrs(y)})catch" apps/web/dist/app-v496.js
+          node --check apps/web/dist/app-v497.js
+          grep -Fq 'stable-r495-exact-runtime+broken-release-sources-removed+modern-blue+full-browser-gate' apps/web/dist/app-v497.js
+          grep -Fq 'ct497-boot' apps/web/dist/index.html
+          ! grep -Fq 'app-v496.js' apps/web/dist/index.html
   android:
     runs-on: ubuntu-latest
     steps:
@@ -33,18 +34,18 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r496, android]
+    needs: [web_r497, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r496 production
+      - name: Wait for r497 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
             HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.23"' <<<"$BODY" && grep -Fq '"revision": "r496-official-0.3.23"' <<<"$BODY" && grep -Fq 'app-v496.js?ct=r496-official-0.3.23' <<<"$HTML"; then exit 0; fi
+            if grep -Fq '"version": "0.3.24"' <<<"$BODY" && grep -Fq '"revision": "r497-official-0.3.24"' <<<"$BODY" && grep -Fq 'app-v497.js?ct=r497-official-0.3.24' <<<"$HTML"; then exit 0; fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
           done

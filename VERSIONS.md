@@ -1,3 +1,4 @@
+- Web: **0.3.24 / r497-official-0.3.24** — base r495 verde preservada, fontes quebrados r493/r494/r496 removidos, bootstrap moderno azul, Pra Você com owner ativo único e Perfil exclusivamente no renderer/v495 e Esportes v479 sem o writer quebrado r240; gate Chromium completo obrigatório.
 - Web: **0.3.23 / r496-official-0.3.23** — Home cache-first com fallback v452, Filmes nativos 2:3, Perfil dividido sem RPC monolítica e Pra Você com snapshot estável; visual azul atual preservado; Chromium full-bundle validado antes da promoção.
 - Web: **0.3.21 / r494-official-0.3.21** — remove fisicamente o bootstrap inline dourado legado do entrypoint; mantém shell moderno azul e preserva as autoridades funcionais r493.
 - Web: **0.3.20 / r493-official-0.3.20** — Home progressiva sem owner de scroll/timer, Filmes v405 imediato/2:3, Perfil dividido em RPCs rápidas sem screen_v491, Top 10 página 1 primeiro e Pra Você com snapshot + fallback delimitado.
