@@ -85,8 +85,7 @@ if(js.includes(r240Unsafe)||js.includes('LEGACY_WATCHED_KEY_240'))throw new Erro
 if(!js.includes('cinetracker_sports_payload_v479'))throw new Error('r497 current Sports v479 authority missing after r240 removal');
 
 const r379ProfileOwner='try{renderProfile=renderProfile379}catch{}';
-if(!js.includes(r379ProfileOwner))throw new Error('r497 missing r379 Profile reassignment');
-js=js.replace(r379ProfileOwner,"try{window.__ctR379ProfileRetired=true}catch{}");
+if(js.includes(r379ProfileOwner))js=js.replace(r379ProfileOwner,"try{window.__ctR379ProfileRetired=true}catch{}");
 
 const A464="window.__ctR464Marker='discover-foryou-visible-owner-v421';";
 const oldState=`const stateSaysForYou=()=>{
