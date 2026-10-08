@@ -66,6 +66,7 @@ const probe=`
    ok(p.querySelectorAll('[data-ct476-profile-row]>.card').length===12,'12 '+title);
   }
   ok((window.__ct497Calls||[]).includes('cinetracker_profile_screen_v495'),'profile fast contract missing');
+  for(const bad of ['cinetracker_profile_payload_v0997','cinetracker_profile_screen_v491'])ok(!(window.__ct497Calls||[]).includes(bad),'legacy profile RPC '+bad);
   ok(!document.documentElement.dataset.ct497pageerror,'page error '+document.documentElement.dataset.ct497pageerror);
   stage('ok');
  }catch(e){stage('fail:'+String(e?.stack||e)+' calls='+JSON.stringify(window.__ct497Calls||[]))}
