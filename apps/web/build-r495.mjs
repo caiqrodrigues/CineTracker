@@ -10,7 +10,13 @@ let [html,js,css,releaseRaw,runtime]=await Promise.all([
 /* Boot-order guard + first click authority. This code executes before every historical runtime listener. */
 const earlyHomeAuthority=String.raw`
 window.__ctR388=window.__ctR388||{};
-window.addEventListener('click',function ct495EarlyHomeTab(e){
+window.addEventListener('click',function ct495EarlyAuthority(e){
+ const profile=e.target?.closest?.('[data-nav="profile"]');
+ if(profile){
+  e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
+  try{if(typeof go==='function')go('/profile');else{history.pushState({},'','/profile');void render()}}catch{}
+  return;
+ }
  const tab=e.target?.closest?.('[data-home-tab]');if(!tab||!document.querySelector('[data-home]'))return;
  e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
  const wanted=String(tab.dataset.homeTab||'series')==='movies'?'movies':'series',root=document.querySelector('[data-home]');
