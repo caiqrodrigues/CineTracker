@@ -8,6 +8,37 @@ function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)thr
 function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r496 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r496 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
 function replaceGlobalNamed(source,name,replacement){const m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(source);if(!m)throw new Error('r496 missing global '+name);const open=source.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<source.length;i++){const c=source[i],n=source[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r496 unbalanced global '+name);return source.slice(0,m.index)+replacement+source.slice(i)}
 
+function replaceAssignedNamedAll(source,name,replacement){
+ const re=new RegExp('\\b'+name.replace(/[.*+?^$\{\}()|[\\]\\\\]/g,'\\const A388=')+'\\s*=\\s*(?:async\\s+)?function\\s*\\([^)]*\\)\\s*\\{','g');
+ let count=0,from=0;
+ while(true){
+  re.lastIndex=from;const m=re.exec(source);if(!m)break;
+  const open=source.indexOf('{',m.index),end=scanFunctionEnd496(source,open,name);
+  source=source.slice(0,m.index)+replacement+source.slice(end);from=m.index+replacement.length;count++;
+ }
+ return{source,count};
+}
+function scanFunctionEnd496(source,open,label){
+ let depth=0,mode='code',quote='',i=open;
+ for(;i<source.length;i++){
+  const c=source[i],n=source[i+1];
+  if(mode==='line'){if(c==='\n')mode='code';continue}
+  if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}
+  if(mode==='string'){if(c==='\\\\'){i++;continue}if(c===quote)mode='code';continue}
+  if(mode==='template'){if(c==='\\\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
+  if(c==='/'&&n==='/'){mode='line';i++;continue}
+  if(c==='/'&&n==='*'){mode='block';i++;continue}
+  if(c==="'"||c==='"'){mode='string';quote=c;continue}
+  if(c.charCodeAt(0)===96){mode='template';continue}
+  if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0)return i+1}
+ }
+ throw new Error('r496 unbalanced assigned '+label);
+}
+function replaceGlobalNamedOptional(source,name,replacement){
+ const re=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(');
+ return re.test(source)?replaceGlobalNamed(source,name,replacement):source;
+}
+
 const A388="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
 js=replaceNamed(js,A388,'clearHomeStorage392',"function clearHomeStorage392(){for(const k of [HS,HH,HM,...OLD_HOME_KEYS,'ct496:home:series','ct496:home:history','ct496:home:movies']){try{sessionStorage.removeItem(k)}catch{}try{localStorage.removeItem(k)}catch{}}}",'r388');
 js=replaceNamed(js,A388,'movieRow',"function movieRow(x){const y={...x,media_type:'movie',release_date:x?.release_date||x?.raw_tmdb?.release_date||null,runtime_minutes:Number(x?.runtime_minutes||x?.raw_tmdb?.runtime||0)||0,genres:rows(x?.genres).length?x.genres:rows(x?.raw_tmdb?.genres),vote_average:Number(x?.vote_average??x?.raw_tmdb?.vote_average??0)||0};const tmdb=Number(y?.tmdb_id||y?.raw_tmdb?.id||0)||0,p=String(y?.poster_path||y?.raw_tmdb?.poster_path||''),src=p?(p.startsWith('http')?p:(typeof img==='function'?img(p,'w342'):p)):'';const meta=[y?.release_year||String(y?.release_date||'').slice(0,4),y.runtime_minutes?y.runtime_minutes+' min':'',y.vote_average?'★ '+Number(y.vote_average).toFixed(1):''].filter(Boolean).join(' · ');let action='';try{action=ct274MovieWatchAction(y)||''}catch{}return '<article class=\"card ct489-movie-card ct496-movie-card\" data-ct388-movie-id=\"'+mediaId(y)+'\" data-media=\"movie:'+tmdb+'\"><button type=\"button\" class=\"ct489-movie-open ct496-movie-open\" data-media=\"movie:'+tmdb+'\"><div class=\"poster ct496-movie-poster\">'+(src?'<img loading=\"lazy\" decoding=\"async\" alt=\"\" src=\"'+esc(src)+'\">':'')+'</div><div class=\"card-body\"><b>'+esc(titleOf(y))+'</b><small>'+esc(meta)+'</small></div></button>'+action+'</article>'}",'r388');
@@ -26,8 +57,28 @@ js=replaceNamed(js,A321,'topRaw321',"async function topRaw321(provider,force=fal
 
 js=replaceGlobalNamed(js,'renderProfile491',"async function renderProfile491(seq){const makeData=async()=>{const jobs=await Promise.allSettled([rpc('cinetracker_profile_summary_v489',{}),rpc('cinetracker_profile_quick_stats_v1',{}),rpc('cinetracker_profile_stats',{}),rpc('cinetracker_sports_stadium_summary_v296',{}),rpc('cinetracker_activity_by_day_v320',{p_days:15,p_tz:tz()})]),val=(i,f)=>jobs[i].status==='fulfilled'?jobs[i].value:f,one=v=>Array.isArray(v)&&v.length===1&&v[0]&&typeof v[0]==='object'?v[0]:(v&&typeof v==='object'?v:{}),arr=v=>Array.isArray(v)?v:[];const summary=one(val(0,{})),quick=one(val(1,{})),stats=one(val(2,{})),stadium=one(val(3,{})),activity=arr(val(4,[])),sports={...(quick.sports_stats||{}),watched_events:Number(stadium.watched_events??quick?.sports_stats?.watched_events??0),stadium_events:Number(stadium.stadium_events||0)};return{stats:quick.stats||stats||{},series_stats:quick.series_stats||{},remaining:quick.remaining||{},activity,summary,sports,stadium}};const paint=data=>{if(seq!==navSeq||route()!=='profile')return false;const summary=data.summary||{},sports=data.sports||{},stadium=data.stadium||{},merged={stats:data.stats||{},series_stats:data.series_stats||{},remaining:data.remaining||{},activity:Array.isArray(data.activity)?data.activity:[],dashboard:[],favorite_actors:Array.isArray(summary.actors)?summary.actors:[],sports_stats:sports};profileCache=merged;if(typeof ct168PaintProfile!=='function')throw new Error('PROFILE_PAINTER_UNAVAILABLE');ct168PaintProfile(merged,'');ct491PatchProfileLists(summary);ct491PatchSports(sports,stadium);try{if(typeof ct169RenderActivity==='function')ct169RenderActivity(merged.activity)}catch{}const root=$('[data-profile]');if(root){root.dataset.ct491Profile='ready';root.dataset.ct496Profile='ready';root.dataset.ct496Lists='12-exact'}return true};let cached=null;try{const c=JSON.parse(sessionStorage.getItem('ct496:profile')||'null');if(c?.at&&Date.now()-Number(c.at)<2*60*1000)cached=c.data}catch{}setApp(shell('Perfil','Estatísticas, biblioteca, favoritos e atividade.','profile','<div class=\"page\" data-profile><div class=\"ct496-profile-loading\"><div class=\"loader\">Carregando Perfil...</div></div></div>'));if(cached)try{paint(cached)}catch{}try{if(!window.__ctR496ProfileTask)window.__ctR496ProfileTask=makeData().finally(()=>{window.__ctR496ProfileTask=null});const data=await window.__ctR496ProfileTask;if(seq!==navSeq||route()!=='profile')return false;if(!Array.isArray(data?.summary?.series)||!data.summary.series.length)throw new Error('PROFILE_SUMMARY_EMPTY');try{sessionStorage.setItem('ct496:profile',JSON.stringify({at:Date.now(),data}))}catch{}return paint(data)}catch(e){if(cached)return true;if(seq!==navSeq||route()!=='profile')return false;const root=$('[data-profile]');if(root)root.innerHTML=fail('Falha ao carregar Perfil: '+(e?.message||e),'profile');return false}}");
 
-/* The original v0.99.7 Profile path and v0.0.99 refresh painter must never wake after r496 paints. */
+/* Retire every legacy Profile assignment and background preload. Historical runtimes repeatedly
+   reassigned renderProfile after boot and preloaded the full v0.99.7 library even when another
+   route was visible. Keep explicit modal/action data loaders intact; only autonomous owners go. */
 js=replaceGlobalNamed(js,'renderProfile',"async function renderProfile(seq){return renderProfile491(seq)}");
+{
+ const r=replaceAssignedNamedAll(js,'renderProfile',"renderProfile=async function(seq){return renderProfile491(seq)}");
+ js=r.source;console.log('R496_RETIRED renderProfile assignments='+r.count);
+}
+js=replaceGlobalNamedOptional(js,'ct163PreloadAll',"async function ct163PreloadAll(){return null}");
+{
+ const r=replaceAssignedNamedAll(js,'ct163PreloadAll',"ct163PreloadAll=async function(){return null}");
+ js=r.source;console.log('R496_RETIRED ct163PreloadAll assignments='+r.count);
+}
+js=replaceGlobalNamedOptional(js,'ct163WarmOnIdle',"function ct163WarmOnIdle(){return null}");
+js=replaceGlobalNamedOptional(js,'ct168RefreshFullProfile',"async function ct168RefreshFullProfile(){return profileCache||null}");
+js=replaceGlobalNamedOptional(js,'ct185CWarmProfileFull',"async function ct185CWarmProfileFull(){return profileCache||null}");
+js=replaceGlobalNamedOptional(js,'refreshProfile190',"async function refreshProfile190(){return profileCache||null}");
+js=replaceGlobalNamedOptional(js,'fetchProfile192',"async function fetchProfile192(){return profileCache||null}");
+js=replaceGlobalNamedOptional(js,'fullProfile193',"async function fullProfile193(){return profileCache||null}");
+/* r193's known-media warmup is useful only inside Discover. Never let its idle callback wake
+   database work while Home/Profile is active. */
+js=js.replace("idle193(()=>{if(session)void knownMedia193(false)}, {timeout:2600});","idle193(()=>{if(session&&route193()==='discover')void knownMedia193(false)}, {timeout:2600});");
 
 for(const probe of ['cinetracker_profile_payload_v0997','cinetracker_profile_media_dashboard_v0991','cinetracker_known_media_v1','cinetracker_watchlist_full_v119']){
  let p=0,n=0;
