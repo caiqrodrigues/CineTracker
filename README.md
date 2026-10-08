@@ -1,3 +1,12 @@
+## Web 0.3.23 / r496 — autoridade fluida sem regressão visual
+
+- Home Séries usa snapshot + refresh delimitado; conteúdo principal não espera Histórico.
+- Home Filmes usa cards nativos 2:3 compactos e paginação v405.
+- Perfil não depende mais de uma RPC monolítica: listas, estatísticas, esportes e atividade carregam de forma independente e tolerante a falhas.
+- Pra Você preserva snapshot válido durante atualização e usa fallback limitado.
+- O visual oficial continua azul/escuro; o bootstrap amarelo/dourado permanece fora do entrypoint.
+- F1, Esportes, Top 10, histórico diário e Android foram preservados.
+
 ## Web 0.3.21 / r494 — entrypoint limpo
 
 - O HTML de produção não contém mais o app inline dourado/amarelo legado.
