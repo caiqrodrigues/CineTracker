@@ -1,8 +1,8 @@
 ## Web 0.3.24 / r497 — base verde + remoção física de código morto
 
 - Base funcional: r495, última release que passou o navegador completo antes do incidente r496.
-- Runtimes aposentados não permanecem no JavaScript apenas com `return`; são removidos do bundle final.
-- r493/r494/r496 quebrados e não necessários deixam de fazer parte do caminho de release.
+- O runtime funcional r495 é mantido exatamente como passou Chromium; nenhuma poda estrutural arriscada é aplicada ao bundle.
+- r493/r494/r496 quebrados e não necessários deixam de fazer parte do caminho de release e do repositório.
 - Boot moderno azul/escuro; nenhum bootstrap amarelo/dourado.
 - Home, Filmes 2:3, Pra Você 7 slots e Perfil 12 cards são obrigatórios no teste Chromium completo.
 - F1, Esportes, Top 10, histórico diário e Android permanecem preservados.

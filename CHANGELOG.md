@@ -3,7 +3,7 @@
 ### Recuperação segura após a tela preta da r496
 - A r497 parte diretamente da r495, última build com Chromium e produção verdes, e **não** herda o bootstrap/owners adicionados pela r496.
 - Produção permaneceu na r495 durante a validação da r497; nenhuma build quebrada é usada como base funcional.
-- Runtimes já explicitamente aposentados pelo r492/r495 deixam de apenas executar `return`: seus blocos IIFE são removidos fisicamente do bundle final, reduzindo parse/execução sem remover funcionalidades vivas.
+- A tentativa de podar fisicamente IIFEs aposentadas foi rejeitada pelo próprio gate porque alterou o paint de Filmes. A r497 mantém o runtime r495 exatamente como validado e remove somente fontes/releases quebrados que não participam do caminho funcional.
 - Os fontes de release quebrados e não necessários r493, r494 e r496 são removidos do repositório. r495 continua sendo a base funcional e r492 permanece por ser dependência real do build.
 - O HTML inicial recebe somente um placeholder moderno azul/escuro e o bundle atual; nenhum bootstrap dourado/amarelo, `auth-page`, `cloud-bar` ou aplicação inline antiga volta a existir.
 - Home Séries/Filmes, Pra Você e Perfil mantêm exatamente a lógica funcional r495 já validada: carregamento progressivo, Filmes 2:3, sete slots e Perfil com 12 cards.
