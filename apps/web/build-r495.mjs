@@ -27,6 +27,29 @@ function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)thr
 function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r495 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r495 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
 function disableRuntime(source,anchor,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),needle="'use strict';",at=region.indexOf(needle);if(at<0)throw new Error('r495 missing strict '+label);const cut=at+needle.length;return source.slice(0,b.start)+region.slice(0,cut)+'\nreturn;\n'+region.slice(cut)+source.slice(b.end)}
 const patch=(anchor,label,defs)=>{for(const [name,body] of defs)js=replaceNamed(js,anchor,name,body,label)};
+
+/* Retire historical Home ownership while preserving unique search/discover helpers. */
+patch("window.__ctR335Marker='home-single-anchor-tab-lock+discover-no-top-filters+foryou-final-r329';",'r335-home-retired',[
+ ['normalizeHistory335',"function normalizeHistory335(){return false}"],
+ ['applyHomeTab335',"function applyHomeTab335(){return false}"],
+ ['alignHome335',"function alignHome335(){return false}"],
+ ['scheduleHome335',"function scheduleHome335(){return false}"]
+]);
+patch("window.__ctR336Marker='episode-search+home-anchor-on-tab+foryou-actions-swap-immediate';",'r336-home-retired',[
+ ['normalizeHistory336',"function normalizeHistory336(){return false}"],
+ ['applyHomeTab336',"function applyHomeTab336(){return false}"],
+ ['alignHome336',"function alignHome336(){return false}"],
+ ['switchHome336',"function switchHome336(){return false}"]
+]);
+patch("window.__ctR337Marker='episode-catalog-search+home-desired-tab-settle+foryou-readable-same-kind-actions';",'r337-home-retired',[
+ ['applyHome337',"function applyHome337(){return false}"],
+ ['alignHome337',"function alignHome337(){return false}"],
+ ['armHome337',"function armHome337(){delete document.documentElement.dataset.ct337HomeAligning;return false}"],
+ ['userMovedHome337',"function userMovedHome337(){delete document.documentElement.dataset.ct337HomeAligning}"]
+]);
+js=disableRuntime(js,"window.__ctR383Marker='home-fast-series-firstpaint+movies-full-owner+foryou-own-actions+fresh-final-state-check';",'r383-retired-r495');
+js=disableRuntime(js,"window.__ctR384Marker='home-series-staged-no-contention+movies-on-demand+foryou-strict-displayed-state+stable-actions';",'r384-retired-r495');
+js=disableRuntime(js,"window.__ctR385Marker='home-independent-series-history-movies+foryou-v385-strict+actions-final';",'r385-retired-r495');
 js=disableRuntime(js,"window.__ctR376Marker='watchlist-media-id-authority+sort-no-rebuild+foryou-final-owner+fresh-never-empty';",'r376-retired-r495');
 patch("window.__ctR399Marker='startup-auth-current-rpc+home+direct-foryou';",'r399',[
  ['settleRoute399',"function settleRoute399(){return false}"],['bootProbe399',"function bootProbe399(){return false}"]
