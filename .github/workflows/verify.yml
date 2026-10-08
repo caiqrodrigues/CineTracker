@@ -24,6 +24,13 @@ jobs:
           node --check apps/web/dist/app-v496.js
           grep -Fq "window.__ctR496Marker='fluid-home-native-movies+profile-split-no-monolith+foryou-snapshot+modern-blue-only'" apps/web/dist/app-v496.js
           ! grep -Fq "try{return ct274Row(y,{meta:ct274MovieMeta(y),action:ct274MovieWatchAction(y),attrs:ct274MovieAttrs(y)})catch" apps/web/dist/app-v496.js
+      - name: Snapshot validated r496 dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: r496-flat-dist
+          path: apps/web/dist
+          if-no-files-found: error
+          retention-days: 1
   android:
     runs-on: ubuntu-latest
     steps:
