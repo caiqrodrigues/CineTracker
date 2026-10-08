@@ -38,9 +38,6 @@ function replaceNamed(source,anchor,name,replacement,label){const b=bounds(sourc
 function disableRuntime(source,anchor,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),needle="'use strict';",at=region.indexOf(needle);if(at<0)throw new Error('r495 missing strict '+label);const cut=at+needle.length;return source.slice(0,b.start)+region.slice(0,cut)+'\nreturn;\n'+region.slice(cut)+source.slice(b.end)}
 const patch=(anchor,label,defs)=>{for(const [name,body] of defs)js=replaceNamed(js,anchor,name,body,label)};
 
-/* r379 was a complete Home/Profile owner. Its responsibilities are superseded by r388/r464/r491 and keeping it alive can rebuild stale UI. */
-js=disableRuntime(js,"window.__ctR379Marker='home-stable-no-late-recompose+visible-meta-fast+fresh-v322-strict+profile-fast-cache';",'r379-retired-r495');
-
 /* r476 keeps only the full-list modal/header More. Its autonomous Home/Profile painters are retired. */
 patch("if(window.__ctR476?.version==='1.0.266')return;",'r476-autonomous-retired',[
  ['primeHome',"function primeHome(){return false}"],
