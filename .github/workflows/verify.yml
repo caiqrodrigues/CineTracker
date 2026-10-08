@@ -22,7 +22,7 @@ jobs:
           npm run build
           npm run verify
           node --check apps/web/dist/app-v497.js
-          grep -Fq 'stable-r495-base+dead-runtimes-physically-pruned+modern-blue+full-browser-gate' apps/web/dist/app-v497.js
+          grep -Fq 'stable-r495-exact-runtime+broken-release-sources-removed+modern-blue+full-browser-gate' apps/web/dist/app-v497.js
           grep -Fq 'ct497-boot' apps/web/dist/index.html
           ! grep -Fq 'app-v496.js' apps/web/dist/index.html
   android:
