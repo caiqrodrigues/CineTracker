@@ -71,6 +71,12 @@ function ct497ReplaceNamed(source,anchor,name,replacement,label){
  if(depth!==0)throw new Error('r497 unbalanced '+label+' '+name);
  return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end);
 }
+const A240="window.__ctR240='sports-four-data-authority';";
+const r240Bounds=ct497Bounds(js,A240,'r240 legacy Sports writer');
+js=js.slice(0,r240Bounds.start)+js.slice(r240Bounds.end);
+if(js.includes(A240))throw new Error('r497 r240 legacy Sports writer survived');
+if(!js.includes('cinetracker_sports_payload_v479'))throw new Error('r497 current Sports v479 authority missing after r240 removal');
+
 const A464="window.__ctR464Marker='discover-foryou-visible-owner-v421';";
 const oldState=`const stateSaysForYou=()=>{
  try{const t=String(window.__ctR288R263?.discover263?.tab||'');if(t)return t==='foryou'}catch{}
@@ -96,14 +102,14 @@ const release=JSON.parse(releaseRaw);Object.assign(release,{
  version:'0.3.24',
  revision:'r497-official-0.3.24',
  base:'r495-green-exact-runtime',
- scope:'modern-blue-r495-functional-base+foryou-active-owner-fix+broken-release-source-removal+full-browser-gate',
+ scope:'modern-blue-r495-functional-base+foryou-active-owner-fix+r240-removed+sports-v479+broken-release-source-removal+full-browser-gate',
  boot:'clean modern boot placeholder; no legacy yellow/gold bootstrap and no r496 early global owner',
  home:'r495 progressive Home preserved byte-for-byte except release identity',
  discover:'r495 v490 owner preserved; active-tab ambiguity fixed at build source so render always owns the selected Pra Você tab',
  profile:'r495 fast profile contract preserved; exactly 12 cards per summary',
  removed_release_sources:['r493','r494','r496'],
  legacy_runtime_policy:'r492 retirement guards preserved exactly because aggressive physical pruning changed movie rendering',
- f1:'preserved',sports:'preserved',history:'daily/undo preserved',android:'unchanged-1.0.20/10062'
+ f1:'preserved',sports:'v479 preserved; broken r240 writer physically removed',history:'daily/undo preserved',android:'unchanged-1.0.20/10062'
 });
 await Promise.all([
  writeFile(resolve(dist,'app-v497.js'),js),

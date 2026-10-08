@@ -5,6 +5,7 @@
 - Produção permaneceu na r495 durante a validação da r497; nenhuma build quebrada é usada como base funcional.
 - A tentativa de podar fisicamente IIFEs aposentadas foi rejeitada pelo próprio gate porque alterou o paint de Filmes. A r497 preserva a base funcional r495 e remove somente fontes/releases quebrados; qualquer correção adicional é feita diretamente na autoridade vigente e coberta pelo navegador completo.
 - Os fontes de release quebrados e não necessários r493, r494 e r496 são removidos do repositório. r495 continua sendo a base funcional e r492 permanece por ser dependência real do build.
+- O writer esportivo r240, que atribuía `sportsPayload` fora do escopo e podia derrubar o boot, é removido fisicamente do bundle. A rota de Esportes permanece na autoridade profissional v479 e passa a ser aberta pelo gate Chromium.
 - O HTML inicial recebe somente um placeholder moderno azul/escuro e o bundle atual; nenhum bootstrap dourado/amarelo, `auth-page`, `cloud-bar` ou aplicação inline antiga volta a existir.
 - Home Séries/Filmes mantêm a base r495 validada: carregamento progressivo e Filmes 2:3. Sobre essa base foram aplicadas somente duas correções isoladas capturadas pelo gate: Pra Você agora possui um único controle `active` e pinta os 7 slots após v490; Perfil delega exclusivamente ao renderer atual/v495 e não executa mais o payload legado v0997.
 - O novo gate Chromium marca `prelude` antes do bundle e falha explicitamente se o JavaScript bloquear antes do primeiro paint, evitando repetir o falso “READY” da r496.
