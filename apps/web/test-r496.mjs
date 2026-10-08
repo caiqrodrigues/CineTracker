@@ -1,0 +1,18 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+await import('./build-r496.mjs');
+const [js,css,html,releaseRaw,rootPkgRaw,webPkgRaw]=await Promise.all([readFile(resolve('dist/app-v496.js'),'utf8'),readFile(resolve('dist/app-v496.css'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('r496 regression: '+m)},release=JSON.parse(releaseRaw),rootPkg=JSON.parse(rootPkgRaw),webPkg=JSON.parse(webPkgRaw);
+ok(rootPkg.version==='0.3.23'&&webPkg.version==='0.3.23','versions');
+ok(release.version==='0.3.23'&&release.revision==='r496-official-0.3.23','release');
+ok(html.includes('app-v496.js?ct=r496-official-0.3.23')&&html.includes('app-v496.css?ct=r496-official-0.3.23'),'assets');
+ok(!html.includes('--gold:#d6b55b')&&!html.includes('MENU DIÁRIO')&&!html.includes('cloud-bar'),'legacy bootstrap');
+ok(js.includes("window.__ctR496Marker='modern-blue+movie-real-2x3+home-cache+single-foryou+split-profile+top10-cache'"),'marker');
+ok(js.includes('ct496-movie-card')&&js.includes('ct496-movie-poster')&&css.includes('aspect-ratio:2/3!important'),'movie real 2:3');
+ok(js.includes("localGet('ct496:home:series'")&&js.includes("localGet('ct496:home:movies'"),'home short cache');
+ok(js.includes("typeof window.__ctR464?.load==='function'")&&js.includes("ct496:foryou")&&js.includes('RECOMMENDATION_POOL_INCOMPLETE'),'ForYou owner');
+ok(!js.includes("for(const ms of [0,250,800,1800])setTimeout(()=>{if(isForYou())activate()},ms)"),'ForYou timer ladder');
+for(const rpc of ['cinetracker_profile_summary_v489','cinetracker_profile_quick_stats_v1','cinetracker_profile_stats','cinetracker_sports_stadium_summary_v296','cinetracker_activity_by_day_v320'])ok(js.includes(rpc),'profile '+rpc);
+const pAt=js.indexOf('async function renderProfile491');ok(pAt>=0,'profile renderer');ok(!js.slice(pAt,pAt+9000).includes('cinetracker_profile_screen_v495'),'monolithic profile in render path');
+ok(css.includes('[data-ct476-profile-row]')&&css.includes('grid-auto-flow:row!important')&&css.includes('nth-child(n+13)'),'profile 12 grid');
+const own=js.slice(js.lastIndexOf('/* CineTracker Web 0.3.23 r496'));for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval('])ok(!own.includes(bad),'forbidden '+bad);
+console.log('WEB_R496_REGRESSION_OK');
