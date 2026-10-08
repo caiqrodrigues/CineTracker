@@ -1,3 +1,19 @@
+## 0.3.23 — r496 (2026-10-08)
+
+### Fluidez e regressões do vídeo corrigidas
+- Corrigida a regressão estrutural da r495 que voltou a renderizar a Watchlist de Filmes com `ct274Row` legado. Filmes volta a usar cards próprios compactos, com pôster real 2:3, altura automática e paginação v405 preservada.
+- Home Séries mantém snapshot válido visível e atualiza em segundo plano. v492 continua primária; se exceder o limite, v452 — a mesma autoridade funcional de episódios/F1 — entra como fallback delimitado, sem mudar regras de bucket.
+- A ordem visual da Home volta a nascer com **Continuar assistindo** antes do Histórico e **Watchlist** antes de Filmes vistos, sem esperar Histórico para mostrar o conteúdo principal.
+- Perfil deixa de chamar `cinetracker_profile_screen_v495` no caminho de navegação. Resumo, estatísticas rápidas, estatísticas-base, Esportes/Estádio e atividade são chamadas independentes com deadlines curtos; falha de uma parte não derruba a tela inteira.
+- Perfil reutiliza snapshot válido por até 5 minutos e atualiza em background; continuam exatamente 12 cards nas cinco listas e **Ver mais** apenas no cabeçalho.
+- Pra Você mantém o último snapshot válido enquanto atualiza. v490 segue primária e o fallback por pools é paralelo e delimitado; a tela não é apagada para um loading longo quando já há recomendações válidas.
+- Visual moderno azul/escuro da r495/r494 é preservado explicitamente. Nenhum bootstrap dourado/amarelo é reintroduzido.
+
+### Preservado
+- F1, Esportes, Top 10, histórico diário/Desmarcar e Android 1.0.20 / versionCode 10062 permanecem funcionais.
+- Sem full-page reload, `router.refresh()`, `while(true)`, `setInterval` ou novo `MutationObserver`.
+- Gate Chromium reproduz Home com Histórico lento, troca imediata para Filmes, geometria do card, Pra Você e Perfil sem RPC monolítica.
+
 ## 0.3.21 — r494 (2026-10-07)
 
 ### Bootstrap legado removido
