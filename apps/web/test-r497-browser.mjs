@@ -15,11 +15,11 @@ window.onerror=(m,s,l,c)=>{document.documentElement.dataset.ct497pageerror=Strin
 window.addEventListener('unhandledrejection',e=>{document.documentElement.dataset.ct497pageerror='rejection:'+String(e.reason?.stack||e.reason||e)});
 new Image().src='/test-stage?value=prelude&t='+Date.now();
 localStorage.setItem('cinetracker_session',${JSON.stringify(JSON.stringify(session))});
-window.__ct497Calls=[];
+window.__ct497Calls=[];window.__ct497ForbiddenStacks=[];
 const sleep=ms=>new Promise(r=>setTimeout(r,ms)),j=v=>new Response(JSON.stringify(v),{status:200,headers:{'content-type':'application/json'}});
 window.fetch=async input=>{
  const u=String(input?.url||input),m=u.match(/\\/rest\\/v1\\/rpc\\/([^?]+)/),name=m?decodeURIComponent(m[1]):'';
- if(name)window.__ct497Calls.push(name);
+ if(name){window.__ct497Calls.push(name);if(name==='cinetracker_profile_payload_v0997'||name==='cinetracker_profile_screen_v491')window.__ct497ForbiddenStacks.push(String(new Error(name).stack||''));}
  if(u.includes('/auth/v1/user'))return j(${JSON.stringify(session.user)});
  if(u.includes('/auth/v1/'))return j(${JSON.stringify(session)});
  if(name==='cinetracker_home_series_v492'){await sleep(180);return j({rows:series,counts:{continue:4,dust:2,up_to_date:2,not_started:2,completed:2},total:12})}
@@ -37,7 +37,7 @@ window.fetch=async input=>{
 const probe=`
 (async()=>{
  const stage=s=>{document.documentElement.dataset.ct497stage=s;new Image().src='/test-stage?value='+encodeURIComponent(s)+'&t='+Date.now()},
- wait=async(fn,ms=4000)=>{const end=Date.now()+ms;while(Date.now()<end){try{const v=fn();if(v)return v}catch{}await new Promise(r=>setTimeout(r,30))}throw new Error('wait page='+String(document.documentElement.dataset.ct497pageerror||'none'))},
+ wait=async(fn,ms=4000)=>{const end=Date.now()+ms;while(Date.now()<end){try{const v=fn();if(v)return v}catch{}await new Promise(r=>setTimeout(r,30))}throw new Error('wait page='+String(document.documentElement.dataset.ct497pageerror||'none')+' forbidden='+JSON.stringify(window.__ct497ForbiddenStacks||[]))},
  ok=(v,m)=>{if(!v)throw new Error(m)};
  try{
   stage('boot');
