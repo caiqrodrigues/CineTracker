@@ -50,7 +50,7 @@ const probe=`
   stage('home-shell');
   await wait('home-series',()=>[...document.querySelectorAll('[data-home-view="series"] h3')].some(x=>x.textContent==='Continuar assistindo'),2600);
   stage('series');
-  ok(String(document.querySelector('[data-home-view="series"]')?.textContent||'').includes('Formula 1'),'F1 missing from Home');
+  await wait('home-f1',()=>String(document.querySelector('[data-home-view="series"]')?.textContent||'').includes('Formula 1'),2600);
   ok(!document.querySelector('[data-ct492-series-more="continue"]'),'false Continue load-more');
   document.querySelector('[data-home-tab="movies"]').click();
   await new Promise(r=>setTimeout(r,50));
