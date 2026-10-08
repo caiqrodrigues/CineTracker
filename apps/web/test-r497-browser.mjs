@@ -37,32 +37,32 @@ window.fetch=async input=>{
 const probe=`
 (async()=>{
  const stage=s=>{document.documentElement.dataset.ct497stage=s;new Image().src='/test-stage?value='+encodeURIComponent(s)+'&t='+Date.now()},
- wait=async(fn,ms=4000)=>{const end=Date.now()+ms;while(Date.now()<end){try{const v=fn();if(v)return v}catch{}await new Promise(r=>setTimeout(r,30))}throw new Error('wait page='+String(document.documentElement.dataset.ct497pageerror||'none')+' forbidden='+JSON.stringify(window.__ct497ForbiddenStacks||[]))},
+ wait=async(label,fn,ms=4000)=>{const end=Date.now()+ms;while(Date.now()<end){try{const v=fn();if(v)return v}catch{}await new Promise(r=>setTimeout(r,30))}throw new Error('wait:'+label+' page='+String(document.documentElement.dataset.ct497pageerror||'none')+' forbidden='+JSON.stringify(window.__ct497ForbiddenStacks||[]))},
  ok=(v,m)=>{if(!v)throw new Error(m)};
  try{
   stage('boot');
-  await wait(()=>document.querySelector('[data-page="home"] .sidebar'),3000);
+  await wait('boot-shell',()=>document.querySelector('[data-page="home"] .sidebar'),3000);
   ok(document.querySelector('.search-global'),'modern shell missing');
   ok(!document.querySelector('.auth-page,.cloud-bar'),'legacy UI visible');
   ok(getComputedStyle(document.documentElement).getPropertyValue('--gold').trim()==='#58afe0','gold token not blue');
   stage('home-shell');
-  await wait(()=>[...document.querySelectorAll('[data-home-view="series"] h3')].some(x=>x.textContent==='Continuar assistindo'),2600);
+  await wait('home-series',()=>[...document.querySelectorAll('[data-home-view="series"] h3')].some(x=>x.textContent==='Continuar assistindo'),2600);
   stage('series');
   document.querySelector('[data-home-tab="movies"]').click();
   await new Promise(r=>setTimeout(r,50));
   const mv=document.querySelector('[data-home-view="movies"]');ok(mv&&!mv.hidden&&!mv.classList.contains('hidden'),'movies tab not immediate');
-  await wait(()=>document.querySelector('.ct489-movie-card .poster'),1800);
+  await wait('home-movies',()=>document.querySelector('.ct489-movie-card .poster'),1800);
   const mr=document.querySelector('.ct489-movie-card .poster').getBoundingClientRect();ok(mr.width>0&&Math.abs(mr.height/mr.width-1.5)<.05,'movie ratio '+mr.width+'x'+mr.height);
   stage('movies');
   document.querySelector('[data-nav="discover"]').click();
-  await wait(()=>document.querySelector('[data-page="discover"]'),2200);
+  await wait('discover-shell',()=>document.querySelector('[data-page="discover"]'),2200);
   const fy=[...document.querySelectorAll('button')].find(x=>/pra voc/i.test(x.textContent||''));fy?.click();
-  await wait(()=>document.querySelectorAll('.ct388-slot[data-ct464-slot]').length===7,3000);
+  await wait('discover-foryou',()=>document.querySelectorAll('.ct388-slot[data-ct464-slot]').length===7,3000);
   const fyRoot=document.querySelector('[data-ct464-foryou]');ok(fyRoot&&!/Buscando indicação/i.test(fyRoot.textContent||''),'ForYou stuck loading');
   ok(fyRoot.querySelectorAll('[data-ct464-action="swap"]').length===7,'ForYou swap count');
   stage('foryou');
   document.querySelector('[data-nav="profile"]').click();
-  await wait(()=>document.querySelector('[data-profile][data-ct491-profile="ready"]'),3200);
+  await wait('profile-ready',()=>document.querySelector('[data-profile][data-ct491-profile="ready"]'),3200);
   const panels=[...document.querySelectorAll('[data-profile] section.panel')];
   for(const title of ['Séries','Filmes','Séries Favoritas','Filmes Favoritos','Atores Favoritos']){
    const p=panels.find(x=>x.querySelector('h2')?.textContent===title);ok(p,'profile '+title);
@@ -72,7 +72,7 @@ const probe=`
   for(const bad of ['cinetracker_profile_payload_v0997','cinetracker_profile_screen_v491'])ok(!(window.__ct497Calls||[]).includes(bad),'legacy profile RPC '+bad);
   stage('profile');
   document.querySelector('[data-nav="sports"]').click();
-  await wait(()=>document.querySelector('[data-sports]'),2200);
+  await wait('sports-shell',()=>document.querySelector('[data-sports]'),2200);
   await wait(()=>String(document.querySelector('[data-sports]')?.textContent||'').includes('Central esportiva'),2200);
   ok((window.__ct497Calls||[]).includes('cinetracker_sports_payload_v479'),'Sports v479 authority missing');
   ok(!(window.__ct497Calls||[]).includes('cinetracker_sports_payload_v1'),'legacy Sports RPC called');
