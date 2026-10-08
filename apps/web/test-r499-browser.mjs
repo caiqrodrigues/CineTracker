@@ -55,7 +55,7 @@ const probe=`
   document.querySelector('[data-home-tab="movies"]').click();
   await new Promise(r=>setTimeout(r,50));
   const mv=document.querySelector('[data-home-view="movies"]');ok(mv&&!mv.hidden&&!mv.classList.contains('hidden'),'movies tab not immediate');
-  await wait('home-movies',()=>document.querySelector('.ct489-movie-card .poster'),1800);
+  await wait('home-movies',()=>document.querySelector('.ct499-movie-card .poster'),1800);
   const mh=mv.querySelector(':scope > [data-ct388-history="movies"]'),mw=mv.querySelector(':scope > [data-ct388-movie-watch]');ok(mh&&mw&&!!(mh.compareDocumentPosition(mw)&Node.DOCUMENT_POSITION_FOLLOWING),'movie history not above Watchlist');const mc=document.querySelector('.ct499-movie-card').getBoundingClientRect(),mr=document.querySelector('.ct499-movie-card .poster').getBoundingClientRect();ok(mc.width>0&&Math.abs(mc.height/mc.width-1.5)<.05,'movie card ratio '+mc.width+'x'+mc.height);ok(mr.width>0&&Math.abs(mr.height/mr.width-1.5)<.05,'movie poster ratio '+mr.width+'x'+mr.height);ok(mr.height>mc.height*.95,'movie poster is not full-card '+mr.height+'/'+mc.height);ok(mw.getBoundingClientRect().top<320,'Watchlist not anchored near viewport '+mw.getBoundingClientRect().top);
   stage('movies');
   document.querySelector('[data-nav="discover"]').click();
