@@ -7,6 +7,10 @@ let [html,js,css,releaseRaw,runtime]=await Promise.all([
  readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v492.js'),'utf8'),readFile(resolve(dist,'app-v492.css'),'utf8'),
  readFile(resolve(dist,'release.json'),'utf8'),readFile(resolve(root,'runtime-r495-final-authority.js'),'utf8')
 ]);
+/* Extend the r471 core bridge inside its original closure before prepending r495 listeners. */
+const coreBridgeNeedle="window.__ctCoreR471=Object.freeze({\n route:()=>route(),";
+if(!js.includes(coreBridgeNeedle))throw new Error('r495 core bridge source missing');
+js=js.replace(coreBridgeNeedle,"window.__ctCoreR471=Object.freeze({\n route:()=>route(),\n navigate:(path,replace=false)=>go(path,replace),\n render:()=>render(),");
 /* Boot-order guard + first click authority. This code executes before every historical runtime listener. */
 const earlyHomeAuthority=String.raw`
 window.__ctR388=window.__ctR388||{};
@@ -14,7 +18,7 @@ window.addEventListener('click',function ct495EarlyAuthority(e){
  const profile=e.target?.closest?.('[data-nav="profile"]');
  if(profile){
   e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
-  try{if(typeof go==='function')go('/profile');else{history.pushState({},'','/profile');void render()}}catch{}
+  try{window.__ctCoreR471?.navigate?.('/profile',false)}catch{}
   return;
  }
  const tab=e.target?.closest?.('[data-home-tab]');if(!tab||!document.querySelector('[data-home]'))return;
