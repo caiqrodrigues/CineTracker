@@ -73,13 +73,14 @@ function ct497ReplaceNamed(source,anchor,name,replacement,label){
 }
 const r240Unsafe='sportsPayload=async function(){';
 const r240At=js.indexOf(r240Unsafe);
-if(r240At<0)throw new Error('r497 missing unsafe r240 sportsPayload writer');
-const r240StartRaw=js.lastIndexOf('\n(()=>{',r240At),r240Close=js.indexOf('\n})();',r240At);
-const r240Start=r240StartRaw>=0?r240StartRaw+1:(js.startsWith('(()=>{')?0:-1);
-if(r240Start<0||r240Close<0)throw new Error('r497 invalid unsafe r240 bounds');
-const r240End=r240Close+6,r240Region=js.slice(r240Start,r240End);
-if(!r240Region.includes('LEGACY_WATCHED_KEY_240'))throw new Error('r497 unsafe Sports writer did not match r240 contract');
-js=js.slice(0,r240Start)+js.slice(r240End);
+if(r240At>=0){
+ const r240StartRaw=js.lastIndexOf('\n(()=>{',r240At),r240Close=js.indexOf('\n})();',r240At);
+ const r240Start=r240StartRaw>=0?r240StartRaw+1:(js.startsWith('(()=>{')?0:-1);
+ if(r240Start<0||r240Close<0)throw new Error('r497 invalid unsafe r240 bounds');
+ const r240End=r240Close+6,r240Region=js.slice(r240Start,r240End);
+ if(!r240Region.includes('LEGACY_WATCHED_KEY_240'))throw new Error('r497 unsafe Sports writer did not match r240 contract');
+ js=js.slice(0,r240Start)+js.slice(r240End);
+}
 if(js.includes(r240Unsafe)||js.includes('LEGACY_WATCHED_KEY_240'))throw new Error('r497 r240 legacy Sports writer survived');
 if(!js.includes('cinetracker_sports_payload_v479'))throw new Error('r497 current Sports v479 authority missing after r240 removal');
 
