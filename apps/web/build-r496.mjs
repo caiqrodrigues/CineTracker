@@ -28,6 +28,11 @@ js=replaceGlobalNamed(js,'renderProfile491',"async function renderProfile491(seq
 
 /* The original v0.99.7 Profile path and v0.0.99 refresh painter must never wake after r496 paints. */
 js=replaceGlobalNamed(js,'renderProfile',"async function renderProfile(seq){return renderProfile491(seq)}");
+
+for(const probe of ['cinetracker_profile_payload_v0997','cinetracker_profile_media_dashboard_v0991','cinetracker_known_media_v1','cinetracker_watchlist_full_v119']){
+ let p=0,n=0;
+ while(n<12){const i=js.indexOf(probe,p);if(i<0)break;console.log('R496_PROFILE_CTX '+probe+' #'+(++n)+' @'+i+' :: '+js.slice(Math.max(0,i-900),Math.min(js.length,i+1300)).replace(/\s+/g,' '));p=i+probe.length}
+}
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r496-official-0.3.23';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.23 • '+String.fromCharCode(36)+'{REVISION}');
 new Function(runtime);js+='\n'+runtime+'\n';
