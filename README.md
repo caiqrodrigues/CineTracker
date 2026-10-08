@@ -1,3 +1,11 @@
+## Web 0.3.26 / r499 — Home com Histórico acima e Top 10 completo
+
+- Séries: Histórico fica acima no documento, mas a Home abre em Continuar assistindo sem cadeia de timers.
+- Filmes: Filmes vistos fica acima; a Watchlist abre como área principal e usa pôster inteiro 2:3.
+- Top 10: amplia de forma delimitada o pool até 10 páginas apenas quando necessário para obter 10 títulos elegíveis após o filtro pessoal.
+- Pra Você mantém a exclusão alias-safe da r498.
+- Nenhuma alteração em Perfil, F1, Esportes, Configurações ou Android.
+
 ## Web 0.3.25 / r498 — correção isolada de Home e Descobrir
 
 - Home Séries preserva IDs especiais e a classificação v492.
