@@ -135,7 +135,6 @@ const stripped497=ct497StripInertIifes(js);
 js=stripped497.source;
 if(stripped497.removed<20)throw new Error('r497 expected retired runtimes to prune, got '+stripped497.removed);
 if(js.includes('(()=>{return;'))throw new Error('r497 inert runtime survived physical pruning');
-document.documentElement?.dataset;
 
 sw=sw.replaceAll('ct-media-r495','ct-media-r497');
 const release=JSON.parse(releaseRaw);Object.assign(release,{
