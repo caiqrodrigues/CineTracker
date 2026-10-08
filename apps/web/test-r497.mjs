@@ -20,6 +20,9 @@ ok(js.includes('cinetracker_sports_payload_v479'),'current Sports v479 authority
 ok(js.includes("async function renderProfile(seq){return renderProfile491(seq)}"),'Profile dispatcher delegates fast renderer');
 ok(js.includes(".some(isForYouControl)"),'Pra Você accepts active owner without first-active ambiguity');
 ok(js.includes("classList.toggle('active',on)"),'Pra Você exclusively toggles active discover tab');
+ok(js.includes("document.documentElement.dataset.ct497Discover='shell-first'"),'Discover shell-first owner');
+ok(js.includes("const owner=window.__ctR464"),'r321 ForYou delegates directly to r464');
+
 ok(!js.includes("document.documentElement;\n\nsw=sw.replaceAll"),'builder browser-global residue absent');
 ok(!js.includes("async function renderProfile(seq){setApp(shell('Perfil'"),'legacy Profile renderer removed');
 console.log('WEB_R497_REGRESSION_OK');
