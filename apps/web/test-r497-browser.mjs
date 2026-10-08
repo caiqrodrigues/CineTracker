@@ -100,7 +100,9 @@ let bin='';for(const x of ['google-chrome-stable','google-chrome','chromium','ch
 if(!bin)throw new Error('Chromium unavailable');
 const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','http://127.0.0.1:'+port+'/home'],{stdio:['ignore','pipe','pipe']});
 let err='';child.stderr.on('data',d=>err+=d);
-const deadline=Date.now()+15000;while(Date.now()<deadline&&!/^ok$|^fail:/.test(lastStage))await new Promise(r=>setTimeout(r,50));
+const bootDeadline=Date.now()+20000;while(Date.now()<bootDeadline&&lastStage==='none')await new Promise(r=>setTimeout(r,50));
+if(lastStage==='none'){try{child.kill('SIGTERM')}catch{};await new Promise(r=>server.close(r));throw new Error('R497_BROWSER chromium did not reach prelude STDERR='+err.slice(-2000))}
+const functionalDeadline=Date.now()+15000;while(Date.now()<functionalDeadline&&!/^ok$|^fail:/.test(lastStage))await new Promise(r=>setTimeout(r,50));
 try{child.kill('SIGTERM')}catch{}
 await Promise.race([new Promise(r=>child.on('close',r)),new Promise(r=>setTimeout(r,2000))]);
 await new Promise(r=>server.close(r));
