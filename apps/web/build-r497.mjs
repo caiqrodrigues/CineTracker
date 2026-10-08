@@ -75,7 +75,6 @@ js=ct497ReplaceNamed(js,A464,'activate',`function activate(){
  if(document.documentElement.dataset.ct490ForYouReady==='1'){render();return true}
  if(!q('[data-ct464-foryou]',root464()))renderLoading();void load(false);return true;
 }`,'r464');
-document.documentElement;
 
 sw=sw.replaceAll('ct-media-r495','ct-media-r497');
 const release=JSON.parse(releaseRaw);Object.assign(release,{
