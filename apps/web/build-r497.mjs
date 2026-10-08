@@ -107,12 +107,42 @@ js=ct497ReplaceNamed(js,A464,'activate',`function activate(){
  if(!q('[data-ct464-foryou]',root464()))renderLoading();void load(false);return true;
 }`,'r464');
 
+function ct497StripInertIifes(source){
+ const marker='(()=>{return;';let removed=0,from=0;
+ while(true){
+  let start=source.indexOf(marker,from);if(start<0)break;
+  if(start>0&&source[start-1]!=='\n'){from=start+marker.length;continue}
+  const open=source.indexOf('{',start),len=source.length;let depth=0,mode='code',quote='',i=open;
+  for(;i<len;i++){const c=source[i],n=source[i+1];
+   if(mode==='line'){if(c==='\n')mode='code';continue}
+   if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}
+   if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}
+   if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
+   if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}
+   if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}
+   if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}
+  }
+  if(depth!==0)throw new Error('r497 inert runtime unbalanced');
+  const tail=source.slice(i,i+5),end=tail.startsWith(')();')?i+4:tail.startsWith(')();\n')?i+4:-1;
+  if(end<0){from=start+marker.length;continue}
+  const removeStart=start>0&&source[start-1]==='\n'?start-1:start;
+  source=source.slice(0,removeStart)+'\n'+source.slice(end);
+  removed++;from=Math.max(0,removeStart);
+ }
+ return{source,removed};
+}
+const stripped497=ct497StripInertIifes(js);
+js=stripped497.source;
+if(stripped497.removed<20)throw new Error('r497 expected retired runtimes to prune, got '+stripped497.removed);
+if(js.includes('(()=>{return;'))throw new Error('r497 inert runtime survived physical pruning');
+document.documentElement?.dataset;
+
 sw=sw.replaceAll('ct-media-r495','ct-media-r497');
 const release=JSON.parse(releaseRaw);Object.assign(release,{
  version:'0.3.24',
  revision:'r497-official-0.3.24',
  base:'r495-green-exact-runtime',
- scope:'modern-blue-r495-functional-base+foryou-active-owner-fix+r240-removed+sports-v479+broken-release-source-removal+full-browser-gate',
+ scope:'modern-blue-r495-functional-base+physical-inert-runtime-pruning+foryou-active-owner-fix+r240-removed+sports-v479+broken-release-source-removal+full-browser-gate',
  boot:'clean modern boot placeholder; no legacy yellow/gold bootstrap and no r496 early global owner',
  home:'r495 progressive Home preserved byte-for-byte except release identity',
  discover:'r495 v490 owner preserved; active-tab ambiguity fixed at build source so render always owns the selected Pra Você tab',
