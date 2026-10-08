@@ -1,3 +1,12 @@
+## Web 0.3.23 / r496 — estabilidade para uso diário
+
+- Interface moderna azul/escura preservada.
+- Home com snapshots curtos e reconciliação assíncrona; Filmes em card real 2:3.
+- Pra Você com owner único e single-flight, sem loaders concorrentes.
+- Perfil com fontes menores em paralelo, sem depender da RPC monolítica; cinco listas com 12 cards em grid e Ver mais no cabeçalho.
+- Top 10 com cache diário e geometria 2:3.
+- F1, Esportes, histórico diário e Android permanecem inalterados.
+
 ## Web 0.3.21 / r494 — entrypoint limpo
 
 - O HTML de produção não contém mais o app inline dourado/amarelo legado.
