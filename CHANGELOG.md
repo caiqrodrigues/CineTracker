@@ -1,3 +1,19 @@
+## 0.3.23 — r496 (2026-10-08)
+
+### Estabilização para uso diário baseada no vídeo real
+- Mantém integralmente o entrypoint moderno azul/escuro; nenhum bootstrap dourado/amarelo é reativado.
+- Home > Filmes gera markup próprio de card com imagem real, pôster estritamente 2:3, título truncado e paginação v405 preservada.
+- Home > Séries, Histórico e Filmes reutilizam snapshots curtos antes da rede e reconciliam em segundo plano; mudanças de dados invalidam os snapshots sem reload.
+- Descobrir > Pra Você passa por um único fluxo r321 → r464, com single-flight, snapshot visível, v490 primário e fallback v421 delimitado. A escada automática de 0/250/800/1800 ms é removida.
+- Descobrir > Top 10 reutiliza cache diário por streaming e mantém pôster 2:3.
+- Perfil não depende mais de cinetracker_profile_screen_v495 no primeiro paint. Resumo, estatísticas rápidas/base, Esportes/Estádio e atividade rodam em paralelo sob uma única promise compartilhada.
+- Perfil continua com exatamente 12 cards em Séries, Filmes, Séries Favoritas, Filmes Favoritos e Atores Favoritos, em grid sem trilho horizontal; Ver mais permanece somente no cabeçalho.
+- Falha isolada de uma RPC auxiliar do Perfil não derruba toda a tela; o resumo v489 continua sendo a autoridade das cinco listas.
+
+### Preservado
+- F1, Esportes, histórico diário/Desmarcar e Android 1.0.20 / versionCode 10062.
+- Sem full-page reload, router.refresh(), while(true), setInterval ou novo MutationObserver.
+
 ## 0.3.21 — r494 (2026-10-07)
 
 ### Bootstrap legado removido
