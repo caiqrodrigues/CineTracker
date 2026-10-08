@@ -73,7 +73,8 @@ const probe=`
   stage('profile');
   document.querySelector('[data-nav="sports"]').click();
   await wait('sports-shell',()=>document.querySelector('[data-sports]'),2200);
-  await wait(()=>String(document.querySelector('[data-sports]')?.textContent||'').includes('Central esportiva'),2200);
+  await wait('sports-current-owner',()=>document.querySelector('[data-ct255-sports] .ct255-sports-tabs'),2200);
+  ok(String(document.querySelector('[data-sports]')?.textContent||'').includes('F1 Hub'),'current Sports/F1 owner missing');
   ok((window.__ct497Calls||[]).includes('cinetracker_sports_payload_v479'),'Sports v479 authority missing');
   ok(!(window.__ct497Calls||[]).includes('cinetracker_sports_payload_v1'),'legacy Sports RPC called');
   ok(!document.documentElement.dataset.ct497pageerror,'page error '+document.documentElement.dataset.ct497pageerror);
