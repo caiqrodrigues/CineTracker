@@ -37,18 +37,6 @@ js=js.slice(0,legacyProfileBounds.start)+"async function renderProfile(seq){retu
 if(!js.includes('async function renderProfile491(seq)'))throw new Error('r497 fast profile renderer missing');
 if(!js.includes('async function sportsPayload(force=false)'))throw new Error('r497 Sports authority was removed while replacing Profile');
 
-const ct497NavAuthority=String.raw`
-window.addEventListener('click',function ct497SingleNavOwner(e){
- const nav=e.target?.closest?.('[data-nav]');
- if(!nav)return;
- const key=String(nav.dataset.nav||''),path=key==='home'?'/home':key==='discover'?'/discover':key==='sports'?'/sports':key==='profile'?'/profile':key==='configs'?'/configs':'';
- if(!path)return;
- e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
- try{window.__ctCoreR471?.navigate?.(path,false)}catch{}
-},true);
-`;
-js=ct497NavAuthority+"\n"+js;
-
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r497-official-0.3.24';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.24 • ${REVISION}');
 js+='\nwindow.__ctR497Marker="stable-r495-exact-runtime+broken-release-sources-removed+modern-blue+full-browser-gate";\n';
@@ -119,6 +107,31 @@ const navLegacy="const nav=e.target.closest('[data-nav]');if(nav){e.preventDefau
 const navSingle="const nav=e.target.closest('[data-nav]');if(nav){e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();ct497PrimaryNavigate(nav.dataset.nav);return}";
 if(!js.includes(navLegacy))throw new Error('r497 base navigation owner missing');
 js=js.replace(navLegacy,navSingle);
+
+const A321="window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity';";
+js=ct497ReplaceNamed(js,A321,'loadForYou321',`async function loadForYou321(force=false){
+ try{
+  const owner=window.__ctR464;
+  if(!owner)throw new Error('FOR_YOU_OWNER_UNAVAILABLE');
+  if(force&&typeof owner.load==='function')return await owner.load(true);
+  if(typeof owner.activate==='function'){owner.activate();return true}
+  if(typeof owner.load==='function')return await owner.load(false);
+  return false;
+ }catch(e){document.documentElement.dataset.ct497ForYouError=String(e?.message||e);return false}
+}`,'r321');
+js=ct497ReplaceNamed(js,A321,'renderDiscover321',`function renderDiscover321(seq){
+ setApp(shell('Descobrir','Recomendações, Top 10, tendências, novidades, lançamentos e calendário.','discover',typeof B.shell319==='function'?B.shell319():''));
+ if(seq!==navSeq||routeNow()!=='discover')return false;
+ sync321();
+ const tab=String(discover?.tab||'foryou');
+ setTimeout(()=>{
+  if(seq!==navSeq||routeNow()!=='discover')return;
+  if(tab==='foryou'){void loadForYou321(false);return}
+  void loadDiscover321(tab,false);
+ },0);
+ document.documentElement.dataset.ct497Discover='shell-first';
+ return true;
+}`,'r321');
 
 const A464="window.__ctR464Marker='discover-foryou-visible-owner-v421';";
 const oldState=`const stateSaysForYou=()=>{
