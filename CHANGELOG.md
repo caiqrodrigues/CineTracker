@@ -1,3 +1,14 @@
+## 0.3.26 — r499 (2026-10-08)
+
+### Escopo estrito: Home Séries/Filmes + Top 10
+- Home Séries: Histórico permanece fisicamente acima de Continuar assistindo no DOM e a entrada fica ancorada em Continuar assistindo. Quando o Histórico hidrata depois, a posição visível é compensada para não pular de volta para o Histórico.
+- Home Filmes: Filmes vistos permanece acima de Assistir a seguir / Watchlist e a entrada fica ancorada na Watchlist.
+- Home Filmes: removida a reutilização visual da linha ct274-media-card para a Watchlist. Cada filme passa a usar card nativo de pôster inteiro 2:3, mantendo paginação v405, ordenação, abertura de detalhe e ação Visto.
+- Home: removida a escada de realinhamento de 40/140/360/760/1400 ms; o anchor usa somente microtask + dois frames e respeita movimento do usuário.
+- Top 10: páginas 1–5 formam o pool primário. Se, após excluir vistos/Watchlist, ainda houver menos de 10 elegíveis, páginas 6–10 são usadas como top-up delimitado antes do paint final.
+- Pra Você: cinetracker_foryou_payload_v498 foi preservado; validação real confirma que A Odisseia/The Odyssey já vista não aparece em 100% Novos.
+- Perfil, F1, Esportes, histórico diário, Configurações e Android não foram alterados.
+
 ## 0.3.25 — r498 (2026-10-08)
 
 ### Escopo estrito: Home + Descobrir/Pra Você + Top 10
