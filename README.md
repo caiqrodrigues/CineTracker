@@ -1,3 +1,10 @@
+## Web 0.3.27 / r500 — Home real e Top 10 10×10
+
+- Histórico de Séries e Filmes fica acima no DOM e escondido acima da área principal mesmo preenchido.
+- Watchlist de Filmes usa card próprio 2:3, sem herdar geometria global.
+- Top 10 continua buscando até completar 10 Séries e 10 Filmes elegíveis.
+- Pra Você, Perfil, F1, Esportes, Configurações e Android permanecem inalterados.
+
 ## Web 0.3.26 / r499 — Home com Histórico acima e Top 10 completo
 
 - Séries: Histórico fica acima no documento, mas a Home abre em Continuar assistindo sem cadeia de timers.

@@ -1,3 +1,13 @@
+## 0.3.27 — r500 (2026-10-09)
+
+### Escopo estrito: Home Séries/Filmes + Top 10
+- Home Séries: Histórico preenchido é forçado como irmão anterior de Continuar assistindo e a ancoragem usa o scroll container real, não apenas window.
+- Home Filmes: Filmes vistos segue fisicamente acima da Watchlist com a mesma ancoragem real.
+- Home Filmes: Watchlist deixa de herdar a classe global .card; card próprio r500 é 150×225 no desktop e 2:3 responsivo no mobile.
+- Top 10: busca adaptativa em lotes de 5 páginas, até a página 50 apenas enquanto faltarem títulos elegíveis.
+- Chromium agora valida Histórico preenchido e bloqueia os primeiros 200 candidatos do Top 10 para exigir 10 Séries + 10 Filmes além da página 10.
+- Pra Você v498 e demais áreas não foram alterados.
+
 ## 0.3.26 — r499 (2026-10-08)
 
 ### Escopo estrito: Home Séries/Filmes + Top 10
