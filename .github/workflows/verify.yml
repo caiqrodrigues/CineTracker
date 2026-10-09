@@ -47,7 +47,7 @@ jobs:
             if grep -Fq '"version": "0.3.36"' <<<"$BODY" && grep -Fq '"revision": "r509-official-0.3.36"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v509.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR509Marker='home-history-truly-hidden-both-tabs+movies-empty-race-fixed+v405-nonempty+scope-home-only'" <<<"$JS" && grep -Fq 'app-v509.js?ct=r508-official-0.3.35' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR509Marker='home-history-truly-hidden-both-tabs+movies-empty-race-fixed+v405-nonempty+scope-home-only'" <<<"$JS" && grep -Fq 'app-v509.js?ct=r509-official-0.3.36' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
