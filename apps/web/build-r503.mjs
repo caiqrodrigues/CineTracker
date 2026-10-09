@@ -16,10 +16,25 @@ js=replaceNamed(js,A388,'activeKind',`function activeKind(){
  if(locked==='movies'||locked==='series')return locked;
  try{return window.__ctR371?.activeTab==='movies'?'movies':'series'}catch{return q('[data-home-tab].active')?.dataset?.homeTab==='movies'?'movies':'series'}
 }`,'r388');
+const A371="window.__ctR371Marker='home-tab-user-only+repaint-preserved+async-generation-cancel';";
+js=replaceNamed(js,A371,'applyTab',`function applyTab(kind=desiredTab(),generation=tabGeneration){
+ if(routeNow()!=='home'||generation!==tabGeneration)return false;
+ const root=q('[data-home]');if(!root)return false;
+ const locked=String(window.__ctR502UserTab||document.documentElement.dataset.ct502HomeKind||''),requested=kind==='movies'?'movies':'series',wanted=(locked==='movies'||locked==='series')?locked:(userSelected?tabRef.current:requested);
+ root.dataset.ct371HomeTab=wanted;document.documentElement.dataset.ct502HomeKind=wanted;document.documentElement.dataset.ct495HomeKind=wanted;
+ try{ct266HomeTab=wanted}catch{}
+ qa('[data-home-tab]',root).forEach(b=>{const on=String(b.dataset.homeTab||'series')===wanted;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');b.type='button'});
+ qa('[data-home-view]',root).forEach(v=>{const on=String(v.dataset.homeView||'series')===wanted;v.hidden=!on;v.classList.toggle('hidden',!on);v.setAttribute('aria-hidden',on?'false':'true')});
+ applyCount++;return true
+}`,'r371');
+
 js=replaceNamed(js,A388,'applyTab',`function applyTab(k){
+ const root=q('[data-home]');if(!root)return false;
  const locked=String(window.__ctR502UserTab||document.documentElement.dataset.ct502HomeKind||''),wanted=(locked==='movies'||locked==='series')?locked:(k==='movies'?'movies':'series');
  document.documentElement.dataset.ct502HomeKind=wanted;document.documentElement.dataset.ct495HomeKind=wanted;
- try{return window.__ctR495?.applyHomeTab?.(wanted,false)??window.__ctR371?.applyTab?.(wanted)??false}catch{try{return window.__ctR371?.applyTab?.(wanted)??false}catch{return false}}
+ root.querySelectorAll('[data-home-tab]').forEach(b=>{const on=String(b.dataset.homeTab||'series')===wanted;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
+ root.querySelectorAll('[data-home-view]').forEach(v=>{const on=String(v.dataset.homeView||'series')===wanted;v.hidden=!on;v.classList.toggle('hidden',!on);v.setAttribute('aria-hidden',on?'false':'true')});
+ return true
 }`,'r388');
 js=replaceNamed(js,A388,'alignHome393',`function alignHome393(kind=activeKind(),token=homeAnchorToken393){
  const current=activeKind();if(routeNow()!=='home'||token!==homeAnchorToken393||homeUserMoved393||kind!==current)return false;
