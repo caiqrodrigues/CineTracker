@@ -128,8 +128,8 @@ const probe=`
  }catch(e){stage('fail:'+String(e?.stack||e)+' calls='+JSON.stringify(window.__ct497Calls||[]))}
 })();
 `;
-const liveScript='<script defer src="/app-v504.js?ct=r503-official-0.3.30"></script>';
-if(!baseHtml.includes(liveScript))throw new Error('r497 browser fixture app script missing');
+const liveScript='<script defer src="/app-v504.js?ct=r504-official-0.3.31"></script>';
+if(!baseHtml.includes(liveScript))throw new Error('r504 browser fixture app script missing');
 const injected=baseHtml.replace(liveScript,'<script src="/test-prelude.js"></script>'+liveScript+'<script defer src="/test-probe.js"></script>');
 let lastStage='none';
 const server=createServer(async(req,res)=>{
@@ -155,10 +155,10 @@ for(let attempt=1;attempt<=2&&lastStage==='none';attempt++){
  if(lastStage==='none'){try{child.kill('SIGTERM')}catch{};await Promise.race([new Promise(r=>child.once('close',r)),new Promise(r=>setTimeout(r,1500))]);await rm(profile,{recursive:true,force:true});child=null;continue}
  await rm(profile,{recursive:true,force:true}).catch(()=>{});
 }
-if(lastStage==='none'){await new Promise(r=>server.close(r));throw new Error('R497_BROWSER chromium did not reach prelude after isolated retry STDERR='+err.slice(-2000))}
+if(lastStage==='none'){await new Promise(r=>server.close(r));throw new Error('R504_BROWSER chromium did not reach prelude after isolated retry STDERR='+err.slice(-2000))}
 const functionalDeadline=Date.now()+15000;while(Date.now()<functionalDeadline&&!/^ok$|^fail:/.test(lastStage))await new Promise(r=>setTimeout(r,50));
 try{child?.kill('SIGTERM')}catch{}
 if(child)await Promise.race([new Promise(r=>child.once('close',r)),new Promise(r=>setTimeout(r,2000))]);
 await new Promise(r=>server.close(r));
-if(lastStage!=='ok')throw new Error('R497_BROWSER stage='+lastStage+' STDERR='+err.slice(-2000));
-console.log('R503_FULL_BROWSER_OK movies survives in-flight legacy repaint');
+if(lastStage!=='ok')throw new Error('R504_BROWSER stage='+lastStage+' STDERR='+err.slice(-2000));
+console.log('R504_FULL_BROWSER_OK movies survives in-flight legacy repaint');
