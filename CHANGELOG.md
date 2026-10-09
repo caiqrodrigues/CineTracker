@@ -1,3 +1,18 @@
+## 0.3.36 — r509 (2026-10-09)
+
+### Home — correção do estado real reportado
+- **Séries:** Histórico recente continua fisicamente acima, mas a entrada é ancorada de forma determinística em **Continuar assistindo**; o Histórico fica fora da viewport e aparece somente ao rolar para cima.
+- **Filmes:** Filmes vistos segue a mesma regra e a entrada é ancorada em **Assistir a seguir / Watchlist**.
+- **Filmes / Watchlist vazia:** corrigida a corrida em que uma requisição herdada/in-flight terminava vazia e fazia `loadMovies(false)` retornar sem disparar uma nova v405.
+- A troca para Filmes não chama mais `renderMoviesAll()` com `hMovies=[]`, portanto o loader/trilho não é apagado antes dos dados.
+- v405 validada no banco real: **60 itens na primeira página / 1.391 no total**. A r509 faz no máximo uma repetição v405 e mantém v376 apenas como fallback delimitado.
+- Primeira página de Filmes é pré-carregada enquanto Séries está ativa, sem pintar a aba oculta.
+- O lock de posição é finito, vale para Séries e Filmes e é cancelado imediatamente quando o usuário rola/interage.
+
+### Escopo preservado
+- Layout 176×264 (2:3) da Watchlist, Descobrir/Pra Você, Top 10, Perfil, F1, Esportes e Android permanecem inalterados.
+- Sem full-page reload, `router.refresh()`, loop infinito, interval ou observer persistente.
+
 ## 0.3.35 — r508 (2026-10-09)
 
 ### Home > Filmes — correção do erro ainda visível no print real
