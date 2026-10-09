@@ -1,3 +1,10 @@
+## Web 0.3.33 / r506 — Home: Histórico acima e Watchlist de Filmes restaurada
+
+- Home Séries abre em **Continuar assistindo**; Histórico fica acima e é acessível rolando para cima.
+- Home Filmes abre em **Assistir a seguir / Watchlist**; Histórico fica acima e é acessível rolando para cima.
+- Watchlist de Filmes usa diretamente v405, com primeira página de 60 itens e cards 2:3; paginação existente permanece.
+- Descobrir, Perfil, F1, Esportes e Android não foram alterados.
+
 ## Web 0.3.32 / r505 — Watchlist de Filmes + abas fixas
 
 - Home Filmes recupera automaticamente uma carga vazia herdada com uma única nova leitura v405.
