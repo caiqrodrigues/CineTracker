@@ -66,11 +66,22 @@ const probe=`
   ok(fyRoot.querySelectorAll('[data-ct464-action="swap"]').length===7,'ForYou swap count');
   ok((window.__ct497Calls||[]).includes('cinetracker_foryou_payload_v498'),'ForYou v498 not called');
   stage('foryou');
+  stage('top10-adaptive');
   window.__ct500Pages=[];
-  window.__ctR321Test?.setTestBridge?.({topPage:async(provider,type,page)=>{window.__ct500Pages.push(type+':'+page);const base=type==='movie'?100000:200000;return Array.from({length:20},(_,i)=>({media_type:type==='movie'?'movie':'tv',tmdb_id:base+page*100+i+1,id:base+page*100+i+1,title:(type==='movie'?'Filme ':'Série ')+page+'-'+i,poster_path:'/p.jpg',release_date:'2026-01-01',first_air_date:'2026-01-01'}))},exact:async items=>{const blocked=items.filter(x=>x.tmdb_id<(x.media_type==='movie'?101100:201100)).map(x=>(x.media_type==='movie'?'movie:':'tv:')+x.tmdb_id);return{blocked_keys:blocked,watch_keys:[],seen_keys:blocked,not_interested_keys:[]}}});
-  const topBtn=[...document.querySelectorAll('[data-ct319-tab]')].find(x=>x.dataset.ct319Tab==='top10'||/top 10/i.test(x.textContent||''));ok(topBtn,'Top10 tab missing');topBtn.click();
-  await wait('top10-10x10',()=>{const rs=[...document.querySelectorAll('[data-ct321-top-content] .ct319-top-row')];return rs.length===2&&rs.every(r=>r.querySelectorAll('.ct319-item').length===10)},9000);
-  const topRows=[...document.querySelectorAll('[data-ct321-top-content] .ct319-top-row')];ok(topRows.every(r=>r.querySelectorAll('.ct319-item').length===10),'Top10 incomplete');ok((window.__ct500Pages||[]).some(x=>/:11$/.test(x)),'Top10 did not continue past page 10');window.__ctR321Test?.setTestBridge?.(null);
+  window.__ctR321Test?.setTestBridge?.({
+   topPage:async(provider,type,page)=>{window.__ct500Pages.push(type+':'+page);const base=type==='movie'?100000:200000;return Array.from({length:20},(_,i)=>({media_type:type==='movie'?'movie':'tv',tmdb_id:base+page*100+i+1,id:base+page*100+i+1,title:(type==='movie'?'Filme ':'Série ')+page+'-'+i,poster_path:'/p.jpg',release_date:'2026-01-01',first_air_date:'2026-01-01'}))},
+   exact:async items=>{const blocked=items.filter(x=>x.tmdb_id<(x.media_type==='movie'?101100:201100)).map(x=>(x.media_type==='movie'?'movie:':'tv:')+x.tmdb_id);return{blocked_keys:blocked,watch_keys:[],seen_keys:blocked,not_interested_keys:[]}}
+  });
+  const [tenMovies,tenSeries]=await Promise.all([
+   window.__ctR500TopTest.eligible(8,'movie',true),
+   window.__ctR500TopTest.eligible(8,'tv',true)
+  ]);
+  ok(tenMovies.length===10,'Top10 movie eligible count '+tenMovies.length);
+  ok(tenSeries.length===10,'Top10 series eligible count '+tenSeries.length);
+  ok((window.__ct500Pages||[]).some(x=>x==='movie:11'),'Top10 movies did not continue past page 10');
+  ok((window.__ct500Pages||[]).some(x=>x==='tv:11'),'Top10 series did not continue past page 10');
+  window.__ctR321Test?.setTestBridge?.(null);
+  stage('top10-ok');
   document.querySelector('[data-nav="profile"]').click();
   await wait('profile-ready',()=>document.querySelector('[data-profile][data-ct491-profile="ready"]'),3200);
   const panels=[...document.querySelectorAll('[data-profile] section.panel')];
