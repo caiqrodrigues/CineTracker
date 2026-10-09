@@ -1,3 +1,16 @@
+## 0.3.33 — r506 (2026-10-09)
+
+### Home — correção estritamente limitada
+- Séries: o Histórico permanece fisicamente acima de **Continuar assistindo**, mas a entrada da Home ancora diretamente em **Continuar assistindo**; o Histórico só aparece ao rolar para cima.
+- Filmes: o Histórico permanece fisicamente acima de **Assistir a seguir / Watchlist**, e a troca para Filmes ancora diretamente na Watchlist.
+- Filmes: removido o `window.scrollTo(0)` da troca Séries/Filmes que anulava a âncora e expunha o Histórico.
+- Filmes: `cinetracker_home_movies_v405` é consumida diretamente pelo owner r388 com normalização robusta do JSON e apenas uma repetição delimitada quando a primeira resposta vier vazia. O banco foi validado com 1.391 filmes elegíveis na Watchlist.
+- Cards de Filmes permanecem no padrão aprovado de 176×264 / 2:3.
+
+### Escopo preservado
+- Nenhuma alteração em Descobrir, Perfil, F1, Esportes ou Android.
+- Sem reload de página, `router.refresh()`, loop infinito, interval ou observer persistente.
+
 ## 0.3.32 — r505 (2026-10-09)
 
 ### Escopo exclusivo: Home > Filmes + abas Séries/Filmes

@@ -1,3 +1,4 @@
+- Web: **0.3.33 / r506-official-0.3.33** — escopo Home: Histórico acima/oculto na entrada, âncora em Continue/Watchlist e Filmes v405 restaurado com cards 2:3.
 - Web: **0.3.32 / r505-official-0.3.32** — escopo Home: Watchlist Filmes não fica vazia após corrida/in-flight; retry v405 delimitado e abas Séries/Filmes sticky no topo. Demais telas preservadas.
 - Web: **0.3.31 / r504-official-0.3.31** — corrige exclusivamente a abertura real de Home > Filmes com owner único de ponteiro, mantendo v405/repaint e cards 176×264 / 2:3.
 
