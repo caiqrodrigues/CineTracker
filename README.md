@@ -1,4 +1,10 @@
-## Web 0.3.32 / r505 — Watchlist de Filmes + abas fixas\n\n- Home Filmes recupera automaticamente uma carga vazia herdada com uma única nova leitura v405.\n- Watchlist mantém cards 176x264 / 2:3 e skeleton equivalente durante a leitura.\n- Séries / Filmes ficam fixos no topo da Home durante o scroll.\n- Nenhuma outra tela ou regra funcional foi alterada.\n## Web 0.3.31 / r504 — Home Filmes com um único owner de clique
+## Web 0.3.32 / r505 — Watchlist de Filmes + abas fixas
+
+- Home Filmes recupera automaticamente uma carga vazia herdada com uma única nova leitura v405.
+- Watchlist mantém cards 176x264 / 2:3 e skeleton equivalente durante a leitura.
+- Séries / Filmes ficam fixos no topo da Home durante o scroll.
+- Nenhuma outra tela ou regra funcional foi alterada.
+## Web 0.3.31 / r504 — Home Filmes com um único owner de clique
 
 - Corrige somente a abertura da aba **Filmes**.
 - Séries/Filmes agora são controlados por um único handler de ponteiro; handlers antigos de aba deixam de competir.
@@ -335,7 +341,16 @@
 - Histórico diário usa ↶ na mesma linha de cada registro e desmarca pelo contrato real `bigint` do RPC v426, com Optimistic UI e rollback.
 - F1 e Android 1.0.20 / 10062 permanecem inalterados.
 
-## Web 1.0.256 / r466 — recuperação publicada e desfazer UUID\n\n- Corrige a montagem que impedia a r465 de sequer gerar o bundle: r466 parte da base r464 estável e neutraliza somente os owners legados efetivamente presentes.\n- Home Séries e Home Filmes usam o owner autenticado finito da recuperação r465; Filmes continua na Watchlist paginada `cinetracker_home_movies_v405`.\n- Descobrir > Pra Você usa o host visível e pools v421; os cards carregados exibem ações ativas e `↻ Trocar` em todos os slots aplicáveis.\n- Perfil mantém exatamente 13 cards na visão resumida e usa o 14º elemento como `Ver mais`; Atores Favoritos usa `cinetracker_profile_actors_v465`.\n- Histórico diário mantém o controle mínimo `↶` na mesma linha e agora preserva `media_id` UUID como texto ao desmarcar, corrigindo o clique que não persistia.\n- Sem full-page reload, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado. Android permanece 1.0.20 / 10062.\n\n## Web 1.0.255 / r465 — recuperação real de Home, Pra Você, Perfil e Histórico
+## Web 1.0.256 / r466 — recuperação publicada e desfazer UUID
+
+- Corrige a montagem que impedia a r465 de sequer gerar o bundle: r466 parte da base r464 estável e neutraliza somente os owners legados efetivamente presentes.
+- Home Séries e Home Filmes usam o owner autenticado finito da recuperação r465; Filmes continua na Watchlist paginada `cinetracker_home_movies_v405`.
+- Descobrir > Pra Você usa o host visível e pools v421; os cards carregados exibem ações ativas e `↻ Trocar` em todos os slots aplicáveis.
+- Perfil mantém exatamente 13 cards na visão resumida e usa o 14º elemento como `Ver mais`; Atores Favoritos usa `cinetracker_profile_actors_v465`.
+- Histórico diário mantém o controle mínimo `↶` na mesma linha e agora preserva `media_id` UUID como texto ao desmarcar, corrigindo o clique que não persistia.
+- Sem full-page reload, `router.refresh()`, `MutationObserver`, `setInterval` ou loop ilimitado. Android permanece 1.0.20 / 10062.
+
+## Web 1.0.255 / r465 — recuperação real de Home, Pra Você, Perfil e Histórico
 
 - Home Séries faz os owners legados convergirem para r465, aguarda a sessão e usa o renderer r388 já promovido para `cinetracker_home_series_v452`; o primeiro carregamento deixa de depender da corrida de boot.
 - Home Filmes faz os owners r456/r457/r460/r461 convergirem para r465; após autenticação chama diretamente o paginador v405 do r461, eliminando o estado infinito de “Carregando Watchlist…”.
@@ -706,7 +721,14 @@ Build: `apps/web/build-r408.mjs`; gate: `apps/web/build-r408-official.mjs`; regr
 
 Build de hospedagem: `apps/web/build-r407.mjs`; gate oficial: `apps/web/build-r407-official.mjs`; regressões: `apps/web/test-r407.mjs` e `apps/web/test-r407-browser.mjs`.
 
-## Web 1.0.197 / r406\n\n- Home Séries volta a usar a contagem canônica de episódios recentes da r403/r402; Raw e SmackDown com episódio atual não visto entram em **Assistir a seguir** sem transformar backlog histórico em pendência.\n- Home Filmes mantém paginação SQL v405, mas a pintura da Watchlist passa a seguir a view realmente visível, evitando o bloco vazio por estado legado de aba.\n- Descobrir > Pra Você garante os botões completos: **+ Watchlist / ✓ Visto / ↻ Trocar** nos cards novos e **✓ Visto / ↻ Trocar** em Da sua Watchlist.\n- Sem reload global, MutationObserver global, setInterval agressivo ou loop infinito.\n\n## Web 1.0.196 / r405
+## Web 1.0.197 / r406
+
+- Home Séries volta a usar a contagem canônica de episódios recentes da r403/r402; Raw e SmackDown com episódio atual não visto entram em **Assistir a seguir** sem transformar backlog histórico em pendência.
+- Home Filmes mantém paginação SQL v405, mas a pintura da Watchlist passa a seguir a view realmente visível, evitando o bloco vazio por estado legado de aba.
+- Descobrir > Pra Você garante os botões completos: **+ Watchlist / ✓ Visto / ↻ Trocar** nos cards novos e **✓ Visto / ↻ Trocar** em Da sua Watchlist.
+- Sem reload global, MutationObserver global, setInterval agressivo ou loop infinito.
+
+## Web 1.0.196 / r405
 
 - **Home / Filmes:** o clique real herdado da r388 agora delega para a autoridade r405 antes do loader legado. A Watchlist usa `cinetracker_home_movies_v405` com paginação SQL real de 120 itens; produção validada com **1.381 filmes**, 120 itens na primeira página e 120 na segunda.
 - **Correção da causa do loading infinito:** o loader antigo convertia `media_id` UUID com `Number(...)`, transformava IDs válidos em zero e descartava toda a Watchlist mesmo após RPC 200. Esse caminho deixa de ser executado pela Home Filmes.
