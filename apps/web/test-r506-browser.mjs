@@ -128,8 +128,8 @@ const probe=`
  }catch(e){stage('fail:'+String(e?.stack||e)+' calls='+JSON.stringify(window.__ct497Calls||[]))}
 })();
 `;
-const liveScript='<script defer src="/app-v505.js?ct=r505-official-0.3.32"></script>';
-if(!baseHtml.includes(liveScript))throw new Error('r504 browser fixture app script missing');
+const liveScript='<script defer src="/app-v506.js?ct=r506-official-0.3.33"></script>';
+if(!baseHtml.includes(liveScript))throw new Error('r506 browser fixture app script missing');
 const injected=baseHtml.replace(liveScript,'<script src="/test-prelude.js"></script>'+liveScript+'<script defer src="/test-probe.js"></script>');
 let lastStage='none';
 const server=createServer(async(req,res)=>{
@@ -161,4 +161,4 @@ try{child?.kill('SIGTERM')}catch{}
 if(child)await Promise.race([new Promise(r=>child.once('close',r)),new Promise(r=>setTimeout(r,2000))]);
 await new Promise(r=>server.close(r));
 if(lastStage!=='ok')throw new Error('R506_BROWSER stage='+lastStage+' STDERR='+err.slice(-2000));
-console.log('R505_FULL_BROWSER_OK nonempty Watchlist + sticky tabs');
+console.log('R506_FULL_BROWSER_OK nonempty Watchlist + sticky tabs');
