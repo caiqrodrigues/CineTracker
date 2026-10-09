@@ -26,7 +26,7 @@ js=replaceNamed(js,A388,'homeMain393',`let homeAnchorPending507=false,homeAnchor
 const homeMainReady507={series:false,movies:false},homeHistoryReady507={series:false,movies:false};
 function homeRequest507(kind=activeKind(),reset=false){
  const k=kind==='movies'?'movies':'series';homeAnchorKind507=k;homeAnchorPending507=true;homeUserMoved393=false;homeAnchorToken393++;
- if(reset){homeMainReady507[k]=k==='movies'?hMovies.length>0:hSeries.length>0;homeHistoryReady507[k]=!!hHistory}
+ if(reset){homeMainReady507[k]=false;homeHistoryReady507[k]=false}
  queueMicrotask(()=>homeAlign507(k,false));requestAnimationFrame(()=>requestAnimationFrame(()=>homeAlign507(k,false)));return homeAnchorToken393
 }
 function homeMain393(kind=activeKind()){
