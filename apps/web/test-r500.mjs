@@ -1,0 +1,8 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r500.mjs');
+const [js,html,css,releaseRaw,rootPkgRaw,webPkgRaw]=await Promise.all([readFile(resolve('dist/app-v500.js'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/app-v500.css'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('r500 regression: '+m)},release=JSON.parse(releaseRaw),rootPkg=JSON.parse(rootPkgRaw),webPkg=JSON.parse(webPkgRaw);
+ok(rootPkg.version==='0.3.27'&&webPkg.version==='0.3.27','versions');ok(release.revision==='r500-official-0.3.27','release');ok(html.includes('app-v500.js?ct=r500-official-0.3.27')&&html.includes('app-v500.css?ct=r500-official-0.3.27'),'assets');
+ok(js.includes('homeScrollRoot500')&&js.includes('homeForceOrder500'),'real scroll/order owner');ok(js.includes('view.insertBefore(history,main)'),'history forced before main');ok(js.includes('class="ct500-movie-card"')&&!js.includes('class="card ct500-movie-card"'),'movie card isolated');ok(css.includes('width:150px!important')&&css.includes('height:225px!important'),'explicit desktop 2:3');ok(js.includes('for(let start=1;start<=50&&out.length<10;start+=5)'),'adaptive Top10 pages');ok(js.includes("window.__ctR500TopTest={eligible:topEligible500}"),'Top10 test bridge');ok(js.includes('document.documentElement.dataset.ct500Top10=String(series.length)+\':\'+String(movies.length)'),'Top10 count marker');
+console.log('WEB_R500_REGRESSION_OK');
