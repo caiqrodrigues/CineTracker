@@ -1,3 +1,11 @@
+## Web 0.3.34 / r507 — Home finalizada sem alterar outras áreas
+
+- Séries abre em **Continuar assistindo**; o **Histórico recente** fica acima da viewport e aparece somente ao rolar para cima.
+- Filmes abre em **Assistir a seguir / Watchlist**; **Filmes vistos** fica acima da viewport.
+- Watchlist de Filmes usa v405 single-flight/cache-first; primeira página real validada com 60 itens de 1.391.
+- Cards de Filmes permanecem **176×264 / 2:3**.
+- Descobrir, Perfil, F1, Esportes e Android permanecem inalterados.
+
 ## Web 0.3.33 / r506 — Home: Histórico acima e Watchlist de Filmes restaurada
 
 - Home Séries abre em **Continuar assistindo**; Histórico fica acima e é acessível rolando para cima.
