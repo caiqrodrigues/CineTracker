@@ -52,7 +52,8 @@ const probe=`
   stage('series');
   await wait('home-f1',()=>String(document.querySelector('[data-home-view="series"]')?.textContent||'').includes('Formula 1'),2600);
   ok(!document.querySelector('[data-ct492-series-more="continue"]'),'false Continue load-more');\n  await sleep(1500);\n  const sv=document.querySelector('[data-home-view="series"]'),sh=sv?.querySelector(':scope > [data-ct388-history="episodes"]'),sc=[...sv?.children||[]].find(x=>x.querySelector?.('h3')?.textContent==='Continuar assistindo');ok(sh&&sc,'series history/continue missing');ok(sh.textContent.includes('Hist Série'),'populated series history missing');ok(!!(sh.compareDocumentPosition(sc)&Node.DOCUMENT_POSITION_FOLLOWING),'series history not above Continue');ok(sc.getBoundingClientRect().top<320,'Continue not anchored after populated history '+sc.getBoundingClientRect().top);
-  const movieButton=document.querySelector('[data-home-tab="movies"]'),br=movieButton.getBoundingClientRect(),hit=document.elementFromPoint(br.left+br.width/2,br.top+br.height/2);
+  const movieButton=document.querySelector('[data-home-tab="movies"]');movieButton.scrollIntoView({block:'center',inline:'center',behavior:'auto'});await sleep(80);const br=movieButton.getBoundingClientRect(),hit=document.elementFromPoint(br.left+br.width/2,br.top+br.height/2);
+  ok(br.width>0&&br.height>0&&br.top>=0&&br.bottom<=innerHeight,'movies tab not in viewport '+JSON.stringify({top:br.top,bottom:br.bottom,h:innerHeight}));
   ok(hit&&(hit===movieButton||movieButton.contains(hit)),'movies tab not pointer-hittable hit='+(hit?.outerHTML||'null'));
   const fire=(type,Ctor=MouseEvent)=>hit.dispatchEvent(new Ctor(type,{bubbles:true,cancelable:true,clientX:br.left+br.width/2,clientY:br.top+br.height/2,button:0}));
   if(typeof PointerEvent==='function')fire('pointerdown',PointerEvent);fire('mousedown');if(typeof PointerEvent==='function')fire('pointerup',PointerEvent);fire('mouseup');fire('click');
