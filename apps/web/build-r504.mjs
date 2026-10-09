@@ -16,7 +16,6 @@ js=replaceNamed(js,A371,'desiredTab',`function desiredTab(){
  return locked==='movies'||locked==='series'?locked:(userSelected?tabRef.current:visibleTab())
 }`,'r371');
 js=replaceNamed(js,A371,'applyTab',`function applyTab(kind=desiredTab(),generation=tabGeneration){
- if(routeNow()!=='home')return false;
  const root=q('[data-home]');if(!root)return false;
  const locked=String(window.__ctR504UserTab||''),requested=kind==='movies'?'movies':'series',wanted=(locked==='movies'||locked==='series')?locked:requested;
  tabRef.current=wanted;root.dataset.ct371HomeTab=wanted;
@@ -34,7 +33,7 @@ js=replaceNamed(js,A371,'selectByUser',`function selectByUser(kind){
  applyTab(wanted,tabGeneration);
  try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{window.scrollTo?.(0,0)}
  try{
-  if(wanted==='movies')Promise.resolve(window.__ctR388?.loadMovies?.(false)).then(()=>{if(desiredTab()==='movies'&&routeNow()==='home'){applyTab('movies',tabGeneration);window.__ctR388?.renderMoviesAll?.()}}).catch(()=>{});
+  if(wanted==='movies')Promise.resolve(window.__ctR388?.loadMovies?.(false)).then(()=>{if(desiredTab()==='movies'&&q('[data-home]')){applyTab('movies',tabGeneration);window.__ctR388?.renderMoviesAll?.()}}).catch(()=>{});
   else void window.__ctR388?.loadSeries?.(false)
  }catch{}
  return{generation:tabGeneration,signal:tabController?.signal||null}
