@@ -1,3 +1,12 @@
+## Web 0.3.36 / r509 — Home final: Histórico acima + Watchlist não vazia
+
+- Séries abre em **Continuar assistindo** e o Histórico recente fica escondido acima da viewport.
+- Filmes abre em **Assistir a seguir / Watchlist** e Filmes vistos fica escondido acima.
+- Corrigida a corrida que podia deixar a Watchlist vazia mesmo com v405 retornando dados.
+- v405: primeira página 60 itens; total real validado em 1.391.
+- Trilho de Filmes 176×264 / 2:3 preservado.
+- Nenhuma outra tela foi alterada.
+
 ## Web 0.3.35 / r508 — Home Filmes corrigida pelo viewport real
 
 - **Filmes vistos** permanece fisicamente antes da Watchlist, mas precisa estar completamente fora da viewport na entrada da aba Filmes.
