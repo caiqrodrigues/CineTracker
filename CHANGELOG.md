@@ -1,3 +1,18 @@
+## 0.3.34 — r507 (2026-10-09)
+
+### Home — histórico oculto acima e Watchlist restaurada
+- Séries: **Histórico recente** permanece fisicamente acima de **Continuar assistindo**; a entrada agora ancora somente depois dos paints reais de Histórico e seção principal, deixando o Histórico fora da viewport e acessível ao rolar para cima.
+- Filmes: **Filmes vistos** segue a mesma regra, acima de **Assistir a seguir / Watchlist**, e a troca para Filmes arma uma nova âncora real.
+- A âncora foi ligada diretamente ao `renderHome388()` efetivamente ativo desde r495; o scheduler legado que já não era chamado deixou de ser dependência.
+- Filmes: v405 usa single-flight/cache-first e v376 somente como fallback delimitado. A autoridade real foi validada com **60 filmes na primeira página e 1.391 no total**.
+- Cards da Watchlist permanecem no padrão aprovado **176×264 / 2:3**.
+- Wheel/touch libera qualquer âncora pendente, preservando o controle manual do scroll após a entrada.
+- Regressão Chromium valida ordem física, posição no viewport, Watchlist não vazia no primeiro v405 e geometria 2:3.
+
+### Escopo preservado
+- Descobrir, Perfil, F1, Esportes e Android não foram alterados.
+- Sem full-page reload, `router.refresh()`, `while(true)`, `setInterval` ou observer persistente.
+
 ## 0.3.33 — r506 (2026-10-09)
 
 ### Home — correção estritamente limitada
