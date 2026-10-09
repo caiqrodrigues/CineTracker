@@ -1,3 +1,16 @@
+## 0.3.35 — r508 (2026-10-09)
+
+### Home > Filmes — correção do erro ainda visível no print real
+- Corrige o falso positivo da r507: o teste antigo verificava somente a ordem DOM entre **Filmes vistos** e **Assistir a seguir / Watchlist**. A r508 exige que **Filmes vistos esteja realmente fora da viewport**, acima das abas sticky.
+- A âncora de Filmes usa um lock finito por `requestAnimationFrame` e é reaplicada após os paints reais de Histórico e Watchlist. Qualquer wheel/touch do usuário cancela imediatamente o lock.
+- **Assistir a seguir / Watchlist** deixa de ocupar várias linhas: passa a ser um único trilho horizontal compacto.
+- Cards ficam no padrão aprovado **176×264 (2:3) no desktop** e **154×231 (2:3) no mobile**.
+- v405, paginação, Visto e ordenação da Watchlist permanecem preservados.
+
+### Escopo preservado
+- Home Séries, Descobrir/Pra Você, Top 10, Perfil, F1, Esportes e Android não foram alterados.
+- Sem full-page reload, `router.refresh()`, loop infinito, interval ou observer persistente.
+
 ## 0.3.34 — r507 (2026-10-09)
 
 ### Home — histórico oculto acima e Watchlist restaurada

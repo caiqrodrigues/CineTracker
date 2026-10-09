@@ -1,3 +1,11 @@
+## Web 0.3.35 / r508 — Home Filmes corrigida pelo viewport real
+
+- **Filmes vistos** permanece fisicamente antes da Watchlist, mas precisa estar completamente fora da viewport na entrada da aba Filmes.
+- A Watchlist abre imediatamente abaixo das abas Home e usa um único trilho horizontal.
+- Cards: **176×264 / 2:3 desktop** e **154×231 / 2:3 mobile**.
+- O teste Chromium agora reprova exatamente o estado mostrado no print em que o Histórico ainda aparecia acima.
+- Demais áreas permanecem inalteradas.
+
 ## Web 0.3.34 / r507 — Home finalizada sem alterar outras áreas
 
 - Séries abre em **Continuar assistindo**; o **Histórico recente** fica acima da viewport e aparece somente ao rolar para cima.

@@ -1,3 +1,4 @@
+- Web: **0.3.35 / r508-official-0.3.35** — escopo Home Filmes: Histórico realmente fora da viewport e Watchlist em trilho único 176×264/2:3; demais áreas preservadas.
 - Web: **0.3.34 / r507-official-0.3.34** — Home-only: Histórico oculto acima de Continue/Watchlist, âncora ligada ao owner r495 real e Filmes v405 single-flight (60/1.391 validado).
 - Web: **0.3.33 / r506-official-0.3.33** — escopo Home: Histórico acima/oculto na entrada, âncora em Continue/Watchlist e Filmes v405 restaurado com cards 2:3.
 - Web: **0.3.32 / r505-official-0.3.32** — escopo Home: Watchlist Filmes não fica vazia após corrida/in-flight; retry v405 delimitado e abas Séries/Filmes sticky no topo. Demais telas preservadas.
