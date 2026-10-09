@@ -17,7 +17,7 @@ js=replaceNamed(js,A371,'desiredTab',`function desiredTab(){
 }`,'r371');
 js=replaceNamed(js,A371,'applyTab',`function applyTab(kind=desiredTab(),generation=tabGeneration){
  if(routeNow()!=='home')return false;
- const requested=kind==='movies'?'movies':'series',wanted=userSelected?tabRef.current:requested;
+ const requested=kind==='movies'?'movies':'series',locked=String(window.__ctR502UserTab||''),wanted=(locked==='movies'||locked==='series')?locked:(userSelected?tabRef.current:requested);
  document.documentElement.dataset.ct502HomeKind=wanted;document.documentElement.dataset.ct495HomeKind=wanted;
  try{return window.__ctR495?.applyHomeTab?.(wanted,false)??false}catch{return false}
 }`,'r371');
