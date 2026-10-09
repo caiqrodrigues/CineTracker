@@ -1,3 +1,11 @@
+## Web 0.3.29 / r502 — Filmes permanece selecionado
+
+- A escolha Séries/Filmes volta a ter um único estado canônico após interação do usuário.
+- Repaint assíncrono de Séries não pode mais devolver a Home para Séries quando Filmes foi selecionado.
+- Watchlist de Filmes usa o padrão 176×264 no desktop e 2:3 responsivo no mobile.
+- Histórico continua acima/oculto e a entrada em Filmes continua ancorada na Watchlist.
+- Pra Você, Top 10, Perfil, F1, Esportes e Android são preservados.
+
 ## Web 0.3.28 / r501 — correção isolada da âncora de Filmes
 
 - Home Séries permanece exatamente como na r500.

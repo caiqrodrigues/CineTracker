@@ -1,3 +1,16 @@
+## 0.3.29 — r502 (2026-10-09)
+
+### Escopo exclusivo: Home > Filmes
+- Corrige a causa do retorno automático para Séries: o owner r371 volta a registrar de fato `userSelected` e `tabRef`. Depois que o usuário escolhe Filmes, repaints tardios de Séries não podem mais trocar a aba.
+- r374, r388 e r495 passam a obedecer o mesmo lock canônico `ct502HomeKind`; não há mais quatro fontes independentes decidindo a aba visível.
+- Repaints de Séries só podem agendar a âncora de Séries quando Séries está ativa; o mesmo vale para Filmes.
+- Watchlist passa ao padrão visual aprovado de **176×264 px no desktop**, com pôster integral 2:3; no mobile permanece responsiva em 2 colunas e 2:3.
+- Chromium espera o carregamento tardio, força um repaint legado de Séries e exige que Filmes continue ativo e visível.
+
+### Preservado
+- Home Séries r500/r501, Pra Você v498, Top 10 adaptativo r500, Perfil, F1, Esportes e Android permanecem sem alteração funcional.
+- Sem full-page reload, `router.refresh()`, `while(true)` ou `setInterval`.
+
 ## 0.3.28 — r501 (2026-10-09)
 
 ### Escopo exclusivo: Home > Filmes
