@@ -1,3 +1,4 @@
+- Web: **0.3.28 / r501-official-0.3.28** — correção isolada da Home Filmes: Histórico permanece acima, entrada fixa na Watchlist; r500/r498 preservados.
 - Web: **0.3.27 / r500-official-0.3.27** — Histórico preenchido realmente acima/oculto, Watchlist isolada em 2:3 e Top 10 adaptativo até completar 10×10.
 - Web: **0.3.26 / r499-official-0.3.26** — Histórico acima/oculto por anchor em Séries e Filmes, Watchlist com cards nativos 2:3 e Top 10 com top-up delimitado até 10 elegíveis.
 - Web: **0.3.25 / r498-official-0.3.25** — Home Séries/Filmes, Pra Você alias-safe para vistos e Top 10 sem paint parcial; restante preservado.

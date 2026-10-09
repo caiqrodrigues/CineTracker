@@ -1,3 +1,12 @@
+## 0.3.28 — r501 (2026-10-09)
+
+### Escopo exclusivo: Home > Filmes
+- Mantém integralmente a r500 em Séries, Top 10, Pra Você e demais telas.
+- Corrige a entrada da aba Filmes: o Histórico continua fisicamente acima da Watchlist, mas a ancoragem passa a usar `scrollIntoView` no alvo real e uma correção exata pelo scroll root ativo.
+- Desativa `overflow-anchor` somente dentro da Home Filmes para impedir o navegador de puxar a viewport de volta ao Histórico depois da hidratação.
+- Watchlist r500 e seus cards 150×225 / 2:3 são preservados sem alteração.
+- Gate Chromium deixa de aceitar Watchlist a 320 px do topo: exige Watchlist abaixo de 90 px e fim do Histórico acima de 55 px.
+
 ## 0.3.27 — r500 (2026-10-09)
 
 ### Escopo estrito: Home Séries/Filmes + Top 10

@@ -1,3 +1,10 @@
+## Web 0.3.28 / r501 — correção isolada da âncora de Filmes
+
+- Home Séries permanece exatamente como na r500.
+- Home Filmes mantém o Histórico acima no DOM, porém abre efetivamente na Watchlist.
+- O navegador não pode mais reposicionar Filmes para dentro do Histórico por scroll anchoring.
+- Cards 2:3, Top 10 r500, Pra Você r498, Perfil, F1, Esportes e Android não foram alterados.
+
 ## Web 0.3.27 / r500 — Home real e Top 10 10×10
 
 - Histórico de Séries e Filmes fica acima no DOM e escondido acima da área principal mesmo preenchido.
