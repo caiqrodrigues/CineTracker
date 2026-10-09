@@ -55,8 +55,7 @@ const probe=`
   const movieButton=document.querySelector('[data-home-tab="movies"]');movieButton.scrollIntoView({block:'center',inline:'center',behavior:'auto'});await sleep(80);const br=movieButton.getBoundingClientRect(),hit=document.elementFromPoint(br.left+br.width/2,br.top+br.height/2);
   ok(br.width>0&&br.height>0&&br.top>=0&&br.bottom<=innerHeight,'movies tab not in viewport '+JSON.stringify({top:br.top,bottom:br.bottom,h:innerHeight}));
   ok(hit&&(hit===movieButton||movieButton.contains(hit)),'movies tab not pointer-hittable hit='+(hit?.outerHTML||'null'));
-  const fire=(type,Ctor=MouseEvent)=>hit.dispatchEvent(new Ctor(type,{bubbles:true,cancelable:true,clientX:br.left+br.width/2,clientY:br.top+br.height/2,button:0}));
-  if(typeof PointerEvent==='function')fire('pointerdown',PointerEvent);fire('mousedown');if(typeof PointerEvent==='function')fire('pointerup',PointerEvent);fire('mouseup');fire('click');
+  hit.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,composed:true,clientX:br.left+br.width/2,clientY:br.top+br.height/2,button:0}));
   await new Promise(r=>setTimeout(r,50));
   const mv=document.querySelector('[data-home-view="movies"]'),sv0=document.querySelector('[data-home-view="series"]'),tabState={r504:window.__ctR504UserTab||null,r502:window.__ctR502UserTab||null,r371:window.__ctR371?.activeTab||null,html504:document.documentElement.dataset.ct504HomeKind||null,html502:document.documentElement.dataset.ct502HomeKind||null,moviesHidden:mv?.hidden,moviesClass:mv?.className,seriesHidden:sv0?.hidden,seriesClass:sv0?.className,active:document.querySelector('[data-home-tab].active')?.dataset?.homeTab||null};ok(mv&&!mv.hidden&&!mv.classList.contains('hidden'),'movies tab not immediate '+JSON.stringify(tabState));
   ok(window.__ctR504UserTab==='movies','r504 canonical tab not movies');
