@@ -21,10 +21,10 @@ jobs:
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v507.js
-          grep -Fq "window.__ctR508Marker='home-movies-history-actually-offscreen+watchlist-one-row-176x264+scope-home-movies-only'" apps/web/dist/app-v507.js
-          grep -Fq 'homeMarkHistory507' apps/web/dist/app-v507.js
-          grep -Fq 'cinetracker_home_movies_v405' apps/web/dist/app-v507.js
+          node --check apps/web/dist/app-v508.js
+          grep -Fq "window.__ctR508Marker='home-movies-history-actually-offscreen+watchlist-one-row-176x264+scope-home-movies-only'" apps/web/dist/app-v508.js
+          grep -Fq 'homeMarkHistory507' apps/web/dist/app-v508.js
+          grep -Fq 'cinetracker_home_movies_v405' apps/web/dist/app-v508.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -45,9 +45,9 @@ jobs:
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
             if grep -Fq '"version": "0.3.35"' <<<"$BODY" && grep -Fq '"revision": "r508-official-0.3.35"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v507.js?ct=$CT" || true)"
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v508.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR508Marker='home-movies-history-actually-offscreen+watchlist-one-row-176x264+scope-home-movies-only'" <<<"$JS" && grep -Fq 'app-v507.js?ct=r508-official-0.3.35' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR508Marker='home-movies-history-actually-offscreen+watchlist-one-row-176x264+scope-home-movies-only'" <<<"$JS" && grep -Fq 'app-v508.js?ct=r508-official-0.3.35' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
