@@ -83,16 +83,6 @@ js=replaceNamed(js,A388,'activeKind',`function activeKind(){
 }`,'r388');
 js=replaceNamed(js,A388,'applyTab',`function applyTab(k){try{return window.__ctR371?.applyTab?.(k)??false}catch{return false}}`,'r388');
 
-const A495="window.__ctR495Marker='modern-runtime+old-owners-retired+progressive-home+fast-profile+strict-12';";
-js=replaceNamed(js,A495,'applyHomeTab495',`function applyHomeTab495(kind,resetScroll=false){
- const locked=String(window.__ctR504UserTab||''),wanted=(locked==='movies'||locked==='series')?locked:(kind==='movies'?'movies':'series');
- try{const out=window.__ctR371?.applyTab?.(wanted);if(resetScroll)try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{window.scrollTo?.(0,0)};return out??false}catch{}
- const root=document.querySelector('[data-home]');if(!root)return false;
- root.querySelectorAll('[data-home-tab]').forEach(b=>{const on=String(b.dataset.homeTab||'series')===wanted;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
- root.querySelectorAll('[data-home-view]').forEach(v=>{const on=String(v.dataset.homeView||'')===wanted;v.hidden=!on;v.classList.toggle('hidden',!on);v.setAttribute('aria-hidden',on?'false':'true')});
- return true
-}`,'r495');
-
 js+="\nwindow.__ctR504Marker='home-tab-single-pointer-owner+movies-immediate-open+r503-watchlist-preserved';\nwindow.__ctR504={version:'0.3.31',scope:'home-movies-open-only'};\n";
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r504-official-0.3.31';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.31 • $'+'{REVISION}');
