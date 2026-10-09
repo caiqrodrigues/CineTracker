@@ -12,8 +12,8 @@ ok(html.includes('app-v502.js?ct=r502-official-0.3.29')&&html.includes('app-v502
 ok(js.includes("window.__ctR502Marker='home-movies-user-lock+standard-176x264+r501-preserved'"),'marker');
 ok(js.includes('userSelected=true;tabRef.current=wanted;tabGeneration++'),'r371 user lock');
 ok(js.includes('dataset.ct502HomeKind=wanted'),'canonical tab dataset');
-ok(js.includes("if(activeKind()==='series')scheduleHome393('series',false)"),'series late-paint guard');
-ok(js.includes("if(activeKind()==='movies')scheduleHome393('movies',false)"),'movies active guard');
+ok(js.includes('window.__ctR501Marker="movies-history-hidden-by-direct-anchor+r500-preserved"'),'r501 movie paint/anchor preserved');
+ok(js.includes('ct500-movie-card'),'r500 movie renderer preserved');
 ok(css.includes('grid-template-columns:repeat(auto-fill,176px)!important'),'desktop standard grid');
 ok(css.includes('width:176px!important')&&css.includes('height:264px!important'),'176x264 cards');
 ok(css.includes('@media(max-width:720px)')&&css.includes('aspect-ratio:2/3!important'),'mobile 2:3');
