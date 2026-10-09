@@ -37,8 +37,12 @@ function homeMain393(kind=activeKind()){
 function homeAlign507(kind=activeKind(),final=false){
  const k=kind==='movies'?'movies':'series';if(routeNow()!=='home'||!homeAnchorPending507||k!==homeAnchorKind507||activeKind()!==k)return false;
  homeForceOrder500(k);const target=homeMain393(k);if(!target)return false;
- const tabs=q('[data-home] .home-tabs'),margin=Math.max(8,Math.ceil(tabs?.getBoundingClientRect?.().height||0)+12),root=homeScrollRoot500(target);
- target.style.scrollMarginTop=margin+'px';homeSetScroll500(root,homeOffset500(target,root)-margin);target.dataset.ct507HomeStart='1';
+ const tabs=q('[data-home] .home-tabs'),margin=Math.max(8,Math.ceil(tabs?.getBoundingClientRect?.().height||0)+12);
+ target.style.scrollMarginTop=margin+'px';
+ try{target.scrollIntoView({block:'start',inline:'nearest',behavior:'auto'})}catch{try{target.scrollIntoView(true)}catch{}}
+ const root=homeScrollRoot500(target),doc=root===document.scrollingElement||root===document.documentElement||root===document.body;
+ if(margin>0){if(doc){try{window.scrollBy({top:-margin,left:0,behavior:'auto'})}catch{window.scrollBy?.(0,-margin)}}else root.scrollTop=Math.max(0,root.scrollTop-margin)}
+ target.dataset.ct507HomeStart='1';
  if(final||homeMainReady507[k]&&homeHistoryReady507[k])homeAnchorPending507=false;
  return true
 }
