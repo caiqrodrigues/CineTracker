@@ -1,4 +1,4 @@
-## 0.3.31 — r504 (2026-10-09)
+## 0.3.32 — r505 (2026-10-09)\n\n### Escopo exclusivo: Home > Filmes + abas Séries/Filmes\n- Corrige a Watchlist vazia sem alterar Séries, Descobrir, Perfil, F1, Esportes ou Android.\n- A RPC v405 foi validada com dados reais: primeira página possui 60 filmes e total atual 1.391; portanto o vazio era corrida de frontend, não falta de dados.\n- Se uma carga herdada terminar vazia, r505 repete uma única vez com leitura fresca v405 e repinta a Watchlist.\n- Ao selecionar Filmes, a recuperação usa o mesmo owner r504 e não recarrega a página.\n- Enquanto a primeira página chega, a Watchlist mostra skeleton de pôster 2:3.\n- Cards aprovados 176x264 / 2:3 permanecem intactos.\n- Botões Séries / Filmes ficam sticky no topo da Home durante o scroll.\n\n### Preservado\n- Home Séries, Pra Você v498, Top 10 r500, Perfil, F1, Esportes e Android permanecem funcionalmente inalterados.\n- Sem full-page reload, router.refresh(), while(true) ou setInterval.\n## 0.3.31 — r504 (2026-10-09)
 
 ### Escopo exclusivo: Home > Filmes não abria por clique real
 - Corrige a regressão da r503 sem alterar Séries, Descobrir, Perfil, F1, Esportes ou Android.

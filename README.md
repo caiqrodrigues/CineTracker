@@ -1,4 +1,4 @@
-## Web 0.3.31 / r504 — Home Filmes com um único owner de clique
+## Web 0.3.32 / r505 — Watchlist de Filmes + abas fixas\n\n- Home Filmes recupera automaticamente uma carga vazia herdada com uma única nova leitura v405.\n- Watchlist mantém cards 176x264 / 2:3 e skeleton equivalente durante a leitura.\n- Séries / Filmes ficam fixos no topo da Home durante o scroll.\n- Nenhuma outra tela ou regra funcional foi alterada.\n## Web 0.3.31 / r504 — Home Filmes com um único owner de clique
 
 - Corrige somente a abertura da aba **Filmes**.
 - Séries/Filmes agora são controlados por um único handler de ponteiro; handlers antigos de aba deixam de competir.
