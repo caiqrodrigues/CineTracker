@@ -58,7 +58,7 @@ const probe=`
   const fire=(type,Ctor=MouseEvent)=>hit.dispatchEvent(new Ctor(type,{bubbles:true,cancelable:true,clientX:br.left+br.width/2,clientY:br.top+br.height/2,button:0}));
   if(typeof PointerEvent==='function')fire('pointerdown',PointerEvent);fire('mousedown');if(typeof PointerEvent==='function')fire('pointerup',PointerEvent);fire('mouseup');fire('click');
   await new Promise(r=>setTimeout(r,50));
-  const mv=document.querySelector('[data-home-view="movies"]');ok(mv&&!mv.hidden&&!mv.classList.contains('hidden'),'movies tab not immediate');
+  const mv=document.querySelector('[data-home-view="movies"]'),sv0=document.querySelector('[data-home-view="series"]'),tabState={r504:window.__ctR504UserTab||null,r502:window.__ctR502UserTab||null,r371:window.__ctR371?.activeTab||null,html504:document.documentElement.dataset.ct504HomeKind||null,html502:document.documentElement.dataset.ct502HomeKind||null,moviesHidden:mv?.hidden,moviesClass:mv?.className,seriesHidden:sv0?.hidden,seriesClass:sv0?.className,active:document.querySelector('[data-home-tab].active')?.dataset?.homeTab||null};ok(mv&&!mv.hidden&&!mv.classList.contains('hidden'),'movies tab not immediate '+JSON.stringify(tabState));
   ok(window.__ctR504UserTab==='movies','r504 canonical tab not movies');
   ok(window.__ctR371?.activeTab==='movies','r371 did not receive real pointer click');
   window.__ctR388?.renderSeries?.();
