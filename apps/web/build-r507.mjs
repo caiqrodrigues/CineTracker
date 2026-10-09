@@ -17,8 +17,9 @@ js=replaceNamed(js,A371,'selectByUser',`function selectByUser(kind){
  userSelected=true;tabRef.current=wanted;tabGeneration++;window.__ctR504UserTab=wanted;window.__ctR502UserTab=wanted;
  document.documentElement.dataset.ct504HomeKind=wanted;document.documentElement.dataset.ct502HomeKind=wanted;document.documentElement.dataset.ct495HomeKind=wanted;
  applyTab(wanted,tabGeneration);
- try{window.__ctR388?.requestHomeAnchor?.(wanted,false)}catch{}
- try{if(wanted==='movies')void window.__ctR388?.loadMovies?.(false);else void window.__ctR388?.loadSeries?.(false)}catch{}
+ try{window.__ctR388?.requestHomeAnchor?.(wanted,true)}catch{}
+ try{window.__ctR388?.renderHistory?.(wanted==='movies'?'movies':'episodes')}catch{}
+ try{if(wanted==='movies'){window.__ctR388?.renderMoviesAll?.();void window.__ctR388?.loadMovies?.(false)}else{window.__ctR388?.renderSeries?.();void window.__ctR388?.loadSeries?.(false)}}catch{}
  return{generation:tabGeneration,signal:tabController?.signal||null}
 }`,'r371');
 
@@ -49,6 +50,18 @@ function homeAlign507(kind=activeKind(),final=false){
 function homeMarkMain507(kind){const k=kind==='movies'?'movies':'series';homeMainReady507[k]=true;return homeAlign507(k,homeHistoryReady507[k])}
 function homeMarkHistory507(kind){const k=kind==='movies'?'movies':'series';homeHistoryReady507[k]=true;return homeAlign507(k,homeMainReady507[k])}`,'r388');
 
+js=replaceNamed(js,A388,'renderHome388',`async function renderHome388(){
+ const kind=activeKind();try{if(!q('[data-home]'))setApp(shell('Home','Sua biblioteca sincronizada e organizada pelo seu progresso.','home','<div class="page" data-home></div>'))}catch{}
+ paintFrame(kind);homeRequest507(kind,true);if(routeNow()!=='home')return false;
+ if(kind==='series'){
+  if(hSeries.length)renderSeries();if(hHistory)renderHistory('episodes');
+  void loadSeries(false);void loadHistory(false)
+ }else{
+  if(hMovies.length)renderMoviesAll();if(hHistory)renderHistory('movies');
+  void loadMovies(false);void loadHistory(false)
+ }
+ document.documentElement.dataset.ct388Home='r507-final-anchor';return true
+}`,'r388');
 js=replaceNamed(js,A388,'alignHome393',`function alignHome393(kind=activeKind()){return homeAlign507(kind,false)}`,'r388');
 js=replaceNamed(js,A388,'scheduleHome393',`function scheduleHome393(kind=activeKind(),fresh=false){if(fresh)return homeRequest507(kind,true);queueMicrotask(()=>homeAlign507(kind,false));requestAnimationFrame(()=>homeAlign507(kind,false));return homeAnchorToken393}`,'r388');
 js=replaceNamed(js,A388,'renderHistory',`function renderHistory(kind){
@@ -107,7 +120,7 @@ js=js.replace(movedOld,"for(const ev of ['wheel','touchmove'])window.addEventLis
 
 const exportOld="window.__ctR388={version:'1.0.184',renderHome:renderHome388,loadSeries,loadHistory,loadMovies,renderSeries,renderMoviesAll,";
 if(!js.includes(exportOld))throw new Error('r507 missing r388 export');
-js=js.replace(exportOld,"window.__ctR388={version:'1.0.184',requestHomeAnchor:homeRequest507,alignHome:(k)=>homeAlign507(k,true),renderHome:renderHome388,loadSeries,loadHistory,loadMovies,renderSeries,renderMoviesAll,");
+js=js.replace(exportOld,"window.__ctR388={version:'1.0.184',requestHomeAnchor:homeRequest507,alignHome:(k)=>homeAlign507(k,true),renderHome:renderHome388,loadSeries,loadHistory,loadMovies,renderHistory,renderSeries,renderMoviesAll,");
 
 js+="\nwindow.__ctR507Marker='home-final-anchor-after-history+movies-v405-singleflight+scope-home-only';\nwindow.__ctR507={version:'0.3.34',scope:'home-only'};\n";
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r507-official-0.3.34';");
