@@ -11,7 +11,6 @@ function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)thr
 function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r507 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r507 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
 const A371="window.__ctR371Marker='home-tab-user-only+repaint-preserved+async-generation-cancel';";
 const A388="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
-const A505="window.__ctR505Marker='home-movies-nonempty-retry+sticky-home-tabs+r504-pointer-preserved';";
 
 js=replaceNamed(js,A371,'selectByUser',`function selectByUser(kind){
  const wanted=kind==='movies'?'movies':'series';
@@ -97,12 +96,6 @@ js=replaceNamed(js,A388,'loadMovies',`async function loadMovies(force=false){
  finally{if(run===hMoviesRun)hMoviesTask=null}})();
  return hMoviesTask
 }`,'r388');
-
-js=replaceNamed(js,A505,'ensureMovies',`async function ensureMovies(force=false){
- if(movieTask)return movieTask;loading();
- movieTask=Promise.resolve().then(()=>baseLoad?.(!!force)||[]).then(list=>{list=Array.isArray(list)?list:[];if(routeHome()&&moviesActive()&&list.length)try{baseRender?.()}catch{};if(routeHome()&&moviesActive()&&!list.length)failed();document.documentElement.dataset.ct505Movies=String(list.length);return list}).finally(()=>{movieTask=null});
- return movieTask
-}`,'r505');
 
 const movedOld="for(const ev of ['wheel','touchmove'])window.addEventListener(ev,()=>{if(routeNow()==='home')homeUserMoved393=true},{capture:true,passive:true});";
 if(!js.includes(movedOld))throw new Error('r507 missing Home movement listener');
