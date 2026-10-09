@@ -64,7 +64,7 @@ const probe=`
   window.__ctR388?.renderSeries?.();
   await sleep(120);
   const movieTab=document.querySelector('[data-home-tab="movies"]'),seriesTab=document.querySelector('[data-home-tab="series"]');
-  ok(movieTab?.classList.contains('active'),'Movies lost active class after late repaint');
+  ok(movieTab?.classList.contains('active'),'Movies lost active class after late repaint state='+JSON.stringify({r371:window.__ctR371?.activeTab,userSelected:window.__ctR371?.userSelected,ct495:document.documentElement.dataset.ct495HomeKind,ct502:document.documentElement.dataset.ct502HomeKind,movieActive:movieTab?.classList.contains('active'),seriesActive:seriesTab?.classList.contains('active'),movieHidden:mv.hidden,seriesHidden:document.querySelector('[data-home-view="series"]')?.hidden}));
   ok(!seriesTab?.classList.contains('active'),'Series became active after late repaint');
   ok(!mv.hidden&&!mv.classList.contains('hidden'),'Movies view hidden after late repaint');
   ok(document.querySelector('[data-home-view="series"]')?.hidden,'Series view visible after late repaint');
