@@ -14,7 +14,8 @@ ok(html.includes('app-v505.js?ct=r505-official-0.3.32')&&html.includes('app-v505
 ok(js.includes("window.__ctR505Marker='home-movies-nonempty-retry+sticky-home-tabs+r504-pointer-preserved'"),'marker');
 ok(js.includes("document.documentElement.dataset.ct505MovieRetry='1'"),'single empty retry');
 ok(js.includes("window.__ctR504HomeTabInstalled=true"),'r504 pointer owner preserved');
-ok(css.includes('position:sticky!important')&&css.includes('top:0!important')&&css.includes('z-index:120!important'),'sticky tabs');
+ok(js.includes("tabs.dataset.ct505Pinned='1'")&&js.includes('schedulePin()'),'fixed tab runtime');
+ok(css.includes('position:fixed!important')&&css.includes('top:8px!important')&&css.includes('z-index:120!important'),'fixed tabs');
 ok(css.includes('width:176px!important;height:264px!important'),'movie skeleton 2:3');
 ok(css.includes('grid-template-columns:repeat(auto-fill,176px)!important')&&css.includes('height:264px!important'),'approved cards preserved');
 ok(js.includes('topEligible500')&&js.includes('cinetracker_foryou_payload_v498'),'unrelated Discover preserved');

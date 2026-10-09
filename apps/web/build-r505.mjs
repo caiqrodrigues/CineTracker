@@ -18,18 +18,18 @@ js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v
 html=html.replaceAll('app-v504.js?ct=r504-official-0.3.31','app-v505.js?ct=r505-official-0.3.32')
  .replaceAll('app-v504.css?ct=r504-official-0.3.31','app-v505.css?ct=r505-official-0.3.32')
  .replaceAll('r504-official-0.3.31','r505-official-0.3.32');
-css+='\n/* CineTracker Web 0.3.32 r505 — scoped Home Movies + sticky Home tabs. */\n'
- +'html body [data-home]>.home-tabs,html body [data-home] .home-tabs{position:sticky!important;top:0!important;z-index:120!important;align-self:start!important;width:max-content!important;max-width:100%!important;padding:6px 8px!important;margin:-6px -8px 4px!important;border-radius:0 0 12px 12px!important;background:rgba(3,10,15,.94)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important;pointer-events:auto!important}\n'
+css+='\n/* CineTracker Web 0.3.32 r505 — scoped Home Movies + fixed Home tabs. */\n'
+ +'html body [data-home]{padding-top:var(--ct505-tabs-height,44px)!important}html body [data-home]>.home-tabs,html body [data-home] .home-tabs{position:fixed!important;top:8px!important;left:var(--ct505-tabs-left,164px)!important;z-index:120!important;width:max-content!important;max-width:calc(100vw - var(--ct505-tabs-left,164px) - 12px)!important;padding:6px 8px!important;margin:0!important;border-radius:12px!important;background:rgba(3,10,15,.94)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important;pointer-events:auto!important}\n'
  +'html body [data-home] .home-tabs [data-home-tab]{position:relative!important;z-index:121!important;pointer-events:auto!important}\n'
  +'html body [data-home-view="movies"] .ct505-movie-loading{display:grid!important;grid-template-columns:repeat(auto-fill,176px)!important;gap:12px!important;align-items:start!important}\n'
  +'html body [data-home-view="movies"] .ct505-movie-loading>span{display:block!important;width:176px!important;height:264px!important;border-radius:13px!important;background:linear-gradient(105deg,rgba(255,255,255,.04) 8%,rgba(255,255,255,.10) 18%,rgba(255,255,255,.04) 33%)!important;background-size:200% 100%!important;animation:ct489Pulse 1.15s ease-in-out infinite!important}\n'
- +'@media(max-width:700px){html body [data-home]>.home-tabs,html body [data-home] .home-tabs{top:0!important;margin:-4px -4px 4px!important}html body [data-home-view="movies"] .ct505-movie-loading{grid-template-columns:repeat(2,minmax(0,1fr))!important}html body [data-home-view="movies"] .ct505-movie-loading>span{width:100%!important;height:auto!important;aspect-ratio:2/3!important}}\n';
+ +'@media(max-width:700px){html body [data-home]>.home-tabs,html body [data-home] .home-tabs{top:8px!important;margin:0!important}html body [data-home-view="movies"] .ct505-movie-loading{grid-template-columns:repeat(2,minmax(0,1fr))!important}html body [data-home-view="movies"] .ct505-movie-loading>span{width:100%!important;height:auto!important;aspect-ratio:2/3!important}}\n';
 sw=sw.replaceAll('ct-media-r504','ct-media-r505').replaceAll('app-v504.js','app-v505.js').replaceAll('app-v504.css','app-v505.css');
 const release=JSON.parse(releaseRaw);
 Object.assign(release,{
  version:'0.3.32',revision:'r505-official-0.3.32',base:'r504-scoped-stable',
- scope:'home-movies-watchlist-nonempty+sticky-home-tabs',
- home_series:'unchanged except sticky Series/Movies controls',
+ scope:'home-movies-watchlist-nonempty+fixed-home-tabs',
+ home_series:'unchanged except fixed Series/Movies controls',
  home_movies:'r504 pointer owner preserved; an empty inherited load is retried once with a fresh v405 request, then the approved 176x264 2:3 grid is repainted',
  discover_foryou:'unchanged',top10:'unchanged',profile:'unchanged',f1:'unchanged',sports:'unchanged',android:'unchanged-1.0.20/10062'
 });
