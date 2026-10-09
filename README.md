@@ -1,3 +1,11 @@
+## Web 0.3.30 / r503 — Home Filmes sem retorno automático
+
+- Filmes passa a ter um único writer efetivo para Séries/Filmes.
+- Repaint tardio de Séries não altera a aba escolhida.
+- Watchlist v405 repinta ao terminar mesmo se a requisição já estava em andamento no momento do clique.
+- Cache válido aparece imediatamente e os cards 176×264 / 2:3 da r502 são preservados.
+- Nenhuma outra tela foi alterada.
+
 ## Web 0.3.29 / r502 — Filmes permanece selecionado
 
 - A escolha Séries/Filmes volta a ter um único estado canônico após interação do usuário.

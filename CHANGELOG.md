@@ -1,3 +1,16 @@
+## 0.3.30 — r503 (2026-10-09)
+
+### Escopo exclusivo: Home > Filmes
+- Remove do caminho ativo o segundo setter legado `ct266ApplyHomeTab` que ainda podia sobrescrever a seleção do usuário depois do lock r502.
+- `activeKind`, r388 e r495 passam a consultar o mesmo estado canônico de aba; callbacks atrasados de Séries deixam de poder esconder Filmes.
+- Se a primeira página v405 já estiver em andamento quando Filmes é selecionado, a aba permanece visível e a Watchlist é repintada obrigatoriamente quando a mesma Promise termina.
+- Cache válido de Filmes pinta imediatamente antes da atualização de rede, evitando Watchlist vazia durante a troca.
+- Layout r502 de 176×264 / 2:3 é preservado sem alterações.
+
+### Preservado
+- Home Séries, Pra Você, Top 10, Perfil, F1, Esportes e Android permanecem sem alteração funcional.
+- Sem full-page reload, `router.refresh()`, `while(true)` ou `setInterval`.
+
 ## 0.3.29 — r502 (2026-10-09)
 
 ### Escopo exclusivo: Home > Filmes
