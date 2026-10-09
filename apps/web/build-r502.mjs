@@ -33,6 +33,10 @@ js=replaceNamed(js,A371,'preserveAfterPaint',`function preserveAfterPaint(){
  applyTab(wanted,generation);queueMicrotask(()=>applyTab(wanted,generation));requestAnimationFrame(()=>applyTab(wanted,generation));return true
 }`,'r371');
 
+const click495="window.addEventListener('click',e=>{const tab=e.target?.closest?.('[data-home-tab]');if(!tab||!document.querySelector('[data-home]'))return;const wanted=String(tab.dataset.homeTab||'series')==='movies'?'movies':'series';applyHomeTab495(wanted,true);queueMicrotask(()=>applyHomeTab495(wanted,false));requestAnimationFrame(()=>applyHomeTab495(wanted,false))},true);";
+const click502="window.addEventListener('click',e=>{const tab=e.target?.closest?.('[data-home-tab]');if(!tab||!document.querySelector('[data-home]'))return;const wanted=String(tab.dataset.homeTab||'series')==='movies'?'movies':'series';try{window.__ctR371?.selectByUser?.(wanted)}catch{};applyHomeTab495(wanted,true);queueMicrotask(()=>applyHomeTab495(wanted,false));requestAnimationFrame(()=>applyHomeTab495(wanted,false))},true);";
+if(!js.includes(click495))throw new Error('r502 missing live r495 tab click owner');
+js=js.replace(click495,click502);
 js+="\nwindow.__ctR502Marker='home-movies-user-lock+standard-176x264+r501-preserved';\nwindow.__ctR502={version:'0.3.29',scope:'home-movies-tab+watchlist-layout'};\n";
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r502-official-0.3.29';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.29 • ${REVISION}');
@@ -53,5 +57,5 @@ const release=JSON.parse(releaseRaw);Object.assign(release,{
 new Function(js);
 await Promise.all([writeFile(resolve(dist,'app-v502.js'),js),writeFile(resolve(dist,'app-v502.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
 await Promise.all([rm(resolve(dist,'app-v501.js'),{force:true}),rm(resolve(dist,'app-v501.css'),{force:true})]);
-for(const need of ["window.__ctR502Marker='home-movies-user-lock+standard-176x264+r501-preserved'","userSelected=true;tabRef.current=wanted","dataset.ct502HomeKind=wanted","window.__ctR501Marker","ct500-movie-card","r502-official-0.3.29"])if(!js.includes(need))throw new Error('r502 missing '+need);
+for(const need of ["window.__ctR502Marker='home-movies-user-lock+standard-176x264+r501-preserved'","userSelected=true;tabRef.current=wanted","dataset.ct502HomeKind=wanted","window.__ctR371?.selectByUser?.(wanted)","window.__ctR501Marker","ct500-movie-card","r502-official-0.3.29"])if(!js.includes(need))throw new Error('r502 missing '+need);
 console.log('WEB_R502_READY movie lock + standard cards');
