@@ -1,4 +1,4 @@
-name: Verify Web 0.3.30 r503
+name: Verify Web 0.3.31 r504
 on:
   push:
     branches: [main]
@@ -9,20 +9,20 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r503:
+  web_r504:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and Home Movies in-flight race gate
+      - name: Build and real Home Movies pointer gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v503.js
-          grep -Fq "window.__ctR503Marker='home-movies-single-tab-writer+inflight-watchlist-repaint+r502-layout-preserved'" apps/web/dist/app-v503.js
+          node --check apps/web/dist/app-v504.js
+          grep -Fq "window.__ctR504Marker='home-tab-single-pointer-owner+movies-immediate-open+r503-watchlist-preserved'" apps/web/dist/app-v504.js
           grep -Fq 'ct497-boot' apps/web/dist/index.html
   android:
     runs-on: ubuntu-latest
@@ -33,7 +33,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r503, android]
+    needs: [web_r504, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -44,7 +44,7 @@ jobs:
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
             HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.30"' <<<"$BODY" && grep -Fq '"revision": "r503-official-0.3.30"' <<<"$BODY" && grep -Fq 'app-v503.js?ct=r503-official-0.3.30' <<<"$HTML"; then exit 0; fi
+            if grep -Fq '"version": "0.3.31"' <<<"$BODY" && grep -Fq '"revision": "r504-official-0.3.31"' <<<"$BODY" && grep -Fq 'app-v504.js?ct=r504-official-0.3.31' <<<"$HTML"; then exit 0; fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
           done

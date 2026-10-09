@@ -1,3 +1,17 @@
+## 0.3.31 — r504 (2026-10-09)
+
+### Escopo exclusivo: Home > Filmes não abria por clique real
+- Corrige a regressão da r503 sem alterar Séries, Descobrir, Perfil, F1, Esportes ou Android.
+- A troca Séries/Filmes passa a ter **um único owner de ponteiro** registrado antes dos handlers legados. O clique torna a view Filmes visível de forma síncrona, antes de qualquer RPC.
+- Os writers de aba duplicados do core antigo, r266 e r495/r502 deixam de decidir a aba Home; continuam preservadas apenas as funções não relacionadas (Visto, navegação e demais ações).
+- O estado canônico da aba passa a ser `__ctR504UserTab`; r371, r388, r495 e a compatibilidade r266 apenas obedecem esse mesmo estado.
+- Mantidos integralmente o carregamento v405/repaint in-flight da r503 e os cards aprovados 176×264 / 2:3 da r502.
+- O gate Chromium não usa mais apenas `.click()`: valida `elementFromPoint` e sequência real pointer/mouse, troca Filmes → Séries → Filmes e exige que repaints tardios não revertam a seleção.
+
+### Preservado
+- Home Séries, Pra Você v498, Top 10 r500, Perfil, F1, Esportes e Android permanecem inalterados.
+- Sem full-page reload, `router.refresh()`, `while(true)` ou `setInterval`.
+
 ## 0.3.30 — r503 (2026-10-09)
 
 ### Escopo exclusivo: Home > Filmes

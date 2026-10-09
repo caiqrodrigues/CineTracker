@@ -1,3 +1,12 @@
+## Web 0.3.31 / r504 — Home Filmes com um único owner de clique
+
+- Corrige somente a abertura da aba **Filmes**.
+- Séries/Filmes agora são controlados por um único handler de ponteiro; handlers antigos de aba deixam de competir.
+- Filmes fica visível antes do carregamento v405 e continua visível durante a requisição.
+- Watchlist r503 e cards 176×264 / 2:3 r502 permanecem iguais.
+- Teste Chromium valida hit-test real e alternância Filmes → Séries → Filmes.
+- Descobrir, Perfil, F1, Esportes e Android não foram alterados.
+
 ## Web 0.3.30 / r503 — Home Filmes sem retorno automático
 
 - Filmes passa a ter um único writer efetivo para Séries/Filmes.

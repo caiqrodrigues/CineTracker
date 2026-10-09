@@ -1,3 +1,5 @@
+- Web: **0.3.31 / r504-official-0.3.31** — corrige exclusivamente a abertura real de Home > Filmes com owner único de ponteiro, mantendo v405/repaint e cards 176×264 / 2:3.
+
 - Web: **0.3.30 / r503-official-0.3.30** — correção exclusiva da Home Filmes: remove setter legado concorrente, preserva Filmes durante requests em andamento e garante repaint da Watchlist v405; layout 176×264 / 2:3 preservado.
 - Web: **0.3.29 / r502-official-0.3.29** — Home Filmes com seleção persistente contra repaints tardios e Watchlist no padrão 176×264 / 2:3; restante preservado.
 - Web: **0.3.28 / r501-official-0.3.28** — correção isolada da Home Filmes: Histórico permanece acima, entrada fixa na Watchlist; r500/r498 preservados.
