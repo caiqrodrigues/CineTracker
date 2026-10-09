@@ -42,7 +42,7 @@ const click502="window.addEventListener('click',e=>{const tab=e.target?.closest?
 if(!js.includes(click495))throw new Error('r502 missing live r495 tab click owner');
 js=js.replace(click495,click502);
 const intent502=`(()=>{'use strict';if(window.__ctR502IntentInstalled)return;window.__ctR502IntentInstalled=true;window.addEventListener('click',e=>{const tab=e.target?.closest?.('[data-home-tab]');if(!tab||!document.querySelector('[data-home]'))return;const wanted=String(tab.dataset.homeTab||'series')==='movies'?'movies':'series';window.__ctR502UserTab=wanted;document.documentElement.dataset.ct502HomeKind=wanted},true)})();`;
-js=intent502+'\\n'+js;
+js=intent502+'\n'+js;
 js+="\nwindow.__ctR502Marker='home-movies-user-lock+standard-176x264+r501-preserved';\nwindow.__ctR502={version:'0.3.29',scope:'home-movies-tab+watchlist-layout'};\n";
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r502-official-0.3.29';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.29 • ${REVISION}');
