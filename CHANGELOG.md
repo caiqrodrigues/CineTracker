@@ -1,4 +1,18 @@
-## 0.3.32 — r505 (2026-10-09)\n\n### Escopo exclusivo: Home > Filmes + abas Séries/Filmes\n- Corrige a Watchlist vazia sem alterar Séries, Descobrir, Perfil, F1, Esportes ou Android.\n- A RPC v405 foi validada com dados reais: primeira página possui 60 filmes e total atual 1.391; portanto o vazio era corrida de frontend, não falta de dados.\n- Se uma carga herdada terminar vazia, r505 repete uma única vez com leitura fresca v405 e repinta a Watchlist.\n- Ao selecionar Filmes, a recuperação usa o mesmo owner r504 e não recarrega a página.\n- Enquanto a primeira página chega, a Watchlist mostra skeleton de pôster 2:3.\n- Cards aprovados 176x264 / 2:3 permanecem intactos.\n- Botões Séries / Filmes ficam sticky no topo da Home durante o scroll.\n\n### Preservado\n- Home Séries, Pra Você v498, Top 10 r500, Perfil, F1, Esportes e Android permanecem funcionalmente inalterados.\n- Sem full-page reload, router.refresh(), while(true) ou setInterval.\n## 0.3.31 — r504 (2026-10-09)
+## 0.3.32 — r505 (2026-10-09)
+
+### Escopo exclusivo: Home > Filmes + abas Séries/Filmes
+- Corrige a Watchlist vazia sem alterar Séries, Descobrir, Perfil, F1, Esportes ou Android.
+- A RPC v405 foi validada com dados reais: primeira página possui 60 filmes e total atual 1.391; portanto o vazio era corrida de frontend, não falta de dados.
+- Se uma carga herdada terminar vazia, r505 repete uma única vez com leitura fresca v405 e repinta a Watchlist.
+- Ao selecionar Filmes, a recuperação usa o mesmo owner r504 e não recarrega a página.
+- Enquanto a primeira página chega, a Watchlist mostra skeleton de pôster 2:3.
+- Cards aprovados 176x264 / 2:3 permanecem intactos.
+- Botões Séries / Filmes ficam sticky no topo da Home durante o scroll.
+
+### Preservado
+- Home Séries, Pra Você v498, Top 10 r500, Perfil, F1, Esportes e Android permanecem funcionalmente inalterados.
+- Sem full-page reload, router.refresh(), while(true) ou setInterval.
+## 0.3.31 — r504 (2026-10-09)
 
 ### Escopo exclusivo: Home > Filmes não abria por clique real
 - Corrige a regressão da r503 sem alterar Séries, Descobrir, Perfil, F1, Esportes ou Android.
@@ -561,7 +575,20 @@
 - Fórmula 1 r462 e Android 1.0.20 / versionCode 10062 permanecem inalterados.
 - Runtime r467 não usa `window.location.reload()`, `router.refresh()`, `MutationObserver`, `setInterval` ou `while(true)`.
 
-## 1.0.256 — r466 (2026-10-02)\n\n### Corrigido\n- Build r465 quebrava antes de publicar por exigir um owner r399 já removido do bundle final; r466 torna esses cortes compatíveis com a base real e exige apenas os owners ainda ativos.\n- Histórico: `media_id` de filmes/episódios deixa de passar por `Number()`; UUID é enviado integralmente para `cinetracker_unmark_history_item_v426`.\n- Home: owner r461 de abas é neutralizado antes do runtime autenticado, preservando o carregamento inicial de Séries e a Watchlist v405 de Filmes.\n- Descobrir > Pra Você: reentradas r399/r461/r464 são neutralizadas quando presentes; owner visível v421 preserva os 7 slots e botões `Trocar`.\n- Perfil: 13 cards + 14º `Ver mais` preservados, inclusive Atores via RPC v465.\n\n### Validação\n- Gate r466 exige bundle, assets, RPCs atuais, Trocar delimitado, Perfil 13+Ver mais e desmarcação UUID sem coerção numérica.\n- Android preservado em 1.0.20 / versionCode 10062.\n\n## 1.0.255 — r465 (2026-10-02)
+## 1.0.256 — r466 (2026-10-02)
+
+### Corrigido
+- Build r465 quebrava antes de publicar por exigir um owner r399 já removido do bundle final; r466 torna esses cortes compatíveis com a base real e exige apenas os owners ainda ativos.
+- Histórico: `media_id` de filmes/episódios deixa de passar por `Number()`; UUID é enviado integralmente para `cinetracker_unmark_history_item_v426`.
+- Home: owner r461 de abas é neutralizado antes do runtime autenticado, preservando o carregamento inicial de Séries e a Watchlist v405 de Filmes.
+- Descobrir > Pra Você: reentradas r399/r461/r464 são neutralizadas quando presentes; owner visível v421 preserva os 7 slots e botões `Trocar`.
+- Perfil: 13 cards + 14º `Ver mais` preservados, inclusive Atores via RPC v465.
+
+### Validação
+- Gate r466 exige bundle, assets, RPCs atuais, Trocar delimitado, Perfil 13+Ver mais e desmarcação UUID sem coerção numérica.
+- Android preservado em 1.0.20 / versionCode 10062.
+
+## 1.0.255 — r465 (2026-10-02)
 
 ### Corrigido
 - Home Séries: owners ainda vivos convergem para r465; após autenticação, o renderer r388 (já promovido para `cinetracker_home_series_v452`) recarrega e repinta a lista.
@@ -1199,7 +1226,16 @@ Build: `apps/web/build-r431.mjs`; gate: `apps/web/build-r431-official.mjs`; regr
 - Sem `MutationObserver` global, `setInterval`, loop infinito, `window.location.reload()` ou `router.refresh()`.
 - Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
 
-## 1.0.197 — r406\n\n### Corrigido\n- Contagem de episódios disponíveis restaurada para a autoridade de episódios recentes; removida a sobrescrita r404 que transformava backlog histórico de Raw/SmackDown em `available_episodes`.\n- Raw e SmackDown com episódio recente liberado e não visto passam para **Assistir a seguir**.\n- Home > Filmes deixa de esvaziar a Watchlist quando o estado legado da aba diverge da view visível.\n- Descobrir > Pra Você completa os botões ausentes em todos os sete slots.\n- Renderização continua em lotes via `requestAnimationFrame` e timers são finitos; sem full page reload.\n\n## Web 1.0.196 / r405 — 2026-09-29
+## 1.0.197 — r406
+
+### Corrigido
+- Contagem de episódios disponíveis restaurada para a autoridade de episódios recentes; removida a sobrescrita r404 que transformava backlog histórico de Raw/SmackDown em `available_episodes`.
+- Raw e SmackDown com episódio recente liberado e não visto passam para **Assistir a seguir**.
+- Home > Filmes deixa de esvaziar a Watchlist quando o estado legado da aba diverge da view visível.
+- Descobrir > Pra Você completa os botões ausentes em todos os sete slots.
+- Renderização continua em lotes via `requestAnimationFrame` e timers são finitos; sem full page reload.
+
+## Web 1.0.196 / r405 — 2026-09-29
 
 ### Home / Filmes
 - O vídeo real da r404 confirmou que **Assistir a seguir / Watchlist** permanecia em `Carregando Watchlist…`.
@@ -1318,7 +1354,8 @@ Build: `apps/web/build-r431.mjs`; gate: `apps/web/build-r431-official.mjs`; regr
 - Indicação do Dia, Da sua Watchlist e 100% Novos continuam usando `cinetracker_discover_foryou_v396` e ações locais Visto/Watchlist/Trocar.
 
 ### Estabilidade / build
-- Web 1.0.192 / r401 deriva da base segura r396; r397-r400 não são encadeadas no bundle.\n- O build r401 valida sintaxe do runtime, padrões proibidos e os nomes finais `app-v401.js`/cache r401 antes de concluir o deploy.
+- Web 1.0.192 / r401 deriva da base segura r396; r397-r400 não são encadeadas no bundle.
+- O build r401 valida sintaxe do runtime, padrões proibidos e os nomes finais `app-v401.js`/cache r401 antes de concluir o deploy.
 - Nenhuma mutação usa `window.location.reload()` ou `router.refresh()`.
 - Perfil, Esportes, Top 10, Configurações e Android permanecem fora do escopo.
 
@@ -1898,7 +1935,24 @@ Build: `apps/web/build-r431.mjs`; gate: `apps/web/build-r431-official.mjs`; regr
 
 Mudanças relevantes do CineTracker. A partir da 1.0.0, esta é a baseline oficial; detalhes históricos completos da linha 0.x permanecem preservados no histórico Git e nos documentos de `docs/releases/`.
 
-## 1.0.166 — 2026-09-25 — Web r375\n\n### Home / início correto após trocar Séries ↔ Filmes\n- Corrige a regressão visual mostrada em vídeo: `scrollTop = 0` revelava o Histórico que fica propositalmente acima da tela inicial.\n- A troca de aba agora procura semanticamente o primeiro bloco não histórico: `Assistir a seguir` em Séries e `Assistir a seguir / Watchlist` em Filmes.\n- O bloco principal é alinhado logo abaixo do toggle Séries/Filmes, tanto para scroll da janela quanto para container interno.\n- `Histórico recente` e `Filmes vistos` continuam acima do viewport inicial e permanecem acessíveis rolando para cima.\n- Os anchors legados continuam bloqueados durante a troca para não disputar a posição.\n\n### Validação\n- Browser gate parte do rodapé, alterna Séries → Filmes e Filmes → Séries, confirmando que o bloco principal fica alinhado e que o Histórico permanece fora da tela acima.\n- O teste também exige `scrollTop > 500`, garantindo explicitamente que a implementação não voltou ao zero absoluto.\n\n### Release\n- Web: `1.0.166 / r375-official-1.0.166`.\n- Android: `1.0.20 / versionCode 10062` preservado.\n\n## 1.0.165 — 2026-09-25 — Web r374
+## 1.0.166 — 2026-09-25 — Web r375
+
+### Home / início correto após trocar Séries ↔ Filmes
+- Corrige a regressão visual mostrada em vídeo: `scrollTop = 0` revelava o Histórico que fica propositalmente acima da tela inicial.
+- A troca de aba agora procura semanticamente o primeiro bloco não histórico: `Assistir a seguir` em Séries e `Assistir a seguir / Watchlist` em Filmes.
+- O bloco principal é alinhado logo abaixo do toggle Séries/Filmes, tanto para scroll da janela quanto para container interno.
+- `Histórico recente` e `Filmes vistos` continuam acima do viewport inicial e permanecem acessíveis rolando para cima.
+- Os anchors legados continuam bloqueados durante a troca para não disputar a posição.
+
+### Validação
+- Browser gate parte do rodapé, alterna Séries → Filmes e Filmes → Séries, confirmando que o bloco principal fica alinhado e que o Histórico permanece fora da tela acima.
+- O teste também exige `scrollTop > 500`, garantindo explicitamente que a implementação não voltou ao zero absoluto.
+
+### Release
+- Web: `1.0.166 / r375-official-1.0.166`.
+- Android: `1.0.20 / versionCode 10062` preservado.
+
+## 1.0.165 — 2026-09-25 — Web r374
 
 ### Home / troca Séries ↔ Filmes
 - A troca de semi-aba agora zera imediatamente a rolagem da janela e de qualquer ancestral/container interno scrollável da Home.
