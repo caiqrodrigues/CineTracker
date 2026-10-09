@@ -33,67 +33,6 @@ js=replaceNamed(js,A371,'preserveAfterPaint',`function preserveAfterPaint(){
  applyTab(wanted,generation);queueMicrotask(()=>applyTab(wanted,generation));requestAnimationFrame(()=>applyTab(wanted,generation));return true
 }`,'r371');
 
-const A374="window.__ctR374Marker='home-tab-switch-scroll-reset+legacy-anchor-blocked+container-aware';";
-if(js.includes(A374)){
- js=replaceNamed(js,A374,'activeKind',`function activeKind(){
-  const locked=document.documentElement.dataset.ct502HomeKind||document.documentElement.dataset.ct495HomeKind;
-  if(locked==='movies'||locked==='series')return locked;
-  try{const k=window.__ctR371?.activeTab;if(k==='movies'||k==='series')return k}catch{}
-  const active=q('[data-home-tab].active');return String(active?.dataset?.homeTab||'series')==='movies'?'movies':'series'
- }`,'r374');
- js=replaceNamed(js,A374,'scheduleReset',`function scheduleReset(kind){
-  const token=++resetToken;userMoved=false;lastKind=kind==='movies'?'movies':'series';
-  resetNow(lastKind,token);queueMicrotask(()=>resetNow(lastKind,token));requestAnimationFrame(()=>requestAnimationFrame(()=>resetNow(lastKind,token)));return token
- }`,'r374');
- js=replaceNamed(js,A374,'applyTab',`function applyTab(kind){
-  const wanted=kind==='movies'?'movies':'series',root=q('[data-home]');if(!root)return false;
-  document.documentElement.dataset.ct502HomeKind=wanted;document.documentElement.dataset.ct495HomeKind=wanted;
-  try{ct266HomeTab=wanted}catch{}
-  try{window.__ctR495?.applyHomeTab?.(wanted,false)}catch{}
-  qa('[data-home-tab]',root).forEach(b=>{const on=String(b.dataset.homeTab||'series')===wanted;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');b.type='button'});
-  qa('[data-home-view]',root).forEach(v=>{const on=String(v.dataset.homeView||'series')===wanted;v.hidden=!on;v.classList.toggle('hidden',!on)});
-  return true
- }`,'r374');
- js=replaceNamed(js,A374,'switchTab',`function switchTab(kind,event){
-  const wanted=kind==='movies'?'movies':'series';
-  event?.preventDefault?.();event?.stopImmediatePropagation?.();event?.stopPropagation?.();
-  try{window.__ctR371?.selectByUser?.(wanted)}catch{}
-  applyTab(wanted);scheduleReset(wanted);return true
- }`,'r374');
-}
-
-const A495="window.__ctR495Marker='modern-runtime+old-owners-retired+progressive-home+fast-profile+strict-12';";
-js=replaceNamed(js,A495,'applyHomeTab495',`function applyHomeTab495(kind,resetScroll=false){
- const root=document.querySelector('[data-home]');if(!root)return false;
- const lock=document.documentElement.dataset.ct502HomeKind,wanted=(lock==='movies'||lock==='series')?lock:(kind==='movies'?'movies':'series');
- root.querySelectorAll('[data-home-tab]').forEach(b=>{const on=String(b.dataset.homeTab||'series')===wanted;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
- root.querySelectorAll('[data-home-view]').forEach(v=>{const on=String(v.dataset.homeView||'')===wanted;v.hidden=!on;v.classList.toggle('hidden',!on);v.setAttribute('aria-hidden',on?'false':'true')});
- document.documentElement.dataset.ct495HomeKind=wanted;
- if(resetScroll)try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{window.scrollTo?.(0,0)}
- try{if(wanted==='movies')void window.__ctR388?.loadMovies?.(false);else void window.__ctR388?.loadSeries?.(false)}catch{}
- return true
-}`,'r495');
-
-const A388="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
-js=replaceNamed(js,A388,'activeKind',`function activeKind(){
- const locked=document.documentElement.dataset.ct502HomeKind||document.documentElement.dataset.ct495HomeKind;
- if(locked==='movies'||locked==='series')return locked;
- return q('[data-home-tab].active')?.dataset?.homeTab==='movies'?'movies':'series'
-}`,'r388');
-js=replaceNamed(js,A388,'applyTab',`function applyTab(k){
- const locked=document.documentElement.dataset.ct502HomeKind||document.documentElement.dataset.ct495HomeKind,wanted=(locked==='movies'||locked==='series')?locked:(k==='movies'?'movies':'series'),root=q('[data-home]')||document;
- qa('[data-home-tab]',root).forEach(b=>{const on=String(b.dataset.homeTab||'series')===wanted;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});
- qa('[data-home-view]',root).forEach(v=>{const on=String(v.dataset.homeView||'')===wanted;v.hidden=!on;v.classList.toggle('hidden',!on)});
- document.documentElement.dataset.ct495HomeKind=wanted;return true
-}`,'r388');
-
-const rb=bounds(js,A388,'r388-schedule-guards');
-let region=js.slice(rb.start,rb.end);
-region=region
- .replace("homeForceOrder500('series');document.documentElement.dataset.ct388Series=String(s.length);scheduleHome393('series',false);return true","homeForceOrder500('series');document.documentElement.dataset.ct388Series=String(s.length);if(activeKind()==='series')scheduleHome393('series',false);return true")
- .replace("homeForceOrder500('movies');sec.dataset.ct388Rendered=String(movieNodes.size);document.documentElement.dataset.ct388Movies=String(movieNodes.size);scheduleHome393('movies',false);return true","homeForceOrder500('movies');sec.dataset.ct388Rendered=String(movieNodes.size);document.documentElement.dataset.ct388Movies=String(movieNodes.size);if(activeKind()==='movies')scheduleHome393('movies',false);return true");
-js=js.slice(0,rb.start)+region+js.slice(rb.end);
-
 js+="\nwindow.__ctR502Marker='home-movies-user-lock+standard-176x264+r501-preserved';\nwindow.__ctR502={version:'0.3.29',scope:'home-movies-tab+watchlist-layout'};\n";
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r502-official-0.3.29';");
 js=js.replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.29 • ${REVISION}');
@@ -114,5 +53,5 @@ const release=JSON.parse(releaseRaw);Object.assign(release,{
 new Function(js);
 await Promise.all([writeFile(resolve(dist,'app-v502.js'),js),writeFile(resolve(dist,'app-v502.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
 await Promise.all([rm(resolve(dist,'app-v501.js'),{force:true}),rm(resolve(dist,'app-v501.css'),{force:true})]);
-for(const need of ["window.__ctR502Marker='home-movies-user-lock+standard-176x264+r501-preserved'","userSelected=true;tabRef.current=wanted","dataset.ct502HomeKind=wanted","if(activeKind()==='movies')scheduleHome393('movies',false)","r502-official-0.3.29"])if(!js.includes(need))throw new Error('r502 missing '+need);
+for(const need of ["window.__ctR502Marker='home-movies-user-lock+standard-176x264+r501-preserved'","userSelected=true;tabRef.current=wanted","dataset.ct502HomeKind=wanted","window.__ctR501Marker","ct500-movie-card","r502-official-0.3.29"])if(!js.includes(need))throw new Error('r502 missing '+need);
 console.log('WEB_R502_READY movie lock + standard cards');
