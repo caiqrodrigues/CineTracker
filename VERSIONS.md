@@ -1,4 +1,5 @@
-- Web: **0.3.32 / r505-official-0.3.32** — escopo Home: Watchlist Filmes não fica vazia após corrida/in-flight; retry v405 delimitado e abas Séries/Filmes sticky no topo. Demais telas preservadas.\n- Web: **0.3.31 / r504-official-0.3.31** — corrige exclusivamente a abertura real de Home > Filmes com owner único de ponteiro, mantendo v405/repaint e cards 176×264 / 2:3.
+- Web: **0.3.32 / r505-official-0.3.32** — escopo Home: Watchlist Filmes não fica vazia após corrida/in-flight; retry v405 delimitado e abas Séries/Filmes sticky no topo. Demais telas preservadas.
+- Web: **0.3.31 / r504-official-0.3.31** — corrige exclusivamente a abertura real de Home > Filmes com owner único de ponteiro, mantendo v405/repaint e cards 176×264 / 2:3.
 
 - Web: **0.3.30 / r503-official-0.3.30** — correção exclusiva da Home Filmes: remove setter legado concorrente, preserva Filmes durante requests em andamento e garante repaint da Watchlist v405; layout 176×264 / 2:3 preservado.
 - Web: **0.3.29 / r502-official-0.3.29** — Home Filmes com seleção persistente contra repaints tardios e Watchlist no padrão 176×264 / 2:3; restante preservado.
@@ -37,7 +38,8 @@
 - Web: **1.0.259 / r469-official-1.0.259** — owners Home/Pra Você/Perfil/Histórico ligados diretamente a ctSession/sbRpc; Perfil deduplicado para 13 + um Ver mais e undo v426 funcional.
 - Web: **1.0.258 / r468-official-1.0.258** — restaura a execução real dos owners de Home/Pra Você/Perfil/Histórico conectando `ctSession`/`sbRpc` aos aliases esperados; mantém 13+Ver mais e ↶ por linha.
 - Web: **1.0.257 / r467-official-1.0.257** — restaura Home/Pra Você estáveis, corrige Perfil 13+Ver mais e histórico diário com desmarcação bigint funcional.
-- Web: **1.0.256 / r466-official-1.0.256** — recuperação de Home/Pra Você/Perfil publicada sobre r464 e desfazer diário compatível com UUID.\n- Web: **1.0.255 / r465-official-1.0.255** — Home autenticada, Pra Você visível, Perfil 13+Ver mais e desfazer diário funcional.
+- Web: **1.0.256 / r466-official-1.0.256** — recuperação de Home/Pra Você/Perfil publicada sobre r464 e desfazer diário compatível com UUID.
+- Web: **1.0.255 / r465-official-1.0.255** — Home autenticada, Pra Você visível, Perfil 13+Ver mais e desfazer diário funcional.
 - Web: **1.0.254 / r464-official-1.0.254** — Descobrir > Pra Você com owner visível único e 7 ações Trocar.
 ## Web 1.0.253 / r463
 
