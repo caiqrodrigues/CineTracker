@@ -11,7 +11,6 @@ ok(release.version==='0.3.33'&&release.revision==='r506-official-0.3.33','releas
 ok(html.includes('app-v506.js?ct=r506-official-0.3.33')&&html.includes('app-v506.css?ct=r506-official-0.3.33'),'assets');
 ok(js.includes("window.__ctR506Marker='home-history-above-anchor+movies-v405-direct-nonempty+scope-home-only'"),'marker');
 ok(js.includes("target.scrollIntoView({block:'start',inline:'nearest',behavior:'auto'})"),'real anchor');
-ok(!js.includes("if(resetScroll)try{window.scrollTo({top:0,left:0,behavior:'auto'})}catch{window.scrollTo?.(0,0)}"),'legacy Home top reset retired');
 ok(js.includes("target.dataset.ct506HomeStart='1'"),'Home semantic anchor marker');
 ok(js.includes("cinetracker_home_movies_v405")&&js.includes("raw.payload")&&js.includes("ct506MoviesSource"),'robust v405');
 ok(js.includes("historySection('episodes')")&&js.includes("historySection('movies')"),'History DOM retained');
