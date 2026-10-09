@@ -1,1 +1,50 @@
-name: Verify Web 0.3.32 r505\non:\n  push:\n    branches: [main]\n  pull_request:\npermissions:\n  contents: read\nconcurrency:\n  group: ${{ github.workflow }}-${{ github.ref }}\n  cancel-in-progress: true\njobs:\n  web_r505:\n    runs-on: ubuntu-latest\n    timeout-minutes: 35\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with: { node-version: 24 }\n      - name: Build and Home Movies Watchlist/sticky-tabs gate\n        run: |\n          set -euo pipefail\n          npm run build\n          npm run verify\n          node --check apps/web/dist/app-v505.js\n          grep -Fq "window.__ctR505Marker='home-movies-nonempty-retry+sticky-home-tabs+r504-pointer-preserved'" apps/web/dist/app-v505.js\n          grep -Fq 'ct497-boot' apps/web/dist/index.html\n  android:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: |\n          grep -Fq "versionName '1.0.20'" apps/android/app/build.gradle\n          grep -Fq 'versionCode 10062' apps/android/app/build.gradle\n  production_smoke:\n    if: github.event_name == 'push' && github.ref == 'refs/heads/main'\n    needs: [web_r505, android]\n    runs-on: ubuntu-latest\n    timeout-minutes: 35\n    steps:\n      - name: Wait for r505 production\n        run: |\n          set -euo pipefail\n          for i in $(seq 1 240); do\n            CT="$(date +%s%N)"\n            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"\n            HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"\n            if grep -Fq '"version": "0.3.32"' <<<"$BODY" && grep -Fq '"revision": "r505-official-0.3.32"' <<<"$BODY" && grep -Fq 'app-v505.js?ct=r505-official-0.3.32' <<<"$HTML"; then exit 0; fi\n            if [ "$i" -eq 240 ]; then exit 1; fi\n            sleep 5\n          done\n
+name: Verify Web 0.3.32 r505
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  web_r505:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - name: Build and Home Movies Watchlist/sticky-tabs gate
+        run: |
+          set -euo pipefail
+          npm run build
+          npm run verify
+          node --check apps/web/dist/app-v505.js
+          grep -Fq "window.__ctR505Marker='home-movies-nonempty-retry+sticky-home-tabs+r504-pointer-preserved'" apps/web/dist/app-v505.js
+          grep -Fq 'ct497-boot' apps/web/dist/index.html
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          grep -Fq "versionName '1.0.20'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10062' apps/android/app/build.gradle
+  production_smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [web_r505, android]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Wait for r505 production
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 240); do
+            CT="$(date +%s%N)"
+            BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
+            HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.32"' <<<"$BODY" && grep -Fq '"revision": "r505-official-0.3.32"' <<<"$BODY" && grep -Fq 'app-v505.js?ct=r505-official-0.3.32' <<<"$HTML"; then exit 0; fi
+            if [ "$i" -eq 240 ]; then exit 1; fi
+            sleep 5
+          done
