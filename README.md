@@ -1,3 +1,11 @@
+## Web 0.3.37 / r510 — UFC como série especial
+
+- Home > Séries passa a mostrar **UFC** como série esportiva recorrente.
+- Inclui Fight Night, UFC on ESPN/ABC/Fox e PPVs numerados; exclui Contender Series e Road to UFC.
+- Temporada anual, eventos em formato de episódios e janela de 21 dias para Continuar assistindo / Em dia.
+- Marcar/desmarcar usa o mesmo histórico de Esportes: UFC Série ↔ Esportes sincronizados sem dupla contagem.
+- Raw/SmackDown, F1, Filmes, Descobrir, Perfil e Android permanecem preservados.
+
 ## Web 0.3.36 / r509 — Home final: Histórico acima + Watchlist não vazia
 
 - Séries abre em **Continuar assistindo** e o Histórico recente fica escondido acima da viewport.
