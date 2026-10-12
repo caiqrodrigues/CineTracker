@@ -1,3 +1,18 @@
+## 0.3.37 — r510 (2026-10-11)
+
+### UFC como série especial
+- UFC passa a aparecer na Home > Séries como série recorrente, alimentada pelo domínio de Esportes.
+- Temporada = ano; Fight Night, UFC on ESPN/ABC/Fox e PPVs numerados viram episódios em ordem cronológica.
+- Dana White's Contender Series, Road to UFC e demais eventos de MMA ficam fora da série UFC.
+- Apenas eventos recentes não vistos (21 dias) mantêm UFC em Continuar assistindo; ao zerar os pendentes recentes, migra para Em dia.
+- O detalhe UFC mostra eventos da temporada e permite Assistido/Desmarcar com Optimistic UI.
+- A gravação usa somente cinetracker_sport_mark_watched_v1. Série e Esportes compartilham o mesmo estado, sem criar histórico de episódio duplicado e sem dupla contagem.
+- Raw/SmackDown e F1 permanecem intactos.
+
+### Escopo preservado
+- Home Filmes r509, Descobrir, Top 10, Perfil, Esportes genérico e Android permanecem inalterados.
+- Android continua 1.0.20 / 10062.
+
 ## 0.3.36 — r509 (2026-10-09)
 
 ### Home — correção do estado real reportado
