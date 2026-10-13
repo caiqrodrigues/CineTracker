@@ -1,3 +1,4 @@
+- Web: **0.3.38 / r511-official-0.3.38** — Fórmula 1 como série especial anual; sessões do F1 Hub viram episódios e continuam sincronizadas com Série/Esportes/F1 Hub pelo writer r462, sem linha duplicada.
 - Web: **0.3.37 / r510-official-0.3.37** — UFC como série esportiva recorrente, Fight Night + PPVs por temporada e sincronização com Esportes sem dupla contagem.
 - Web: **0.3.36 / r509-official-0.3.36** — Home-only: Histórico realmente escondido acima em Séries/Filmes; entrada em Continue/Watchlist; corrida de Watchlist vazia corrigida com v405 nonempty.
 - Web: **0.3.35 / r508-official-0.3.35** — escopo Home Filmes: Histórico realmente fora da viewport e Watchlist em trilho único 176×264/2:3; demais áreas preservadas.

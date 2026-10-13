@@ -1,3 +1,12 @@
+## Web 0.3.38 / r511 — Fórmula 1 como série especial
+
+- Home > Séries mostra **Fórmula 1** no mesmo modelo da série especial UFC.
+- Temporada anual; treinos, classificações, sprints e corridas são episódios.
+- Janela de 21 dias decide **Continuar assistindo** versus **Em dia**, sem cobrar sessões antigas.
+- Marcar/desmarcar usa o writer canônico r462 e sincroniza Série ↔ Esportes ↔ F1 Hub.
+- A linha F1 legada é substituída, nunca duplicada.
+- UFC, Raw/SmackDown, Filmes, Descobrir, Perfil e Android permanecem preservados.
+
 ## Web 0.3.37 / r510 — UFC como série especial
 
 - Home > Séries passa a mostrar **UFC** como série esportiva recorrente.
