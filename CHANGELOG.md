@@ -1,3 +1,19 @@
+## 0.3.38 — r511 (2026-10-13)
+
+### Fórmula 1 como série especial
+- Fórmula 1 passa a usar o mesmo modelo visual/funcional criado para UFC dentro da Home > Séries.
+- Temporada = ano. Cada sessão mapeada do F1 Hub vira episódio: Treino Livre 1/2/3, Classificação, Classificação Sprint, Sprint e Corrida.
+- Apenas sessões recentes não assistidas (janela de 21 dias) mantêm F1 em **Continuar assistindo**; sem pendência recente, fica em **Em dia**, sem exigir backlog histórico.
+- O card sintético substitui a linha F1 legada na Home, impedindo duplicação.
+- O detalhe da série mostra todas as sessões da temporada e permite Assistido/Desmarcar com Optimistic UI.
+- A escrita usa exclusivamente `cinetracker_f1_watch_sync_v462`: Série, Esportes e F1 Hub continuam sincronizados pelo writer canônico já existente, preservando a contabilização de tempo atual.
+- Validação real em 13/10/2026: temporada 2026 com 115 sessões mapeadas, 85 liberadas e 85 assistidas; estado atual **Em dia** e próximo episódio = TL1 do GP dos Estados Unidos em 23/10.
+
+### Escopo preservado
+- UFC r510, Raw/SmackDown, Home Filmes, Descobrir, Top 10, Perfil, Esportes genérico e Android permanecem inalterados.
+- Android continua 1.0.20 / 10062.
+- Sem full-page reload, `router.refresh()`, loop infinito, interval ou observer persistente.
+
 ## 0.3.37 — r510 (2026-10-11)
 
 ### UFC como série especial

@@ -1,4 +1,4 @@
-name: Verify Web 0.3.37 r510
+name: Verify Web 0.3.38 r511
 on:
   push:
     branches: [main]
@@ -9,22 +9,22 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r510:
+  web_r511:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r510 UFC special-series regression gate
+      - name: Build and r511 Formula 1 special-series regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v510.js
-          grep -Fq "window.__ctR510Marker='ufc-special-series+sports-single-source+fight-night-ppv+optimistic-watch'" apps/web/dist/app-v510.js
-          grep -Fq 'cinetracker_ufc_series_v510' apps/web/dist/app-v510.js
-          grep -Fq 'cinetracker_sport_mark_watched_v1' apps/web/dist/app-v510.js
+          node --check apps/web/dist/app-v511.js
+          grep -Fq "window.__ctR511Marker='f1-special-series+current-season+canonical-r462-three-way-sync+no-duplicate-row'" apps/web/dist/app-v511.js
+          grep -Fq 'cinetracker_f1_series_v511' apps/web/dist/app-v511.js
+          grep -Fq 'cinetracker_f1_watch_sync_v462' apps/web/dist/app-v511.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,20 +34,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r510, android]
+    needs: [web_r511, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r510 production
+      - name: Wait for r511 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.37"' <<<"$BODY" && grep -Fq '"revision": "r510-official-0.3.37"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v510.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.38"' <<<"$BODY" && grep -Fq '"revision": "r511-official-0.3.38"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v511.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR510Marker='ufc-special-series+sports-single-source+fight-night-ppv+optimistic-watch'" <<<"$JS" && grep -Fq 'app-v510.js?ct=r510-official-0.3.37' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR511Marker='f1-special-series+current-season+canonical-r462-three-way-sync+no-duplicate-row'" <<<"$JS" && grep -Fq 'app-v511.js?ct=r511-official-0.3.38' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
