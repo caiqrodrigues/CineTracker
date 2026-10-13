@@ -1,3 +1,18 @@
+## 0.3.45 — r518 (2026-10-13)
+
+### Contadores F1/UFC + Relacionados + detalhe diário
+- **Fórmula 1:** removido o denominador histórico externo incorreto. O card passa a mostrar apenas o total realmente assistido na série e o progresso canônico da temporada: atualmente **87 sessões assistidas no total · T2026 · 85/115 sessões**.
+- **UFC:** criada a chave canônica v518 que deduplica o mesmo Fight Night vindo com e sem número do evento. A temporada 2026 passa de 52 linhas infladas para **41 eventos canônicos**, com **14 assistidos**, 34 realizados e 2 pendências recentes no estado atual.
+- **UFC como série:** Home e tela da série usam exclusivamente `cinetracker_ufc_series_v518`; o cliente deixa de reintroduzir duplicatas ao misturar novamente TMDB depois da autoridade do banco.
+- **F1/UFC global:** o resumo externo deixa de fornecer denominador. `cinetracker_special_series_progress_v518` informa o total realmente assistido; a UI não apresenta um catálogo histórico incompleto como se fosse denominador oficial.
+- **Títulos Relacionados:** cards passam a 176 px no desktop / 154 px no mobile, com colunas de ação proporcionais; `＋ Watchlist` e `✓ Visto` cabem integralmente.
+- **Perfil > Assistido por dia:** o detalhe diário agora usa `cinetracker_activity_items_by_day_v518`, incluindo `watch_play_events_v0994`. O filme contado no gráfico também aparece ao abrir o dia e continua usando o Desmarcar canônico existente.
+- Validação real do banco: **WWE Money in the Bank 2026** é retornado no detalhe de 13/10 como filme.
+
+### Preservado
+- Home Séries/Filmes, Descobrir/Top 10/Pra Você, Raw/SmackDown, Esportes genérico, writer F1 r462, Perfil 12 cards e Android 1.0.20 / 10062 não foram alterados fora destes pontos.
+- Sem full-page reload, `router.refresh()`, loop infinito, interval ou observer novo.
+
 ## 0.3.44 — r517 (2026-10-13)
 
 ### Correções do vídeo — escopo preservado
