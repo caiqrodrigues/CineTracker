@@ -1,3 +1,11 @@
+## Web 0.3.45 / r518 — contadores canônicos e detalhe diário completo
+
+- F1 mostra sessões realmente assistidas no total + progresso da temporada, sem denominador externo fictício.
+- UFC deduplica Fight Nights equivalentes por chave canônica e continua como série por temporada, com PPVs + eventos semanais.
+- Títulos Relacionados mantêm pôster 2:3 e agora comportam `＋ Watchlist` / `✓ Visto` sem corte.
+- Assistido por dia abre filmes vindos de `watch_play_events_v0994`, além de episódios e esportes.
+- Demais owners e Android permanecem preservados.
+
 ## Web 0.3.44 / r517 — correções do vídeo de 13/10
 
 - Perfil inclui filmes no gráfico diário.
