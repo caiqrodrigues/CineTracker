@@ -1,3 +1,4 @@
+- Web: **0.3.42 / r515-official-0.3.42** — corrige Watchlist Filmes vazia eliminando preload/in-flight antigo e restaura saída visível das telas UFC/F1 para a Home; Top 10 r514 e demais áreas preservados.
 - Web: **0.3.41 / r514-official-0.3.41** — Home Filmes volta ao trilho 2:3; Top 10 exige 10+10 elegíveis; bridge Edge/TMDB corrige temporadas históricas UFC/F1 sem alterar Séries, Perfil, WWE, Esportes ou Android.
 - Web: **0.3.40 / r513-official-0.3.40** — Home Filmes em linhas canônicas; F1 com todas as sessões; UFC com Fight Nights + PPVs; UFC/F1 em tela de Série.
 - Web: **0.3.39 / r512-official-0.3.39** — Home Filmes em linhas canônicas; UFC 1993–atual e F1 1950–atual sob owner único estável, com sincronização F1 r462 preservada.

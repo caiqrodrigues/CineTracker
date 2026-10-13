@@ -1,0 +1,15 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r515.mjs');
+const [js,css,html,releaseRaw,rootRaw,webRaw,buildRaw]=await Promise.all([readFile(resolve('dist/app-v515.js'),'utf8'),readFile(resolve('dist/app-v515.css'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8'),readFile(resolve('build-r515.mjs'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('r515 regression: '+m)},release=JSON.parse(releaseRaw),rootPkg=JSON.parse(rootRaw),webPkg=JSON.parse(webRaw);
+ok(rootPkg.version==='0.3.42'&&webPkg.version==='0.3.42','versions');
+ok(release.version==='0.3.42'&&release.revision==='r515-official-0.3.42','release');
+ok(html.includes('app-v515.js?ct=r515-official-0.3.42')&&html.includes('app-v515.css?ct=r515-official-0.3.42'),'assets');
+for(const need of ["window.__ctR515Marker='movie-watchlist-fresh-owner+no-background-preload+ufc-f1-return-home+preserve-top10-r514'",'ct515MoviesSource','cinetracker_home_movies_v405','← Voltar para Home','returnState','topEligible514',"window.__ctR514Marker='movie-rail-2x3+top10-strict-10x10+core-edge-tmdb+stable-ufc-f1-seasons'"])ok(js.includes(need),'bundle '+need);
+ok(js.includes("document.documentElement.dataset.ct388Home='r515-no-movie-background-preload'"),'Home owner');
+ok(!js.includes("document.documentElement.dataset.ct388Home='r509-final-home'"),'old Home owner body replaced');
+ok(css.includes('.ct513-series-back.ct515-series-back{position:fixed!important')&&css.includes('z-index:10140!important'),'fixed visible back');
+ok(css.includes('ct514-movie-card')&&css.includes('aspect-ratio:2/3!important'),'movie 2:3 preserved');
+for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])ok(!buildRaw.includes(bad),'forbidden '+bad);
+console.log('WEB_R515_REGRESSION_OK');

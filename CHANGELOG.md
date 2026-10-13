@@ -1,3 +1,15 @@
+## 0.3.42 — r515 (2026-10-13)
+
+### Watchlist Filmes + retorno UFC/F1
+- **Home > Filmes:** removido o preload de Filmes enquanto a aba Séries está ativa. Esse preload podia deixar uma Promise antiga pendente e fazer o clique em Filmes aguardar indefinidamente.
+- Ao abrir **Filmes** sem cards renderizados, a leitura v405 é forçada de forma nova; a geração nova invalida a tarefa anterior e impede que resposta velha sobrescreva a Watchlist.
+- `cinetracker_home_movies_v405` foi validada no banco atual com **60 filmes na primeira página** e mais de 1.300 no total; portanto o estado vazio era frontend.
+- A Watchlist mantém o layout r514: trilho horizontal de cards **176×264 / 2:3** no desktop e **154×231 / 2:3** no mobile.
+- **UFC/F1:** a tela de Série passa a ter `← Voltar para Home` fixo e sempre visível. Fechar restaura a aba anterior da Home, posição e foco sem reload.
+- UFC continua tratado como série recorrente por temporada/ano, com **Fight Nights + PPVs** e Visto/Desmarcar sincronizado com Esportes. F1 mantém o writer canônico r462.
+- **Top 10:** lógica r514 de 10 Séries + 10 Filmes é preservada sem alteração.
+- **Fora do escopo:** Perfil, Pra Você, Raw/SmackDown, Esportes genérico e Android não foram alterados.
+
 ## 0.3.41 — r514 (2026-10-13)
 
 ### Correção final de escopo

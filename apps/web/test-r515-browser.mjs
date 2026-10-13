@@ -1,0 +1,46 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {createServer} from 'node:http';
+import {spawn,execFileSync} from 'node:child_process';
+await import('./build-r515.mjs');
+const js=await readFile(resolve('dist/app-v515.js'),'utf8'),css=await readFile(resolve('dist/app-v515.css'),'utf8');
+function region(anchor){const at=js.indexOf(anchor);if(at<0)throw new Error('missing '+anchor);const s=js.lastIndexOf('(()=>{',at),e=js.indexOf('\n})();',at);if(s<0||e<0)throw new Error('bounds '+anchor);return js.slice(s,e+6)}
+function fn(source,name){const m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(source);if(!m)throw new Error('fn '+name);const open=source.indexOf('{',m.index+m[0].length);let d=0,mode='code',quote='',i=open;for(;i<source.length;i++){const c=source[i],n=source[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')d++;else if(c==='}'){d--;if(d===0){i++;break}}}return source.slice(m.index,i)}
+const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
+const movieFns=[fn(r388,'movieRow'),fn(r388,'renderMoviesAll'),fn(r388,'loadMovies')].join('\n');
+const screenMarker="window.__ctR513SeriesScreenMarker='canonical-series-screen+season-episodes+optimistic-watch';";
+const sm=js.indexOf(screenMarker),sc=js.lastIndexOf('/* CineTracker Web 0.3.40 r513',sm),ss=js.indexOf('(()=>{',sc),se=js.indexOf('\n})();',sm);
+if(sm<0||sc<0||ss<0||se<0)throw new Error('r513 screen bounds');
+const screen=js.slice(ss,se+6),closeFn=fn(screen,'close');
+const movies=Array.from({length:60},(_,i)=>({media_type:'movie',media_kind:'movie',media_id:2000+i,tmdb_id:2000+i,title:'Movie '+i,poster_path:'/p.jpg',release_year:2026,runtime_minutes:100,vote_average:8.1,added_at:'2026-10-13T00:00:00Z'}));
+const f1={series:{title:'Fórmula 1',season:2026,total_episodes:2,released_episodes:1,watched_episodes:1},seasons:[2026,2025],events:[{season:2026,episode_number:1,round:1,title:'GP Teste',session_kind:'race',starts_at:'2026-10-01T12:00:00Z',runtime_minutes:120,released:true,is_watched:true,source:'mapped'}]};
+const ufc={series:{title:'UFC',season:2026,total_episodes:2,released_episodes:2,watched_episodes:1},seasons:[2026,2025],events:[{season:2026,episode_number:3001,title:'UFC Fight Night Test',event_kind:'Fight Night',starts_at:'2026-10-01T21:00:00Z',runtime_minutes:180,released:true,is_watched:false,source:'sport'},{season:2026,episode_number:3002,title:'UFC 333 Test',event_kind:'PPV',starts_at:'2026-10-08T21:00:00Z',runtime_minutes:180,released:true,is_watched:true,source:'sport'}]};
+const prelude=[
+ "const q=(s,r=document)=>r?.querySelector?.(s)||null,rows=v=>Array.isArray(v)?v:[];",
+ "const esc=v=>String(v??'').replace(/[&<>\\\"']/g,'_'),img=p=>p,titleOf=x=>x.title||'',mediaId=x=>Number(x.media_id||0);",
+ "const ct274MovieMeta=x=>String(x.release_year||''),ct274MovieWatchAction=()=>'',ct274MovieAttrs=()=>'',sortedMovies=()=>hMovies;",
+ "const cacheSet=()=>{},cacheGet=()=>[],HM='hm',homeForceOrder500=()=>true,homeMarkMain507=()=>true;",
+ "let hMovies=[],hMoviesTask=new Promise(()=>{}),hMoviesRun=1,movieNodes=new Map();",
+ "const routeNow=()=> 'home',activeKind=()=> 'movies',timeout=p=>p;",
+ "window.__rpcCalls=[];",
+ "const rpc=async(name,args)=>{window.__rpcCalls.push({name,args});if(name==='cinetracker_home_movies_v405')return {rows:"+JSON.stringify(movies)+",count:1392};if(name==='cinetracker_watchlist_full_v376')return {rows:"+JSON.stringify(movies)+",count:1392};throw new Error(name)};",
+ movieFns,
+ "let state={returnState:{tab:'series',scrollY:0,focus:null}},loadToken=0;",
+ closeFn,
+ "window.__ctCoreR471={rpc:async(name,args)=>({ok:true})};",
+ "window.__ctR512Special={loadSeason:async(type)=>type==='ufc'?"+JSON.stringify(ufc)+":"+JSON.stringify(f1)+",loadCurrent:async()=>true,mountAll:()=>{document.documentElement.dataset.mounted='1'}};",
+ "window.__ctR371={applyTab:(kind)=>{document.querySelectorAll('[data-home-tab]').forEach(b=>b.classList.toggle('active',b.dataset.homeTab===kind));document.querySelectorAll('[data-home-view]').forEach(v=>{const on=v.dataset.homeView===kind;v.hidden=!on;v.classList.toggle('hidden',!on)});return true}};"
+].join('\n');
+const probe=[
+ "(async()=>{const ok=(v,m)=>{if(!v)throw new Error(m)},wait=ms=>new Promise(r=>setTimeout(r,ms));try{",
+ "const list=await loadMovies(true);ok(list.length===60,'forced movies '+list.length);renderMoviesAll();const cards=[...document.querySelectorAll('.ct514-movie-card')];ok(cards.length===60,'movie cards '+cards.length);const pr=cards[0].getBoundingClientRect();ok(pr.width>170&&Math.abs(pr.height/pr.width-1.5)<.03,'movie geometry '+pr.width+'x'+pr.height);ok(window.__rpcCalls.some(x=>x.name==='cinetracker_home_movies_v405'),'v405 not called');",
+ "document.body.insertAdjacentHTML('beforeend','<div data-ct513-series-screen class=\\\"ct513-series-screen\\\"><button class=\\\"btn ct513-series-back ct515-series-back\\\" data-ct513-series-close>← Voltar para Home</button><main>UFC · Fight Night · PPV</main></div>');let page=document.querySelector('[data-ct513-series-screen]');const back=page.querySelector('[data-ct513-series-close]'),cs=getComputedStyle(back);ok(cs.position==='fixed'&&cs.visibility!=='hidden'&&Number(cs.opacity)>0,'back invisible '+cs.position+'/'+cs.visibility+'/'+cs.opacity);ok(back.textContent.includes('Voltar para Home'),'back label');back.addEventListener('click',()=>close());back.click();await wait(30);ok(!document.querySelector('[data-ct513-series-screen]'),'UFC screen not closed');ok(document.querySelector('[data-home-tab=\\\"series\\\"]').classList.contains('active'),'series tab not restored');ok(document.documentElement.dataset.mounted==='1','special cards not remounted');",
+ "state={returnState:{tab:'series',scrollY:0,focus:null}};document.body.insertAdjacentHTML('beforeend','<div data-ct513-series-screen class=\\\"ct513-series-screen\\\"><button class=\\\"btn ct513-series-back ct515-series-back\\\" data-ct513-series-close>← Voltar para Home</button><main>Fórmula 1</main></div>');page=document.querySelector('[data-ct513-series-screen]');page.querySelector('[data-ct513-series-close]').addEventListener('click',()=>close());page.querySelector('[data-ct513-series-close]').click();await wait(20);ok(!document.querySelector('[data-ct513-series-screen]'),'F1 screen not closed');",
+ "document.documentElement.dataset.ct515browser='ok';}catch(e){document.documentElement.dataset.ct515browser='fail:'+String(e?.stack||e)}})();"
+].join('\n');
+const html='<!doctype html><html><head><style>'+css+'body{margin:0;background:#02090f;color:white}.fixture{width:1100px;margin:10px}</style></head><body><div class="fixture"><div class="home-tabs"><button data-home-tab="series" class="active">Séries</button><button data-home-tab="movies">Filmes</button></div><div data-home-view="series"><button data-ct513-open="ufc">UFC</button><button data-ct513-open="f1">F1</button></div><div data-home-view="movies"><section data-ct388-movie-watch data-ct492-total="1392"><span data-ct388-movie-count></span><div class="ct388-movie-stack ct514-movie-rail"></div></section></div></div><script src="/prelude.js"></script><script src="/probe.js"></script></body></html>'; 
+const assets=new Map([['/',{type:'text/html',body:html}],['/prelude.js',{type:'application/javascript',body:prelude}],['/probe.js',{type:'application/javascript',body:probe}]]);
+const server=createServer((req,res)=>{const a=assets.get(new URL(req.url,'http://x').pathname);if(!a){res.writeHead(404);res.end();return}res.writeHead(200,{'content-type':a.type,'cache-control':'no-store'});res.end(a.body)});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
+let bin='';for(const x of ['google-chrome-stable','google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}if(!bin)throw new Error('Chromium unavailable');
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget=3500','--window-size=1280,900','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);const killer=setTimeout(()=>child.kill('SIGTERM'),35000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1200));const m=out.match(/data-ct515browser="([^"]*)"/),state=m?.[1]||'';if(state!=='ok')throw new Error('R515_BROWSER '+state+' DOM='+out.slice(-7000));console.log('R515_BROWSER_OK fresh movie Watchlist + UFC/F1 return');
