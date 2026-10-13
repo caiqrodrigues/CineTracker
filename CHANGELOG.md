@@ -1,3 +1,13 @@
+## 0.3.41 — r514 (2026-10-13)
+
+### Correção final de escopo
+- **Home > Séries:** preservada sem alteração funcional.
+- **Home > Filmes:** mantém Filmes vistos fisicamente acima da Watchlist e restaura a Watchlist ao padrão solicitado: um único trilho horizontal de pôsteres **176×264 / 2:3** no desktop e **154×231 / 2:3** no mobile. A regressão r513 para linhas foi removida.
+- **Descobrir > Top 10:** reposição tolera falha de páginas individuais, expande dentro do mesmo streaming por modalidades de disponibilidade e só pinta quando possui **10 Séries + 10 Filmes** já validados contra Visto/Watchlist.
+- A chamada legada `cinetracker_discovery_exclusions_v0994`, observada em produção estourando ~10 s/500, sai do caminho antigo do Descobrir.
+- **UFC/F1:** corrigida a bridge real que não expunha `edge`/`tmdb`. Temporadas históricas usam ESPN/TMDB/Jolpica; falha externa degrada para cache/estado vazio sem tela vermelha. Escritas canônicas permanecem.
+- **Preservado:** Perfil, Raw/SmackDown, Esportes genérico, F1 Hub/writer r462 e Android 1.0.20 / 10062.
+
 ## 0.3.40 — r513 (2026-10-13)
 
 ### Home Filmes + UFC/F1 como séries
