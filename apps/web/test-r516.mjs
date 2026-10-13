@@ -1,0 +1,10 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r516.mjs');
+const [js,css,html,releaseRaw,rootRaw,webRaw,buildRaw]=await Promise.all([readFile(resolve('dist/app-v516.js'),'utf8'),readFile(resolve('dist/app-v516.css'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8'),readFile(resolve('build-r516.mjs'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('r516 regression: '+m)},release=JSON.parse(releaseRaw),rootPkg=JSON.parse(rootRaw),webPkg=JSON.parse(webRaw);
+ok(rootPkg.version==='0.3.43'&&webPkg.version==='0.3.43','versions');ok(release.version==='0.3.43'&&release.revision==='r516-official-0.3.43','release');ok(html.includes('app-v516.js?ct=r516-official-0.3.43')&&html.includes('app-v516.css?ct=r516-official-0.3.43'),'assets');
+for(const need of ["window.__ctR516Marker='movies-v405-final-owner+special-series-global-progress+season-progress-preserved'",'ct516MoviesSource','cinetracker_home_movies_v405','ct-special-series-summary','cinetracker_special_series_progress_v516','Série: carregando total global','topEligible514'])ok(js.includes(need),'bundle '+need);
+ok(!js.includes("if(baseLoad)window.__ctR388.loadMovies=ensureMovies;"),'r505 override');ok(js.includes("Promise.resolve(window.__ctR388?.loadMovies?.(true))"),'Movies direct final loader');ok(js.includes("stack.querySelector('.ct514-movie-card,[data-ct505-movie-loading]')"),'r505 card detection');ok(css.includes('ct514-movie-card')&&css.includes('aspect-ratio:2/3!important'),'2:3');ok(css.includes('.ct516-series-progress'),'progress style');ok(js.includes('globalWatched=Math.max(watched,Number(g?.watched||0))'),'global watched guard');
+for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])ok(!buildRaw.includes(bad)&&!js.slice(js.lastIndexOf('/* CineTracker Web 0.3.43 r516')).includes(bad),'forbidden '+bad);
+console.log('WEB_R516_REGRESSION_OK');

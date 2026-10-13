@@ -1,4 +1,4 @@
-## Web 0.3.42 / r515 — Watchlist e retorno das séries especiais
+## Web 0.3.43 / r516 — Filmes e progresso global das séries especiais\n\n- Home Filmes: v405 volta a ser o owner final; r505 não substitui mais o loader e a primeira página renderiza 60 cards 2:3.\n- F1 e UFC: cards da Home mostram progresso global + temporada atual; a tela de temporada mostra os dois contadores separadamente.\n- Totais globais usam fontes históricas no backend com fallback para o catálogo conhecido localmente.\n- Top 10, Home Séries, Perfil, Pra Você, WWE, Esportes e Android permanecem inalterados.\n\n## Web 0.3.42 / r515 — Watchlist e retorno das séries especiais
 
 - Home Filmes não pré-carrega mais em segundo plano enquanto Séries está ativa.
 - Abrir Filmes sem cards dispara uma v405 fresca e não aguarda Promise antiga; primeira página = 60 itens, preservando o trilho 2:3.
