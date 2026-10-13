@@ -35,7 +35,7 @@ function recount(sec){
 }
 function removeExisting(key){
  const view=q('[data-home-view="series"]');if(!view)return;
- const sel=key==='f1'?'[data-ct512-special="f1"],[data-ct511-f1-series]':'[data-ct512-special="ufc"],[data-ct510-ufc-series]';
+ const sel=key==='f1'?'.media-row[data-ct512-special="f1"],[data-ct511-f1-series]':'.media-row[data-ct512-special="ufc"],[data-ct510-ufc-series]';
  for(const x of qa(sel,view)){const sec=x.closest('section');x.remove();recount(sec)}
  const names=key==='f1'?new Set(['formula 1','formula one']):new Set(['ufc']);
  for(const row of qa('.media-row.ct274-media-card',view)){
@@ -55,7 +55,7 @@ function mountOne(key){
  removeExisting(key);
  const bucket=p.series.home_bucket==='continue'?'continue':'up_to_date',target=panelFor(bucket),stack=q(':scope > .stack',target);if(!target||!stack)return false;
  q(':scope > .empty',stack)?.remove();stack.insertAdjacentHTML('afterbegin',cardHtml(key,p));recount(target);
- target.dataset.ct512Special=(target.dataset.ct512Special?target.dataset.ct512Special+',':'')+key;
+ target.dataset.ct512SpecialPanel=(target.dataset.ct512SpecialPanel?target.dataset.ct512SpecialPanel+',':'')+key;
  return true
 }
 function mountAll(){const a=mountOne('ufc'),b=mountOne('f1');document.documentElement.dataset.ct512SpecialHome=(a||b)?'mounted':'pending';return a||b}
