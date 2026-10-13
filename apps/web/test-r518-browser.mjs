@@ -18,13 +18,13 @@ function functionText(source,name,anchor){
  if(d!==0)throw new Error('unbalanced '+name);return region.slice(m.index,i);
 }
 const A512="window.__ctR512Marker='r514-stable-historical-seasons+movie-2x3-rail+canonical-f1-sync';";
-const A467="if(window.__ctR467?.version==='1.0.257')return;";
-const cardHtml=functionText(js,'cardHtml',A512),historyRow=functionText(js,'historyRow467',A467),openDay=functionText(js,'openDay467',A467);
+const A426="if(window.__ctR426?.version==='1.0.217')return;";
+const cardHtml=functionText(js,'cardHtml',A512),activityHtml=functionText(js,'activityHtml',A426),openDay=functionText(js,'openDay426',A426);
 const prelude=[
  "const q=(s,r=document)=>r.querySelector(s),rows=v=>Array.isArray(v)?v:[],num=v=>Number(v)||0,esc=v=>String(v??'').replace(/[&<>\\\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\\"':'&quot;',\\\"'\\\":'&#39;'}[c]));",
- "const currentYear=()=>2026,dayFmt467=v=>new Date(v).toLocaleString('pt-BR'),dataOf=v=>v&&typeof v==='object'&&'data' in v?v.data:v,timeout=p=>Promise.resolve(p),waitAuth467=async()=>true,tz=()=> 'America/Sao_Paulo';",
+ "const currentYear=()=>2026,fmt=v=>new Date(v).toLocaleString('pt-BR'),timeout=p=>Promise.resolve(p),tz=()=> 'America/Sao_Paulo';",
  "window.__ctR516SpecialSummary={get:key=>key==='f1'?{watched:87}:{watched:17}};",
- "const rpcCall467=async(name)=>{if(name!=='cinetracker_activity_items_by_day_v518')throw new Error('wrong rpc '+name);return [{sort_id:2000010323,watched_at:'2026-10-13T22:24:30.025Z',item_type:'movie',media_id:9742,media_type:'movie',tmdb_id:1545690,media_title:'WWE Money in the Bank 2026',title:'WWE Money in the Bank 2026',runtime_minutes:194}]};"
+ "const rpc=async(name)=>{if(name!=='cinetracker_activity_items_by_day_v518')throw new Error('wrong rpc '+name);return [{sort_id:2000010323,watched_at:'2026-10-13T22:24:30.025Z',item_type:'movie',media_id:9742,media_type:'movie',tmdb_id:1545690,media_title:'WWE Money in the Bank 2026',title:'WWE Money in the Bank 2026',runtime_minutes:194}]};"
 ].join('\n');
 const probe=[
  "(async()=>{try{",
@@ -37,14 +37,14 @@ const probe=[
  "const related=document.querySelector('.ct169-related-card'),buttons=[...related.querySelectorAll('.ct169-related-actions button')];",
  "ok(Math.round(related.getBoundingClientRect().width)===176,'related width '+related.getBoundingClientRect().width);",
  "for(const b of buttons)ok(b.scrollWidth<=b.clientWidth+1,'button clipped '+b.textContent+' '+b.scrollWidth+'/'+b.clientWidth);",
- "await openDay467('2026-10-13');",
- "const history=document.querySelector('[data-ct467-history-items]')?.textContent||'';",
+ "await openDay426('2026-10-13');",
+ "const history=document.querySelector('[data-ct171-activity-items]')?.textContent||'';",
  "ok(history.includes('WWE Money in the Bank 2026')&&history.includes('Filme assistido'),'movie day detail '+history);",
  "document.documentElement.dataset.ct518browser='ok';",
  "}catch(e){document.documentElement.dataset.ct518browser='fail:'+String(e?.stack||e)}})();"
 ].join('\n');
 const html='<!doctype html><html><head><link rel="stylesheet" href="/app.css"></head><body><div id="cards"></div><article class="ct169-related-card"><div class="ct169-related-poster"></div><div class="ct169-related-actions"><button>＋ Watchlist</button><button>✓ Visto</button></div></article><script src="/prelude.js"></script><script src="/functions.js"></script><script src="/probe.js"></script></body></html>';
-const funcs=cardHtml+'\n'+historyRow+'\n'+openDay;
+const funcs=cardHtml+'\n'+activityHtml+'\n'+openDay;
 const assets=new Map([['/',{t:'text/html; charset=utf-8',b:html}],['/app.css',{t:'text/css; charset=utf-8',b:css}],['/prelude.js',{t:'application/javascript; charset=utf-8',b:prelude}],['/functions.js',{t:'application/javascript; charset=utf-8',b:funcs}],['/probe.js',{t:'application/javascript; charset=utf-8',b:probe}]]);
 const server=createServer((req,res)=>{const x=assets.get(new URL(req.url,'http://127.0.0.1').pathname);if(!x){res.writeHead(404);res.end();return}res.writeHead(200,{'content-type':x.t,'cache-control':'no-store'});res.end(x.b)});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
