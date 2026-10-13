@@ -11,7 +11,8 @@ ok(release.version==='0.3.45'&&release.revision==='r518-official-0.3.45','releas
 ok(html.includes('app-v518.js')&&html.includes('app-v518.css'),'assets');
 ok(js.includes("window.__ctR518Marker='canonical-f1-ufc-counts+daily-movie-items+related-actions-fit'"),'marker');
 ok(js.includes("rpc('cinetracker_ufc_series_v518'"),'UFC v518 owner');
-ok(js.includes("rpc('cinetracker_activity_items_by_day_v518'"),'daily detail v518');
+ok(js.includes('cinetracker_activity_items_by_day_v518'),'daily detail v518');
+ok(!js.includes('cinetracker_activity_items_by_day_v426')&&!js.includes('cinetracker_activity_items_by_day_v475'),'legacy daily detail RPC retired');
 ok(js.includes("core()?.rpc?.('cinetracker_special_series_progress_v518'"),'special summary v518');
 ok(!js.includes("core()?.edge?.('ct-special-series-summary'"),'external denominator removed');
 ok(js.includes("globalWatched.toLocaleString('pt-BR')+' '+unit+' assistidos no total"),'home global watched-only line');
