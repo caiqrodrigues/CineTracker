@@ -1,3 +1,11 @@
+## Web 0.3.41 / r514 — Filmes 2:3, Top 10 completo e temporadas UFC/F1 estáveis
+
+- Home Séries permanece como estava.
+- Home Filmes usa um trilho horizontal de cards 2:3 (176×264 desktop / 154×231 mobile), com Histórico oculto acima pela autoridade existente.
+- Top 10 só apresenta o resultado final quando possui 10 séries e 10 filmes elegíveis do streaming selecionado.
+- UFC/F1 recebem bridge real para Edge/TMDB e fallback histórico sem erro vermelho ao trocar temporada.
+- Perfil, WWE, Esportes e Android permanecem fora do escopo.
+
 ## Web 0.3.40 / r513 — Home Filmes + UFC/F1 em formato de Série
 
 - Watchlist de Filmes usa linhas canônicas e paginação v405.

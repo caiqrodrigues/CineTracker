@@ -1,4 +1,4 @@
-name: Verify Web 0.3.40 r513
+name: Verify Web 0.3.41 r514
 on:
   push:
     branches: [main]
@@ -9,21 +9,22 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r513:
+  web_r514:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r513 movie UFC F1 regression gate
+      - name: Build and r514 scoped regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v513.js
-          grep -Fq "window.__ctR513Marker='movies-60-visible+ufc-full-espn-season+f1-total-sessions'" apps/web/dist/app-v513.js
-          grep -Fq "window.__ctR513SeriesScreenMarker='canonical-series-screen+season-episodes+optimistic-watch'" apps/web/dist/app-v513.js
+          node --check apps/web/dist/app-v514.js
+          grep -Fq "window.__ctR514Marker='movie-rail-2x3+top10-strict-10x10+core-edge-tmdb+stable-ufc-f1-seasons'" apps/web/dist/app-v514.js
+          grep -Fq 'ct514-movie-card' apps/web/dist/app-v514.js
+          grep -Fq 'topEligible514' apps/web/dist/app-v514.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -33,20 +34,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r513, android]
+    needs: [web_r514, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r513 production
+      - name: Wait for r514 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.40"' <<<"$BODY" && grep -Fq '"revision": "r513-official-0.3.40"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v513.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.41"' <<<"$BODY" && grep -Fq '"revision": "r514-official-0.3.41"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v514.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR513Marker='movies-60-visible+ufc-full-espn-season+f1-total-sessions'" <<<"$JS" && grep -Fq 'app-v513.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR514Marker='movie-rail-2x3+top10-strict-10x10+core-edge-tmdb+stable-ufc-f1-seasons'" <<<"$JS" && grep -Fq 'app-v514.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
