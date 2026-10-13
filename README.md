@@ -1,3 +1,14 @@
+## Web 0.3.44 / r517 — correções do vídeo de 13/10
+
+- Perfil inclui filmes no gráfico diário.
+- Descobrir e relacionados usam a mesma barreira Visto/Watchlist v517.
+- Detalhes têm primeiro paint progressivo, sem esperar recomendações.
+- Home Séries pode expandir para a biblioteca completa; Home Filmes usa diretamente a autoridade v405 e mantém cards 2:3.
+- Busca não fica mais coberta pelas abas da Home.
+- Top 10 mantém a lógica 10+10; apenas as logos dos streamings foram corrigidas visualmente.
+- UFC complementa temporadas com UFCStats; F1/UFC exibem um único progresso global + temporada.
+- Esportes genérico e Android permanecem fora do escopo.
+
 ## Web 0.3.43 / r516 — Filmes e progresso global das séries especiais\n\n- Home Filmes: v405 volta a ser o owner final; r505 não substitui mais o loader e a primeira página renderiza 60 cards 2:3.\n- F1 e UFC: cards da Home mostram progresso global + temporada atual; a tela de temporada mostra os dois contadores separadamente.\n- Totais globais usam fontes históricas no backend com fallback para o catálogo conhecido localmente.\n- Top 10, Home Séries, Perfil, Pra Você, WWE, Esportes e Android permanecem inalterados.\n\n## Web 0.3.42 / r515 — Watchlist e retorno das séries especiais
 
 - Home Filmes não pré-carrega mais em segundo plano enquanto Séries está ativa.
