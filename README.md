@@ -1,3 +1,11 @@
+## Web 0.3.42 / r515 — Watchlist e retorno das séries especiais
+
+- Home Filmes não pré-carrega mais em segundo plano enquanto Séries está ativa.
+- Abrir Filmes sem cards dispara uma v405 fresca e não aguarda Promise antiga; primeira página = 60 itens, preservando o trilho 2:3.
+- UFC e Fórmula 1 mantêm a tela por temporada, com **Voltar para Home** fixo/visível e restauração da Home sem reload.
+- UFC continua em formato de série com Fight Nights e PPVs; F1 mantém sincronização canônica.
+- Top 10 r514, Perfil, Pra Você, WWE, Esportes e Android permanecem preservados.
+
 ## Web 0.3.41 / r514 — Filmes 2:3, Top 10 completo e temporadas UFC/F1 estáveis
 
 - Home Séries permanece como estava.
