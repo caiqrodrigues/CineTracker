@@ -1,4 +1,4 @@
-name: Verify Web 0.3.38 r511
+name: Verify Web 0.3.39 r512
 on:
   push:
     branches: [main]
@@ -9,22 +9,24 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r511:
+  web_r512:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r511 Formula 1 special-series regression gate
+      - name: Build and r512 Home movies + historical UFC/F1 regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v511.js
-          grep -Fq "window.__ctR511Marker='f1-special-series+current-season+canonical-r462-three-way-sync+no-duplicate-row'" apps/web/dist/app-v511.js
-          grep -Fq 'cinetracker_f1_series_v511' apps/web/dist/app-v511.js
-          grep -Fq 'cinetracker_f1_watch_sync_v462' apps/web/dist/app-v511.js
+          node --check apps/web/dist/app-v512.js
+          grep -Fq "window.__ctR512Marker='historical-f1-1950+ufc-1993+single-special-owner+stable-remount+movies-standard-rows'" apps/web/dist/app-v512.js
+          grep -Fq 'cinetracker_f1_series_v512' apps/web/dist/app-v512.js
+          grep -Fq 'cinetracker_f1_watch_sync_v462' apps/web/dist/app-v512.js
+          grep -Fq 'cinetracker_ufc_series_v512' apps/web/dist/app-v512.js
+          grep -Fq 'ct512-movie-list' apps/web/dist/app-v512.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +36,7 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r511, android]
+    needs: [web_r512, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -44,10 +46,10 @@ jobs:
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.38"' <<<"$BODY" && grep -Fq '"revision": "r511-official-0.3.38"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v511.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.39"' <<<"$BODY" && grep -Fq '"revision": "r512-official-0.3.39"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v512.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR511Marker='f1-special-series+current-season+canonical-r462-three-way-sync+no-duplicate-row'" <<<"$JS" && grep -Fq 'app-v511.js?ct=r511-official-0.3.38' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR512Marker='historical-f1-1950+ufc-1993+single-special-owner+stable-remount+movies-standard-rows'" <<<"$JS" && grep -Fq 'app-v512.js?ct=r512-official-0.3.39' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
