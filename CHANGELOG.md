@@ -1,3 +1,20 @@
+## 0.3.44 — r517 (2026-10-13)
+
+### Correções do vídeo — escopo preservado
+- **Perfil:** Assistido por dia passa a contar filmes pela trilha atual `watch_play_events_v0994`, além de episódios e esportes; barra e detalhe diário voltam a concordar.
+- **Recomendações:** filtro pessoal v517 bloqueia títulos já vistos, Watchlist e Não interessado por TMDB e aliases de título/ano. O mesmo filtro é usado em Descobrir e nos relacionados/semelhantes.
+- **Detalhes:** filme/série pinta assim que o detalhe TMDB chega; estado pessoal e relacionados carregam depois, sem segurar a tela inteira.
+- **Home Séries:** primeiro lote maior e expansão até a biblioteca completa; ao ultrapassar o lote compacto, a autoridade completa v452 assume sem reload.
+- **Home Filmes:** o clique em Filmes usa diretamente o owner r388/v405, reaproveita cache/single-flight e mantém a Watchlist 2:3.
+- **Busca/Home:** abas Séries/Filmes deixam de ficar fixas por cima da barra de busca.
+- **Top 10:** ranking 10+10 da r514 permanece; alteração somente visual nas logos de streaming com `contain/center/no-repeat`.
+- **UFC:** sincronização de temporada combina ESPN e UFCStats histórico para Fight Nights e PPVs.
+- **F1/UFC:** progresso aparece em uma única linha, separando série inteira da temporada atual; caches parciais antigos de temporada são invalidados.
+
+### Preservado
+- Rota genérica de Esportes, writer F1 r462, Raw/SmackDown, Perfil 12 cards, histórico/Desmarcar e Android 1.0.20 / 10062 não foram alterados.
+- Sem `window.location.reload()`, `router.refresh()`, `while(true)`, `setInterval` ou novo `MutationObserver`.
+
 ## 0.3.43 — r516 (2026-10-13)\n\n### Watchlist Filmes + progresso global F1/UFC\n- **Home > Filmes:** corrigida a causa real do estado vazio: r505 ainda sobrescrevia o loader v405 depois da r515. r516 mantém r388/v405 como owner final e deixa r505 apenas como helper visual.\n- Todo clique explícito em **Filmes** dispara a autoridade final v405; primeira página = 60 itens e total atual da biblioteca é preservado. O fallback v376 só entra se v405 realmente vier vazia.\n- Cards de Filmes permanecem no trilho r514 **176×264 / 2:3** (154×231 mobile), sem regressão para linhas/quadrados.\n- **F1/UFC:** o card da Home deixa de apresentar a temporada atual como se fosse o total da série. Passa a mostrar progresso **global** da série e, separadamente, o progresso da temporada atual.\n- A tela de temporada mantém o contador daquela temporada e adiciona uma segunda linha Série com o progresso global.\n- F1 combina catálogo histórico de GPs com sessões detalhadas das temporadas mapeadas; UFC usa o catálogo histórico de eventos completos, com fallback seguro para o catálogo já conhecido no CineTracker.\n- O contador global assistido nunca pode ficar abaixo do contador da temporada atualmente carregada.\n- **Preservado:** Home Séries, Top 10 r514, Pra Você, Perfil, Raw/SmackDown, Esportes, writer F1 r462 e Android 1.0.20 / 10062.\n\n## 0.3.42 — r515 (2026-10-13)
 
 ### Watchlist Filmes + retorno UFC/F1
