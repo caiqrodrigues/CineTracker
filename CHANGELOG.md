@@ -2,7 +2,7 @@
 
 ### Correções do vídeo — escopo preservado
 - **Perfil:** Assistido por dia passa a contar filmes pela trilha atual `watch_play_events_v0994`, além de episódios e esportes; barra e detalhe diário voltam a concordar.
-- **Recomendações:** filtro pessoal v517 bloqueia títulos já vistos, Watchlist e Não interessado por TMDB e aliases de título/ano. O mesmo filtro é usado em Descobrir e nos relacionados/semelhantes.
+- **Recomendações:** filtro pessoal v517 bloqueia títulos já vistos, Watchlist e Não interessado por TMDB e aliases de título original/traduzido + ano. Isso cobre duplicidades como **“A Odisseia” ↔ “The Odyssey”**, mesmo quando chegam com TMDB IDs distintos. O mesmo filtro é usado em Descobrir e nos relacionados/semelhantes.
 - **Detalhes:** filme/série pinta assim que o detalhe TMDB chega; estado pessoal e relacionados carregam depois, sem segurar a tela inteira.
 - **Home Séries:** primeiro lote maior e expansão até a biblioteca completa; ao ultrapassar o lote compacto, a autoridade completa v452 assume sem reload.
 - **Home Filmes:** o clique em Filmes usa diretamente o owner r388/v405, reaproveita cache/single-flight e mantém a Watchlist 2:3.
