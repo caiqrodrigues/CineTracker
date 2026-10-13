@@ -1,3 +1,17 @@
+## 0.3.39 — r512 (2026-10-13)
+
+### Home Filmes + UFC/F1 históricos e estáveis
+- **Home > Filmes / Watchlist:** remove o trilho de pôsteres 176×264 introduzido nas r499–r511 e restaura o padrão canônico de linhas do CineTracker, igual às listas de Séries/Histórico. Paginação v405, ordenação, abertura de detalhe, Visto e Histórico oculto acima permanecem preservados.
+- **UFC:** substitui o owner r510 por um único owner r512. Temporadas de 1993 até o ano atual; UFC numerados já existentes na biblioteca (incluindo UFC 1/2/3) são reconhecidos como episódios vistos sem apagar o histórico legado. Fight Nights/PPVs atuais continuam ligados ao estado de Esportes.
+- **Fórmula 1:** substitui o owner r511 por um único owner r512. Temporadas de 1950 até o ano atual. Temporadas já mapeadas (2015/2025/2026) mantêm sessões completas e o writer canônico r462; anos históricos sem mapa carregam os GPs sob demanda via Jolpica, sem contaminar a classificação atual da Home.
+- UFC e F1 são remontados de forma idempotente sempre que a lista de Séries é repintada ou quando o usuário volta da aba Filmes, eliminando o desaparecimento ao trocar abas.
+- Backlog antigo de UFC/F1 **não** força Continuar assistindo: apenas evento/sessão recente pendente da temporada atual decide Continuar versus Em dia.
+- r510/r511 ficam inertes no bundle final; não há dois owners disputando os mesmos cards.
+
+### Escopo preservado
+- Descobrir, Top 10, Pra Você, Perfil, Raw/SmackDown, Esportes genérico, histórico diário e Android permanecem inalterados.
+- Sem full-page reload, `router.refresh()`, `while(true)`, `setInterval` ou `MutationObserver`.
+
 ## 0.3.38 — r511 (2026-10-13)
 
 ### Fórmula 1 como série especial
