@@ -1,4 +1,4 @@
-name: Verify Web 0.3.42 r515
+name: Verify Web 0.3.43 r516
 on:
   push:
     branches: [main]
@@ -9,23 +9,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r515:
+  web_r516:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r515 Watchlist/navigation regression gate
+      - name: Build and r516 scoped regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v515.js
-          grep -Fq "window.__ctR515Marker='movie-watchlist-fresh-owner+no-background-preload+ufc-f1-return-home+preserve-top10-r514'" apps/web/dist/app-v515.js
-          grep -Fq 'ct515MoviesSource' apps/web/dist/app-v515.js
-          grep -Fq '← Voltar para Home' apps/web/dist/app-v515.js
-          grep -Fq 'topEligible514' apps/web/dist/app-v515.js
+          node --check apps/web/dist/app-v516.js
+          grep -Fq "window.__ctR516Marker='movies-v405-final-owner+special-series-global-progress+season-progress-preserved'" apps/web/dist/app-v516.js
+          grep -Fq 'ct516MoviesSource' apps/web/dist/app-v516.js
+          grep -Fq 'ct-special-series-summary' apps/web/dist/app-v516.js
+          grep -Fq 'topEligible514' apps/web/dist/app-v516.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -35,20 +35,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r515, android]
+    needs: [web_r516, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r515 production
+      - name: Wait for r516 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.42"' <<<"$BODY" && grep -Fq '"revision": "r515-official-0.3.42"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v515.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.43"' <<<"$BODY" && grep -Fq '"revision": "r516-official-0.3.43"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v516.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR515Marker='movie-watchlist-fresh-owner+no-background-preload+ufc-f1-return-home+preserve-top10-r514'" <<<"$JS" && grep -Fq 'app-v515.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR516Marker='movies-v405-final-owner+special-series-global-progress+season-progress-preserved'" <<<"$JS" && grep -Fq 'app-v516.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
