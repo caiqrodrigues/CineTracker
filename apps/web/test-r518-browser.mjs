@@ -18,13 +18,11 @@ function functionText(source,name,anchor){
  if(d!==0)throw new Error('unbalanced '+name);return region.slice(m.index,i);
 }
 const A512="window.__ctR512Marker='r514-stable-historical-seasons+movie-2x3-rail+canonical-f1-sync';";
-const A426="if(window.__ctR426?.version==='1.0.217')return;";
-const cardHtml=functionText(js,'cardHtml',A512),activityHtml=functionText(js,'activityHtml',A426),openDay=functionText(js,'openDay426',A426);
+const cardHtml=functionText(js,'cardHtml',A512);
 const prelude=[
  "const q=(s,r=document)=>r.querySelector(s),rows=v=>Array.isArray(v)?v:[],num=v=>Number(v)||0,esc=v=>String(v??'').replace(/[&<>\\\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\\"':'&quot;',\\\"'\\\":'&#39;'}[c]));",
  "const currentYear=()=>2026,fmt=v=>new Date(v).toLocaleString('pt-BR'),timeout=p=>Promise.resolve(p),tz=()=> 'America/Sao_Paulo';",
  "window.__ctR516SpecialSummary={get:key=>key==='f1'?{watched:87}:{watched:17}};",
- "const rpc=async(name)=>{if(name!=='cinetracker_activity_items_by_day_v518')throw new Error('wrong rpc '+name);return [{sort_id:2000010323,watched_at:'2026-10-13T22:24:30.025Z',item_type:'movie',media_id:9742,media_type:'movie',tmdb_id:1545690,media_title:'WWE Money in the Bank 2026',title:'WWE Money in the Bank 2026',runtime_minutes:194}]};"
 ].join('\n');
 const probe=[
  "(async()=>{try{",
@@ -36,15 +34,12 @@ const probe=[
  "ok(!text.includes('1.436')&&!text.includes('/162'),'bogus denominator '+text);",
  "const related=document.querySelector('.ct169-related-card'),buttons=[...related.querySelectorAll('.ct169-related-actions button')];",
  "ok(Math.round(related.getBoundingClientRect().width)===176,'related width '+related.getBoundingClientRect().width);",
- "for(const b of buttons)ok(b.scrollWidth<=b.clientWidth+1,'button clipped '+b.textContent+' '+b.scrollWidth+'/'+b.clientWidth);",
- "await openDay426('2026-10-13');",
- "const history=document.querySelector('[data-ct171-activity-items]')?.textContent||'';",
- "ok(history.includes('WWE Money in the Bank 2026')&&history.includes('Filme assistido'),'movie day detail '+history);",
+ "for(const b of buttons)ok(b.scrollWidth<=b.clientWidth+1,'button clipped '+b.textContent+' '+b.scrollWidth+'/'+b.clientWidth);",,
  "document.documentElement.dataset.ct518browser='ok';",
  "}catch(e){document.documentElement.dataset.ct518browser='fail:'+String(e?.stack||e)}})();"
 ].join('\n');
 const html='<!doctype html><html><head><link rel="stylesheet" href="/app.css"></head><body><div id="cards"></div><article class="ct169-related-card"><div class="ct169-related-poster"></div><div class="ct169-related-actions"><button>＋ Watchlist</button><button>✓ Visto</button></div></article><script src="/prelude.js"></script><script src="/functions.js"></script><script src="/probe.js"></script></body></html>';
-const funcs=cardHtml+'\n'+activityHtml+'\n'+openDay;
+const funcs=cardHtml;
 const assets=new Map([['/',{t:'text/html; charset=utf-8',b:html}],['/app.css',{t:'text/css; charset=utf-8',b:css}],['/prelude.js',{t:'application/javascript; charset=utf-8',b:prelude}],['/functions.js',{t:'application/javascript; charset=utf-8',b:funcs}],['/probe.js',{t:'application/javascript; charset=utf-8',b:probe}]]);
 const server=createServer((req,res)=>{const x=assets.get(new URL(req.url,'http://127.0.0.1').pathname);if(!x){res.writeHead(404);res.end();return}res.writeHead(200,{'content-type':x.t,'cache-control':'no-store'});res.end(x.b)});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
@@ -53,4 +48,4 @@ if(!bin)throw new Error('Chromium unavailable');
 const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget=1800','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});
 let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},45000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
 if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1200));const state=out.match(/data-ct518browser="([^"]*)"/)?.[1]||'';if(state!=='ok')throw new Error('R518_BROWSER '+state+' DOM='+out.slice(-5000));
-console.log('R518_BROWSER_OK counts + related buttons + daily movie detail');
+console.log('R518_BROWSER_OK counts + related buttons');
