@@ -46,27 +46,10 @@ js=replaceNamed(js,A371,'selectByUser',`function selectByUser(kind){
  return{generation:tabGeneration,signal:tabController?.signal||null}
 }`,'r371');
 
-const A505="window.__ctR505Marker='home-movies-nonempty-retry+sticky-home-tabs+r504-pointer-preserved';";
-js=replaceNamed(js,A505,'loading',`function loading(){
- if(!routeHome()||!moviesActive())return false;
- const stack=q('[data-home-view="movies"] .ct388-movie-stack');
- if(!stack||stack.querySelector('.ct514-movie-card,[data-ct505-movie-loading]'))return false;
- stack.innerHTML='<div class="ct505-movie-loading" data-ct505-movie-loading><span></span><span></span><span></span><span></span><span></span></div>';
- return true;
-}`,'r505');
-js=replaceNamed(js,A505,'failed',`function failed(){
- const stack=q('[data-home-view="movies"] .ct388-movie-stack');
- if(stack&&!stack.querySelector('.ct514-movie-card'))stack.innerHTML='<div class="empty">Não foi possível carregar a Watchlist. <button type="button" class="chip" data-ct505-movies-retry>Tentar novamente</button></div>';
-}`,'r505');
-js=replaceNamed(js,A505,'ensureMovies',`async function ensureMovies(force=false){
- if(movieTask&&!force)return movieTask;
- loading();
- const task=(async()=>{let list=[];try{list=await baseLoad?.(!!force)||[]}catch{}if(!Array.isArray(list))list=[];if(!list.length&&!force){try{list=await baseLoad?.(true)||[]}catch{};if(!Array.isArray(list))list=[]}if(routeHome()&&moviesActive()&&list.length){try{baseRender?.()}catch{}}if(routeHome()&&moviesActive()&&!list.length)failed();document.documentElement.dataset.ct516Movies=String(list.length);return list})().finally(()=>{if(movieTask===task)movieTask=null});
- movieTask=task;return task;
-}`,'r505');
-const oldOverride="if(baseLoad)window.__ctR388.loadMovies=ensureMovies;";
-if(!js.includes(oldOverride))throw new Error('r516 r505 override missing');
-js=js.replace(oldOverride,"/* r516: r388 v405 loader remains the final Movies owner; r505 is helper-only. */");
+const stale505Override="if(baseLoad)window.__ctR388.loadMovies=ensureMovies;";
+if(js.includes(stale505Override))js=js.replace(stale505Override,"/* r516: r388 v405 loader remains the final Movies owner; r505 is helper-only. */");
+js=js.replaceAll("stack.querySelector('.ct500-movie-card,[data-ct505-movie-loading]')","stack.querySelector('.ct514-movie-card,[data-ct505-movie-loading]')");
+js=js.replaceAll("!stack.querySelector('.ct500-movie-card')","!stack.querySelector('.ct514-movie-card')");
 
 const A512="window.__ctR512Marker='r514-stable-historical-seasons+movie-2x3-rail+canonical-f1-sync';";
 js=replaceNamed(js,A512,'cardHtml',`function cardHtml(key,p){
