@@ -1,3 +1,12 @@
+## 0.3.40 — r513 (2026-10-13)
+
+### Home Filmes + UFC/F1 como séries
+- Home > Filmes: renderer determinístico em linhas canônicas para a primeira página v405; sem cards quadrados/poster-grid.
+- Fórmula 1: progresso usa todas as sessões da temporada. Em 2026: 85 assistidas de 115 sessões totais.
+- UFC: temporadas 1993-atual, Fight Nights + PPVs, deduplicando Sports e histórico legado.
+- UFC/F1 abrem em tela de Série em página cheia, com temporada, episódios/eventos e Visto/Desmarcar otimista; o modal r512 deixa de ser o caminho dos cards.
+- Escopo preservado: Perfil, Descobrir, WWE/Raw/SmackDown, rota genérica de Esportes e Android não foram alterados.
+
 ## 0.3.39 — r512 (2026-10-13)
 
 ### Home Filmes + UFC/F1 históricos e estáveis
