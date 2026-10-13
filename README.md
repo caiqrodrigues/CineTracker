@@ -1,3 +1,11 @@
+## Web 0.3.39 / r512 — Watchlist padrão + UFC/F1 históricos
+
+- Home Filmes volta ao padrão de **linhas do sistema**; não usa mais pôsteres quadrados/em trilho.
+- UFC é uma série especial estável com temporadas 1993–atual; eventos antigos vistos como filmes são reconhecidos no progresso da série.
+- Fórmula 1 é uma série especial estável com temporadas 1950–atual; anos mapeados usam a sincronização r462 e anos históricos carregam GPs sob demanda.
+- Trocar Séries/Filmes não remove UFC ou Fórmula 1.
+- Histórico oculto acima, Raw/SmackDown, Descobrir, Perfil, Esportes e Android são preservados.
+
 ## Web 0.3.38 / r511 — Fórmula 1 como série especial
 
 - Home > Séries mostra **Fórmula 1** no mesmo modelo da série especial UFC.

@@ -1,3 +1,4 @@
+- Web: **0.3.39 / r512-official-0.3.39** — Home Filmes em linhas canônicas; UFC 1993–atual e F1 1950–atual sob owner único estável, com sincronização F1 r462 preservada.
 - Web: **0.3.38 / r511-official-0.3.38** — Fórmula 1 como série especial anual; sessões do F1 Hub viram episódios e continuam sincronizadas com Série/Esportes/F1 Hub pelo writer r462, sem linha duplicada.
 - Web: **0.3.37 / r510-official-0.3.37** — UFC como série esportiva recorrente, Fight Night + PPVs por temporada e sincronização com Esportes sem dupla contagem.
 - Web: **0.3.36 / r509-official-0.3.36** — Home-only: Histórico realmente escondido acima em Séries/Filmes; entrada em Continue/Watchlist; corrida de Watchlist vazia corrigida com v405 nonempty.
