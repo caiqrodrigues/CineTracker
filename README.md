@@ -1,3 +1,11 @@
+## Web 0.3.40 / r513 — Home Filmes + UFC/F1 em formato de Série
+
+- Watchlist de Filmes usa linhas canônicas e paginação v405.
+- Fórmula 1 mostra assistidos / total da temporada e mantém writer r462.
+- UFC é Série com temporadas desde 1993, Fight Nights e PPVs.
+- UFC/F1 abrem em tela de Série, não em modal especial.
+- Android permanece 1.0.20 / 10062.
+
 ## Web 0.3.39 / r512 — Watchlist padrão + UFC/F1 históricos
 
 - Home Filmes volta ao padrão de **linhas do sistema**; não usa mais pôsteres quadrados/em trilho.
