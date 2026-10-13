@@ -20,9 +20,9 @@ function functionText(source,name,anchor){
 const A512="window.__ctR512Marker='r514-stable-historical-seasons+movie-2x3-rail+canonical-f1-sync';";
 const cardHtml=functionText(js,'cardHtml',A512);
 const prelude=[
- "const q=(s,r=document)=>r.querySelector(s),rows=v=>Array.isArray(v)?v:[],num=v=>Number(v)||0,esc=v=>String(v??'').replace(/[&<>\\\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\\"':'&quot;',\\\"'\\\":'&#39;'}[c]));",
- "const currentYear=()=>2026,fmt=v=>new Date(v).toLocaleString('pt-BR'),timeout=p=>Promise.resolve(p),tz=()=> 'America/Sao_Paulo';",
- "window.__ctR516SpecialSummary={get:key=>key==='f1'?{watched:87}:{watched:17}};",
+ "const esc=v=>String(v??'');",
+ "const currentYear=()=>2026;",
+ "window.__ctR516SpecialSummary={get:key=>key==='f1'?{watched:87}:{watched:17}};"
 ].join('\n');
 const probe=[
  "(async()=>{try{",
@@ -34,7 +34,7 @@ const probe=[
  "ok(!text.includes('1.436')&&!text.includes('/162'),'bogus denominator '+text);",
  "const related=document.querySelector('.ct169-related-card'),buttons=[...related.querySelectorAll('.ct169-related-actions button')];",
  "ok(Math.round(related.getBoundingClientRect().width)===176,'related width '+related.getBoundingClientRect().width);",
- "for(const b of buttons)ok(b.scrollWidth<=b.clientWidth+1,'button clipped '+b.textContent+' '+b.scrollWidth+'/'+b.clientWidth);",,
+ "for(const b of buttons)ok(b.scrollWidth<=b.clientWidth+1,'button clipped '+b.textContent+' '+b.scrollWidth+'/'+b.clientWidth);",
  "document.documentElement.dataset.ct518browser='ok';",
  "}catch(e){document.documentElement.dataset.ct518browser='fail:'+String(e?.stack||e)}})();"
 ].join('\n');
