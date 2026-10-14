@@ -1,3 +1,12 @@
+## Web 0.3.47 / r520 — F1 + UFC + WWE PPV, Home fixa e Esportes navegável
+
+- F1, UFC e WWE Pay-Per-View coexistem como três séries especiais por temporada/ano.
+- Totais históricos usam Jolpica, UFCStats e catálogo histórico de PPV/PLE da WWE, sem limitar a contagem ao que já existe localmente.
+- Busca global e botões Séries/Filmes ficam fixos na Home; Filmes é selecionado antes de qualquer card receber o clique.
+- Em Esportes, time abre os últimos 5 jogos e liga abre a rodada mais recente.
+- Marcar/desmarcar nesses detalhes usa o writer esportivo canônico e atualiza as mesmas estatísticas existentes.
+- Raw/SmackDown, Descobrir, Perfil, F1 Hub e Android permanecem preservados.
+
 ## Web 0.3.46 / r519 — WWE Pay-Per-View como série
 
 - WWE Pay-Per-View é uma série especial por temporada/ano; cada PPV/PLE é um episódio.
