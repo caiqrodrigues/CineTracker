@@ -1,3 +1,11 @@
+## Web 0.3.47 / r520 — três séries especiais
+
+- **Fórmula 1**: temporadas/sessões existentes preservadas.
+- **UFC**: temporadas desde 1993 com Fight Nights e PPVs, sincronizado com Esportes.
+- **WWE Pay-Per-View**: temporadas desde 1985 com os principais PPV/PLE por ano e complementação TMDB somente ao abrir a temporada.
+- As três coexistem; adicionar WWE não remove UFC nem F1.
+- Raw/SmackDown e todas as outras áreas permanecem inalteradas.
+
 ## Web 0.3.46 / r519 — WWE Pay-Per-View como série
 
 - WWE Pay-Per-View é uma série especial por temporada/ano; cada PPV/PLE é um episódio.

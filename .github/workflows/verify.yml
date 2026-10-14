@@ -1,4 +1,4 @@
-name: Verify Web 0.3.46 r519
+name: Verify Web 0.3.47 r520
 on:
   push:
     branches: [main]
@@ -9,24 +9,26 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r519:
+  web_r520:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r519 WWE PPV regression gate
+      - name: Build and r520 three-special-series regression gate
         run: |
           set -euo pipefail
-          node --check apps/web/runtime-r519-series-screen.js
+          node --check apps/web/runtime-r520-special-series.js
+          node --check apps/web/runtime-r520-series-screen.js
+          node --check apps/web/runtime-r520-summary.js
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v519.js
-          grep -Fq "window.__ctR519Marker='wwe-ppv-special-series+ufc-ui-retired+f1-preserved'" apps/web/dist/app-v519.js
-          grep -Fq 'cinetracker_wwe_ppv_series_v519' apps/web/dist/app-v519.js
-          grep -Fq 'cinetracker_wwe_ppv_watch_v519' apps/web/dist/app-v519.js
-          grep -Fq 'WWE Pay-Per-View' apps/web/dist/app-v519.js
+          node --check apps/web/dist/app-v520.js
+          grep -Fq "window.__ctR520Marker='f1+ufc+wwe-ppv-three-special-series+no-feature-removal'" apps/web/dist/app-v520.js
+          grep -Fq 'cinetracker_ufc_series_v518' apps/web/dist/app-v520.js
+          grep -Fq 'cinetracker_wwe_ppv_series_v519' apps/web/dist/app-v520.js
+          grep -Fq 'cinetracker_f1_series_v512' apps/web/dist/app-v520.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -36,20 +38,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r519, android]
+    needs: [web_r520, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r519 production
+      - name: Wait for r520 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.46"' <<<"$BODY" && grep -Fq '"revision": "r519-official-0.3.46"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v519.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.47"' <<<"$BODY" && grep -Fq '"revision": "r520-official-0.3.47"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v520.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR519Marker='wwe-ppv-special-series+ufc-ui-retired+f1-preserved'" <<<"$JS" && grep -Fq 'app-v519.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR520Marker='f1+ufc+wwe-ppv-three-special-series+no-feature-removal'" <<<"$JS" && grep -Fq 'app-v520.js' <<<"$HTML"; then exit 0; fi
             fi
             if [ "$i" -eq 240 ]; then exit 1; fi
             sleep 5
