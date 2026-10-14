@@ -14,9 +14,14 @@ function bounds(source,anchor,label){
  const start=source.lastIndexOf('(()=>{',at),close=source.indexOf('\n})();',at);
  if(start<0||close<0)throw new Error('r522 invalid '+label);return{start,end:close+6}
 }
-function replaceRuntime(source,anchor,replacement,label){const b=bounds(source,anchor,label);return source.slice(0,b.start)+replacement.trim()+source.slice(b.end)}
-js=replaceRuntime(js,"window.__ctR520HomeSportsMarker='sticky-search+tabs+deterministic-movies+team-last5+league-latest-round'",sports,'r520 Home/Sports');
-js=replaceRuntime(js,"window.__ctR521HomeSportsMarker='same-row-search+tabs+no-click-leak+sports-r520-preserved'",retired,'r521 Home owner');
+function replaceKnownRuntime(source,header,anchor,replacement,label){
+ const at=source.indexOf(anchor);if(at<0)throw new Error('r522 missing '+label+' marker');
+ const start=source.lastIndexOf(header,at),close=source.indexOf('\n})();',at);
+ if(start<0||close<0)throw new Error('r522 invalid '+label+' boundary');
+ return source.slice(0,start)+replacement.trim()+'\n'+source.slice(close+6)
+}
+js=replaceKnownRuntime(js,"/* CineTracker Web 0.3.47 r520 — sticky Home chrome + team/league sports detail. */","window.__ctR520HomeSportsMarker='sticky-search+tabs+deterministic-movies+team-last5+league-latest-round'",sports,'r520 Home/Sports');
+js=replaceKnownRuntime(js,"/* CineTracker Web 0.3.48 r521 — same-row Home controls; r520 Sports drilldown preserved. */","window.__ctR521HomeSportsMarker='same-row-search+tabs+no-click-leak+sports-r520-preserved'",retired,'r521 Home owner');
 for(const x of [sports,specialOpen,finalRuntime,retired])new Function(x);
 js+='\n'+specialOpen.trim()+'\n'+finalRuntime.trim()+'\n';
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r522-official-0.3.49';");
