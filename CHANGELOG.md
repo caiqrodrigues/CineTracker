@@ -1,3 +1,18 @@
+## 0.3.47 — r520 (2026-10-13)
+
+### F1 + UFC + WWE Pay-Per-View coexistem
+- Corrigido o erro de escopo da r519: **UFC não é removido**. As três séries especiais ativas passam a ser **Fórmula 1**, **UFC** e **WWE Pay-Per-View**.
+- Fórmula 1 preserva sessões por temporada e writer canônico r462.
+- UFC volta ao modelo aprovado: temporada por ano desde 1993, Fight Nights + PPVs numerados, estado sincronizado com Esportes e histórico existente.
+- WWE Pay-Per-View permanece como terceira série: temporada por ano desde 1985, com Royal Rumble, WrestleMania, Elimination Chamber, Money in the Bank, SummerSlam, Survivor Series, Backlash, Crown Jewel, Clash e demais PLE/PPVs principais.
+- Ao abrir uma temporada WWE, o catálogo local é complementado pelo TMDB de forma limitada e cacheada; noites duplicadas do mesmo evento são consolidadas em um único evento lógico e o estado assistido prevalece.
+- Os três cards coexistem na Home sem um remover o outro e cada um abre a mesma tela canônica de temporadas.
+- O resumo global combina F1 + UFC do authority r518 com WWE PPV do authority r519, sem apagar históricos.
+
+### Preservado
+- Raw, SmackDown, Home Filmes, Descobrir, Top 10, Pra Você, Perfil, Esportes genérico e Android 1.0.20 / 10062 permanecem fora do escopo.
+- Sem full-page reload, router.refresh, loop infinito, interval ou observer novo.
+
 ## 0.3.46 — r519 (2026-10-13)
 
 ### WWE Pay-Per-View como série
