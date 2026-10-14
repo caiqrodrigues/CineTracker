@@ -1,3 +1,7 @@
+## Web 0.3.48 / r521
+
+Catálogos F1/UFC/WWE PPV completos, Home com Séries/Filmes/busca na mesma linha fixa e clique de Filmes determinístico. Esportes r520 é preservado.
+
 ## Web 0.3.47 / r520 — F1 + UFC + WWE PPV, Home fixa e Esportes navegável
 
 - F1, UFC e WWE Pay-Per-View coexistem como três séries especiais por temporada/ano.

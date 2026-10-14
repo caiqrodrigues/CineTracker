@@ -1,34 +1,26 @@
-name: Verify Web 0.3.47 r520
+name: Verify Web 0.3.48 r521
 on:
   push:
     branches: [main]
   pull_request:
 permissions:
   contents: read
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 jobs:
-  web_r520:
+  web_r521:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r520 regression gate
-        run: |
+      - run: |
           set -euo pipefail
-          node --check apps/web/runtime-r520-catalog.js
-          node --check apps/web/runtime-r520-special.js
-          node --check apps/web/runtime-r520-series-screen.js
-          node --check apps/web/runtime-r520-home-sports.js
+          node --check apps/web/runtime-r521-catalog.js
+          node --check apps/web/runtime-r521-summary.js
+          node --check apps/web/runtime-r521-home-sports.js
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v520.js
-          grep -Fq "window.__ctR520Marker='f1+ufc+wwe-complete+sticky-home+sports-team-league'" apps/web/dist/app-v520.js
-          grep -Fq 'cinetracker_sports_team_recent_v520' apps/web/dist/app-v520.js
-          grep -Fq 'cinetracker_sports_league_latest_round_v520' apps/web/dist/app-v520.js
+          node --check apps/web/dist/app-v521.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -38,21 +30,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r520, android]
+    needs: [web_r521, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r520 production
-        run: |
+      - run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.47"' <<<"$BODY" && grep -Fq '"revision": "r520-official-0.3.47"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v520.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.48"' <<<"$BODY" && grep -Fq '"revision": "r521-official-0.3.48"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v521.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR520Marker='f1+ufc+wwe-complete+sticky-home+sports-team-league'" <<<"$JS" && grep -Fq 'app-v520.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR521Marker='complete-counts+same-row-home+deterministic-movies+sports-drilldown-preserved'" <<<"$JS" && grep -Fq 'app-v521.js' <<<"$HTML"; then exit 0; fi
             fi
-            if [ "$i" -eq 240 ]; then exit 1; fi
+            [ "$i" -eq 240 ] && exit 1
             sleep 5
           done

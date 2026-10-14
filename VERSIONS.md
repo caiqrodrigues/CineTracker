@@ -1,3 +1,4 @@
+- Web: **0.3.48 / r521-official-0.3.48** — catálogos especiais completos e Home com Séries/Filmes/busca na mesma linha fixa.
 - Web: **0.3.47 / r520-official-0.3.47** — F1 + UFC + WWE PPV juntos com catálogos históricos completos, Home com busca/abas fixas e Esportes com detalhe de time/liga + writer canônico.
 - Web: **0.3.46 / r519-official-0.3.46** — WWE Pay-Per-View substitui o UFC na série especial: PPV/PLE por temporada, histórico visto reaproveitado, UFC UI aposentada e F1 preservada.
 - Web: **0.3.45 / r518-official-0.3.45** — F1/UFC sem denominador histórico falso, UFC 2026 canônico sem duplicatas, botões de Relacionados sem corte e detalhe diário incluindo filmes v0994.
