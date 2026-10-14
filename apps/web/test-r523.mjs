@@ -22,7 +22,7 @@ ok(r321.includes('for(let attempt=0;attempt<2&&!ok;attempt++)'),'Top10 filter re
 const audit523=fn(r321,'topAudit523');ok(!audit523.includes('blocked.add(keyOf(x))')&&audit523.includes("throw(last||new Error('TOP10_FILTER_UNAVAILABLE'))"),'no fail-closed chunk loss');
 ok(paint.includes('movies.length!==10||series.length!==10')&&paint.includes("ct523Top10='10:10'"),'strict 10x10');
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';"),fy=fn(r464,'load');
-ok(fy.includes('auditFresh523')&&fy.includes('cinetracker_recommendation_filter_v517'),'ForYou final audit');
+const auditFresh523=fn(r464,'auditFresh523');ok(fy.includes('auditFresh523')&&auditFresh523.includes('cinetracker_recommendation_filter_v517')&&auditFresh523.includes('blocked_keys'),'ForYou final audit');
 ok(fy.indexOf('auditFresh523')<fy.indexOf('state=next;chooseDaily();render()'),'audit before render');
 ok(css.includes('flex-flow:row nowrap!important')&&css.includes('width:176px!important')&&css.includes('height:264px!important')&&css.includes('width:154px!important')&&css.includes('height:231px!important'),'movie 2:3 sizes');
 for(const preserved of ["window.__ctR512Marker='r520-f1+ufc+wwe-complete-catalog-single-owner'","window.__ctR522SpecialOpenMarker='pointerup-owner-f1-ufc-wwe'"])ok(js.includes(preserved),'preserve '+preserved);
