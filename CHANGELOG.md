@@ -1,3 +1,13 @@
+## 0.3.50 — r523 (2026-10-14)
+
+### Escopo estrito: Home + Descobrir
+- Home > Séries: Histórico volta a ficar fisicamente acima de **Continuar assistindo**. A entrada usa a âncora finita aprovada na r509 e libera imediatamente ao primeiro gesto de navegação do usuário.
+- Home > Filmes: Filmes vistos fica fisicamente acima da Watchlist e a entrada ancora em **Assistir a seguir / Watchlist**.
+- Home > Filmes: Watchlist volta ao rail horizontal único aprovado da r514, com cards 176×264 no desktop e 154×231 no mobile, sempre 2:3 e sem quebra para segunda linha.
+- Descobrir > Pra Você: todos os candidatos de **100% Novos** passam por uma auditoria final v517 antes do paint. Vistos, Watchlist e aliases como título traduzido/original são removidos antes de entrar no estado visível.
+- Descobrir > Top 10: falha transitória no filtro pessoal não transforma o lote inteiro em bloqueado. O filtro é repetido de forma delimitada e a tela só pinta quando possui exatamente 10 Séries + 10 Filmes elegíveis; cache completo 10/10 pode ser usado em falha transitória.
+- F1, UFC, WWE Pay-Per-View, Raw, SmackDown, Perfil, Esportes, histórico diário e Android 1.0.20 / 10062 permanecem intactos.
+
 ## 0.3.49 — r522 (2026-10-14)
 
 ### Home restaurada + abertura F1/UFC/WWE
