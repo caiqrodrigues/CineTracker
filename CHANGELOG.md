@@ -1,3 +1,19 @@
+## 0.3.47 — r520 (2026-10-14)
+
+### Catálogos completos + Home fixa + navegação de Esportes
+- **Fórmula 1:** o total histórico deixa de usar somente o subconjunto mapeado localmente. O catálogo global usa Jolpica/Ergast desde 1950; temporadas históricas carregam GPs sob demanda e temporadas mapeadas mantêm as sessões canônicas e o writer r462.
+- **UFC:** volta a coexistir com F1 e WWE como série especial. Ao abrir uma temporada, UFCStats + ESPN sincronizam numerados, Fight Nights e UFC on ESPN/ABC/Fox antes da composição final.
+- **WWE PPV / PLE:** o catálogo histórico passa a vir da lista pública de supercards por ano, reconciliado por chave canônica com o histórico pessoal. O total global não é mais o subconjunto de filmes existente no banco.
+- **Home:** barra de busca e abas **Séries / Filmes** ficam fixas no topo, com espaçadores próprios, prioridade de z-index/pointer e sem interceptação por cards. A Watchlist de Filmes continua 2:3 em 176×264 (154×231 mobile).
+- **Esportes:** clique no escudo/nome de um time abre os **últimos 5 jogos**; clique no nome da liga abre a **última rodada/slate disponível**. Em ambas as telas é possível marcar/desmarcar assistido com o writer esportivo canônico, preservando duração, contagem e estatísticas.
+- Backend r520 adiciona cinetracker_sport_entity_recent_v520, cinetracker_sport_competition_latest_round_v520, cinetracker_wwe_ppv_status_by_keys_v520 e resumo global F1/UFC/WWE.
+- Sem reload de página, router.refresh(), while(true), setInterval ou novo MutationObserver.
+
+### Validação de fonte pública
+- Jolpica documenta o endpoint histórico de corridas da F1 e expõe o total completo do catálogo.
+- UFC oficial identificou o UFC 328 (09/05/2026) como o **773º evento** da organização.
+- A lista pública de supercards WWE informa **558 eventos** no total, além dos já confirmados futuros.
+
 ## 0.3.46 — r519 (2026-10-13)
 
 ### WWE Pay-Per-View como série

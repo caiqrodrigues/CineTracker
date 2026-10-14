@@ -1,0 +1,24 @@
+/* CineTracker Web 0.3.47 r520 — fixed Home search/tabs + final movie rail geometry guard. */
+(()=>{
+'use strict';
+if(window.__ctR520HomeControls?.version==='0.3.47')return;
+const q=(s,r=document)=>r?.querySelector?.(s)||null,route=()=>String(window.__ctCoreR471?.route?.()||'');
+function spacer(after,name,height){let el=q('[data-ct520-spacer="'+name+'"]');if(!el){el=document.createElement('div');el.dataset.ct520Spacer=name;el.setAttribute('aria-hidden','true');after?.insertAdjacentElement?.('afterend',el)}if(el)el.style.height=Math.max(0,Math.ceil(height))+'px';return el}
+function pin(){if(route()!=='home')return false;const app=q('[data-page="home"]'),content=q('.content',app),search=q('.search-global',app),root=q('[data-home]',app),tabs=q('.home-tabs',root);if(!app||!content||!search||!root||!tabs)return false;const cr=content.getBoundingClientRect(),rr=root.getBoundingClientRect(),sh=Math.max(42,Math.ceil(search.offsetHeight||search.getBoundingClientRect().height||52)),th=Math.max(34,Math.ceil(tabs.offsetHeight||tabs.getBoundingClientRect().height||42)),gap=8,top=8;search.style.setProperty('--ct520-fixed-left',Math.max(0,Math.round(cr.left))+'px');search.style.setProperty('--ct520-fixed-width',Math.max(240,Math.round(cr.width))+'px');tabs.style.setProperty('--ct520-fixed-left',Math.max(0,Math.round(rr.left))+'px');tabs.style.setProperty('--ct520-fixed-width',Math.max(240,Math.round(rr.width))+'px');tabs.style.setProperty('--ct520-fixed-top',(top+sh+gap)+'px');spacer(search,'search',sh+gap);spacer(tabs,'tabs',th+gap);search.dataset.ct520Fixed='1';tabs.dataset.ct520Fixed='1';return true}
+function enforceMovies(){if(route()!=='home')return false;const stack=q('[data-home-view="movies"] .ct388-movie-stack');if(stack)stack.dataset.ct520MovieRail='1';return !!stack}
+function sync(){pin();enforceMovies()}
+window.addEventListener('resize',()=>requestAnimationFrame(sync),{passive:true});
+window.addEventListener('popstate',()=>requestAnimationFrame(sync));
+document.addEventListener('click',e=>{if(route()!=='home')return;if(e.target?.closest?.('[data-home-tab],[data-nav="home"]'))requestAnimationFrame(()=>requestAnimationFrame(sync))},true);
+queueMicrotask(sync);requestAnimationFrame(()=>requestAnimationFrame(sync));
+const style=document.createElement('style');style.id='ct520-home-controls-style';style.textContent=[
+ 'html body [data-page="home"] .search-global[data-ct520-fixed="1"]{position:fixed!important;top:8px!important;left:var(--ct520-fixed-left)!important;width:var(--ct520-fixed-width)!important;z-index:2300!important;pointer-events:auto!important;background:rgba(5,14,22,.98)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important}',
+ 'html body [data-page="home"] [data-home] .home-tabs[data-ct520-fixed="1"]{position:fixed!important;top:var(--ct520-fixed-top)!important;left:var(--ct520-fixed-left)!important;width:var(--ct520-fixed-width)!important;z-index:2290!important;pointer-events:auto!important;isolation:isolate!important;background:rgba(5,14,22,.98)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important;padding:8px 0!important}',
+ 'html body [data-page="home"] [data-home] .home-tabs [data-home-tab]{position:relative!important;z-index:2291!important;pointer-events:auto!important;cursor:pointer!important}',
+ 'html body [data-home-view="movies"] .ct388-movie-stack{display:flex!important;flex-flow:row nowrap!important;align-items:flex-start!important;gap:12px!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x proximity!important;padding:2px 2px 10px!important}',
+ 'html body [data-home-view="movies"] .ct388-movie-stack>.ct500-movie-card{display:block!important;flex:0 0 176px!important;width:176px!important;min-width:176px!important;max-width:176px!important;height:auto!important;scroll-snap-align:start!important;overflow:hidden!important}',
+ 'html body [data-home-view="movies"] .ct500-movie-card .poster{display:block!important;width:176px!important;height:264px!important;min-height:264px!important;max-height:264px!important;aspect-ratio:2/3!important;background-size:cover!important;background-position:center!important;object-fit:cover!important}',
+ '@media(max-width:720px){html body [data-home-view="movies"] .ct388-movie-stack>.ct500-movie-card{flex-basis:154px!important;width:154px!important;min-width:154px!important;max-width:154px!important}html body [data-home-view="movies"] .ct500-movie-card .poster{width:154px!important;height:231px!important;min-height:231px!important;max-height:231px!important}}'
+].join('');if(!q('#ct520-home-controls-style'))document.head.appendChild(style);
+window.__ctR520HomeControls={version:'0.3.47',pin,enforceMovies,sync};
+})();

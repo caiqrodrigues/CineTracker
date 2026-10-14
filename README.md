@@ -1,3 +1,12 @@
+## Web 0.3.47 / r520 — catálogos completos e Esportes navegável
+
+- F1, UFC e WWE PPV/PLE coexistem como séries especiais; os totais globais vêm de catálogos públicos completos, não do subconjunto já persistido no banco.
+- A busca e as abas Séries/Filmes da Home ficam fixas no topo e têm prioridade de clique sobre os cards.
+- Filmes mantém trilho 2:3 estrito.
+- Em Esportes, escudo/nome do time abre os últimos 5 jogos; nome da liga abre a última rodada/slate disponível.
+- Marcar/desmarcar jogo nessas telas usa o writer esportivo canônico e atualiza tempo/contadores sem reload.
+- Android permanece 1.0.20 / 10062.
+
 ## Web 0.3.46 / r519 — WWE Pay-Per-View como série
 
 - WWE Pay-Per-View é uma série especial por temporada/ano; cada PPV/PLE é um episódio.
