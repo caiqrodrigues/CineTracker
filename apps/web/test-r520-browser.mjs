@@ -11,7 +11,7 @@ const series=(kind,base)=>({series:{title:kind,season:2026,home_bucket:'up_to_da
 const teamEvents=Array.from({length:5},(_,i)=>({id:500+i,provider:'espn:soccer',provider_event_id:'e'+i,competition_id:100,competition_name:'Liga Teste',competition_logo:'/league.png',home_id:10,home_name:'Time A',home_logo:'/a.png',away_id:20,away_name:'Time B',away_logo:'/b.png',home_score:String(i),away_score:'0',starts_at:'2026-10-0'+(i+1)+'T12:00:00Z',is_watched:false}));
 const leagueEvents=teamEvents.slice(0,4);
 const prelude=`
-let currentRoute='home',watchedWrites=0,movieSelections=0;
+let currentRoute='home',watchedWrites=0,movieSelections=0;\nwindow.onerror=(m,src,line,col)=>{document.documentElement.dataset.ct520script='error:'+String(m)+'@'+line+':'+col};\nwindow.onunhandledrejection=e=>{document.documentElement.dataset.ct520script='reject:'+String(e?.reason?.stack||e?.reason||e)};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 window.__ctCoreR471={
  route:()=>currentRoute,
