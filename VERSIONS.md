@@ -1,3 +1,4 @@
+- Web: **0.3.51 / r524-official-0.3.51** — Home: F1/UFC/WWE PPV com assistidos/total da temporada, abertura direta dos três especiais e Séries/Filmes + busca fixos na mesma linha; r523 preservada.
 - Web: **0.3.50 / r523-official-0.3.50** — Home com Histórico oculto acima e âncora r509, Filmes em rail r514 2:3, Pra Você auditado por v517 e Top 10 estrito 10+10.
 - Web: **0.3.49 / r522-official-0.3.49** — restaura a Home pré-r520 e endurece a abertura individual de F1, UFC e WWE Pay-Per-View; Esportes r520 preservado sem interceptar a Home.
 - Web: **0.3.48 / r521-official-0.3.48** — catálogos especiais completos e Home com Séries/Filmes/busca na mesma linha fixa.

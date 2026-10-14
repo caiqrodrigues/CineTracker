@@ -1,3 +1,12 @@
+## 0.3.51 — r524 (2026-10-14)
+
+### Escopo estrito: Home
+- F1/UFC/WWE Pay-Per-View: o card passa a mostrar **assistidos / total da temporada**, não assistidos / lançados. Com os dados canônicos atuais, F1 2026 é 85/115 sessões e UFC 2026 é 14/41 eventos; WWE usa o catálogo completo da temporada carregado pelo owner r521.
+- A classificação Continuar assistindo/Em dia continua baseada somente em sessão/evento recente pendente; backlog antigo não muda a Home.
+- F1/UFC/WWE PPV: abertura do card chama diretamente o owner de tela r520 e deixa de depender da rota reportada pelo bridge legado.
+- Home: Séries/Filmes e busca voltam a ficar **travados na mesma linha**, reaplicando apenas a geometria visual da r521; os owners funcionais r520/r521 continuam aposentados.
+- Histórico escondido acima, Watchlist Filmes r514 2:3, Pra Você/Top 10 r523, Perfil, Esportes, Raw/SmackDown e Android permanecem inalterados.
+
 ## 0.3.50 — r523 (2026-10-14)
 
 ### Escopo estrito: Home + Descobrir
