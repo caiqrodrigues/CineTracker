@@ -1,3 +1,19 @@
+## 0.3.46 — r519 (2026-10-13)
+
+### WWE Pay-Per-View como série
+- Corrigido o escopo: **UFC deixa de ser a série especial ativa**. A série solicitada é **WWE Pay-Per-View**.
+- Cada PPV/Premium Live Event da WWE passa a ser um episódio da temporada correspondente ao ano, de 1985 até a temporada atual.
+- Filmes WWE já marcados como vistos são reconhecidos automaticamente como episódios assistidos, sem perder o histórico existente.
+- Ao abrir uma temporada, o CineTracker complementa lacunas históricas pelo TMDB e aplica o mesmo estado pessoal antes de pintar os eventos.
+- Kickoff, Countdown, pós-show, Raw, SmackDown, Saturday/Sunday Night Main Event e conteúdos não-PPV ficam fora da série.
+- A regra da Home segue Raw/SmackDown: somente PPV recente liberado e não visto mantém **WWE Pay-Per-View** em Continuar assistindo; backlog antigo não força o card.
+- Validação no banco atual: T2026 possui **7 PPVs/PLEs conhecidos e 7 já vistos**; o total histórico conhecido possui **50 assistidos**.
+- O owner r512 passa a controlar apenas **F1 + WWE Pay-Per-View**; a UI especial de UFC é aposentada e seus caches antigos são invalidados.
+
+### Preservado
+- Fórmula 1 e writer r462, Raw/SmackDown, Home Filmes, Descobrir/Top 10/Pra Você, Perfil, Esportes e Android 1.0.20 / 10062 permanecem fora do escopo.
+- Sem full-page reload, `router.refresh()`, loop infinito, interval ou observer novo.
+
 ## 0.3.45 — r518 (2026-10-13)
 
 ### Contadores F1/UFC + Relacionados + detalhe diário

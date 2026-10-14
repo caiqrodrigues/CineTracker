@@ -1,3 +1,12 @@
+## Web 0.3.46 / r519 — WWE Pay-Per-View como série
+
+- WWE Pay-Per-View é uma série especial por temporada/ano; cada PPV/PLE é um episódio.
+- Histórico de filmes WWE já visto é reaproveitado automaticamente.
+- Temporadas históricas são complementadas pelo TMDB somente quando abertas, sem pesar a Home.
+- Kickoff/Countdown/pós-show e programas semanais ficam fora.
+- UFC deixa de existir como série especial ativa; F1 permanece inalterada.
+- Raw, SmackDown, Home Filmes, Descobrir, Perfil, Esportes e Android foram preservados.
+
 ## Web 0.3.45 / r518 — contadores canônicos e detalhe diário completo
 
 - F1 mostra sessões realmente assistidas no total + progresso da temporada, sem denominador externo fictício.
