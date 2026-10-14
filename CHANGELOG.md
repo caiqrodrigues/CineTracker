@@ -1,3 +1,14 @@
+## 0.3.47 — r520 (2026-10-13)
+
+### F1 + UFC + WWE PPV / Home fixa / Esportes navegável
+- Corrige a regressão conceitual da r519: **Fórmula 1, UFC e WWE Pay-Per-View coexistem como três séries especiais**.
+- Totais históricos deixam de depender do catálogo local parcial: Fórmula 1 usa o catálogo histórico Jolpica, UFC usa UFCStats e WWE usa a lista histórica de PPV/PLE. O progresso da temporada continua separado do total histórico.
+- UFC volta a ter temporadas 1993-atual com eventos numerados, Fight Nights e UFC on ESPN/ABC/Fox; WWE mantém temporadas 1985-atual com PPV/PLE; F1 mantém 1950-atual e o writer canônico r462 para temporadas mapeadas.
+- **Home:** barra de busca global permanece fixa; botões Séries/Filmes permanecem fixos logo abaixo. A intenção de Filmes é aplicada no pointerdown antes de qualquer card, impedindo abertura acidental de série.
+- **Esportes:** clicar no escudo/nome do time abre os últimos 5 jogos. Clicar no nome da liga abre os jogos da rodada mais recente. Assistido/Desmarcar usa exclusivamente `cinetracker_sport_mark_watched_v1`, preservando tempo e estatísticas.
+- Raw/SmackDown, Descobrir, Perfil, F1 Hub e Android 1.0.20 / 10062 permanecem preservados.
+- Sem full-page reload, `router.refresh()`, loop infinito, `setInterval` ou observer persistente.
+
 ## 0.3.46 — r519 (2026-10-13)
 
 ### WWE Pay-Per-View como série

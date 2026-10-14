@@ -1,0 +1,2 @@
+/* CineTracker Web 0.3.47 r520 — final scope marker. */
+(()=>{'use strict';window.__ctR520Marker='f1+ufc+wwe-complete+sticky-home+sports-team-league';window.__ctR520={version:'0.3.47',scope:'special-series+home-sticky+sports-drilldown'};})();
