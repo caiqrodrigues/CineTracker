@@ -27,14 +27,20 @@ function bounds(source,anchor,label){
 function replaceRuntime(source,anchor,replacement,label){
  const b=bounds(source,anchor,label);return source.slice(0,b.start)+replacement.trim()+source.slice(b.end)
 }
+function replaceKnownRuntime(source,startNeedle,anchor,replacement,label){
+ const at=source.indexOf(anchor);if(at<0)throw new Error('r520 missing '+label+' anchor');
+ const start=source.lastIndexOf(startNeedle,at);if(start<0)throw new Error('r520 missing '+label+' start');
+ const close=source.indexOf('\n})();',at);if(close<0)throw new Error('r520 missing '+label+' close');
+ return source.slice(0,start)+replacement.trim()+'\n'+source.slice(close+6)
+}
 
 js=replaceRuntime(js,"window.__ctR512Marker='r519-f1+wwe-ppv-single-special-owner+ufc-retired';",catalog+'\n'+special,'r512 special owner');
 try{new Function(js)}catch(e){throw new Error('r520 syntax after r512: '+e.message)}
-js=replaceRuntime(js,"window.__ctR513SeriesScreenMarker='canonical-series-screen+season-episodes+optimistic-watch';",screen,'r513 series screen');
+js=replaceKnownRuntime(js,"/* CineTracker r519 — single full-screen owner for F1 + WWE Pay-Per-View. */\n(()=>{","window.__ctR513SeriesScreenMarker='canonical-series-screen+season-episodes+optimistic-watch';",screen,'r513 series screen');
 try{new Function(js)}catch(e){throw new Error('r520 syntax after r513: '+e.message)}
-js=replaceRuntime(js,"window.__ctR516SpecialSummary={version:'0.3.46'",summary,'r516 summary');
+js=replaceKnownRuntime(js,"(()=>{\n'use strict';\nconst core=()=>window.__ctCoreR471||null;\nlet summary=null,task=null;\nconst cacheKey='ct519:special-summary';","window.__ctR516SpecialSummary={version:'0.3.46'",summary,'r516 summary');
 try{new Function(js)}catch(e){throw new Error('r520 syntax after r516: '+e.message)}
-js=replaceRuntime(js,"window.__ctR519Marker='wwe-ppv-special-series+ufc-ui-retired+f1-preserved';",finalRuntime,'r519 final retirement');
+js=replaceKnownRuntime(js,"/* CineTracker Web 0.3.46 r519 — WWE PPV/PLE replaces mistaken UFC special-series UI. */\n(()=>{","window.__ctR519Marker='wwe-ppv-special-series+ufc-ui-retired+f1-preserved';",finalRuntime,'r519 final retirement');
 try{new Function(js)}catch(e){throw new Error('r520 syntax after r519: '+e.message)}
 
 for(const runtime of [catalog,special,screen,summary,homeSports,finalRuntime])new Function(runtime);
