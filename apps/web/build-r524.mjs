@@ -13,9 +13,17 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
 ]);
 function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)throw new Error('r524 missing '+label+' anchor');const start=source.lastIndexOf('(()=>{',at),close=source.indexOf('\n})();',at);if(start<0||close<0)throw new Error('r524 invalid '+label+' bounds');return{start,end:close+6}}
 function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r524 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r524 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
+function replaceBeforeAnchorNamed(source,anchor,name,replacement,label){
+ const at=source.indexOf(anchor);if(at<0)throw new Error('r524 missing '+label+' anchor');
+ const prefix=source.slice(0,at),sig='function '+name+'(',start=prefix.lastIndexOf(sig);if(start<0)throw new Error('r524 missing '+label+' '+name);
+ const open=source.indexOf('{',start+sig.length);let depth=0,mode='code',quote='',i=open;
+ for(;i<source.length;i++){const c=source[i],n=source[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}
+ if(depth!==0)throw new Error('r524 unbalanced '+label+' '+name);
+ return source.slice(0,start)+replacement+source.slice(i)
+}
 
 const A512="window.__ctR512Marker='r520-f1+ufc+wwe-complete-catalog-single-owner';";
-js=replaceNamed(js,A512,'cardHtml',`function cardHtml(key,p){
+js=replaceBeforeAnchorNamed(js,A512,'cardHtml',`function cardHtml(key,p){
  const s=p?.series||{},season=Number(s.season||currentYear()),watched=Math.max(0,Number(s.watched_episodes||0)),total=Math.max(watched,Number(s.total_episodes||s.released_episodes||0)),pending=Math.max(0,Number(s.available_episodes||0)),poster=String(s.poster_url||'');
  const title=key==='f1'?'Fórmula 1':key==='ufc'?'UFC':'WWE Pay-Per-View',unit=key==='f1'?'sessões':'eventos';
  const meta='T'+season+' · '+watched.toLocaleString('pt-BR')+'/'+total.toLocaleString('pt-BR')+' '+unit+' assistidos';
