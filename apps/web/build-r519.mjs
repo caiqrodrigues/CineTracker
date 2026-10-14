@@ -20,6 +20,14 @@ function replaceR513Runtime(source,replacement){
  if(close<0)throw new Error('r519 missing r513 close');
  return source.slice(0,header)+replacement+'\n'+source.slice(close+6)
 }
+function replaceR516Runtime(source,anchor,replacement){
+ const at=source.indexOf(anchor);if(at<0)throw new Error('r519 missing r516 summary marker');
+ const header=source.lastIndexOf('/* CineTracker Web 0.3.43 r516',at);
+ if(header<0)throw new Error('r519 missing r516 header');
+ const close=source.indexOf('\n})();',at);
+ if(close<0)throw new Error('r519 missing r516 close');
+ return source.slice(0,header)+replacement+'\n'+source.slice(close+6)
+}
 function replaceInRuntime(source,anchor,oldText,newText,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end);if(!region.includes(oldText))throw new Error('r519 missing text '+label);return source.slice(0,b.start)+region.replace(oldText,newText)+source.slice(b.end)}
 const A512="window.__ctR512Marker='r514-stable-historical-seasons+movie-2x3-rail+canonical-f1-sync';";
 const A513="window.__ctR513SeriesScreenMarker='canonical-series-screen+season-episodes+optimistic-watch';";
@@ -57,7 +65,7 @@ function assertRuntimeSyntax(source,anchor,label){
 }
 assertRuntimeSyntax(js,"window.__ctR512Marker='r519-f1+wwe-ppv-single-special-owner+ufc-retired'",'r512');
 try{new Function(seriesRuntime)}catch(e){throw new Error('r519 syntax r513-source: '+String(e?.message||e))}
-assertRuntimeSyntax(js,"window.__ctR516SpecialSummary={version:'0.3.46'",'r516-summary');
+try{new Function(""+summaryRuntime)}catch(e){throw new Error('r519 syntax r516-source: '+String(e?.message||e))}
 try{new Function(js)}catch(e){throw new Error('r519 full bundle syntax: '+String(e?.message||e))}
 
 const release=JSON.parse(releaseRaw);Object.assign(release,{
