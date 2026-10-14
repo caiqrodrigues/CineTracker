@@ -1,12 +1,12 @@
 {
   "name": "cinetracker-web",
   "private": true,
-  "version": "0.3.47",
+  "version": "0.3.49",
   "type": "module",
   "scripts": {
-    "build": "node build-r520.mjs",
+    "build": "node build-r522.mjs",
     "build:legacy": "node build-r405.mjs",
-    "verify": "node test-r520.mjs && node test-r520-browser.mjs",
+    "verify": "node test-r522.mjs && node test-r522-browser.mjs",
     "test:r443": "node test-r443.mjs",
     "release:r443": "node build-r443-official.mjs",
     "test:r444": "node test-r444.mjs",
@@ -86,7 +86,9 @@
     "test:r517": "node test-r517.mjs && node test-r517-browser.mjs",
     "test:r518": "node test-r518.mjs && node test-r518-browser.mjs",
     "test:r519": "node test-r519.mjs && node test-r519-browser.mjs",
-    "test:r520": "node test-r520.mjs && node test-r520-browser.mjs"
+    "test:r520": "node test-r520.mjs && node test-r520-browser.mjs",
+    "test:r521": "node test-r521.mjs && node test-r521-browser.mjs",
+    "test:r522": "node test-r522.mjs && node test-r522-browser.mjs"
   },
   "devDependencies": {
     "playwright": "^1.55.0"
