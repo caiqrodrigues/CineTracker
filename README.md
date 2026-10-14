@@ -1,3 +1,11 @@
+## Web 0.3.51 / r524 — Home especial corrigida sem trocar owners
+
+- F1, UFC e WWE PPV mostram progresso da temporada como assistidos/total.
+- Os três cards especiais abrem diretamente a tela de Série existente.
+- Séries/Filmes + busca ficam travados na mesma linha no topo.
+- Histórico oculto acima, Watchlist Filmes 2:3 e Descobrir r523 permanecem intactos.
+- Perfil, Esportes, Raw/SmackDown e Android não são alterados.
+
 ## Web 0.3.50 / r523 — Home + Descobrir estabilizados
 
 - Home Séries/Filmes: Histórico permanece acima da viewport inicial; entrada em Continuar assistindo/Watchlist.
