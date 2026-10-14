@@ -6,7 +6,7 @@ const core=()=>window.__ctCoreR471||null,q=(s,r=document)=>r?.querySelector?.(s)
 let detail=null,detailToken=0,lastIntent={kind:'',at:0};const locks=new Set();
 function pinHome(){
  if(route()!=='home')return false;const root=q('[data-home]'),tabs=q('.home-tabs',root),search=q('[data-page="home"] .search-global');if(!root||!tabs||!search)return false;
- const left=Math.max(0,Math.round(root.getBoundingClientRect().left)),w=Math.max(112,Math.ceil(tabs.getBoundingClientRect().width||112));document.documentElement.style.setProperty('--ct521-home-left',left+'px');document.documentElement.style.setProperty('--ct521-tabs-width',w+'px');document.documentElement.dataset.ct521HomePinned='same-row';return true
+ const left=Math.max(0,Math.round(root.getBoundingClientRect().left)),buttons=qa('[data-home-tab]',tabs),first=buttons[0]?.getBoundingClientRect(),last=buttons.at(-1)?.getBoundingClientRect(),w=Math.max(112,Math.ceil(first&&last?last.right-first.left:112));document.documentElement.style.setProperty('--ct521-home-left',left+'px');document.documentElement.style.setProperty('--ct521-tabs-width',w+'px');document.documentElement.dataset.ct521HomePinned='same-row';return true
 }
 function syncView(w){const root=q('[data-home]');if(!root)return false;root.dataset.ct521HomeKind=w;qa('[data-home-tab]',root).forEach(b=>{const on=b.dataset.homeTab===w;b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false')});qa('[data-home-view]',root).forEach(v=>{const on=v.dataset.homeView===w;v.hidden=!on;v.classList.toggle('hidden',!on)});return true}
 function applyHomeIntent(kind){
