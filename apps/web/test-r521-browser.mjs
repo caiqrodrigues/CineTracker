@@ -3,9 +3,9 @@ import {resolve} from 'node:path';
 import {createServer} from 'node:http';
 import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r521.mjs');
-const [catalog,special,screen,summary,homeSports]=await Promise.all([
- 'runtime-r521-catalog.js','runtime-r520-special.js','runtime-r520-series-screen.js','runtime-r521-summary.js','runtime-r521-home-sports.js'
-].map(x=>readFile(resolve(x),'utf8')));
+const [catalog,special,screen,summary,oldHomeSports,homeSports,css]=await Promise.all([
+ 'runtime-r521-catalog.js','runtime-r520-special.js','runtime-r520-series-screen.js','runtime-r521-summary.js','runtime-r520-home-sports.js','runtime-r521-home-sports.js'
+].map(x=>readFile(resolve(x),'utf8')).concat(readFile(resolve('dist/app-v521.css'),'utf8')));
 const items=(kind,base)=>Array.from({length:3},(_,i)=>({title:(kind==='ufc'?'UFC Fight Night ':kind==='wwe'?'WWE Event ':'Grand Prix ')+(i+1),season:2026,episode_number:base+i,round:i+1,session_kind:'race',starts_at:'2026-09-0'+(i+1)+'T12:00:00Z',runtime_minutes:180,released:true,is_watched:i===0,event_id:base+i,event_kind:kind==='ufc'?'Fight Night':'PPV / PLE'}));
 const series=(kind,base)=>({series:{title:kind,season:2026,home_bucket:'up_to_date',total_episodes:3,released_episodes:3,watched_episodes:1,available_episodes:0},seasons:[2026,2025],events:items(kind,base)});
 const teamEvents=Array.from({length:5},(_,i)=>({id:500+i,provider:'espn:soccer',provider_event_id:'e'+i,competition_id:100,competition_name:'Liga Teste',competition_logo:'/league.png',home_id:10,home_name:'Time A',home_logo:'/a.png',away_id:20,away_name:'Time B',away_logo:'/b.png',home_score:String(i),away_score:'0',starts_at:'2026-10-0'+(i+1)+'T12:00:00Z',is_watched:false}));
@@ -16,7 +16,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 window.__ctCoreR471={
  route:()=>currentRoute,
  rpc:async(name,args)=>{
-  if(name==='cinetracker_f1_series_v512')return ${JSON.stringify(series('f1',1000))};
+  if(name==='cinetracker_f1_series_v512')return {series:{title:'Fórmula 1',season:2026,home_bucket:'up_to_date',total_episodes:2,released_episodes:2,watched_episodes:1,available_episodes:0},seasons:[2026,2025],historical_watched_rounds:[2],events:[{source:'mapped',season:2026,episode_number:1000,round:1,session_kind:'fp1',title:'Australian GP FP1',starts_at:'2026-03-06T01:30:00Z',runtime_minutes:60,released:true,is_watched:true,event_id:1000},{source:'mapped',season:2026,episode_number:1001,round:1,session_kind:'race',title:'Australian GP Race',starts_at:'2026-03-08T04:00:00Z',runtime_minutes:120,released:true,is_watched:false,event_id:1001}]};
   if(name==='cinetracker_ufc_series_v518')return ${JSON.stringify(series('ufc',2000))};
   if(name==='cinetracker_wwe_ppv_series_v519')return ${JSON.stringify(series('wwe',3000))};
   if(name==='cinetracker_wwe_ppv_episode_status_v520')return [];
@@ -31,7 +31,7 @@ window.__ctCoreR471={
   if(name==='ct-special-series-summary')return {f1:{watched:10,total:1130,source:'jolpica'},ufc:{watched:20,total:780,source:'ufcstats'},wwe:{watched:30,total:558,source:'wikipedia'}};
   if(name==='ct-ufc-series-sync')return {ok:true,events:${JSON.stringify(items('ufc',2000))}};
   if(name==='ct-wwe-ppv-series-sync')return {ok:true,events:${JSON.stringify(items('wwe',4000000).map((x,i)=>({...x,event_key:'wwe-'+i,episode_number:4000000+i})))}};
-  if(name==='cinetracker-f1-v1')return {season:2026,races:[]};
+  if(name==='cinetracker-f1-v1')return {season:2026,races:[{round:'1',raceName:'Australian Grand Prix',date:'2026-03-08',time:'04:00:00Z'},{round:'2',raceName:'Chinese Grand Prix',date:'2026-03-15',time:'07:00:00Z'}]};
   throw new Error(name)
  }
 };
@@ -48,7 +48,8 @@ const probe=`
   const txt=document.querySelector('[data-home-view="series"]').textContent;
   ok(txt.includes('Fórmula 1')&&txt.includes('UFC')&&txt.includes('WWE Pay-Per-View'),'special titles');
   ok(txt.includes('1.130')&&txt.includes('780')&&txt.includes('558'),'global totals');
-  window.__ctR520HomeSports.pinHome();let leak=0;document.addEventListener('click',e=>{if(e.target.closest?.('[data-home-tab="movies"]'))leak++});const movies=document.querySelector('[data-home-tab="movies"]');movies.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerType:'mouse'}));movies.dispatchEvent(new MouseEvent('click',{bubbles:true}));await sleep(20);ok(leak===0,'movies click leak');
+  const f1=await window.__ctR520Catalog.loadSeason('f1',2026,true);ok(f1.events.length===3,'F1 mapped+historical merge '+f1.events.length);ok(f1.events.some(x=>x.source==='historical'&&Number(x.round)===2),'F1 missing Jolpica round');ok(f1.events.some(x=>x.session_kind==='fp1'),'F1 mapped session lost');
+  window.__ctR520HomeSports.pinHome();window.scrollTo(0,400);await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));const tabsRect=document.querySelector('.home-tabs').getBoundingClientRect(),searchRect=document.querySelector('.search-global').getBoundingClientRect();ok(Math.abs(tabsRect.top-searchRect.top)<3,'Home controls not same row '+tabsRect.top+'/'+searchRect.top);ok(searchRect.left>=tabsRect.right+4,'Home search overlaps tabs');let leak=0;document.addEventListener('click',e=>{if(e.target.closest?.('[data-home-tab="movies"]'))leak++});const movies=document.querySelector('[data-home-tab="movies"]');movies.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,pointerType:'mouse'}));movies.dispatchEvent(new MouseEvent('click',{bubbles:true}));await sleep(20);ok(leak===0,'movies click leak');
   ok(movieSelections>0,'movies intent');ok(!document.querySelector('[data-home-view="movies"]').hidden,'movies visible');
   window.__ctR371.selectByUser('series');
   document.querySelector('[data-ct512-special="ufc"]').click();await sleep(80);
@@ -65,8 +66,8 @@ const probe=`
  }catch(e){document.documentElement.dataset.ct521browser='fail:'+String(e?.stack||e)}
 })();
 `;
-const html='<!doctype html><html><head><style>.hidden{display:none}.search-global{height:42px}.home-tabs{display:flex}.media-row{display:grid}.ct520-detail-backdrop{position:fixed}</style></head><body><div class="app" data-page="home"><main class="content"><div class="search-global"><input data-global-search></div><div data-home><div class="home-tabs"><button data-home-tab="series" class="active">Séries</button><button data-home-tab="movies">Filmes</button></div><div data-home-view="series"><section><div class="panel-head"><h3>Continuar assistindo</h3><small>0</small></div><div class="stack"></div></section><section><div class="panel-head"><h3>Em dia</h3><small>0</small></div><div class="stack"></div></section></div><div data-home-view="movies" class="hidden" hidden></div></div><div id="sports"></div></main></div><script src="/prelude.js"></script><script src="/catalog.js"></script><script src="/special.js"></script><script src="/screen.js"></script><script src="/summary.js"></script><script src="/homeSports.js"></script><script src="/probe.js"></script></body></html>';
-const assets=new Map([['/',{type:'text/html',body:html}],['/prelude.js',{type:'application/javascript',body:prelude}],['/catalog.js',{type:'application/javascript',body:catalog}],['/special.js',{type:'application/javascript',body:special}],['/screen.js',{type:'application/javascript',body:screen}],['/summary.js',{type:'application/javascript',body:summary}],['/homeSports.js',{type:'application/javascript',body:homeSports}],['/probe.js',{type:'application/javascript',body:probe}]]);
+const html='<!doctype html><html><head><style>'+css+'.hidden{display:none}.search-global{height:42px}.home-tabs{display:flex}.media-row{display:grid}.ct520-detail-backdrop{position:fixed}</style></head><body><div class="app" data-page="home"><main class="content"><div class="search-global"><input data-global-search></div><div data-home style="min-height:1800px"><div class="home-tabs"><button data-home-tab="series" class="active">Séries</button><button data-home-tab="movies">Filmes</button></div><div data-home-view="series"><section><div class="panel-head"><h3>Continuar assistindo</h3><small>0</small></div><div class="stack"></div></section><section><div class="panel-head"><h3>Em dia</h3><small>0</small></div><div class="stack"></div></section></div><div data-home-view="movies" class="hidden" hidden></div></div><div id="sports"></div></main></div><script src="/prelude.js"></script><script src="/catalog.js"></script><script src="/special.js"></script><script src="/screen.js"></script><script src="/summary.js"></script><script src="/homeSports.js"></script><script src="/probe.js"></script></body></html>';
+const assets=new Map([['/',{type:'text/html',body:html}],['/prelude.js',{type:'application/javascript',body:prelude}],['/catalog.js',{type:'application/javascript',body:catalog}],['/special.js',{type:'application/javascript',body:special}],['/screen.js',{type:'application/javascript',body:screen}],['/summary.js',{type:'application/javascript',body:summary}],['/oldHomeSports.js',{type:'application/javascript',body:oldHomeSports}],['/homeSports.js',{type:'application/javascript',body:homeSports}],['/probe.js',{type:'application/javascript',body:probe}]]);
 const server=createServer((req,res)=>{const item=assets.get(new URL(req.url,'http://127.0.0.1').pathname);if(!item){res.writeHead(404);res.end();return}res.writeHead(200,{'content-type':item.type.includes('charset')?item.type:item.type+'; charset=utf-8','cache-control':'no-store'});res.end(item.body)});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
 let bin='';for(const x of ['google-chrome-stable','google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}
