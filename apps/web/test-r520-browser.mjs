@@ -25,7 +25,7 @@ const probe=[
  "(()=>{try{const ok=(v,m)=>{if(!v)throw new Error(m)};",
  "document.querySelector('#cards').innerHTML=cardHtml('f1',{series:{season:2026,watched_episodes:85,total_episodes:115,available_episodes:0}})+cardHtml('ufc',{series:{season:2026,watched_episodes:14,total_episodes:41,available_episodes:2}})+cardHtml('wwe',{series:{season:2026,watched_episodes:7,total_episodes:12,available_episodes:1}});",
  "const text=document.querySelector('#cards').textContent;ok(text.includes('Fórmula 1'),'F1 missing');ok(text.includes('UFC'),'UFC missing');ok(text.includes('WWE Pay-Per-View'),'WWE missing');",
- "for(const k of ['f1','ufc','wwe'])ok(document.querySelector('[data-ct513-open="'+k+'"]'),'open '+k);",
+ "for(const k of ['f1','ufc','wwe'])ok(document.querySelector('[data-ct513-open='+k+']'),'open '+k);",
  "const d=dedupeWwe([{title:'WWE WrestleMania 42 Night 1',tmdb_id:1,starts_at:'2026-04-18T12:00:00Z',is_watched:false},{title:'WrestleMania 42 Night 2',tmdb_id:2,starts_at:'2026-04-19T12:00:00Z',is_watched:true},{title:'WWE Royal Rumble 2026',tmdb_id:3,starts_at:'2026-01-31T12:00:00Z',is_watched:false}]);",
  "ok(d.length===2,'WWE brand dedupe '+d.length);ok(d.some(x=>/WrestleMania/.test(x.title)&&x.is_watched),'watched WrestleMania not preferred');",
  "document.documentElement.dataset.ct520browser='ok'}catch(e){document.documentElement.dataset.ct520browser='fail:'+String(e?.stack||e)}})();"
