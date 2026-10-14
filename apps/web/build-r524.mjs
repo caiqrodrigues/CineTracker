@@ -32,7 +32,7 @@ js=replaceBeforeAnchorNamed(js,A512,'cardHtml',`function cardHtml(key,p){
 }`,'special card');
 
 const A522="window.__ctR522SpecialOpenMarker='pointerup-owner-f1-ufc-wwe';";
-js=replaceNamed(js,A522,'openType',`function openType(type){
+js=replaceBeforeAnchorNamed(js,A522,'openType',`function openType(type){
  if(!type)return false;
  const now=performance.now();if(last.type===type&&now-last.at<500)return true;last={type,at:now};
  const screen=window.__ctR513SeriesScreen;if(typeof screen?.open!=='function'){document.documentElement.dataset.ct524SpecialOpenError='SCREEN_UNAVAILABLE:'+type;return false}
@@ -40,7 +40,7 @@ js=replaceNamed(js,A522,'openType',`function openType(type){
  opening=Promise.resolve(screen.open(type,new Date().getFullYear())).then(ok=>{if(ok!==false)document.documentElement.dataset.ct524SpecialOpened=type;else document.documentElement.dataset.ct524SpecialOpenError='OPEN_FALSE:'+type;return ok}).catch(e=>{document.documentElement.dataset.ct524SpecialOpenError=type+':'+String(e?.message||e);return false}).finally(()=>{opening=null});
  return true
 }`,'special opener');
-js=replaceNamed(js,A522,'intercept',`function intercept(e){const card=e.target?.closest?.('[data-ct512-special]');if(!card)return;const type=typeOf(card);if(!type)return;stop(e);openType(type)}`,'special opener');
+js=replaceBeforeAnchorNamed(js,A522,'intercept',`function intercept(e){const card=e.target?.closest?.('[data-ct512-special]');if(!card)return;const type=typeOf(card);if(!type)return;stop(e);openType(type)}`,'special opener');
 
 new Function(runtime);js+='\n'+runtime+'\n';
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r524-official-0.3.51';").replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.51 • ${REVISION}');
