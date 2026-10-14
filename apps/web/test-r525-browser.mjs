@@ -7,7 +7,7 @@ const [js,css,runtime]=await Promise.all([readFile(resolve('dist/app-v525.js'),'
 const marker="window.__ctR525Marker='one-shot-home-anchor+fixed-toolbar+movies-2x3+filter-v525+top10-10x10+special-db-first+sports-team-canonical'";
 if(!js.includes(marker))throw new Error('r525 bundle marker missing');
 const prelude=`
-window.__ctCoreR471={route:()=> 'home'};
+window.onerror=(m,s,l,c)=>{document.documentElement.dataset.ct525browser='error:'+String(m)+'@'+l+':'+c};\nwindow.__ctCoreR471={route:()=> 'home'};
 window.__ctR464={load:async(force)=>{document.documentElement.dataset.retry=String(!!force);return true}};
 window.__ctR388={renderMoviesAll:()=>{document.documentElement.dataset.movieRender='1';return true}};
 `;
@@ -18,8 +18,8 @@ const probe=`
  ok(ss.position==='fixed','search '+ss.position);ok(ts.position==='fixed','tabs '+ts.position);ok(Math.abs(sr.top-tr.top)<3,'row top');ok(sr.left>=tr.right+4,'search beside tabs');ok(parseFloat(getComputedStyle(home).paddingTop)>=50,'reserved toolbar');
  const rail=document.querySelector('.ct525-movie-rail'),card=rail.querySelector('.ct514-movie-card'),poster=card.querySelector('.poster'),rs=getComputedStyle(rail),cr=card.getBoundingClientRect(),pr=poster.getBoundingClientRect();
  ok(rs.display==='flex'&&rs.flexDirection==='row'&&rs.flexWrap==='nowrap','movie rail');ok(Math.abs(cr.height/cr.width-1.5)<.03,'card 2:3 '+cr.width+'x'+cr.height);ok(Math.abs(pr.height/pr.width-1.5)<.03,'poster 2:3');
- document.querySelector('[data-ct490-foryou-retry]').click();await new Promise(r=>setTimeout(r,10));ok(document.documentElement.dataset.retry==='true','retry');
- document.querySelector('[data-home-tab="movies"]').click();await new Promise(requestAnimationFrame);ok(document.documentElement.dataset.movieRender==='1','movie owner after tab');
+ document.querySelector('[data-ct490-foryou-retry]').click();ok(document.documentElement.dataset.retry==='true','retry');
+ document.querySelector('[data-home-tab="movies"]').click();ok(document.documentElement.dataset.movieRender==='1','movie owner after tab');
  document.documentElement.dataset.ct525browser='ok';
  }catch(e){document.documentElement.dataset.ct525browser='fail:'+String(e?.stack||e)}})();
 `;
