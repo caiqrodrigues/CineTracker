@@ -5,7 +5,7 @@ import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r522.mjs');
 const [catalog,special,screen,summary,sports,opener,css]=await Promise.all([
  'runtime-r521-catalog.js','runtime-r520-special.js','runtime-r520-series-screen.js','runtime-r521-summary.js','runtime-r522-sports-only.js','runtime-r522-special-open.js'
-].map(x=>readFile(resolve(x),'utf8')).concat(readFile(resolve('dist/app-v521.css'),'utf8')));
+].map(x=>readFile(resolve(x),'utf8')).concat(readFile(resolve('dist/app-v522.css'),'utf8')));
 const items=(kind,base)=>Array.from({length:3},(_,i)=>({title:(kind==='ufc'?'UFC Fight Night ':kind==='wwe'?'WWE Event ':'Grand Prix ')+(i+1),season:2026,episode_number:base+i,round:i+1,session_kind:'race',starts_at:'2026-09-0'+(i+1)+'T12:00:00Z',runtime_minutes:180,released:true,is_watched:i===0,event_id:base+i,event_kind:kind==='ufc'?'Fight Night':'PPV / PLE'}));
 const series=(kind,base)=>({series:{title:kind,season:2026,home_bucket:'up_to_date',total_episodes:3,released_episodes:3,watched_episodes:1,available_episodes:0},seasons:[2026,2025],events:items(kind,base)});
 const teamEvents=Array.from({length:5},(_,i)=>({id:500+i,provider:'espn:soccer',provider_event_id:'e'+i,competition_id:100,competition_name:'Liga Teste',competition_logo:'/league.png',home_id:10,home_name:'Time A',home_logo:'/a.png',away_id:20,away_name:'Time B',away_logo:'/b.png',home_score:String(i),away_score:'0',starts_at:'2026-10-0'+(i+1)+'T12:00:00Z',is_watched:false}));
