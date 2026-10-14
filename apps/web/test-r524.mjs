@@ -13,6 +13,8 @@ ok(js.includes("window.__ctR524Marker='home-toolbar-same-row+special-total-seaso
 ok(js.includes("window.__ctR523Marker='home-r509-hidden+movies-r514-rail+foryou-v517-audit+top10-strict-retry'"),'r523 preserved');
 ok(js.includes("total=Math.max(watched,Number(s.total_episodes||s.released_episodes||0))"),'season total denominator');
 ok(js.includes("data-ct512-open=\"'+key+'\" data-ct513-open=\"'+key+'\""),'special open attrs');
+ok(js.includes("window.__ctR524SpecialOpenMarker='direct-special-card-owner-no-route-gate'"),'r524 special opener marker');
+ok(!js.includes("window.__ctR522SpecialOpenMarker='pointerup-owner-f1-ufc-wwe'"),'r522 special opener retired');
 ok(js.includes("const card=e.target?.closest?.('[data-ct512-special]')"),'route-independent special selector');
 ok(js.includes("screen.open(type,new Date().getFullYear())"),'direct screen open');
 ok(css.includes('.search-global{position:sticky!important;top:8px!important')&&css.includes('.home-tabs{position:fixed!important;top:8px!important'),'sticky same-row controls');

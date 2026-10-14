@@ -4,8 +4,9 @@ import {createServer} from 'node:http';
 import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r524.mjs');
 const [js,css]=await Promise.all([readFile(resolve('dist/app-v524.js'),'utf8'),readFile(resolve('dist/app-v524.css'),'utf8')]);
-const marker="window.__ctR522SpecialOpenMarker='pointerup-owner-f1-ufc-wwe';",mi=js.indexOf(marker),ms=js.lastIndexOf('(()=>{',mi),me=js.indexOf('\n})();',mi);
-if(mi<0||ms<0||me<0)throw new Error('r522 opener missing');const opener=js.slice(ms,me+6);
+const header='/* CineTracker Web 0.3.51 r524 — final direct opener for F1/UFC/WWE special series. */';
+const marker="window.__ctR524SpecialOpenMarker='direct-special-card-owner-no-route-gate';",hs=js.indexOf(header),mi=js.indexOf(marker,hs),me=js.indexOf('\n})();',mi);
+if(hs<0||mi<0||me<0)throw new Error('r524 opener missing');const opener=js.slice(hs,me+6);
 const prelude=`
 let opened=[];
 window.__ctCoreR471={route:()=> 'series'};
