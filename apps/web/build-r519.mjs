@@ -45,6 +45,15 @@ html=html.replaceAll('app-v518.js','app-v519.js').replaceAll('app-v518.css','app
 css+='\n/* r519 — WWE Pay-Per-View special series; UFC special-series UI retired. */\n';
 sw=sw.replaceAll('ct-media-r518','ct-media-r519').replaceAll('app-v518.js','app-v519.js').replaceAll('app-v518.css','app-v519.css');
 
+function assertRuntimeSyntax(source,anchor,label){
+ const b=bounds(source,anchor,label),region=source.slice(b.start,b.end);
+ try{new Function(region)}catch(e){throw new Error('r519 syntax '+label+': '+String(e?.message||e))}
+}
+assertRuntimeSyntax(js,"window.__ctR512Marker='r519-f1+wwe-ppv-single-special-owner+ufc-retired'",'r512');
+assertRuntimeSyntax(js,A513,'r513');
+assertRuntimeSyntax(js,"window.__ctR516SpecialSummary={version:'0.3.46'",'r516-summary');
+try{new Function(js)}catch(e){throw new Error('r519 full bundle syntax: '+String(e?.message||e))}
+
 const release=JSON.parse(releaseRaw);Object.assign(release,{
  version:'0.3.46',revision:'r519-official-0.3.46',base:'r518+r519-wwe-ppv-special-series',
  scope:'wwe-ppv-special-series+ufc-special-ui-retired+f1-preserved',
