@@ -34,10 +34,8 @@ document.addEventListener('click',e=>{
  }
  const tab=e.target?.closest?.('[data-home-tab]');
  if(tab&&route()==='home'){
-  requestAnimationFrame(()=>{
-   layoutHome();
-   if(String(tab.dataset.homeTab)==='movies')window.__ctR388?.renderMoviesAll?.();
-  });
+  if(String(tab.dataset.homeTab)==='movies')window.__ctR388?.renderMoviesAll?.();
+  requestAnimationFrame(layoutHome);
  }
 },true);
 window.__ctR525Marker='one-shot-home-anchor+fixed-toolbar+movies-2x3+filter-v525+top10-10x10+special-db-first+sports-team-canonical';
