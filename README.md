@@ -1,3 +1,11 @@
+## Web 0.3.49 / r522 — Home restaurada e três séries especiais abrindo
+
+- A camada r520/r521 que interceptava/fixava busca e abas da Home foi retirada.
+- Filmes mantém Watchlist v405 no padrão 2:3 existente e Séries mantém o Histórico oculto acima.
+- F1, UFC e WWE Pay-Per-View continuam coexistindo e agora possuem abertura final própria, testada individualmente.
+- Esportes mantém o detalhe de time/liga sem controlar a Home.
+- Perfil, Descobrir, Raw/SmackDown e Android não foram alterados.
+
 ## Web 0.3.48 / r521
 
 Catálogos F1/UFC/WWE PPV completos, Home com Séries/Filmes/busca na mesma linha fixa e clique de Filmes determinístico. Esportes r520 é preservado.

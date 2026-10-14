@@ -1,3 +1,16 @@
+## 0.3.49 — r522 (2026-10-14)
+
+### Home restaurada + abertura F1/UFC/WWE
+- Remove o owner de Home introduzido por r520/r521: sem captura própria de Séries/Filmes e sem position:fixed novo para busca/abas.
+- Home volta aos owners estabilizados antes da r520, preservando Histórico oculto acima, Watchlist Filmes v405 em 2:3 e as ações existentes.
+- F1, UFC e WWE Pay-Per-View mantêm os catálogos completos da r521, mas a abertura recebe um owner final dedicado em pointerup, clique e teclado antes do media-card genérico.
+- O gate Chromium agora abre e fecha F1, UFC e WWE PPV individualmente; o r520 verificava somente UFC.
+- Drill-down esportivo do r520 é preservado, sem autoridade sobre a Home.
+
+### Preservado
+- Descobrir, Perfil, Raw/SmackDown, F1 Hub e Android 1.0.20 / 10062 permanecem inalterados.
+- Sem reload global, router.refresh(), loop infinito, interval ou observer persistente.
+
 ## 0.3.48 — r521 (2026-10-14)
 
 - F1 mescla sessões mapeadas com todos os GPs Jolpica da temporada; catálogo parcial não perde corridas.

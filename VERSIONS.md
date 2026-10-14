@@ -1,3 +1,4 @@
+- Web: **0.3.49 / r522-official-0.3.49** — restaura a Home pré-r520 e endurece a abertura individual de F1, UFC e WWE Pay-Per-View; Esportes r520 preservado sem interceptar a Home.
 - Web: **0.3.48 / r521-official-0.3.48** — catálogos especiais completos e Home com Séries/Filmes/busca na mesma linha fixa.
 - Web: **0.3.47 / r520-official-0.3.47** — F1 + UFC + WWE PPV juntos com catálogos históricos completos, Home com busca/abas fixas e Esportes com detalhe de time/liga + writer canônico.
 - Web: **0.3.46 / r519-official-0.3.46** — WWE Pay-Per-View substitui o UFC na série especial: PPV/PLE por temporada, histórico visto reaproveitado, UFC UI aposentada e F1 preservada.
