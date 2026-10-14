@@ -11,6 +11,15 @@ function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)thr
 function scanFunctionEnd(source,start,label){const open=source.indexOf('{',start);if(open<0)throw new Error('r519 no body '+label);let depth=0,mode='code',quote='',i=open;for(;i<source.length;i++){const c=source[i],n=source[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0)return i+1}}throw new Error('r519 unbalanced '+label)}
 function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r519 missing '+label+' '+name);const end=scanFunctionEnd(region,m.index,label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(end)+source.slice(b.end)}
 function replaceRuntime(source,anchor,replacement,label){const b=bounds(source,anchor,label);return source.slice(0,b.start)+replacement+source.slice(b.end)}
+function replaceR513Runtime(source,replacement){
+ const marker="window.__ctR513SeriesScreenMarker='canonical-series-screen+season-episodes+optimistic-watch';",at=source.indexOf(marker);
+ if(at<0)throw new Error('r519 missing r513 marker');
+ const header=source.lastIndexOf('/* CineTracker Web 0.3.40 r513',at);
+ if(header<0)throw new Error('r519 missing r513 header');
+ const close=source.indexOf('\n})();',at);
+ if(close<0)throw new Error('r519 missing r513 close');
+ return source.slice(0,header)+replacement+'\n'+source.slice(close+6)
+}
 function replaceInRuntime(source,anchor,oldText,newText,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end);if(!region.includes(oldText))throw new Error('r519 missing text '+label);return source.slice(0,b.start)+region.replace(oldText,newText)+source.slice(b.end)}
 const A512="window.__ctR512Marker='r514-stable-historical-seasons+movie-2x3-rail+canonical-f1-sync';";
 const A513="window.__ctR513SeriesScreenMarker='canonical-series-screen+season-episodes+optimistic-watch';";
@@ -32,7 +41,7 @@ js=replaceNamed(js,A512,'toggle',"async function toggle(btn){\n const type=Strin
 js=replaceInRuntime(js,A512,"window.addEventListener('cinetracker:sports-watched-changed',()=>{current.ufc=null;cacheDrop('ct512:ufc:current');if(route()==='home'||modal?.type==='ufc')void loadCurrent(true)});","window.addEventListener('cinetracker:wwe-ppv-watched-changed',()=>{current.wwe=null;cacheDrop('ct519:wwe:current');if(route()==='home'||modal?.type==='wwe')void loadCurrent(true)});",'r512 event listener');
 js=js.replace(A512,"window.__ctR512Marker='r519-f1+wwe-ppv-single-special-owner+ufc-retired';");
 
-js=replaceRuntime(js,A513,seriesRuntime,'r513');
+js=replaceR513Runtime(js,seriesRuntime);
 
 js=replaceRuntime(js,A516,"(()=>{\n'use strict';\nconst core=()=>window.__ctCoreR471||null;\nlet summary=null,task=null;\nconst cacheKey='ct519:special-summary';\nfunction normalize(v){const raw=Array.isArray(v)&&v.length===1&&v[0]&&typeof v[0]==='object'?v[0]:v;return raw?.f1||raw?.wwe_ppv?raw:null}\nfunction readCache(){try{const x=JSON.parse(sessionStorage.getItem(cacheKey)||'null');return x&&Date.now()-Number(x.at||0)<10*60*1000?x.data:null}catch{return null}}\nfunction writeCache(v){try{sessionStorage.setItem(cacheKey,JSON.stringify({at:Date.now(),data:v}))}catch{}}\nfunction get(key){const x=summary?.[key];return x&&typeof x==='object'?x:null}\nfunction repaint(){try{window.__ctR512Special?.mountAll?.()}catch{};try{window.__ctR513SeriesScreen?.rerender?.()}catch{}}\nasync function load(force=false){\n if(task)return task;\n if(!force&&!summary){summary=normalize(readCache());if(summary)repaint()}\n task=(async()=>{try{\n  const db=normalize(await core()?.rpc?.('cinetracker_special_series_progress_v519',{}));\n  if(db){\n   summary={\n    f1:{watched:Number(db?.f1?.watched||0),mapped_sessions:Number(db?.f1?.mapped_sessions||0),source:'db-v519'},\n    wwe:{watched:Number(db?.wwe_ppv?.watched||0),known_events:Number(db?.wwe_ppv?.known_events||0),source:'db-v519'}\n   };\n   writeCache(summary);document.documentElement.dataset.ct519SpecialSummary=(summary.f1.watched||0)+'|'+(summary.wwe.watched||0);repaint()\n  }\n  return summary\n }catch(e){document.documentElement.dataset.ct519SpecialError=String(e?.message||e);return summary}\n })().finally(()=>{task=null});return task\n}\nfor(const ev of ['cinetracker:f1-watched-changed','cinetracker:wwe-ppv-watched-changed'])window.addEventListener(ev,()=>{try{sessionStorage.removeItem(cacheKey)}catch{};void load(true)});\ndocument.addEventListener('cinetracker:data-changed',e=>{const t=String(e?.detail?.type||'');if(t==='f1'||t==='wwe'){try{sessionStorage.removeItem(cacheKey)}catch{};void load(true)}});\nwindow.__ctR516SpecialSummary={version:'0.3.46',load,get,repaint,get data(){return summary}};\nqueueMicrotask(()=>void load(false));\n})();",'r516 summary');
 new Function(runtime);js+='\n'+runtime+'\n';
@@ -47,7 +56,7 @@ function assertRuntimeSyntax(source,anchor,label){
  try{new Function(region)}catch(e){throw new Error('r519 syntax '+label+': '+String(e?.message||e))}
 }
 assertRuntimeSyntax(js,"window.__ctR512Marker='r519-f1+wwe-ppv-single-special-owner+ufc-retired'",'r512');
-assertRuntimeSyntax(js,A513,'r513');
+try{new Function(seriesRuntime)}catch(e){throw new Error('r519 syntax r513-source: '+String(e?.message||e))}
 assertRuntimeSyntax(js,"window.__ctR516SpecialSummary={version:'0.3.46'",'r516-summary');
 try{new Function(js)}catch(e){throw new Error('r519 full bundle syntax: '+String(e?.message||e))}
 
