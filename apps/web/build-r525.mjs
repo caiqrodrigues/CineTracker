@@ -46,7 +46,7 @@ function replaceNamed(source,anchor,name,replacement,label){
 function replaceBeforeAnchorNamed(source,anchor,name,replacement,label){
  const at=source.indexOf(anchor);if(at<0)throw new Error('r525 missing '+label+' anchor');
  const prefix=source.slice(0,at),asyncSig='async function '+name+'(',syncSig='function '+name+'(';
- const start=Math.max(prefix.lastIndexOf(asyncSig),prefix.lastIndexOf(syncSig));
+ const asyncStart=prefix.lastIndexOf(asyncSig),syncStart=prefix.lastIndexOf(syncSig),start=asyncStart>=0?asyncStart:syncStart;
  if(start<0)throw new Error('r525 missing '+label+' '+name+' before anchor');
  const sigAt=source.indexOf('(',start),open=source.indexOf('{',sigAt);
  let depth=0,mode='code',quote='',i=open;
