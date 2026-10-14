@@ -1,3 +1,11 @@
+## Web 0.3.50 / r523 — Home + Descobrir estabilizados
+
+- Home Séries/Filmes: Histórico permanece acima da viewport inicial; entrada em Continuar assistindo/Watchlist.
+- Filmes: Watchlist em um único rail horizontal 2:3 — 176×264 desktop / 154×231 mobile.
+- Pra Você: 100% Novos recebe auditoria pessoal v517 imediatamente antes do render.
+- Top 10: nunca publica ranking parcial; exige 10 Séries + 10 Filmes e repete somente o filtro que falhou.
+- F1/UFC/WWE PPV, Raw/SmackDown, Perfil, Esportes e Android não são alterados nesta release.
+
 ## Web 0.3.49 / r522 — Home restaurada e três séries especiais abrindo
 
 - A camada r520/r521 que interceptava/fixava busca e abas da Home foi retirada.
