@@ -17,9 +17,9 @@ ok(fn(r388,'renderMoviesAll').includes("className='ct388-movie-stack ct514-movie
 ok(fn(r388,'homeRequest507').includes('frames:24')&&fn(r388,'homeAlign507').includes('homeSetScroll500'),'finite anchor');
 ok(fn(r388,'renderHome388').includes('__ctR512Special?.loadCurrent'),'special series preserved');
 const r321=region("window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity';"),top=fn(r321,'topRaw321'),paint=fn(r321,'paintTop321');
-ok(top.includes('topAudit523')&&top.includes("['flatrate',30]")&&top.includes("['',50]"),'Top10 adaptive');
-ok(top.includes('for(let attempt=0;attempt<2&&!ok;attempt++)'),'Top10 filter retry');
-ok(!top.includes('for(const x of small)blocked.add(keyOf(x))'),'no fail-closed chunk loss');
+ok(r321.includes('function topAudit523')&&r321.includes("['flatrate',30]")&&r321.includes("['',50]")&&top.includes('topEligible523'),'Top10 adaptive');
+ok(r321.includes('for(let attempt=0;attempt<2&&!ok;attempt++)'),'Top10 filter retry');
+ok(!r321.includes('for(const x of small)blocked.add(keyOf(x))'),'no fail-closed chunk loss');
 ok(paint.includes('movies.length!==10||series.length!==10')&&paint.includes("ct523Top10='10:10'"),'strict 10x10');
 const r464=region("window.__ctR464Marker='discover-foryou-visible-owner-v421';"),fy=fn(r464,'load');
 ok(fy.includes('auditFresh523')&&fy.includes('cinetracker_recommendation_filter_v517'),'ForYou final audit');
