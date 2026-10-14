@@ -1,3 +1,11 @@
+## 0.3.48 — r521 (2026-10-14)
+
+- F1 mescla sessões mapeadas com todos os GPs Jolpica da temporada; catálogo parcial não perde corridas.
+- UFC e WWE Pay-Per-View mantêm catálogos externos completos; totais globais autoritativos não regridem para o subconjunto local.
+- Séries, Filmes e busca ficam na mesma primeira linha fixa; clique de Filmes é capturado antes dos cards.
+- Drill-down de time/liga e writer de Visto do r520 são preservados sem reescrita.
+- Perfil, Descobrir, F1 Hub, Raw/SmackDown e Android permanecem fora do escopo.
+
 ## 0.3.47 — r520 (2026-10-13)
 
 ### F1 + UFC + WWE PPV / Home fixa / Esportes navegável
