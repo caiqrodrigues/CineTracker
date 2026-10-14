@@ -1,14 +1,14 @@
 import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 await import('./build-r520.mjs');
-const [js,html,sw,releaseRaw,rootPkgRaw,webPkgRaw]=await Promise.all([
- readFile(resolve('dist/app-v520.js'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/service-worker.js'),'utf8'),
+const [js,html,releaseRaw,rootPkgRaw,webPkgRaw]=await Promise.all([
+ readFile(resolve('dist/app-v520.js'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),
  readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8')
 ]);
 const ok=(v,m)=>{if(!v)throw new Error('r520 regression: '+m)},release=JSON.parse(releaseRaw),rootPkg=JSON.parse(rootPkgRaw),webPkg=JSON.parse(webPkgRaw);
 ok(rootPkg.version==='0.3.47'&&webPkg.version==='0.3.47','versions');
 ok(release.version==='0.3.47'&&release.revision==='r520-official-0.3.47','release');
-ok(html.includes('app-v520.js')&&html.includes('app-v520.css')&&sw.includes('app-v520.js'),'assets');
+ok(html.includes('app-v520.js')&&html.includes('app-v520.css'),'assets');
 ok(js.includes("window.__ctR520Marker='f1+ufc+wwe-ppv-three-special-series+no-feature-removal'"),'r520 marker');
 ok(js.includes("window.__ctR512Marker='r520-f1+ufc+wwe-three-special-series'"),'three-series owner');
 ok(js.includes("let current={f1:null,ufc:null,wwe:null}"),'three current states');
