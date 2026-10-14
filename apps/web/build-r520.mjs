@@ -29,9 +29,13 @@ function replaceRuntime(source,anchor,replacement,label){
 }
 
 js=replaceRuntime(js,"window.__ctR512Marker='r519-f1+wwe-ppv-single-special-owner+ufc-retired';",catalog+'\n'+special,'r512 special owner');
+try{new Function(js)}catch(e){throw new Error('r520 syntax after r512: '+e.message)}
 js=replaceRuntime(js,"window.__ctR513SeriesScreenMarker='canonical-series-screen+season-episodes+optimistic-watch';",screen,'r513 series screen');
+try{new Function(js)}catch(e){throw new Error('r520 syntax after r513: '+e.message)}
 js=replaceRuntime(js,"window.__ctR516SpecialSummary={version:'0.3.46'",summary,'r516 summary');
+try{new Function(js)}catch(e){throw new Error('r520 syntax after r516: '+e.message)}
 js=replaceRuntime(js,"window.__ctR519Marker='wwe-ppv-special-series+ufc-ui-retired+f1-preserved';",finalRuntime,'r519 final retirement');
+try{new Function(js)}catch(e){throw new Error('r520 syntax after r519: '+e.message)}
 
 for(const runtime of [catalog,special,screen,summary,homeSports,finalRuntime])new Function(runtime);
 js+='\n'+homeSports+'\n';
