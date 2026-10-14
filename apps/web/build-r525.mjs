@@ -42,12 +42,36 @@ function replaceNamed(source,anchor,name,replacement,label){
  if(depth!==0)throw new Error('r525 unbalanced '+label+' '+name);
  return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end);
 }
+
+function replaceBeforeAnchorNamed(source,anchor,name,replacement,label){
+ const at=source.indexOf(anchor);if(at<0)throw new Error('r525 missing '+label+' anchor');
+ const prefix=source.slice(0,at),asyncSig='async function '+name+'(',syncSig='function '+name+'(';
+ const start=Math.max(prefix.lastIndexOf(asyncSig),prefix.lastIndexOf(syncSig));
+ if(start<0)throw new Error('r525 missing '+label+' '+name+' before anchor');
+ const sigAt=source.indexOf('(',start),open=source.indexOf('{',sigAt);
+ let depth=0,mode='code',quote='',i=open;
+ for(;i<source.length;i++){
+  const c=source[i],n=source[i+1];
+  if(mode==='line'){if(c==='\n')mode='code';continue}
+  if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}
+  if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}
+  if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
+  if(c==='/'&&n==='/'){mode='line';i++;continue}
+  if(c==='/'&&n==='*'){mode='block';i++;continue}
+  if(c==="'"||c==='"'){mode='string';quote=c;continue}
+  if(c.charCodeAt(0)===96){mode='template';continue}
+  if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}
+ }
+ if(depth!==0)throw new Error('r525 unbalanced '+label+' '+name);
+ return source.slice(0,start)+replacement+source.slice(i);
+}
+
 const A388="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
 for(const [name,body] of Object.entries(home))js=replaceNamed(js,A388,name,body,'r388');
 const A321="window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity';";
 for(const [name,body] of Object.entries(discover))js=replaceNamed(js,A321,name,body,'r321');
 const A513="window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner';";
-js=replaceNamed(js,A513,'open',special.specialOpen,'r520 screen');
+js=replaceBeforeAnchorNamed(js,A513,'open',special.specialOpen,'r520 screen');
 const A521="window.__ctR521CatalogMarker='f1-local-sessions+jolpica-all-races+ufc-full+wwe-full';";
 js=replaceNamed(js,A521,'loadF1',special.loadF1,'r521 catalog');
 js=replaceNamed(js,A521,'loadUfc',special.loadUfc,'r521 catalog');
