@@ -1,0 +1,8 @@
+/* CineTracker Web 0.3.58 r531 — continuous opaque shield behind fixed Home controls. */
+html body [data-page="home"] [data-ct531-home-shield]{
+ position:fixed!important;top:0!important;right:0!important;z-index:204!important;
+ display:block!important;pointer-events:none!important;background:#030a0f!important;
+ border-bottom:1px solid rgba(31,69,91,.78)!important;box-shadow:0 8px 18px rgba(0,0,0,.24)!important
+}
+html body [data-page="home"] .search-global,
+html body [data-home] .home-tabs{background:#030a0f!important}

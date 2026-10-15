@@ -1,4 +1,4 @@
-name: Verify Web 0.3.57 r530
+name: Verify Web 0.3.58 r531
 on:
   push:
     branches: [main]
@@ -9,20 +9,21 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r530:
+  web_r531:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r530 scoped behavior gate
+      - name: Build and r531 scoped behavior gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v530.js
-          grep -Fq "window.__ctR530Marker='home-fixed-search-tabs+special-screen-catalog-fallback'" apps/web/dist/app-v530.js
+          node --check apps/web/dist/app-v531.js
+          grep -Fq "window.__ctR531Marker='special-real-screen+related-spa+opaque-home-chrome'" apps/web/dist/app-v531.js
+          grep -Fq "window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner'" apps/web/dist/app-v531.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -32,20 +33,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r530, android]
+    needs: [web_r531, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r530 production
+      - name: Wait for r531 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.57"' <<<"$BODY" && grep -Fq '"revision": "r530-official-0.3.57"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v530.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.58"' <<<"$BODY" && grep -Fq '"revision": "r531-official-0.3.58"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v531.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR530Marker='home-fixed-search-tabs+special-screen-catalog-fallback'" <<<"$JS" && grep -Fq 'app-v530.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR531Marker='special-real-screen+related-spa+opaque-home-chrome'" <<<"$JS" && grep -Fq 'app-v531.js' <<<"$HTML"; then exit 0; fi
             fi
             [ "$i" -eq 240 ] && exit 1
             sleep 5

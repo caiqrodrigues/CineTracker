@@ -1,3 +1,10 @@
+## Web 0.3.58 / r531 — interações finais sem regressão de escopo
+
+- F1, UFC e WWE PPV abrem a tela anual real r520 com espera delimitada do owner.
+- Títulos Relacionados navegam pelo core SPA, sem reload.
+- Toolbar fixa da Home possui fundo opaco contínuo; o conteúdo não aparece correndo por baixo.
+- Nenhuma outra área funcional foi alterada.
+
 ## Web 0.3.57 / r530 — toolbar fixo + séries especiais
 
 - Séries/Filmes e busca global permanecem travados no topo da Home durante o scroll.

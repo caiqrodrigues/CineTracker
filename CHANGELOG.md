@@ -1,3 +1,11 @@
+## 0.3.58 — r531 (2026-10-15)
+
+### Escopo estrito: especiais + relacionados + isolamento da toolbar da Home
+- F1 / UFC / WWE Pay-Per-View: o opener deixa de depender de o owner da tela já existir no mesmo tick. O clique aguarda de forma delimitada a tela canônica r520 e abre a janela real; o teste Chromium usa a própria `__ctR513SeriesScreen`, não stub.
+- Detalhes > Títulos Relacionados: o clique usa a navegação SPA canônica exposta pelo core r471. Filme abre `/movie/:id` e série abre `/series/:id` sem reload.
+- Home: Séries/Filmes + busca continuam fixos, mas agora existe uma camada opaca contínua atrás de toda a faixa superior. Conteúdo que rola abaixo não fica visível entre os controles.
+- Preservado: Home Séries/Filmes e seus dados/ordem, Descobrir/Pra Você/Top 10, Perfil, Esportes, Raw/SmackDown, writers de visto/F1 e Android 1.0.20 / 10062.
+
 ## 0.3.57 — r530 (2026-10-15)
 
 ### Escopo estrito: toolbar da Home + abertura F1/UFC/WWE

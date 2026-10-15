@@ -1,3 +1,4 @@
+- Web: **0.3.58 / r531-official-0.3.58** — janela real F1/UFC/WWE resiliente ao boot, Títulos Relacionados com navegação SPA canônica e toolbar fixa da Home com fundo opaco contínuo.
 - Web: **0.3.57 / r530-official-0.3.57** — restaura Séries/Filmes + busca fixos no topo e torna a tela anual F1/UFC/WWE resiliente à corrida de inicialização do bridge especial.
 - Web: **0.3.56 / r529-official-0.3.56** — Home sem barra/abas flutuantes, âncora direta em Continuar/Watchlist e opener único da tela de Série para F1/UFC/WWE PPV.
 - Web: **0.3.55 / r528-official-0.3.55** — Home Séries ancorada em Continuar após Histórico, Home Filmes em lista vertical canônica, especiais com contagem anual e Top 10 com troca de streaming determinística 10+10.
