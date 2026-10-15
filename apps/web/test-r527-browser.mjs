@@ -2,23 +2,128 @@ import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {createServer} from 'node:http';
 import {spawn,execFileSync} from 'node:child_process';
+
 await import('./build-r527.mjs');
-const [js,css,r527Runtime]=await Promise.all([readFile(resolve('dist/app-v527.js'),'utf8'),readFile(resolve('dist/app-v527.css'),'utf8'),readFile(resolve('runtime-r527-final.js'),'utf8')]);
-const runtime=marker=>{const at=js.indexOf(marker);if(at<0)throw new Error('missing '+marker);const start=js.lastIndexOf('(()=>{',at),end=js.indexOf('\n})();',at);if(start<0||end<0)throw new Error('bounds '+marker);return js.slice(start,end+6)};
-const r388=runtime("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';"),r321=runtime("window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity';"),r464=runtime("window.__ctR464Marker='discover-foryou-visible-owner-v421';"),r512=runtime("window.__ctR512Marker='r520-f1+ufc+wwe-complete-catalog-single-owner';"),r524=runtime("window.__ctR524SpecialOpenMarker='direct-special-card-owner-no-route-gate';"),r311=runtime("window.__ctR311='profile-stat-single-version+f1-clickable-weekend+discover-public-single-renderer';");
-const moviePrelude="function route(){return'home'} function localDay(){return'2026-10-14'} function img(p){return p}\nfunction rpc(){return Promise.resolve([])} function shell(a,b,c,d){return d} function setApp(h){document.getElementById('app').innerHTML=h}\nfunction ct274MovieMeta(x){return [x.release_year,x.runtime_minutes+' min'].join(' · ')} function ct274MovieAttrs(){return''} function ct274MovieWatchAction(){return''}\nwindow.__ctR371={activeTab:'movies',applyTab(){}};window.SUPABASE_URL='';",movieProbe="try{\n const ok=(v,m)=>{if(!v)throw new Error(m)},movies=Array.from({length:12},(_,i)=>({media_id:500+i,tmdb_id:1500+i,media_type:'movie',title:'Filme '+i,poster_path:'/p.jpg',release_year:2025,runtime_minutes:100,vote_average:8,created_at:'2026-10-14T00:00:00Z'}));\n window.__ctR388Test.setHome({movies});window.__ctR388.renderMoviesAll();\n const view=document.querySelector('[data-home-view=\"movies\"]'),h=view.querySelector('[data-ct388-history=\"movies\"]'),w=view.querySelector('[data-ct388-movie-watch]');ok(!!(h.compareDocumentPosition(w)&Node.DOCUMENT_POSITION_FOLLOWING),'movie history not above');\n const rail=view.querySelector('.ct526-movie-rail'),cards=[...rail.querySelectorAll(':scope>.ct514-movie-card')],style=getComputedStyle(rail);ok(cards.length===12,'real movie cards '+cards.length);ok(style.display==='flex'&&style.flexWrap==='nowrap','rail layout '+style.display+'/'+style.flexWrap);\n const a=cards[0].getBoundingClientRect(),b=cards[1].getBoundingClientRect(),p=cards[0].querySelector('.poster').getBoundingClientRect();ok(a.width>0&&Math.abs(a.height/a.width-1.5)<.03,'card ratio '+a.width+'x'+a.height);ok(Math.abs(p.height/p.width-1.5)<.03,'poster ratio '+p.width+'x'+p.height);ok(Math.abs(a.top-b.top)<1,'not one row');ok(rail.scrollWidth>rail.clientWidth,'no horizontal overflow');document.documentElement.dataset.ct527movies='ok'\n}catch(e){document.documentElement.dataset.ct527movies='fail:'+String(e.message||e)}",discoverPrelude="function route(){return'discover'} function localDay(){return'2026-10-14'} function img(p){return p} function rpc(){return Promise.resolve({blocked_keys:[],watch_keys:[],seen_keys:[],not_interested_keys:[]})}\nwindow.__ctR288R263={discover263:{tab:'top10',type:'all'},type263:x=>x.media_type,id263:x=>x.tmdb_id,title263:x=>x.title,year263:x=>x.release_year,poster263:x=>x.poster_path};\nwindow.__ctR319Test={state:{filterOpen:false,fyKind:'all',topProvider:8},STRICT:new Set(['trending','popular','new','releases','anticipated','top']),TABS:[['foryou','Pra você'],['top10','Top 10'],['trending','Em alta']]};window.__ctR319={};\nvar ct171ProviderList=[{provider_id:8,provider_name:'Teste'}],ct171TopProvider=8;async function ct171Providers(){return ct171ProviderList} function ct169RenderActivity(){}",discoverProbe="(async()=>{try{\n const ok=(v,m)=>{if(!v)throw new Error(m)},make=(type,id)=>({media_type:type,tmdb_id:id,title:(type==='movie'?'Filme ':'Série ')+id,poster_path:'/p.jpg',release_year:2025}),bridge={};\n bridge.topPage=async(_p,type,page)=>Array.from({length:8},(_,i)=>make(type,(type==='movie'?10000:20000)+(page-1)*8+i+1));\n bridge.exact=async items=>({blocked_keys:items.filter(x=>{const base=x.media_type==='movie'?10000:20000;return Number(x.tmdb_id)-base<=22}).map(x=>(x.media_type==='movie'?'movie':'tv')+':'+x.tmdb_id),watch_keys:[],seen_keys:[],not_interested_keys:[]});\n window.__ctR321Test.setTestBridge(bridge);const movies=await window.__ctR523TopTest.eligible(8,'movie',true),series=await window.__ctR523TopTest.eligible(8,'tv',true);ok(movies.length===10&&series.length===10,'eligible not 10+10 '+movies.length+':'+series.length);\n bridge.top=async()=>({movies,series});bridge.exact=async()=>({blocked_keys:[],watch_keys:[],seen_keys:[],not_interested_keys:[]});window.__ctR321Test.setDiscover('top10','all');document.querySelector('[data-ct319-content]').innerHTML='';await window.__ctR321.loadTop(true);\n const sections=[...document.querySelectorAll('.ct288-top-section')];ok(sections.length===2,'top sections '+sections.length);ok(sections.every(s=>s.querySelectorAll('.ct319-item').length===10),'DOM top not 10+10');ok(document.documentElement.dataset.ct523Top10==='10:10','top marker');\n window.__ctR321Test.setDiscover('trending','all');bridge.source=async()=>Array.from({length:14},(_,i)=>make(i%2?'movie':'tv',30000+i));bridge.exact=async items=>({blocked_keys:items.slice(0,2).map(x=>(x.media_type==='movie'?'movie':'tv')+':'+x.tmdb_id),watch_keys:[],seen_keys:[],not_interested_keys:[]});await window.__ctR321.loadPublic('trending',true);ok(document.querySelectorAll('.ct319-public .ct319-item').length===12,'public tab did not load');document.documentElement.dataset.ct527discover='ok'\n}catch(e){document.documentElement.dataset.ct527discover='fail:'+String(e.stack||e)}})();",fyPrelude="function route(){return'discover'};window.__ctR288R263={discover263:{tab:'foryou'}};let seenPayload=null;\nfunction rpc(name,args){if(name==='cinetracker_recommendation_filter_v525'){seenPayload=args.p_items;return Promise.resolve({blocked_keys:['movie:1368337'],watch_keys:[],seen_keys:['movie:1368337'],not_interested_keys:[]})}throw new Error(name)} function img(p){return p}",fyProbe="(async()=>{try{const list=[{media_type:'movie',tmdb_id:1368337,title:'A Odisseia',original_title:'The Odyssey',release_year:2026,poster_path:'/p.jpg'},{media_type:'movie',tmdb_id:777,title:'Novo',original_title:'New',release_year:2026,poster_path:'/p.jpg'}],out=await window.__ctR523ForYouTest.auditFresh(list);if(out.some(x=>x.tmdb_id===1368337))throw new Error('Odyssey leaked');if(!seenPayload?.some(x=>x.original_title==='The Odyssey'))throw new Error('original title not audited');document.documentElement.dataset.ct527fy='ok'}catch(e){document.documentElement.dataset.ct527fy='fail:'+String(e.message||e)}})();",specialPrelude="function route(){return'home'};const opened=[];window.__ctCoreR471={route:()=> 'home',rpc:async(name)=>{\n if(name==='cinetracker_f1_series_v512')return {series:{title:'Fórmula 1',season:2026,poster_url:'',watched_episodes:99,released_episodes:99,total_episodes:99},events:[{session_kind:'practice',episode_number:1,title:'Treino',starts_at:'2026-10-10T10:00:00Z',released:true,is_watched:true},{session_kind:'race',episode_number:2,title:'GP A',starts_at:'2026-10-11T10:00:00Z',released:true,is_watched:true},{session_kind:'race',episode_number:3,title:'GP B',starts_at:'2026-10-13T10:00:00Z',released:true,is_watched:false}]};\n if(name==='cinetracker_ufc_series_v518')return {series:{title:'UFC',season:2026,total_episodes:41,released_episodes:34,watched_episodes:14,available_episodes:2,home_bucket:'continue'}};\n if(name==='cinetracker_wwe_ppv_series_v519')return {series:{title:'WWE Pay-Per-View',season:2026,total_episodes:12,released_episodes:10,watched_episodes:9,available_episodes:1,home_bucket:'continue'}};throw new Error(name)}};\nwindow.__ctR513SeriesScreen={open:async(type)=>{opened.push(type);return true}};window.__ctR520Catalog=null;",specialProbe="(async()=>{try{await new Promise(r=>setTimeout(r,100));const ok=(v,m)=>{if(!v)throw new Error(m)},f=document.querySelector('[data-ct512-special=\"f1\"]');ok(f,'F1 card');ok(/1\\/2 GPs/.test(f.textContent),'F1 not GP count '+f.textContent);ok(!/sessões/.test(f.textContent),'session wording');for(const type of ['f1','ufc','wwe']){const el=document.querySelector('[data-ct512-special=\"'+type+'\"]');ok(el,'missing '+type);el.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true}));await new Promise(r=>setTimeout(r,500))}ok(['f1','ufc','wwe'].every(x=>opened.includes(x)),'open '+opened.join(','));document.documentElement.dataset.ct527special='ok'}catch(e){document.documentElement.dataset.ct527special='fail:'+String(e.message||e)}})();",f1Prelude="function route(){return'sports'} function rpc(){return Promise.resolve([])} function img(p){return p} function toast(){} window.__ctR288R263={};window.__ctR295Test={};window.__ctR310={};",f1Probe="(async()=>{try{const ok=(v,m)=>{if(!v)throw new Error(m)},race={round:18,raceName:'Singapore Grand Prix',date:'2026-10-04',time:'12:00:00Z',Circuit:{circuitName:'Marina Bay',Location:{locality:'Singapore',country:'Singapore'}},FirstPractice:{date:'2026-10-02',time:'09:30:00Z'},Qualifying:{date:'2026-10-03',time:'13:00:00Z'}};window.__ctR311Test.setTestBridge({loadF1History:async()=>[],loadF1Results:async()=>[{grid:1,position:2,Driver:{givenName:'Lando',familyName:'Norris'},Constructor:{name:'McLaren'},status:'Finished'},{grid:2,position:1,Driver:{givenName:'Oscar',familyName:'Piastri'},Constructor:{name:'McLaren'},status:'Finished'}]});document.querySelector('#f1').innerHTML=window.__ctR311Test.f1Calendar311({season:2026,schedule:[race]});const b=document.querySelector('[data-ct311-f1-race]');ok(b,'race button');b.click();await new Promise(r=>setTimeout(r,100));const modal=document.querySelector('[data-ct311-f1-modal]');ok(modal,'modal');ok(modal.textContent.includes('Grid de Largada'),'grid heading');ok(modal.textContent.includes('Resultado de Chegada'),'result heading');ok(modal.querySelector('[data-ct311-grid]').textContent.includes('Norris'),'grid data');ok(modal.querySelector('[data-ct311-result]').textContent.includes('Piastri'),'result data');document.documentElement.dataset.ct527f1='ok'}catch(e){document.documentElement.dataset.ct527f1='fail:'+String(e.message||e)}})();";
-const page=(style,body,scripts)=>'<!doctype html><html><head><meta charset="utf-8"><style>'+style+'</style></head><body>'+body+scripts.map(s=>'<script src="'+s+'"></script>').join('')+'</body></html>';
-const pages={
- '/movies.html':page(css+' body{margin:0}#app{width:760px}.hidden{display:none}','<div id="app"><div data-home><div data-home-view="movies" style="width:760px"><section data-ct388-history="movies"><h3>Filmes vistos</h3></section><section data-ct388-movie-watch data-ct492-total="12"><span data-ct388-movie-count></span><div class="ct388-movie-stack"></div></section></div></div></div>',['/movie-prelude.js','/r388.js','/movie-probe.js']),
- '/discover.html':page(css+'.ct319-top-row{display:flex!important}.ct319-item{width:120px!important;flex:0 0 120px!important}','<div data-ct319-content></div>',['/discover-prelude.js','/r321.js','/discover-probe.js']),
- '/foryou.html':page('','<div data-ct319-content></div>',['/fy-prelude.js','/r464.js','/fy-probe.js']),
- '/special.html':page('','<div data-home-view="series"><section><div class="panel-head"><h3>Continuar assistindo</h3><small>0</small></div><div class="stack"></div></section><section><div class="panel-head"><h3>Em dia</h3><small>0</small></div><div class="stack"></div></section></div>',['/special-prelude.js','/r512.js','/r524.js','/r527.js','/special-probe.js']),
- '/f1.html':page('','<div id="f1"></div>',['/f1-prelude.js','/r311.js','/f1-probe.js'])
-};
-const assets=new Map(Object.entries({'/r388.js':r388,'/r321.js':r321,'/r464.js':r464,'/r512.js':r512,'/r524.js':r524,'/r527.js':r527Runtime,'/r311.js':r311,'/movie-prelude.js':moviePrelude,'/movie-probe.js':movieProbe,'/discover-prelude.js':discoverPrelude,'/discover-probe.js':discoverProbe,'/fy-prelude.js':fyPrelude,'/fy-probe.js':fyProbe,'/special-prelude.js':specialPrelude,'/special-probe.js':specialProbe,'/f1-prelude.js':f1Prelude,'/f1-probe.js':f1Probe}).map(([k,v])=>[k,{type:'application/javascript; charset=utf-8',body:v}]));
-for(const [k,v] of Object.entries(pages))assets.set(k,{type:'text/html; charset=utf-8',body:v});
-const server=createServer((req,res)=>{const item=assets.get(new URL(req.url,'http://127.0.0.1').pathname);if(!item){res.writeHead(404);res.end();return}res.writeHead(200,{'content-type':item.type,'cache-control':'no-store'});res.end(item.body)});
-await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;let bin='';for(const x of ['google-chrome-stable','google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}if(!bin)throw new Error('Chromium unavailable');
-async function run(path,attr,budget=5000){const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--virtual-time-budget='+budget,'--dump-dom','http://127.0.0.1:'+port+path],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},30000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);if(code!==0)throw new Error(path+' Chromium '+code+' '+err.slice(-800));const m=out.match(new RegExp('data-'+attr+'="([^"]*)"')),state=m?.[1]||'';if(state!=='ok')throw new Error(path+' '+state+' DOM='+out.slice(-4500))}
-try{await run('/movies.html','ct527movies');await run('/discover.html','ct527discover',7000);await run('/foryou.html','ct527fy');await run('/special.html','ct527special',7000);await run('/f1.html','ct527f1');}finally{await new Promise(r=>server.close(r))}
-console.log('R527_BROWSER_OK real-movies+discover-10x10+odyssey-filter+special-open+f1-detail');
+const [js,css,r527Runtime]=await Promise.all([
+ readFile(resolve('dist/app-v527.js'),'utf8'),
+ readFile(resolve('dist/app-v527.css'),'utf8'),
+ readFile(resolve('runtime-r527-final.js'),'utf8')
+]);
+const ok=(v,m)=>{if(!v)throw new Error('R527_BEHAVIOR '+m)};
+function extractNamed(name,needle=''){
+ const re=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(','g'),hits=[...js.matchAll(re)],out=[];
+ for(const h of hits){
+  const start=h.index,open=js.indexOf('{',start+h[0].length);let depth=0,mode='code',quote='',i=open;
+  for(;i<js.length;i++){
+   const c=js[i],n=js[i+1];
+   if(mode==='line'){if(c==='\n')mode='code';continue}
+   if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}
+   if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}
+   if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}
+   if(c==='/'&&n==='/'){mode='line';i++;continue}
+   if(c==='/'&&n==='*'){mode='block';i++;continue}
+   if(c==="'"||c==='"'){mode='string';quote=c;continue}
+   if(c.charCodeAt(0)===96){mode='template';continue}
+   if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}
+  }
+  if(depth===0){const src=js.slice(start,i);if(!needle||src.includes(needle))out.push(src)}
+ }
+ if(out.length!==1)throw new Error('R527 extract '+name+' needle='+needle+' count='+out.length);
+ return out[0];
+}
+const rows=v=>Array.isArray(v)?v:[];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mediaId=x=>Number(x?.media_id||x?.id||0)||0;
+const titleOf=x=>String(x?.title||x?.name||'');
+const keyOf=x=>(String(x?.media_type||x?.type||'tv')==='movie'?'movie':'tv')+':'+Number(x?.tmdb_id||x?.id||0);
+const validKey=k=>/^(movie|tv):[1-9]\d*$/.test(String(k||''));
+
+/* 1) HOME FILMES — HTML generated by the actual final movieRow(). */
+const movieRowSrc=extractNamed('movieRow','ct514-movie-card');
+const movieRow=new Function('rows','img','esc','mediaId','titleOf','ct274MovieMeta','ct274MovieAttrs','ct274MovieWatchAction',
+ movieRowSrc+';return movieRow;')(
+ rows,p=>p,esc,mediaId,titleOf,
+ x=>[x.release_year,x.runtime_minutes?x.runtime_minutes+' min':''].filter(Boolean).join(' · '),
+ ()=>'',()=>''
+);
+const movies=Array.from({length:12},(_,i)=>({media_id:500+i,tmdb_id:1500+i,media_type:'movie',title:'Filme '+i,poster_path:'',release_year:2025,runtime_minutes:100,vote_average:8}));
+const movieCards=movies.map(movieRow).join('');
+ok((movieCards.match(/ct514-movie-card/g)||[]).length===12,'movieRow did not generate 12 real cards');
+
+/* 2) TOP 10 — execute the final adaptive eligibility algorithm directly. */
+const topPageSrc=extractNamed('topPage523','testBridge?.topPage');
+const topAuditSrc=extractNamed('topAudit523','TOP10_FILTER_UNAVAILABLE');
+const topEligibleSrc=extractNamed('topEligible523',"modes=[['flatrate',30]");
+const makeStore=()=>{const m=new Map();return{getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)}};
+const localStorage=makeStore(),sessionStorage=makeStore();
+const dedupe321=list=>{const seen=new Set();return rows(list).filter(x=>{const k=keyOf(x);if(seen.has(k))return false;seen.add(k);return true})};
+const testBridge={topPage:async(_provider,type,page)=>Array.from({length:8},(_,i)=>({media_type:type,tmdb_id:(type==='movie'?10000:20000)+(page-1)*8+i+1,title:type+' '+page+'-'+i}))};
+const exact321=async chunk=>({blocked:new Set(chunk.filter(x=>{const base=String(x.media_type)==='movie'?10000:20000;return Number(x.tmdb_id)-base<=22}).map(keyOf))});
+const topEligible=new Function('testBridge','dedupe321','tmdbPage321','exact321','rows','keyOf','validKey','localDay','localStorage','sessionStorage',
+ topPageSrc+'\n'+topAuditSrc+'\n'+topEligibleSrc+'\nreturn topEligible523;')(
+ testBridge,dedupe321,async()=>[],exact321,rows,keyOf,validKey,()=> '2026-10-14',localStorage,sessionStorage
+);
+const [topMovies,topSeries]=await Promise.all([topEligible(8,'movie',true),topEligible(8,'tv',true)]);
+ok(topMovies.length===10&&topSeries.length===10,'Top 10 adaptive result '+topMovies.length+':'+topSeries.length);
+ok(topMovies.every(x=>Number(x.tmdb_id)>10022)&&topSeries.every(x=>Number(x.tmdb_id)>20022),'Top 10 leaked blocked early candidates');
+const paintTopSrc=extractNamed('paintTop321',"ct523Top10='10:10'");
+ok(paintTopSrc.includes('movies.length!==10||series.length!==10')&&paintTopSrc.includes('<small>10</small>'),'Top 10 final painter is not strict 10+10');
+
+/* 3) PRA VOCÊ — execute final alias audit. */
+const auditFreshSrc=extractNamed('auditFresh523','cinetracker_recommendation_filter_v525');
+let auditPayload=null;
+const auditFresh=new Function('rows','keyOf','titleOf','unwrap','timeout','rpcCall',
+ auditFreshSrc+';return auditFresh523;')(
+ rows,keyOf,titleOf,x=>x,async p=>await p,
+ async(name,args)=>{ok(name==='cinetracker_recommendation_filter_v525','wrong fresh filter '+name);auditPayload=args.p_items;return{blocked_keys:['movie:1368337'],watch_keys:[],seen_keys:['movie:1368337'],not_interested_keys:[]}}
+);
+const fresh=await auditFresh([
+ {media_type:'movie',tmdb_id:1368337,title:'A Odisseia',original_title:'The Odyssey',release_year:2026},
+ {media_type:'movie',tmdb_id:777,title:'Novo',original_title:'New',release_year:2026}
+]);
+ok(!fresh.some(x=>Number(x.tmdb_id)===1368337),'A Odisseia leaked into 100% Novos');
+ok(auditPayload?.some(x=>x.original_title==='The Odyssey'),'The Odyssey alias was not sent to v525');
+
+/* 4) SPECIAL SERIES — final F1 card uses GP counts. */
+const cardHtmlSrc=extractNamed('cardHtml',"unit=key==='f1'?'GPs':'eventos'");
+const cardHtml=new Function('window','currentYear','esc',cardHtmlSrc+';return cardHtml;')(
+ {__ctR516SpecialSummary:null},()=>2026,esc
+);
+const f1Card=cardHtml('f1',{series:{season:2026,watched_episodes:1,total_episodes:2,released_episodes:2,available_episodes:1,next_episode_title:'GP B'}});
+ok(f1Card.includes('1/2 GPs')&&!f1Card.includes('sessões'),'F1 Home is not GP-based');
+
+/* 5) F1 HUB — final bundle preserves clickable calendar + full detail owner. */
+const f1CalendarSrc=extractNamed('f1Calendar311','data-ct311-f1-race');
+const openRaceSrc=extractNamed('openRace311','Grid de Largada');
+const exactClickSrc=extractNamed('exactClick311','data-ct311-f1-race');
+ok(f1CalendarSrc.includes('Abrir corrida')&&f1CalendarSrc.includes('data-ct311-f1-race'),'F1 calendar is not clickable');
+ok(openRaceSrc.includes('Fim de semana')&&openRaceSrc.includes('Grid de Largada')&&openRaceSrc.includes('Resultado de Chegada')&&openRaceSrc.includes('data-ct311-grid')&&openRaceSrc.includes('data-ct311-result'),'F1 detail sections missing');
+ok(exactClickSrc.includes('openRace311(race)'),'F1 calendar click is not wired to race detail');
+
+/* 6) One short Chromium run: real movie markup + production CSS + real r527 pointer owner. */
+const browserProbe=`
+try{
+ const ok=(v,m)=>{if(!v)throw new Error(m)};
+ const view=document.querySelector('[data-home-view="movies"]'),hist=view.querySelector('[data-ct388-history="movies"]'),watch=view.querySelector('[data-ct388-movie-watch]');
+ ok(!!(hist.compareDocumentPosition(watch)&Node.DOCUMENT_POSITION_FOLLOWING),'history-order');
+ const rail=view.querySelector('.ct526-movie-rail'),cards=[...rail.querySelectorAll(':scope>.ct514-movie-card')],rs=getComputedStyle(rail);
+ ok(cards.length===12,'movie-card-count '+cards.length);ok(rs.display==='flex'&&rs.flexWrap==='nowrap','movie-rail '+rs.display+'/'+rs.flexWrap);
+ const a=cards[0].getBoundingClientRect(),b=cards[1].getBoundingClientRect(),p=cards[0].querySelector('.poster').getBoundingClientRect();
+ ok(a.width>0&&Math.abs(a.height/a.width-1.5)<.03,'movie-card-ratio '+a.width+'x'+a.height);
+ ok(p.width>0&&Math.abs(p.height/p.width-1.5)<.03,'movie-poster-ratio '+p.width+'x'+p.height);
+ ok(Math.abs(a.top-b.top)<1,'movie-not-one-row');ok(rail.scrollWidth>rail.clientWidth,'movie-no-horizontal-overflow');
+ for(const type of ['f1','ufc','wwe'])document.querySelector('[data-ct512-special="'+type+'"]').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true,cancelable:true}));
+ ok(window.__opened.join(',')==='f1,ufc,wwe','special-open '+window.__opened.join(','));
+ document.documentElement.dataset.ct527browser='ok';
+}catch(e){document.documentElement.dataset.ct527browser='fail:'+String(e.message||e)}
+`;
+const html='<!doctype html><html><head><meta charset="utf-8"><style>'+css+' body{margin:0}#wrap{width:760px}</style></head><body><div id="wrap"><div data-home-view="movies"><section data-ct388-history="movies"><h3>Filmes vistos</h3></section><section data-ct388-movie-watch><h3>Assistir a seguir / Watchlist</h3><div class="ct388-movie-stack ct514-movie-rail ct525-movie-rail ct526-movie-rail">'+movieCards+'</div></section></div></div><div data-ct512-special="f1"></div><div data-ct512-special="ufc"></div><div data-ct512-special="wwe"></div><script>window.__opened=[];window.__ctR524SpecialOpen={open:t=>window.__opened.push(t)};window.__ctR513SeriesScreen={open:t=>window.__opened.push(t)};</script><script src="/r527.js"></script><script>'+browserProbe+'</script></body></html>';
+const server=createServer((req,res)=>{if(new URL(req.url,'http://127.0.0.1').pathname==='/r527.js'){res.writeHead(200,{'content-type':'application/javascript','cache-control':'no-store'});res.end(r527Runtime);return}res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});res.end(html)});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
+let bin='';for(const x of ['google-chrome-stable','google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}
+if(!bin)throw new Error('Chromium unavailable');
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--virtual-time-budget=800','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});
+let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},20000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
+if(code!==0)throw new Error('R527_BROWSER Chromium '+code+' '+err.slice(-1000));
+const m=out.match(/data-ct527browser="([^"]*)"/),state=m?.[1]||'';if(state!=='ok')throw new Error('R527_BROWSER '+state+' DOM='+out.slice(-3000));
+console.log('R527_BROWSER_OK real-movieRow+top10-10x10+odyssey-alias+special-open+f1-detail');
