@@ -1,3 +1,12 @@
+## Web 0.3.53 / r526 — Home + Descobrir + séries especiais
+
+- Home Séries usa v526 para contagem canônica de séries encerradas; Naruto foi consolidado em uma única mídia.
+- Home Filmes mantém Histórico acima/oculto e Watchlist em um único rail 2:3 sem wrap.
+- Descobrir usa r321 nas abas públicas, r464 direto em Pra Você e Top 10 10+10 com cards próprios visíveis.
+- F1 como série conta GPs; sessões permanecem no detalhe do F1 Hub.
+- Calendário F1 abre cada GP com fim de semana, grid de largada e resultado final.
+- UFC e WWE Pay-Per-View continuam como séries anuais e abrem pela Home.
+- Perfil, Raw/SmackDown e Android não foram alterados.
 ## Web 0.3.52 / r525 — Home, Descobrir e detalhe de time
 
 - Histórico da Home continua acima/oculto; entrada é finita em Continuar/Watchlist.

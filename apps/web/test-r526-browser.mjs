@@ -1,0 +1,15 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {createServer} from 'node:http';
+import {spawn,execFileSync} from 'node:child_process';
+await import('./build-r526.mjs');
+const css=await readFile(resolve('dist/app-v526.css'),'utf8');
+const html='<!doctype html><html><head><style>'+css+'.ct514-movie-card{width:176px;height:264px}.poster{width:176px;height:264px}</style></head><body><div data-page="home"><div class="search-global"></div><div data-home><div class="home-tabs"></div><div data-home-view="movies"><section data-ct388-history="movies"><h3>Filmes vistos</h3></section><section data-ct388-movie-watch><h3>Assistir a seguir / Watchlist</h3><div class="ct388-movie-stack ct525-movie-rail ct526-movie-rail" style="display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important"><article class="ct514-movie-card"><div class="poster"></div></article><article class="ct514-movie-card"><div class="poster"></div></article></div></section></div></div></div><script>try{const v=document.querySelector("[data-home-view=movies]"),h=v.querySelector("[data-ct388-history=movies]"),w=v.querySelector("[data-ct388-movie-watch]"),rail=v.querySelector(".ct526-movie-rail"),rs=getComputedStyle(rail),c=rail.querySelector(".ct514-movie-card").getBoundingClientRect(),p=rail.querySelector(".poster").getBoundingClientRect();if(!(h.compareDocumentPosition(w)&Node.DOCUMENT_POSITION_FOLLOWING))throw new Error("history-order");if(rs.display!=="flex"||rs.flexWrap!=="nowrap")throw new Error("rail-layout");if(Math.abs(c.height/c.width-1.5)>.03||Math.abs(p.height/p.width-1.5)>.03)throw new Error("ratio");document.documentElement.dataset.ct526browser="ok"}catch(e){document.documentElement.dataset.ct526browser="fail:"+String(e.message||e)}</script></body></html>';
+const server=createServer((req,res)=>{res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});res.end(html)});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;let bin='';
+for(const x of ['google-chrome-stable','google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}
+if(!bin)throw new Error('Chromium unavailable');
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);
+const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},30000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));
+if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1000));const m=out.match(/data-ct526browser="([^"]*)"/),state=m?.[1]||'';if(state!=='ok')throw new Error('R526_BROWSER '+state+' DOM='+out.slice(-2500));
+console.log('R526_BROWSER_OK history-above+movie-nowrap+2x3');

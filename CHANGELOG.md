@@ -1,3 +1,17 @@
+## 0.3.53 — r526 (2026-10-14)
+
+### Home, Descobrir e séries especiais
+- **Naruto:** duplicação por TMDB efetivo consolidada; v526 validada em 90/220 assistidos, 130 restantes e próximo S2E39.
+- **Home Séries:** Histórico continua fisicamente acima/oculto; v526 é a fonte primária e o refresh de TV mantém a mesma autoridade.
+- **Home Filmes:** Histórico continua acima/oculto; Watchlist é um único rail horizontal `nowrap`, com card e pôster 2:3.
+- **Home toolbar:** fundo opaco contínuo evita qualquer conteúdo aparente por baixo de Séries/Filmes e busca.
+- **Descobrir:** abas públicas usam owner r321 + filtro pessoal v525 fail-closed; renderer final não depende de card legado invisível.
+- **Pra Você:** r321 delega diretamente ao owner auditado r464, mantendo 100% Novos livre de vistos/Watchlist e aliases já conhecidos.
+- **Top 10:** mantém contrato estrito 10 Séries + 10 Filmes e usa cards finais próprios 2:3 para garantir os 20 itens visíveis.
+- **Fórmula 1 como série:** episódios representam GPs/corridas, não todas as sessões do fim de semana.
+- **F1 Hub:** Calendário passa pelo owner clicável r311; cada GP abre fim de semana, Grid de Largada e Resultado de Chegada.
+- **UFC / WWE Pay-Per-View:** temporadas e writers preservados; Home reaproveita catálogo completo dos três especiais.
+- **Preservado:** Perfil, Raw, SmackDown, Esportes geral, histórico diário/Desmarcar e Android 1.0.20 / 10062.
 ## 0.3.52 — r525 (2026-10-14)
 
 ### Correção orientada pelo vídeo real
