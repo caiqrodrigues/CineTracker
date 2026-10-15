@@ -62,6 +62,7 @@ function replaceFamily(source,header,marker,canonical,label){
  return source
 }
 function retireFamily(source,header,marker,label){
+ if(!source.includes(marker)||!source.includes(header))return source;
  const rr=ranges(source,header,marker,label);
  for(let i=rr.length-1;i>=0;i--){
   const r=rr[i],body='/* r532 retired obsolete '+label+' */\n(()=>{\'use strict\';window.__ctR532Retired_'+label.replace(/[^a-z0-9]/gi,'_')+'_'+i+'=true;})();';
