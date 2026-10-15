@@ -1,4 +1,4 @@
-name: Verify Web 0.3.53 r526
+name: Verify Web 0.3.54 r527
 on:
   push:
     branches: [main]
@@ -9,22 +9,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r526:
+  web_r527:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r526 scoped regression gate
+      - name: Build and r527 behavioral regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v526.js
-          grep -Fq "window.__ctR526Marker='home-v526+movie-nowrap+discover-r321-r464+top10-owned-cards+special-direct+f1-clickable-gp'" apps/web/dist/app-v526.js
-          grep -Fq 'cinetracker_home_series_v526' apps/web/dist/app-v526.js
-          grep -Fq 'data-ct311-f1-race' apps/web/dist/app-v526.js
+          node --check apps/web/dist/app-v527.js
+          grep -Fq "window.__ctR527Marker='home-v527-live-status+movies-real-renderer+discover-10x10-audited+special-pointerdown+f1-gp-detail'" apps/web/dist/app-v527.js
+          grep -Fq 'cinetracker_home_series_v527' apps/web/dist/app-v527.js
+          grep -Fq 'Grid de Largada' apps/web/dist/app-v527.js
+          grep -Fq 'Resultado de Chegada' apps/web/dist/app-v527.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,20 +35,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r526, android]
+    needs: [web_r527, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r526 production
+      - name: Wait for r527 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.53"' <<<"$BODY" && grep -Fq '"revision": "r526-official-0.3.53"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v526.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.54"' <<<"$BODY" && grep -Fq '"revision": "r527-official-0.3.54"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v527.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR526Marker='home-v526+movie-nowrap+discover-r321-r464+top10-owned-cards+special-direct+f1-clickable-gp'" <<<"$JS" && grep -Fq 'app-v526.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR527Marker='home-v527-live-status+movies-real-renderer+discover-10x10-audited+special-pointerdown+f1-gp-detail'" <<<"$JS" && grep -Fq 'app-v527.js' <<<"$HTML"; then exit 0; fi
             fi
             [ "$i" -eq 240 ] && exit 1
             sleep 5

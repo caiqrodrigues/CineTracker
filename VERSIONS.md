@@ -1,3 +1,4 @@
+- Web: **0.3.54 / r527-official-0.3.54** — Home v527 para séries encerradas/vivas, Watchlist Filmes validada pelo renderer real 2:3, Pra Você com alias original, Top 10 10+10 behavior-gated, especiais abrindo e F1 por GPs com detalhe de corrida.
 - Web: **0.3.53 / r526-official-0.3.53** — Home v526/Watchlist nowrap 2:3, Descobrir r321+r464, Top 10 10+10 visível, Naruto consolidado e F1 por GP com calendário clicável.
 - Web: **0.3.52 / r525-official-0.3.52** — Home com âncora finita e Watchlist 2:3; filtro pessoal v525 sem timeout; Top 10 10+10; F1/UFC/WWE db-first; últimos 5 jogos do time em todas as competições.
 - Web: **0.3.51 / r524-official-0.3.51** — Home: F1/UFC/WWE PPV com assistidos/total da temporada, abertura direta dos três especiais e Séries/Filmes + busca fixos na mesma linha; r523 preservada.

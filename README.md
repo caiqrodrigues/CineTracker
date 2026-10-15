@@ -1,3 +1,11 @@
+## Web 0.3.54 / r527 — Home, Descobrir e séries especiais
+
+- Home Séries usa v527: backlog completo apenas para séries encerradas; Raw/SmackDown continuam pela regra recente; Naruto mantém contagem integral correta.
+- Home Filmes é validada pelo renderer real em rail horizontal 2:3, com Histórico escondido fisicamente acima.
+- Pra Você audita também título original; A Odisseia/The Odyssey é uma regressão obrigatória.
+- Top 10 precisa buscar e renderizar 10 Séries + 10 Filmes mesmo quando as primeiras páginas são removidas pelo filtro pessoal.
+- F1, UFC e WWE PPV abrem pela Home; F1 conta GPs e o F1 Hub abre cada GP com Grid de Largada e Resultado de Chegada.
+- Perfil, Esportes geral e Android permanecem fora do escopo.
 ## Web 0.3.53 / r526 — Home + Descobrir + séries especiais
 
 - Home Séries usa v526 para contagem canônica de séries encerradas; Naruto foi consolidado em uma única mídia.

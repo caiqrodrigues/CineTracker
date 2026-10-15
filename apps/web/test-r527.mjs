@@ -1,0 +1,15 @@
+import {readFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+await import('./build-r527.mjs');
+const [js,css,html,relRaw,rootRaw,webRaw]=await Promise.all([readFile(resolve('dist/app-v527.js'),'utf8'),readFile(resolve('dist/app-v527.css'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('r527 regression: '+m)},rel=JSON.parse(relRaw),rp=JSON.parse(rootRaw),wp=JSON.parse(webRaw);
+const region=marker=>{const at=js.indexOf(marker);ok(at>=0,'marker region '+marker);const start=js.lastIndexOf('(()=>{',at),end=js.indexOf('\n})();',at);ok(start>=0&&end>=0,'bounds '+marker);return js.slice(start,end+6)};
+ok(rp.version==='0.3.54'&&wp.version==='0.3.54','versions');ok(rel.version==='0.3.54'&&rel.revision==='r527-official-0.3.54','release');ok(html.includes('app-v527.js')&&html.includes('app-v527.css'),'assets');
+ok(js.includes("window.__ctR527Marker='home-v527-live-status+movies-real-renderer+discover-10x10-audited+special-pointerdown+f1-gp-detail'"),'marker');
+const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");ok(r388.includes("rpc('cinetracker_home_series_v527'"),'Home v527');ok(!r388.includes("rpc('cinetracker_home_series_v526'"),'no v526 Home RPC');ok(r388.includes('class="card ct514-movie-card"')&&r388.includes("stack.className='ct388-movie-stack ct514-movie-rail ct525-movie-rail ct526-movie-rail'"),'actual movie renderer');
+ok(js.includes('original_title')&&js.includes('cinetracker_recommendation_filter_v525')&&js.includes('__ctR523ForYouTest'),'ForYou alias audit v525');
+const r321=region("window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity';");ok(r321.includes('topEligible523')&&r321.includes("ct523Top10='10:10'")&&r321.includes('ct526-top-card'),'Top10 strict 10+10');
+ok(js.includes("unit=key==='f1'?'GPs':'eventos'"),'F1 GP unit');ok(js.includes("available_episodes:pending.length")&&js.includes("home_bucket:y===currentYear()&&pending.length?'continue':'up_to_date'"),'F1 race-only state');
+ok(js.includes("window.addEventListener('pointerdown'")&&js.includes("window.__ctR524SpecialOpen"),'special pointerdown owner');ok(js.includes('data-ct311-f1-race')&&js.includes('Grid de Largada')&&js.includes('Resultado de Chegada'),'F1 Hub detail');ok(css.includes('flex-flow:row nowrap!important')&&css.includes('aspect-ratio:2/3!important'),'movie rail CSS');
+const tail=js.slice(js.lastIndexOf('/* CineTracker Web 0.3.54 r527'));for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])ok(!tail.includes(bad),'forbidden '+bad);
+console.log('WEB_R527_REGRESSION_OK');
