@@ -1,3 +1,11 @@
+## Web 0.3.61 / r534 — interação canônica
+
+- F1, UFC e WWE Pay-Per-View usam um único opener ativo e a mesma janela anual r520.
+- Raw e SmackDown permanecem séries normais.
+- Títulos Relacionados abrem pelo handler nativo `data-media` + `go()`; runtimes auxiliares cuidam apenas de Watchlist/Visto.
+- O gate Chromium não fornece `__ctCoreR471.navigate`, reproduzindo a bridge realmente existente em produção.
+- Home, Descobrir, Perfil, Esportes e Android não recebem mudança visual ou funcional nesta release.
+
 ## Web 0.3.60 / r533 — especiais, relacionados e chrome da Home
 
 - F1/UFC/WWE PPV abrem pela tela anual mesmo quando a Home recria o card como linha genérica.
