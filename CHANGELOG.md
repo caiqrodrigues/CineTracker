@@ -1,9 +1,9 @@
 ## 0.3.61 — r534 (2026-10-15)
 
 ### Escopo estrito: abertura F1/UFC/WWE + Títulos Relacionados
-- **F1 / UFC / WWE Pay-Per-View:** existe um único owner de abertura, colocado no primeiro ponto da cadeia de interação. Os listeners concorrentes r524, r527 e r533 são retirados do bundle ativo.
+- **F1 / UFC / WWE Pay-Per-View:** existe um único owner ativo de abertura. r524/r527 já permanecem aposentados desde r529 e o owner r533 é substituído em sua própria posição, sem empilhar outro listener.
 - A tela anual r520 continua sendo a mesma; catálogo, seleção de temporada e writers de Assistido não foram reescritos.
-- O owner aguarda de forma limitada tanto a tela r520 quanto o catálogo r520 antes de abrir; linhas genéricas da Home usam fallback somente por título exato.
+- O owner abre no pointerdown, aguarda de forma limitada tanto a tela r520 quanto o catálogo r520 e bloqueia o clique genérico antes que ele possa disputar a navegação; linhas genéricas da Home usam fallback somente por título exato.
 - **Raw / SmackDown:** continuam como séries normais e passam pelo clique canônico de mídia; não são capturados como WWE PPV.
 - **Títulos Relacionados:** abrir filme/série volta a ser responsabilidade exclusiva do handler original `data-media` + `go()` do CineTracker. Nenhum runtime auxiliar inventa `navigate()`, `pushState` ou evento de rota.
 - Os runtimes auxiliares de Relacionados tratam somente **Watchlist** e **Visto**, preservando essas ações sem bloquear a abertura do card.

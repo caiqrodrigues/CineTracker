@@ -8,7 +8,7 @@ const release=JSON.parse(releaseRaw),rootPkg=JSON.parse(rootPkgRaw),webPkg=JSON.
 yes(rootPkg.version==='0.3.61'&&webPkg.version==='0.3.61','versions');
 yes(release.version==='0.3.61'&&release.revision==='r534-official-0.3.61','release');
 yes(html.includes('app-v534.js')&&html.includes('app-v534.css'),'assets');
-yes(count("window.__ctR534SpecialMarker='earliest-single-special-owner+catalog-ready+title-fallback'")===1,'one canonical special owner');
+yes(count("window.__ctR534SpecialMarker='single-special-owner+catalog-ready+title-fallback'")===1,'one active special owner');
 yes(count("window.__ctR534RelatedMarker='related-actions-only+native-go-opens-media'")===1,'one related action owner');
 for(const old of [
  "window.__ctR522SpecialOpenMarker='pointerup-owner-f1-ufc-wwe'",

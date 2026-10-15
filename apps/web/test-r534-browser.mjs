@@ -3,7 +3,7 @@ await import('./build-r534.mjs');
 const js=await readFile(resolve('dist/app-v534.js'),'utf8');
 function region(header,marker){const at=js.lastIndexOf(marker);if(at<0)throw new Error('region '+marker);const start=js.lastIndexOf(header,at),end=js.indexOf('\n})();',at);if(start<0||end<0)throw new Error('bounds '+marker);return js.slice(start,end+6)}
 const screen=region('/* CineTracker Web 0.3.47 r520 — full-screen owner for F1 + UFC + WWE Pay-Per-View. */',"window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner';");
-const special=region('/* CineTracker Web 0.3.61 r534 — earliest and only opener for F1/UFC/WWE annual series screens. */',"window.__ctR534SpecialMarker='earliest-single-special-owner+catalog-ready+title-fallback';");
+const special=region('/* CineTracker Web 0.3.61 r534 — single active opener for F1/UFC/WWE annual series screens. */',"window.__ctR534SpecialMarker='single-special-owner+catalog-ready+title-fallback';");
 const related=region('/* CineTracker Web 0.3.61 r534 — related actions only; native CineTracker data-media handler owns navigation. */',"window.__ctR534RelatedMarker='related-actions-only+native-go-opens-media';");
 const prelude=`
 let currentRoute='home',navLog=[],watchLog=[],seenLog=[];
@@ -20,7 +20,7 @@ const probe=`
  history.replaceState({},'','/home');currentRoute='home';
  for(const [type,title,id] of [['f1','Fórmula 1',801],['ufc','UFC',802],['wwe','WWE Pay-Per-View',803]]){
   const row=document.createElement('div');row.className='media-row ct274-media-card';row.dataset.media='tv:'+id;row.innerHTML='<div class="ct274-row-copy"><b>'+title+'</b></div>';document.body.appendChild(row);
-  row.dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));row.click();await sleep(70);
+  row.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));row.click();await sleep(70);
   const s=document.querySelector('[data-ct513-series-screen]');yes(s,'special not opened '+type+' '+(document.documentElement.dataset.ct534SpecialError||''));
   const h=s.querySelector('h1')?.textContent||'';yes(type==='f1'?h==='Fórmula 1':type==='ufc'?h==='UFC':h==='WWE Pay-Per-View','special title '+type+':'+h);
   yes(!navLog.includes('/series/'+id),'special leaked to generic go '+type);
@@ -29,25 +29,25 @@ const probe=`
  for(const [title,id] of [['WWE Raw',901],['WWE SmackDown',902]]){
   currentRoute='home';history.replaceState({},'','/home');
   const row=document.createElement('div');row.className='media-row ct274-media-card';row.dataset.media='tv:'+id;row.innerHTML='<div class="ct274-row-copy"><b>'+title+'</b></div>';document.body.appendChild(row);
-  row.dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));row.click();await sleep(5);
+  row.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));row.click();await sleep(5);
   yes(!document.querySelector('[data-ct513-series-screen]'),title+' incorrectly intercepted');
   yes(navLog.filter(x=>x==='/series/'+id).length===1,title+' did not use normal series route');
   row.remove()
  }
  currentRoute='movie';history.replaceState({},'','/movie/1');
  const movie=document.createElement('article');movie.className='ct169-related-card';movie.innerHTML='<button class="ct169-related-open" data-media="movie:123" type="button">Movie related</button>';document.body.appendChild(movie);
- movie.querySelector('[data-media]').dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));movie.querySelector('[data-media]').click();await sleep(5);
+ movie.querySelector('[data-media]').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));movie.querySelector('[data-media]').click();await sleep(5);
  yes(navLog.filter(x=>x==='/movie/123').length===1,'related movie native go '+navLog.join(','));
  movie.remove();
  currentRoute='series';history.replaceState({},'','/series/1');
  const series=document.createElement('article');series.className='ct169-related-card';series.innerHTML='<button class="ct169-related-open" data-media="tv:456" type="button">Series related</button>';document.body.appendChild(series);
- series.querySelector('[data-media]').dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));series.querySelector('[data-media]').click();await sleep(5);
+ series.querySelector('[data-media]').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));series.querySelector('[data-media]').click();await sleep(5);
  yes(navLog.filter(x=>x==='/series/456').length===1,'related series native go '+navLog.join(','));
  series.remove();
  const w=document.createElement('article');w.className='ct169-related-card';w.innerHTML='<button data-ct169-related-watch="movie:777" type="button">Watch</button>';document.body.appendChild(w);
- w.querySelector('button').dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));w.querySelector('button').click();await sleep(5);yes(watchLog.join(',')==='movie:777','watch action');yes(!navLog.includes('/movie/777'),'watch navigated');
+ w.querySelector('button').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));w.querySelector('button').click();await sleep(5);yes(watchLog.join(',')==='movie:777','watch action');yes(!navLog.includes('/movie/777'),'watch navigated');
  const v=document.createElement('article');v.className='ct169-related-card';v.innerHTML='<button data-ct169-related-seen="tv:888" type="button">Seen</button>';document.body.appendChild(v);
- v.querySelector('button').dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));v.querySelector('button').click();await sleep(5);yes(seenLog.join(',')==='tv:888','seen action');yes(!navLog.includes('/series/888'),'seen navigated');
+ v.querySelector('button').dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));v.querySelector('button').click();await sleep(5);yes(seenLog.join(',')==='tv:888','seen action');yes(!navLog.includes('/series/888'),'seen navigated');
  document.documentElement.dataset.ct534browser='ok'
 }catch(e){document.documentElement.dataset.ct534browser='fail:'+String(e?.stack||e)}})();
 `;

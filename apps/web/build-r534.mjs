@@ -41,27 +41,9 @@ function replaceFunction(source,name,replacement){
 }
 
 js=replaceRegion(js,
- '/* CineTracker Web 0.3.49 r522 — final direct opener for F1/UFC/WWE special series. */',
- "window.__ctR522SpecialOpenMarker='pointerup-owner-f1-ufc-wwe';",
- special,'r522 special opener');
-
-js=replaceRegion(js,
- '/* CineTracker Web 0.3.51 r524 — final direct opener for F1/UFC/WWE special series. */',
- "window.__ctR524SpecialOpenMarker='direct-special-card-owner-no-route-gate';",
- "/* r534 retired r524 special listeners */\n(()=>{'use strict';window.__ctR524SpecialOpen={version:'retired-r534',open:type=>window.__ctR534Special?.openSpecial?.(type)??false};window.__ctR534RetiredR524=true;})();",
- 'r524 special opener');
-
-js=replaceRegion(js,
- '/* CineTracker Web 0.3.54 r527 — scoped final authority for Home/Discover/special-series/F1. */',
- "window.__ctR527Marker='home-v527-live-status+movies-real-renderer+discover-10x10-audited+special-pointerdown+f1-gp-detail';",
- "/* r534 r527 compatibility without special pointer owner */\n(()=>{'use strict';if(window.__ctR527?.version==='0.3.54')return;try{sessionStorage.removeItem('ct392:series');sessionStorage.removeItem('ct520:f1:current');sessionStorage.removeItem('ct520:ufc:current');sessionStorage.removeItem('ct520:wwe:current')}catch{}window.__ctR527Marker='home-v527-live-status+movies-real-renderer+discover-10x10-audited+special-pointerdown+f1-gp-detail';window.__ctR527={version:'0.3.54',scope:'home+discover+special-series+f1-hub'};})();",
- 'r527 special pointer owner');
-
-js=replaceRegion(js,
  '/* CineTracker Web 0.3.60 r533 — resilient single opener for F1/UFC/WWE. */',
  "window.__ctR533SpecialMarker='special-title-fallback+pointer-owner+real-series-screen';",
- "/* r534 retired r533 special listeners */\n(()=>{'use strict';window.__ctR533Special={version:'retired-r534',openSpecial:type=>window.__ctR534Special?.openSpecial?.(type)??false};window.__ctR534RetiredR533Special=true;})();",
- 'r533 special opener');
+ special,'r533 special opener');
 
 js=replaceRegion(js,
  '/* CineTracker Web 0.3.60 r533 — pointer-safe related-title SPA owner. */',
@@ -87,7 +69,7 @@ sw=sw.replaceAll('r533','r534').replaceAll('app-v533.js','app-v534.js').replaceA
 const release=JSON.parse(releaseRaw);Object.assign(release,{
  version:'0.3.61',revision:'r534-official-0.3.61',base:'r533+r534-canonical-interactions',
  scope:'special-series-one-earliest-owner+related-native-go',
- special_series:'one earliest window owner opens F1/UFC/WWE annual r520 screen; r524/r527/r533 open listeners and r520 screen self-open branch are retired; Raw/SmackDown remain normal series',
+ special_series:'one active window owner opens F1/UFC/WWE annual r520 screen; r524/r527 are already retired by r529; r533 is replaced in place and the r520 screen self-open branch is retired; Raw/SmackDown remain normal series',
  related:'related movie/series opening is owned exclusively by the original application data-media click handler and lexical go(); auxiliary owners only handle Watchlist/Visto',
  preserved:'Home rendering/chrome/order, Discover/PraVocê/Top10, Profile, Sports, writers/catalogs, Raw/SmackDown and Android unchanged'
 });
@@ -100,7 +82,7 @@ await Promise.all([
 await Promise.all([rm(resolve(dist,'app-v533.js'),{force:true}),rm(resolve(dist,'app-v533.css'),{force:true})]);
 
 for(const need of [
- "window.__ctR534SpecialMarker='earliest-single-special-owner+catalog-ready+title-fallback'",
+ "window.__ctR534SpecialMarker='single-special-owner+catalog-ready+title-fallback'",
  "window.__ctR534RelatedMarker='related-actions-only+native-go-opens-media'",
  "window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner'",
  "window.__ctR533HomeMarker='dominant-body-shield+fixed-controls-above-content'",

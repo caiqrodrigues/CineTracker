@@ -22,7 +22,7 @@ jobs:
           npm run build
           npm run verify
           node --check apps/web/dist/app-v534.js
-          grep -Fq "window.__ctR534SpecialMarker='earliest-single-special-owner+catalog-ready+title-fallback'" apps/web/dist/app-v534.js
+          grep -Fq "window.__ctR534SpecialMarker='single-special-owner+catalog-ready+title-fallback'" apps/web/dist/app-v534.js
           grep -Fq "window.__ctR534RelatedMarker='related-actions-only+native-go-opens-media'" apps/web/dist/app-v534.js
           ! grep -Fq "window.__ctR522SpecialOpenMarker='pointerup-owner-f1-ufc-wwe'" apps/web/dist/app-v534.js
           ! grep -Fq "window.__ctR524SpecialOpenMarker='direct-special-card-owner-no-route-gate'" apps/web/dist/app-v534.js
@@ -49,7 +49,7 @@ jobs:
             if grep -Fq '"version": "0.3.61"' <<<"$BODY" && grep -Fq '"revision": "r534-official-0.3.61"' <<<"$BODY"; then
               JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v534.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR534SpecialMarker='earliest-single-special-owner+catalog-ready+title-fallback'" <<<"$JS" && grep -Fq 'app-v534.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR534SpecialMarker='single-special-owner+catalog-ready+title-fallback'" <<<"$JS" && grep -Fq 'app-v534.js' <<<"$HTML"; then exit 0; fi
             fi
             [ "$i" -eq 240 ] && exit 1
             sleep 5

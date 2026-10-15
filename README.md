@@ -1,6 +1,6 @@
 ## Web 0.3.61 / r534 — interação canônica
 
-- F1, UFC e WWE Pay-Per-View usam um único opener e a mesma janela anual r520.
+- F1, UFC e WWE Pay-Per-View usam um único opener ativo e a mesma janela anual r520.
 - Raw e SmackDown permanecem séries normais.
 - Títulos Relacionados abrem pelo handler nativo `data-media` + `go()`; runtimes auxiliares cuidam apenas de Watchlist/Visto.
 - O gate Chromium não fornece `__ctCoreR471.navigate`, reproduzindo a bridge realmente existente em produção.

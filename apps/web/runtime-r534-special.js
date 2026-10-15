@@ -1,4 +1,4 @@
-/* CineTracker Web 0.3.61 r534 — earliest and only opener for F1/UFC/WWE annual series screens. */
+/* CineTracker Web 0.3.61 r534 — single active opener for F1/UFC/WWE annual series screens. */
 (()=>{
 'use strict';
 if(window.__ctR534Special?.version==='0.3.61')return;
@@ -51,7 +51,7 @@ function openSpecial(type){
 function activate(e,el=candidate(e.target)){
  if(!el)return false;const t=typeOf(el);if(!t)return false;stop(e);void openSpecial(t);return true
 }
-window.addEventListener('pointerup',e=>{
+window.addEventListener('pointerdown',e=>{
  const el=candidate(e.target),t=typeOf(el);if(!el||!t)return;
  lastPointer={el,type:t,at:Date.now()};activate(e,el)
 },true);
@@ -63,7 +63,6 @@ window.addEventListener('click',e=>{
 window.addEventListener('keydown',e=>{
  if((e.key==='Enter'||e.key===' ')&&candidate(e.target))activate(e)
 },true);
-window.__ctR522SpecialOpen={version:'retired-r534',open:openSpecial};
-window.__ctR534SpecialMarker='earliest-single-special-owner+catalog-ready+title-fallback';
+window.__ctR534SpecialMarker='single-special-owner+catalog-ready+title-fallback';
 window.__ctR534Special={version:'0.3.61',candidate,typeOf,openSpecial};
 })();
