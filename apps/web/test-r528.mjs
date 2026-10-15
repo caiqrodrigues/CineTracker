@@ -18,8 +18,8 @@ const align=extractNamed(r388,'homeAlign507','ct528HomeStart');ok(align.includes
 const markHist=extractNamed(r388,'homeMarkHistory507','requestAnimationFrame');ok(markHist.includes('homeAlign507(k,true)'),'late History final re-anchor');
 const select=extractNamed(r321,'selectTopProvider528','paintTop321');ok(select.includes('++topToken')&&select.includes('paintTop321(next,token,true)'),'Top10 provider generation');
 const paint=extractNamed(r321,'paintTop321',"ct523Top10='10:10'");ok(paint.includes('movies.length!==10||series.length!==10'),'Top10 strict 10+10');
-const card=extractNamed(r520,'cardHtml',"unit=key==='f1'?'GPs':'eventos'");ok(!card.includes('__ctR516SpecialSummary')&&card.includes('total_episodes'),'special card annual count only');
-const special=extractNamed(r520,'loadCurrent','normalizeSpecial528');ok(special.includes('catalog.loadSeason')&&special.includes('normalizeSpecial528'),'special catalog normalization');
+const card=extractNamed(js,'cardHtml',"pendingUnit=key==='f1'?'GP':'evento'");ok(!card.includes('__ctR516SpecialSummary')&&card.includes('total_episodes'),'special card annual count only');
+const special=extractNamed(js,'loadCurrent','normalizeSpecial528');ok(special.includes('catalog.loadSeason')&&special.includes('normalizeSpecial528'),'special catalog normalization');
 const f1=extractNamed(r521Catalog,'mergeF1','f1-r526-gp-series');ok(f1.includes("session_kind||'').toLowerCase()==='race'"),'F1 must count races only');
 ok(css.includes('.ct528-movie-list')&&css.includes('flex-flow:column nowrap!important')&&!css.includes('.ct528-movie-list{display:grid'),'list CSS');
 const tail=js.slice(js.lastIndexOf('/* CineTracker Web 0.3.55 r528'));for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])ok(!tail.includes(bad),'forbidden '+bad);

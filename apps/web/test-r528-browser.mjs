@@ -24,7 +24,7 @@ const alignSrc=extractNamed(r388,'homeAlign507','ct528HomeStart');
 const markMainSrc=extractNamed(r388,'homeMarkMain507','homeAlign507');
 const markHistSrc=extractNamed(r388,'homeMarkHistory507','homeAlign507');
 const selectSrc=extractNamed(r321,'selectTopProvider528','paintTop321');
-const cardSrc=extractNamed(r520,'cardHtml',"unit=key==='f1'?'GPs':'eventos'");
+const cardSrc=extractNamed(js,'cardHtml',"pendingUnit=key==='f1'?'GP':'evento'");
 
 const topHarness=new Function('sleep',`
  let state={topProvider:0},topToken=0,ct171TopProvider=0,content={innerHTML:'',provider:0},buttons=[];
