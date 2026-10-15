@@ -1,3 +1,16 @@
+## 0.3.52 — r525 (2026-10-14)
+
+### Correção orientada pelo vídeo real
+- **Home Séries:** Histórico permanece fisicamente acima/oculto; entrada e repaints usam âncora finita em Continuar assistindo, sem cadeia de dezenas de RAFs. v492 usa lote compacto e v452 é fallback delimitado.
+- **Home Filmes:** Filmes vistos permanece acima/oculto; entrada em Assistir a seguir / Watchlist. O owner final força um único rail horizontal de pôsteres 2:3 (176×264 desktop / 154×231 mobile).
+- **Home toolbar:** Séries/Filmes e busca ficam na mesma linha fixa com espaço reservado, sem desaparecer no scroll nem cobrir conteúdo.
+- **F1/UFC/WWE PPV:** a tela usa a temporada já em cache imediatamente; F1/WWE têm enriquecimento remoto limitado e UFC deixa de bloquear a abertura esperando sync externo.
+- **Descobrir:** filtros pessoais antigos v517/v322 são roteados para v525, que consulta primeiro biblioteca/histórico do usuário e evita statement timeout. Aliases original/traduzido continuam valendo; A Odisseia ↔ The Odyssey foi validada como bloqueada.
+- **Top 10:** mantém o contrato estrito 10 Séries + 10 Filmes e passa a usar o filtro rápido v525; entrada nova escolhe o primeiro streaming da lista em vez de estado antigo.
+- **Pra Você:** retry do erro volta a funcionar e 100% Novos passa pelo filtro v525.
+- **Esportes / time:** últimos 5 jogos usam IDs canônicos do mesmo time em todas as competições; Atlético-MG foi validado com Sul-Americana + Brasileirão.
+- **Perfil:** não alterado. Raw/SmackDown e Android 1.0.20 / 10062 preservados.
+
 ## 0.3.51 — r524 (2026-10-14)
 
 ### Escopo estrito: Home

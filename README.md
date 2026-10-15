@@ -1,3 +1,14 @@
+## Web 0.3.52 / r525 — Home, Descobrir e detalhe de time
+
+- Histórico da Home continua acima/oculto; entrada é finita em Continuar/Watchlist.
+- Watchlist de Filmes é um único rail horizontal 2:3.
+- Séries/Filmes + busca permanecem juntos sem sobrepor conteúdo.
+- Pra Você/abas públicas usam filtro pessoal v525 rápido e alias-safe.
+- Top 10 mantém somente resultado completo 10+10 e abre no primeiro streaming.
+- F1/UFC/WWE PPV abrem com cache atual e completam dados sem bloquear a tela.
+- Detalhe de time retorna os últimos 5 jogos em todas as competições.
+- Perfil e Android não foram alterados.
+
 ## Web 0.3.51 / r524 — Home especial corrigida sem trocar owners
 
 - F1, UFC e WWE PPV mostram progresso da temporada como assistidos/total.

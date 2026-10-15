@@ -1,0 +1,46 @@
+/* r525 — Home toolbar reserved space + strict Watchlist rail. */
+html body [data-page="home"] .search-global{
+ position:fixed!important;top:8px!important;
+ left:calc(var(--ct525-home-left,164px) + var(--ct525-tabs-width,112px) + 10px)!important;
+ width:calc(var(--ct525-home-width,calc(100vw - 180px)) - var(--ct525-tabs-width,112px) - 10px)!important;
+ max-width:none!important;margin:0!important;box-sizing:border-box!important;z-index:205!important;
+ background:rgba(3,10,15,.97)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important
+}
+html body [data-page="home"] .search-global input{min-width:0!important;width:100%!important}
+html body [data-home]>.home-tabs,html body [data-home] .home-tabs{
+ position:fixed!important;top:8px!important;left:var(--ct525-home-left,164px)!important;z-index:210!important;margin:0!important;
+ display:flex!important;flex-flow:row nowrap!important;gap:6px!important;width:var(--ct525-tabs-width,112px)!important;max-width:none!important;
+ background:rgba(3,10,15,.97)!important;backdrop-filter:blur(16px)!important;-webkit-backdrop-filter:blur(16px)!important
+}
+html body [data-page="home"] [data-global-results]:not(:empty),html body [data-page="home"] .global-results:not(:empty){
+ position:fixed!important;top:54px!important;
+ left:calc(var(--ct525-home-left,164px) + var(--ct525-tabs-width,112px) + 10px)!important;
+ width:calc(var(--ct525-home-width,calc(100vw - 180px)) - var(--ct525-tabs-width,112px) - 10px)!important;
+ z-index:220!important;max-height:60vh!important;overflow:auto!important
+}
+html body [data-home]{padding-top:54px!important;box-sizing:border-box!important}
+html body [data-home-view="movies"] .ct388-movie-stack.ct525-movie-rail{
+ box-sizing:border-box!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;
+ align-items:flex-start!important;justify-content:flex-start!important;gap:12px!important;width:100%!important;min-width:0!important;
+ max-width:100%!important;overflow-x:auto!important;overflow-y:hidden!important;padding:1px 1px 9px!important;
+ scroll-snap-type:x proximity!important;scrollbar-width:thin!important;grid-template-columns:none!important
+}
+html body [data-home-view="movies"] .ct525-movie-rail>.ct514-movie-card{
+ position:relative!important;display:block!important;flex:0 0 176px!important;width:176px!important;min-width:176px!important;max-width:176px!important;
+ height:264px!important;min-height:264px!important;max-height:264px!important;aspect-ratio:2/3!important;padding:0!important;margin:0!important;
+ overflow:hidden!important;border-radius:12px!important;scroll-snap-align:start!important
+}
+html body [data-home-view="movies"] .ct525-movie-rail>.ct514-movie-card .poster{
+ position:absolute!important;inset:0!important;width:176px!important;height:264px!important;aspect-ratio:2/3!important;
+ background-size:cover!important;background-position:center!important;object-fit:cover!important
+}
+@media(max-width:720px){
+ html body [data-page="home"] .search-global{top:6px!important}
+ html body [data-home]>.home-tabs,html body [data-home] .home-tabs{top:6px!important}
+ html body [data-home]{padding-top:52px!important}
+ html body [data-home-view="movies"] .ct525-movie-rail>.ct514-movie-card,
+ html body [data-home-view="movies"] .ct525-movie-rail>.ct514-movie-card .poster{
+  flex-basis:154px!important;width:154px!important;min-width:154px!important;max-width:154px!important;
+  height:231px!important;min-height:231px!important;max-height:231px!important;aspect-ratio:2/3!important
+ }
+}
