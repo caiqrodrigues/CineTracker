@@ -19,12 +19,15 @@ const addWatchlist=async()=>true,markSeen=async()=>true,toast=()=>{};
 const probe=`
 (async()=>{const yes=(v,m)=>{if(!v)throw new Error(m)},sleep=ms=>new Promise(r=>setTimeout(r,ms));try{
  window.__ctR512Special=undefined;
+ yes(typeof window.__ctR513SeriesScreen?.open==='function','real r520 special owner unavailable');
+ yes(typeof window.__ctR529?.openSpecial==='function','r529 click owner unavailable');
  for(const type of ['f1','ufc','wwe']){
   const b=document.createElement('button');b.dataset.ct512Special=type;b.dataset.ct513Open=type;document.body.appendChild(b);
-  b.dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));await sleep(80);
-  const screen=document.querySelector('[data-ct513-series-screen]');yes(screen,'real special screen '+type);
+  b.click();
+  let screen=null;for(let i=0;i<24&&!screen;i++){await sleep(25);screen=document.querySelector('[data-ct513-series-screen]')}
+  yes(screen,'real special screen '+type+' r529='+(document.documentElement.dataset.ct529SpecialError||'')+' r530='+(document.documentElement.dataset.ct530SpecialError||''));
   const title=screen.querySelector('h1')?.textContent||'';yes(type==='f1'?/Fórmula 1/.test(title):type==='ufc'?title==='UFC':/WWE Pay-Per-View/.test(title),'special title '+type+':'+title);
-  window.__ctR513SeriesScreen.close();b.remove();await sleep(10);
+  window.__ctR513SeriesScreen.close();b.remove();await sleep(30);
  }
  const card=document.createElement('article');card.className='ct169-related-card ct170-related-card';card.innerHTML='<button class="ct169-related-open" data-media="movie:123" type="button">Relacionado</button>';document.body.appendChild(card);
  card.querySelector('button').dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));await sleep(0);yes(navLog.at(-1)==='/movie/123','related SPA '+navLog.join(','));
