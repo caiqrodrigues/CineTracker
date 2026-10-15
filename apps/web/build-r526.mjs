@@ -16,7 +16,7 @@ const A388="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies
 const A371="window.__ctR371Marker='home-tab-user-only+repaint-preserved+async-generation-cancel';";for(const [n,b] of Object.entries(P.r371))js=replaceNamed(js,A371,n,b,'r371');
 const A321="window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity';";for(const [n,b] of Object.entries(P.discover))js=replaceNamed(js,A321,n,b,'r321');
 const A521="window.__ctR521CatalogMarker='f1-local-sessions+jolpica-all-races+ufc-full+wwe-full';";for(const [n,b] of Object.entries(P.catalog))js=replaceNamed(js,A521,n,b,'r521');
-const A520="window.__ctR512Marker='r520-f1+ufc+wwe-complete-catalog-single-owner';";for(const [n,b] of Object.entries(P.special))js=replaceNamed(js,A520,n,b,'r520-special');
+for(const [n,b] of Object.entries(P.special))js=replaceGlobal(js,n,b,'r520-special');
 for(const [n,b] of Object.entries(P.global))js=replaceGlobal(js,n,b,'global');
 new Function(runtime);js+='\n'+runtime+'\n';
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r526-official-0.3.53';").replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.53 • ${REVISION}');
