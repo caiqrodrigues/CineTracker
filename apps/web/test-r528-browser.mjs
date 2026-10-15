@@ -5,22 +5,26 @@ import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r528.mjs');
 const [js,css]=await Promise.all([readFile(resolve('dist/app-v528.js'),'utf8'),readFile(resolve('dist/app-v528.css'),'utf8')]);
 const ok=(v,m)=>{if(!v)throw new Error('R528_BEHAVIOR '+m)};
-function extractNamed(name,needle=''){const re=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(','g'),hits=[...js.matchAll(re)],out=[];for(const h of hits){const start=h.index,open=js.indexOf('{',start+h[0].length);let depth=0,mode='code',quote='',i=open;for(;i<js.length;i++){const c=js[i],n=js[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth===0){const src=js.slice(start,i);if(!needle||src.includes(needle))out.push(src)}}if(out.length!==1)throw new Error('extract '+name+' '+needle+' count='+out.length);return out[0]}
+function region(marker){const at=js.indexOf(marker);if(at<0)throw new Error('region '+marker);const start=js.lastIndexOf('(()=>{',at),end=js.indexOf('\n})();',at);if(start<0||end<0)throw new Error('region bounds '+marker);return js.slice(start,end+6)}
+function extractNamed(source,name,needle=''){const re=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(','g'),hits=[...source.matchAll(re)],out=[];for(const h of hits){const start=h.index,open=source.indexOf('{',start+h[0].length);let depth=0,mode='code',quote='',i=open;for(;i<source.length;i++){const c=source[i],n=source[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth===0){const src=source.slice(start,i);if(!needle||src.includes(needle))out.push(src)}}if(out.length!==1)throw new Error('extract '+name+' '+needle+' count='+out.length);return out[0]}
+const r388=region("window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';");
+const r321=region("window.__ctR321='discover-pre-render-exact-filter+profile-home-history-parity';");
+const r520=region("window.__ctR512Marker='r520-f1+ufc+wwe-complete-catalog-single-owner';");
 const rows=v=>Array.isArray(v)?v:[],esc=v=>String(v??''),mediaId=x=>Number(x?.media_id||x?.id||0)||0,titleOf=x=>String(x?.title||x?.name||'');
-const movieRowSrc=extractNamed('movieRow','ct274MovieMeta');
+const movieRowSrc=extractNamed(r388,'movieRow','ct274MovieMeta');
 const movieRow=new Function('rows','esc','mediaId','titleOf','ct274Row','ct274MovieMeta','ct274MovieWatchAction','ct274MovieAttrs',movieRowSrc+';return movieRow;')(
  rows,esc,mediaId,titleOf,
  (x,o)=>'<div class="media-row ct274-media-card"><div class="thumb"></div><div><b>'+x.title+'</b><small>'+o.meta+'</small></div><span>'+o.action+'</span></div>',
  x=>String(x.release_year||''),()=>'<button>✓</button>',()=>''
 );
 const movieRows=Array.from({length:12},(_,i)=>movieRow({media_id:500+i,tmdb_id:1500+i,media_type:'movie',title:'Filme '+i,release_year:2025,runtime_minutes:100})).join('');
-const mainSrc=extractNamed('homeMain393','continuar');
-const reqSrc=extractNamed('homeRequest507','__ctR528HomeAnchor');
-const alignSrc=extractNamed('homeAlign507','ct528HomeStart');
-const markMainSrc=extractNamed('homeMarkMain507','homeAlign507');
-const markHistSrc=extractNamed('homeMarkHistory507','homeAlign507');
-const selectSrc=extractNamed('selectTopProvider528','paintTop321');
-const cardSrc=extractNamed('cardHtml',"unit=key==='f1'?'GPs':'eventos'");
+const mainSrc=extractNamed(r388,'homeMain393','continuar');
+const reqSrc=extractNamed(r388,'homeRequest507','__ctR528HomeAnchor');
+const alignSrc=extractNamed(r388,'homeAlign507','ct528HomeStart');
+const markMainSrc=extractNamed(r388,'homeMarkMain507','homeAlign507');
+const markHistSrc=extractNamed(r388,'homeMarkHistory507','homeAlign507');
+const selectSrc=extractNamed(r321,'selectTopProvider528','paintTop321');
+const cardSrc=extractNamed(r520,'cardHtml',"unit=key==='f1'?'GPs':'eventos'");
 
 const topHarness=new Function('sleep',`
  let state={topProvider:0},topToken=0,ct171TopProvider=0,content={innerHTML:'',provider:0},buttons=[];
