@@ -1,3 +1,4 @@
+- Web: **0.3.57 / r530-official-0.3.57** — restaura Séries/Filmes + busca fixos no topo e torna a tela anual F1/UFC/WWE resiliente à corrida de inicialização do bridge especial.
 - Web: **0.3.56 / r529-official-0.3.56** — Home sem barra/abas flutuantes, âncora direta em Continuar/Watchlist e opener único da tela de Série para F1/UFC/WWE PPV.
 - Web: **0.3.55 / r528-official-0.3.55** — Home Séries ancorada em Continuar após Histórico, Home Filmes em lista vertical canônica, especiais com contagem anual e Top 10 com troca de streaming determinística 10+10.
 - Web: **0.3.54 / r527-official-0.3.54** — Home v527 para séries encerradas/vivas, Watchlist Filmes validada pelo renderer real 2:3, Pra Você com alias original, Top 10 10+10 behavior-gated, especiais abrindo e F1 por GPs com detalhe de corrida.

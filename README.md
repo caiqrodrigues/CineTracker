@@ -1,3 +1,10 @@
+## Web 0.3.57 / r530 — toolbar fixo + séries especiais
+
+- Séries/Filmes e busca global permanecem travados no topo da Home durante o scroll.
+- Histórico continua escondido acima; Continuar/Watchlist são ancorados abaixo do toolbar.
+- F1, UFC e WWE Pay-Per-View abrem a tela anual imediatamente e usam fallback direto do catálogo r520 se o bridge especial ainda estiver inicializando.
+- Nenhuma outra área funcional foi alterada.
+
 ## Web 0.3.56 / r529 — Home sem overlay + séries especiais
 
 - Home mantém o Histórico acima/oculto, mas Séries/Filmes não flutuam sobre o conteúdo.
