@@ -41,7 +41,7 @@ ok(cardHtml('f1',{series:{season:2026,watched_episodes:17,total_episodes:23,avai
 ok(cardHtml('ufc',{series:{season:2026,watched_episodes:14,total_episodes:41,available_episodes:2}}).includes('14/41 eventos'),'UFC annual count');
 ok(!cardHtml('wwe',{series:{season:2026,watched_episodes:7,total_episodes:10,available_episodes:0}}).includes('999'),'global special total leaked');
 
-const probe=`(async()=>{try{
+const probe=`(()=>{try{
  const yes=(v,m)=>{if(!v)throw new Error(m)},q=(s,r=document)=>r.querySelector(s);
  let homeAnchorKind507='series',homeAnchorPending507=false,homeUserMoved393=false,homeAnchorToken393=0;
  const homeMainReady507={series:false,movies:false},homeHistoryReady507={series:false,movies:false};
@@ -55,9 +55,9 @@ const probe=`(async()=>{try{
  ${alignSrc}
  ${markMainSrc}
  ${markHistSrc}
- homeRequest507('series',true);homeMarkMain507('series');await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+ homeRequest507('series',true);homeMarkMain507('series');
  const target=q('[data-ct388-series-section]');let wanted=Math.max(8,Math.ceil(Number(q('.home-tabs').getBoundingClientRect().bottom||0))+8);yes(Math.abs(target.getBoundingClientRect().top-wanted)<4,'initial-anchor '+target.getBoundingClientRect().top+'/'+wanted);
- q('[data-ct388-history="episodes"]').style.height='1300px';homeMarkHistory507('series');await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+ q('[data-ct388-history="episodes"]').style.height='1300px';homeMarkHistory507('series');homeAlign507('series',true);
  wanted=Math.max(8,Math.ceil(Number(q('.home-tabs').getBoundingClientRect().bottom||0))+8);yes(Math.abs(target.getBoundingClientRect().top-wanted)<4,'final-anchor '+target.getBoundingClientRect().top+'/'+wanted);yes(window.scrollY>1000,'history-not-hidden '+window.scrollY);
  const list=q('.ct528-movie-list'),items=[...list.children],cs=getComputedStyle(list);yes(cs.display==='flex'&&cs.flexDirection==='column','movie-list-css '+cs.display+'/'+cs.flexDirection);yes(items.length===12&&items.every(x=>x.classList.contains('media-row')),'movie-list-rows');const a=items[0].getBoundingClientRect(),b=items[1].getBoundingClientRect();yes(b.top>a.bottom,'movies-not-vertical '+a.bottom+'/'+b.top);yes(list.scrollWidth<=list.clientWidth+2,'movie-horizontal-overflow');
  document.documentElement.dataset.ct528browser='ok';
@@ -66,5 +66,5 @@ const html='<!doctype html><html><head><meta charset="utf-8"><style>'+css+' body
 const server=createServer((req,res)=>{res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store'});res.end(html)});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;let bin='';for(const x of ['google-chrome-stable','google-chrome','chromium','chromium-browser']){try{execFileSync('which',[x],{stdio:'ignore'});bin=x;break}catch{}}
 if(!bin)throw new Error('Chromium unavailable');
-const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--virtual-time-budget=1200','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},20000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1000));const m=out.match(/data-ct528browser="([^"]*)"/),state=m?.[1]||'';if(state!=='ok')throw new Error('R528_BROWSER '+state+' DOM='+out.slice(-3500));
+const child=spawn(bin,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-background-networking','--dump-dom','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});let out='',err='';child.stdout.on('data',d=>out+=d);child.stderr.on('data',d=>err+=d);const killer=setTimeout(()=>{try{child.kill('SIGTERM')}catch{}},20000);const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await new Promise(r=>server.close(r));if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1000));const m=out.match(/data-ct528browser="([^"]*)"/),state=m?.[1]||'';if(state!=='ok')throw new Error('R528_BROWSER '+state+' DOM='+out.slice(-3500));
 console.log('R528_BROWSER_OK hidden-history+movie-list+special-season-counts+top10-provider-generation');
