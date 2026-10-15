@@ -1,3 +1,10 @@
+## Web 0.3.59 / r532 — owners ativos corrigidos sem alterar telas funcionais
+
+- F1, UFC e WWE PPV usam somente a tela anual r520; listeners r513/r519 antigos não executam no bundle final.
+- Títulos Relacionados/Semelhantes abrem por navegação SPA canônica; Watchlist/Visto continuam preservados.
+- O fundo dos controles fixos da Home fica no stacking context do viewport/body e bloqueia visualmente o conteúdo que passa por baixo.
+- O build falha se os owners antigos r286/r529/r531 permanecerem ativos.
+
 ## Web 0.3.58 / r531 — interações finais sem regressão de escopo
 
 - F1, UFC e WWE PPV abrem a tela anual real r520 com espera delimitada do owner.
