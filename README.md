@@ -1,3 +1,9 @@
+## Web 0.3.56 / r529 — Home sem overlay + séries especiais
+
+- Home mantém o Histórico acima/oculto, mas Séries/Filmes não flutuam sobre o conteúdo.
+- Séries entra diretamente em Continuar assistindo; Filmes entra diretamente em Assistir a seguir / Watchlist, inclusive após o Histórico tardio estabilizar.
+- F1, UFC e WWE Pay-Per-View usam um único opener e abrem a tela anual canônica de Série.
+- Descobrir, Perfil, Esportes, Raw/SmackDown e Android permanecem fora do escopo.
 ## Web 0.3.55 / r528 — Home em lista + Top 10 determinístico
 
 - Home Séries entra em **Continuar assistindo** mesmo quando o Histórico termina de carregar depois.

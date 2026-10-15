@@ -1,3 +1,11 @@
+## 0.3.56 — r529 (2026-10-15)
+
+### Escopo estrito: Home + abertura das três séries especiais
+- Home Séries: remove a geometria fixed/sticky introduzida por r524/r525. Histórico continua fisicamente acima e oculto; Séries/Filmes passam para o fluxo normal entre o Histórico e o conteúdo principal. A entrada e a reconciliação tardia ancoram diretamente Continuar assistindo no início da viewport.
+- Home Filmes: mesma regra da Home Séries. Filmes vistos continua fisicamente acima e oculto; a entrada ancora diretamente Assistir a seguir / Watchlist. O renderer/lista de filmes da r528 não foi alterado.
+- F1 / UFC / WWE Pay-Per-View: removidos do bundle os openers duplicados r524 e r527. Um único owner r529 captura o card antes do handler genérico e abre a tela canônica r520 de temporada/episódios.
+- Regressão Chromium: exige Histórico acima, controles sem position:fixed, início exato no bloco principal para Séries e Filmes e abertura individual de F1, UFC e WWE na tela de Série.
+- Preservado: Descobrir/Pra Você/Top 10, Perfil, Esportes, Raw/SmackDown, writers de Visto/F1, histórico diário e Android 1.0.20 / 10062.
 ## 0.3.55 — r528 (2026-10-14)
 
 ### Escopo estrito: Home + contagens especiais + Top 10
