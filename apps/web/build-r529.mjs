@@ -40,6 +40,6 @@ const release=JSON.parse(releaseRaw);Object.assign(release,{
 new Function(js);
 await Promise.all([writeFile(resolve(dist,'app-v529.js'),js),writeFile(resolve(dist,'app-v529.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
 await Promise.all([rm(resolve(dist,'app-v528.js'),{force:true}),rm(resolve(dist,'app-v528.css'),{force:true})]);
-for(const need of ["window.__ctR529Marker='home-normal-flow+main-anchor+single-f1-ufc-wwe-opener'","data-ct529-home-start","window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner'","r529-official-0.3.56"])if(!js.includes(need))throw new Error('r529 missing '+need);
+for(const need of ["window.__ctR529Marker='home-normal-flow+main-anchor+single-f1-ufc-wwe-opener'","ct529HomeStart","window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner'","r529-official-0.3.56"])if(!js.includes(need))throw new Error('r529 missing '+need);
 for(const bad of ["window.__ctR524SpecialOpenMarker='direct-special-card-owner-no-route-gate'","window.__ctR527Marker='home-v527-live-status+movies-real-renderer+discover-10x10-audited+special-pointerdown+f1-gp-detail'"])if(js.includes(bad))throw new Error('r529 legacy special opener survived '+bad);
 console.log('WEB_R529_READY home normal-flow + canonical special opener');
