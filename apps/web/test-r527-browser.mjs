@@ -70,12 +70,13 @@ const paintTopSrc=extractNamed('paintTop321',"ct523Top10='10:10'");
 ok(paintTopSrc.includes('movies.length!==10||series.length!==10')&&paintTopSrc.includes('<small>10</small>'),'Top 10 final painter is not strict 10+10');
 
 /* 3) PRA VOCÊ — execute final alias audit. */
-const auditFreshSrc=extractNamed('auditFresh523','cinetracker_recommendation_filter_v525');
+const auditFreshSrc=extractNamed('auditFresh523','cinetracker_recommendation_filter_v517');
+ok(js.includes("name==='cinetracker_recommendation_filter_v517'||name==='cinetracker_discover_filter_v322'?'cinetracker_recommendation_filter_v525'"),'v517-to-v525 core bridge missing');
 let auditPayload=null;
 const auditFresh=new Function('rows','keyOf','titleOf','unwrap','timeout','rpcCall',
  auditFreshSrc+';return auditFresh523;')(
  rows,keyOf,titleOf,x=>x,async p=>await p,
- async(name,args)=>{ok(name==='cinetracker_recommendation_filter_v525','wrong fresh filter '+name);auditPayload=args.p_items;return{blocked_keys:['movie:1368337'],watch_keys:[],seen_keys:['movie:1368337'],not_interested_keys:[]}}
+ async(name,args)=>{const effective=name==='cinetracker_recommendation_filter_v517'?'cinetracker_recommendation_filter_v525':name;ok(effective==='cinetracker_recommendation_filter_v525','wrong effective fresh filter '+effective);auditPayload=args.p_items;return{blocked_keys:['movie:1368337'],watch_keys:[],seen_keys:['movie:1368337'],not_interested_keys:[]}}
 );
 const fresh=await auditFresh([
  {media_type:'movie',tmdb_id:1368337,title:'A Odisseia',original_title:'The Odyssey',release_year:2026},
