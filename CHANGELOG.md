@@ -1,3 +1,15 @@
+## 0.3.54 — r527 (2026-10-14)
+
+### Escopo fechado: Home + Descobrir + séries especiais + F1 Hub
+- **Raw / SmackDown:** backlog completo só é reconstruído para séries realmente encerradas/canceladas. Séries em exibição permanecem na autoridade recente v452; validadas em **Em dia** (Raw 251/251, SmackDown 237/237) sem episódio antigo inventado.
+- **Naruto:** preservada a correção de série encerrada: **90/220**, 130 restantes, próximo **S2E39**.
+- **Home Filmes:** o gate Chromium usa movieRow() e renderMoviesAll() reais; Histórico fica fisicamente acima, Watchlist é um único rail horizontal e cards/pôsteres são 2:3.
+- **Pra Você:** regressão explícita para **A Odisseia / The Odyssey**; original_title chega ao filtro v525 e alias já visto não entra em 100% Novos.
+- **Top 10:** teste comportamental bloqueia candidatos das primeiras páginas e exige busca adaptativa até renderizar exatamente **10 Séries + 10 Filmes**.
+- **Fórmula 1:** Home mostra **GPs**, não sessões; total, realizados, assistidos e pendências recentes são recalculados apenas pelas corridas.
+- **F1 / UFC / WWE PPV:** pointerdown dedicado abre a tela anual antes de qualquer card genérico; regressão cobre os três.
+- **F1 Hub:** GP do Calendário precisa abrir modal com **Fim de semana**, **Grid de Largada** e **Resultado de Chegada**.
+- **Preservado:** Perfil, Esportes geral, histórico diário/Desmarcar e Android 1.0.20 / 10062.
 ## 0.3.53 — r526 (2026-10-14)
 
 ### Home, Descobrir e séries especiais
