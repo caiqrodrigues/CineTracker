@@ -1,3 +1,16 @@
+## 0.3.59 — r532 (2026-10-15)
+
+### Escopo estrito: abertura de especiais, títulos relacionados e chrome da Home
+- **F1 / UFC / WWE Pay-Per-View:** r513 e r519 deixam de executar listeners antigos no bundle final. A tela anual r520 fica como único owner de temporada/episódios.
+- **F1 / UFC / WWE Pay-Per-View:** um único owner de clique r532 captura os cards reais da Home (`data-ct512-special`, `data-ct513-open` ou `data-ct512-open`) e abre a tela anual imediatamente. O catálogo r520 pode terminar depois; a abertura da tela não fica bloqueada por corrida de inicialização.
+- **Títulos Relacionados/Semelhantes:** o owner r286 antigo é substituído na própria posição do bundle. Abrir filme/série usa a bridge SPA canônica; ações **Watchlist** e **Visto** permanecem.
+- **Home:** o fundo opaco dos controles fixos passa a pertencer diretamente ao `body`, fora do stacking context da página. Séries/Filmes e busca continuam fixos, mas o conteúdo deixa de aparecer correndo por baixo.
+- O gate Chromium abre individualmente F1, UFC e WWE, navega por um título relacionado e valida a geometria/stacking do shield da Home.
+
+### Preservado
+- Home Séries/Filmes, Histórico/Watchlist, Descobrir/Pra Você/Top 10, Perfil, Esportes, Raw/SmackDown, writers F1/UFC/WWE e Android 1.0.20 / 10062 não recebem alteração funcional.
+- Sem reload global, `router.refresh()`, `while(true)`, `setInterval` ou `MutationObserver`.
+
 ## 0.3.58 — r531 (2026-10-15)
 
 ### Escopo estrito: especiais + relacionados + isolamento da toolbar da Home
