@@ -1,0 +1,14 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+await import('./build-r530.mjs');
+const [js,css,html,relRaw,rootRaw,webRaw]=await Promise.all([readFile(resolve('dist/app-v530.js'),'utf8'),readFile(resolve('dist/app-v530.css'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8')]);
+const ok=(v,m)=>{if(!v)throw new Error('r530 regression: '+m)},rel=JSON.parse(relRaw),rp=JSON.parse(rootRaw),wp=JSON.parse(webRaw);
+ok(rp.version==='0.3.57'&&wp.version==='0.3.57','versions');ok(rel.version==='0.3.57'&&rel.revision==='r530-official-0.3.57','release');ok(html.includes('app-v530.js')&&html.includes('app-v530.css'),'assets');
+ok(js.includes("window.__ctR530Marker='home-fixed-search-tabs+special-screen-catalog-fallback'"),'marker');
+ok(css.includes('position:fixed!important;top:8px!important')&&css.includes('[data-page="home"] .search-global'),'search fixed');
+ok(css.includes('[data-home] .home-tabs')&&css.includes('z-index:210!important'),'tabs fixed');
+ok(js.includes('window.__ctR530HomeAnchor')&&js.includes('chromeBottom'),'fixed chrome anchor');
+ok(js.includes("window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner'"),'screen owner');
+ok(js.includes('__ctR512Special')&&js.includes('__ctR520Catalog')&&js.includes('SPECIAL_CATALOG_UNAVAILABLE'),'special fallback');
+ok(js.includes("state={type:t,season:Number(season)||currentYear(),data:null,loading:true,returnState:previous};render();"),'immediate special screen');
+const tail=js.slice(js.lastIndexOf('/* CineTracker Web 0.3.57 r530'));for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])ok(!tail.includes(bad),'forbidden '+bad);
+console.log('WEB_R530_REGRESSION_OK');

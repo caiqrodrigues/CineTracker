@@ -1,3 +1,12 @@
+## 0.3.57 — r530 (2026-10-15)
+
+### Escopo estrito: toolbar da Home + abertura F1/UFC/WWE
+- Home: corrige a interpretação errada da r529. **Séries / Filmes e a busca global voltam a ficar fixos no topo** e permanecem visíveis durante todo o scroll.
+- Home: Histórico continua fisicamente acima/oculto; a âncora desconta a altura do toolbar fixo, evitando esconder Continuar assistindo ou Watchlist atrás da barra.
+- F1 / UFC / WWE Pay-Per-View: a tela anual canônica é criada imediatamente no clique. Se o bridge r512 ainda estiver inicializando, o loader usa diretamente o catálogo r520 em fallback delimitado em vez de retornar falso e não abrir nada.
+- Regressão Chromium: rola a Home e exige busca + abas fixas; preserva a abertura individual de F1, UFC e WWE.
+- Preservado: renderers/dados da Home, Descobrir/Pra Você/Top 10, Perfil, Esportes, Raw/SmackDown, writers de visto/F1 e Android 1.0.20 / 10062.
+
 ## 0.3.56 — r529 (2026-10-15)
 
 ### Escopo estrito: Home + abertura das três séries especiais
