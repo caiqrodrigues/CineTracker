@@ -1,0 +1,27 @@
+import {readFile,writeFile,rm} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r526.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+let [html,js,css0,sw,releaseRaw,runtime,extraCss,patchRaw]=await Promise.all([
+ readFile(resolve(dist,'index.html'),'utf8'),readFile(resolve(dist,'app-v526.js'),'utf8'),readFile(resolve(dist,'app-v526.css'),'utf8'),
+ readFile(resolve(dist,'service-worker.js'),'utf8'),readFile(resolve(dist,'release.json'),'utf8'),
+ readFile(resolve(root,'runtime-r527-final.js'),'utf8'),readFile(resolve(root,'r527-final.css'),'utf8'),readFile(resolve(root,'r527-patches.json'),'utf8')
+]);
+const P=JSON.parse(patchRaw);
+function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)throw new Error('r527 missing '+label+' anchor');const start=source.lastIndexOf('(()=>{',at),close=source.indexOf('\n})();',at);if(start<0||close<0)throw new Error('r527 invalid '+label+' bounds');return{start,end:close+6}}
+function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r527 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r527 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
+const A388="window.__ctR388Marker='r393-hidden-history-anchor+lightweight-movies+foryou-db-first-bounded';";
+for(const [n,b] of Object.entries(P.home))js=replaceNamed(js,A388,n,b,'r388');
+const A512="window.__ctR512Marker='r520-f1+ufc+wwe-complete-catalog-single-owner';";
+for(const [n,b] of Object.entries(P.special))js=replaceNamed(js,A512,n,b,'r520-special');
+new Function(runtime);js+='\n'+runtime+'\n';
+js=js.replace(/const REVISION='[^']+';/,"const REVISION='r527-official-0.3.54';").replace(/CineTracker • v[^•<]+ • \$\{REVISION\}/g,'CineTracker • v0.3.54 • ${REVISION}');
+html=html.replaceAll('app-v526.js','app-v527.js').replaceAll('app-v526.css','app-v527.css').replaceAll('v0.3.53','v0.3.54').replaceAll('r526-official-0.3.53','r527-official-0.3.54');
+const css=css0+'\n'+extraCss+'\n';sw=sw.replaceAll('r526','r527').replaceAll('app-v526.js','app-v527.js').replaceAll('app-v526.css','app-v527.css');
+const release=JSON.parse(releaseRaw);Object.assign(release,{version:'0.3.54',revision:'r527-official-0.3.54',base:'r526+r527-scoped-final',scope:'home-v527+movies-real-renderer+discover-behavior-gates+special-gp-counts+f1-detail',home_series:'v527 applies full backlog reconstruction only to truly ended/cancelled series; live Raw/SmackDown pass through v452 recent authority',home_movies:'actual movieRow renderer remains one horizontal strict 2:3 rail; browser gate now renders real r388 movie cards',discover_foryou:'100% new final audit uses v525 with translated/original title aliases; The Odyssey/A Odisseia regression is gated',top10:'adaptive eligibility is browser-tested with early blocked pages and must render exactly 10 series + 10 movies',special_series:'F1 Home count uses GPs only; F1/UFC/WWE open from pointerdown and preserve annual season screens',f1_hub:'calendar GP click is browser-tested to open weekend, Grid de Largada and Resultado de Chegada',profile:'unchanged',sports:'unchanged',android:'unchanged-1.0.20/10062'});
+new Function(js);
+await Promise.all([writeFile(resolve(dist,'app-v527.js'),js),writeFile(resolve(dist,'app-v527.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
+await Promise.all([rm(resolve(dist,'app-v526.js'),{force:true}),rm(resolve(dist,'app-v526.css'),{force:true})]);
+for(const need of ["window.__ctR527Marker='home-v527-live-status+movies-real-renderer+discover-10x10-audited+special-pointerdown+f1-gp-detail'",'cinetracker_home_series_v527','ct526-movie-rail','cinetracker_recommendation_filter_v525',"ct523Top10='10:10'",'GPs','data-ct311-f1-race','Grid de Largada','Resultado de Chegada','r527-official-0.3.54'])if(!js.includes(need))throw new Error('r527 missing '+need);
+console.log('WEB_R527_READY scoped final');
