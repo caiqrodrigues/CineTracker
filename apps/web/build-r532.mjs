@@ -159,7 +159,7 @@ new Function(js);
 await Promise.all([
  writeFile(resolve(dist,'app-v532.js'),js),
  writeFile(resolve(dist,'app-v532.css'),css),
- writeFile(resolve(dist,'index.html')*,html),
+ writeFile(resolve(dist,'index.html'),html),
  writeFile(resolve(dist,'service-worker.js'),sw),
  writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))
 ]);
