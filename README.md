@@ -1,3 +1,11 @@
+## Web 0.3.55 / r528 — Home em lista + Top 10 determinístico
+
+- Home Séries entra em **Continuar assistindo** mesmo quando o Histórico termina de carregar depois.
+- Home Filmes usa lista vertical canônica, igual ao Histórico e às demais listas da Home; não usa carrossel ou grid de pôsteres.
+- Naruto continua na autoridade v527; F1/UFC/WWE exibem contagem da temporada atual, sem total histórico externo no card.
+- Top 10 troca de streaming por geração: a seleção nova força recarga e uma resposta antiga não pode repintar a tela.
+- Perfil, Esportes geral, Raw/SmackDown e Android não foram alterados.
+
 ## Web 0.3.54 / r527 — Home, Descobrir e séries especiais
 
 - Home Séries usa v527: backlog completo apenas para séries encerradas; Raw/SmackDown continuam pela regra recente; Naruto mantém contagem integral correta.

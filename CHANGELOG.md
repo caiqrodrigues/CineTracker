@@ -1,3 +1,13 @@
+## 0.3.55 — r528 (2026-10-14)
+
+### Escopo estrito: Home + contagens especiais + Top 10
+- **Home Séries:** Histórico continua fisicamente acima, mas a entrada é ancorada em **Continuar assistindo** e recebe uma segunda correção única quando o Histórico termina de expandir. Qualquer movimento do usuário cancela a âncora.
+- **Home Filmes:** Histórico continua fisicamente acima/oculto; **Assistir a seguir / Watchlist volta ao mesmo formato de lista vertical da Home/Histórico**, usando o renderer canônico ct274. Removidos rail/carrossel/cards-pôster desta superfície.
+- **Naruto:** Home continua usando v527; cache de Séries é invalidado na r528 para não reapresentar contagem antiga. Autoridade atual validada em 90/220, 130 restantes, próximo S2E39.
+- **F1 / UFC / WWE PPV:** o card da Home mostra somente **progresso da temporada atual**. O total histórico externo deixa de contaminar o denominador. F1 permanece baseado apenas em GPs/corridas; UFC/WWE usam o catálogo anual e são normalizados antes do paint.
+- **Descobrir > Top 10:** cada troca de streaming cria uma nova geração, força recomputação específica daquele provider e invalida a resposta anterior. O renderer estrito existente continua exigindo 10 Séries + 10 Filmes; uma requisição lenta do streaming anterior não pode sobrescrever a seleção nova.
+- **Preservado:** Perfil, Esportes geral, Raw/SmackDown, F1 writer r462, histórico diário/Desmarcar e Android 1.0.20 / 10062.
+
 ## 0.3.54 — r527 (2026-10-14)
 
 ### Escopo fechado: Home + Descobrir + séries especiais + F1 Hub
