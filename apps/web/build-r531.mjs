@@ -13,8 +13,8 @@ function bounds(source,anchor,label){const at=source.indexOf(anchor);if(at<0)thr
 function replaceNamed(source,anchor,name,replacement,label){const b=bounds(source,anchor,label),region=source.slice(b.start,b.end),m=new RegExp('(?:async\\s+)?function\\s+'+name+'\\s*\\(').exec(region);if(!m)throw new Error('r531 missing '+label+' '+name);const open=region.indexOf('{',m.index+m[0].length);let depth=0,mode='code',quote='',i=open;for(;i<region.length;i++){const c=region[i],n=region[i+1];if(mode==='line'){if(c==='\n')mode='code';continue}if(mode==='block'){if(c==='*'&&n==='/'){mode='code';i++}continue}if(mode==='string'){if(c==='\\'){i++;continue}if(c===quote)mode='code';continue}if(mode==='template'){if(c==='\\'){i++;continue}if(c.charCodeAt(0)===96)mode='code';continue}if(c==='/'&&n==='/'){mode='line';i++;continue}if(c==='/'&&n==='*'){mode='block';i++;continue}if(c==="'"||c==='"'){mode='string';quote=c;continue}if(c.charCodeAt(0)===96){mode='template';continue}if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){i++;break}}}if(depth!==0)throw new Error('r531 unbalanced '+label+' '+name);return source.slice(0,b.start)+region.slice(0,m.index)+replacement+region.slice(i)+source.slice(b.end)}
 
 js=once(js,
- " toast:message=>{try{if(typeof toast==='function')toast(message)}catch{}}\n});",
- " toast:message=>{try{if(typeof toast==='function')toast(message)}catch{}},\n navigate:(path,replace=false)=>{go(String(path||'/home'),!!replace);return true}\n});",
+ "window.__ctCoreR471=Object.freeze({",
+ "window.__ctCoreR471=Object.freeze({\n navigate:(path,replace=false)=>{go(String(path||'/home'),!!replace);return true},",
  'core SPA navigate bridge'
 );
 
