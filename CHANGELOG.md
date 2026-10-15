@@ -1,3 +1,15 @@
+## 0.3.60 — r533 (2026-10-15)
+
+### Escopo estrito: F1/UFC/WWE, títulos semelhantes e faixa fixa da Home
+- **F1 / UFC / WWE Pay-Per-View:** o owner reconhece tanto os cards especiais quanto linhas genéricas recriadas pela Home pelo título exato. Raw e SmackDown não são interceptados.
+- **F1 / UFC / WWE Pay-Per-View:** pointerup + click com deduplicação abre a tela anual canônica r520 imediatamente, sem reload e sem disputar com o handler genérico de mídia.
+- **Títulos semelhantes:** restaura captura em pointerup com deduplicação do click; navegação continua SPA e mantém Watchlist/Visto.
+- **Home:** a camada opaca passa para z-index 9000; Séries/Filmes, busca e resultados ficam explicitamente acima dela. Conteúdo normal não pode mais aparecer correndo por baixo da faixa fixa.
+- O r533 substitui fisicamente os três owners r532 no bundle; não adiciona mais uma camada concorrente.
+
+### Preservado
+- Home dados/ordem/Histórico/Watchlist, Descobrir/Pra Você/Top 10, Perfil, Esportes, Raw/SmackDown, writers de visto e Android 1.0.20 / 10062 permanecem intactos.
+
 ## 0.3.59 — r532 (2026-10-15)
 
 ### Escopo estrito: abertura de especiais, títulos relacionados e chrome da Home

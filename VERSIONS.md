@@ -1,3 +1,4 @@
+- Web: **0.3.60 / r533-official-0.3.60** — F1/UFC/WWE com fallback por título + pointer owner, Títulos semelhantes com navegação SPA robusta e faixa fixa da Home com stacking opaco determinístico.
 - Web: **0.3.59 / r532-official-0.3.59** — owner único para F1/UFC/WWE, navegação real de Relacionados e shield opaco da Home preso ao body; sem alterações funcionais fora desse escopo.
 - Web: **0.3.58 / r531-official-0.3.58** — janela real F1/UFC/WWE resiliente ao boot, Títulos Relacionados com navegação SPA canônica e toolbar fixa da Home com fundo opaco contínuo.
 - Web: **0.3.57 / r530-official-0.3.57** — restaura Séries/Filmes + busca fixos no topo e torna a tela anual F1/UFC/WWE resiliente à corrida de inicialização do bridge especial.

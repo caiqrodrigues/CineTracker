@@ -1,3 +1,11 @@
+## Web 0.3.60 / r533 — especiais, relacionados e chrome da Home
+
+- F1/UFC/WWE PPV abrem pela tela anual mesmo quando a Home recria o card como linha genérica.
+- Raw/SmackDown continuam no fluxo normal de séries.
+- Títulos semelhantes usam pointerup + click deduplicado e navegação SPA.
+- A faixa fixa da Home é opaca e domina o stacking do conteúdo; busca e Séries/Filmes permanecem acima dela.
+- Nenhuma alteração em Perfil, Descobrir, Esportes ou Android.
+
 ## Web 0.3.59 / r532 — owners ativos corrigidos sem alterar telas funcionais
 
 - F1, UFC e WWE PPV usam somente a tela anual r520; listeners r513/r519 antigos não executam no bundle final.

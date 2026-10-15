@@ -1,4 +1,4 @@
-name: Verify Web 0.3.59 r532
+name: Verify Web 0.3.60 r533
 on:
   push:
     branches: [main]
@@ -9,26 +9,25 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r532:
+  web_r533:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r532 active-owner behavior gate
+      - name: Build and r533 real-interaction behavior gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v532.js
-          grep -Fq "window.__ctR532SpecialMarker='single-special-opener-real-screen'" apps/web/dist/app-v532.js
-          grep -Fq "window.__ctR532RelatedMarker='related-click-spa-single-owner'" apps/web/dist/app-v532.js
-          grep -Fq "window.__ctR532HomeMarker='body-owned-opaque-home-shield'" apps/web/dist/app-v532.js
-          grep -Fq "window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner'" apps/web/dist/app-v532.js
-          ! grep -Fq "window.__ctR286='related-open-watchlist-seen-window-capture';" apps/web/dist/app-v532.js
-          ! grep -Fq "window.__ctR529Marker='home-normal-flow+main-anchor+single-f1-ufc-wwe-opener';" apps/web/dist/app-v532.js
-          ! grep -Fq "window.__ctR531Marker='special-real-screen+related-spa+opaque-home-chrome';" apps/web/dist/app-v532.js
+          node --check apps/web/dist/app-v533.js
+          grep -Fq "window.__ctR533SpecialMarker='special-title-fallback+pointer-owner+real-series-screen'" apps/web/dist/app-v533.js
+          grep -Fq "window.__ctR533RelatedMarker='related-pointerup+click-dedupe+spa-navigation'" apps/web/dist/app-v533.js
+          grep -Fq "window.__ctR533HomeMarker='dominant-body-shield+fixed-controls-above-content'" apps/web/dist/app-v533.js
+          ! grep -Fq "window.__ctR532SpecialMarker='single-special-opener-real-screen'" apps/web/dist/app-v533.js
+          ! grep -Fq "window.__ctR532RelatedMarker='related-click-spa-single-owner'" apps/web/dist/app-v533.js
+          ! grep -Fq "window.__ctR532HomeMarker='body-owned-opaque-home-shield'" apps/web/dist/app-v533.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -38,20 +37,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r532, android]
+    needs: [web_r533, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r532 production
+      - name: Wait for r533 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.59"' <<<"$BODY" && grep -Fq '"revision": "r532-official-0.3.59"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v532.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.60"' <<<"$BODY" && grep -Fq '"revision": "r533-official-0.3.60"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v533.js?ct=$CT" || true)"
               HTML="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/?ct=$CT" || true)"
-              if grep -Fq "window.__ctR532SpecialMarker='single-special-opener-real-screen'" <<<"$JS" && grep -Fq 'app-v532.js' <<<"$HTML"; then exit 0; fi
+              if grep -Fq "window.__ctR533SpecialMarker='special-title-fallback+pointer-owner+real-series-screen'" <<<"$JS" && grep -Fq 'app-v533.js' <<<"$HTML"; then exit 0; fi
             fi
             [ "$i" -eq 240 ] && exit 1
             sleep 5

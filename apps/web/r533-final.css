@@ -1,0 +1,15 @@
+/* CineTracker Web 0.3.60 r533 — deterministic Home stacking. */
+html body>[data-ct533-home-shield]{
+ position:fixed!important;top:0!important;right:0!important;z-index:9000!important;display:block!important;
+ pointer-events:none!important;background:#030a0f!important;opacity:1!important;
+ border-bottom:1px solid rgba(31,69,91,.88)!important;box-shadow:0 8px 18px rgba(0,0,0,.34)!important
+}
+html body [data-page="home"] .search-global{
+ z-index:9010!important;background:#030a0f!important;opacity:1!important;isolation:isolate!important
+}
+html body [data-home] .home-tabs{
+ z-index:9020!important;background:#030a0f!important;opacity:1!important;isolation:isolate!important
+}
+html body [data-page="home"] [data-global-results]:not(:empty),
+html body [data-page="home"] .global-results:not(:empty){z-index:9030!important}
+html body [data-page="home"] .search-global::before{content:none!important;display:none!important}
