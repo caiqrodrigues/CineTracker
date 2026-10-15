@@ -2,10 +2,10 @@ import {readFile} from 'node:fs/promises';
 import {resolve} from 'node:path';import {createServer} from 'node:http';import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r531.mjs');
 const [js,css,runtime]=await Promise.all([readFile(resolve('dist/app-v531.js'),'utf8'),readFile(resolve('dist/app-v531.css'),'utf8'),readFile(resolve('runtime-r531-final.js'),'utf8')]);
-function region(marker){const at=js.indexOf(marker);if(at<0)throw new Error('region '+marker);const start=js.lastIndexOf('(()=>{',at),end=js.indexOf('\n})();',at);if(start<0||end<0)throw new Error('bounds '+marker);return js.slice(start,end+6)}
-const r286=region("window.__ctR286='related-open-watchlist-seen-window-capture';");
-const r513=region("window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner';");
-const r529=region("window.__ctR529Marker='home-normal-flow+main-anchor+single-f1-ufc-wwe-opener';");
+function region(header,marker){const at=js.lastIndexOf(marker);if(at<0)throw new Error('region '+marker);const start=js.lastIndexOf(header,at),end=js.indexOf('\n})();',at);if(start<0||end<0)throw new Error('bounds '+marker);return js.slice(start,end+6)}
+const r286=region("/* CineTracker Web 1.0.77 / r286 — related titles own open, Watchlist and Visto interactions before legacy document handlers. */","window.__ctR286='related-open-watchlist-seen-window-capture';");
+const r513=region("/* CineTracker Web 0.3.47 r520 — full-screen owner for F1 + UFC + WWE Pay-Per-View. */","window.__ctR513SeriesScreenMarker='r520-three-special-series-full-screen-owner';");
+const r529=region("/* CineTracker Web 0.3.56 r529 — non-floating Home chrome + single special-series opener. */","window.__ctR529Marker='home-normal-flow+main-anchor+single-f1-ufc-wwe-opener';");
 const prelude=`
 let currentRoute='home',navLog=[];
 window.__ctCoreR471={
