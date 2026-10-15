@@ -145,7 +145,7 @@ js=replaceFamily(
 const css=css0+'\n'+extraCss+'\n';
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r532-official-0.3.59';");
 html=html.replaceAll('app-v531.js','app-v532.js').replaceAll('app-v531.css','app-v532.css').replaceAll('v0.3.58','v0.3.59').replaceAll('r531-official-0.3.58','r532-official-0.3.59');
-sw=sw.replaceAll('r531','r532').replaceAll('app-v531.js','app-v532.js').replaceAl('app-v531.css','app-v532.css');
+sw=sw.replaceAll('r531','r532').replaceAll('app-v531.js','app-v532.js').replaceAll('app-v531.css','app-v532.css');
 
 const release=JSON.parse(releaseRaw);Object.assign(release,{
  version:'0.3.59',revision:'r532-official-0.3.59',base:'r531+r532-active-owner-replacement',
