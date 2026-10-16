@@ -1882,3 +1882,8 @@ Documentação canônica: `PROJECT_STATE.md`, `VERSIONS.md`, `CHANGELOG.md`, `do
 ### Android 1.0.22 — correção de integração
 
 Preserva Web 0.3.68/r541 e Android 1.0.20/r262. Corrige contêineres de Séries/Filmes, carregamento autenticado de F1/UFC/WWE e recomendações após auditoria. Para compilar: `node scripts/prepare-android-v1022.mjs && node scripts/test-android-v1022.mjs`, depois `gradle assembleDebug` em `apps/android`.
+
+
+### Android 1.0.23 — correções do vídeo
+
+Integra GP clicável no F1 Hub (fins de semana, grid, resultado, marcação), consulta esportiva inicial menor, enquadramento e rolagem, remoção de AEW/wrestling/stand-up/reality/YouTube/curtas em Pra Você, com slots vazios explicados. Web 0.3.68/r541 preservada, sem mudanças na Activity nativa. `node scripts/prepare-android-v1023.mjs && node scripts/test-android-v1023.mjs`; `gradle assembleDebug` em `apps/android`. APK paralelo `com.cinetracker.app.teste23` evita sobrescrever versões instaladas.

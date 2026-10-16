@@ -1,3 +1,12 @@
+## Android 1.0.23 — r265 (2026-10-16)
+
+- **F1 Hub:** Calendário passa a abrir cada GP com sessões, marcação Visto/Desmarcar, Grid de Largada e Resultado de Chegada via Jolpica. Mantém painéis de Pilotos, Construtores, Último GP, Pit Stops e Voltas.
+- **Esportes:** primeira consulta com janela curta (2 dias anteriores e 5 posteriores), cache reaproveitado e tela que não depende de sincronização histórica extensa para apresentar dados recentes.
+- **Android mobile:** enquadramento em 100dvh, rolagem completa da Home e espaço inferior protegido pela navegação; detalhes WWE, UFC, F1 com rolagem até o fim.
+- **Descobrir > Pra Você:** excluir AEW/luta livre/wrestling/WWE, UFC/MMA, stand-up, realities, curtas abaixo de 40 minutos e originais YouTube na seleção final, além da auditoria no backend. Slots sem indicação elegível exibem mensagem e busca novamente.
+- **Compatibilidade:** Web 0.3.68/r541 e código nativo mantidos; funções anteriores Android, Watchlist/Trocar, importação/exportação, notificações e navegação preservadas. Aplicativo TESTE em pacote separado `com.cinetracker.app.teste23`.
+- **Validação:** testes de sintaxe, exclusões, GP e integridade do APK no GitHub Actions; validação em aparelho real ainda necessária.
+
 ## Android 1.0.22 — r264 (2026-10-16)
 
 - **Correção efetiva do APK 1.0.21:** seletores F1/UFC/WWE usavam seções diretamente em `[data-home-view]`; no Android as seções estão dentro de `[data-home-viewport] .home-start`. As três séries são montadas na seção correta.
