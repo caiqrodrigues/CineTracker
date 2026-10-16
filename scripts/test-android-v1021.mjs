@@ -1,5 +1,5 @@
 import {readFile} from 'node:fs/promises';
-import {inflateRawSync} from 'node:zlib';
+import {gunzipSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
 
 const p='apps/android/app/src/main/assets/hotfix5/index.html';
@@ -29,9 +29,9 @@ for(const must of [
   'ct263:top10:'
 ])if(!html.includes(must))throw new Error('Android 1.0.21 missing '+must);
 
-const packed=await readFile('apps/android/runtime-r263-v1021-web-sync.js.gz');
-// Raw DEFLATE bypasses the invalid gzip trailer; SHA-256 below authenticates the bytes.
-const runtime=inflateRawSync(packed.subarray(10,-8)).toString('utf8');
+const encodedParts=await Promise.all(Array.from({length:12},(_,i)=>readFile(`apps/android/runtime-r263-v1021-web-sync.part${String(i+1).padStart(2,'0')}.b64`,'utf8')));
+const packed=Buffer.from(encodedParts.join('').replace(/\s+/g,''),'base64');
+const runtime=gunzipSync(packed).toString('utf8');
 const digest=createHash('sha256').update(runtime).digest('hex');
 if(digest!=='5952547a846c5011c154c7c66d2882c1511c5505c040ace08dd37c930fc81c49')throw new Error('Android 1.0.21 runtime payload hash mismatch '+digest);
 for(const forbidden of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])if(runtime.includes(forbidden))throw new Error('Android 1.0.21 forbidden construct '+forbidden);

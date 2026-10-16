@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/android/runtime-r263-v1021-web-sync.js.gz'
+      - 'apps/android/runtime-r263-v1021-web-sync.part*.b64'
       - 'apps/android/app/build.gradle'
       - 'scripts/prepare-android-v1021.mjs'
       - 'scripts/test-android-v1021.mjs'
