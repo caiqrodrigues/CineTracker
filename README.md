@@ -1,3 +1,12 @@
+## Web 0.3.63 / r536 — Home e Descobrir estabilizados no owner final
+
+- Histórico continua acima/oculto; entrada de Séries e Filmes fixa o bloco principal antes de liberar o scroll do usuário.
+- F1/UFC/WWE são remontados após qualquer repaint de Séries e usam a tela anual r520 full-screen existente.
+- Watchlist Filmes volta ao rail horizontal estritamente 2:3, com paginação v405 preservada.
+- Novidades, Lançamentos e Mais Aguardados usam chamadas TMDB delimitadas e auditoria pessoal segmentada/fail-closed.
+- Top 10 só publica 10 Séries + 10 Filmes e continua procurando candidatos quando os primeiros lotes são bloqueados.
+- Perfil, Esportes, Pra Você e Android permanecem fora do escopo.
+
 ## Web 0.3.62 / r535 — estabilidade localizada da Home e Descobrir
 
 - Histórico permanece acima/oculto; Home ancora imediatamente em Continuar assistindo ou Watchlist, mesmo antes dos dados terminarem.

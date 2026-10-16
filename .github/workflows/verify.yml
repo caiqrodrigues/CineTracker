@@ -1,4 +1,4 @@
-name: Verify Web 0.3.62 r535
+name: Verify Web 0.3.63 r536
 on:
   push:
     branches: [main]
@@ -9,22 +9,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r535:
+  web_r536:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r535 scoped behavior gate
+      - name: Build and r536 requested behavior gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v535.js
-          grep -Fq "window.__ctR535Marker='home-initial-anchor+locked-tabs+special-screen-css+bounded-public-discover'" apps/web/dist/app-v535.js
-          grep -Fq 'position:fixed!important' apps/web/dist/app-v535.css
-          grep -Fq 'Promise.allSettled(jobs)' apps/web/dist/app-v535.js
+          node --check apps/web/dist/app-v536.js
+          grep -Fq "window.__ctR536Marker='home-anchor-user-safe+special-remount+movies-2x3-rail+public-bounded-audit+top10-10x10'" apps/web/dist/app-v536.js
+          grep -Fq 'ct536-movie-card' apps/web/dist/app-v536.js
+          grep -Fq 'ct536AuditPublic' apps/web/dist/app-v536.js
+          grep -Fq "sk='ct536:top10:'" apps/web/dist/app-v536.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -34,20 +35,20 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r535, android]
+    needs: [web_r536, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r535 production
+      - name: Wait for r536 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.62"' <<<"$BODY" && grep -Fq '"revision": "r535-official-0.3.62"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v535.js?ct=$CT" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v535.css?ct=$CT" || true)"
-              if grep -Fq "window.__ctR535Marker='home-initial-anchor+locked-tabs+special-screen-css+bounded-public-discover'" <<<"$JS" && grep -Fq '.ct513-series-screen{' <<<"$CSS"; then exit 0; fi
+            if grep -Fq '"version": "0.3.63"' <<<"$BODY" && grep -Fq '"revision": "r536-official-0.3.63"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v536.js?ct=$CT" || true)"
+              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v536.css?ct=$CT" || true)"
+              if grep -Fq "window.__ctR536Marker='home-anchor-user-safe+special-remount+movies-2x3-rail+public-bounded-audit+top10-10x10'" <<<"$JS" && grep -Fq '.ct536-movie-card' <<<"$CSS"; then exit 0; fi
             fi
             [ "$i" -eq 240 ] && exit 1
             sleep 5
