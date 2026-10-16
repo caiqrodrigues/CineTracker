@@ -46,6 +46,6 @@ await Promise.all([
 await Promise.all([rm(resolve(dist,'app-v535.js'),{force:true}),rm(resolve(dist,'app-v535.css'),{force:true})]);
 for(const need of [
  "window.__ctR536Marker='home-anchor-user-safe+special-remount+movies-2x3-rail+public-bounded-audit+top10-10x10'",
- 'data-ct536HomeStart','ct536-movie-card','ct536-movie-rail','ct536AuditPublic','ct536:top10','ct536SeriesScreen','r536-official-0.3.63'
+ 'ct536HomeStart','ct536-movie-card','ct536-movie-rail','ct536AuditPublic','ct536:top10','ct536SeriesScreen','r536-official-0.3.63'
 ])if(!js.includes(need))throw new Error('r536 missing '+need);
 console.log('WEB_R536_READY requested Home + Discover stabilization');
