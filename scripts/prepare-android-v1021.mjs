@@ -34,6 +34,14 @@ for(const must of [
 const packed=await readFile(resolve(root,'apps/android/runtime-r263-v1021-web-sync.js.gz'));
 // Ignore the damaged gzip trailer; validate the exact decompressed bytes using SHA-256 below.
 const patch=inflateRawSync(packed.subarray(10,-8)).toString('utf8');
+for(const required of [
+  "window.__ctR263AndroidV1021='web-r541-parity+android-r262-preserved'",
+  'cinetracker_special_series_counts_v540','cinetracker_recommendation_filter_v525',
+  'cinetracker_activity_items_by_day_v518','cinetracker_sports_team_recent_v525',
+  'cinetracker_f1_watch_sync_v462','data-ct263-profile-more','data-ct263-special'
+])if(!patch.includes(required))throw new Error('Android patch incomplete: '+required);
+new Function(patch);
+console.log('ANDROID_R263_SOURCE_AUDIT length='+patch.length+' syntax=valid markers=present');
 const digest=createHash('sha256').update(patch).digest('hex');
 if(digest!=='5952547a846c5011c154c7c66d2882c1511c5505c040ace08dd37c930fc81c49')throw new Error('Android 1.0.21 runtime payload hash mismatch '+digest);
 for(const must of [
