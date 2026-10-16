@@ -1,3 +1,4 @@
+- Web: **0.3.62 / r535-official-0.3.62** — Home ancora antes dos dados e trava o tab escolhido; tela anual F1/UFC/WWE volta a ocupar a viewport; Novidades/Lançamentos/Mais Aguardados deixam de ficar presos por uma chamada TMDB pendente.
 - Web: **0.3.61 / r534-official-0.3.61** — owner ativo único para F1/UFC/WWE e Títulos Relacionados devolvidos ao `data-media` + `go()` canônico; Raw/SmackDown e demais telas preservados.
 - Web: **0.3.60 / r533-official-0.3.60** — F1/UFC/WWE com fallback por título + pointer owner, Títulos semelhantes com navegação SPA robusta e faixa fixa da Home com stacking opaco determinístico.
 - Web: **0.3.59 / r532-official-0.3.59** — owner único para F1/UFC/WWE, navegação real de Relacionados e shield opaco da Home preso ao body; sem alterações funcionais fora desse escopo.

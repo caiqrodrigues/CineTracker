@@ -1,3 +1,11 @@
+## Web 0.3.62 / r535 — estabilidade localizada da Home e Descobrir
+
+- Histórico permanece acima/oculto; Home ancora imediatamente em Continuar assistindo ou Watchlist, mesmo antes dos dados terminarem.
+- Troca Séries/Filmes é idempotente e repaints antigos não podem voltar para a aba anterior.
+- F1/UFC/WWE PPV recuperam a geometria full-screen da tela anual sem alterar catálogo ou writers.
+- Novidades, Lançamentos e Mais Aguardados usam requests TMDB delimitados e toleram falha/travamento parcial.
+- Pra Você, Top 10, Perfil, Esportes, Raw/SmackDown e Android permanecem fora do escopo.
+
 ## Web 0.3.61 / r534 — interação canônica
 
 - F1, UFC e WWE Pay-Per-View usam um único opener ativo e a mesma janela anual r520.

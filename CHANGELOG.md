@@ -1,3 +1,16 @@
+## 0.3.62 — r535 (2026-10-15)
+
+### Escopo estrito: Home + F1/UFC/WWE + três abas públicas do Descobrir
+- **Home Séries/Filmes:** Histórico continua fisicamente acima/oculto, mas a âncora inicial agora funciona já no placeholder de Continuar/Watchlist; não espera o payload terminar para tirar o Histórico da viewport.
+- **Home Séries/Filmes:** repaints atrasados respeitam o tab escolhido pelo usuário. Pointerdown + click repetidos tornam-se idempotentes e não disparam duas trocas/cargas concorrentes.
+- **F1 / UFC / WWE Pay-Per-View:** restaurado o CSS canônico de tela cheia (position fixed + inset 0) que foi perdido quando r519/r520 substituíram o runtime r513. O conteúdo anual volta a abrir realmente na viewport; catálogo e writers permanecem os mesmos.
+- **Descobrir > Novidades / Lançamentos / Mais Aguardados:** r321 deixa de depender do Promise.all legado sem timeout. Cada perna TMDB é delimitada e o lote usa Promise.allSettled, portanto uma página travada não mantém a aba eternamente em Carregando.
+- O filtro pessoal continua fail-closed via cinetracker_recommendation_filter_v525, também com prazo delimitado e retry existente.
+
+### Preservado
+- Pra Você, Top 10, Perfil, Esportes/time/liga, F1 Hub, Raw/SmackDown, Relacionados, writers F1/UFC/WWE e Android 1.0.20 / 10062 não foram alterados.
+- Sem full-page reload, router.refresh(), while(true), setInterval ou novo MutationObserver.
+
 ## 0.3.61 — r534 (2026-10-15)
 
 ### Escopo estrito: abertura F1/UFC/WWE + Títulos Relacionados

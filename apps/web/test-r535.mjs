@@ -1,0 +1,13 @@
+import {readFile} from 'node:fs/promises';import {resolve} from 'node:path';
+await import('./build-r535.mjs');
+const [js,html,css,releaseRaw,rootPkgRaw,webPkgRaw]=await Promise.all([readFile(resolve('dist/app-v535.js'),'utf8'),readFile(resolve('dist/index.html'),'utf8'),readFile(resolve('dist/app-v535.css'),'utf8'),readFile(resolve('dist/release.json'),'utf8'),readFile(resolve('../../package.json'),'utf8'),readFile(resolve('package.json'),'utf8')]);
+const release=JSON.parse(releaseRaw),rootPkg=JSON.parse(rootPkgRaw),webPkg=JSON.parse(webPkgRaw),yes=(v,m)=>{if(!v)throw new Error('r535 regression: '+m)};
+yes(rootPkg.version==='0.3.62'&&webPkg.version==='0.3.62','versions');yes(release.version==='0.3.62'&&release.revision==='r535-official-0.3.62','release');yes(html.includes('app-v535.js')&&html.includes('app-v535.css'),'assets');
+yes(js.includes("window.__ctR535Marker='home-initial-anchor+locked-tabs+special-screen-css+bounded-public-discover'"),'marker');
+yes(css.includes('.ct513-series-screen{')&&css.includes('position:fixed!important')&&css.includes('z-index:10090!important'),'special screen fixed CSS');
+yes(js.includes("if(final&&(!homeMainReady507[k]||!homeHistoryReady507[k]))return false"),'final anchor waits for settled content');yes(!js.includes("if(!target||!homeMainReady507[k])return false"),'initial anchor no longer waits for data');
+yes(js.includes("window.__ctR504UserTab||window.__ctR502UserTab"),'stale Home repaint respects user tab lock');yes(js.includes("same=userSelected&&tabRef.current===wanted"),'duplicate tab selection idempotent');
+yes(js.includes("window.__ctR535TmdbTimeoutMs")&&js.includes("Promise.allSettled(jobs)"),'bounded public TMDB');yes(js.includes("cinetracker_recommendation_filter_v525")&&js.includes("window.__ctR535FilterTimeoutMs"),'bounded personal filter');
+for(const tab of ["tab==='new'","tab==='releases'","tab==='anticipated'"])yes(js.includes(tab),'public tab '+tab);
+const tail=js.slice(js.lastIndexOf('/* CineTracker Web 0.3.62 r535'));for(const bad of ['window.location.reload(','router.refresh(','while(true)','setInterval(','new MutationObserver'])yes(!tail.includes(bad),'forbidden '+bad);
+console.log('WEB_R535_REGRESSION_OK');
