@@ -1,3 +1,16 @@
+## 0.3.68 — r541 (2026-10-16)
+
+### Escopo estrito: posição inicial da Home
+- **Séries:** toda entrada/seleção da aba reinicia somente a âncora de Séries e abre em **Continuar assistindo**, mantendo o Histórico fisicamente acima e fora da viewport inicial.
+- **Filmes:** toda seleção da aba reinicia somente a âncora de Filmes e abre em **Assistir a seguir / Watchlist**, mantendo Filmes vistos fisicamente acima e fora da viewport inicial.
+- Corrigida a causa da regressão: initialDone/finalDone era compartilhado entre Séries e Filmes. Depois de Séries concluir sua âncora, Filmes podia herdar o estado concluído e não se posicionar.
+- O estado passa a ser independente por aba. Alternar Séries → Filmes → Séries sempre cria uma nova âncora daquela aba, sem reposicionar novamente depois que o usuário começa a rolar.
+- Regressão Chromium valida ida e volta entre as duas abas, Histórico acima nas duas e cancelamento do realinhamento após movimento do usuário.
+
+### Preservado
+- Renderers, dados, Watchlist, F1/UFC/WWE, Descobrir, Perfil, Esportes, Raw/SmackDown e Android permanecem inalterados.
+- Sem full-page reload, router.refresh(), loop infinito, timer contínuo ou observer novo.
+
 ## 0.3.67 — r540 (2026-10-16)
 
 ### Escopo estrito: F1 / UFC / WWE presos em "Contagem histórica carregando"

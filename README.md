@@ -1,3 +1,11 @@
+## Web 0.3.68 / r541 — entrada determinística da Home
+
+- Séries inicia em **Continuar assistindo**; o Histórico permanece acima/oculto.
+- Filmes inicia em **Assistir a seguir / Watchlist**; Filmes vistos permanece acima/oculto.
+- O estado de âncora é separado por aba, evitando que Séries marque Filmes como já alinhado.
+- O scroll do usuário continua soberano após o primeiro alinhamento.
+- Nenhuma outra tela, regra ou renderer foi alterado.
+
 ## Web 0.3.67 / r540 — contagens históricas auth-safe
 
 - F1/UFC/WWE podem mostrar "Contagem histórica carregando" apenas durante a restauração da sessão; depois disso a leitura é retomada automaticamente e o placeholder é substituído.
