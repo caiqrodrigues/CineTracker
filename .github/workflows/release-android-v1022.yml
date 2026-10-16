@@ -111,11 +111,44 @@ jobs:
           sha256sum "$OUT" | tee android-1.0.22-sha256.txt
           stat -c '%s' "$OUT" | tee android-1.0.22-size.txt
 
+      - name: Build side-by-side Android TESTE APK (no existing-app replacement)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          gradle=Path('apps/android/app/build.gradle')
+          src=gradle.read_text()
+          old="applicationId 'com.cinetracker.app'"
+          assert src.count(old)==1, 'Original applicationId unexpectedly changed'
+          assert "versionName '1.0.22'" in src
+          gradle.write_text(src.replace(old,"applicationId 'com.cinetracker.app.teste'").replace("versionName '1.0.22'","versionName '1.0.22-teste'"))
+          manifest=Path('apps/android/app/src/main/AndroidManifest.xml')
+          text=manifest.read_text()
+          assert text.count('android:name=".MainActivity"')==1
+          assert text.count('android:label="CineTracker"')==1
+          manifest.write_text(text.replace('android:name=".MainActivity"','android:name="com.cinetracker.app.MainActivity"').replace('android:label="CineTracker"','android:label="CineTracker TESTE"'))
+          PY
+          (cd apps/android && gradle assembleDebug --stacktrace)
+          TESTAPK='CineTracker-Android-1.0.22-TESTE.apk'
+          cp apps/android/app/build/outputs/apk/debug/app-debug.apk "$TESTAPK"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$($AAPT dump badging "$TESTAPK")"
+          grep -Fq "package: name='com.cinetracker.app.teste'" <<<"$BADGING"
+          grep -Fq "versionName='1.0.22-teste'" <<<"$BADGING"
+          grep -Fq 'application-label:' <<<"$BADGING"
+          unzip -p "$TESTAPK" assets/hotfix5/index.html | grep -Fq "window.__ctR264AndroidV1022="
+          "$APKSIGNER" verify --print-certs "$TESTAPK"
+          sha256sum "$TESTAPK" | tee android-1.0.22-teste-sha256.txt
+
       - uses: actions/upload-artifact@v4
         with:
           name: cinetracker-android-1.0.22
           path: |
             CineTracker-Android-1.0.22.apk
+            CineTracker-Android-1.0.22-TESTE.apk
+            android-1.0.22-teste-sha256.txt
             android-1.0.22-sha256.txt
             android-1.0.22-size.txt
           if-no-files-found: error
@@ -131,4 +164,4 @@ jobs:
           TAG='android-v1.0.22'
           NOTES='Android 1.0.22 / versionCode 10064. Fixes Android DOM mismatch preventing F1/UFC/WWE rendering; authenticates before loading them; scrolls inside the actual Android Home viewports; recomputes post-audit Pra Voce selections. Preserves native Android and r262 authorities. Web r541 remains frozen.'
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'CineTracker Android 1.0.22' --notes "$NOTES"
-          gh release upload "$TAG" CineTracker-Android-1.0.22.apk android-1.0.22-sha256.txt android-1.0.22-size.txt --clobber
+          gh release upload "$TAG" CineTracker-Android-1.0.22.apk CineTracker-Android-1.0.22-TESTE.apk android-1.0.22-teste-sha256.txt android-1.0.22-sha256.txt android-1.0.22-size.txt --clobber
