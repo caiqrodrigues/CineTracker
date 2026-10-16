@@ -1,3 +1,11 @@
+## Web 0.3.66 / r539 — contagem histórica correta das séries especiais
+
+- Home usa progresso histórico completo para F1, UFC e WWE Pay-Per-View.
+- F1 compara somente corridas vistas com o total de Grandes Prêmios: 18 / 1.166; sessões de treino/classificação/sprint continuam registradas separadamente.
+- UFC: 18 / 793 eventos; WWE PPV/PLE: 50 / 567 eventos.
+- Temporada atual continua responsável somente por pendências recentes e pelo bucket Continuar assistindo / Em dia.
+- Nenhum layout ou outra área do CineTracker foi alterado.
+
 ## Web 0.3.65 / r538 — correção somente das contagens
 
 - Naruto permanece com **220** episódios; Naruto Shippuuden passa a **500**.

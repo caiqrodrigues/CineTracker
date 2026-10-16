@@ -1,3 +1,17 @@
+## 0.3.66 — r539 (2026-10-16)
+
+### Escopo estrito: contagem global de F1 / UFC / WWE na Home
+- Corrigida a causa real da regressão: a r528 ainda formatava os três cards com o denominador da temporada atual.
+- **Fórmula 1:** Home passa a usar Grande Prêmio contra Grande Prêmio. Progresso validado: **18 / 1.166 GPs assistidos**. As 87 sessões vistas continuam preservadas no banco, mas não são misturadas com o denominador de GPs.
+- **UFC:** Home passa a mostrar o progresso histórico completo validado: **18 / 793 eventos assistidos**.
+- **WWE Pay-Per-View / PLE:** Home passa a mostrar o progresso histórico completo validado: **50 / 567 eventos assistidos**.
+- O RPC `cinetracker_special_series_counts_v539` separa F1 race-only de sessões e mantém UFC/WWE por evento.
+- Enquanto a contagem global ainda está chegando, o card mostra estado de carregamento em vez de voltar a exibir 17/23, 14/41 ou 7/7.
+
+### Preservado
+- Bucket atual (**Continuar assistindo / Em dia**), pendências recentes, seleção anual, catálogos, writers de Assistido, Home/Filmes, Descobrir, Perfil, Esportes, Raw/SmackDown e Android não foram alterados.
+- Sem full-page reload, `router.refresh()`, `while(true)`, `setInterval` ou novo observer.
+
 ## 0.3.65 — r538 (2026-10-16)
 
 ### Escopo estrito: somente contagens
