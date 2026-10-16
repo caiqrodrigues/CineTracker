@@ -1,4 +1,4 @@
-name: Verify Web 0.3.66 r539
+name: Verify Web 0.3.67 r540
 on:
   push:
     branches: [main]
@@ -9,23 +9,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r539:
+  web_r540:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r539 special-count regression gate
+      - name: Build and r540 auth-race regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v539.js
-          grep -Fq "window.__ctR539Marker='special-home-all-time-counts+matching-units+no-season-denominator'" apps/web/dist/app-v539.js
-          grep -Fq 'cinetracker_special_series_counts_v539' apps/web/dist/app-v539.js
-          grep -Fq 'ct537-movie-list' apps/web/dist/app-v539.js
-          ! grep -Fq '.ct536-movie-rail' apps/web/dist/app-v539.css
+          node --check apps/web/dist/app-v540.js
+          grep -Fq "window.__ctR540Marker='special-counts-auth-safe+fast-v540+no-stuck-placeholder'" apps/web/dist/app-v540.js
+          grep -Fq 'cinetracker_special_series_counts_v540' apps/web/dist/app-v540.js
+          grep -Fq 'ct537-movie-list' apps/web/dist/app-v540.js
+          ! grep -Fq '.ct536-movie-rail' apps/web/dist/app-v540.css
   android:
     runs-on: ubuntu-latest
     steps:
@@ -35,19 +35,19 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r539, android]
+    needs: [web_r540, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r539 production
+      - name: Wait for r540 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.66"' <<<"$BODY" && grep -Fq '"revision": "r539-official-0.3.66"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v539.js?ct=$CT" || true)"
-              if grep -Fq "window.__ctR539Marker='special-home-all-time-counts+matching-units+no-season-denominator'" <<<"$JS"; then exit 0; fi
+            if grep -Fq '"version": "0.3.67"' <<<"$BODY" && grep -Fq '"revision": "r540-official-0.3.67"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v540.js?ct=$CT" || true)"
+              if grep -Fq "window.__ctR540Marker='special-counts-auth-safe+fast-v540+no-stuck-placeholder'" <<<"$JS"; then exit 0; fi
             fi
             [ "$i" -eq 240 ] && exit 1
             sleep 5

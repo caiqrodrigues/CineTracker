@@ -1,3 +1,10 @@
+## Web 0.3.67 / r540 — contagens históricas auth-safe
+
+- F1/UFC/WWE não ficam mais presos em "Contagem histórica carregando".
+- A leitura aguarda a sessão autenticada e usa RPC direta v540 (~176 ms no perfil validado).
+- Progresso preservado: F1 18/1.166 GPs, UFC 18/793 eventos e WWE 50/567 eventos.
+- Nenhuma outra tela ou funcionalidade foi alterada.
+
 ## Web 0.3.66 / r539 — contagem histórica correta das séries especiais
 
 - Home usa progresso histórico completo para F1, UFC e WWE Pay-Per-View.

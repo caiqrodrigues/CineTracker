@@ -1,3 +1,4 @@
+- Web: **0.3.67 / r540-official-0.3.67** — corrige corrida de autenticação das contagens F1/UFC/WWE e troca RPC pesada por v540 direta (~176 ms); restante preservado.
 - Web: **0.3.66 / r539-official-0.3.66** — cards F1/UFC/WWE da Home usam progresso histórico global com unidades coerentes; F1 race-only, UFC/WWE por evento; restante preservado.
 - Web: **0.3.65 / r538-official-0.3.65** — somente contagens: Naruto 220 preservado, Shippuuden 500, F1 1.166 GPs, UFC 793 eventos e WWE PPV/PLE 567 supercards; sem alteração visual ou funcional fora desses números.
 - Web: **0.3.64 / r537-official-0.3.64** — Watchlist Filmes volta à lista vertical canônica; F1/UFC/WWE persistem após repaints r399 e abrem a tela anual sem esperar o catálogo inicializar.

@@ -1,3 +1,15 @@
+## 0.3.67 — r540 (2026-10-16)
+
+### Escopo estrito: F1 / UFC / WWE presos em "Contagem histórica carregando"
+- Corrigida a corrida real de boot: a r539 disparava a RPC antes de a sessão autenticada estar restaurada e não repetia a leitura depois; os três cards podiam permanecer eternamente no placeholder.
+- O owner r540 aguarda autenticação de forma finita e faz no máximo três tentativas delimitadas, sem loop infinito, observer ou reload.
+- Nova RPC `cinetracker_special_series_counts_v540` elimina o caminho pesado `special_series_progress_v520`. Medição no perfil atual: aproximadamente **176 ms**, preservando **F1 18/1.166 GPs**, **UFC 18/793 eventos** e **WWE 50/567 eventos**.
+- Antes da contagem pessoal chegar, os cards mostram imediatamente o denominador histórico estável (1.166 / 793 / 567), nunca mais a mensagem presa de carregamento.
+- Teste Chromium reproduz sessão inicialmente indisponível, exige zero RPC antes do auth-ready e valida a troca automática para as três contagens históricas completas.
+
+### Preservado
+- Buckets Continuar assistindo / Em dia, pendências recentes, telas anuais, writers de Assistido, Home Séries/Filmes, Descobrir, Perfil, Esportes, Raw/SmackDown e Android permanecem inalterados.
+
 ## 0.3.66 — r539 (2026-10-16)
 
 ### Escopo estrito: contagem global de F1 / UFC / WWE na Home
