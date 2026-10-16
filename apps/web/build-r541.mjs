@@ -93,7 +93,7 @@ await Promise.all([
 await Promise.all([rm(resolve(dist,'app-v540.js'),{force:true}),rm(resolve(dist,'app-v540.css'),{force:true})]);
 for(const need of [
  "window.__ctR541Marker='home-entry-anchor-per-tab+history-hidden-above+no-cross-tab-state'",
- 'window.__ctR541HomeAnchorState','data-ct541-home-start','r541-official-0.3.68',
+ 'window.__ctR541HomeAnchorState','dataset.ct541HomeStart','r541-official-0.3.68',
  "window.__ctR540Marker='special-counts-auth-safe+fast-v540+no-stuck-placeholder'",
  'ct537-movie-list'
 ])if(!js.includes(need))throw new Error('r541 missing '+need);
