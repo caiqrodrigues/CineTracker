@@ -106,6 +106,14 @@ async function stadiumSync(force=false){
  }).finally(()=>{stadiumRequest=null});
  return stadiumRequest;
 }
+/* The r168 Profile owner repaints again after its deferred full payload, so fix the
+   actual painter rather than attaching the metric only to the first render. */
+const oldPaintProfile266=ct168PaintProfile;
+ct168PaintProfile=function(...args){
+ const out=oldPaintProfile266.apply(this,args);
+ if(route()==='profile')requestAnimationFrame(()=>{void stadiumSync(false)});
+ return out;
+};
 const oldProfile=renderProfile;
 renderProfile=async function(...args){
  const out=await oldProfile.apply(this,args);
