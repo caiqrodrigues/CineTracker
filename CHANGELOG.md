@@ -1,3 +1,16 @@
+## Android 1.0.21 — r263 (2026-10-16)
+
+### Web congelada + novidades adaptadas ao Android
+- **Web congelada:** referência imutável em `43f5f0c5d87802fac80365c62388276c0b2d7255` / `r541-official-0.3.68`; a release Android falha se `apps/web/**` divergir desse ponto.
+- **Base Android preservada:** mantém o runtime validado 1.0.20/r262, Watchlist/Trocar, gestos do WebView, navegação nativa, importação/exportação, notificações, F1 Hub e autoridades Android já funcionais.
+- **Home:** Séries entra em Continuar assistindo e Filmes em Assistir a seguir / Watchlist, com Histórico fisicamente acima e estado de âncora independente por aba.
+- **F1 / UFC / WWE Pay-Per-View:** séries especiais anuais, tela por temporada, contagens históricas v540 e writers canônicos existentes; Raw/SmackDown continuam séries normais.
+- **Descobrir:** auditoria pessoal v525 aplicada aos novos pools, incluindo vistos/Watchlist/Não interessado e filtros atuais de conteúdo; Pra Você preserva a composição Android já validada.
+- **Top 10:** busca delimitada até 10 Séries + 10 Filmes elegíveis por streaming e pôster 2:3.
+- **Perfil:** cinco listas resumidas com exatamente 12 cards e somente Ver mais no cabeçalho; detalhe diário usa v518 e Desmarcar usa os writers r426.
+- **Esportes:** detalhe de time (últimos 5 jogos em todas as competições) e liga (rodada mais recente), com writer esportivo canônico.
+- Sem `window.location.reload()`, `router.refresh()`, `while(true)`, `setInterval()` ou novo `MutationObserver` no runtime r263.
+
 ## 0.3.68 — r541 (2026-10-16)
 
 ### Escopo estrito: posição inicial da Home

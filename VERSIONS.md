@@ -1,3 +1,4 @@
+- Android: **1.0.21 / r263-android-official-1.0.21 / versionCode 10063** — Web r541 congelada; novidades atuais adaptadas ao Android sobre a base r262, preservando shell nativo, Watchlist/Trocar, gestos, importação/exportação, notificações e demais funções Android existentes.
 - Web: **0.3.68 / r541-official-0.3.68** — âncora de entrada independente por aba: Séries em Continuar assistindo e Filmes em Assistir a seguir / Watchlist, com Históricos mantidos acima/ocultos.
 - Web: **0.3.67 / r540-official-0.3.67** — corrige corrida de autenticação das contagens F1/UFC/WWE e troca RPC pesada por v540 direta (~176 ms); restante preservado.
 - Web: **0.3.66 / r539-official-0.3.66** — cards F1/UFC/WWE da Home usam progresso histórico global com unidades coerentes; F1 race-only, UFC/WWE por evento; restante preservado.

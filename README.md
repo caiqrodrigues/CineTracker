@@ -1,3 +1,10 @@
+## Android 1.0.21 / r263 — paridade com Web r541 sem remover funções Android
+
+- Web congelada em **0.3.68 / r541** (`43f5f0c5…`); esta release não modifica `apps/web/**`.
+- Android 1.0.20/r262 continua sendo a base validada: shell nativo, gestos, Watchlist/Trocar, importação/exportação, notificações e navegação são preservados.
+- Adapta Home atual, séries especiais F1/UFC/WWE PPV, filtros atuais do Descobrir, Top 10 10+10, Perfil 12 cards + Ver mais, histórico diário com Desmarcar e drill-down esportivo.
+- Release: **1.0.21 / versionCode 10063 / r263-android-official-1.0.21**.
+
 ## Web 0.3.68 / r541 — entrada determinística da Home
 
 - Séries inicia em **Continuar assistindo**; o Histórico permanece acima/oculto.

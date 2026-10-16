@@ -31,8 +31,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          grep -Fq "versionName '1.0.20'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10062' apps/android/app/build.gradle
+          grep -Fq "versionName '1.0.21'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10063' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [web_r541, android]
