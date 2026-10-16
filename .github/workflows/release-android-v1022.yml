@@ -138,7 +138,8 @@ jobs:
           grep -Fq "package: name='com.cinetracker.app.teste'" <<<"$BADGING"
           grep -Fq "versionName='1.0.22-teste'" <<<"$BADGING"
           grep -Fq 'application-label:' <<<"$BADGING"
-          unzip -p "$TESTAPK" assets/hotfix5/index.html | grep -Fq "window.__ctR264AndroidV1022="
+          unzip -p "$TESTAPK" assets/hotfix5/index.html > /tmp/ct1022-preview.html
+          grep -Fq "window.__ctR264AndroidV1022=" /tmp/ct1022-preview.html
           "$APKSIGNER" verify --print-certs "$TESTAPK"
           sha256sum "$TESTAPK" | tee android-1.0.22-teste-sha256.txt
 
