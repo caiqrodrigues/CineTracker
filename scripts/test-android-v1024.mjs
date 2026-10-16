@@ -45,7 +45,7 @@ const globals={
  pages:async()=>[valid,another],
  route:()=>globals.currentRoute,discoverState:{tab:'foryou'},currentRoute:'discover',
  paintDiscover:()=>{paint++},
- renderProfile:async()=>{},rpc:async(name)=>{calls.push(name);return {stadium_events:sportsCount,watched_events:30}},
+ renderProfile:async()=>{},ct168PaintProfile:()=>{},rpc:async(name)=>{calls.push(name);return {stadium_events:sportsCount,watched_events:30}},
  requestAnimationFrame:f=>{f()},setTimeout:(cb,ms)=>{const t=setTimeout(cb,ms);t.unref();return t},
  console,Intl,Date,Promise,
 };
