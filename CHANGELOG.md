@@ -1,3 +1,12 @@
+## Android 1.0.25 — r267 (2026-10-16)
+
+- **F1 Hub:** removido diretamente do renderer Android o legado de sete abas e consolidado no mesmo owner canônico das quatro abas da Web: Visão geral, Calendário, Pilotos e Construtores. Clique no GP mantém o detalhamento de sessões, grid e resultado já implementado, sem montar um segundo Hub concorrente.
+- **Descobrir > Pra Você:** o repositor anterior somente de filmes foi substituído. Consulta complementar, delimitada e independente de filmes, séries e animes, após exclusões finais (visto, Watchlist, AEW/luta livre, reality, stand-up, origem YouTube, curtas). Mantém exatamente sete posições; não inventa recomendação nem insere candidatos externos em Da sua Watchlist.
+- **Perfil > Esportes assistidos:** grid de **Eventos assistidos** e **Jogos no estádio** na primeira linha (duas colunas); **Tempo assistido** ocupa sozinho toda a segunda linha. Os três valores seguem suas fontes anteriores, incluindo RPC de estádio v296.
+- **Preservado:** Web 0.3.68/r541 e MainActivity/layout nativos sem modificações, navegação, Watchlist/Trocar, Visto/Desmarcar, Esportes, notificações, exportação/importação, Home e detalhes.
+- **Gate:** teste do markup F1 (quatro abas, GP clicável), refill de três categorias com exclusão de vistos/Watchlist, distribuição 2+1 do Perfil, syntax check do JS, assinatura/verificação do APK. Teste real no dispositivo ainda necessário.
+- **APK paralelo:** TESTE25 com package ID `com.cinetracker.app.teste25`, sem substituir as versões de teste anteriores.
+
 ## Android 1.0.24 — r266 (2026-10-16)
 
 - **Correção a partir do vídeo enviado:** a Indicação do dia e o slot Filme de 100% Novos perdiam todos os candidatos após o filtro r265; agora há reposição delimitada com candidatos TMDB realmente elegíveis, já filtrados contra Visto, Watchlist, AEW, luta livre e outras exclusões. Quando o pool contém um único filme, procura mais um sem reaproveitar o primeiro nem inventar candidato.

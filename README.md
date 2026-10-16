@@ -1892,3 +1892,8 @@ Integra GP clicável no F1 Hub (fins de semana, grid, resultado, marcação), co
 ### Android 1.0.24 — correções evidenciadas em vídeo
 
 Pra Você recarrega pools de filmes somente quando o filtro deixa menos de dois filmes elegíveis, sem romper os sete slots nem preencher Da sua Watchlist com candidatos novos. Perfil mostra Jogos no estádio consultando `cinetracker_sports_stadium_summary_v296`. Drawer real `.ct169-drawer` agora ocupa apenas a altura disponível acima da navegação fixa do APK, permitindo alcançar o último episódio. A Web r541 e a Activity nativa não foram modificadas. Verificação: `node scripts/prepare-android-v1024.mjs && node scripts/test-android-v1024.mjs`; depois `gradle assembleDebug`. TESTE24 usa aplicação paralela `com.cinetracker.app.teste24`.
+
+
+### Android 1.0.25 — F1 Hub canônico / Pra Você / Esportes assistidos
+
+A Web r541 permanece congelada. O Android 1.0.25 substitui diretamente os dois renderers do F1 Hub legado (corpo e barra), conserva somente as quatro abas do aplicativo Web e reutiliza a tela de GP para sessões/grid/resultado. O Pra Você repõe filmes, séries e animes por categoria, respeitando a exclusão pessoal, e não preenche artificialmente a Watchlist. O Perfil organiza eventos e estádio na primeira linha e tempo na segunda em toda a largura. Testar localmente: `node scripts/prepare-android-v1025.mjs && node scripts/test-android-v1025.mjs` antes de `gradle assembleDebug` em `apps/android`. TESTE25 usa pacote paralelo `com.cinetracker.app.teste25`.
