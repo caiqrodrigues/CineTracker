@@ -4,8 +4,8 @@ import {createServer} from 'node:http';
 import {spawn,execFileSync} from 'node:child_process';
 await import('./build-r538.mjs');
 const js=await readFile(resolve('dist/app-v538.js'),'utf8');
-const anchor="if(window.__ctR516SpecialSummary?.version==='0.3.47')return;",at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),end=js.indexOf('\n})();',at);
-if(at<0||start<0||end<0)throw new Error('r520 summary region missing');
+const anchor="window.__ctR538SummaryMarker='stable-counts-v538+public-growth';",at=js.indexOf(anchor),start=js.lastIndexOf('(()=>{',at),end=js.indexOf('\n})();',at);
+if(at<0||start<0||end<0)throw new Error('r538 summary region missing');
 const summary=js.slice(start,end+6);
 const prelude=`
 window.__ctCoreR471={
@@ -48,4 +48,4 @@ const code=await new Promise(r=>child.on('close',r));clearTimeout(killer);await 
 if(code!==0)throw new Error('Chromium '+code+' '+err.slice(-1000));
 const m=out.match(/data-ct538browser="([^"]*)"/),state=m?.[1]||'';
 if(state!=='ok')throw new Error('R538_BROWSER '+state+' DOM='+out.slice(-5000));
-console.log('R538_BROWSER_OK stable-count-fallbacks');
+console.log('R538_BROWSER_OK active-summary-stable-counts');
