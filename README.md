@@ -1,6 +1,6 @@
 ## Web 0.3.67 / r540 — contagens históricas auth-safe
 
-- F1/UFC/WWE não ficam mais presos em "Contagem histórica carregando".
+- F1/UFC/WWE podem mostrar "Contagem histórica carregando" apenas durante a restauração da sessão; depois disso a leitura é retomada automaticamente e o placeholder é substituído.
 - A leitura aguarda a sessão autenticada e usa RPC direta v540 (~176 ms no perfil validado).
 - Progresso preservado: F1 18/1.166 GPs, UFC 18/793 eventos e WWE 50/567 eventos.
 - Nenhuma outra tela ou funcionalidade foi alterada.
