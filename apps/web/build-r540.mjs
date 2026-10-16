@@ -11,14 +11,19 @@ let [html,js,css,sw,releaseRaw,runtime]=await Promise.all([
  readFile(resolve(dist,'release.json'),'utf8'),
  readFile(resolve(root,'runtime-r540-summary.js'),'utf8')
 ]);
-function bounds(source,anchor,label){
- const at=source.indexOf(anchor);if(at<0)throw new Error('r540 missing '+label+' anchor');
- const start=source.lastIndexOf('(()=>{',at),close=source.indexOf('\n})();',at);
- if(start<0||close<0)throw new Error('r540 invalid '+label+' bounds');
- return{start,end:close+6}
+function replaceRuntimeByHeader(source,header,anchor,replacement,label){
+ const start=source.indexOf(header);if(start<0)throw new Error('r540 missing '+label+' header');
+ const at=source.indexOf(anchor,start);if(at<0)throw new Error('r540 missing '+label+' marker');
+ const close=source.indexOf('\n})();',at);if(close<0)throw new Error('r540 missing '+label+' close');
+ return source.slice(0,start)+replacement.trim()+source.slice(close+6)
 }
-function replaceRuntime(source,anchor,replacement,label){const b=bounds(source,anchor,label);return source.slice(0,b.start)+replacement.trim()+source.slice(b.end)}
-js=replaceRuntime(js,"window.__ctR539SummaryMarker='db-first-global-progress+f1-race-only+ufc-wwe-events'",runtime,'r539 summary');
+js=replaceRuntimeByHeader(
+ js,
+ '/* CineTracker Web 0.3.66 r539 — all-time special-series progress with matching units. */',
+ "window.__ctR539SummaryMarker='db-first-global-progress+f1-race-only+ufc-wwe-events'",
+ runtime,
+ 'r539 summary'
+);
 js+="\n;window.__ctR540Marker='special-counts-auth-safe+fast-v540+no-stuck-placeholder';\n";
 new Function(runtime);new Function(js);
 js=js.replace(/const REVISION='[^']+';/,"const REVISION='r540-official-0.3.67';");
