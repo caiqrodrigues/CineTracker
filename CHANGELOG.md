@@ -1,3 +1,17 @@
+## 0.3.64 — r537 (2026-10-16)
+
+### Escopo estrito: Home Filmes + F1/UFC/WWE
+- **Home > Filmes:** desfaz exclusivamente a regressão visual da r536. **Assistir a seguir / Watchlist volta a ser 100% lista vertical**, usando o renderer canônico `ct274Row`, igual ao Histórico e às listas de Séries. O CSS e o markup `ct536-movie-rail / ct536-movie-card` são removidos do bundle final.
+- **Home > Filmes:** paginação v405, ordenação e ação de Visto são preservadas; somente a apresentação volta ao contrato de lista.
+- **F1 / UFC / WWE Pay-Per-View:** identificado o painter concorrente r399 que recriava as seções de Séries sem remontar os especiais. O próprio `renderSeries399` agora remonta os três cards após todo repaint e reconcilia o cache atual.
+- **F1 / UFC / WWE Pay-Per-View:** o opener canônico r534 deixa de esperar `__ctR512Special.loadSeason` para abrir. Basta a tela anual r520 estar registrada; ela aparece imediatamente e o catálogo continua carregando dentro dela.
+- **Raw / SmackDown:** continuam séries normais e não são interceptadas pelo owner de PPV.
+- Teste Chromium r537 repinta Séries duas vezes e exige os três especiais ainda presentes; também abre F1/UFC/WWE sem `__ctR512Special` pronto e valida a Watchlist com 12 linhas verticais.
+
+### Preservado
+- Home Séries/Histórico/toolbar, Descobrir/Pra Você/Top 10, Perfil, Esportes/time/liga, títulos relacionados, writers/catálogos especiais e Android 1.0.20 / 10062 não foram alterados.
+- Sem full-page reload, `router.refresh()`, `while(true)`, `setInterval` ou observer novo.
+
 ## 0.3.63 — r536 (2026-10-15)
 
 ### Escopo estrito: Home Séries/Filmes + F1/UFC/WWE + Descobrir público/Top 10

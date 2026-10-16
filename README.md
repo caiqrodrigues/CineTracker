@@ -1,3 +1,11 @@
+## Web 0.3.64 / r537 — lista de Filmes + especiais estáveis
+
+- Home Filmes: Watchlist em lista vertical canônica, igual Histórico/Séries; rail de pôsteres r536 removido.
+- F1/UFC/WWE PPV: r399 remonta os três após qualquer repaint de Séries.
+- A tela anual abre assim que o owner visual existe; catálogo/temporada pode finalizar depois sem bloquear o clique.
+- Raw/SmackDown continuam no fluxo normal de Série.
+- Restante do site e Android permanecem fora do escopo.
+
 ## Web 0.3.63 / r536 — Home e Descobrir estabilizados no owner final
 
 - Histórico continua acima/oculto; entrada de Séries e Filmes fixa o bloco principal antes de liberar o scroll do usuário.
