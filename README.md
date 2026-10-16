@@ -1877,3 +1877,8 @@ A Web é uma aplicação JavaScript/PWA construída por uma cadeia incremental. 
 Build, CI, deploy, APK, assinatura e teste real são evidências separadas. O bundle final e a produção precisam renderizar conteúdo em navegador real; teste no navegador/aparelho prevalece sobre asserts estáticos quando houver divergência.
 
 Documentação canônica: `PROJECT_STATE.md`, `VERSIONS.md`, `CHANGELOG.md`, `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_RULES.md` e `docs/SECURITY.md`.
+
+
+### Android 1.0.22 — correção de integração
+
+Preserva Web 0.3.68/r541 e Android 1.0.20/r262. Corrige contêineres de Séries/Filmes, carregamento autenticado de F1/UFC/WWE e recomendações após auditoria. Para compilar: `node scripts/prepare-android-v1022.mjs && node scripts/test-android-v1022.mjs`, depois `gradle assembleDebug` em `apps/android`.

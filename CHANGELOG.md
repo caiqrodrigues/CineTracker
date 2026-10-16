@@ -1,3 +1,13 @@
+## Android 1.0.22 — r264 (2026-10-16)
+
+- **Correção efetiva do APK 1.0.21:** seletores F1/UFC/WWE usavam seções diretamente em `[data-home-view]`; no Android as seções estão dentro de `[data-home-viewport] .home-start`. As três séries são montadas na seção correta.
+- **Autenticação:** sessão restaurada antes de pedir F1/UFC/WWE; navegação à Home dispara integração pós-auth.
+- **Home:** âncora usa `scrollTop` do contêiner Android em vez de `window.scrollTo`; Histórico acima, Séries em Continuar e Filmes em Watchlist.
+- **Descobrir/Pra Você:** após auditoria dos pools, recalcula os sete slots, sem candidatos externos na seção Da sua Watchlist.
+- **Perfil:** reconcilia 12 cards e Ver mais após renderização efetiva.
+- **Preservados:** Android 1.0.20/r262, Trocar, Watchlist, Visto, F1 Hub, Histórico/Desmarcar, Top 10, Esportes, importação/exportação, notificações, navegação nativa e Web r541 sem alterações.
+- **Validação:** script e sintaxe do runtime, seletores/autoridades e smoke test Chromium local com RPCs simuladas (F1/UFC/WWE visíveis e Home rolada pelo contêiner correto). Teste real no aparelho ainda necessário.
+
 ### Android 1.0.21 — correção do pipeline de APK
 - Corrigido somente o gate legado `prepare-android-v1019.mjs` para exigir a RPC realmente existente `cinetracker_watchlist_full_v376` em vez da referência inexistente `cinetracker_watchlist_full_v119`.
 - Mantidas a Web r541 congelada e a base funcional Android 1.0.20; nenhuma mudança na lógica da Watchlist ou da aplicação.
