@@ -1,3 +1,18 @@
+## 0.3.63 — r536 (2026-10-15)
+
+### Escopo estrito: Home Séries/Filmes + F1/UFC/WWE + Descobrir público/Top 10
+- **Home Séries:** Histórico continua fisicamente acima/oculto. O primeiro alinhamento em **Continuar assistindo** não pode mais ser cancelado por um `touchmove` incidental antes da âncora inicial; depois do primeiro alinhamento, o movimento real do usuário volta a ter prioridade.
+- **Home Séries:** todo repaint de Séries remonta F1, UFC e WWE Pay-Per-View e reconcilia o carregamento atual. Os três cards não podem desaparecer depois de uma resposta assíncrona da Home.
+- **Home Filmes:** seleção de Filmes solicita uma nova âncora de Watchlist e mantém o lock do tab escolhido. A Watchlist usa novamente o renderer final de pôster, em um único trilho horizontal 2:3 (176×264 desktop / 154×231 mobile), preservando paginação v405 e ações existentes.
+- **F1 / UFC / WWE:** a tela anual continua sendo a r520 canônica; abre imediatamente em full-screen, inicia no topo e a espera pelo catálogo/temporada é delimitada, sem deixar apenas o botão Voltar sobre a Home.
+- **Descobrir > Novidades / Lançamentos / Mais Aguardados:** o TMDB continua `allSettled`/delimitado e a auditoria pessoal passa a ser feita em blocos independentes. Um bloco lento/falhando não mantém toda a aba em loading; blocos não auditados são descartados.
+- **Descobrir > Top 10:** o filtro pessoal deixa de derrubar o ranking inteiro quando um bloco falha. Cada lote é auditado fail-closed e a busca continua até obter exatamente 10 Séries + 10 Filmes elegíveis; ranking parcial nunca é publicado.
+- Teste Chromium exige âncora inicial mesmo após movimento incidental, rail de Filmes 2:3 sem wrap, tela especial full-screen e Top 10 10×10 após candidatos iniciais bloqueados.
+
+### Preservado
+- Pra Você, Perfil, Esportes/time/liga, F1 Hub/writers, Raw/SmackDown, Títulos Relacionados e Android 1.0.20 / 10062 não foram alterados.
+- Nenhum full-page reload, `router.refresh()`, `while(true)`, `setInterval` ou novo `MutationObserver`.
+
 ## 0.3.62 — r535 (2026-10-15)
 
 ### Escopo estrito: Home + F1/UFC/WWE + três abas públicas do Descobrir
