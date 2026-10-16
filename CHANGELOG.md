@@ -1,3 +1,8 @@
+### Android 1.0.21 — correção do pipeline de APK
+- Corrigido somente o gate legado `prepare-android-v1019.mjs` para exigir a RPC realmente existente `cinetracker_watchlist_full_v376` em vez da referência inexistente `cinetracker_watchlist_full_v119`.
+- Mantidas a Web r541 congelada e a base funcional Android 1.0.20; nenhuma mudança na lógica da Watchlist ou da aplicação.
+- Manifesto raiz atualizado para versão 0.3.69 exclusivamente como registro da entrega Android (a versão Web permanece 0.3.68).
+
 ## Android 1.0.21 — r263 (2026-10-16)
 
 ### Web congelada + novidades adaptadas ao Android
