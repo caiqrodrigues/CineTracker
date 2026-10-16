@@ -1,3 +1,4 @@
+- Web: **0.3.65 / r538-official-0.3.65** — somente contagens: Naruto 220 preservado, Shippuuden 500, F1 1.166 GPs, UFC 793 eventos e WWE PPV/PLE 567 supercards; sem alteração visual ou funcional fora desses números.
 - Web: **0.3.64 / r537-official-0.3.64** — Watchlist Filmes volta à lista vertical canônica; F1/UFC/WWE persistem após repaints r399 e abrem a tela anual sem esperar o catálogo inicializar.
 - Web: **0.3.63 / r536-official-0.3.63** — Home com âncora inicial imune a touch incidental, especiais persistentes, Filmes em rail 2:3; Descobrir público com auditoria segmentada e Top 10 estrito 10×10.
 - Web: **0.3.62 / r535-official-0.3.62** — Home ancora antes dos dados e trava o tab escolhido; tela anual F1/UFC/WWE volta a ocupar a viewport; Novidades/Lançamentos/Mais Aguardados deixam de ficar presos por uma chamada TMDB pendente.

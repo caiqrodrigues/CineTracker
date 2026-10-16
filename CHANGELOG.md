@@ -1,3 +1,18 @@
+## 0.3.65 — r538 (2026-10-16)
+
+### Escopo estrito: somente contagens
+- **Naruto:** preservado em 220 episódios.
+- **Naruto Shippuuden:** corrigido de 0 para **500 episódios**; nenhuma marcação foi alterada.
+- **Fórmula 1:** total global corrigido para **1.166 Grandes Prêmios** após Singapura 2026; o catálogo local parcial não reduz mais o total.
+- **UFC:** total global corrigido para **793 eventos realizados** até UFC Fight Night: Allen vs. Duncan (10/10/2026).
+- **WWE Pay-Per-View / PLE:** total global corrigido para **567 supercards**.
+- `ct-special-series-summary` continua consultando fontes públicas para crescimento futuro, mas usa `cinetracker_special_series_counts_v538` como piso estável.
+- Cache versionado para `ct538:special-summary`, impedindo retorno aos antigos 66/380/61.
+
+### Preservado
+- Nenhum layout, ordem da Home, Watchlist de Filmes, Descobrir, Perfil, Esportes, Raw/SmackDown, F1 Hub, escritores de Assistido ou Android foi alterado.
+- Android permanece **1.0.20 / versionCode 10062**.
+
 ## 0.3.64 — r537 (2026-10-16)
 
 ### Escopo estrito: Home Filmes + F1/UFC/WWE

@@ -1,3 +1,10 @@
+## Web 0.3.65 / r538 — correção somente das contagens
+
+- Naruto permanece com **220** episódios; Naruto Shippuuden passa a **500**.
+- F1 usa **1.166 GPs**, UFC **793 eventos** e WWE PPV/PLE **567 supercards** como totais mínimos verificados em 16/10/2026.
+- Fontes públicas continuam podendo elevar automaticamente esses totais; falhas externas não fazem o app voltar aos catálogos parciais locais.
+- Nenhuma interface ou funcionalidade fora das contagens foi modificada.
+
 ## Web 0.3.64 / r537 — lista de Filmes + especiais estáveis
 
 - Home Filmes: Watchlist em lista vertical canônica, igual Histórico/Séries; rail de pôsteres r536 removido.

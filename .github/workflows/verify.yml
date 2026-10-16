@@ -1,4 +1,4 @@
-name: Verify Web 0.3.64 r537
+name: Verify Web 0.3.65 r538
 on:
   push:
     branches: [main]
@@ -9,23 +9,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r537:
+  web_r538:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Build and r537 scoped regression gate
+      - name: Build and r538 counts-only regression gate
         run: |
           set -euo pipefail
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v537.js
-          grep -Fq "window.__ctR537Marker='movies-canonical-list+special-r399-remount+special-screen-immediate-owner'" apps/web/dist/app-v537.js
-          grep -Fq 'ct537-movie-list' apps/web/dist/app-v537.js
-          ! grep -Fq '.ct536-movie-card' apps/web/dist/app-v537.css
-          ! grep -Fq '.ct536-movie-rail' apps/web/dist/app-v537.css
+          node --check apps/web/dist/app-v538.js
+          grep -Fq "window.__ctR538Marker='counts-only+naruto-shippuuden-500+f1-1166+ufc-793+wwe-567'" apps/web/dist/app-v538.js
+          grep -Fq 'cinetracker_special_series_counts_v538' apps/web/dist/app-v538.js
+          grep -Fq 'ct537-movie-list' apps/web/dist/app-v538.js
+          ! grep -Fq '.ct536-movie-rail' apps/web/dist/app-v538.css
   android:
     runs-on: ubuntu-latest
     steps:
@@ -35,20 +35,19 @@ jobs:
           grep -Fq 'versionCode 10062' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r537, android]
+    needs: [web_r538, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r537 production
+      - name: Wait for r538 production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.64"' <<<"$BODY" && grep -Fq '"revision": "r537-official-0.3.64"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v537.js?ct=$CT" || true)"
-              CSS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v537.css?ct=$CT" || true)"
-              if grep -Fq "window.__ctR537Marker='movies-canonical-list+special-r399-remount+special-screen-immediate-owner'" <<<"$JS" && grep -Fq '.ct537-movie-list' <<<"$CSS" && ! grep -Fq '.ct536-movie-rail' <<<"$CSS"; then exit 0; fi
+            if grep -Fq '"version": "0.3.65"' <<<"$BODY" && grep -Fq '"revision": "r538-official-0.3.65"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v538.js?ct=$CT" || true)"
+              if grep -Fq "window.__ctR538Marker='counts-only+naruto-shippuuden-500+f1-1166+ufc-793+wwe-567'" <<<"$JS"; then exit 0; fi
             fi
             [ "$i" -eq 240 ] && exit 1
             sleep 5
