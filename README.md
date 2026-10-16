@@ -1887,3 +1887,8 @@ Preserva Web 0.3.68/r541 e Android 1.0.20/r262. Corrige contêineres de Séries/
 ### Android 1.0.23 — correções do vídeo
 
 Integra GP clicável no F1 Hub (fins de semana, grid, resultado, marcação), consulta esportiva inicial menor, enquadramento e rolagem, remoção de AEW/wrestling/stand-up/reality/YouTube/curtas em Pra Você, com slots vazios explicados. Web 0.3.68/r541 preservada, sem mudanças na Activity nativa. `node scripts/prepare-android-v1023.mjs && node scripts/test-android-v1023.mjs`; `gradle assembleDebug` em `apps/android`. APK paralelo `com.cinetracker.app.teste23` evita sobrescrever versões instaladas.
+
+
+### Android 1.0.24 — correções evidenciadas em vídeo
+
+Pra Você recarrega pools de filmes somente quando o filtro deixa menos de dois filmes elegíveis, sem romper os sete slots nem preencher Da sua Watchlist com candidatos novos. Perfil mostra Jogos no estádio consultando `cinetracker_sports_stadium_summary_v296`. Drawer real `.ct169-drawer` agora ocupa apenas a altura disponível acima da navegação fixa do APK, permitindo alcançar o último episódio. A Web r541 e a Activity nativa não foram modificadas. Verificação: `node scripts/prepare-android-v1024.mjs && node scripts/test-android-v1024.mjs`; depois `gradle assembleDebug`. TESTE24 usa aplicação paralela `com.cinetracker.app.teste24`.

@@ -1,3 +1,11 @@
+## Android 1.0.24 — r266 (2026-10-16)
+
+- **Correção a partir do vídeo enviado:** a Indicação do dia e o slot Filme de 100% Novos perdiam todos os candidatos após o filtro r265; agora há reposição delimitada com candidatos TMDB realmente elegíveis, já filtrados contra Visto, Watchlist, AEW, luta livre e outras exclusões. Quando o pool contém um único filme, procura mais um sem reaproveitar o primeiro nem inventar candidato.
+- **Perfil > Esportes assistidos:** contador independente e visível de **Jogos no estádio**, consultado da RPC real e existente `cinetracker_sports_stadium_summary_v296` (a v1 de esportes não possui essa informação). Zero só é exibido se o banco confirmou zero; em falhas usa traço, não zera estatísticas já existentes.
+- **Episódios de séries normais:** a tela cortada é o drawer `.ct169-drawer`, não o overlay F1/UFC/WWE. Limita a altura/rolagem do drawer à área acima da barra HTML `.ct180-mobile-nav`, mantendo a lista e o último episódio acessíveis.
+- **Escopo e validação:** a Web r541 e a Activity Android permanecem intocadas. Mantidos Trocar, Watchlist, F1 Hub, Esportes, Perfil, notificações, backup e marcadores r262-r265. Testes automatizados verificam reposição de 2 filmes elegíveis, repaint, RPC de estádio, geometria do drawer e sintaxe antes de publicar o APK; a validação em aparelho real segue pendente.
+- **Instalação segura:** APK TESTE24 com pacote separado `com.cinetracker.app.teste24`, sem exigir desinstalar as versões anteriores.
+
 ## Android 1.0.23 — r265 (2026-10-16)
 
 - **F1 Hub:** Calendário passa a abrir cada GP com sessões, marcação Visto/Desmarcar, Grid de Largada e Resultado de Chegada via Jolpica. Mantém painéis de Pilotos, Construtores, Último GP, Pit Stops e Voltas.
