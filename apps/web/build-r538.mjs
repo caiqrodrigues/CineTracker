@@ -33,6 +33,7 @@ new Function(summaryRuntime);
 new Function(markerRuntime);
 js+='\n'+markerRuntime+'\n';
 new Function(js);
+js=js.replace(/const REVISION='[^']+';/,"const REVISION='r538-official-0.3.65';");
 
 html=html.replaceAll('app-v537.js','app-v538.js').replaceAll('app-v537.css','app-v538.css').replaceAll('v0.3.64','v0.3.65').replaceAll('r537-official-0.3.64','r538-official-0.3.65');
 sw=sw.replaceAll('r537','r538').replaceAll('app-v537.js','app-v538.js').replaceAll('app-v537.css','app-v538.css');
