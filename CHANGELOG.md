@@ -1,3 +1,13 @@
+## Android 1.0.28 — r270 (2026-10-17)
+
+- **Home → Filmes, Histórico:** cache reduzido de sete dias para dois minutos. Quando o histórico backend é antigo, concilia de maneira assíncrona somente filmes confirmados como assistidos e com data válida no dashboard autenticado; mantém ordem cronológica e não altera registros no banco.
+- **Home → Pôsteres:** miniaturas utilizam imagens nativas com carregamento lazy e decodificação assíncrona em vez de carregar centenas de CSS background-image fora da tela.
+- **Descobrir → Pra Você:** a primeira busca filme/série/anime usa duas páginas por tipo (seis consultas totais), em vez de seis páginas por tipo e bloqueio por reservas. A reposição de elegíveis roda depois da primeira exibição, preservando sete slots, filtros de visto, Watchlist, AEW, luta livre, stand-up, reality, YouTube e curtas.
+- **Top 10:** começa com duas páginas por tipo, amplia por etapas se a auditoria não encontra dez; preserva ordenação, 10+10 e cache por usuário/plataforma.
+- **Primeira pintura:** cancelado o preload simultâneo não solicitado de dez seções que disputavam rede com a tela ativa e os pôsteres. A primeira visita sem cache continua dependendo de rede.
+- **Escopo:** Web 0.3.68/r541 e Activity Android intactas. Recursos anteriores F1 Hub, Esportes, Perfil e Watchlist preservados. APK TESTE28 paralelo com pacote com.cinetracker.app.teste28.
+- **Validação:** testes automatizados de sintaxe, exemplo de filme posterior a Pokémon, histórico ordenado, exclusão de Watchlist não vista, lazy-loading, performance e integridade do APK.
+
 ## Android 1.0.27 — r269 (2026-10-17)
 
 - **F1 Hub:** quatro abas em uma única linha, ajuste responsivo em aparelhos estreitos, supressão da quinta aba injetada pelo runtime Android legado ("Grid de largada"). Os dados do grid e chegada permanecem acessíveis dentro do GP; Visão geral mantém os quatro quadros 2×2, com pódio/Top 3, alinhamento ajustado.

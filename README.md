@@ -1907,3 +1907,8 @@ Web 0.3.68/r541 não é modificada. No Android 1.0.26, a indicação diária dei
 ### Android 1.0.27 — enquadramento e primeira pintura rápida
 
 Web 0.3.68/r541 não sofre alterações. No Android, o F1 Hub mantém quatro abas com texto em uma linha e mostra o grid dentro dos GPs; o Pra Você reserva espaço independente para título e botões em sete slots, sem quebrar linhas ou cobrir texto. Top 10 deixa de buscar plataformas do zero a cada troca e preserva as listas válidas de 10+10 por dia. A Home prioriza o carregamento visível ao adiar o preload de outras abas, e Esportes/F1 exibe dados reais em cache antes de uma atualização. O primeiro carregamento sem cache ainda precisa aguardar a rede. Validar usando `node scripts/prepare-android-v1027.mjs && node scripts/test-android-v1027.mjs`; depois `gradle assembleDebug` em apps/android. TESTE27 = `com.cinetracker.app.teste27`.
+
+
+### Android 1.0.28 — filmes recentes, Pra Você e carregamento de pôsteres
+
+Web 0.3.68/r541 e Activity nativa permanecem congeladas. A Home limita a dois minutos seu cache e concilia filmes marcados assistidos usando o dashboard quando a última data do histórico for antiga. Miniaturas da Home usam lazy loading. Pra Você renderiza a partir de duas páginas por tipo e complementa depois, e Top10 consulta mais páginas somente quando precisa de mais elegíveis. O preload de outras abas não concorre mais com a navegação ativa. Validar com: node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs; depois gradle assembleDebug em apps/android. APK TESTE28 usa pacote com.cinetracker.app.teste28.
