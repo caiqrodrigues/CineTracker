@@ -16,6 +16,20 @@ once("window.__ctWebBuild='1.0.28';window.__ctOfficialVersion='1.0.28';window.__
 js=js.replaceAll('CineTracker • v1.0.28','CineTracker • v1.0.29')
 .replaceAll("JSON.stringify({version:'1.0.28',revision:REVISION","JSON.stringify({version:'1.0.29',revision:REVISION")
 .replaceAll("window.__ctAndroidRelease='1.0.28'","window.__ctAndroidRelease='1.0.29'");
+/* The LIVE Android Pra Voce owner is r118 affinity, which supersedes the
+   older r186 six-page function. Bound only this live owner and preserve its
+   scoring/exclusion formulas. The r271 runtime fills truly empty categories. */
+function affinityScope271(start,end,oldText,newText,label){
+ const a=js.indexOf(start),b=a<0?-1:js.indexOf(end,a+start.length);
+ if(a<0||b<=a)throw Error('r271 active affinity scope missing '+label);
+ const before=js.slice(a,b);
+ if(before.split(oldText).length!==2)throw Error('r271 live owner '+label+' must occur once');
+ js=js.slice(0,a)+before.replace(oldText,newText)+js.slice(b);
+}
+affinityScope271('function seedRows118(c,kind){','async function enrichSeed118(seed){',
+ '.slice(0,5);','.slice(0,2);','max two weighted affinity seeds');
+affinityScope271('async function poolForKind118(c,kind){','let affinity118=null',
+ 'if(i<2)jobs.push','if(i<1)jobs.push','one relevant similar query per category');
 const patch=await readFile(resolve(root,'apps/android/runtime-r271-v1029-history-sports-foryou.js'),'utf8');
 for(const tag of ['__ctR271AndroidV1029',"window.addEventListener('click',sportsClick271,true)",'watch_history?select=id,media_id','fetchAllMovies271','ct186LoadForYou=async function'])if(!patch.includes(tag))throw Error('Android 1.0.29 missing '+tag);
 for(const forbidden of ['window.location.reload(', 'router.refresh(', 'while(true)', 'new MutationObserver'])if(patch.includes(forbidden))throw Error('Forbidden '+forbidden);
