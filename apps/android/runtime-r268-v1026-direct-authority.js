@@ -19,10 +19,22 @@ function ct186DailyPick(pool,used){
  const usable=(pool||[]).filter(x=>!used.has(ct186Key(x))&&!ct186LocalBlocked.has(ct186Key(x)));
  if(!usable.length)return null;
  let saved='';try{saved=localStorage.getItem(ct186DailyStorage())||''}catch{}
- const current=usable.find(x=>ct186Key(x)===saved);
- if(current){ct186SaveDaily268(current);return current}
  const today=localDay(),hist=ct186History268();
+ const current=usable.find(x=>ct186Key(x)===saved);
+ const recorded=hist.list.some(x=>x.day===today&&x.key===saved);
+ if(current&&recorded)return current;
  const lastKeys=new Set(hist.list.filter(x=>x.day!==today).slice(-8).map(x=>x.key));
+ // On upgrading from pre-r268, the old stored title may be the one shown
+ // for weeks. Rotate it once, then keep the new result stable that day.
+ if(current&&!recorded)lastKeys.add(saved);
+ try{
+  const date=new Date(today+'T12:00:00');
+  for(let offset=1;offset<=7;offset++){
+   const previous=new Date(date);previous.setDate(previous.getDate()-offset);
+   const key='ct:r186:daily:'+String(user?.id||session?.user?.id||'anon')+':'+previous.toISOString().slice(0,10);
+   const old=localStorage.getItem(key);if(old)lastKeys.add(old);
+  }
+ }catch{}
  const fresh=usable.filter(x=>!lastKeys.has(ct186Key(x)));
  const candidates=fresh.length?fresh:usable;
  const seed=today+':'+String(user?.id||session?.user?.id||'anon');
