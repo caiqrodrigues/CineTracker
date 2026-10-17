@@ -144,6 +144,37 @@ document.addEventListener('click',e=>{
 },true);
 window.addEventListener('cinetracker:data-changed',()=>{movieStamp271='';movieRetryAt271=0});
 
+/* The r118 affinity owner overrides the original r186 three-page query. The
+   old source still issued up to 21 affinity requests and returned empty when
+   watched/watchlist seeds were absent. Respect that owner, then use a single
+   eligible discover page only for still-empty categories. */
+try{
+ const affinityFresh271=ct186FreshPools;
+ ct186FreshPools=async function(ctx){
+  const pools=await affinityFresh271(ctx);
+  const p={movie:Array.isArray(pools?.movie)?pools.movie:[],series:Array.isArray(pools?.series)?pools.series:[],anime:Array.isArray(pools?.anime)?pools.anime:[]};
+  const needed=['movie','series','anime'].filter(k=>p[k].length<(k==='movie'?2:1));
+  if(!needed.length)return p;
+  const rules={
+   movie:['/discover/movie',{'vote_average.gte':7.5,'vote_count.gte':75,'without_genres':'99',sort_by:'popularity.desc',include_adult:false,'primary_release_date.gte':'1991-01-01'}],
+   series:['/discover/tv',{'vote_average.gte':7.5,'vote_count.gte':50,'without_genres':'99,10764,10767',sort_by:'popularity.desc',include_adult:false,'first_air_date.gte':'1991-01-01'}],
+   anime:['/discover/tv',{'vote_average.gte':7.5,'vote_count.gte':40,with_genres:'16',with_origin_country:'JP',sort_by:'popularity.desc',include_adult:false,'first_air_date.gte':'1991-01-01'}]
+  };
+  await Promise.all(needed.map(async kind=>{
+   try{
+    const [path,params]=rules[kind],response=await safeTmdb(path,params);
+    const accepted=(Array.isArray(response?.results)?response.results:[])
+     .map(row=>({...row,media_type:kind==='movie'?'movie':'tv'}))
+     .filter(row=>ct186FreshEligible(row,ctx)&&
+      window.__ctR265Test?.allowed?.(row)&&
+      (kind==='movie'?!ct186Anime(row):kind==='anime'?ct186Anime(row):!ct186Anime(row)));
+    if(accepted.length)p[kind]=ct186MergeRows(p[kind],accepted);
+   }catch{}
+  }));
+  return p;
+ };
+}catch(e){try{console.warn('r271 affinity fallback unavailable',e?.message||e)}catch{}}
+
 /* PRA VOCÊ: reuse ONLY an existing validated, owner-scoped selection snapshot
    during quick tab switching. The original full source remains authoritative;
    no extra items are inserted into Da sua Watchlist. */
