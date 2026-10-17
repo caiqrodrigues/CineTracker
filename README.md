@@ -1897,3 +1897,8 @@ Pra Você recarrega pools de filmes somente quando o filtro deixa menos de dois 
 ### Android 1.0.25 — F1 Hub canônico / Pra Você / Esportes assistidos
 
 A Web r541 permanece congelada. O Android 1.0.25 substitui diretamente os dois renderers do F1 Hub legado (corpo e barra), conserva somente as quatro abas do aplicativo Web e reutiliza a tela de GP para sessões/grid/resultado. O Pra Você repõe filmes, séries e animes por categoria, respeitando a exclusão pessoal, e não preenche artificialmente a Watchlist. O Perfil organiza eventos e estádio na primeira linha e tempo na segunda em toda a largura. Testar localmente: `node scripts/prepare-android-v1025.mjs && node scripts/test-android-v1025.mjs` antes de `gradle assembleDebug` em `apps/android`. TESTE25 usa pacote paralelo `com.cinetracker.app.teste25`.
+
+
+### Android 1.0.26 — Discover Pra Você + F1 Hub Visão geral compacta
+
+Web 0.3.68/r541 não é modificada. No Android 1.0.26, a indicação diária deixa de reaproveitar o mesmo filme entre dias quando existem alternativas e Trocar persiste a escolha no handler usado no aparelho. A recomendação mantém os sete slots sob filtros de histórico, Watchlist, YouTube, AEW/luta livre, realities, stand-up e duração mínima, com busca complementar limitada. No F1 Hub, Visão geral passa a 2×2: próximo GP, último GP/pódio, pilotos e construtores Top3; rankings completos preservados em suas abas. Teste: `node scripts/prepare-android-v1026.mjs && node scripts/test-android-v1026.mjs`, então `gradle assembleDebug` em apps/android. APK paralelo `com.cinetracker.app.teste26` evita substituição da instalação anterior.

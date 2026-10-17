@@ -1,3 +1,12 @@
+## Android 1.0.26 — r268 (2026-10-17)
+
+- **Descobrir → Pra Você:** seleção final autoritativa dos sete slots (indicação diária, três da Watchlist, três 100% Novos), com critérios mantidos de histórico/progresso, títulos alternativos, Watchlist, idade (1991+), nota TMDB 7,5+, curtas com duração conhecida <40 min, YouTube, stand-up, realities, AEW/WWE/luta livre e MMA. Nenhum item externo entra nos três slots Da sua Watchlist.
+- **Indicação do dia:** respeita o botão Trocar no próprio handler ativo, salva a nova escolha e mantém histórico recente para não repetir o mesmo filme em dias consecutivos quando há alternativas. O renderer passa a receber a contagem real da lista de filmes (antes era fixada artificialmente em 1, ocultando Trocar).
+- **Slots vazios:** a consulta complementar de novos conteúdos tenta também o pool popular elegível, com limites; só atualiza cards ao encontrar candidatos válidos. Ausência real de item continua sinalizada, sem card inventado.
+- **F1 Hub, Visão geral:** tela de quatro cartões pequenos (2×2), Próximo GP, Último GP apenas pódio, Top 3 Pilotos e Top 3 Construtores. Rankings completos de 20 posições permanecem nas abas Pilotos/Construtores, com calendário e detalhes de GP preservados.
+- **Validações:** regressões determinísticas de troca diária/persistência/dia seguinte, top3 versus tabela completa, JS sintaxe, conteúdo e assinatura de APK; fluxo com dados reais do dispositivo ainda exige verificação.
+- **Escopo:** Web 0.3.68/r541 congelada; layout Activity Android, Esportes, Perfil, F1 Hub (outras abas), Watchlist, notificações, importação/exportação e ações vistos intactos. TESTE26 instalado separadamente.
+
 ## Android 1.0.25 — r267 (2026-10-16)
 
 - **F1 Hub:** removido diretamente do renderer Android o legado de sete abas e consolidado no mesmo owner canônico das quatro abas da Web: Visão geral, Calendário, Pilotos e Construtores. Clique no GP mantém o detalhamento de sessões, grid e resultado já implementado, sem montar um segundo Hub concorrente.
