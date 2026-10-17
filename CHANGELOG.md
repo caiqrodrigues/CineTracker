@@ -1,3 +1,13 @@
+## Android 1.0.27 — r269 (2026-10-17)
+
+- **F1 Hub:** quatro abas em uma única linha, ajuste responsivo em aparelhos estreitos, supressão da quinta aba injetada pelo runtime Android legado ("Grid de largada"). Os dados do grid e chegada permanecem acessíveis dentro do GP; Visão geral mantém os quatro quadros 2×2, com pódio/Top 3, alinhamento ajustado.
+- **Descobrir → Pra Você:** mantém os sete slots e filtros de elegibilidade, mas reestrutura os três cards por linha: título e metadados em linhas individuais sem quebra, com reticências quando ultrapassarem a largura, altura reservada de 42px e os controles +Watchlist e Trocar em um rodapé estático de 42px. Os botões deixam de cobrir textos e não ficam sobre os posters.
+- **Top 10:** remove a invalidação forçada da lista de streamings a cada acesso; preserva 10 filmes+10 séries quando há elegíveis, busca em 4 páginas simultâneas por tipo, ampliando de maneira limitada apenas se necessário; guarda resultado por usuário, plataforma e dia (sessão + armazenamento local), sem alterar as auditorias de vistos/watchlist/produtos inelegíveis nem fingir posições.
+- **Esportes:** usa o cache real de agenda e mostra o F1 Hub imediatamente enquanto a agenda é atualizada; F1 recupera calendário local recente (até 8h) antes de acessar a rede. Não altera contagens ou regras de watch.
+- **Home Séries/Filmes:** prioridade para as consultas da tela visível; posterga em 6,5 segundos o preload pesado de outros conteúdos que competia com o primeiro carregamento. Mantém o Home cache-first e os dois modos existentes, sem page reload ou refetch síncrono.
+- **Garantias:** nenhuma mudança na Web 0.3.68/r541, nas Activities/menus nativos, na sincronização F1, histórico, Perfil ou recomendação de conteúdo. Testes de sintaxe, presença do cache auditado, página Top 10 10×10, CSS F1 e rodapés, APK e SHA256 no GitHub Actions. O primeiro acesso sem cache ainda depende de respostas reais dos serviços.
+- **Instalação:** pacote separado com nome CineTracker TESTE 1.0.27 e `com.cinetracker.app.teste27`.
+
 ## Android 1.0.26 — r268 (2026-10-17)
 
 - **Descobrir → Pra Você:** seleção final autoritativa dos sete slots (indicação diária, três da Watchlist, três 100% Novos), com critérios mantidos de histórico/progresso, títulos alternativos, Watchlist, idade (1991+), nota TMDB 7,5+, curtas com duração conhecida <40 min, YouTube, stand-up, realities, AEW/WWE/luta livre e MMA. Nenhum item externo entra nos três slots Da sua Watchlist.

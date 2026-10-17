@@ -1902,3 +1902,8 @@ A Web r541 permanece congelada. O Android 1.0.25 substitui diretamente os dois r
 ### Android 1.0.26 — Discover Pra Você + F1 Hub Visão geral compacta
 
 Web 0.3.68/r541 não é modificada. No Android 1.0.26, a indicação diária deixa de reaproveitar o mesmo filme entre dias quando existem alternativas e Trocar persiste a escolha no handler usado no aparelho. A recomendação mantém os sete slots sob filtros de histórico, Watchlist, YouTube, AEW/luta livre, realities, stand-up e duração mínima, com busca complementar limitada. No F1 Hub, Visão geral passa a 2×2: próximo GP, último GP/pódio, pilotos e construtores Top3; rankings completos preservados em suas abas. Teste: `node scripts/prepare-android-v1026.mjs && node scripts/test-android-v1026.mjs`, então `gradle assembleDebug` em apps/android. APK paralelo `com.cinetracker.app.teste26` evita substituição da instalação anterior.
+
+
+### Android 1.0.27 — enquadramento e primeira pintura rápida
+
+Web 0.3.68/r541 não sofre alterações. No Android, o F1 Hub mantém quatro abas com texto em uma linha e mostra o grid dentro dos GPs; o Pra Você reserva espaço independente para título e botões em sete slots, sem quebrar linhas ou cobrir texto. Top 10 deixa de buscar plataformas do zero a cada troca e preserva as listas válidas de 10+10 por dia. A Home prioriza o carregamento visível ao adiar o preload de outras abas, e Esportes/F1 exibe dados reais em cache antes de uma atualização. O primeiro carregamento sem cache ainda precisa aguardar a rede. Validar usando `node scripts/prepare-android-v1027.mjs && node scripts/test-android-v1027.mjs`; depois `gradle assembleDebug` em apps/android. TESTE27 = `com.cinetracker.app.teste27`.
