@@ -1912,3 +1912,8 @@ Web 0.3.68/r541 não sofre alterações. No Android, o F1 Hub mantém quatro aba
 ### Android 1.0.28 — filmes recentes, Pra Você e carregamento de pôsteres
 
 Web 0.3.68/r541 e Activity nativa permanecem congeladas. A Home limita a dois minutos seu cache e concilia filmes marcados assistidos usando o dashboard quando a última data do histórico for antiga. Miniaturas da Home usam lazy loading. Pra Você renderiza a partir de duas páginas por tipo e complementa depois, e Top10 consulta mais páginas somente quando precisa de mais elegíveis. O preload de outras abas não concorre mais com a navegação ativa. Validar com: node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs; depois gradle assembleDebug em apps/android. APK TESTE28 usa pacote com.cinetracker.app.teste28.
+
+
+### Android 1.0.29 — histórico completo, Esportes sem scroll-jump, Pra Você sem espera repetida
+
+Web r541 congelada e Activity nativa inalterada. O Android trata o toque em Assistido esportivo em estado local antes dos antigos manipuladores: não redesenha a tela nem sua janela, e a RPC persiste ou reverte o estado. O Histórico de Filmes consulta watch_history paginada e media do próprio perfil: ultrapassa os 80 itens do payload básico e preserva a posição e a ordem cronológica durante a inclusão de filmes. Pra Você reaproveita a seleção local válida por até oito minutos ao trocar abas, invalidada quando há alterações de mídia. Teste: node scripts/prepare-android-v1029.mjs && node scripts/test-android-v1029.mjs; gradle assembleDebug. APK paralelo com.cinetracker.app.teste29.

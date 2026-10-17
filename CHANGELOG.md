@@ -1,3 +1,12 @@
+## Android 1.0.29 — r271 (2026-10-17)
+
+- **Esportes > Assistido:** elimina o repaint e a recriação do modal de detalhes pelos listeners legados. Listener de captura na janela trata os três tipos de botões esportivos com atualização otimista, lock síncrono por evento, rollback em erro, RPC única e atualização somente do botão. Mantém rolagem e posição da tela/modais intactas; não exige segundo toque.
+- **Home Filmes > Histórico:** backend cinetracker_home_live_v0997_r3 retorna no máximo 80 filmes recentes. O Android busca páginas autenticadas de watch_history em blocos de 120, consulta metadados originais em media e apresenta títulos, TMDB, posters e datas verdadeiros em ordem cronológica (mais recentes abaixo), sem registros sintéticos. Atualiza exclusivamente o stack de Histórico com compensação de altura, sem refazer Home e sem saltar a rolagem. Consulta só ao abrir Filmes, com limite de páginas e retry.
+- **Descobrir > Pra Você:** reaproveita por até 8 minutos o pool original, já filtrado pelo motor existente, apenas para o mesmo usuário/data; evita reconsultas completas ao alternar abas. Ao marcar visto/watchlist/trocar, invalida o cache local; regras de filtros e posições permanecem intocadas.
+- **Pôsteres e prioridade:** mantém lazy loading real e preload não concorrente do r270, sem novas requisições até abrir Histórico.
+- **Garantias:** Web 0.3.68/r541 congelada; MainActivity, importação/exportação, F1 Hub, Perfil, Watchlist e outras mutações preservadas. Testes com RPC simulada confirmam marcação sem full render/scroll; paginação, ordem/poster/data; cache de Pra Você. Necessária validação no aparelho com rede e dados reais.
+- **Instalação:** APK TESTE29 separado com applicationId com.cinetracker.app.teste29, sem substituir os TESTEs anteriores.
+
 ## Android 1.0.28 — r270 (2026-10-17)
 
 - **Home → Filmes, Histórico:** cache reduzido de sete dias para dois minutos. Quando o histórico backend é antigo, concilia de maneira assíncrona somente filmes confirmados como assistidos e com data válida no dashboard autenticado; mantém ordem cronológica e não altera registros no banco.
