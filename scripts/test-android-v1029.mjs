@@ -19,6 +19,11 @@ for(const required of [
  'cinetracker_recommendation_filter_v525'
 ])assert.ok((required.startsWith('name=')?html:app).includes(required),'missing '+required);
 for(const bad of ['window.location.reload(', 'router.refresh(', 'while(true)', 'new MutationObserver'])assert.ok(!patch.includes(bad),'forbidden '+bad);
+const affinitySeeds=app.slice(app.indexOf('function seedRows118(c,kind){'),app.indexOf('async function enrichSeed118(seed){'));
+const affinityJobs=app.slice(app.indexOf('async function poolForKind118(c,kind){'),app.indexOf('let affinity118=null'));
+assert.ok(affinitySeeds.includes('.slice(0,2)'),'live affinity pipeline must use two seeds');
+assert.ok(affinityJobs.includes('if(i<1)jobs.push'),'live affinity pipeline must use only one similar request per kind');
+assert.ok(app.includes('const pools=await affinityFresh271(ctx)'),'empty category fallback must be present');
 const listeners={click:[], 'cinetracker:data-changed':[]},storage=new Map();
 const fakeButton={dataset:{sportWatch:'9',watched:'0'},disabled:false,style:{},attributes:{},isConnected:true,textContent:'✓ Marcar assistido',
  matches(s){return s==='[data-sport-watch]'},classList:{toggle(){}},setAttribute(k,v){fakeButton.attributes[k]=v}};
@@ -33,7 +38,7 @@ const movieStack={innerHTML:''},history={offsetHeight:450};
 const vp={scrollTop:scroll,get scrollHeight(){return 1200},querySelector(s){if(s==='.home-history .stack')return movieStack;if(s==='.home-history')return history;return null}};
 const fakeDoc={head:{appendChild(){}},createElement:()=>({}),querySelector(s){if(s==='[data-home-viewport="movies"]')return vp;return null},
  querySelectorAll(){return [fakeButton]},addEventListener(k,fn){(listeners[k]||=[]).push(fn)}};
-const fakeWindow={addEventListener(k,fn){(listeners[k]||=[]).push(fn)}};
+const fakeWindow={__ctR265Test:{allowed:x=>Boolean(x.id&&x.poster_path)},addEventListener(k,fn){(listeners[k]||=[]).push(fn)}};
 const fakeData={
  window:fakeWindow,document:fakeDoc,session:{access_token:'token',user:{id:'uid'}} ,user:{id:'uid'},sportsCache:cachedSports,
  sportsDetail263:null,profileCache:{},Date,Promise,Set,Map,JSON,localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)},
@@ -51,7 +56,13 @@ const fakeData={
  ct163Write:()=>{},toast:()=>{},setTimeout:(fn)=>{fn();return 0},
  ct186LoadForYou:async()=>{personalLoads++;return {_ct186_fresh:{movie:[{id:11,title:'Candidato',poster_path:'/x.jpg'}],series:[],anime:[]},_ct186_watchlist:{movie:[],series:[],anime:[]}}},
  ct186Select:d=>({daily:d._ct186_fresh.movie[0],fm:null,fs:null,fa:null,wm:null,ws:null,wa:null,wmPool:[],wsPool:[],waPool:[]}),
- ct186RefreshVisible:async()=>null,ct186ForYouData:null,console
+ ct186RefreshVisible:async()=>null,ct186ForYouData:null,
+ ct186FreshPools:async()=>({movie:[],series:[],anime:[]}),
+ safeTmdb:async(path,params)=>({results:[{id:path.includes('movie')?501:params.with_genres?503:502,title:'Elegível',poster_path:'/film.jpg',genre_ids:params.with_genres?[16]:[12],media_type:path.includes('movie')?'movie':'tv',vote_average:8,original_language:params.with_genres?'ja':'en'}]}),
+ ct186FreshEligible:x=>Boolean(x.id&&x.poster_path),
+ ct186Anime:x=>Array.isArray(x.genre_ids)&&x.genre_ids.includes(16),
+ ct186MergeRows:(a,b)=>[...a,...b],
+ console
 };
 vm.createContext(fakeData);vm.runInContext(patch,fakeData,{timeout:1000});
 const hook=listeners.click[0];
@@ -72,6 +83,8 @@ fakeData.window.__ctR271Test.paintMovieHistory271(h);
 assert.ok(movieStack.innerHTML.indexOf('Filme mais antigo')<movieStack.innerHTML.indexOf('Pokémon'));
 assert.ok(movieStack.innerHTML.indexOf('Pokémon')<movieStack.innerHTML.indexOf('Filme mais novo'));
 assert.equal(vp.scrollTop,482,'movie history DOM update must not reset viewport');
+const strictPools=await fakeData.ct186FreshPools({dash:[]});
+assert.ok(strictPools.movie.length&&strictPools.series.length&&strictPools.anime.length,'empty affinity must fall back to eligible single-page discovery');
 const first=await fakeData.ct186LoadForYou(false);const second=await fakeData.ct186LoadForYou(false);
 assert.equal(personalLoads,1,'fresh same-day personal snapshot must be reused');
 assert.ok(first._ct186_fresh.movie.length&&second.daily);
