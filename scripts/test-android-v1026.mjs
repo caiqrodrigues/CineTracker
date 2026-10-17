@@ -33,7 +33,11 @@ const ctx={
 };
 vm.createContext(ctx);
 vm.runInContext(daily+'\n'+swap,ctx);
+store.set('ct:r186:daily:u1:2026-10-17','movie:101');
+store.set('ct:r186:daily:u1:2026-10-16','movie:102');
 const first=ctx.ct186DailyPick(pool,new Set());
+assert.notEqual(first.id,101,'old version daily title should rotate on first v1.0.26 launch');
+assert.notEqual(first.id,102,'recent-day title should not repeat when other candidates exist');
 assert.ok(pool.includes(first));assert.equal(ctx.ct186DailyPick(pool,new Set()).id,first.id,'daily pick should remain stable within a day');
 const next=ctx.pick237('daily:movie',first.id);
 assert.ok(next&&next.id!==first.id,'Trocar must choose another movie');
