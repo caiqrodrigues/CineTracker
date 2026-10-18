@@ -1927,3 +1927,8 @@ A Home combina o Histórico legado com `cinetracker_home_movie_history_v323` par
 ### Android 1.0.30 — Histórico sem lacunas e performance segura
 
 A Home do Android une reproduções de `watch_play_events_v0994` com os 948 registros antigos de `watch_history`: filmes vistos depois de Pokémon aparecem no final cronológico, com poster, data e contagem de reexibição, sem inserir informações fictícias. Exibe os 120 filmes mais recentes inicialmente e permite carregar anteriores em lotes de 100. Pôsteres fora da área visível permanecem lazy inclusive após novo lote. Esportes preserva posição e aplica assistido instantaneamente com persistência e rollback. Pra Você mantém os sete slots e só reutiliza snapshot rápido após verificar o contexto pessoal. Testes: `node scripts/prepare-android-v1030.mjs && node scripts/test-android-v1030.mjs`. APK TESTE30 roda em paralelo com versões antigas.
+
+
+### Android 1.0.31 — correção de inicialização/black screen
+
+A 1.0.30 falhava antes do login devido a funções privadas de módulos diferentes. A 1.0.31 inicia pelo runtime funcional da 1.0.29, expõe um contrato explícito de Histórico para o patch de Outubro e isola falhas desse aprimoramento do `boot()`. O teste `node scripts/prepare-android-v1031.mjs && node scripts/test-android-v1031.mjs` executa a integração em VM com e sem a bridge, não apenas a sintaxe. O TESTE31 instala lado a lado (`com.cinetracker.app.teste31`). Não alterar a Web r541 nem a Activity nativa.

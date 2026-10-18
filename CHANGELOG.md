@@ -1,3 +1,12 @@
+## Android 1.0.31 — r273 (2026-10-18)
+
+- **Correção prioritária da tela preta:** a versão 1.0.30 tentava acessar funções `fetchAllMovies271` e `paintMovieHistory271` privadas do módulo r271. A exceção `ReferenceError` ocorria antes de `boot()`, bloqueando inclusive a tela de login.
+- **Inicialização:** reconstruído a partir do bootstrap da 1.0.29 (que não incluía o patch que interrompia o login); introduzida bridge explícita para funções do Histórico, sem depender de acessos livres entre IIFEs.
+- **Falha isolada:** o patch r273 de Histórico usa `try/catch` e mantém o `boot()` disponível mesmo se alguma integração opcional falhar, registrando `__ctR273StartupError`.
+- **Histórico:** conserva registros antigos e novos de visualizações, paginando a exibição em blocos de 120 + 100, preservando posters com carregamento preguiçoso. **Esportes:** mantém marcação otimista sem refresh/rolagem ao topo.
+- **Testes adicionais de inicialização:** execução real do JavaScript isolado em VM, incluindo cenário com bridge válida e ausente; ambos precisam chegar ao `boot()` sem exceção fatal, além de testes de merge do Histórico e poster.
+- **Escopo:** Web r541, código nativo Activity, navegação, login/autenticação, F1, recomendações e estado da conta intocados. TESTE31 é aplicativo separado e não apaga instalações anteriores.
+
 ## Android 1.0.30 — r272 (2026-10-18)
 
 - **Histórico correto, sem desaparecer após Pokémon:** `watch_history` tem 948 filmes até 19/09/2026, enquanto `watch_play_events_v0994` inclui eventos reais até 13/10/2026. A versão 1.0.29 paginava apenas o histórico antigo e substituía a lista recente. Agora `cinetracker_home_movie_history_v323` é conciliada com todos os registros históricos, mantendo **filmes posteriores a Pokémon**, reassistidos e datas do banco sem fabricar dados. O Histórico começa com os 120 mais recentes, com “Carregar anteriores” em lotes de 100, sem perder a posição.
