@@ -1937,3 +1937,8 @@ A 1.0.30 falhava antes do login devido a funções privadas de módulos diferent
 ### Android 1.0.32 — correção isolada de Descobrir → Pra Você
 
 Sete slots: Indicação do dia; Filme/Série/Anime da Watchlist (apenas conteúdos dessa lista); Filme/Série/Anime 100% Novos (nunca assistidos nem da Watchlist). Os candidatos continuam sujeitos a filtros de nota mínima 7,5, data, duração, gênero/reality, YouTube, AEW/WWE/MMA e estado pessoal no Supabase. Primeira seleção pesquisa em paralelo, com auditoria posterior e cache por usuário/dia validado contra contexto ao reentrar. Títulos de uma linha, pôster 2:3 e botões Watchlist, Visto e Trocar em rodapé independente. Nenhuma alteração nas outras telas nem na Web r541. Preparar/testar: `node scripts/prepare-android-v1032.mjs && node scripts/test-android-v1032.mjs`. TESTE32 instala paralelamente com `com.cinetracker.app.teste32`.
+
+
+### Android 1.0.33 — Pra Você isolado
+
+A release 1.0.33/r275 corrige exclusivamente a aba Descobrir → Pra Você: sete slots auditados pela seleção personalizada, filtros completos antes da exibição, alternativas paralelas, cache validado, ação **Visto** verdadeiramente habilitada nos três cards Da sua Watchlist, botões +Watchlist / Visto / Trocar nos quatro cards novos e recomposição depois do swap capturado pelo runtime legado. Cards 2:3 e botões em grade reservada, sem sobreposição. Base Android 1.0.32 preservada para demais abas, Web r541 inalterada. Validar: `node scripts/prepare-android-v1033.mjs && node scripts/test-android-v1033.mjs`; APK TESTE33 independente `com.cinetracker.app.teste33`.

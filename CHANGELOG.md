@@ -1,3 +1,14 @@
+## Android 1.0.33 — r275 (2026-10-18)
+
+- **Somente Descobrir → Pra Você:** substitui o runtime r274 diretamente em vez de empilhar outra camada, preservando as sete posições e todos os módulos de Home, Histórico, Esportes, F1 e Perfil.
+- **Correção funcional:** o botão antigo `Na Watchlist` era desabilitado e recebeu apenas um novo texto/aria-label. Agora é substituído por uma ação real e ativa **✓ Visto**, com marcação otimista e rollback através da função existente. Os cards da Indicação do Dia e 100% Novos mostram três ações distintas: Watchlist, Visto e Trocar. Os de Da sua Watchlist mostram Visto e Trocar.
+- **Trocar:** o handler legado r237 consome o evento de clique antes do reformatador r274; agora a reformatação ocorre após o clique observado por pointerdown (ou Enter/Espaço), garantindo ações funcionais mesmo depois de trocar o conteúdo.
+- **Formatação:** cards 2:3, títulos truncados em linha única e rodapé de ações em grid com espaço próprio de 42px, sem sobrepor a imagem, título ou a próxima seção.
+- **Regras preservadas:** filtro personalizado autenticado contra Visto, Histórico/progresso, Watchlist e Não Tenho Interesse; mínimo 7,5, 1991+, curtas (<40min), origem YouTube, stand-up, reality, documentário e AEW/WWE/MMA. Da Watchlist apresenta exclusivamente itens pertencentes à Watchlist e ainda não vistos. Auditoria TMDB de detalhes e RPC `cinetracker_recommendation_filter_v525` continuam obrigatórias.
+- **Performance:** mantém busca paralela limitada de seis páginas TMDB e snapshot validado contra o contexto autenticado antes de reutilizar, sem apresentar um cache desatualizado como resultado novo.
+- **Teste:** o vídeo recebido registra Android **1.0.31/r273**, não o 1.0.32/r274; testar especificamente a instalação separada TESTE33. Sem validação real de Supabase no aparelho no processo CI.
+- **Escopo:** Web r541 e todas as demais abas Android intocadas; versão, README, changelog e APK de teste independente.
+
 ## Android 1.0.32 — r274 (2026-10-18)
 
 - **Escopo exclusivamente Descobrir → Pra Você.** Nada foi alterado em Home, Histórico Filmes, Esportes, F1 Hub, Perfil, navegação, API de assistidos, Android Activity ou Web 0.3.68/r541.

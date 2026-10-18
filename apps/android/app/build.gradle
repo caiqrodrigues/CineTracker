@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10074
-        versionName '1.0.32'
+        versionCode 10075
+        versionName '1.0.33'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Android 1.0.32/r274: ONLY Discover Pra Voce fast strict pool/cache and action-card layout; login safe r273, Web r541 frozen.
+// Android 1.0.33/r274: ONLY Discover Pra Voce fast strict pool/cache and action-card layout; login safe r273, Web r541 frozen.
