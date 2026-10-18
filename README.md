@@ -1932,3 +1932,8 @@ A Home do Android une reproduções de `watch_play_events_v0994` com os 948 regi
 ### Android 1.0.31 — correção de inicialização/black screen
 
 A 1.0.30 falhava antes do login devido a funções privadas de módulos diferentes. A 1.0.31 inicia pelo runtime funcional da 1.0.29, expõe um contrato explícito de Histórico para o patch de Outubro e isola falhas desse aprimoramento do `boot()`. O teste `node scripts/prepare-android-v1031.mjs && node scripts/test-android-v1031.mjs` executa a integração em VM com e sem a bridge, não apenas a sintaxe. O TESTE31 instala lado a lado (`com.cinetracker.app.teste31`). Não alterar a Web r541 nem a Activity nativa.
+
+
+### Android 1.0.32 — correção isolada de Descobrir → Pra Você
+
+Sete slots: Indicação do dia; Filme/Série/Anime da Watchlist (apenas conteúdos dessa lista); Filme/Série/Anime 100% Novos (nunca assistidos nem da Watchlist). Os candidatos continuam sujeitos a filtros de nota mínima 7,5, data, duração, gênero/reality, YouTube, AEW/WWE/MMA e estado pessoal no Supabase. Primeira seleção pesquisa em paralelo, com auditoria posterior e cache por usuário/dia validado contra contexto ao reentrar. Títulos de uma linha, pôster 2:3 e botões Watchlist, Visto e Trocar em rodapé independente. Nenhuma alteração nas outras telas nem na Web r541. Preparar/testar: `node scripts/prepare-android-v1032.mjs && node scripts/test-android-v1032.mjs`. TESTE32 instala paralelamente com `com.cinetracker.app.teste32`.

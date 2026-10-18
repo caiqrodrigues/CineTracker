@@ -1,3 +1,12 @@
+## Android 1.0.32 — r274 (2026-10-18)
+
+- **Escopo exclusivamente Descobrir → Pra Você.** Nada foi alterado em Home, Histórico Filmes, Esportes, F1 Hub, Perfil, navegação, API de assistidos, Android Activity ou Web 0.3.68/r541.
+- **Tempo de carregamento:** primeira seleção faz até duas páginas TMDB em paralelo por Filme/Série/Anime, depois um fallback delimitado quando realmente necessário. Mantém o filtro de recomendações Supabase v525 e a verificação detalhada TMDB dos títulos que podem ser exibidos, mas limita a primeira amostragem auditada a 12 por categoria nova e oito por categoria da Watchlist, em vez de 45/30. Contexto autenticado tem TTL de 60 segundos e notificações de mutação invalidam corretamente.
+- **Retorno rápido e sem vazamento:** cache local curto do resultado previamente auditado (usuário + dia), exibido **somente depois** de confrontado novamente com histórico real e Watchlist; visto passa a não aparecer em 100% Novos/Indicação do dia, e Watchlist recebe apenas entradas reais da Watchlist. Ao marcar visto/adicionar à Watchlist o cache é invalidado. Nenhum conteúdo é inventado quando não há elegíveis.
+- **Sete cards e ações:** pôsteres sempre 2:3, títulos e metadados em linha única com truncamento, altura própria de rodapé e botões independentes de +Watchlist / ✓ Visto / ↻ Trocar nas indicações novas e ✓ Visto / ↻ Trocar nas sugestões da Watchlist. Não sobrepõe texto, respeita cliques imediatos sem reload; r193 mantém API de assistidos original e otimista.
+- **Segurança inicial:** patch isolado em try/catch para nunca deixar a tela preta caso haja futura divergência; testes automáticos validam login, filtragem, cache, três buscas paralelas por categoria, CSS limitado ao Pra Você, controles e proibição de reload; sem validação em aparelho real.
+- **Distribuição:** APK TESTE32 usa `com.cinetracker.app.teste32` e não substitui o TESTE31.
+
 ## Android 1.0.31 — r273 (2026-10-18)
 
 - **Correção prioritária da tela preta:** a versão 1.0.30 tentava acessar funções `fetchAllMovies271` e `paintMovieHistory271` privadas do módulo r271. A exceção `ReferenceError` ocorria antes de `boot()`, bloqueando inclusive a tela de login.
