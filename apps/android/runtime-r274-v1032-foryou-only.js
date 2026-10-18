@@ -166,12 +166,11 @@ paintDiscover=function(...args){
  if(route()==='discover'&&discoverState?.tab==='foryou')requestAnimationFrame(()=>requestAnimationFrame(dress));
  return out;
 };
-const oldSwap=swapNow237;
-swapNow237=function(...args){
- const out=oldSwap.apply(this,args);
- if(out)requestAnimationFrame(dress);
- return out;
-};
+// r237 swap function belongs to an isolated IIFE. Observe its button at
+// window capture without overriding inaccessible private functions or clicks.
+window.addEventListener('click',event=>{
+ if(event.target?.closest?.('[data-ct237-swap]'))requestAnimationFrame(()=>requestAnimationFrame(dress));
+},true);
 window.addEventListener('click',event=>{
  const button=event.target?.closest?.('[data-ct274-seen]');if(!button)return;
  const raw=String(button.dataset.ct274Seen||''),[type,idText]=raw.split(':'),id=Number(idText||0);
