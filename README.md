@@ -1922,3 +1922,8 @@ Web r541 congelada e Activity nativa inalterada. O Android trata o toque em Assi
 ### Android 1.0.28 — Histórico fiel, Esportes sem saltos, Pra Você e imagens
 
 A Home combina o Histórico legado com `cinetracker_home_movie_history_v323` para incluir reproduções posteriores a Pokémon que estavam somente em `watch_play_events_v0994`. Em Esportes, marcar ou desmarcar é otimista e muda apenas os botões e cache pertinentes, sem redesenho/refetch integral nem movimento da página; mesmo comportamento nas janelas de times e ligas. Descobrir > Pra Você exibe candidatos válidos após o primeiro lote de três páginas por tipo e busca complementares em segundo plano. Pôsteres do Histórico fora da viewport aguardam até o usuário se aproximar. Web r541 continua congelada. Testar `node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs`; apk paralelo TESTE28 com appId `com.cinetracker.app.teste28`.
+
+
+### Android 1.0.30 — Histórico sem lacunas e performance segura
+
+A Home do Android une reproduções de `watch_play_events_v0994` com os 948 registros antigos de `watch_history`: filmes vistos depois de Pokémon aparecem no final cronológico, com poster, data e contagem de reexibição, sem inserir informações fictícias. Exibe os 120 filmes mais recentes inicialmente e permite carregar anteriores em lotes de 100. Pôsteres fora da área visível permanecem lazy inclusive após novo lote. Esportes preserva posição e aplica assistido instantaneamente com persistência e rollback. Pra Você mantém os sete slots e só reutiliza snapshot rápido após verificar o contexto pessoal. Testes: `node scripts/prepare-android-v1030.mjs && node scripts/test-android-v1030.mjs`. APK TESTE30 roda em paralelo com versões antigas.
