@@ -1,13 +1,3 @@
-## Android 1.0.28 — r270 (2026-10-18)
-
-- **Home > Filmes > Histórico:** a RPC do backend `cinetracker_home_live_v0997_r3` limita `history_movies` a 80 resultados; o Android mantém essa resposta rápida, mas consulta o histórico completo separadamente por páginas de 120 registros, com ordenação cronológica e metadados corretos (filme, TMDB, pôster). A lista é ampliada no DOM da seção de Histórico, preservando a rolagem e a Watchlist sem reconstruir a Home. Consulta apenas na aba Filmes e guarda o resultado por sessão/usuário, com invalidação após alterações. Limite de segurança explícito: 40 páginas, sem loop infinito.
-- **Esportes > Marcar assistido:** interceptação na fase de captura da janela, antes do manipulador antigo r159, para impedir o `sportsPayload(true)` e `paintSports()` completos que causavam subida da página. Estado otimista instantâneo, trava síncrona por evento, uma única RPC `cinetracker_sport_mark_watched_v1`, rollback em erro e atualização somente de botões/caches locais, sem reload, `router.refresh`, scroll reset ou fetch geral.
-- **Descobrir > Pra Você:** consulta inicial reduzida de seis para duas páginas por Filme/Série/Anime, mantendo critérios completos, seleção diária, Trocar, sete slots e piscinas elegíveis; reposição adicional em background limitada; cache rápido e somente por usuário/dia de escolhas anteriormente filtradas por contexto, invalidado nas mutações/realtime. Não insere filmes vistos nem itens externos nos três slots Da sua Watchlist.
-- **Pôsteres:** pré-conexão para TMDB/Supabase e carregamento progressivo de imagens fora da janela visível, evitando disputa de downloads com as consultas da tela.
-- **Primeiro carregamento:** o pré-carregamento da versão anterior abria muitas consultas pesadas em paralelo para Descobrir/Esportes/Perfil; agora permite apenas aquecer a Home quando não é a aba aberta e ainda não há cache. Cada aba segue a própria autoridade e atualiza quando acessada.
-- **Escopo:** Web 0.3.68/r541 e Activity nativa intactas. F1 Hub, Perfil, WATCHLIST, Trocar, esportes/F1 e demais ações mantidos. Testes incluem histórico 133 registros com pôsteres, Sports clique interceptado com rolagem intacta, limites de consultas TMDB, cache escopado, sintaxe JS, assinatura e SHA-256 de APKs.
-- **Instalação paralela:** TESTE28 (`com.cinetracker.app.teste28`) não substitui outros testes.
-
 ## Android 1.0.29 — r271 (2026-10-17)
 
 - **Esportes > Assistido:** elimina o repaint e a recriação do modal de detalhes pelos listeners legados. Listener de captura na janela trata os três tipos de botões esportivos com atualização otimista, lock síncrono por evento, rollback em erro, RPC única e atualização somente do botão. Mantém rolagem e posição da tela/modais intactas; não exige segundo toque.
