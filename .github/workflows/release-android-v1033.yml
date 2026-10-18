@@ -104,7 +104,7 @@ jobs:
           grep -Fq "versionCode='10075'" <<<"$BADGING"
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1033-index.html
           grep -Fq 'name="ct-official-version" content="1.0.33"' /tmp/ct1033-index.html
-          grep -Fq "window.__ctR275AndroidV1033='seven-complete-filtered+watchlist-seen-works+actions-row'" /tmp/ct1033-index.html
+          grep -Fq "window.__ctR275AndroidV1033='foryou-seven-complete-filtered+watchlist-seen-works+actions-row'" /tmp/ct1033-index.html
           grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1033-index.html
           grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1033-index.html
           "$APKSIGNER" verify --print-certs "$OUT"
