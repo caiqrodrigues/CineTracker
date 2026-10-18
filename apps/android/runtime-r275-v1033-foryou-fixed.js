@@ -24,7 +24,7 @@ function restore(snapshot,c){
     .map(x=>({...x,_ct_watchlist:true}));
  }
  const data={_ct186_fresh:fresh,_ct186_watchlist:watch,_ct166_fresh:fresh,_ct166_watchlist:watch,
-  _ct186_fallback:empty(),_ct186_reserve:empty(),__ct274AuditedSnapshot:true};
+  _ct186_fallback:empty(),_ct186_reserve:empty(),__ct275AuditedSnapshot:true};
  const selection=ct186Select(data);
  Object.assign(data,{daily:selection.daily,movie:selection.fm,series:selection.fs,anime:selection.fa,
   watchlist_movie:selection.wm,watchlist_series:selection.ws,watchlist_anime:selection.wa,
@@ -159,7 +159,7 @@ function dress(){
    seen.title='Marcar como visto';seen.setAttribute('aria-label','Marcar como visto');
    actions.insertBefore(seen,swap||null);
   }
-  slot.dataset.ct274Layout='ready';
+  slot.dataset.ct275Layout='ready';
  }
 }
 const previousPaint=paintDiscover;
