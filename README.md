@@ -1927,3 +1927,8 @@ A Home combina o Histórico legado com `cinetracker_home_movie_history_v323` par
 ### Android 1.0.30 — Histórico sem lacunas e performance segura
 
 A Home do Android une reproduções de `watch_play_events_v0994` com os 948 registros antigos de `watch_history`: filmes vistos depois de Pokémon aparecem no final cronológico, com poster, data e contagem de reexibição, sem inserir informações fictícias. Exibe os 120 filmes mais recentes inicialmente e permite carregar anteriores em lotes de 100. Pôsteres fora da área visível permanecem lazy inclusive após novo lote. Esportes preserva posição e aplica assistido instantaneamente com persistência e rollback. Pra Você mantém os sete slots e só reutiliza snapshot rápido após verificar o contexto pessoal. Testes: `node scripts/prepare-android-v1030.mjs && node scripts/test-android-v1030.mjs`. APK TESTE30 roda em paralelo com versões antigas.
+
+
+### Android 1.0.28 — Histórico completo / Esportes sem refresh / menor latência
+
+A Home Filmes usa uma RPC Android aditiva `cinetracker_android_movie_history_v1028` que entrega até 450 filmes do usuário em vez da janela antiga de 80. A lista é preenchida de forma assíncrona, com scroll estável, títulos canônicos e pôsteres só quando estiverem perto da viewport. Esportes marca/desmarca de forma otimista sem remontar a página ou mover a rolagem. Pra Você conserva todos os filtros mas reduz o número de páginas TMDB no caminho crítico, complementando sob demanda; o preload pesado de abas não visitadas deixa de competir com a tela atual. Web 0.3.68/r541 e Activity Android não sofrem alterações. Validar com `node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs`; TESTE28 usa pacote independente `com.cinetracker.app.teste28`.
