@@ -1917,3 +1917,8 @@ Web 0.3.68/r541 e Activity nativa permanecem congeladas. A Home limita a dois mi
 ### Android 1.0.29 — histórico completo, Esportes sem scroll-jump, Pra Você sem espera repetida
 
 Web r541 congelada e Activity nativa inalterada. O Android trata o toque em Assistido esportivo em estado local antes dos antigos manipuladores: não redesenha a tela nem sua janela, e a RPC persiste ou reverte o estado. O Histórico de Filmes consulta watch_history paginada e media do próprio perfil: ultrapassa os 80 itens do payload básico e preserva a posição e a ordem cronológica durante a inclusão de filmes. Pra Você reaproveita a seleção local válida por até oito minutos ao trocar abas, invalidada quando há alterações de mídia. Teste: node scripts/prepare-android-v1029.mjs && node scripts/test-android-v1029.mjs; gradle assembleDebug. APK paralelo com.cinetracker.app.teste29.
+
+
+### Android 1.0.28 — histórico, carregamento e Esportes sem refresh
+
+Corrige marcação de evento esportivo sem consultar agenda inteira nem redesenhar a lista; mantém rolagem, aplica optimistic UI no botão e desfaz somente esse botão em erro. O Histórico de Filmes não fica mais restrito aos 80 filmes do payload rápido, carregando até 600 eventos autenticados em segundo plano e enriquecendo títulos/capas por `media`. Pra Você usa apenas duas páginas iniciais por categoria com filtros atuais e cache por usuário/dia; busca novas opções em segundo plano quando necessário. Pôsteres de Home/Descobrir fora da tela esperam proximidade do viewport. Nenhuma modificação da Web r541 ou do shell nativo. Validar: `node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs` e `gradle assembleDebug` em apps/android. Instalação de teste separada: `com.cinetracker.app.teste28`.
