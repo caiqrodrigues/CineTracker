@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/android/runtime-r270-v1028-home-discover-posters.js'
+      - 'apps/android/runtime-r270-v1028-history-sports-speed.js'
       - 'apps/android/app/build.gradle'
       - 'scripts/prepare-android-v1028.mjs'
       - 'scripts/test-android-v1028.mjs'
@@ -104,7 +104,7 @@ jobs:
           grep -Fq "versionCode='10070'" <<<"$BADGING"
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1028-index.html
           grep -Fq 'name="ct-official-version" content="1.0.28"' /tmp/ct1028-index.html
-          grep -Fq "window.__ctR270AndroidV1028='fast-foryou+home-recent-history+lazy-posters+top10-priority'" /tmp/ct1028-index.html
+          grep -Fq "window.__ctR270AndroidV1028='movies-history-pages+sports-no-jump+foryou-warm-cache+poster-priority'" /tmp/ct1028-index.html
           grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1028-index.html
           grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1028-index.html
           "$APKSIGNER" verify --print-certs "$OUT"
@@ -163,6 +163,6 @@ jobs:
         run: |
           set -euo pipefail
           TAG='android-v1.0.28'
-          NOTES='Android 1.0.28/r270. Corrects Android Home stale seven-day movie history by shortening its read TTL and reconciling independently confirmed seen movies after network; lazy-loads offscreen TMDB Home posters; Pra Voce loads 2 instead of 6 pages per category before first paint and defers backfill; Top10 fetches first two pages per type and only expands if fewer than ten remain after auditing; prevents background preloads competing with the active view. Preserves F1, sports, seven-slot filters, native shell, Web 0.3.68/r541. Separate TESTE28.'
+          NOTES='Android 1.0.28/r270: Movie Home history pagination for all watched movies beyond the 80-row server snapshot, with restored metadata/posters and unchanged scroll; Sports watched single-flight optimistic UI at Window capture, bypassing old full sports refetch/scroll jump; For You validated user/day cache, bounded initial TMDB requests, no invented recommendations; images deferred offscreen; idle preload avoids bulk media RPC competition. Web r541 and native Android shell unchanged. TESTE28 independent install.'
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'CineTracker Android 1.0.28' --notes "$NOTES"
           gh release upload "$TAG" CineTracker-Android-1.0.28.apk CineTracker-Android-1.0.28-TESTE.apk android-1.0.28-teste-sha256.txt android-1.0.28-sha256.txt android-1.0.28-size.txt --clobber
