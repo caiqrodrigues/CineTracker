@@ -5,7 +5,7 @@ const html=await readFile('apps/android/app/src/main/assets/hotfix5/index.html',
 const tag='<script data-ct-android="r275-android-js">';
 const a=html.indexOf(tag),b=a<0?-1:html.indexOf('</script>',a+tag.length);
 assert.ok(a>=0&&b>a,'v1.0.33 startup source must be embedded');
-const app=html.slice(a+tag.length,b),patch=await readFile('apps/android/runtime-r275-v1033-foryou-only.js','utf8');
+const app=html.slice(a+tag.length,b),patch=await readFile('apps/android/runtime-r275-v1033-foryou-fixed.js','utf8');
 new Function(app);new Function(patch);
 assert.ok(html.includes('name="ct-official-version" content="1.0.33"'));
 for(const marker of [
