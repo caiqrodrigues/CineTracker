@@ -87,7 +87,7 @@ assert.ok(css.includes('aspect-ratio:2/3!important'));
 assert.ok(css.includes('height:38px!important'));
 assert.ok(css.includes('overflow:hidden!important'));
 assert.ok(css.includes('white-space:nowrap!important'));
-assert.ok(css.includes('ct274-mark-seen'));
+assert.ok(css.includes('ct275-mark-seen'));
 
 assert.ok(css.includes('flex:0 0 42px!important'),'action footer must have reserved height');
 assert.ok(css.includes('ct275-mark-seen'),'Visto button must have visible styling');
