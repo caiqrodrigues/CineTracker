@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/android/runtime-r289-v1047-profile-metrics.js'
-      - 'apps/android/runtime-r289-v1047-f1-standings.js'
-      - 'apps/android/runtime-r289-v1047-home-parity.js'
+      - 'apps/android/runtime-r289-v1047-profile-drilldowns.js'
+      - 'apps/android/runtime-r289-v1047-f1-rankings.js'
+      - 'apps/android/runtime-r289-v1047-special-home-standard.js'
       - 'apps/android/runtime-r289-v1047-discover-guard.js'
       - 'scripts/prepare-android-v1047.mjs'
       - 'scripts/test-android-v1047.mjs'
@@ -109,8 +109,8 @@ jobs:
           grep -Fq "versionCode='10089'" <<<"$BADGING"
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1047-index.html
           grep -Fq 'name="ct-official-version" content="1.0.47"' /tmp/ct1047-index.html
-          grep -Fq 'profile-watchlist-and-history-metric-navigation' /tmp/ct1047-index.html
-          grep -Fq 'native-home-action-rows-for-ufc-wwe-f1' /tmp/ct1047-index.html
+          grep -Fq 'drilldowns-watchlist-history-sports-with-real-records' /tmp/ct1047-index.html
+          grep -Fq 'native-media-row-uniform-UFC-WWE-F1' /tmp/ct1047-index.html
           grep -Fq 'stable-v525-cards-and-bounded-local-mutations' /tmp/ct1047-index.html
           grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1047-index.html
           grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1047-index.html
