@@ -1972,3 +1972,8 @@ A Web r541 permanece intacta. O Android salva apenas o último Perfil útil por 
 ### Android 1.0.39 — biblioteca do Perfil / Pra Você com auditoria progressiva
 
 O APK Android lê o resumo real `cinetracker_profile_summary_v489` ao abrir o Perfil, recuperando os itens de filmes/séries/favoritos/atores sem aguardar a função de Perfil completa. Não apaga cards ao receber atualizações de estatísticas; usa cache de 30 minutos por usuário e aviso de erro com recuperação manual. O Pra Você conserva os filtros pessoais da RPC `cinetracker_recommendation_filter_v525` e verifica candidatos adicionais em segundo plano quando categorias ficam vazias. Testes: `node scripts/prepare-android-v1039.mjs && node scripts/test-android-v1039.mjs`. Web r541 e shell Android imutáveis; TESTE39 tem pacote separado `com.cinetracker.app.teste39`.
+
+
+### Android 1.0.28 — Recuperação de bibliotecas e mutação sem refresh
+
+Versão de teste Android com Profile dashboard/favoritos recuperados de fonte real e cache segregado por usuário; Pra Você com primeira renderização cache-first e auditoria assíncrona por categoria; Home Filmes com histórico autenticado paginado, incluindo filmes anteriores/posteriores ao corte de 80 da Home; Esportes assistidos atualizados sem reconstruir a tela nem deslocar a rolagem. Web r541 e infraestrutura nativa intocadas. Validação: `node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs`, `gradle assembleDebug`. TESTE28: `com.cinetracker.app.teste28`.
