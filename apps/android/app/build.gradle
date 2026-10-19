@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10085
-        versionName '1.0.43'
+        versionCode 10086
+        versionName '1.0.44'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Android 1.0.43/r285: fixed Discover card sizing/actions + independent Profile loading. Web r541 frozen.
+// Android 1.0.44/r286: verified swaps and Home special-series progress. Web r541 frozen.
