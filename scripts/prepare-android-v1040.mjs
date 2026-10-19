@@ -25,9 +25,15 @@ once('if(movieStamp271===key||now<movieRetryAt271)return;',
  'do not suppress the entire day of Home film history refresh');
 once('movieStamp271=key;','movieStamp271=key;movieRetryAt271=Date.now()+120000;',
  'bounded authenticated history refresh cooldown');
-once("const dash=await rpc('cinetracker_profile_media_dashboard_v0991',{}).catch(()=>[]);",
- "const dash=await rpc('cinetracker_profile_media_dashboard_v0991',{});if(!Array.isArray(dash))throw new Error('authenticated Watchlist unavailable');",
- 'do not cache a failed profile query as empty Watchlist');
+{
+ const from="const dash=await rpc('cinetracker_profile_media_dashboard_v0991',{}).catch(()=>[]);";
+ const to="const dash=await rpc('cinetracker_profile_media_dashboard_v0991',{});if(!Array.isArray(dash))throw new Error('authenticated Watchlist unavailable');";
+ const count=js.split(from).length-1;
+ // The frozen Android baseline contains this exact fetch in both the original
+ // context reader and the updated authenticated context reader.
+ if(count!==2)throw new Error('r282 authenticated Watchlist context expected exactly two readers, found '+count);
+ js=js.replaceAll(from,to);
+}
 once('g.includes(10766)||g.includes(18)','g.includes(10766)',
  'drama is NOT a prohibited genre');
 once("if(!d||typeof d!=='object'||!Number(d.id||0))return false;",
