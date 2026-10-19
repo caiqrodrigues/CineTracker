@@ -21,10 +21,10 @@ replace("window.__ctWebBuild='1.0.46';window.__ctOfficialVersion='1.0.46';window
 replace("const f111Stand=(x,key)=>x?.MRData?.StandingsTable?.StandingsLists?.[0]?.[key]||[];",
  "const f111Stand=(value,key)=>{if(Array.isArray(value))return value;const x=value?.MRData||value?.data?.MRData||value?.data||value;const rows=x?.StandingsTable?.StandingsLists?.[0]?.[key]||x?.StandingsLists?.[0]?.[key]||x?.standings?.[key]||x?.[key]||x?.items;return Array.isArray(rows)?rows:[]};",
  'F1 multiple valid response forms');
-const f1=(await readFile(resolve(root,'apps/android/runtime-r289-v1047-f1-standings.js'),'utf8')).trimEnd();
-const home=(await readFile(resolve(root,'apps/android/runtime-r289-v1047-home-parity.js'),'utf8')).trimEnd();
+const f1=(await readFile(resolve(root,'apps/android/runtime-r289-v1047-f1-rankings.js'),'utf8')).trimEnd();
+const home=(await readFile(resolve(root,'apps/android/runtime-r289-v1047-special-home-standard.js'),'utf8')).trimEnd();
 const other=await Promise.all([
- readFile(resolve(root,'apps/android/runtime-r289-v1047-profile-metrics.js'),'utf8'),
+ readFile(resolve(root,'apps/android/runtime-r289-v1047-profile-drilldowns.js'),'utf8'),
  readFile(resolve(root,'apps/android/runtime-r289-v1047-discover-guard.js'),'utf8')
 ]);
 for(const text of [f1,home,...other]){
@@ -33,7 +33,7 @@ for(const text of [f1,home,...other]){
   if(text.includes(forbidden))throw Error('r289 forbidden action '+forbidden);
 }
 replace('function rowsF111(a,constructors=false){',
- '/* r289 F1 standings rescue, inside r111 closure */\n'+f1+
+ '/* r289 F1 standings rescue, inside r111 closure */\ntry{\n'+f1+\n '\n}catch(error){document.documentElement.dataset.ct289F1StartError=String(error?.message||error);console.error(error)}\n'+
  '\nfunction rowsF111(a,constructors=false){',
  'F1 standings module scope');
 replace('window.__ctAndroidV1021={version:',
@@ -43,7 +43,7 @@ replace('window.__ctAndroidV1021={version:',
 // Internal event must not invalidate the authenticated pools while an
 // optimistic mutation is in progress in the current seven slots.
 replace("window.addEventListener('cinetracker:data-changed',()=>{\n recommendationData=null;recommendationEpoch++;",
-"window.addEventListener('cinetracker:data-changed',()=>{\n if(isForYou()&&window.__ctR289DiscoverV1047){historyStamp=0;return;}\n recommendationData=null;recommendationEpoch++;",
+"window.addEventListener('cinetracker:data-changed',()=>{\n if(isForYou()&&window.__ctR289DiscoverV1047&&window.__ctR288DiscoverTest?.getStable?.()){historyStamp=0;return;}\n recommendationData=null;recommendationEpoch++;",
  'targeted active Pra Voce invalidation');
 // Protect the login bootstrap from unrelated UI extensions.
 const wrappers=other.map((text,i)=>'try{\n'+text+
