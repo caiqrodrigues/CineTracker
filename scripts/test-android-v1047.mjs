@@ -56,7 +56,7 @@ assert.ok(parts[3].includes('if(!canonical(data)&&canonical(cached))'),
 const top=[{position:'1',points:'123',Driver:{givenName:'Piloto',familyName:'Teste'}}];
 const raw={MRData:{StandingsTable:{StandingsLists:[{DriverStandings:top}]}}};
 const f1env={
- window:{},document:{documentElement:{dataset:{}}},
+ window:{},document:{documentElement:{dataset:{}},addEventListener(){},head:{appendChild(){}},createElement:()=>({})},
  route:()=> 'sports',q111:()=>({innerHTML:''}),
  f111Data:{season:2026,races:[{round:1}],drivers:null,constructors:null},
  f111Tab:'drivers',f111At:0,
