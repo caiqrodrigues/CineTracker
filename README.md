@@ -1947,8 +1947,3 @@ A release 1.0.33/r275 corrige exclusivamente a aba Descobrir → Pra Você: sete
 ### Android 1.0.34 — programação recente de Raw/SmackDown
 
 Constrói a partir do Android 1.0.33, preservando Web r541, UI e ações de Pra Você r275, Esportes r271 e histórico de filmes r273. Quando a Home está aberta confronta últimas transmissões TMDB (8s de limite por série) com o progresso assistido e corrige SmackDown T28E42 exibido em 16/10/2026. Raw só fica pendente se houver um episódio realmente lançado, sem adivinhar próximos programas. Aquece poucas imagens alternativas após renderizar Pra Você. Teste: node scripts/prepare-android-v1034.mjs && node scripts/test-android-v1034.mjs. TESTE34 usa com.cinetracker.app.teste34.
-
-
-### Android 1.0.28 — WWE semanal, Pra Você, histórico e Esportes sem refresh
-
-Web 0.3.68/r541 permanece intocada. `apps/android/runtime-r270-v1028-weekly-discover-sports.js` separa episódios recentes de Raw/SmackDown dos milhares de episódios históricos, usa TMDB + progresso somente de leitura, e aplica a classificação local de Home. O Pra Você tem um fluxo único de recomendação com sete slots e cache por usuário/dia, sem sugestões indevidas na Watchlist. Histórico de filmes é recuperado de `cinetracker_home_history_v387()` quando a aba Filmes é aberta. Marcações em Esportes usam Optimistic UI, lock síncrono e nenhuma rolagem forçada. Testes: `node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs`; em seguida `gradle assembleDebug` em apps/android. TESTE28 com pacote separado `com.cinetracker.app.teste28`.
