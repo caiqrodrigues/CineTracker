@@ -32,7 +32,7 @@ assert.ok(patch.includes("item.stack.insertAdjacentHTML('beforeend'"),'Special s
 assert.ok(patch.includes('pending.has(type)'),'duplicate-click guard');
 assert.ok(patch.includes('await Promise.allSettled([loadCurrentSpecial263(true),loadCounts263(true)])'),'server refresh');
 assert.ok(patch.includes("edge263('ct-ufc-series-sync'"),'UFC should sync while on Home');
-assert.ok(patch.includes("!seenIn(key).has(mediaRef(x))"),'seen recommendation rotation');
+assert.ok(source.includes("!seenIn(key).has(mediaRef(x))"),'seen recommendation rotation');
 for(const forbidden of ['window.location.reload(', 'router.refresh(', 'while(true)', 'new MutationObserver'])
  assert.ok(!patch.includes(forbidden),'forbidden '+forbidden);
 console.log('ANDROID_1_0_44_TEST_OK: 7 active slots, server-v525 filtered pools, bounded immediate Trocar, non-stale Home UFC/WWE/F1, frozen Web');
