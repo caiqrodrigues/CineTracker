@@ -102,11 +102,11 @@ jobs:
           grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
           grep -Fq "versionName='1.0.42'" <<<"$BADGING"
           grep -Fq "versionCode='10084'" <<<"$BADGING"
-          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1041-index.html
-          grep -Fq 'name="ct-official-version" content="1.0.42"' /tmp/ct1041-index.html
-          grep -Fq "window.__ctR283AndroidV1042='server-verified-seven-slots+dated-movie-override-history'" /tmp/ct1041-index.html
-          grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1041-index.html
-          grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1041-index.html
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1042-index.html
+          grep -Fq 'name="ct-official-version" content="1.0.42"' /tmp/ct1042-index.html
+          grep -Fq "window.__ctR284AndroidV1042='paged-movie-history-v542+six-authenticated-pools-v421+verified-v525'" /tmp/ct1042-index.html
+          grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1042-index.html
+          grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1042-index.html
           "$APKSIGNER" verify --print-certs "$OUT"
           sha256sum "$OUT" | tee android-1.0.42-sha256.txt
           stat -c '%s' "$OUT" | tee android-1.0.42-size.txt
@@ -138,8 +138,8 @@ jobs:
           grep -Fq "package: name='com.cinetracker.app.teste42'" <<<"$BADGING"
           grep -Fq "versionName='1.0.42-teste'" <<<"$BADGING"
           grep -Fq 'application-label:' <<<"$BADGING"
-          unzip -p "$TESTAPK" assets/hotfix5/index.html > /tmp/ct1041-preview.html
-          grep -Fq "window.__ctR283AndroidV1042=" /tmp/ct1041-preview.html
+          unzip -p "$TESTAPK" assets/hotfix5/index.html > /tmp/ct1042-preview.html
+          grep -Fq "window.__ctR283AndroidV1042=" /tmp/ct1042-preview.html
           "$APKSIGNER" verify --print-certs "$TESTAPK"
           sha256sum "$TESTAPK" | tee android-1.0.42-teste-sha256.txt
 
