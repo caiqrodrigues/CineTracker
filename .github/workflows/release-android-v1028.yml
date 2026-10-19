@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/android/runtime-r270-v1028-history-fast-optimistic.js'
+      - 'apps/android/runtime-r270-v1028-weekly-discover-sports.js'
       - 'apps/android/app/build.gradle'
       - 'scripts/prepare-android-v1028.mjs'
       - 'scripts/test-android-v1028.mjs'
@@ -104,7 +104,7 @@ jobs:
           grep -Fq "versionCode='10070'" <<<"$BADGING"
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1028-index.html
           grep -Fq 'name="ct-official-version" content="1.0.28"' /tmp/ct1028-index.html
-          grep -Fq "window.__ctR270AndroidV1028='play-events-movies+progressive-foryou+lazy-posters+stable-sports'" /tmp/ct1028-index.html
+          grep -Fq "window.__ctR270AndroidV1028='weekly-wwe-recent+foryou-single-fast-owner+movie-history-canonical+sports-optimistic-no-scroll'" /tmp/ct1028-index.html
           grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1028-index.html
           grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1028-index.html
           "$APKSIGNER" verify --print-certs "$OUT"
@@ -163,6 +163,6 @@ jobs:
         run: |
           set -euo pipefail
           TAG='android-v1.0.28'
-          NOTES='Android 1.0.28/r270. Movie History combines real watch_play_events with legacy watch_history using existing authenticated RPC v323; old Home ignored plays since September. Sports mark watched is single-click optimistic, rollback on error, no whole-page redraw/refresh/scroll reset, including team/league detail. Pra Voce loads three 3-page eligible initial pools before nonblocking additional searches. Home movie/series poster backgrounds deferred outside viewport. Web r541 frozen, native shell preserved. TESTE28 separate installation.'
+          NOTES='CineTracker Android 1.0.28/r270: WWE Raw and SmackDown classify recently aired unseen episodes using TMDB fresh data + read-only watch history, never total old catalog; Discover Pra Voce single cached 7-slot owner with personalized filtering and no repetitive legacy audits; movie history grouped canonical metadata; Sports optimistic watch action stops propagation and preserves scroll without reload. Web 0.3.68/r541 and native Activity unchanged. TESTE28 independent.'
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'CineTracker Android 1.0.28' --notes "$NOTES"
           gh release upload "$TAG" CineTracker-Android-1.0.28.apk CineTracker-Android-1.0.28-TESTE.apk android-1.0.28-teste-sha256.txt android-1.0.28-sha256.txt android-1.0.28-size.txt --clobber
