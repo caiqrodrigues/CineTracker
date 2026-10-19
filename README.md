@@ -1967,3 +1967,8 @@ Pra Você executa a verificação final do usuário pelo contrato existente `cin
 ### Android 1.0.38 — Perfil visível e Pra Você recuperável
 
 A Web r541 permanece intacta. O Android salva apenas o último Perfil útil por usuário para apresentação imediata, sem substituir dados reais por zeros; quando necessário, busca `cinetracker_profile_screen_v495` como fallback, preservando o carregamento completo. No Pra Você, a auditoria do servidor `cinetracker_recommendation_filter_v525` permanece obrigatória, mas candidatos que ainda precisam de verificação não se perdem se uma requisição falhar; até duas tentativas automáticas e uma opção explícita de repetir a validação são oferecidas. Pré-carregamento global pesado suspenso para priorizar a seção aberta. Rodar `node scripts/prepare-android-v1038.mjs && node scripts/test-android-v1038.mjs` antes de `gradle assembleDebug`. Pacote paralelo `com.cinetracker.app.teste38`.
+
+
+### Android 1.0.39 — biblioteca do Perfil / Pra Você com auditoria progressiva
+
+O APK Android lê o resumo real `cinetracker_profile_summary_v489` ao abrir o Perfil, recuperando os itens de filmes/séries/favoritos/atores sem aguardar a função de Perfil completa. Não apaga cards ao receber atualizações de estatísticas; usa cache de 30 minutos por usuário e aviso de erro com recuperação manual. O Pra Você conserva os filtros pessoais da RPC `cinetracker_recommendation_filter_v525` e verifica candidatos adicionais em segundo plano quando categorias ficam vazias. Testes: `node scripts/prepare-android-v1039.mjs && node scripts/test-android-v1039.mjs`. Web r541 e shell Android imutáveis; TESTE39 tem pacote separado `com.cinetracker.app.teste39`.

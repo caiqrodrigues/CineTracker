@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10080
-        versionName '1.0.38'
+        versionCode 10081
+        versionName '1.0.39'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Android 1.0.38/r280: Profile visible fallback and resumable verified Pra Voce; Web r541 frozen.
+// Android 1.0.39/r280: Profile visible fallback and resumable verified Pra Voce; Web r541 frozen.
