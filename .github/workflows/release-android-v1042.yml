@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  android_1_0_21:
+  android_1_0_42:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -139,7 +139,7 @@ jobs:
           grep -Fq "versionName='1.0.42-teste'" <<<"$BADGING"
           grep -Fq 'application-label:' <<<"$BADGING"
           unzip -p "$TESTAPK" assets/hotfix5/index.html > /tmp/ct1042-preview.html
-          grep -Fq "window.__ctR283AndroidV1042=" /tmp/ct1042-preview.html
+          grep -Fq "window.__ctR284AndroidV1042=" /tmp/ct1042-preview.html
           "$APKSIGNER" verify --print-certs "$TESTAPK"
           sha256sum "$TESTAPK" | tee android-1.0.42-teste-sha256.txt
 
