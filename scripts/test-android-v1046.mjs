@@ -47,7 +47,6 @@ const owners={
  esc263:x=>String(x),num263:x=>Number(x)||0,
  specialCard263:(kind)=>'<div class="media-row ct263-special" data-ct263-special="'+kind+'"><div class="thumb"></div><div><b>Title</b></div><span class="badge">›</span></div>',
  mountSpecial263:()=>false,recount263:()=>{},
- syncHomeEvents:async()=>{owners.special263.current.ufc=null;return false},
  loadCurrentSpecial263:async()=>owners.special263.current,
  console,setTimeout,Date,Promise,Math,Boolean,Number,String,Array,Map,Set
 };
@@ -57,7 +56,8 @@ assert.equal(rendered.length,3,'No special Home series may disappear when RPC is
 assert.equal(rendered.filter(x=>x.includes('Sincronização pendente')).length,2,'Missing data must be disclosed');
 assert.ok(rendered.some(x=>x.includes('ct288-quick')),'UFC must have small inline seen button');
 assert.ok(styles.some(x=>x.includes('max-width:36px!important')),'Quick button width must be bounded');
-await owners.syncHomeEvents(false);
+owners.special263.current.ufc=null;
+await owners.loadCurrentSpecial263(true);
 assert.ok(owners.special263.current.ufc===dataUfc,'Transient sync failure erased loaded UFC');
 assert.equal(rendered.length,6,'Home must render after sync completes');
 // Test authenticated seven-slot paint remains owned after asynchronous legacy callbacks.
