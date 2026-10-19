@@ -23,8 +23,7 @@ once("const REVISION='r285-android-official-1.0.43';","const REVISION='r286-andr
 once("window.__ctWebBuild='1.0.43';window.__ctOfficialVersion='1.0.43';window.__ctAndroidOfficialVersion='1.0.43';window.__ctAndroidOfficialCode=10085;",
 "window.__ctWebBuild='1.0.44';window.__ctOfficialVersion='1.0.44';window.__ctAndroidOfficialVersion='1.0.44';window.__ctAndroidOfficialCode=10086;",'metadata');
 // V525 server authority: an unrelated client rating rule cannot null its approved pools.
-once("&&ct186Quality(x)&&!ct186LocalBlocked.has(ct186Key(x))&&window.__ctR279Audit?.permitted?.(x,watch)===true",
-"&&!ct186LocalBlocked.has(ct186Key(x))&&window.__ctR279Audit?.permitted?.(x,watch)===true",'redundant r283 rating');
+if(js.includes('&&ct186Quality(x)&&!ct186LocalBlocked.has(ct186Key(x))'))throw Error('r283 redundant quality regression');
 once("const disabled=(act==='swap'&&nChoices<2&&(watchKind(key)||expandedOnce.has(kindOf(key))))||busy.has(key);",
 "const disabled=busy.has(key);",'buttons permanently disabled');
 once("let owner=actualUser(),auditing=null;","let owner=actualUser(),auditing=null,viewEpoch=-1;",'new-visit ownership');
