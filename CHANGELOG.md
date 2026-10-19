@@ -1,3 +1,12 @@
+## Android 1.0.37 — r279 (2026-10-19)
+
+- **Correção de recomendações já vistas/Watchlist:** seleção final do Pra Você agora consulta a RPC autenticada existente `cinetracker_recommendation_filter_v525`, que confere estados de Watchlist, vistos, episódios, progresso, títulos alternativos e itens ignorados. Candidatos novos só aparecem quando a consulta confirma ausência de histórico/Watchlist. "Da sua Watchlist" só recebe os que estão realmente nessa lista e ainda não foram vistos; não há fallback de candidatos aleatórios.
+- **Todos os sete slots e Trocar:** valida lotes limitados por tipo, incluindo pools de reposição e novas opções solicitadas ao trocar. Respostas desconhecidas/erro não exibem uma indicação potencialmente errada. Previne exposição de cards não verificados durante a primeira pintura e no carregamento assíncrono. Mantém as regras pré-existentes de nota, data, duração, YouTube, stand-up, realities, AEW/WWE/luta livre e MMA.
+- **Home Séries, UFC/WWE/F1:** removida a abertura em `pointerdown`. Gestos agora verificam movimento vertical acima de 10px, mudança de scroll, cancelamento e tempo do toque antes de abrir no `click`. Rolagem livre, ação via teclado preservada; nenhuma navegação/refresh no início do toque.
+- **Estrito escopo:** não modifica o código Web r541, Activity Android, layouts nativos, Perfil, Esportes, histórico, F1 Hub, lógica WWE/F1 de episódio, ou marcação de assistido. Nenhuma mutação com reload.
+- **Testes:** r278 (preexistentes) e r279 com bloqueios retornados de v525, distinção dos sete slots, candidato novo não auditado, scroll/drag/cancel/tap/teclado para UFC/WWE/F1, sintaxe, assinatura, checksum e verificação do APK.
+- **Instalação:** TESTE37 paralelo (`com.cinetracker.app.teste37`), mantendo testes anteriores.
+
 ## Android 1.0.36 — r278 (2026-10-19)
 
 - **Correção do vídeo:** o Trocar do r277 selecionava sempre `options[0]`, de modo que o card A alternava para B e imediatamente voltava a A. Agora existe lista de títulos já mostrados, por **usuário/dia/slot**, com persistência na sessão. Candidatos mostrados ficam excluídos das próximas trocas — sem circulação A-B-A — inclusive após repintura local.

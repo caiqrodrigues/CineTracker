@@ -1957,3 +1957,8 @@ Corrige os botões duplicados/sem ação dos sete slots: substitui os handlers e
 ### Android 1.0.36 — Pra Você sem ciclo de Trocar
 
 Trocar agora controla histórico por usuário/dia/slot para nunca voltar imediatamente à indicação descartada. Antes de mostrar uma nova escolha, consulta detalhes TMDB com prazo delimitado para aplicar as exclusões de luta livre, YouTube, reality, stand-up, curtas e regras de visto/Watchlist. Se as alternativas acabarem, tenta uma busca complementar por categoria; caso não haja título elegível, mantém o card sem reiniciar a lista. Mantém exatamente sete slots, Visto e Watchlist otimistas e nenhum refresh/scroll reset. Web r541 e demais módulos Android preservados. Compilação: `node scripts/prepare-android-v1036.mjs && node scripts/test-android-v1036.mjs`, depois `gradle assembleDebug` em apps/android. Pacote paralelo TESTE36.
+
+
+### Android 1.0.37 — recomendações auditadas e cards com toque seguro
+
+Pra Você executa a verificação final do usuário pelo contrato existente `cinetracker_recommendation_filter_v525` (vistos, episódios, progresso, Watchlist, nomes alternativos, NotInterested), inclusive em alternativas de Trocar. Itens não verificados ficam ocultos até a confirmação; falhas não são interpretadas como permissão de exibição. Os cards de UFC, WWE e F1 na Home são abertos por toque curto validado, cancelando movimentos de rolagem ou `pointercancel` e preservando Enter/Espaço. A Web r541, o shell Android e os demais módulos continuam intactos. Para validar: `node scripts/prepare-android-v1037.mjs && node scripts/test-android-v1037.mjs`, após executar também os testes base v1036. TESTE37 com pacote `com.cinetracker.app.teste37`.
