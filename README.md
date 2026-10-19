@@ -1,3 +1,13 @@
+## Android 1.0.48 / r290 — Home, NFL Super Bowl, Perfil e Pra Você
+
+- **Home Séries:** UFC, WWE e Fórmula 1 usam o mesmo componente visual `home-action-row` das demais séries, com uma única linha de informações e botão Assistido à direita, sem linhas extras nem largura excedente.
+- **NFL Super Bowl:** a série sintética existente (`tmdb_id = -1895884984`) possui 120 registros de episódios: 60 em cada uma das temporadas 1 e 2, correspondentes a 1967–2026. Abre uma tela própria com seleção por ano, detalhes da temporada e Assistido/Desmarcar através dos mesmos RPCs autenticados, sem duplicar/alterar dados já vistos ou inventar partidas.
+- **Perfil — Históricos:** filmes, séries, episódios e esportes ordenados por última visualização, do mais recente para o mais antigo; sem reinicializar os contadores.
+- **Perfil — Watchlist:** os modais carregam a fonte autenticada completa `cinetracker_watchlist_full_v119`, com ordenação inicial por último adicionado e filtros para primeiro adicionado, A–Z e Z–A.
+- **Descobrir — Pra Você:** intercepta renderizações obsoletas e verifica os sete botões após uma interação; apenas quando necessário, reconcilia a tela existente sem refetch global.
+- **Escopo:** Android exclusivamente, Web 0.3.68/r541 congelada, nenhum arquivo `apps/web` alterado; Perfil fora dos históricos, F1 Hub, Esportes e Home Filmes preservados.
+- **Versões:** Android 1.0.48/r290/versionCode 10090, pacote TESTE48 independente `com.cinetracker.app.teste48`, versão raiz 0.3.77.
+
 ## Android 1.0.47 / r289 — Perfil, Pra Você, F1 Hub e Home
 
 - **Perfil:** restaurados botões nos números de Filmes/Séries Watchlist com as janelas existentes v120; histórico de filmes e séries no contador de assistidos; esporte em TV e estádio acessíveis por janelas próprias. Consultas autenticadas com mensagens explícitas em caso de falha.

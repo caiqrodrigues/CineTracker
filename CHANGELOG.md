@@ -1,3 +1,13 @@
+## Android 1.0.48 — r290 (2026-10-19)
+
+- **Home Séries:** UFC, WWE e F1 inseridos usando o mesmo grid de dois elementos dos demais cards: pôster e progresso na esquerda e botão ✓ na extrema direita. Dados e telas existentes preservados.
+- **NFL Super Bowl:** implementada página autônoma com seleção por ano (1967–2026), dois episódios existentes por ano mapeados às temporadas 1/2 e registro/desmarcação otimista usando os RPCs de episódio já existentes. Nenhuma modificação nos 120 registros já marcados.
+- **Perfil:** históricos de filmes, séries, episódios e esportes ordenados do mais recente para o mais antigo; Watchlist de filmes/séries consulta v119 e oferece Último adicionado, Primeiro adicionado, A–Z e Z–A.
+- **Descobrir > Pra Você:** estabilização do renderizador final auditado v421/v525, com reconciliação limitada somente quando uma renderização antiga substitui os controles.
+- **Web:** 0.3.68/r541 congelada, sem alterações nativas.
+- **Versões:** Android 1.0.48/r290/versionCode 10090; raiz 0.3.77; TESTE48 com package separado.
+- **Validação:** teste Node para mapeamento NFL e histórico, 3 Home cards, quatro ordenações, dono de recomendações, build e assinatura de APK.
+
 ## Android 1.0.47 — r289 (2026-10-19)
 
 - **Perfil:** restaurada a abertura dos contadores das Watchlists de Séries e Filmes via modal completo existente, e implementadas janelas de histórico por Filmes, Séries e Esportes (TV e estádio) com RPCs autenticadas.
