@@ -74,7 +74,7 @@ css.textContent=[
  '[data-home] .ct290-home-special{grid-template-columns:minmax(0,1fr) 38px!important;align-items:center!important}',
  '[data-home] .ct290-home-special>.ct290-home-button{box-sizing:border-box!important;width:36px!important;min-width:36px!important;max-width:36px!important;height:36px!important;min-height:36px!important;max-height:36px!important;align-self:center!important;justify-self:center!important;padding:0!important;margin:0!important;grid-column:2!important;grid-row:1!important;position:static!important;flex:none!important}',
  '[data-home] .ct291-nfl-logo-card .thumb{background-color:#f6f8ff!important;border:1px solid #526c82!important;border-radius:8px!important}',
- '[data-home] .ct290-home-special .ct290-home-text small{display:block!important;white-space:nowrap!important;text-overflow:hidden!important;text-overflow:ellipsis!important}'
+ '[data-home] .ct290-home-special .ct290-home-text small{display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}'
 ].join('\n');
 document.head.appendChild(css);
 window.__ctR291HomeTest={update,refresh,totals,nflBadge};
