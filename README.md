@@ -1977,3 +1977,8 @@ O APK Android lê o resumo real `cinetracker_profile_summary_v489` ao abrir o Pe
 ### Android 1.0.28 — Recuperação de bibliotecas e mutação sem refresh
 
 Versão de teste Android com Profile dashboard/favoritos recuperados de fonte real e cache segregado por usuário; Pra Você com primeira renderização cache-first e auditoria assíncrona por categoria; Home Filmes com histórico autenticado paginado, incluindo filmes anteriores/posteriores ao corte de 80 da Home; Esportes assistidos atualizados sem reconstruir a tela nem deslocar a rolagem. Web r541 e infraestrutura nativa intocadas. Validação: `node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs`, `gradle assembleDebug`. TESTE28: `com.cinetracker.app.teste28`.
+
+
+### Android 1.0.40 — histórico de filmes completo e Pra Você auditado
+
+Web 0.3.68/r541 permanece congelada. A Home Filmes junta histórico completo e `watch_play_events_v0994` com metadados reais, removendo o lock diário e mantendo scroll durante repaints. O Pra Você percorre três consultas TMDB limitadas em paralelo, mostra apenas opções que passaram pela RPC autenticada `cinetracker_recommendation_filter_v525`, não inventa Watchlist e renderiza uma única mensagem em cada slot sem candidatos. Regressões de dados/DOM e sintaxe: `node scripts/prepare-android-v1040.mjs && node scripts/test-android-v1040.mjs`. Android TESTE40 instala paralelamente com o pacote `com.cinetracker.app.teste40`.
