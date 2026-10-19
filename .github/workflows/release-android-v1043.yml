@@ -81,9 +81,9 @@ jobs:
           const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
           const marker='<script data-ct-android="r285-android-js">',a=h.indexOf(marker),b=a<0?-1:h.indexOf('</script>',a+marker.length);
           if(a<0||b<a)throw new Error('r285 embedded script missing');
-          fs.writeFileSync('/tmp/ct-android-1042.js',h.slice(a+marker.length,b));
+          fs.writeFileSync('/tmp/ct-android-1043.js',h.slice(a+marker.length,b));
           NODE
-          node --check /tmp/ct-android-1042.js
+          node --check /tmp/ct-android-1043.js
 
       - name: Build Android APK
         working-directory: apps/android
@@ -104,7 +104,7 @@ jobs:
           grep -Fq "versionCode='10085'" <<<"$BADGING"
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1043-index.html
           grep -Fq 'name="ct-official-version" content="1.0.43"' /tmp/ct1043-index.html
-          grep -Fq "window.__ctR284AndroidV1043='paged-movie-history-v542+six-authenticated-pools-v421+verified-v525'" /tmp/ct1043-index.html
+          grep -Fq "window.__ctR285AndroidV1043='compact-daily+stable-optimistic-actions+verified-swaps+progressive-profile'" /tmp/ct1043-index.html
           grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1043-index.html
           grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1043-index.html
           "$APKSIGNER" verify --print-certs "$OUT"
@@ -139,7 +139,7 @@ jobs:
           grep -Fq "versionName='1.0.43-teste'" <<<"$BADGING"
           grep -Fq 'application-label:' <<<"$BADGING"
           unzip -p "$TESTAPK" assets/hotfix5/index.html > /tmp/ct1043-preview.html
-          grep -Fq "window.__ctR284AndroidV1043=" /tmp/ct1043-preview.html
+          grep -Fq "window.__ctR285AndroidV1043=" /tmp/ct1043-preview.html
           "$APKSIGNER" verify --print-certs "$TESTAPK"
           sha256sum "$TESTAPK" | tee android-1.0.43-teste-sha256.txt
 
@@ -163,6 +163,6 @@ jobs:
         run: |
           set -euo pipefail
           TAG='android-v1.0.43'
-          NOTES='CineTracker Android 1.0.43/r285. Daily recommendation is compact 2:3 like other cards, adding to Watchlist does not clear other recommendations or trigger whole-page refetch, Trocar respects v421/v525 candidates, and Profile loads summary/stats independently. Full movie history v542 and Web r541 preserved. Android TESTE42 installs side by side.'
+          NOTES='CineTracker Android 1.0.43/r285. Daily recommendation is compact 2:3 like other cards, adding to Watchlist does not clear other recommendations or trigger whole-page refetch, Trocar respects v421/v525 candidates, and Profile loads summary/stats independently. Full movie history v542 and Web r541 preserved. Android TESTE43 installs side by side.'
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'CineTracker Android 1.0.43' --notes "$NOTES"
           gh release upload "$TAG" CineTracker-Android-1.0.43.apk CineTracker-Android-1.0.43-TESTE.apk android-1.0.43-teste-sha256.txt android-1.0.43-sha256.txt android-1.0.43-size.txt --clobber
