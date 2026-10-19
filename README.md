@@ -1982,3 +1982,8 @@ Versão de teste Android com Profile dashboard/favoritos recuperados de fonte re
 ### Android 1.0.40 — histórico de filmes completo e Pra Você auditado
 
 Web 0.3.68/r541 permanece congelada. A Home Filmes junta histórico completo e `watch_play_events_v0994` com metadados reais, removendo o lock diário e mantendo scroll durante repaints. O Pra Você percorre três consultas TMDB limitadas em paralelo, mostra apenas opções que passaram pela RPC autenticada `cinetracker_recommendation_filter_v525`, não inventa Watchlist e renderiza uma única mensagem em cada slot sem candidatos. Regressões de dados/DOM e sintaxe: `node scripts/prepare-android-v1040.mjs && node scripts/test-android-v1040.mjs`. Android TESTE40 instala paralelamente com o pacote `com.cinetracker.app.teste40`.
+
+
+### Android 1.0.41 — Histórico de Filmes e Pra Você
+
+A visualização do Histórico preserva todas as entradas reais já carregadas e acrescenta filmes marcados `AlreadySeen` com `watched_at` autêntico, além de filmes vistos com data de `cinetracker_profile_media_dashboard_v0991`. O Pra Você mostra apenas indicações aprovadas por `cinetracker_recommendation_filter_v525` e impede que um reconciliador antigo descarte cards com base em um contexto de Watchlist incompleto. Enquanto as verificações não terminam, os slots informam a espera; posteriormente permitem nova tentativa. Verificar a construção: `node scripts/prepare-android-v1041.mjs && node scripts/test-android-v1041.mjs`. A Web r541 e os componentes nativos continuam congelados. TESTE41 usa `com.cinetracker.app.teste41`.

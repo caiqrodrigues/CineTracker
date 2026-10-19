@@ -1,3 +1,11 @@
+## Android 1.0.41 — r283 (2026-10-19)
+
+- **Home > Filmes > Histórico recente:** adiciona à conciliação existente de watch_history e watch_play_events os registros reais de `media_overrides.AlreadySeen` que possuam `watched_at` e os filmes vistos com `last_watched_at` em `cinetracker_profile_media_dashboard_v0991`. Preserva filmes anteriores (incluindo Pokémon) e posteriores sem inventar datas ou inserir não assistidos; identifica aliases de TMDB e elimina duplicação de um mesmo filme/visto em janela curta. Nenhuma substituição da página ou salto de scroll.
+- **Descobrir > Pra Você:** o reconciliador r277 e o seletor final r268 deixam de descartar novamente candidatos aprovados pelo filtro autenticado r279/v525 por causa de contexto local incompleto. Somente `v525` verificado habilita os slots; preservados bloqueios de assistidos, Watchlist, exclusões de conteúdo, alias e diferenciação entre Indicação do Dia e 100% Novos. Nenhuma inserção artificial de itens na Watchlist.
+- **Feedback real de carregamento:** placeholders exibem “Verificando indicações elegíveis…” enquanto as consultas seguem em andamento e “Buscar novamente” depois de esgotadas, sem fingir que inexistem conteúdos enquanto o servidor não respondeu.
+- **Escopo:** mantém Web r541, Activity e layout Android, sports/watch, F1 Hub, home séries, perfil e suas métricas sem mudanças; otimização local/cached sem reload. Testes abrangem filmes após Pokémon, não assistidos excluídos, slots auditados e ausência de refresh.
+- **APK TESTE41** com pacote independente `com.cinetracker.app.teste41`; validação funcional com dados reais do dispositivo ainda depende de teste em aparelho.
+
 ## Android 1.0.40 — r282 (2026-10-19)
 
 - **Refinamento dos problemas reportados em vídeo:** as três consultas de recomendação continuam paralelas também na etapa autenticada v525, usando lotes isolados por categoria: série/anime lenta não bloqueia filmes. O estado visual de auditoria pendente não esconde mais cards que já passaram no filtro final.
