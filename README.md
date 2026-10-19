@@ -1,3 +1,12 @@
+## Android 1.0.43 / r285 — Pra Você compacto e Perfil progressivo
+
+- **Web congelada:** versão 0.3.68 / r541; nenhum arquivo de `apps/web` alterado.
+- **Indicação do dia:** o card mantém as mesmas dimensões 2:3 dos demais cards; sem expansão indevida.
+- **Pra Você — adicionar à Watchlist:** alteração otimista só no card selecionado, sem evento global que descarte a auditoria v525 dos outros seis slots, sem reload nem salto do scroll.
+- **Trocar:** candidatos autenticados v421 e aprovados pelo filtro pessoal v525 deixam de passar pelo filtro redundante de nota; categorias com outras alternativas podem trocar sem serem esvaziadas.
+- **Perfil:** estatísticas rápidas, biblioteca, esportes e atividade são carregados independentemente; não bloqueia toda a tela aguardando um RPC completo.
+- **APK:** Android `1.0.43`, `versionCode 10085` e TESTE43 instalável paralelamente (`com.cinetracker.app.teste43`). Histórico completo de filmes v542 permanece disponível.
+
 ## Android 1.0.42 / r284 — Histórico de Filmes completo e Pra Você autenticado
 
 - **Web permanece congelada:** versão 0.3.68/r541, sem qualquer modificação nos arquivos Web.

@@ -1,3 +1,6 @@
+- Android: **1.0.43 / r285-android-official-1.0.43 / versionCode 10085** — Pra Você sete slots compactos com Trocar autorizado e mutação otimista isolada; Perfil progressivo com RPCs independentes; histórico v542 preservado. APK TESTE43 independente.
+- Web: **CONGELADA em 0.3.68 / r541**, sem alterações.
+
 - Android: **1.0.42 / r284-android-official-1.0.42 / versionCode 10084** — histórico de filmes paginado v542 junto ao histórico/reproduções anteriores; Pra Você utiliza 6 pools Supabase v421 com auditoria v525 e 7 slots; APK TESTE42 paralelo.
 - Web: **congelada 0.3.68 / r541**, nenhuma mudança de código Web.
 

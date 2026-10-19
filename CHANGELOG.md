@@ -1,3 +1,13 @@
+## Android 1.0.43 — r285 (2026-10-19)
+
+- Correção do card desproporcional de **Indicação do Dia**: coluna dimensionada como um dos três cards da seção e pôster 2:3, respeitando altura intrínseca.
+- **Adicionar à Watchlist / Marcar visto:** suprime apenas o evento genérico de refetch durante a mutação otimista em Descobrir > Pra Você; elimina a invalidação global das recomendações já verificadas e mantém os demais cards estáveis.
+- **Trocar:** elimina segunda filtragem redundante depois do banco v421 e auditoria v525; preserva as alternativas reais. Sem duplicar ações nem preencher a Watchlist com títulos inventados.
+- **Perfil:** substitui o carregamento sequencial/monolítico por recuperação progressiva e independente de estatísticas (`cinetracker_profile_quick_stats_v1`), biblioteca (`cinetracker_profile_summary_v489`), esportes (`cinetracker_sports_stadium_summary_v296`) e atividade (`cinetracker_activity_by_day_v517`), com cache válido por usuário e fallback limitado.
+- **Preservados:** histórico de filmes v542, Home, Esportes e funcionalidades não solicitadas; Web permanece em r541. Não altera a Activity Android.
+- **Validação:** `scripts/prepare-android-v1043.mjs`, `scripts/test-android-v1043.mjs`, GitHub Actions `release-android-v1043.yml` com APK oficial e TESTE43, assinatura e conferência de metadados.
+- **Versão:** Android 1.0.43 / r285 / code 10085. `package.json` raiz incrementado para 0.3.72.
+
 ## Android 1.0.42 — r284 (2026-10-19)
 
 - **Escopo:** somente Android. Web congelada em 0.3.68/r541, sem alterações em `apps/web/**`.

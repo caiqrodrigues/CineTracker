@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.42
+# CineTracker Android — 1.0.43
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -53,3 +53,9 @@ Documentação: `docs/releases/1.0.0.md` e `docs/validation/1.0.0.md`.
 - Pra Você: seis grupos elegíveis v421 auditados v525; sete posições e Watchlist real.
 - APK de teste paralelo: `com.cinetracker.app.teste42`.
 - Web r541 congelada, shell nativo preservado.
+
+## Android 1.0.43 / r285
+
+- Indicação do Dia compacta em 2:3; Trocar usa pools reais v421 auditados v525; ações locais não reinicializam as outras recomendações.
+- Perfil com estatísticas, biblioteca e histórico de atividade carregados progressivamente, sem reinicialização de tela.
+- APK TESTE43: `com.cinetracker.app.teste43`; Web r541 intocada.
