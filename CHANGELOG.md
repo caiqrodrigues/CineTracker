@@ -1,3 +1,14 @@
+## Android 1.0.36 — r278 (2026-10-19)
+
+- **Correção do vídeo:** o Trocar do r277 selecionava sempre `options[0]`, de modo que o card A alternava para B e imediatamente voltava a A. Agora existe lista de títulos já mostrados, por **usuário/dia/slot**, com persistência na sessão. Candidatos mostrados ficam excluídos das próximas trocas — sem circulação A-B-A — inclusive após repintura local.
+- **Regras completas antes da troca:** respeita histórico/progresso e Watchlist reais, nota mínima/ano/gêneros e exclusões; cada **novo** candidato é validado com detalhes TMDB, rejeitando explicitamente AEW/WWE/luta livre/MMA, stand-up, realities, curtas de menos de 40 minutos e produções originárias do YouTube. Falha na busca de detalhe não autoriza a indicação (fail-closed).
+- **Carregamento e reposição:** auditoria de até quatro detalhes em paralelo, em no máximo 12 opções por rodada; quando as alternativas locais acabam, faz apenas uma busca complementar delimitada por categoria. Se a lista da Watchlist acabar, mantém o último candidato e desabilita Trocar, sem inventar indicação nem voltar ao início.
+- **Só uma ação por toque:** mantém o listener único r277, trava por slot, guarda de clique duplicado, componentes Visto e Watchlist com media ID correto, UI local sem reload ou salto de scroll. Registra a opção descartada em `cinetracker_recommendation_record_v113` em segundo plano.
+- **Auditoria dos slots atuais:** os candidatos inicialmente exibidos são verificados em segundo plano; se um for proibido nos detalhes, é retirado do slot, e a seleção procura alternativa válida. Nenhum título inelegível é aceito em novas trocas.
+- **Escopo protegido:** nenhuma mudança em Web 0.3.68/r541, Home Filmes/Séries, Histórico, Esportes, Perfil, F1 Hub, navegação e Activity Android.
+- **Testes:** duas opções não voltam à primeira; regras de runtime, YouTube, reality, AEW e fluxo Visto/Watchlist; sintaxe do bundle, integridade e assinatura dos APKs. Validação com dados reais no dispositivo ainda pendente.
+- **APK de teste:** `com.cinetracker.app.teste36` separado de TESTE35.
+
 ## Android 1.0.35 — r277 (2026-10-19)
 
 - **Escopo único:** Descobrir > Pra Você, sem modificar Web r541, Home, Histórico, Esportes, Perfil, F1 Hub ou Activity nativa.

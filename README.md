@@ -1952,3 +1952,8 @@ Constrói a partir do Android 1.0.33, preservando Web r541, UI e ações de Pra 
 ### Android 1.0.35 — exclusivamente Descobrir > Pra Você
 
 Corrige os botões duplicados/sem ação dos sete slots: substitui os handlers e barras conflitantes da aba pelo conjunto único com três ações (Watchlist, Visto, Trocar) nos slots de sugestão e duas ações (Visto, Trocar) nos slots Da sua Watchlist. Cada botão identifica `movie:ID` ou `tv:ID`, filtra os candidatos com o contexto autenticado e atualiza localmente sem recarregar ou subir a tela. `node scripts/prepare-android-v1035.mjs && node scripts/test-android-v1035.mjs` valida o bundle; a compilação usa o workflow Android 1.0.35. TESTE35 paralelo: `com.cinetracker.app.teste35`. Web r541 e demais abas não foram alteradas.
+
+
+### Android 1.0.36 — Pra Você sem ciclo de Trocar
+
+Trocar agora controla histórico por usuário/dia/slot para nunca voltar imediatamente à indicação descartada. Antes de mostrar uma nova escolha, consulta detalhes TMDB com prazo delimitado para aplicar as exclusões de luta livre, YouTube, reality, stand-up, curtas e regras de visto/Watchlist. Se as alternativas acabarem, tenta uma busca complementar por categoria; caso não haja título elegível, mantém o card sem reiniciar a lista. Mantém exatamente sete slots, Visto e Watchlist otimistas e nenhum refresh/scroll reset. Web r541 e demais módulos Android preservados. Compilação: `node scripts/prepare-android-v1036.mjs && node scripts/test-android-v1036.mjs`, depois `gradle assembleDebug` em apps/android. Pacote paralelo TESTE36.
