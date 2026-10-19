@@ -1,3 +1,4 @@
+- Android: **1.0.45 / r287-android-official-1.0.45 / versionCode 10087** — login inicializa sem erro de escopo; funcionalidades r286 dentro do módulo r263 com falha isolada; APK TESTE45 independente. Web congelada r541.
 - Android: **1.0.44 / r286-android-official-1.0.44 / versionCode 10086** — 7 slots v421/v525 com botões ativos, troca sem consulta TMDB por clique, rotação na reabertura; Home UFC/WWE/F1 com ação rápida e posicionamento sem fixação no topo. APK TESTE44 independente.
 - Web: **CONGELADA em 0.3.68 / r541**.
 

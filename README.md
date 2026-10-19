@@ -1,3 +1,11 @@
+## Android 1.0.45 / r287 — correção da tela preta no login
+
+- **Causa confirmada em navegador real:** `ReferenceError: mountSpecial263 is not defined`. A extensão r286 havia sido injetada fora do escopo privado r263 que contém as funções das séries UFC, WWE e Fórmula 1; isso interrompia toda a inicialização antes do login.
+- **Correção:** posiciona a extensão r286 dentro do escopo do módulo especial r263, exatamente antes do fechamento dele. Um isolamento `try/catch` permite que a tela de login continue abrindo mesmo se a extensão de séries especiais falhar.
+- **Validação:** comparação de navegador headless entre Android 1.0.43 (login visível), 1.0.44 (tela vazia e `mountSpecial263 is not defined`) e Android corrigido (login visível, sem erro de página); verificações de sintaxe, escopo e continuidade dos sete slots e dos RPCs esportivos.
+- **Escopo:** somente Android, Web r541 / versão 0.3.68 congelada; nenhum dado pessoal alterado.
+- **Pacotes:** Android 1.0.45, `versionCode 10087`, com TESTE45 instalável independentemente como `com.cinetracker.app.teste45`.
+
 ## Android 1.0.44 / r286 — Pra Você e séries especiais na Home
 
 - **Web congelada:** r541 / 0.3.68, sem alterações em `apps/web`.

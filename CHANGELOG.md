@@ -1,3 +1,12 @@
+## Android 1.0.45 — r287 (2026-10-19)
+
+- **Erro crítico reproduzido:** APK 1.0.44 abria em tela preta, sem login, por `ReferenceError: mountSpecial263 is not defined` durante a inicialização.
+- **Raiz corrigida:** script Android r286 movido para dentro do fechamento lexical da r263, único local que contém as funções das séries especiais; sem exportar estado privado globalmente.
+- **Resiliência:** fronteira `try/catch` ao registrar aprimoramentos especiais, para não interromper login em eventual erro desse módulo.
+- **Regressão:** navegador headless comparando login das versões 1.0.43, 1.0.44 e HTML corrigido; testes JS de escopo/sintaxe automatizados na build.
+- **Preservados:** 7 slots do Pra Você r286, UFC/WWE/F1 da Home, Perfil e histórico v542. Web r541 congelada.
+- **Versões:** Android 1.0.45 / r287 / versionCode 10087; versão raiz 0.3.74; pacote TESTE45 independente.
+
 ## Android 1.0.44 — r286 (2026-10-19)
 
 - **Descobrir > Pra Você:** remove bloqueio permanente de Trocar causado pelo limite de alternativas; mantém os botões de Adicionar à Watchlist, Assistido e Trocar nos respectivos sete slots.
