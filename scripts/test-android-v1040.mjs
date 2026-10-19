@@ -42,12 +42,13 @@ const series=[build('tv',21),build('tv',22),build('tv',23)];
 const anime=[build('tv',31,true),build('tv',32,true),build('tv',33,true)];
 const old=[{id:1,media_id:1,watched_at:'2026-10-10T15:00:00Z',media_title:'Pokémon O Filme',tmdb_id:11}];
 let fetcher=async()=>old,painter=()=>true,painted=0,network=0,ctxAccess=0;
-const counters={audited:0},domStyles=[];
+const counters={audited:0,active:0,maxActive:0},domStyles=[];
 const empty=()=>({movie:[],series:[],anime:[]});
 const sandbox={
  window:{addEventListener(){},__ctR265Test:{allowed:x=>Boolean(x?.poster_path)},
   __ctR279Audit:{auditData:async data=>{
-   counters.audited++;
+   counters.audited++;counters.active++;counters.maxActive=Math.max(counters.maxActive,counters.active);
+   await new Promise(resolve=>setTimeout(resolve,12));counters.active--;
    // Simulate v525: an item in Watchlist or seen can never enter a fresh slot.
    for(const k of ['movie','series','anime']){
     data._ct186_fresh[k]=(data._ct186_fresh[k]||[]).filter(x=>!x.seen&&!x.is_watchlist);
@@ -107,15 +108,17 @@ assert.ok(domStyles[0].includes('grid-template-columns:minmax(190px'),'daily emp
 assert.ok(!domStyles[0].includes('100px-wide'),'no old incorrect tiny column');
 
 await sandbox.discoverRows('foryou');
+await new Promise(resolve=>setTimeout(resolve,100));
 for(let i=0;i<60;i++)await new Promise(done=>setImmediate(done));
 const rec=sandbox.window.__ctR282Test.forYou();
 assert.ok(rec&&rec.data._ct186_fresh.movie.length>=2,'daily and fresh must have different eligible movies');
 assert.ok(rec.data._ct186_fresh.series.length>=1,'series candidates missing');
 assert.ok(rec.data._ct186_fresh.anime.length>=1,'anime candidates missing');
 assert.ok(counters.audited>=3,'all three categories must pass authenticated audit');
+assert.ok(counters.maxActive>=2,'movie, series and anime v525 audits must not form a blocking serial queue');
 assert.ok(painted>=3,'progressive category paint did not happen');
 assert.equal(rec.data._ct186_fresh.movie.some(x=>x.seen),false,'seen movie leaked');
 assert.ok(network<=6,'fast first load must use bounded 3+3 queries');
 assert.equal(sandbox.ct186Slot('Filme',null,'daily:movie',0).includes('ct265-empty-slot'),false,'old narrow empty slot survived');
 assert.ok(sandbox.ct186Slot('Filme',null,'daily:movie',0).includes('ct277-empty'),'empty placeholder should be single');
-console.log('ANDROID_1_0_40_TEST_OK recent play after Pokemon preserved + no 24h history lock + 7 secure progressive slots + 3 parallel first pages + correct non-overflow empty slot');
+console.log('ANDROID_1_0_40_TEST_OK recent play after Pokemon preserved + no 24h history lock + 7 secure slots + concurrent independent server audits + no blank verified cards');

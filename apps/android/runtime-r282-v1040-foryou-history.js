@@ -62,23 +62,39 @@ async function recentPlays(owner){
 if(bridge?.getFetcher&&bridge?.setFetcher&&bridge?.getPainter){
  const previous=bridge.getFetcher();
  bridge.setFetcher(async function(...args){
-  const owner=uid();
-  if(!owner)return[];
+  const owner=uid();if(!owner)return[];
   if(historyOwner!==owner){historyOwner=owner;historyRows=[];historyAt=0}
-  const responses=await Promise.allSettled([
-   Promise.resolve().then(()=>previous.apply(this,args)),
+  const existing=rows(homeCache?.history_movies);
+  // Start the legacy deep pagination separately. It must never gate recent
+  // real play events, nor erase them when the older pages finally arrive.
+  const deeper=Promise.resolve().then(()=>previous.apply(this,args)).then(full=>{
+   if(uid()!==owner)return[];
+   const combined=combineHistory([historyRows,rows(homeCache?.history_movies),rows(full)]);
+   if(combined.length){
+    historyRows=combined;historyAt=Date.now();
+    if(route()==='home'&&homeActiveTab158==='movies'){
+     homeCache={...(homeCache||{}),history_movies:combined};
+     bridge.getPainter()(combined);
+    }
+   }
+   return combined;
+  }).catch(()=>[]);
+  const recent=Promise.allSettled([
    recentPlays(owner),
    rpc('cinetracker_home_movie_history_v323',{p_limit:100})
   ]);
+  const settled=await Promise.race([
+   recent,
+   new Promise(resolve=>setTimeout(()=>resolve([]),7000))
+  ]);
   if(uid()!==owner)return[];
-  const source=responses.map(x=>x.status==='fulfilled'?rows(x.value):[]);
-  const result=combineHistory([...source,historyRows,rows(homeCache?.history_movies)]);
-  if(result.length){
-   historyRows=result;historyAt=Date.now();
-   return result;
-  }
-  if(responses.every(x=>x.status==='rejected'))throw new Error('Todas as fontes do histórico falharam');
-  return historyRows;
+  const fresh=rows(settled).flatMap(r=>r.status==='fulfilled'?rows(r.value):[]);
+  const combined=combineHistory([fresh,historyRows,existing]);
+  if(combined.length){historyRows=combined;historyAt=Date.now();return combined}
+  // On network failure, keep the original Home history visible; the deep
+  // pagination job above will update it without a global page redraw.
+  void deeper;
+  return existing;
  });
  const previousPaint=paintHome;
  paintHome=function(...args){
@@ -134,27 +150,35 @@ function minimalContext(){
 }
 function display(s){
  if(!visible(s))return;
+ // The owner passes only v525-verified titles to the renderer. A parallel
+ // pending audit must not globally hide cards already verified.
+ document.querySelector('[data-discover-content]')?.classList.add('ct282-verified-owner');
  ct186ForYouData=s.data;ct166ForYouData=s.data;
  const picked=ct186Select(s.data);
  Object.assign(s.data,{daily:picked.daily,movie:picked.fm,series:picked.fs,anime:picked.fa,
   watchlist_movie:picked.wm,watchlist_series:picked.ws,watchlist_anime:picked.wa});
  paintDiscover(s.data);
 }
-function verify(s){
- serial=serial.catch(()=>{}).then(async()=>{
-  if(state!==s||safeOwner()!==s.owner)return;
-  const auditor=window.__ctR279Audit;
-  if(typeof auditor?.auditData!=='function')return;
-  const data=await auditor.auditData(s.data);
-  if(state!==s||safeOwner()!==s.owner)return;
-  minimalContext(); // safe only after the authenticated auditor has returned.
-  display(s);
- });
- return serial;
+async function verify(s,kind,bag,candidates){
+ if(state!==s||safeOwner()!==s.owner||!rows(candidates).length)return;
+ const auditor=window.__ctR279Audit;
+ if(typeof auditor?.auditData!=='function')return;
+ const isolated={_ct186_fresh:empty(),_ct186_watchlist:empty(),
+  _ct186_reserve:empty(),_ct186_fallback:empty()};
+ isolated[bag][kind]=rows(candidates);
+ // Each category goes through its own authenticated v525 check. Never hold
+ // a global queue: a slow Anime query cannot block validated Movie/Series.
+ const audited=await auditor.auditData(isolated).catch(()=>null);
+ if(!audited||state!==s||safeOwner()!==s.owner)return;
+ const passed=rows(audited[bag]?.[kind]);
+ if(!passed.length)return;
+ s.data[bag][kind]=ct186MergeRows(s.data[bag][kind],passed);
+ minimalContext(); // only after v525 has actually returned this category
+ display(s);
 }
 function compactCandidates(result,kind){
  const data=rows(result?.results).map(x=>({...x,media_type:kind==='movie'?'movie':'tv'}));
- return ct186UniqueRows(data).filter(x=>allowed(x)&&ct186Quality(x)&&matches(x,kind)).slice(0,12);
+ return ct186UniqueRows(data).filter(x=>allowed(x)&&ct186Quality(x)&&matches(x,kind)).slice(0,30);
 }
 function quick(s,kind,page=1){
  const conf=params[kind];
@@ -165,8 +189,7 @@ function quick(s,kind,page=1){
   if(state!==s||safeOwner()!==s.owner)return;
   const next=compactCandidates(result,kind);
   if(!next.length)return;
-  s.data._ct186_fresh[kind]=ct186MergeRows(s.data._ct186_fresh[kind],next);
-  await verify(s);
+  await verify(s,kind,'_ct186_fresh',next);
  }).catch(()=>{});
 }
 async function watchlist(s){
@@ -177,8 +200,9 @@ async function watchlist(s){
    new Promise((_,reject)=>setTimeout(()=>reject(new Error('watchlist context timeout')),18000))]);
   if(state!==s||safeOwner()!==s.owner||!Array.isArray(c?.dash))return;
   const watch=ct186WatchPools(c);
-  for(const kind of keys)s.data._ct186_watchlist[kind]=rows(watch[kind]).slice(0,12);
-  await verify(s);
+  await Promise.allSettled(keys.map(kind=>
+   verify(s,kind,'_ct186_watchlist',rows(watch[kind]).slice(0,12))
+  ));
  }catch{}
 }
 function begin(s){
@@ -234,6 +258,7 @@ css.textContent=[
  '[data-discover-content] [data-ct241-section] .ct282-empty-slot .ct166-slot-head small{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}',
  '[data-discover-content] [data-ct241-section="watchlist"] .foryou-grid,[data-discover-content] [data-ct241-section="fresh"] .foryou-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;min-width:0!important;max-width:100%!important;overflow:visible!important}',
  '[data-discover-content] [data-ct241-section] .ct277-actions{position:static!important;max-width:100%!important}',
+ 'html[data-ct279-audit="pending"] [data-discover-content].ct282-verified-owner [data-ct241-section] .discover-card{visibility:visible!important}',
  '[data-home-viewport="movies"] .home-history .stack .media-row{min-width:0!important}'
 ].join('\n');
 document.head.appendChild(css);
