@@ -74,8 +74,6 @@ jobs:
           grep -Fq 'versionCode 10079' apps/android/app/build.gradle
           node --check scripts/prepare-android-v1037.mjs
           node --check scripts/test-android-v1037.mjs
-          node scripts/prepare-android-v1036.mjs
-          node scripts/test-android-v1036.mjs
           node scripts/prepare-android-v1037.mjs
           node scripts/test-android-v1037.mjs
           node - <<'NODE'
