@@ -1,3 +1,12 @@
+## Android 1.0.49 — r291 (2026-10-19)
+
+- **Home UFC/WWE/F1:** botão de Assistido limitado a 36 × 36 px e centralizado verticalmente na extremidade direita. O status de UFC/WWE agora distingue visualizações da temporada atual dos 793 e 567 episódios totais, respectivamente, consultando o catálogo existente.
+- **NFL Super Bowl:** logo real da NFL no card e na tela da série; temporada por ano mantida de 1967 a 2026. Temporada 1 = jogo do Super Bowl; temporada 2 = show do intervalo, com capas e títulos próprios. Não cria, duplica ou altera os 120 episódios existentes nem os estados Assistido.
+- **Descobrir > Pra Você:** corrige a causa de reversão para a versão antiga: nova resposta autenticada não deve repintar os sete slots durante a mesma navegação, preservando as trocas otimistas feitas pelo componente final r278. Outras telas não são recarregadas.
+- **Escopo:** Web r541 congelada; Perfil, Esportes, F1 Hub, histórico completo, login e outras seções preservados.
+- **Validação:** teste do ciclo de primeira renderização, dois Trocar e navegação posterior, além de checagem de metadados NFL, botão compacto, assinatura e APK TESTE49 independente.
+- **Versões:** Android 1.0.49/r291/versionCode 10091; package root 0.3.78.
+
 ## Android 1.0.48 — r290 (2026-10-19)
 
 - **Home Séries:** UFC, WWE e F1 inseridos usando o mesmo grid de dois elementos dos demais cards: pôster e progresso na esquerda e botão ✓ na extrema direita. Dados e telas existentes preservados.

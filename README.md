@@ -1,3 +1,11 @@
+## Android 1.0.49 / r291 — UFC, NFL Super Bowl e Pra Você
+
+- **Home UFC e WWE:** botões de assistir com tamanho máximo fixo de 36 × 36 px, alinhados à direita. Os contadores distinguem visualizações na temporada atual dos totais históricos: o catálogo possui 793 episódios de UFC e 567 de WWE. Os totais são atualizados a partir de `public.media.total_episodes`, quando a consulta autenticada estiver disponível.
+- **NFL Super Bowl:** adicionado o escudo real da NFL na Home e na tela da série. Cada ano mantém os mesmos dois registros existentes, agora identificados corretamente como `Super Bowl` (jogo) e `Show do intervalo`, com artes individuais de estádio/bola e palco/microfone. Progresso e temporadas anteriores preservados.
+- **Descobrir — Pra Você:** a rotina anterior de atualização dos seis pools v421/v525 deixava repintar todos os sete slots depois do clique em `Trocar`, substituindo escolhas feitas pelo usuário e ressuscitando a antiga Watchlist. Agora somente a primeira renderização por navegação faz o repaint; respostas subsequentes reconciliam os controles existentes sem trocar o catálogo já exibido. Ao navegar novamente para a tela, uma nova seleção pode ser exibida.
+- **Escopo:** Android apenas; a Web permanece congelada em 0.3.68/r541. Perfil, Esportes, F1 Hub e funções de login não alterados.
+- **Versões:** Android 1.0.49 / r291 / versionCode 10091; TESTE49 independente; package root 0.3.78.
+
 ## Android 1.0.48 / r290 — Home, NFL Super Bowl, Perfil e Pra Você
 
 - **Home Séries:** UFC, WWE e Fórmula 1 usam o mesmo componente visual `home-action-row` das demais séries, com uma única linha de informações e botão Assistido à direita, sem linhas extras nem largura excedente.
