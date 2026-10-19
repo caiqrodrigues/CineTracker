@@ -59,7 +59,7 @@ const sandbox={
  },
  document:{head:{appendChild:x=>domStyles.push(x.textContent)},createElement:()=>({id:'',textContent:''}),addEventListener(){},querySelector(){return null}},
  session:{user:{id:'test-owner'}},user:{id:'test-owner'},
- ct186ContextValue:null,ct186ContextAt:0,
+ ct186ContextValue:null,ct186ContextAt:0,ct186ForYouData:null,ct166ForYouData:null,
  ct186Context:async()=>{ctxAccess++;return{dash:[{is_watchlist:true}],historyMovieIds:new Set(),historyTvIds:new Set(),watchMovieIds:new Set(),watchTvIds:new Set(),historyAliases:new Set(),watchAliases:new Set()}},
  ct186WatchPools:()=>({movie:[{...movie[0],is_watchlist:true}],series:[],anime:[]}),
  ct186UniqueRows:x=>[...new Map(x.map(z=>[z.media_type+':'+z.id,z])).values()],
