@@ -1,7 +1,7 @@
 /* Android 1.0.48/r290: UFC, WWE and F1 inherit the ordinary Home row. */
 (()=>{'use strict';
 if(window.__ctR290Home)return;
-window.__ctR290Home='standard-home-action-row-ufc-wwe-f1';
+window.__ctR290Home='ufc-wwe-f1-standard-action-rows';
 const types=['ufc','wwe','f1'],fallback={};
 const q=(s,r=document)=>r?.querySelector?.(s)||null,qa=(s,r=document)=>Array.from(r?.querySelectorAll?.(s)||[]);
 const show=()=>route263()==='home'&&homeActiveTab158==='series';
@@ -11,7 +11,7 @@ function card(k,d){
  const label=d?.series?seen+'/'+(released||'?')+' · '+(pending?'Faltam '+pending:'Em dia'):'Sincronização pendente';
  const poster=String(s.poster_url||''),style=poster.startsWith('https://')?' style="background-image:url('+esc263(poster)+')"':'';
  const watch=d?.series&&pending>0;
- return '<div class="home-action-row ct290-home-special" data-ct290-home-special="'+k+'">'+
+ return '<div class="home-action-row ct290-home-special'+(watch?'':' ct290-no-action')+'" data-ct290-home-special="'+k+'">'+
  '<div class="media-row ct263-special" data-ct263-special="'+k+'" role="button" tabindex="0">'+
  '<div class="thumb"'+style+'></div><div class="ct290-home-text"><b>'+esc263(specialCfg263[k].title)+'</b><small>'+esc263(label)+'</small></div><span class="badge">›</span></div>'+
  (watch?'<button type="button" class="home-check ct290-home-button" data-ct286-special-quick="'+k+'" title="Marcar próximo episódio como assistido">✓</button>':'')+'</div>';
@@ -56,7 +56,8 @@ css.textContent=[
  '[data-home] .ct290-home-special>.media-row>.thumb{width:48px!important;min-width:48px!important;max-width:48px!important;height:68px!important;min-height:68px!important;max-height:68px!important}',
  '[data-home] .ct290-home-text{min-width:0!important;overflow:hidden!important}.ct290-home-text b,.ct290-home-text small{display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}',
  '[data-home] .ct290-home-special>.ct290-home-button{box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;width:38px!important;min-width:38px!important;max-width:38px!important;height:100%!important;max-height:100%!important;min-height:0!important;padding:0!important;margin:0!important;position:static!important;grid-column:2!important;grid-row:1!important;font:900 16px/1 system-ui!important;transform:none!important}',
- '[data-home] .ct290-home-special>.media-row{grid-column:1!important;grid-row:1!important}'
+ '[data-home] .ct290-home-special>.media-row{grid-column:1!important;grid-row:1!important}',
+ '[data-home] .ct290-home-special.ct290-no-action{grid-template-columns:minmax(0,1fr)!important}'
 ].join('\n');document.head.appendChild(css);
 window.__ctR290HomeTest={card,mount:()=>mountSpecial263(),get};
 })();
