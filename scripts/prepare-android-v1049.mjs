@@ -1,0 +1,27 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {execFileSync} from 'node:child_process';
+const root=resolve(process.cwd());
+execFileSync(process.execPath,[resolve(root,'scripts/prepare-android-v1048.mjs')],{cwd:root,stdio:'inherit'});
+const path=resolve(root,'apps/android/app/src/main/assets/hotfix5/index.html');
+let html=await readFile(path,'utf8');
+const tag='<script data-ct-android="r290-android-js">';
+const a=html.indexOf(tag),b=a<0?-1:html.indexOf('</script>',a+tag.length);
+if(a<0||b<a)throw Error('Missing Android 1.0.48 baseline');
+let js=html.slice(a+tag.length,b);
+function once(oldValue,newValue,label){const count=js.split(oldValue).length-1;if(count!==1)throw Error('r291 '+label+': expected one match, found '+count);js=js.replace(oldValue,newValue)}
+once("const REVISION='r290-android-official-1.0.48';","const REVISION='r291-android-official-1.0.49';",'revision');
+once("window.__ctWebBuild='1.0.48';window.__ctOfficialVersion='1.0.48';window.__ctAndroidOfficialVersion='1.0.48';window.__ctAndroidOfficialCode=10090;","window.__ctWebBuild='1.0.49';window.__ctOfficialVersion='1.0.49';window.__ctAndroidOfficialVersion='1.0.49';window.__ctAndroidOfficialCode=10091;",'metadata');
+const patches=[["function renderData(data){\n if(!isForYou()||!data||!owner())return false;\n ct186ForYouData=data;ct166ForYouData=data;","let ct291DrawNav=-1,ct291DrawOwner='',ct291DrawData=null;\nfunction renderData(data){\n if(!isForYou()||!data||!owner())return false;\n const current=document.querySelector('[data-discover-content]');\n if(ct291DrawNav===navSeq&&ct291DrawOwner===owner()&&ct291DrawData?.__ct283ServerAudited===true&&\n    current?.querySelectorAll('[data-ct241-slot-key]').length>=5){\n  // r278 owns all live buttons and the just-swapped card. A concurrent\n  // v421/v525 response may update the pool, never replace the entire DOM.\n  ct186ForYouData=ct291DrawData;ct166ForYouData=ct291DrawData;\n  queueMicrotask(()=>{try{window.__ctR278Test?.reconcile?.()}catch{}});\n  document.documentElement.dataset.ct291SuppressedRepaint=\n   String(Number(document.documentElement.dataset.ct291SuppressedRepaint||0)+1);\n  return true;\n }\n ct186ForYouData=data;ct166ForYouData=data;","prevent post-Trocar repaint"],[" paintDiscover(data);\n document.documentElement.dataset.ct284ForYou=moreThanZero(data)?"," ct291DrawNav=navSeq;ct291DrawOwner=owner();ct291DrawData=data;\n paintDiscover(data);\n document.documentElement.dataset.ct284ForYou=moreThanZero(data)?","remember authoritative painted pool"],["function titleFor(year,season){return season===1?'Super Bowl '+roman(year-startYear+1):'NFL Super Bowl — episódio complementar '+roman(year-startYear+1)}","function titleFor(year,season){return season===1?'Super Bowl '+roman(year-startYear+1):'Show do intervalo · Super Bowl '+roman(year-startYear+1)}","two existing NFL episode meanings"],["'<header><small>SÉRIE · NFL</small><h1>NFL Super Bowl</h1><p>Todos os Super Bowls desde 1967. Episódios e progresso existentes preservados.</p></header>'+","'<header class=\"ct291-nfl-header\"><div class=\"ct291-nfl-badge\"><img loading=\"lazy\" src=\"https://r2.thesportsdb.com/images/media/league/badge/g85fqz1662057187.png\" alt=\"Escudo da NFL\"></div><div><small>SÉRIE · NFL</small><h1>NFL Super Bowl</h1><p>Jogo e show do intervalo por ano desde 1967. Progresso original preservado.</p></div></header>'+","real NFL badge"],["return '<div class=\"ct290-nfl-episode\"><div class=\"ct290-nfl-cover\">🏈</div>'+","return '<div class=\"ct290-nfl-episode ct291-nfl-'+(season===1?'game':'halftime')+'\"><div class=\"ct290-nfl-cover ct291-nfl-poster\"><span class=\"ct291-nfl-art\">'+(season===1?'🏈':'🎤')+'</span><small>'+(season===1?'SUPER BOWL':'HALFTIME')+'</small><b>'+safe(roman(ep))+'</b></div>'+","NFL stadium and halftime cover"],["'<small>'+safe('Ano '+y+' · Temporada '+season+' · Episódio '+ep)+'</small></div>'+","'<small>'+safe('Ano '+y+' · '+(season===1?'Jogo principal':'Show do intervalo')+' · Episódio '+ep)+'</small></div>'+","NFL meaningful episode labels"]];
+for(const [before,after,label] of patches)once(before,after,label);
+const files=['apps/android/runtime-r291-v1049-home-count-and-logo.js','apps/android/runtime-r291-v1049-nfl-art.js'];
+const scripts=await Promise.all(files.map(x=>readFile(resolve(root,x),'utf8')));
+for(const part of scripts){new Function(part);for(const forbidden of ['window.location.reload(', 'router.refresh(', 'while(true)', 'new MutationObserver'])if(part.includes(forbidden))throw Error('r291 forbidden '+forbidden)}
+const guard=(part,i)=>'/* r291 scoped '+i+' */\ntry{\n'+part+'\n}catch(e){document.documentElement.dataset.ct291Module'+i+'Error=String(e?.message||e);console.error(e)}\n';
+once('\nboot();','\n'+scripts.map(guard).join('\n')+'\nboot();','last scoped Home and NFL art');
+js=js.replaceAll('CineTracker • v1.0.48','CineTracker • v1.0.49').replaceAll("JSON.stringify({version:'1.0.48',revision:REVISION","JSON.stringify({version:'1.0.49',revision:REVISION").replaceAll("window.__ctAndroidRelease='1.0.48'","window.__ctAndroidRelease='1.0.49'");
+new Function(js);
+html=html.slice(0,a)+'<script data-ct-android="r291-android-js">'+js+'</script>'+html.slice(b+'</script>'.length);
+html=html.replaceAll('ct-android-v1048','ct-android-v1049').replaceAll('content="1.0.48"','content="1.0.49"');
+await writeFile(path,html,'utf8');
+console.log('ANDROID_1_0_49_READY stable 7-slot Trocar, UFC historical totals, 36px button, NFL logo and two separate show covers; Web r541 frozen');
