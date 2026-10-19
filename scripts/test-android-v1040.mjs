@@ -55,7 +55,7 @@ const sandbox={
    }
    return data;
   }},
-  __ctR271Bridge:{getFetcher:()=>fetcher,setFetcher:f=>{fetcher=f},getPainter:()=>painter,setPainter:f=>{painter=f}}},
+  __ctR271Bridge:{getFetcher:()=>fetcher,setFetcher:f=>{fetcher=f},getPainter:()=>painter,setPainter:f=>{painter=f}},
  },
  document:{head:{appendChild:x=>domStyles.push(x.textContent)},createElement:()=>({id:'',textContent:''}),addEventListener(){},querySelector(){return null}},
  session:{user:{id:'test-owner'}},user:{id:'test-owner'},
