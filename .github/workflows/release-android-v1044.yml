@@ -104,7 +104,7 @@ jobs:
           grep -Fq "versionCode='10086'" <<<"$BADGING"
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1044-index.html
           grep -Fq 'name="ct-official-version" content="1.0.44"' /tmp/ct1044-index.html
-          grep -Fq "window.__ctR285AndroidV1043='audited-server-swaps+rotation+special-series-inline-watch+home-recent-order'" /tmp/ct1044-index.html
+          grep -Fq "window.__ctR286AndroidV1044='audited-server-swaps+rotation+special-series-inline-watch+home-recent-order'" /tmp/ct1044-index.html
           grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1044-index.html
           grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1044-index.html
           "$APKSIGNER" verify --print-certs "$OUT"
@@ -139,7 +139,7 @@ jobs:
           grep -Fq "versionName='1.0.44-teste'" <<<"$BADGING"
           grep -Fq 'application-label:' <<<"$BADGING"
           unzip -p "$TESTAPK" assets/hotfix5/index.html > /tmp/ct1044-preview.html
-          grep -Fq "window.__ctR285AndroidV1043=" /tmp/ct1044-preview.html
+          grep -Fq "window.__ctR286AndroidV1044=" /tmp/ct1044-preview.html
           "$APKSIGNER" verify --print-certs "$TESTAPK"
           sha256sum "$TESTAPK" | tee android-1.0.44-teste-sha256.txt
 
@@ -163,6 +163,6 @@ jobs:
         run: |
           set -euo pipefail
           TAG='android-v1.0.44'
-          NOTES='CineTracker Android 1.0.44/r286. Daily recommendation is compact 2:3 like other cards, adding to Watchlist does not clear other recommendations or trigger whole-page refetch, Trocar respects v421/v525 candidates, and Profile loads summary/stats independently. Full movie history v542 and Web r541 preserved. Android TESTE43 installs side by side.'
+          NOTES='CineTracker Android 1.0.44/r286. Pra Voce uses seven v421/v525 verified pools with active nonblocking swap and remembered rotation. UFC WWE F1 Home cards offer quick seen action and do not pin to top. Profile and full movie history v542 preserved; Web r541 frozen. Android TESTE44 installs side by side.'
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'CineTracker Android 1.0.44' --notes "$NOTES"
           gh release upload "$TAG" CineTracker-Android-1.0.44.apk CineTracker-Android-1.0.44-TESTE.apk android-1.0.44-teste-sha256.txt android-1.0.44-sha256.txt android-1.0.44-size.txt --clobber
