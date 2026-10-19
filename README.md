@@ -1,3 +1,10 @@
+## Android 1.0.42 / r284 — Histórico de Filmes completo e Pra Você autenticado
+
+- **Web permanece congelada:** versão 0.3.68/r541, sem qualquer modificação nos arquivos Web.
+- **Filmes > Histórico recente:** paginação autenticada v542 até o final; união com histórico antigo, reproduções recentes e filmes marcados manualmente como assistidos; sem falsos registros e sem reposicionar a tela.
+- **Descobrir > Pra Você:** sete slots com seis pools autênticos Supabase v421; filtro v525 antes de renderizar; Watchlist real preservada mesmo com filmes abaixo da nota de corte dos 100% novos.
+- **Android:** 1.0.42 / r284 / versionCode 10084. Pipeline `.github/workflows/release-android-v1042.yml` publica `CineTracker-Android-1.0.42-TESTE.apk` para instalação paralela (`com.cinetracker.app.teste42`).
+
 ## Android 1.0.21 / r263 — paridade com Web r541 sem remover funções Android
 
 - Web congelada em **0.3.68 / r541** (`43f5f0c5…`); esta release não modifica `apps/web/**`.

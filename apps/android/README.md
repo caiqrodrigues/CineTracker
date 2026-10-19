@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.0
+# CineTracker Android — 1.0.42
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -46,3 +46,10 @@ O pipeline 1.0.0 repete o teste que finalmente capturou o bug real da Watchlist:
 Depois disso são validados Gradle, `aapt`, assinatura e conteúdo interno do APK.
 
 Documentação: `docs/releases/1.0.0.md` e `docs/validation/1.0.0.md`.
+
+## Android 1.0.42 / r284
+
+- Histórico de filmes completo com paginação autenticada v542 e conciliação de eventos anteriores.
+- Pra Você: seis grupos elegíveis v421 auditados v525; sete posições e Watchlist real.
+- APK de teste paralelo: `com.cinetracker.app.teste42`.
+- Web r541 congelada, shell nativo preservado.

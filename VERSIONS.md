@@ -1,3 +1,6 @@
+- Android: **1.0.42 / r284-android-official-1.0.42 / versionCode 10084** — histórico de filmes paginado v542 junto ao histórico/reproduções anteriores; Pra Você utiliza 6 pools Supabase v421 com auditoria v525 e 7 slots; APK TESTE42 paralelo.
+- Web: **congelada 0.3.68 / r541**, nenhuma mudança de código Web.
+
 - Android: **1.0.41 / r283-android-official-1.0.41 / versionCode 10083** — filmes Recentes incluem AlreadySeen com data + dashboard visto; Pra Você usa v525 como gate final sem re-filtragem incorreta por contexto local; estados de verificação e retry. Web r541 intacta.
 - Android: **1.0.40 / r282-android-official-1.0.40 / versionCode 10082** — Home Filmes reúne reproduções recentes reais e histórico completo sem lock diário; Pra Você valida sete slots no servidor v525 e monta as três categorias em paralelo, com layout vazio corrigido; Web r541 congelada.
 - Android: **1.0.28 / r270-android-official-1.0.28 / versionCode 10070** — Perfil não zera bibliotecas se o fast-RPC falha (fallback autenticado), Pra Você mostra resultados auditados progressivamente, Histórico de Filmes continua além do limite de 80 da Home e Sport assistido funciona sem refresh/scroll ao topo. Web r541 congelada.

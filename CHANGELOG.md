@@ -1,3 +1,12 @@
+## Android 1.0.42 — r284 (2026-10-19)
+
+- **Escopo:** somente Android. Web congelada em 0.3.68/r541, sem alterações em `apps/web/**`.
+- **Home > Filmes > Histórico recente:** passa a recuperar todas as páginas de `cinetracker_home_movie_history_v542` (até 120 por página), mesclando-as com registros de `watch_history`, `watch_play_events_v0994`, `media_overrides.AlreadySeen` e dashboard já coletados pela r283. Mantém datas reais, reexibições distintas, registros antigos, paginação visual e posição de scroll. Falhas de página não substituem o histórico anterior por resultado parcial.
+- **Descobrir > Pra Você:** troca dependência inicial dos pools TMDB por seis consultas autenticadas `cinetracker_discover_fresh_v421` e `cinetracker_discover_watch_unseen_v421`, processadas concorrentemente; verificação final de elegibilidade em `cinetracker_recommendation_filter_v525` antes da exposição dos sete slots. Somente candidatos confirmados entram em 100% novos, e candidatos realmente presentes na Watchlist entram em Da sua Watchlist.
+- **Filtro Watchlist:** títulos da Watchlist não são descartados pelo corte de nota, aplicado somente aos novos; continuam valendo elegibilidade de conteúdo e auditoria v525.
+- **Estabilidade:** refresh escopado, trava para requisições em voo, resultados isolados por usuário, controle de lote finito e estado local sem reload de página.
+- **Android:** build `1.0.42` (`versionCode 10084`), APK normal e TESTE42 lado a lado via `release-android-v1042.yml`; teste `scripts/test-android-v1042.mjs`. Sem mudanças na Activity nativa.
+
 ## Android 1.0.41 — r283 (2026-10-19)
 
 - **Home > Filmes > Histórico recente:** adiciona à conciliação existente de watch_history e watch_play_events os registros reais de `media_overrides.AlreadySeen` que possuam `watched_at` e os filmes vistos com `last_watched_at` em `cinetracker_profile_media_dashboard_v0991`. Preserva filmes anteriores (incluindo Pokémon) e posteriores sem inventar datas ou inserir não assistidos; identifica aliases de TMDB e elimina duplicação de um mesmo filme/visto em janela curta. Nenhuma substituição da página ou salto de scroll.
