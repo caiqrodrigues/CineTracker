@@ -1,3 +1,14 @@
+## Android 1.0.35 — r277 (2026-10-19)
+
+- **Escopo único:** Descobrir > Pra Você, sem modificar Web r541, Home, Histórico, Esportes, Perfil, F1 Hub ou Activity nativa.
+- **Um único renderizador de ações:** remove botões/rodapés herdados do r166/r169/r237/r274/r275 e os substitui por uma barra única com referências explícitas `movie:TMDB_ID` / `tv:TMDB_ID`, válida somente para a mídia daquele slot.
+- **Sem "++":** cada controle Watchlist mostra um único `+` como texto, sem pseudo-elementos duplicados. Watchlist dispõe de Visto e Trocar; Indicação do dia e 100% Novos dispõem de Watchlist, Visto e Trocar.
+- **Clique funcional:** listener único com trava contra cliques concorrentes. Watchlist chama `addWatchlist(type,id)`; Visto chama `markSeen(type,id)`; Trocar substitui o card por outro candidato do mesmo grupo. Bloqueia antigos listeners r237 e r275 SOMENTE enquanto a aba Pra Você está ativa.
+- **Regras:** os sete slots respeitam autenticidade e elegibilidade pessoal: assistidos/histórico/progresso, Watchlist de verdade, tipo filme/série/anime, poster, score mínimo, período, curtas (<40 min), origem YouTube, realities, stand-up, AEW/WWE e MMA. Os três slots Da sua Watchlist nunca aceitam sugestões de fora dela; slots verdadeiramente vazios permanecem explicitamente vazios.
+- **UI imediata:** mutação otimista no estado local, sem reload, sem resetar scroll e sem refetch síncrono da aba inteira. Falha restaura somente o título afetado.
+- **Testes:** asserts de código-fonte, montagem segura, filtros reais, único conjunto de controles com ícones corretos, parâmetros Watchlist/Visto e inexistência de comportamento fora da aba; assinatura/verificação SHA-256 dos dois APKs.
+- **APK TESTE35:** aplicativo paralelo `com.cinetracker.app.teste35`; mantém instalação anterior intacta.
+
 ## Android 1.0.34 — r276 (2026-10-18)
 
 - **Home Séries — WWE Friday Night SmackDown e Raw:** o banco tem último episódio TMDB de 02/10 (SmackDown T28E40) e 05/10 (Raw T34E40). A versão Android busca os episódios efetivamente exibidos da temporada TMDB antes de decidir o bucket. Na falha de consulta, usa somente as transmissões verificadas: SmackDown T28E42 em 16/10/2026 e Raw T34E41 em 12/10/2026; jamais presume episódios futuros.

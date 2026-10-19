@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10076
-        versionName '1.0.34'
+        versionCode 10077
+        versionName '1.0.35'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Android 1.0.34/r276: verified weekly WWE episodes; preserve r275 Pra Voce/r271 Sports/history. Web r541 frozen.
+// Android 1.0.35/r276: verified weekly WWE episodes; preserve r275 Pra Voce/r271 Sports/history. Web r541 frozen.

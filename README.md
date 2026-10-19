@@ -1947,3 +1947,8 @@ A release 1.0.33/r275 corrige exclusivamente a aba Descobrir → Pra Você: sete
 ### Android 1.0.34 — programação recente de Raw/SmackDown
 
 Constrói a partir do Android 1.0.33, preservando Web r541, UI e ações de Pra Você r275, Esportes r271 e histórico de filmes r273. Quando a Home está aberta confronta últimas transmissões TMDB (8s de limite por série) com o progresso assistido e corrige SmackDown T28E42 exibido em 16/10/2026. Raw só fica pendente se houver um episódio realmente lançado, sem adivinhar próximos programas. Aquece poucas imagens alternativas após renderizar Pra Você. Teste: node scripts/prepare-android-v1034.mjs && node scripts/test-android-v1034.mjs. TESTE34 usa com.cinetracker.app.teste34.
+
+
+### Android 1.0.35 — exclusivamente Descobrir > Pra Você
+
+Corrige os botões duplicados/sem ação dos sete slots: substitui os handlers e barras conflitantes da aba pelo conjunto único com três ações (Watchlist, Visto, Trocar) nos slots de sugestão e duas ações (Visto, Trocar) nos slots Da sua Watchlist. Cada botão identifica `movie:ID` ou `tv:ID`, filtra os candidatos com o contexto autenticado e atualiza localmente sem recarregar ou subir a tela. `node scripts/prepare-android-v1035.mjs && node scripts/test-android-v1035.mjs` valida o bundle; a compilação usa o workflow Android 1.0.35. TESTE35 paralelo: `com.cinetracker.app.teste35`. Web r541 e demais abas não foram alteradas.
