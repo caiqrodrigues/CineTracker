@@ -20,7 +20,7 @@ assert.ok(js.slice(owner,close).includes('const oldMountSpecial=mountSpecial263'
  'Home wrapper missing private r263 symbol');
 assert.ok(js.slice(owner,close).includes('catch(error){document.documentElement.dataset.ct287StartupError'),
  'startup guard missing for login');
-assert.ok(js.includes('function loginView(')||js.includes('function authScreen(')||js.includes('CINETRACKER'),
+assert.ok(js.includes('login-wrap')&&js.includes('async function boot()'),
  'login screen lost');
 assert.ok(js.includes("const REVISION='r287-android-official-1.0.45'"),'version wrong');
 assert.ok(js.includes('window.__ctAndroidOfficialCode=10087'),'Android version code wrong');
