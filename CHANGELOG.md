@@ -1,3 +1,12 @@
+## Android 1.0.34 — r276 (2026-10-18)
+
+- **Home Séries — WWE Friday Night SmackDown e Raw:** o banco tem último episódio TMDB de 02/10 (SmackDown T28E40) e 05/10 (Raw T34E40). A versão Android busca os episódios efetivamente exibidos da temporada TMDB antes de decidir o bucket. Na falha de consulta, usa somente as transmissões verificadas: SmackDown T28E42 em 16/10/2026 e Raw T34E41 em 12/10/2026; jamais presume episódios futuros.
+- **Comportamento:** se SmackDown T28E41 foi assistido e T28E42 não, SmackDown vai para Continuar assistindo. Se T28E42 for marcado, retorna a Em dia. Raw só vai para Continuar quando houver episódio realmente lançado posterior ao último marcado. Episódios anteriores não assistidos continuam contando no histórico, sem mudar a regra das séries semanais.
+- **Descobrir > Pra Você:** preservado o runtime r275/1.0.33 (sete slots, auditoria completa, botões Visto/Watchlist/Trocar e grid sem sobreposição). Até seis imagens alternativas dos pools válidos são aquecidas com atraso após a primeira pintura, diminuindo a chance de pôster em branco no Trocar sem bloquear a tela.
+- **Outras correções preservadas:** r271/r273 mantém marcação esportiva otimista sem rolagem e histórico cronológico completo de filmes após Pokémon.
+- **Escopo:** apps/web, Activity nativa, banco, F1 e histórico não são alterados. Não há reload/refetch completo em mutações; o patch captura erros de startup.
+- **Testes:** SmackDown 42 assistido/não assistido, Raw 41 assistido/42 futuro, outras séries intocadas, preservação de testes r275 e APK TESTE34 com pacote distinto com.cinetracker.app.teste34. A verificação em aparelho permanece pendente.
+
 ## Android 1.0.33 — r275 (2026-10-18)
 
 - **Somente Descobrir → Pra Você:** substitui o runtime r274 diretamente em vez de empilhar outra camada, preservando as sete posições e todos os módulos de Home, Histórico, Esportes, F1 e Perfil.

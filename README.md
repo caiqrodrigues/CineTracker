@@ -1942,3 +1942,8 @@ Sete slots: Indicação do dia; Filme/Série/Anime da Watchlist (apenas conteúd
 ### Android 1.0.33 — Pra Você isolado
 
 A release 1.0.33/r275 corrige exclusivamente a aba Descobrir → Pra Você: sete slots auditados pela seleção personalizada, filtros completos antes da exibição, alternativas paralelas, cache validado, ação **Visto** verdadeiramente habilitada nos três cards Da sua Watchlist, botões +Watchlist / Visto / Trocar nos quatro cards novos e recomposição depois do swap capturado pelo runtime legado. Cards 2:3 e botões em grade reservada, sem sobreposição. Base Android 1.0.32 preservada para demais abas, Web r541 inalterada. Validar: `node scripts/prepare-android-v1033.mjs && node scripts/test-android-v1033.mjs`; APK TESTE33 independente `com.cinetracker.app.teste33`.
+
+
+### Android 1.0.34 — programação recente de Raw/SmackDown
+
+Constrói a partir do Android 1.0.33, preservando Web r541, UI e ações de Pra Você r275, Esportes r271 e histórico de filmes r273. Quando a Home está aberta confronta últimas transmissões TMDB (8s de limite por série) com o progresso assistido e corrige SmackDown T28E42 exibido em 16/10/2026. Raw só fica pendente se houver um episódio realmente lançado, sem adivinhar próximos programas. Aquece poucas imagens alternativas após renderizar Pra Você. Teste: node scripts/prepare-android-v1034.mjs && node scripts/test-android-v1034.mjs. TESTE34 usa com.cinetracker.app.teste34.
