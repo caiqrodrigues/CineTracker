@@ -1,3 +1,11 @@
+## Android 1.0.38 — r280 (2026-10-19)
+
+- **Perfil vazio:** o usuário vê imediatamente os últimos dados verificadamente carregados para sua própria conta; sem snapshot, há aviso de sincronização, resumo alternativo pela RPC existente `cinetracker_profile_screen_v495` e botão Tentar novamente sem full reload. Estatísticas desconhecidas não são convertidas em zero. O detalhe completo continua carregando pelo owner anterior e atualiza a interface quando retorna.
+- **Descobrir > Pra Você vazio/lento:** corrigida a perda definitiva dos pools de candidatos quando algum lote autenticado da RPC `cinetracker_recommendation_filter_v525` falha ou expira; preservação interna por objeto + nova validação de até 16 candidatos por categoria por janela. Apenas itens **aprovados pelo servidor para a própria conta** podem aparecer. Há aviso e botão Verificar novamente em resultados parciais, com até duas retentativas delimitadas. Não preenche manualmente a Watchlist nem libera conteúdos já vistos/não elegíveis.
+- **Prioridade de carregamento:** desativado o pré-carregamento global de dez ou mais consultas paralelas enquanto o usuário já navega em Home/Perfil/Descobrir/Esportes. Cada aba mantém seu carregador autoritativo e cache já validado. Sem alterar o fluxo de carregamento das demais funcionalidades.
+- **Validação:** teste automatizado de falha e recuperação da v525 sem vazamento, owner isolado no cache do Perfil, assinatura/compilação do APK e integridade SHA256; validação em aparelho real ainda necessária.
+- **Escopo:** Web r541, shell nativo, F1, Esportes (inclusive marcadores sem refresh), Histórico de filmes, Android 1.0.37 e operações Visto/Watchlist preservados; apenas comportamento de carregamento/recuperação das áreas reportadas. APK TESTE38 com pacote separado.
+
 ## Android 1.0.37 — r279 (2026-10-19)
 
 - **Correção de recomendações já vistas/Watchlist:** seleção final do Pra Você agora consulta a RPC autenticada existente `cinetracker_recommendation_filter_v525`, que confere estados de Watchlist, vistos, episódios, progresso, títulos alternativos e itens ignorados. Candidatos novos só aparecem quando a consulta confirma ausência de histórico/Watchlist. "Da sua Watchlist" só recebe os que estão realmente nessa lista e ainda não foram vistos; não há fallback de candidatos aleatórios.

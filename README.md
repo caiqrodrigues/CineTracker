@@ -1962,3 +1962,8 @@ Trocar agora controla histórico por usuário/dia/slot para nunca voltar imediat
 ### Android 1.0.37 — recomendações auditadas e cards com toque seguro
 
 Pra Você executa a verificação final do usuário pelo contrato existente `cinetracker_recommendation_filter_v525` (vistos, episódios, progresso, Watchlist, nomes alternativos, NotInterested), inclusive em alternativas de Trocar. Itens não verificados ficam ocultos até a confirmação; falhas não são interpretadas como permissão de exibição. Os cards de UFC, WWE e F1 na Home são abertos por toque curto validado, cancelando movimentos de rolagem ou `pointercancel` e preservando Enter/Espaço. A Web r541, o shell Android e os demais módulos continuam intactos. Para validar: `node scripts/prepare-android-v1037.mjs && node scripts/test-android-v1037.mjs`, após executar também os testes base v1036. TESTE37 com pacote `com.cinetracker.app.teste37`.
+
+
+### Android 1.0.38 — Perfil visível e Pra Você recuperável
+
+A Web r541 permanece intacta. O Android salva apenas o último Perfil útil por usuário para apresentação imediata, sem substituir dados reais por zeros; quando necessário, busca `cinetracker_profile_screen_v495` como fallback, preservando o carregamento completo. No Pra Você, a auditoria do servidor `cinetracker_recommendation_filter_v525` permanece obrigatória, mas candidatos que ainda precisam de verificação não se perdem se uma requisição falhar; até duas tentativas automáticas e uma opção explícita de repetir a validação são oferecidas. Pré-carregamento global pesado suspenso para priorizar a seção aberta. Rodar `node scripts/prepare-android-v1038.mjs && node scripts/test-android-v1038.mjs` antes de `gradle assembleDebug`. Pacote paralelo `com.cinetracker.app.teste38`.
