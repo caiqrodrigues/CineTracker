@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.43
+# CineTracker Android — 1.0.44
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -59,3 +59,9 @@ Documentação: `docs/releases/1.0.0.md` e `docs/validation/1.0.0.md`.
 - Indicação do Dia compacta em 2:3; Trocar usa pools reais v421 auditados v525; ações locais não reinicializam as outras recomendações.
 - Perfil com estatísticas, biblioteca e histórico de atividade carregados progressivamente, sem reinicialização de tela.
 - APK TESTE43: `com.cinetracker.app.teste43`; Web r541 intocada.
+
+## Android 1.0.44 / r286
+
+- Pra Você: Trocar em todos os slots reais auditados pelo Supabase v525, rotação de itens mostrados e ausência de validação TMDB no clique.
+- Home: UFC, WWE e Fórmula 1 ordenados após as séries comuns e com botão de marcar o próximo evento liberado.
+- APK TESTE44 tem package separado `com.cinetracker.app.teste44`. Web r541 permanece congelada.

@@ -1,3 +1,6 @@
+- Android: **1.0.44 / r286-android-official-1.0.44 / versionCode 10086** — 7 slots v421/v525 com botões ativos, troca sem consulta TMDB por clique, rotação na reabertura; Home UFC/WWE/F1 com ação rápida e posicionamento sem fixação no topo. APK TESTE44 independente.
+- Web: **CONGELADA em 0.3.68 / r541**.
+
 - Android: **1.0.43 / r285-android-official-1.0.43 / versionCode 10085** — Pra Você sete slots compactos com Trocar autorizado e mutação otimista isolada; Perfil progressivo com RPCs independentes; histórico v542 preservado. APK TESTE43 independente.
 - Web: **CONGELADA em 0.3.68 / r541**, sem alterações.
 

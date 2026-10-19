@@ -1,3 +1,11 @@
+## Android 1.0.44 / r286 — Pra Você e séries especiais na Home
+
+- **Web congelada:** r541 / 0.3.68, sem alterações em `apps/web`.
+- **Descobrir > Pra Você:** todos os sete slots mostram seus botões aplicáveis, sem `Trocar` permanentemente desativado; troca seleciona outro título do pool de candidatos autenticados v421 e filtrados por v525, sem refetch global nem espera por TMDB; ao reabrir, prioriza opções ainda não exibidas.
+- **Home > UFC, WWE e Fórmula 1:** cards de séries especiais deixam de ocupar obrigatoriamente o topo de Continuar assistindo, com ação direta de marcar o evento recente como visto, bloqueio de toques simultâneos, reconciliação de dados do servidor e sincronização de eventos UFC/WWE na Home.
+- **Preservados:** Perfil progressivo 1.0.43, histórico completo de filmes v542, Watchlist e demais funcionalidades.
+- **Pacote:** Android 1.0.44 (versionCode 10086); APK de teste independente `com.cinetracker.app.teste44`.
+
 ## Android 1.0.43 / r285 — Pra Você compacto e Perfil progressivo
 
 - **Web congelada:** versão 0.3.68 / r541; nenhum arquivo de `apps/web` alterado.

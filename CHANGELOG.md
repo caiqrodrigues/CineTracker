@@ -1,3 +1,13 @@
+## Android 1.0.44 — r286 (2026-10-19)
+
+- **Descobrir > Pra Você:** remove bloqueio permanente de Trocar causado pelo limite de alternativas; mantém os botões de Adicionar à Watchlist, Assistido e Trocar nos respectivos sete slots.
+- **Trocar:** escolhe alternativa imediatamente de um conjunto autenticado e autorizado pelas RPCs v421/v525; quando necessário, atualiza o pool autenticado (inclusive Watchlist), em vez de recair em recomendações genéricas de TMDB e submeter cada toque a até 12 requisições TMDB.
+- **Rotação:** prioriza indicações não vistas anteriormente ao reabrir Pra Você. Sem navegar/recarregar a página para ações locais.
+- **Home UFC/WWE/F1:** cards especiais removidos do topo fixo da lista; ação rápida de Assistido utiliza os mesmos RPCs de registro da tela especial, atualiza otimisticamente e sincroniza do banco sem recarregar toda a Home; eventos UFC e WWE são sincronizados periodicamente na Home.
+- **Escopo estrito:** Web r541 intocada, pacote Android nativo e Home regular preservados; Perfil da r285 preservado.
+- **Validação:** script de preparação `scripts/prepare-android-v1044.mjs`, verificação `scripts/test-android-v1044.mjs`, workflow `release-android-v1044.yml` e assinatura de dois APKs.
+- **Versões:** Android 1.0.44/r286/versionCode 10086, package root 0.3.73, aplicativo TESTE44 independente.
+
 ## Android 1.0.43 — r285 (2026-10-19)
 
 - Correção do card desproporcional de **Indicação do Dia**: coluna dimensionada como um dos três cards da seção e pôster 2:3, respeitando altura intrínseca.
