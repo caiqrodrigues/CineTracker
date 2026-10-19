@@ -33,7 +33,8 @@ for(const text of [f1,home,...other]){
   if(text.includes(forbidden))throw Error('r289 forbidden action '+forbidden);
 }
 replace('function rowsF111(a,constructors=false){',
- '/* r289 F1 standings rescue, inside r111 closure */\ntry{\n'+f1+\n '\n}catch(error){document.documentElement.dataset.ct289F1StartError=String(error?.message||error);console.error(error)}\n'+
+ '/* r289 F1 standings rescue, inside r111 closure */\ntry{\n'+f1+
+ '\n}catch(error){document.documentElement.dataset.ct289F1StartError=String(error?.message||error);console.error(error)}\n'+
  '\nfunction rowsF111(a,constructors=false){',
  'F1 standings module scope');
 replace('window.__ctAndroidV1021={version:',
