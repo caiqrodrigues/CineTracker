@@ -1977,8 +1977,3 @@ O APK Android lê o resumo real `cinetracker_profile_summary_v489` ao abrir o Pe
 ### Android 1.0.28 — Recuperação de bibliotecas e mutação sem refresh
 
 Versão de teste Android com Profile dashboard/favoritos recuperados de fonte real e cache segregado por usuário; Pra Você com primeira renderização cache-first e auditoria assíncrona por categoria; Home Filmes com histórico autenticado paginado, incluindo filmes anteriores/posteriores ao corte de 80 da Home; Esportes assistidos atualizados sem reconstruir a tela nem deslocar a rolagem. Web r541 e infraestrutura nativa intocadas. Validação: `node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs`, `gradle assembleDebug`. TESTE28: `com.cinetracker.app.teste28`.
-
-
-### Android 1.0.28 — Perfil, Pra Você, Histórico e Esportes
-
-Corrige biblioteca vazia substituindo o gargalo do payload completo do Perfil por resumo autenticado de 12 cards/seção (`cinetracker_profile_summary_v489`), mais paginação real no Ver mais. A descoberta consulta só 2 páginas por filme/série/anime no primeiro quadro, em paralelo com o contexto individual de exclusões, evitando dezenas de buscas sequenciais, e preserva os sete slots. Histórico de Filmes é paginado independentemente do Home, da data antiga para a recente, sem recarregar a página. Um toque em Assistido no Esportes só atualiza estado local e RPC assíncrono, com rollback e sem scroll. Para testar: `node scripts/prepare-android-v1028.mjs && node scripts/test-android-v1028.mjs`, depois `gradle assembleDebug` em apps/android. TESTE28 usa applicationId separado.
