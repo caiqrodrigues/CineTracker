@@ -3,6 +3,7 @@ import {resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
 const root=resolve(process.cwd());
 execFileSync(process.execPath,[resolve(root,'scripts/prepare-android-v1036.mjs')],{cwd:root,stdio:'inherit'});
+execFileSync(process.execPath,[resolve(root,'scripts/test-android-v1036.mjs')],{cwd:root,stdio:'inherit'});
 const file=resolve(root,'apps/android/app/src/main/assets/hotfix5/index.html');
 let html=await readFile(file,'utf8');
 const tag='<script data-ct-android="r278-android-js">';
