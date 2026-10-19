@@ -117,16 +117,19 @@ console.log('ANDROID_1_0_35_TEST_OK single action owner, exact tmdb params, real
 
 const fixed=fake.window.__ctR278Test;
 blocked.delete('movie:101');ctx.watchedIds.delete(101);ctx.watchlistIds.delete(101);
-const firstPool=fixed.candidates('fresh:movie','movie:101');
+// Daily movie already occupies movie:102; exercise another isolated slot
+// so uniqueness against other visible slots remains part of the test.
+data._ct186_fresh.series.push({id:202,title:'Outra série elegível',media_type:'tv',poster_path:'/202.jpg',vote_average:8.5,first_air_date:'2025-01-01'});
+const firstPool=fixed.candidates('fresh:series','tv:201');
 assert.equal(firstPool.length,1,'same slot should start with exactly one alternate');
-const next=await fixed.slotChoice('fresh:movie','movie:101');
-assert.equal(next?.id,102,'first swap should offer the other eligible movie');
-fixed.takeSeen('fresh:movie','movie:101');
-fixed.takeSeen('fresh:movie','movie:102');
-const exhausted=await fixed.slotChoice('fresh:movie','movie:102');
-assert.equal(exhausted,null,'second swap must not cycle back to a shown movie');
-assert.ok(fixed.seenIn('fresh:movie').has('movie:101'));
-assert.ok(fixed.seenIn('fresh:movie').has('movie:102'));
+const next=await fixed.slotChoice('fresh:series','tv:201');
+assert.equal(next?.id,202,'first swap should offer the other eligible series');
+fixed.takeSeen('fresh:series','tv:201');
+fixed.takeSeen('fresh:series','tv:202');
+const exhausted=await fixed.slotChoice('fresh:series','tv:202');
+assert.equal(exhausted,null,'second swap must not cycle back to a shown series');
+assert.ok(fixed.seenIn('fresh:series').has('tv:201'));
+assert.ok(fixed.seenIn('fresh:series').has('tv:202'));
 const good=(id,title)=>({id,title,media_type:'movie',poster_path:'/test.jpg',vote_average:8.6,release_date:'2025-09-10'});
 assert.equal(fixed.contentDetailSafe(good(900,'Filme'),{id:900,runtime:39,genres:[{id:12}]}),false,'shorter than 40min not allowed');
 assert.equal(fixed.contentDetailSafe(good(901,'Filme'),{id:901,runtime:100,homepage:'https://youtube.com/watch?v=abc',genres:[{id:12}]}),false,'original YouTube title forbidden');
