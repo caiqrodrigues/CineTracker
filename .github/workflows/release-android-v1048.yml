@@ -97,7 +97,7 @@ jobs:
       - name: Validate signed APK and embedded release
         shell: bash
         run: |
-          set -euo pipefail
+          set -euxo pipefail
           APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
           OUT='CineTracker-Android-1.0.48.apk'
           cp "$APK" "$OUT"
