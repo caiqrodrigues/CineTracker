@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.46
+# CineTracker Android — 1.0.47
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -73,3 +73,7 @@ Corrigida a tela preta causada pela inicialização fora do escopo privado do m�
 ## Android 1.0.46 / r288
 
 Pra Voce com renderer autenticado final e troca sem regressao para cards legados; Home UFC/WWE/F1 com snapshot no erro e botao pequeno 36px. APK TESTE46 com package independente com.cinetracker.app.teste46. Web r541 sem alteracoes.
+
+## Android 1.0.47 / r289
+
+Retorno das janelas de histórico e Watchlist pelos contadores no Perfil. Classificação de Pilotos/Construtores do F1 Hub usando Jolpica como fallback em falha do payload principal. UFC/WWE/F1 padronizados na Home; dados autenticados mantidos em Pra Você. TESTE47 separado de produção. Web r541 congelada.

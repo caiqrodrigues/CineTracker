@@ -1,3 +1,13 @@
+## Android 1.0.47 / r289 — Perfil, Pra Você, F1 Hub e Home
+
+- **Perfil:** restaurados botões nos números de Filmes/Séries Watchlist com as janelas existentes v120; histórico de filmes e séries no contador de assistidos; esporte em TV e estádio acessíveis por janelas próprias. Consultas autenticadas com mensagens explícitas em caso de falha.
+- **F1 Hub:** normalização de diversos formatos de classificação, com recuperação da classificação real de pilotos e construtores pela API Jolpica F1 quando a resposta principal não trouxer as tabelas. Cache por temporada e falha explícita se indisponível.
+- **Home séries:** UFC, WWE e Fórmula 1 agora usam a mesma linha `home-action-row` das séries comuns, com botão Assistido 36×36px e sincronização resiliente dos dados conhecidos.
+- **Descobrir — Pra Você:** proteção final contra renderizações assíncronas legadas que substituíam os sete slots corretos, evitando refetch global durante mutações locais.
+- **Escopo:** somente Android, Web congelada na versão 0.3.68/r541. Mantidos Home Filmes, Perfil progressivo, histórico de filmes v542 e ações dos Esportes.
+- **Release:** Android 1.0.47/r289, versionCode 10089, pacote TESTE47 independente `com.cinetracker.app.teste47`.
+- **Validação:** sintaxe de runtime, testes das listas F1, marcadores de ações do Perfil e renderização Home; build e assinatura no GitHub Actions.
+
 ## Android 1.0.46 / r288 — recomendacoes e Home especiais
 
 Pra Voce aceita somente dados canonicos autenticados v421 e auditados v525; renderizadores legados nao podem substituir os cards durante Trocar, Visto ou Watchlist. Nova abertura gira as indicacoes e a mutacao tem prazo limitado. Home UFC, WWE e F1 preserva os ultimos dados conhecidos mesmo na falha de sincronizacao e, se nao houver dados, apresenta linha navegavel de sincronizacao pendente. Botao de marcar como visto limitado a 36x36px. Web congelada em r541. Android 1.0.46 versionCode 10088; TESTE46 independente.

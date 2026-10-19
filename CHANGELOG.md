@@ -1,3 +1,13 @@
+## Android 1.0.47 — r289 (2026-10-19)
+
+- **Perfil:** restaurada a abertura dos contadores das Watchlists de Séries e Filmes via modal completo existente, e implementadas janelas de histórico por Filmes, Séries e Esportes (TV e estádio) com RPCs autenticadas.
+- **F1 Hub:** classificação de pilotos e construtores com normalização do formato da resposta de standings, fallback ao Jolpica F1 e cache de temporada; ausência de dados exibida claramente com atualização manual.
+- **Home UFC, WWE e Fórmula 1:** substituição da apresentação especial divergente pela estrutura `home-action-row` original e botão compacto de assistir (36×36px), preservando ordem das demais séries e último estado conhecido.
+- **Descobrir — Pra Você:** proteção final contra sobrescrita de cards autorizados v421/v525 por renderizações anteriores e contra invalidação global no meio de mutações.
+- **Escopo:** Web r541 congelada; nenhum componente Web, nativo Android, Perfil fora do solicitado, esporte não-F1 ou histórico de filmes v542 alterado.
+- **Testes:** scripts `prepare-android-v1047.mjs` e `test-android-v1047.mjs`, CI independente `release-android-v1047.yml`, verificação de APK assinado.
+- **Versões:** Android 1.0.47/r289/versionCode 10089, raiz 0.3.76, aplicativo TESTE47 instalável paralelamente.
+
 ## Android 1.0.46 — r288 (2026-10-19)
 
 - Descobrir Pra Voce: ignora paints assincronos nao canonicos de owners antigos e preserva 7 slots v421/v525; rotacao na abertura e limite de espera das mutacoes.
