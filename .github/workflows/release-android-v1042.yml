@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'apps/android/runtime-r284-v1042-history-discover.js'
+      - 'apps/android/runtime-r284-v1042-movies-foryou.js'
       - 'apps/android/app/build.gradle'
       - 'scripts/prepare-android-v1042.mjs'
       - 'scripts/test-android-v1042.mjs'
@@ -81,9 +81,9 @@ jobs:
           const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
           const marker='<script data-ct-android="r284-android-js">',a=h.indexOf(marker),b=a<0?-1:h.indexOf('</script>',a+marker.length);
           if(a<0||b<a)throw new Error('r284 embedded script missing');
-          fs.writeFileSync('/tmp/ct-android-1041.js',h.slice(a+marker.length,b));
+          fs.writeFileSync('/tmp/ct-android-1042.js',h.slice(a+marker.length,b));
           NODE
-          node --check /tmp/ct-android-1041.js
+          node --check /tmp/ct-android-1042.js
 
       - name: Build Android APK
         working-directory: apps/android
