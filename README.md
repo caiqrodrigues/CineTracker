@@ -1,3 +1,7 @@
+## Android 1.0.46 / r288 — recomendacoes e Home especiais
+
+Pra Voce aceita somente dados canonicos autenticados v421 e auditados v525; renderizadores legados nao podem substituir os cards durante Trocar, Visto ou Watchlist. Nova abertura gira as indicacoes e a mutacao tem prazo limitado. Home UFC, WWE e F1 preserva os ultimos dados conhecidos mesmo na falha de sincronizacao e, se nao houver dados, apresenta linha navegavel de sincronizacao pendente. Botao de marcar como visto limitado a 36x36px. Web congelada em r541. Android 1.0.46 versionCode 10088; TESTE46 independente.
+
 ## Android 1.0.45 / r287 — correção da tela preta no login
 
 - **Causa confirmada em navegador real:** `ReferenceError: mountSpecial263 is not defined`. A extensão r286 havia sido injetada fora do escopo privado r263 que contém as funções das séries UFC, WWE e Fórmula 1; isso interrompia toda a inicialização antes do login.

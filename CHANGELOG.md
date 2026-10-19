@@ -1,3 +1,11 @@
+## Android 1.0.46 — r288 (2026-10-19)
+
+- Descobrir Pra Voce: ignora paints assincronos nao canonicos de owners antigos e preserva 7 slots v421/v525; rotacao na abertura e limite de espera das mutacoes.
+- Home UFC/WWE/F1: cards inseridos diretamente como linhas, snapshot de ultimo resultado valido e placeholders navegaveis sem inventar contagem.
+- Botao marcar assistido: 36x36px, evitando expansao indevida na Home.
+- Verificacao automatizada: casos de sete slots, chamadas legadas atrasadas, tres especiais e perda temporaria de sincronizacao.
+- Android 1.0.46 r288 versionCode 10088, raiz 0.3.75, APK TESTE46 instalavel em paralelo. Web r541 congelada.
+
 ## Android 1.0.45 — r287 (2026-10-19)
 
 - **Erro crítico reproduzido:** APK 1.0.44 abria em tela preta, sem login, por `ReferenceError: mountSpecial263 is not defined` durante a inicialização.

@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.45
+# CineTracker Android — 1.0.46
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -69,3 +69,7 @@ Documentação: `docs/releases/1.0.0.md` e `docs/validation/1.0.0.md`.
 ## Android 1.0.45 / r287
 
 Corrigida a tela preta causada pela inicialização fora do escopo privado do módulo r263. Login preservado por isolamento de falhas e teste comparativo headless. Sem alterações na Web r541.
+
+## Android 1.0.46 / r288
+
+Pra Voce com renderer autenticado final e troca sem regressao para cards legados; Home UFC/WWE/F1 com snapshot no erro e botao pequeno 36px. APK TESTE46 com package independente com.cinetracker.app.teste46. Web r541 sem alteracoes.
