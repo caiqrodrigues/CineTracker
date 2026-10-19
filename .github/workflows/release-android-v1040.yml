@@ -17,7 +17,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: cinetracker-android-1.0.40-${{ github.ref }}
+  group: cinetracker-android-1.0.40-r282-verified-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
