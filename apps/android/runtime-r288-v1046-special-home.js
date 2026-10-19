@@ -78,12 +78,9 @@ mountSpecial263=function(){
 };
 // Restore after any sync error, including the r286 routine which previously
 // set UFC/WWE to null before receiving new server data.
-const originalSync=syncHomeEvents;
-syncHomeEvents=async function(force=false){
- retain();
- try{return await originalSync(force)}
- finally{retain();if(show())mountSpecial263()}
-};
+// r286 keeps its syncHomeEvents function PRIVATE inside a nested IIFE.
+// The visible r263 loadCurrentSpecial263 hook below restores snapshots
+// even when that private sync sets UFC/WWE to null.
 const originalLoad=loadCurrentSpecial263;
 loadCurrentSpecial263=async function(force=false){
  const result=await originalLoad(force);
@@ -103,5 +100,5 @@ css.textContent=[
  '@media(max-width:420px){[data-home] .ct288-special{grid-template-columns:45px minmax(0,1fr) 36px 17px!important;gap:6px!important}[data-home] .ct288-special>.thumb{width:42px!important;min-width:42px!important;height:62px!important}}'
 ].join('\n');
 document.head.appendChild(css);
-window.__ctR288HomeTest={retain,readyEvent,realCard,fallbackCard,mount:()=>mountSpecial263(),sync:()=>syncHomeEvents(false),snapshots};
+window.__ctR288HomeTest={retain,readyEvent,realCard,fallbackCard,mount:()=>mountSpecial263(),snapshots};
 })();
