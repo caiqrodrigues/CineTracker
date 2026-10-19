@@ -4,7 +4,7 @@
 if(window.__ctR288HomeV1046)return;
 window.__ctR288HomeV1046='three-special-rows+compact-quick-watch+retain-on-sync-failure';
 const kinds=['ufc','wwe','f1'],snapshots={ufc:null,wwe:null,f1:null};
-const show=()=>route263()==='home'&&homeActiveTab158==='series'&&!!session?.user?.id;
+const show=()=>route263()==='home'&&homeActiveTab158==='series'&&!!(session?.user?.id||user?.id);
 const root=()=>homeView263('series');
 function retain(){
  for(const kind of kinds){
@@ -52,7 +52,13 @@ mountSpecial263=function(){
   // A sync error never erases F1/WWE; if this is a fresh install, render
   // a neutral navigable row rather than guessing any watched count.
   let inserted=0;
-  for(const kind of kinds){
+  const ordered=[...kinds].sort((a,b)=>{
+   const da=special263.current[a]||snapshots[a],db=special263.current[b]||snapshots[b];
+   const ta=Date.parse(da?.series?.last_watched_at||da?.last_watched_at||'')||0;
+   const tb=Date.parse(db?.series?.last_watched_at||db?.last_watched_at||'')||0;
+   return tb-ta||kinds.indexOf(a)-kinds.indexOf(b);
+  });
+  for(const kind of ordered){
    const data=special263.current[kind]||snapshots[kind];
    const bucket=data?.series?.home_bucket==='continue'?'continue':
     data?.series?.home_bucket==='up_to_date'?'up_to_date':
