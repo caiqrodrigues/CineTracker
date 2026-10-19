@@ -5,7 +5,7 @@ if(window.__ctR288DiscoverV1046)return;
 window.__ctR288DiscoverV1046='final-audited-seven-slot-painter+stable-actions+entry-rotation';
 const active=()=>route()==='discover'&&discoverState?.tab==='foryou'&&!!session?.user?.id;
 const owner=()=>String(session?.user?.id||user?.id||'')+':'+localDay();
-const verified=x=>Boolean(x&&typeof x==='object'&&x.__ct283ServerAudited===true&&
+const verified=x=>Boolean(x&&typeof x==='object'&&x.__ct283ServerAudited===true&&x.__ct288Canonical===true&&
  x._ct186_fresh&&x._ct186_watchlist);
 let identity='',stable=null,entry='',lastReconcile=0,rendering=false;
 const prevDiscover=discoverRows;
