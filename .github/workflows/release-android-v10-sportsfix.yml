@@ -119,7 +119,7 @@ jobs:
           printf 'Previous signing SHA-256: %s\\nOfficial signing SHA-256: %s\\n' "$OLD_CERT" "$NEW_CERT"
           test -n "$OLD_CERT" && test -n "$NEW_CERT"
           if test "$OLD_CERT" = "$NEW_CERT"; then
-            printf 'COMPATIBLE: Android 1.0 can update 1.0.61 in place.\n' > CineTracker-Android-1.0-compatibilidade.txt
+            printf 'COMPATIBLE: The new 1.0 APK updates the previous 1.0 APK in place.\n' > CineTracker-Android-1.0-compatibilidade.txt
           else
             printf 'INCOMPATIBLE: Android 1.0 and 1.0.61 have different APK signing certificates. A clean installation may be required; uninstalling can erase locally stored app data. Confirm synchronization before uninstalling.\n' > CineTracker-Android-1.0-compatibilidade.txt
             echo '::warning::APK signing differs from 1.0.61; user must be warned about clean installation and locally stored data.'
