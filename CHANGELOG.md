@@ -1,3 +1,13 @@
+## Android 1.0.59 — r301 (2026-10-20)
+
+- **Esportes:** removida a aba Favoritos do menu superior. Permanecem somente **Anteriores** e **Próximos**. A ação de favoritar times e competições, os dados sincronizados e todo o F1 Hub continuam disponíveis e inalterados.
+- **Descobrir → Pra Você — tremedeira:** eliminado o segundo bloco legado de sincronização r290 que ainda agendava repinturas 60/280/950/2600 ms após ações, eventos de dados e consultas. Mantido seu bloqueio de HTML não auditado; r278 é o único controlador de mutações e r293 protege apenas substituições estruturais reais.
+- **Descobrir → Pra Você — regras:** os slots de Indicação do Dia e 100% Novos compartilham um histórico diário de títulos já exibidos, evitando repetição entre categorias; Da sua Watchlist preserva histórico próprio. O pool segue autenticado v525 com filtros para vistos/watchlist, títulos curtos, YouTube, realities, stand-up, wrestling e duplicatas. Trocar mantém o card montado durante a consulta e não volta a selecionar alternativas antigas ao esgotar o pool.
+- **Raw e SmackDown na Home:** antes, o guardião r296 só restaurava linhas que já apareciam no DOM, e o sincronizador r294 não criava linhas ausentes. Agora a sincronização verifica a linha real da biblioteca do usuário na consulta v527, a data do episódio lançado (janela de 16 dias) e o estado assistido v4 antes de criar o card faltante usando `homeSeriesRow158`, incluindo o botão do episódio. O cache da verificação restaura o card em repaint posterior sem RPC síncrona da página inteira; ações de assistido invalidam o cache. Cards retidos visíveis não expiram após dez minutos de uso.
+- **Segurança e escopo:** não fabrica títulos, IDs, progresso ou episódios; não reapresenta WWE já assistida; nenhuma mudança em Web, Supabase, F1, estatísticas ou navegação externa.
+- **Verificação:** testes estruturais para dois tabs, isolamento r290, memória entre slots, cache e autorização dos cards WWE, build, versão e assinatura oficial e TESTE59.
+- **Versões:** Android 1.0.59/r301/versionCode 10101; raiz 0.3.89.
+
 ## Android 1.0.58 — r300 (2026-10-20)
 
 - **Esportes:** interface reduzida às três abas Anteriores, Próximos e Favoritos. Os eventos passados são ordenados do mais recente para o mais antigo e os próximos do mais próximo em diante. Mantidos os filtros esportivos, marcadores de assistido, favoritos, sincronização, histórico, tempo de Perfil e F1 Hub sem mudança nas fórmulas nem na persistência.
