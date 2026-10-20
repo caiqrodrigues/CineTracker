@@ -16,7 +16,7 @@ function reset(){
  if(raf){cancelAnimationFrame(raf);raf=0}
 }
 
-function same(){return active()&&uid()===account&&locked&&root?.isConnected}
+function same(){return active()&&uid()===account&&nav===navSeq&&locked&&root?.isConnected}
 function restoreData(){
  if(!same()||!canonical(data))return;
  if(ct186ForYouData!==data)ct186ForYouData=data;
