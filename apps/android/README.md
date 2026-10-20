@@ -7,7 +7,7 @@ App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarc
 - `applicationId`: `com.cinetracker.app` — preservado para atualizar instalações existentes;
 - `versionName`: **`1.0`**;
 - `versionCode`: **`10104`** (maior que 10103 da 1.0.61);
-- versão funcional: **Android 1.0.61/r303**, sem alterações na lógica;
+- versão funcional: **CineTracker 1.0/r304**, mantendo o runtime r303 e alterando somente a tela Esportes;
 - preparação: `scripts/prepare-android-v10-official.mjs`;
 - validação: `scripts/test-android-v10-official.mjs` — compara com APK 1.0.61 publicado;
 - build nativo: **release não depurável**, assinatura estável de release; **não compatível com o certificado do APK oficial 1.0.61** (reinstalação pode ser necessária, com risco para dados locais);
@@ -107,3 +107,7 @@ Escopo: somente Descobrir > Pra Você. Elimina callbacks redundantes dos módulo
 ## Android 1.0.61 / r303
 
 Corrigida a arquitetura de renderização de Descobrir > Pra Você. A grade auditada v525 é montada diretamente uma única vez por visita, sem acionar dezenas de callbacks do `paintDiscover` legado. Após a montagem, callbacks passivos não fazem rotação de Indicação do Dia ou 100% Novos. Mutações Visto e Trocar atualizam somente o slot tocado. Scripts: `scripts/prepare-android-v1061.mjs`, `scripts/test-android-v1061.mjs`, workflow `release-android-v1061.yml`. APK TESTE61 independente. Web e banco não modificados.
+
+## Android 1.0 / r304 — patch somente Esportes
+
+Substitui bordas vermelhas por estilo neutro e uniformiza as ações dos cards esportivos em duas colunas de 42px. Marcação de assistido passa a ter um único handler com confirmação explícita do resultado de `cinetracker_sport_mark_watched_v1`, rollback e erro visível; Formula 1 usa o mesmo fluxo anterior, sem mudança. Preparação `scripts/prepare-android-v10-sportsfix.mjs`, testes `scripts/test-android-v10-sportsfix.mjs`, publicação oficial na mesma release `android-v1.0`. Nome público 1.0 mantido, `versionCode 10105`.
