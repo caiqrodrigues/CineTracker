@@ -45,31 +45,31 @@ replace(
 // three slots after an asynchronous request, bypassing ALL paintDiscover
 // wrappers. The final v421/v525 renderer owns these slots exclusively.
 replace(
- "async function hydrateWatch116(force=false){\\n try{",
- "async function hydrateWatch116(force=false){\\n if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou')return;\\n try{",
+ "async function hydrateWatch116(force=false){\n try{",
+ "async function hydrateWatch116(force=false){\n if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou')return;\n try{",
  'r116 async Watchlist HTML overwrite');
 // r282's independent TMDB category callbacks directly overwrite the
 // authoritative pool, even without a click, commonly after ~5 seconds.
 replace(
- "function display(s){\\n if(!visible(s))return;",
- "function display(s){\\n if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou')return;\\n if(!visible(s))return;",
+ "function display(s){\n if(!visible(s))return;",
+ "function display(s){\n if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou')return;\n if(!visible(s))return;",
  'r282 late TMDB display');
 // Keep the per-slot Optimistic UI context alive when +Watchlist persists.
 // invalidate196 otherwise nulls all context and dispatches a global update.
 replace(
- "function invalidate196(){\\n  try{homeCache=null}catch{}",
- "function invalidate196(){\\n  if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou'){\\n   homeCache=null;profileCache=null;discoverCache.clear();ct171SeenMap=null;\\n   document.documentElement.dataset.ct293WatchlistUpdate='in-place';return;\\n  }\\n  try{homeCache=null}catch{}",
+ "function invalidate196(){\n  try{homeCache=null}catch{}",
+ "function invalidate196(){\n  if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou'){\n   homeCache=null;profileCache=null;discoverCache.clear();ct171SeenMap=null;\n   document.documentElement.dataset.ct293WatchlistUpdate='in-place';return;\n  }\n  try{homeCache=null}catch{}",
  'r196 Watchlist optimistic local mutation');
 // Supabase realtime currently triggers ct186RefreshVisible 120ms after
 // +Watchlist, recreating the old page. Update the picked card only.
 replace(
- "function ct186RealtimeChange(table,data){\\n  if(!ct186RealtimeRelevant(table,data))return;",
- "function ct186RealtimeChange(table,data){\\n  if(!ct186RealtimeRelevant(table,data))return;\\n  if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou'){\\n   const x=data?.record||{},old=data?.old_record||{},id=Number(x.media_id||old.media_id||0);\\n   if(id>0&&String(data?.type||'')!=='DELETE')void ct186ResolveMediaKey(id).then(ref=>{\\n    if(ref){ct186LocalBlocked.add(ref);try{window.__ctR278Test?.reconcile?.()}catch{}}\\n   }).catch(()=>{});\\n   document.documentElement.dataset.ct293Realtime='local-only';return;\\n  }",
+ "function ct186RealtimeChange(table,data){\n  if(!ct186RealtimeRelevant(table,data))return;",
+ "function ct186RealtimeChange(table,data){\n  if(!ct186RealtimeRelevant(table,data))return;\n  if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou'){\n   const x=data?.record||{},old=data?.old_record||{},id=Number(x.media_id||old.media_id||0);\n   if(id>0&&String(data?.type||'')!=='DELETE')void ct186ResolveMediaKey(id).then(ref=>{\n    if(ref){ct186LocalBlocked.add(ref);try{window.__ctR278Test?.reconcile?.()}catch{}}\n   }).catch(()=>{});\n   document.documentElement.dataset.ct293Realtime='local-only';return;\n  }",
  'r186 realtime avoid full visible refetch');
 // r284 global invalidator was still able to discard the v525 source.
 replace(
- "window.addEventListener('cinetracker:data-changed',()=>{\\n if(isForYou()&&window.__ctR289DiscoverV1047",
- "window.addEventListener('cinetracker:data-changed',()=>{\\n if(window.__ctR293Gate&&isForYou()){historyStamp=0;return;}\\n if(isForYou()&&window.__ctR289DiscoverV1047",
+ "window.addEventListener('cinetracker:data-changed',()=>{\n if(isForYou()&&window.__ctR289DiscoverV1047",
+ "window.addEventListener('cinetracker:data-changed',()=>{\n if(window.__ctR293Gate&&isForYou()){historyStamp=0;return;}\n if(isForYou()&&window.__ctR289DiscoverV1047",
  'r284 prevent global recommendation invalidation');
 const patch=(await readFile(resolve(root,'apps/android/runtime-r293-v1051-foryou-single-owner.js'),'utf8')).trimEnd();
 new Function(patch);
