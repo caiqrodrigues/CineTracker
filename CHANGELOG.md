@@ -1,3 +1,13 @@
+## Android 1.0.55 — r297 (2026-10-20)
+
+- **Descobrir > Pra Você (Android):** análise do vídeo: o aparelho ainda mostrava Android 1.0.52 e aproximadamente nove segundos de tela vazia `Carregando títulos...` antes dos cards.
+- **Carga inicial:** reduzida a quantidade de títulos candidatos por categoria de 48/30 para 24/16, conservando reposição autenticada por slot através do Trocar. Redução do volume enviado à auditoria v525; nenhuma alteração nos filtros de itens vistos, Watchlist, origem, duração, reality, stand-up ou WWE.
+- **Watchlist vazia:** resposta válida `[]` deixa de acionar consulta redundante após 300 ms. Requisições com erro têm apenas uma tentativa adicional, com espera de 150 ms e prazo finito preexistente.
+- **Erro de rede / nenhum resultado:** removida a condição em que um payload não auditado era recusado pelo controlador de sete slots, mantendo indefinidamente `Carregando títulos...`; a própria região Pra Você passa a mostrar aviso e botão `Tentar novamente`, sem refazer a página ou abandonar a aba.
+- **Preservação:** sete slots com controles r278, auditoria Supabase v525, proteção de estado r296, Raw/SmackDown e todas as outras áreas mantidas. Web e SQL congelados.
+- **Validação:** teste de sintaxe do JavaScript embarcado, fluxos de falha/vazio, recuperação por botão e não substituição dos cards válidos, workflow Gradle com build oficial e TESTE55 paralelo.
+- **Versão:** Android 1.0.55/r297/versionCode 10097; raiz 0.3.85.
+
 ## Android 1.0.54 — r296 (2026-10-20)
 
 - **Somente APK Android:** a Web permanece congelada; nenhuma alteração em `apps/web`, Supabase ou interface Web.
