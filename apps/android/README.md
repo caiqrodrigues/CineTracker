@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.49
+# CineTracker Android — 1.0.50
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -85,3 +85,7 @@ Home padronizada (UFC, WWE, F1), NFL Super Bowl anual navegável com episódios 
 ## Android 1.0.49 / r291
 
 Pra Você mantém a seleção auditada após Trocar durante a mesma navegação; Home UFC/WWE com 793/567 episódios históricos e botão Assistido 36px; NFL Super Bowl com escudo, jogo e show do intervalo por ano, com capas individuais. TESTE49 independente. Web congelada r541.
+
+## Android 1.0.50 / r292
+
+Home contadores históricos v540 de UFC/WWE/F1, NFL Super Bowl 120 episódios, antiga Fórmula 1 sem capa oculta apenas na Home e sete recomendações autenticadas estáveis durante o Trocar. TESTE50 package independente. Web r541 congelada.

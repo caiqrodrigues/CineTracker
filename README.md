@@ -1,3 +1,12 @@
+## Android 1.0.50 / r292 — contadores completos e Pra Você estável
+
+- **Home (UFC, WWE e Fórmula 1):** contador mostra episódios históricos assistidos e total da série, usando `cinetracker_special_series_counts_v540`; deixa de comparar os assistidos históricos com somente 35 eventos de 2026. Totais de referência: UFC 793, WWE 567, Fórmula 1 1.166 GPs.
+- **NFL Super Bowl:** contador em Home cobre 120 registros (60 anos de jogo + intervalo), contando exclusivamente coordenadas das temporadas 1 e 2, sem duplicar episódios nem contabilizar registros auxiliares de temporada 0. Recontagem pós-Assistido.
+- **Fórmula 1 duplicada:** o registro legado `tmdb_id=-1321137963` (sem pôster) é removido **apenas da renderização da Home**, mantendo o registro e seu histórico íntegros no Supabase. A Fórmula 1 oficial da interface especial mantém sua capa, página, seleção por ano e Assistido.
+- **Descobrir — Pra Você:** removido o fallback que repintava a grade antiga de Watchlist após `Trocar`. Uma única fonte controla os sete cards durante a visita; novas consultas atualizam somente a escolha local através de `r278.reconcile`. Uma nova navegação continua podendo apresentar novas indicações.
+- **Escopo:** somente Android. Web congelada 0.3.68/r541, Perfil, Esportes e demais fluxos preservados.
+- **Release:** Android 1.0.50 / r292 / versionCode 10092, TESTE50 independente, package root 0.3.79.
+
 ## Android 1.0.49 / r291 — UFC, NFL Super Bowl e Pra Você
 
 - **Home UFC e WWE:** botões de assistir com tamanho máximo fixo de 36 × 36 px, alinhados à direita. Os contadores distinguem visualizações na temporada atual dos totais históricos: o catálogo possui 793 episódios de UFC e 567 de WWE. Os totais são atualizados a partir de `public.media.total_episodes`, quando a consulta autenticada estiver disponível.

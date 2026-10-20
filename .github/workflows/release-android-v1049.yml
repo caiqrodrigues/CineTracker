@@ -1,17 +1,17 @@
-name: Release Android 1.0.49
+name: Release Android 1.0.50
 
 on:
   push:
     branches: [main]
     paths:
-      - 'apps/android/runtime-r291-v1049-home-count-and-logo.js'
-      - 'apps/android/runtime-r291-v1049-nfl-art.js'
-      - 'scripts/prepare-android-v1049.mjs'
-      - 'scripts/test-android-v1049.mjs'
+      - 'apps/android/runtime-r292-v1050-home-counter-and-duplicate.js'
+      - 'apps/android/runtime-r292-v1050-discover-single-owner.js'
+      - 'scripts/prepare-android-v1050.mjs'
+      - 'scripts/test-android-v1050.mjs'
       - 'apps/android/app/build.gradle'
-      - 'scripts/prepare-android-v1049.mjs'
-      - 'scripts/test-android-v1049.mjs'
-      - '.github/workflows/release-android-v1049.yml'
+      - 'scripts/prepare-android-v1050.mjs'
+      - 'scripts/test-android-v1050.mjs'
+      - '.github/workflows/release-android-v1050.yml'
       - 'CHANGELOG.md'
       - 'VERSIONS.md'
   workflow_dispatch:
@@ -20,11 +20,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: cinetracker-android-1.0.49-r291-verified-${{ github.ref }}
+  group: cinetracker-android-1.0.50-r292-verified-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  android_1_0_49:
+  android_1_0_50:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -69,24 +69,24 @@ jobs:
           fi
           cp ~/.cinetracker/cinetracker.keystore ~/.android/debug.keystore
 
-      - name: Prepare and validate exact Android 1.0.49 runtime
+      - name: Prepare and validate exact Android 1.0.50 runtime
         shell: bash
         run: |
           set -euo pipefail
-          grep -Fq "versionName '1.0.49'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10091' apps/android/app/build.gradle
-          node --check scripts/prepare-android-v1049.mjs
-          node --check scripts/test-android-v1049.mjs
-          node scripts/prepare-android-v1049.mjs
-          node scripts/test-android-v1049.mjs
+          grep -Fq "versionName '1.0.50'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10092' apps/android/app/build.gradle
+          node --check scripts/prepare-android-v1050.mjs
+          node --check scripts/test-android-v1050.mjs
+          node scripts/prepare-android-v1050.mjs
+          node scripts/test-android-v1050.mjs
           node - <<'NODE'
           const fs=require('fs');
           const h=fs.readFileSync('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
-          const marker='<script data-ct-android="r291-android-js">',a=h.indexOf(marker),b=a<0?-1:h.indexOf('</script>',a+marker.length);
-          if(a<0||b<a)throw new Error('r291 embedded script missing');
-          fs.writeFileSync('/tmp/ct-android-1049.js',h.slice(a+marker.length,b));
+          const marker='<script data-ct-android="r292-android-js">',a=h.indexOf(marker),b=a<0?-1:h.indexOf('</script>',a+marker.length);
+          if(a<0||b<a)throw new Error('r292 embedded script missing');
+          fs.writeFileSync('/tmp/ct-android-1050.js',h.slice(a+marker.length,b));
           NODE
-          node --check /tmp/ct-android-1049.js
+          node --check /tmp/ct-android-1050.js
 
       - name: Build Android APK
         working-directory: apps/android
@@ -97,24 +97,24 @@ jobs:
         run: |
           set -euxo pipefail
           APK='apps/android/app/build/outputs/apk/debug/app-debug.apk'
-          OUT='CineTracker-Android-1.0.49.apk'
+          OUT='CineTracker-Android-1.0.50.apk'
           cp "$APK" "$OUT"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           BADGING="$($AAPT dump badging "$OUT")"
           grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
-          grep -Fq "versionName='1.0.49'" <<<"$BADGING"
-          grep -Fq "versionCode='10091'" <<<"$BADGING"
-          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1049-index.html
-          grep -Fq 'name="ct-official-version" content="1.0.49"' /tmp/ct1049-index.html
-          grep -Fq 'fixed-check-36px-all-time-UFC-793-WWE-567-and-NFL-identity' /tmp/ct1049-index.html
-          grep -Fq 'NFL-branded-super-bowl-game-and-halftime-covers' /tmp/ct1049-index.html
-          grep -Fq 'ct291SuppressedRepaint' /tmp/ct1049-index.html
-          grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1049-index.html
-          grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1049-index.html
+          grep -Fq "versionName='1.0.50'" <<<"$BADGING"
+          grep -Fq "versionCode='10092'" <<<"$BADGING"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/ct1050-index.html
+          grep -Fq 'name="ct-official-version" content="1.0.50"' /tmp/ct1050-index.html
+          grep -Fq 'exact-f1-duplicate-hidden-nfl-full-episodes-counter' /tmp/ct1050-index.html
+          grep -Fq 'one-painter-per-visit-no-legacy-watchlist-snapback' /tmp/ct1050-index.html
+          grep -Fq 'ct292BlockedRepaints' /tmp/ct1050-index.html
+          grep -Fq "window.__ctR243Fix='watchlist-swap-uses-active-ct186-selected-pool'" /tmp/ct1050-index.html
+          grep -Fq "window.__ctR226V120='final-dom-authority-no-legacy-listeners'" /tmp/ct1050-index.html
           "$APKSIGNER" verify --print-certs "$OUT"
-          sha256sum "$OUT" | tee android-1.0.49-sha256.txt
-          stat -c '%s' "$OUT" | tee android-1.0.49-size.txt
+          sha256sum "$OUT" | tee android-1.0.50-sha256.txt
+          stat -c '%s' "$OUT" | tee android-1.0.50-size.txt
 
       - name: Build side-by-side Android TESTE APK (no existing-app replacement)
         shell: bash
@@ -126,48 +126,48 @@ jobs:
           src=gradle.read_text()
           old="applicationId 'com.cinetracker.app'"
           assert src.count(old)==1, 'Original applicationId unexpectedly changed'
-          assert "versionName '1.0.49'" in src
-          gradle.write_text(src.replace(old,"applicationId 'com.cinetracker.app.teste49'").replace("versionName '1.0.49'","versionName '1.0.49-teste'"))
+          assert "versionName '1.0.50'" in src
+          gradle.write_text(src.replace(old,"applicationId 'com.cinetracker.app.teste50'").replace("versionName '1.0.50'","versionName '1.0.50-teste'"))
           manifest=Path('apps/android/app/src/main/AndroidManifest.xml')
           text=manifest.read_text()
           assert text.count('android:name=".MainActivity"')==1
           assert text.count('android:label="CineTracker"')==1
-          manifest.write_text(text.replace('android:name=".MainActivity"','android:name="com.cinetracker.app.MainActivity"').replace('android:label="CineTracker"','android:label="CineTracker TESTE 1.0.49"'))
+          manifest.write_text(text.replace('android:name=".MainActivity"','android:name="com.cinetracker.app.MainActivity"').replace('android:label="CineTracker"','android:label="CineTracker TESTE 1.0.50"'))
           PY
           (cd apps/android && gradle assembleDebug --stacktrace)
-          TESTAPK='CineTracker-Android-1.0.49-TESTE.apk'
+          TESTAPK='CineTracker-Android-1.0.50-TESTE.apk'
           cp apps/android/app/build/outputs/apk/debug/app-debug.apk "$TESTAPK"
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           BADGING="$($AAPT dump badging "$TESTAPK")"
-          grep -Fq "package: name='com.cinetracker.app.teste49'" <<<"$BADGING"
-          grep -Fq "versionName='1.0.49-teste'" <<<"$BADGING"
+          grep -Fq "package: name='com.cinetracker.app.teste50'" <<<"$BADGING"
+          grep -Fq "versionName='1.0.50-teste'" <<<"$BADGING"
           grep -Fq 'application-label:' <<<"$BADGING"
-          unzip -p "$TESTAPK" assets/hotfix5/index.html > /tmp/ct1049-preview.html
-          grep -Fq "window.__ctR289DiscoverV1047=" /tmp/ct1049-preview.html
+          unzip -p "$TESTAPK" assets/hotfix5/index.html > /tmp/ct1050-preview.html
+          grep -Fq "window.__ctR289DiscoverV1047=" /tmp/ct1050-preview.html
           "$APKSIGNER" verify --print-certs "$TESTAPK"
-          sha256sum "$TESTAPK" | tee android-1.0.49-teste-sha256.txt
+          sha256sum "$TESTAPK" | tee android-1.0.50-teste-sha256.txt
 
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-1.0.49
+          name: cinetracker-android-1.0.50
           path: |
-            CineTracker-Android-1.0.49.apk
-            CineTracker-Android-1.0.49-TESTE.apk
-            android-1.0.49-teste-sha256.txt
-            android-1.0.49-sha256.txt
-            android-1.0.49-size.txt
+            CineTracker-Android-1.0.50.apk
+            CineTracker-Android-1.0.50-TESTE.apk
+            android-1.0.50-teste-sha256.txt
+            android-1.0.50-sha256.txt
+            android-1.0.50-size.txt
           if-no-files-found: error
           retention-days: 30
 
-      - name: Publish Android 1.0.49 release
+      - name: Publish Android 1.0.50 release
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          TAG='android-v1.0.49'
-          NOTES='CineTracker Android 1.0.49/r291: seven live audited recommendation cards no longer repainted when tapping Trocar. UFC historical 793 episodes and WWE 567 episodes shown with 36px check control. NFL shield branding and distinct game and halftime artwork while preserving existing records. Web r541 frozen; TESTE49 installs independently.'
-          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'CineTracker Android 1.0.49' --notes "$NOTES"
-          gh release upload "$TAG" CineTracker-Android-1.0.49.apk CineTracker-Android-1.0.49-TESTE.apk android-1.0.49-teste-sha256.txt android-1.0.49-sha256.txt android-1.0.49-size.txt --clobber
+          TAG='android-v1.0.50'
+          NOTES='CineTracker Android 1.0.50/r292: seven live audited recommendation cards no longer repainted when tapping Trocar. UFC historical 793 episodes and WWE 567 episodes shown with 36px check control. NFL shield branding and distinct game and halftime artwork while preserving existing records. Web r541 frozen; TESTE50 installs independently.'
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title 'CineTracker Android 1.0.50' --notes "$NOTES"
+          gh release upload "$TAG" CineTracker-Android-1.0.50.apk CineTracker-Android-1.0.50-TESTE.apk android-1.0.50-teste-sha256.txt android-1.0.50-sha256.txt android-1.0.50-size.txt --clobber

@@ -1,3 +1,13 @@
+## Android 1.0.50 — r292 (2026-10-19)
+
+- Corrigidos os contadores históricos de UFC (793), WWE (567) e Fórmula 1 (1.166) diretamente a partir do RPC de totais históricos v540. O card não mistura mais visualizações anuais com totais de outras temporadas.
+- NFL Super Bowl: contador global de 120 episódios com histórico real do usuário (jogo + show do intervalo de cada ano), sem contar dados legados de temporada 0 e sem alterar episódios.
+- Fórmula 1: registro legado sem pôster oculto somente da Home; registro da série não excluído do banco e série interativa com capa preservada.
+- Descobrir > Pra Você: removido refetch visual que restaurava Watchlist antiga após primeira troca; bloqueio de repaint integral para a visita após a inicialização auditada e reconciliação somente local.
+- Web r541 congelada. Nenhuma alteração em Perfil, F1 Hub, Esportes, Home Filmes ou código da Web.
+- Testes: contadores e filtros de registros, primeira renderização e repaint concorrente em Trocar, integridade do APK assinado e package TESTE50 independente.
+- Versões: Android 1.0.50/r292/versionCode 10092; raiz 0.3.79.
+
 ## Android 1.0.49 — r291 (2026-10-19)
 
 - **Home UFC/WWE/F1:** botão de Assistido limitado a 36 × 36 px e centralizado verticalmente na extremidade direita. O status de UFC/WWE agora distingue visualizações da temporada atual dos 793 e 567 episódios totais, respectivamente, consultando o catálogo existente.
