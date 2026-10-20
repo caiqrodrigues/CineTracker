@@ -7,7 +7,7 @@ App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarc
 - `applicationId`: `com.cinetracker.app` — preservado para atualizar instalações existentes;
 - `versionName`: **`1.0`**;
 - `versionCode`: **`10104`** (maior que 10103 da 1.0.61);
-- versão funcional: **CineTracker 1.0/r304**, mantendo o runtime r303 e alterando somente a tela Esportes;
+- versão funcional: **CineTracker 1.0/r305**, base r304 com alterações exclusivamente em Home/Filmes/Histórico e botão Esportes;
 - preparação: `scripts/prepare-android-v10-official.mjs`;
 - validação: `scripts/test-android-v10-official.mjs` — compara com APK 1.0.61 publicado;
 - build nativo: **release não depurável**, assinatura estável de release; **não compatível com o certificado do APK oficial 1.0.61** (reinstalação pode ser necessária, com risco para dados locais);
@@ -111,3 +111,7 @@ Corrigida a arquitetura de renderização de Descobrir > Pra Você. A grade audi
 ## Android 1.0 / r304 — patch somente Esportes
 
 Substitui bordas vermelhas por estilo neutro e uniformiza as ações dos cards esportivos em duas colunas de 42px. Marcação de assistido passa a ter um único handler com confirmação explícita do resultado de `cinetracker_sport_mark_watched_v1`, rollback e erro visível; Formula 1 usa o mesmo fluxo anterior, sem mudança. Preparação `scripts/prepare-android-v10-sportsfix.mjs`, testes `scripts/test-android-v10-sportsfix.mjs`, publicação oficial na mesma release `android-v1.0`. Nome público 1.0 mantido, `versionCode 10105`.
+
+## Android 1.0 / r305
+
+Remove unicamente o botão `Ver eventos` adjacente a Assistido, mantendo a ação de marcação e F1 intactas. A aba Home → Filmes → Histórico consulta a primeira página de `cinetracker_home_movie_history_v542` ao abrir a aba e retornar ao aplicativo, além de revalidar em marcações e em janela de 2 minutos. O estado recente autorizado é mesclado com a listagem completa anterior e prevalece contra respostas tardias de carregamentos históricos; novas entradas ficam ao final da cronologia. Sem reload, sem mudanças em Web, SQL, Discover, Raw/SmackDown ou Perfil. Preparação `scripts/prepare-android-v10-r305-history.mjs`, testes `scripts/test-android-v10-r305-history.mjs`, pipeline `.github/workflows/release-android-v10-r305.yml`.
