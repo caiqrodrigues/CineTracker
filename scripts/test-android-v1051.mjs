@@ -8,8 +8,10 @@ assert.ok(at>=0&&to>at,'Android r293 missing embedded JavaScript');
 const js=html.slice(at+marker.length,to);
 new Function(js);
 const source=(await readFile('apps/android/runtime-r293-v1051-foryou-single-owner.js','utf8')).trimEnd();
-new Function(source);
+const localWatch=(await readFile('apps/android/runtime-r293-v1051-watchlist-local.js','utf8')).trimEnd();
+new Function(source);new Function(localWatch);
 assert.equal(js.split(source).length-1,1,'Singleton r293 owner injected incorrectly');
+assert.equal(js.split(localWatch).length-1,1,'Direct Watchlist writer injected incorrectly');
 for(const bad of ['window.location.reload(', 'router.refresh(', 'while(true)'])
  assert.ok(!source.includes(bad),'Forbidden full refresh '+bad);
 for(const x of [
@@ -64,6 +66,7 @@ const mock={
   documentElement:{dataset:{}},createElement:()=>({}),
   head:{appendChild(){}},addEventListener(){}
  },
+ setApp(){mock.shellRebuilds=(mock.shellRebuilds||0)+1},
  session:{user:{id:account}},user:{id:account},discoverState:{tab},
  route:()=>activeRoute,navSeq:88,ct186ForYouData:null,ct166ForYouData:null,
  requestAnimationFrame:fn=>{fn();return 1},
@@ -88,6 +91,10 @@ const late={_ct186_fresh:{movie:[{id:123}]},_ct186_watchlist:{movie:[{id:999}]}}
 assert.equal(gate.shouldBlockPaint(late),true,'Unverified #Alive Watchlist would replace seven slots');
 assert.equal(gate.shouldBlockPaint(canonical()),true,'Even stale audited responses must not reset local swaps');
 assert.equal(gate.beforeRoute(),true,'Watchlist mutation would re-render the ENTIRE route shell');
+mock.navSeq=89; // A global render() may bump navSeq without changing the live DOM.
+assert.equal(gate.beforeRoute(),true,'Late render changed navSeq and broke the original UI lock');
+mock.setApp('<div data-discover-content>Old full route shell</div>');
+assert.equal(mock.shellRebuilds||0,0,'Existing seven slots were destroyed by setApp');
 assert.equal(seven[0].selected,'swapped-51','Trocar selection changed unexpectedly');
 assert.equal(mock.ct186ForYouData,correct,'Stale callback overwrote live pool');
 // Bypass original painter via direct innerHTML/setApp simulation.
@@ -154,4 +161,25 @@ const lateCtx={
 vm.createContext(lateCtx);
 vm.runInContext(take('function display(s){','\nasync function verify('),lateCtx,{timeout:1500});
 lateCtx.display({owner:'outdated'});
+
+// Direct +Watchlist must never call render(), dispatch data-changed, reset the
+// seven-slot context, or call a second page-level fetch. One POST only.
+const calls=[];
+const watch={
+ window:{},session:{user:{id:'account-55'}},user:{id:'account-55'},
+ route:()=> 'discover',discoverState:{tab:'foryou'},
+ document:{documentElement:{dataset:{}}},
+ ensureMedia:async()=>({id:321,title:'Valid title'}),
+ api:async(path,opts)=>{calls.push({path,method:opts?.method||'GET'});return []},
+ homeCache:{},profileCache:{},discoverCache:{clear(){throw Error('Full Discover invalidation attempted')}},
+ render(){throw Error('A full page render was requested')},toast(){},
+ Number,String,Boolean,Promise,Map,Set,encodeURIComponent,console,Error
+};
+vm.createContext(watch);vm.runInContext(localWatch,watch,{timeout:1200});
+assert.equal(await watch.window.__ctR293AddWatchlist('movie',701),true);
+assert.equal(calls.filter(x=>x.method==='POST').length,1,'Exactly one media_overrides POST required');
+assert.equal(calls.filter(x=>x.method==='GET').length,1,'Only direct watchlist existence GET allowed');
+assert.ok(calls.some(x=>x.path.includes('profile_id=eq.account-55')),'Watchlist must be user-scoped');
+assert.equal(watch.document.documentElement.dataset.ct293WatchlistSaved,'movie:701');
+
 console.log('ANDROID_1_0_51_TEST_OK: old captured r279 painter guarded at original DOM sink, 5-second Watchlist snapback blocked, first render allowed, local Trocar and Watchlist mutation retain seven cards/scroll, new navigation resets, login and Web frozen');
