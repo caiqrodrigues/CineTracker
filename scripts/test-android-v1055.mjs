@@ -33,7 +33,8 @@ assert.ok(mod.includes('await new Promise(resolve=>setTimeout(resolve,150))'),'B
 assert.ok(mod.includes("if(!moreThanZero(next))"),'Empty eligible response has no visible failure');
 assert.ok(mod.includes('void loadRecommendations(true)'),'Retry does not call only authenticated local fetch');
 assert.ok(mod.includes('event.stopImmediatePropagation()'),'Legacy click handlers can hijack retry');
-assert.ok(!mod.includes('window.location.reload(')&&!mod.includes('router.refresh('),'A full-page reload is forbidden');
+const executable=mod.replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g,'');
+assert.ok(!executable.includes('window.location.reload(')&&!executable.includes('router.refresh('),'A full-page reload is forbidden');
 
 // Exercise the exact embedded failure view with the route/user/DOM gate.
 const st=mod.indexOf('function ct297Status(label){');
