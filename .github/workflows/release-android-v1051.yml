@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'apps/android/runtime-r293-v1051-foryou-single-owner.js'
+      - 'apps/android/runtime-r293-v1051-watchlist-local.js'
       - 'scripts/prepare-android-v1051.mjs'
       - 'scripts/test-android-v1051.mjs'
       - 'apps/android/app/build.gradle'
