@@ -1,3 +1,9 @@
+## Android 1.0.56 / r298 — Pra Você sem tremedeira ou repetição
+
+- Trocar utiliza apenas candidatos ainda não exibidos no slot, inclui a exclusão de cards de outros slots e mantém o card se não houver outra indicação elegível.
+- A barra de botões não é recriada ao alternar entre estados ativo e ocupado; a seleção atual permanece estável contra atualizações assíncronas.
+- Sem mudança na Web, Supabase, Raw/SmackDown ou outras páginas Android. APK TESTE56 instalável separadamente da versão oficial.
+
 ## Android 1.0.55 / r297 — carregamento e recuperação do Pra Você
 
 - Busca inicial de indicações autenticadas reduzida para 24 títulos novos e 16 títulos da Watchlist por categoria; o controlador de Trocar mantém expansão autenticada sob demanda.
