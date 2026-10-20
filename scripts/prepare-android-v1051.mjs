@@ -25,7 +25,7 @@ replace('else await addWatchlist(type,id);',
  'else await window.__ctR293AddWatchlist(type,id);',
  'Pra Voce only direct Watchlist persistence');
 replace('window.__ctR278Test={candidates,validate,contentDetailSafe,expandPool,seenIn,takeSeen,reconcile,operate,slotChoice};',
- 'window.__ctR278Test={candidates,validate,contentDetailSafe,expandPool,seenIn,takeSeen,reconcile,operate,slotChoice};\\nwindow.__ctR293PickedRefs=()=>new Map(picked);',
+ 'window.__ctR278Test={candidates,validate,contentDetailSafe,expandPool,seenIn,takeSeen,reconcile,operate,slotChoice};\nwindow.__ctR293PickedRefs=()=>new Map(picked);',
  'read-only per-slot current picks');
 // ESSENTIAL: the original r158 paintDiscover DOM sink is still reachable via
 // saved originalPaint references in r279, r281 and r282. Wrapping the LATEST
