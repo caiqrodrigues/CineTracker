@@ -63,7 +63,7 @@ const documentMock={
  hidden:false,documentElement:{dataset:{}},
  addEventListener(name,fn){(listeners[name]??=[]).push(fn)}
 };
-const run=new Function('window','document','route','startRows','rpc','setInterval','setTimeout','setImmediate','Date',
+const run=new Function('window','document','route','startRows','rpc','setInterval','setTimeout','setImmediate','Date','pageDraws',
  "let session={access_token:'auth-token',user:{id:'user-a'}},user={id:'user-a'},homeActiveTab158='movies';"+
  "let homeCache={history_movies:[...startRows]},paintHome=()=>{pageDraws.push('home');return true};"+
  module+
@@ -72,7 +72,7 @@ const run=new Function('window','document','route','startRows','rpc','setInterva
 const oldDate=Date;
 const app=run(windowMock,documentMock,()=>current,previous,
  (name,args)=>{assert.equal(name,'cinetracker_home_movie_history_v542');assert.deepEqual(args,{p_limit:200,p_offset:0});return new Promise((resolve,reject)=>pending.push({resolve,reject}))},
- ()=>42,()=>42,undefined,oldDate);
+ ()=>42,()=>42,undefined,oldDate,pageDraws);
 const owner=windowMock.__ctR305MovieHistory;
 assert.ok(owner,'History owner API absent');
 let task=owner.refresh(true);
