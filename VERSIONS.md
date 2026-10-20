@@ -1,3 +1,5 @@
+- Android **1.0.52 / r294 / versionCode 10094** — Pra Você sem substituição assíncrona e sem observer-loop; WWE Raw/SmackDown auto-sync local em Home. TESTE52 independente.
+- Web **0.3.69 / r542** — somente sincronização de episódios Raw/SmackDown; interface r541 preservada.
 - Android **1.0.51 / r293-android-official-1.0.51 / versionCode 10093** — Pra Você mantém uma única autoridade v525 no renderizador original r158: bloqueia retorno assíncrono da Watchlist antiga e refresh de página após Visto/Watchlist; TESTE51 independente. Web r541 congelada.
 - Android **1.0.50 / r292-android-official-1.0.50 / versionCode 10092** — UFC/WWE/F1 contagem histórica v540; NFL 120 episódios; duplicata da Fórmula 1 oculta somente da Home; Pra Você sem restauração da interface antiga após Trocar. TESTE50 independente; Web r541 congelada.
 - Android **1.0.49 / r291-android-official-1.0.49 / versionCode 10091** — Pra Você não reinicia após Trocar, Home UFC/WWE com totais históricos e controles 36px, NFL Super Bowl com escudo, jogo e show do intervalo. TESTE49 independente. Web r541 congelada.

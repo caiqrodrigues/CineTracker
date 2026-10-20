@@ -1,3 +1,12 @@
+## CineTracker Android 1.0.52 / r294 + Web 0.3.69 / r542 — 20/10/2026
+
+- **Descobrir > Pra Você (Android):** corrigido o último bloqueio quando só 3 ou 4 slots têm recomendações elegíveis na Watchlist. O renderizador r293 agora assume a autoridade mesmo com Watchlist parcialmente vazia; o observador só reconcilia se um renderizador antigo realmente substituiu a DOM, evitando ciclos de renderização e retorno às indicações repetidas. **Trocar**, **Assistido** e **Watchlist** permanecem otimistas e locais, sem reload de página.
+- **WWE Raw e SmackDown (Web e Android):** registrados os episódios exibidos e verificados nas datas 09/10, 12/10, 16/10 e 19/10 no catálogo compartilhado, sem alterar marcações de assistido.
+- **Atualização automática:** nova Edge Function `ct-wwe-tv-refresh`, autenticada e com proteção de frequência, busca as temporadas atuais no TMDB, preserva dados verificados da WWE e consolida o último episódio exibido. Chamadas em segundo plano ao entrar/reabrir a Home nas duas plataformas.
+- **Home:** somente os cards Raw/SmackDown ganham indicação local de novo episódio não visto e podem mover seu próprio elemento para **Continuar assistindo**; nenhuma página é recarregada, nem outras séries são alteradas.
+- **Web:** a base visual r541 permanece byte a byte. Nova r542 altera exclusivamente a integração automática de episódios da WWE, sem mexer em Perfil, Descobrir, F1, UFC ou layout.
+- **Versões:** Android 1.0.52 / r294 / versionCode 10094; Web 0.3.69 / r542; raiz 0.3.81. APK TESTE52 `com.cinetracker.app.teste52` independente.
+
 ## Android 1.0.51 — r293 (2026-10-19)
 
 - **Descobrir > Pra Você (causa raiz):** identificadas referências antigas a `paintDiscover` no r279 que não passavam pelas proteções mais recentes, concluindo uma auditoria assíncrona cerca de cinco segundos depois e substituindo os sete cards por recomendações repetidas da Watchlist. Adicionada proteção ao próprio renderizador original r158.
