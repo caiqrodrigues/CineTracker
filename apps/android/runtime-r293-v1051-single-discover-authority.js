@@ -19,8 +19,13 @@ function sessionKey(){return account()+':'+String(navSeq)}
 function align(){
  if(!live())return false;
  const key=sessionKey(),current=root();
- if(identity!==key||panel!==current){
+ if(identity!==key){
   identity=key;panel=current;locked=false;confirmed=null;epoch++;
+ }else if(panel!==current){
+  // A delayed shell replacement is NOT a new visit. Keep the confirmed
+  // authenticated source; never unlock to accept an old fallback dataset.
+  panel=current;
+  if(locked&&confirmed){restore();queueMicrotask(keepSelected)}
  }
  return !!current;
 }
