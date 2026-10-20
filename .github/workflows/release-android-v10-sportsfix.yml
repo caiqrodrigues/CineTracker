@@ -114,7 +114,7 @@ jobs:
           if grep -Fq 'application-debuggable' <<<"$BADGING"; then echo 'Refusing debuggable APK'; exit 1; fi
           "$APKSIGNER" verify --print-certs "$OUT" > /tmp/cinetracker-1.0-signer.txt
           "$APKSIGNER" verify --print-certs /tmp/CineTracker-Android-1.0.apk > /tmp/cinetracker-previous-1.0-signer.txt
-          OLD_CERT="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-1.0.61-signer.txt)"
+          OLD_CERT="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-previous-1.0-signer.txt)"
           NEW_CERT="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-1.0-signer.txt)"
           printf 'Previous signing SHA-256: %s\\nOfficial signing SHA-256: %s\\n' "$OLD_CERT" "$NEW_CERT"
           test -n "$OLD_CERT" && test -n "$NEW_CERT"
