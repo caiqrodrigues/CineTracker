@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10098
-        versionName '1.0.56'
+        versionCode 10099
+        versionName '1.0.57'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Android 1.0.56/r298: stable cards and in-place controls; never repeat a previously shown Trocar candidate. Web frozen.
+// Android 1.0.57/r299: one Pra Voce action owner, no r292 retry timers or r293 observer on every button mutation. Web frozen.
