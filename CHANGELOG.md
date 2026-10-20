@@ -1,3 +1,11 @@
+## Android 1.0.58 — r300 (2026-10-20)
+
+- **Esportes:** interface reduzida às três abas Anteriores, Próximos e Favoritos. Os eventos passados são ordenados do mais recente para o mais antigo e os próximos do mais próximo em diante. Mantidos os filtros esportivos, marcadores de assistido, favoritos, sincronização, histórico, tempo de Perfil e F1 Hub sem mudança nas fórmulas nem na persistência.
+- **Descobrir > Pra Você:** retirada a ordem determinística de escolha do primeiro item na seleção inicial e em Trocar. Sorteio ponderado por nota e suporte de votos considera somente os itens aprovados pelo filtro autenticado v525, exclui vistos/watchlist conforme cada slot, títulos já apresentados no mesmo dia e itens exibidos em outros slots. Reposição permanece sob demanda, sem recarregar a página.
+- **Home Séries:** fila canônica de próximo episódio respeita a posição mais avançada realmente assistida. Falhas cronológicas mais antigas permanecem contabilizadas e disponíveis na série, sem forçar o Home a voltar ao início. Para Raw (TMDB 4656) e SmackDown (1549), o episódio recente já lançado e não visto tem prioridade; a fila não percorre milhares de episódios antigos. O botão de marcação utiliza a mesma fila que o texto da Home.
+- **Testes:** filtros esportivos com F1 preservada; escolhas sorteadas com fontes diferentes de entropia; ausência de repetição; Raw/SmackDown episódio recente sem busca histórica; fila normal após o último visto e início cronológico para série não iniciada; build e assinatura oficial/TESTE.
+- **Escopo:** código apenas do APK Android. Nenhuma alteração na Web, Supabase ou fórmulas F1. Android 1.0.58/r300/versionCode 10100, raiz 0.3.88.
+
 ## Android 1.0.57 — r299 (2026-10-20)
 
 - **Causa identificada da tremedeira:** módulo legado r292 mantinha seis chamadas tardias a `reconcile()` depois de cada Trocar, Assistido, Watchlist e conclusão de consulta (0, 100, 350, 850, 1700 e 3200 ms), concorrendo com o controlador autenticado r278. Esse mesmo módulo interferia após pesquisas de Pra Você por meio de outro wrapper de `discoverRows()`.
