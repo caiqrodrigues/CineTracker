@@ -18,6 +18,10 @@ const end=js.indexOf('/* CineTracker Android 1.0.37/r279',start);
 if(start<0||end<=start)throw Error('r278 authenticated owner not found');
 let r278=js.slice(start,end);
 r278=once(r278,
+ 'function selectedData(){return ct186ForYouData||ct166ForYouData||null}',
+ 'function selectedData(){return window.__ctR303SinglePaint?.data?.()||window.__ctR293Gate?.data?.()||ct186ForYouData||ct166ForYouData||null}',
+ 'pin audited data when legacy network callbacks change the global pool');
+r278=once(r278,
  "let owner=actualUser(),auditing=null,viewEpoch=-1,lastForYouRoot=null;",
  "let owner=actualUser(),auditing=null,viewEpoch=-1,lastForYouRoot=null,paintedRoot=null,paintedAccount='';",'stable scene');
 r278=once(r278,
@@ -47,6 +51,16 @@ r278=once(r278,
  "  busy.delete(key);\n  changeOne(key);\n }\n}",
  'no global repaint after watched');
 js=js.slice(0,start)+r278+js.slice(end);
+// r286's authenticated refill MUST use the same pinned data object that
+// r278 uses, rather than a global reassigned by obsolete async callbacks.
+js=once(js,"if(!visible()||!uid()||!ct186ForYouData)return false;",
+ "if(!visible()||!uid()||!(window.__ctR303SinglePaint?.data?.()||ct186ForYouData))return false;",'r286 refill guarded pool');
+js=once(js,"const account=uid(),data=ct186ForYouData,epoch=window.__ctR286VisitEpoch;",
+ "const account=uid(),data=window.__ctR303SinglePaint?.data?.()||ct186ForYouData,epoch=window.__ctR286VisitEpoch;",'r286 refill captured authenticated pool');
+js=once(js,"if(uid()!==account||ct186ForYouData!==data||epoch!==window.__ctR286VisitEpoch)return false;",
+ "if(uid()!==account||(window.__ctR303SinglePaint?.data?.()||ct186ForYouData)!==data||epoch!==window.__ctR286VisitEpoch)return false;",'r286 no cross-scene refill');
+js=once(js,"if(uid()!==account||ct186ForYouData!==data)return false;",
+ "if(uid()!==account||(window.__ctR303SinglePaint?.data?.()||ct186ForYouData)!==data)return false;",'r286 post-audit scene validation');
 
 const single=[
  '/* Android r303: absolute single-paint owner for authenticated Pra Voce */',
@@ -55,7 +69,7 @@ const single=[
  'const former=paintDiscover;',
  "const active=()=>route()==='discover'&&discoverState?.tab==='foryou'&&!!(session?.user?.id||user?.id);",
  "const verified=data=>Boolean(data?.__ct288Canonical===true&&data?.__ct283ServerAudited===true&&data?._ct186_fresh&&data?._ct186_watchlist);",
- "let owner='',lastRoot=null,lastNav=-1,paints=0,suppressed=0;",
+ "let owner='',lastRoot=null,lastNav=-1,sceneData=null,paints=0,suppressed=0;",
  'paintDiscover=function(data,...args){',
  ' if(!active())return former.apply(this,arguments);',
  ' if(!verified(data)){suppressed++;return null}',
@@ -69,7 +83,7 @@ const single=[
  ' root.replaceChildren(...Array.from(holder.childNodes));',
  ' // Mount every real action in the same turn, before the first browser paint.',
  ' window.__ctR278Test?.reconcile?.();',
- ' owner=uid;lastRoot=root;lastNav=navSeq;paints++;',
+ ' owner=uid;lastRoot=root;lastNav=navSeq;sceneData=data;paints++;',
  " root.dataset.ct303SingleOwner='1';",
  " document.documentElement.dataset.ct303ForYou='one-direct-paint-per-view';",
  ' window.__ctR293Gate?.commit?.(data,root);',
@@ -82,7 +96,7 @@ const single=[
  " '[data-discover-content] [data-ct241-slot-key] .ct277-control'+",
  " '{animation:none!important;transition:none!important}';",
  'document.head.appendChild(style);',
- 'window.__ctR303SinglePaint={stats:()=>({paints,suppressed,owner,slots:lastRoot?.querySelectorAll("[data-ct241-slot-key]")?.length||0}),active,verified};',
+ 'window.__ctR303SinglePaint={stats:()=>({paints,suppressed,owner,slots:lastRoot?.querySelectorAll("[data-ct241-slot-key]")?.length||0}),data:()=>active()&&String(session?.user?.id||user?.id||\'\')===owner&&document.querySelector(\'[data-discover-content]\')===lastRoot&&navSeq===lastNav?sceneData:null,active,verified};',
  '})();'
 ].join('\n')+'\n';
 js=once(js,'boot();\n})();',single+'boot();\n})();','install final painter before boot');
