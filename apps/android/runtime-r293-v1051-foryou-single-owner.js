@@ -16,7 +16,7 @@ function reset(){
  if(raf){cancelAnimationFrame(raf);raf=0}
 }
 
-function same(){return active()&&uid()===account&&nav===navSeq&&locked&&root?.isConnected}
+function same(){return active()&&uid()===account&&locked&&root?.isConnected}
 function restoreData(){
  if(!same()||!canonical(data))return;
  if(ct186ForYouData!==data)ct186ForYouData=data;
@@ -112,6 +112,16 @@ window.addEventListener('cinetracker:data-changed',()=>{
 },false);
 // A stale async callback can change the dataset without passing paintDiscover;
 // the saved canonical data is reapplied on the next local card mutation.
+// Prevent any legacy renderDiscover variant from reinstalling its entire
+// route shell after a background fetch or an old Watchlist action. A real
+// change of tab or route passes through normally because active() is false.
+const originalSetApp=setApp;
+setApp=function(markup,...args){
+ if(same()&&slots(root)>=5&&String(markup||'').includes('data-discover-content')){
+  beforeRoute();return;
+ }
+ return originalSetApp.apply(this,arguments);
+};
 const style=document.createElement('style');style.id='ct293-single-seven-slot-owner';
 style.textContent=[
  '[data-discover-content] [data-ct241-section] .ct277-actions{pointer-events:auto!important}',
