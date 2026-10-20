@@ -1,3 +1,10 @@
+## Android 1.0.55 / r297 — carregamento e recuperação do Pra Você
+
+- Busca inicial de indicações autenticadas reduzida para 24 títulos novos e 16 títulos da Watchlist por categoria; o controlador de Trocar mantém expansão autenticada sob demanda.
+- Resposta de Watchlist vazia aceita diretamente; tentativas extras só ocorrem diante de erro.
+- Se a consulta/auditoria falhar ou todos os grupos retornarem vazios, a tela de Descobrir > Pra Você exibe `Tentar novamente`, sem carregar infinitamente e sem fazer reload.
+- Android oficial e TESTE55 independentes; sem alterações em `apps/web`, banco, Home/Raw/SmackDown e outras telas.
+
 ## Android 1.0.54 / r296 — Pra Você completo e Raw/SmackDown estáveis
 
 - **Escopo:** somente o runtime embarcado no APK Android; `apps/web` permanece congelado.
