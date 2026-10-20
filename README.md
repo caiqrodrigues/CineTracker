@@ -1,3 +1,10 @@
+## Android 1.0.54 / r296 — Pra Você completo e Raw/SmackDown estáveis
+
+- **Escopo:** somente o runtime embarcado no APK Android; `apps/web` permanece congelado.
+- **Pra Você:** a tela só é fixada quando todos os sete slots têm ações válidas ou uma categoria vazia explicitamente renderizada, eliminando bloqueio prematuro e cartões incompletos.
+- **Raw/SmackDown:** reaproveitamento dos próprios cards existentes após atualizações assíncronas, sem clones ou recriação de episódios. Assistido invalida cache local; sem reload.
+- **Pacotes:** Android 1.0.54 (`com.cinetracker.app`), APK TESTE54 instalável em paralelo (`com.cinetracker.app.teste54`), versionCode 10096 e raiz 0.3.84.
+
 ## Android 1.0.53 / r295 — estabilização final do Pra Você e WWE
 
 - **Descobrir > Pra Você:** identificada uma fonte residual de versões antigas: renderizações assíncronas substituíam o conteúdo interno dos slots da Watchlist e escapavam da proteção de página. Os sete slots passam a manter o último elemento autenticado com botões válidos. Um Trocar bem-sucedido torna-se o novo estado estável; uma resposta antiga posterior não o desfaz.
