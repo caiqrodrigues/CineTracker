@@ -1,3 +1,11 @@
+## Android 1.0.54 — r296 (2026-10-20)
+
+- **Somente APK Android:** a Web permanece congelada; nenhuma alteração em `apps/web`, Supabase ou interface Web.
+- **Descobrir > Pra Você:** corrigido o fechamento prematuro do controle do renderizador com apenas uma ação presente. O bloqueio de renderizações antigas passa a ocorrer somente depois dos **sete slots** autenticados estarem montados: cada card presente precisa ter os botões válidos e uma Watchlist legitimamente vazia deve ter um placeholder explícito. Espera assíncrona limitada a 90 frames, sem loops infinitos ou reload.
+- **Raw e SmackDown:** substituída a restauração de clones com validade de três minutos por preservação do próprio nó DOM já exibido, observador limitado à Home Séries, prevenção de duplicidade, retenção máxima de dez minutos e invalidação ao acionar Assistido; nenhuma criação nem modificação de episódios.
+- **Testes:** validação sintática do JavaScript embarcado e casos com sete slots válidos, categorias vazias, botões faltantes, grade incompleta/duplicada, verificação dos controles WWE e compilação/assinatura de APK oficial e APK TESTE54 independente.
+- **Versões:** Android 1.0.54/r296/versionCode 10096; pacote raiz 0.3.84; tag android-v1.0.54.
+
 ## Android 1.0.53 — r295 (2026-10-20)
 
 - Corrigida a substituição tardia dos slots internos do Descobrir/Pra Você causada pela reidratação de Watchlist legada. A proteção monitora a subárvore do conteúdo autenticado e restaura somente slots substituídos por HTML sem ações r278.
