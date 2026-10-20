@@ -1,14 +1,5 @@
 name: CineTracker Android 1.0 — Official Release
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/prepare-android-v10-official.mjs'
-      - 'scripts/test-android-v10-official.mjs'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-official.yml'
-      - 'CHANGELOG.md'
-      - 'VERSIONS.md'
   workflow_dispatch:
 
 permissions:
