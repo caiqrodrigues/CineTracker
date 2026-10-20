@@ -1,3 +1,12 @@
+## Android 1.0.56 — r298 (2026-10-20)
+
+- **Escopo exclusivo do APK Android:** corrigidas a tremedeira intermitente e as recomendações repetidas ao usar Trocar em Descobrir > Pra Você. Código Web, Supabase e Home intocados.
+- **Correção visual:** ao iniciar ou finalizar uma ação, os controles existentes agora são habilitados/desabilitados por propriedades, sem recriar todo o HTML da barra de ações. Isso evita reflow e piscadas de botões durante toques rápidos.
+- **Reconciliação estável:** prioriza o card atual ainda válido antes de selecionar outro candidato; ignora alteração de epoch de rede quando a própria raiz de Pra Você continua montada, preservando escolha, pôster e posição de scroll.
+- **Trocar sem repetição:** elimina o fallback que reciclava títulos já exibidos dentro do slot. A expansão autenticada v421/v525 é tentada dentro do limite existente; sem alternativa nova, mantém o card atual e avisa o usuário. Itens atualmente visíveis em outros slots também são excluídos.
+- **Teste:** casos de esgotamento do pool, exclusão de escolhas previamente mostradas, duplicidade entre slots, identidade de visualização e estabilidade dos botões durante os estados ocupado/livre; compilação e assinatura do APK oficial e TESTE56 independente.
+- **Versão:** Android 1.0.56/r298/versionCode 10098; raiz 0.3.86.
+
 ## Android 1.0.55 — r297 (2026-10-20)
 
 - **Descobrir > Pra Você (Android):** análise do vídeo: o aparelho ainda mostrava Android 1.0.52 e aproximadamente nove segundos de tela vazia `Carregando títulos...` antes dos cards.
