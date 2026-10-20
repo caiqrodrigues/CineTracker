@@ -1,3 +1,13 @@
+## Android 1.0.61 — r303 (2026-10-20)
+
+- **Causa estrutural da tremedeira:** a aba autenticada `Descobrir > Pra Você` ainda atravessava uma cadeia acumulada de cerca de 26 interceptadores legados de `paintDiscover`, além do reconciliador r278. Isso permitia que callbacks antigos disputassem a montagem, produzindo alternância automática de Indicação do Dia e 100% Novos.
+- **Correção arquitetural no APK:** criado um *único* adaptador direto para a renderização inicial autenticada v421/v525. Apenas na rota Pra Você, a primeira montagem recebe HTML dos sete slots pelo renderer já existente `ct186RenderForYou`, sem chamar a cadeia de renderizadores antigos. O controle r278 instala botões autenticados no mesmo turno, antes de a tela ser pintada. As demais abas mantêm o renderizador anterior.
+- **Bloqueio de looping:** após completar uma grade de sete slots, callbacks passivos de rede, contexto ou renderização não podem escolher outro título ou remontar a grade. O contrato permanece válido para o mesmo usuário e DOM; nova navegação monta uma cena nova.
+- **Mutações de um único slot:** marcar Visto agora seleciona o sucessor elegível apenas do card acionado e atualiza sua lista otimisticamente; sucesso e rollback não reconstroem os outros seis slots. Trocar e Watchlist continuam protegidos contra cliques repetidos, sem reload nem recomposição de página.
+- **Aparência:** desativadas transições e animações dentro dos slots de Pra Você que mascaravam a estabilidade do DOM. Layout, cartões 2:3, filtros v525, exclusão de visto/Watchlist, vedações de curtas, YouTube, realities, stand-up, WWE e memória de não repetição preservados.
+- **Regressões:** teste de execução do adaptador contra DOM simulado valida que três chamadas posteriores não alteram os títulos, nenhuma é encaminhada aos renderizadores legados e a navegação cria uma nova cena. Testes de sintaxe, build Android e assinatura das duas variantes.
+- **Escopo:** somente Android. Web, Supabase, Home, Raw/SmackDown, Esportes e Fórmula 1 sem alterações. Versão raiz 0.3.91; Android 1.0.61/r303/code 10103.
+
 ## Android 1.0.60 — r302 (2026-10-20)
 
 - **Causa da tremedeira de Descobrir > Pra Você:** módulos históricos sobrepostos ainda forçavam nova reconciliação dos sete cards após a primeira montagem. O r284 disparava reconciliação em microtask toda vez que ignorava uma resposta já vista e renderizava novamente uma resposta forçada; o r288 agendava outro `requestAnimationFrame(reconcile)` após cada render canônico; o protetor r293 também reconciliava toda a grade ao restaurar qualquer fragmento e reagia a cliques/eventos de dados.
