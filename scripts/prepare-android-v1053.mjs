@@ -30,11 +30,11 @@ function gp(from,to,label){
  gate=gate.replace(from,to);
 }
 // Keep the lock even with one nonempty Watchlist category.
-gp('if(actions(target)<3){','if(actions(target)<1){','canonical ownership one active slot');
+gp('if(actions(target)<3){','if(actions(target)<1&&attempt<45){','wait for an action without abandoning canonical DOM lock');
 gp('let locked=false,account=',"\n/* r295: remember ONLY valid action-ready slot DOM nodes. A legacy renderer\n * can replace a nested Watchlist grid without changing root.childNodes.\n * Slot edits performed by r278 remain valid and become the new snapshot. */\nconst ct295Slots=new Map();\nfunction ct295Capture(){\n if(!same())return;\n for(const slot of Array.from(root.querySelectorAll('[data-ct241-slot-key]'))){\n  const key=String(slot.dataset.ct241SlotKey||'');\n  if(!key||!slot.querySelector('[data-ct277-action=\"swap\"]'))continue;\n  ct295Slots.set(key,{slot,parent:slot.parentElement,next:slot.nextSibling});\n }\n}\nfunction ct295Protect(){\n if(!same())return 0;\n let restored=0;\n for(const [key,saved] of ct295Slots){\n  const current=root.querySelector('[data-ct241-slot-key=\"'+key+'\"]');\n  if(current?.querySelector('[data-ct277-action=\"swap\"]')){\n   // An authenticated local Trocar/Assistido update replaces only its slot.\n   if(current!==saved.slot)ct295Slots.set(key,{slot:current,parent:current.parentElement,next:current.nextSibling});\n   continue;\n  }\n  // Old r116/r282 HTML has a different button layout. Restore last valid\n  // interactive node without touching any other slot or page section.\n  if(current?.isConnected){current.replaceWith(saved.slot);restored++}\n  else if(saved.parent?.isConnected){\n   saved.parent.insertBefore(saved.slot,saved.next?.isConnected?saved.next:null);\n   restored++;\n  }\n }\n if(restored){\n  document.documentElement.dataset.ct295RecoveredLegacySlots=String(restored);\n }\n ct295Capture();\n return restored;\n}\n"+'\nlet locked=false,account=','insert nested slot guard');
 gp('observer?.disconnect();observer=null;locked=false;', 'observer?.disconnect();observer=null;ct295Slots.clear();locked=false;','reset slot account');
-gp('  restoreData();\n // Never repaint from an old pool.',
-   '  ct295Protect();\n restoreData();\n // Never repaint from an old pool.',
+gp(' restoreData();\n // Never repaint from an old pool.',
+   ' ct295Protect();\n restoreData();\n // Never repaint from an old pool.',
    'repair nested legacy Watchlist');
 gp('  nodes=Array.from(target.childNodes);\n  restoreData();observe();',
    '  nodes=Array.from(target.childNodes);\n  restoreData();observe();ct295Capture();requestAnimationFrame(ct295Capture);',
