@@ -1,6 +1,6 @@
 ## CineTracker Android 1.0 — versão oficial
 
-Versão estável oficial do Android: **CineTracker 1.0**, pacote `com.cinetracker.app` (`versionName=1.0`, `versionCode=10104`). O runtime funcional é idêntico ao da Android 1.0.61/r303. APK não depurável compilado em modo release com a identidade de assinatura usada nas versões oficiais, para atualização da instalação existente. Publicação no GitHub sob tag `android-v1.0`, com APK `CineTracker-Android-1.0.apk`.
+Versão estável oficial do Android: **CineTracker 1.0**, pacote `com.cinetracker.app` (`versionName=1.0`, `versionCode=10104`). O runtime funcional é idêntico ao da Android 1.0.61/r303. APK não depurável compilado em modo release com identidade de assinatura estável. A assinatura do APK anterior 1.0.61 é diferente: pode ser necessário desinstalar a versão antiga para instalar a 1.0, com risco de perda de dados locais. Confirme a sincronização antes de desinstalar. Publicação no GitHub sob tag `android-v1.0`, com APK `CineTracker-Android-1.0.apk`.
 
 O release 1.0.0 anterior é histórico e não representa a promoção atual. Pipeline `.github/workflows/release-android-v10-official.yml`; scripts `scripts/prepare-android-v10-official.mjs` e `scripts/test-android-v10-official.mjs`. Web, banco e funcionalidades Android não alteradas.
 
