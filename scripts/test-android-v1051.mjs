@@ -106,4 +106,51 @@ currentRoot=newer;
 const next=canonical();gate.afterPaint(next,newer);
 assert.equal(gate.locked(),true,'New Discover visit failed');
 assert.equal(mock.ct186ForYouData,next,'New visit reused old user pool');
+
+// Regression: r116 scheduled its own full old Watchlist after an arbitrary
+// async response (often ~5 seconds idle). It must never run on Pra Você.
+for(const sourceText of [
+ "async function hydrateWatch116(force=false){\n if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou')return;",
+ "function display(s){\n if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou')return;",
+ "function invalidate196(){\n  if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou'){",
+ "function ct186RealtimeChange(table,data){\n  if(!ct186RealtimeRelevant(table,data))return;\n  if(window.__ctR293Gate&&route()==='discover'&&discoverState?.tab==='foryou'){",
+ "if(window.__ctR293Gate&&isForYou()){historyStamp=0;return;}"
+])assert.ok(js.includes(sourceText),'Legacy full-screen update survives: '+sourceText.slice(0,64));
+const take=(begin,end)=>{
+ const i=js.indexOf(begin),j=i<0?-1:js.indexOf(end,i+begin.length);
+ assert.ok(i>=0&&j>i,'Missing uniquely isolated legacy function '+begin);
+ return js.slice(i,j);
+};
+const ctx={
+ window:{__ctR293Gate:{},dispatchEvent(){throw Error('Legacy broadcast invoked')}},
+ route:()=> 'discover',discoverState:{tab:'foryou'},document:{documentElement:{dataset:{}}},
+ homeCache:{},profileCache:{},discoverCache:{clear(){}},ct171SeenMap:{},
+ ct186ContextValue:{watchMovieIds:new Set([123])},ct186ContextAt:999,
+ ct186LocalBlocked:new Set(),ct186RealtimeRelevant:()=>true,
+ ct186ResolveMediaKey:async()=> 'movie:123',
+ ct186RefreshVisible(){throw Error('Forbidden realtime page refresh')},
+ Promise,Number,String,Date,console
+};
+vm.createContext(ctx);
+vm.runInContext(take('async function hydrateWatch116(force=false){','\ntry{const base=paintDiscover;paintDiscover=function'),ctx,{timeout:1500});
+const noHydration=await ctx.hydrateWatch116(false);
+assert.equal(noHydration,undefined,'Late watchlist hydration attempted a redraw');
+vm.runInContext(take('function invalidate196(){','\nfunction paintWatchButton196('),ctx,{timeout:1500});
+const savedContext=ctx.ct186ContextValue;
+ctx.invalidate196();
+assert.equal(ctx.ct186ContextValue,savedContext,'Watchlist mutation discarded selection context');
+assert.equal(ctx.document.documentElement.dataset.ct293WatchlistUpdate,'in-place');
+vm.runInContext(take('function ct186RealtimeChange(table,data){','\nfunction ct186RealtimeStart('),ctx,{timeout:1500});
+ctx.ct186RealtimeChange('media_overrides',{type:'INSERT',record:{media_id:783}});
+await Promise.resolve();await Promise.resolve();
+assert.equal(ctx.document.documentElement.dataset.ct293Realtime,'local-only');
+assert.equal(ctx.ct186LocalBlocked.has('movie:123'),true);
+const late={
+ window:{__ctR293Gate:{}},route:()=> 'discover',discoverState:{tab:'foryou'},
+ visible(){throw Error('Legacy TMDB progressive painter reached')},
+ console
+};
+vm.createContext(late);
+vm.runInContext(take('function display(s){','\nasync function verify('),late,{timeout:1500});
+late.display({owner:'outdated'});
 console.log('ANDROID_1_0_51_TEST_OK: old captured r279 painter guarded at original DOM sink, 5-second Watchlist snapback blocked, first render allowed, local Trocar and Watchlist mutation retain seven cards/scroll, new navigation resets, login and Web frozen');
