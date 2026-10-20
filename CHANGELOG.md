@@ -1,3 +1,12 @@
+## Android 1.0.57 — r299 (2026-10-20)
+
+- **Causa identificada da tremedeira:** módulo legado r292 mantinha seis chamadas tardias a `reconcile()` depois de cada Trocar, Assistido, Watchlist e conclusão de consulta (0, 100, 350, 850, 1700 e 3200 ms), concorrendo com o controlador autenticado r278. Esse mesmo módulo interferia após pesquisas de Pra Você por meio de outro wrapper de `discoverRows()`.
+- **Conflito de controladores corrigido:** removidos temporizadores, listeners e wrapper assíncrono de r292 que repetiam ações; preservado somente seu bloqueio de repintura de dados antigos. r278 permanece único responsável pelo estado local de cada card.
+- **Mutations menos invasivas:** a proteção estrutural r293 passa a ignorar mudanças internas de botão/pôster/card, reagindo apenas à substituição real de slots ou da raiz de Pra Você. Isso impede ciclos redundantes de restauração enquanto mantém proteção contra renderizadores antigos.
+- **Trocar:** mantém histórico sem repetição da r298, seleciona apenas alternativas válidas e conserva o card atual quando acabarem opções.
+- **Testes:** validação real dos MutationRecords (mudança de botão/pôster não restaura; substituição de slot ou raiz restaura), proibição de listeners e timers tardios, sintaxe embarcada, compilação e assinatura APK oficial e TESTE57.
+- **Escopo:** exclusivo Android; Web, banco, Home, Perfil, F1 e WWE sem mudanças. Versão Android 1.0.57/r299/code 10099, raiz 0.3.87.
+
 ## Android 1.0.56 — r298 (2026-10-20)
 
 - **Escopo exclusivo do APK Android:** corrigidas a tremedeira intermitente e as recomendações repetidas ao usar Trocar em Descobrir > Pra Você. Código Web, Supabase e Home intocados.
