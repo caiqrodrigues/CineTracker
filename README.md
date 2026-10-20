@@ -1,3 +1,7 @@
+## Android 1.0.57 / r299 — Pra Você com um controlador de ações
+
+Elimina a sobreposição entre o antigo reconciliador r292 (seis repinturas tardias por toque e callbacks de consulta) e o controle local autenticado r278; o protetor r293 observa apenas alterações estruturais dos sete slots, sem responder a cada mutação de botão ou pôster. Mantém os filtros v525, o histórico de Trocar da r298 e o carregamento da r297. APK TESTE57 independente, sem alterar a Web ou o Supabase.
+
 ## Android 1.0.56 / r298 — Pra Você sem tremedeira ou repetição
 
 - Trocar utiliza apenas candidatos ainda não exibidos no slot, inclui a exclusão de cards de outros slots e mantém o card se não houver outra indicação elegível.
