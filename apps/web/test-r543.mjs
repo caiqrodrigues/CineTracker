@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const [js,html,release,runtime]=await Promise.all([
- readFile('apps/web/dist/app-v543.js','utf8'),
- readFile('apps/web/dist/index.html','utf8'),
- readFile('apps/web/dist/release.json','utf8'),
- readFile('apps/web/runtime-r542-wwe-episodes.js','utf8')
+ readFile('dist/app-v543.js','utf8'),
+ readFile('dist/index.html','utf8'),
+ readFile('dist/release.json','utf8'),
+ readFile('runtime-r542-wwe-episodes.js','utf8')
 ]);
 new Function(js);new Function(runtime);
 assert.ok(js.includes("const REVISION='r543-official-0.3.70'"),'new Web version missing');
