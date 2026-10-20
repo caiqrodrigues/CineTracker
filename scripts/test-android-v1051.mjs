@@ -18,6 +18,7 @@ for(const x of [
  'window.__ctR293Gate?.shouldBlockPaint?.(rows)',
  'window.__ctR293Gate?.afterPaint?.(rows,h)',
  "window.__ctR293Gate?.beforeRoute?.()",
+ "window.__ctR293Gate?.commit?.(data,document.querySelector('[data-discover-content]'))",
  'if(!window.__ctR293Gate?.locked?.())paintDiscover(d)',
  'window.__ctR293Gate.restoreData();return;',
  "window.__ctR293Gate={",
