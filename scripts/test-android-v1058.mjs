@@ -14,7 +14,7 @@ for(const marker of [
  'function ct300SportsRange(p)',
  'function ct300Choice(rows)',
  'return ct300Choice(options);',
- 'return seen.has(latestKey)?[]:[latest]',
+ 'if(isWwe)return fresh&&latest.season>0',
  'function ct297Status(label)',
  'window.__ctR296WweHome',
  'cinetracker_recommendation_filter_v525',
@@ -82,6 +82,11 @@ assert.equal(calls,0,'WWE cannot crawl thousands of historical episodes');
 assert.deepEqual(await queue(4656,new Set(['33:42']),6),[],'Latest watched WWE remains caught up');
 assert.deepEqual((await queue(1549,new Set(['1:13','27:50']),6)).map(x=>x.episode),[51]);
 assert.equal(calls,0,'SmackDown must be resolved directly from latest aired');
+const oldEpisode=shows[4656].last_episode_to_air;
+shows[4656].last_episode_to_air={...oldEpisode,air_date:'2024-01-01'};
+assert.deepEqual(await queue(4656,new Set(['1:13']),6),[],'WWE without new releases must not fall back to historic episode 14');
+assert.equal(calls,0,'WWE historic catalog must not be fetched for catch-up');
+shows[4656].last_episode_to_air=oldEpisode;
 const normal=await queue(5555,new Set(['1:1','3:5']),6);
 assert.deepEqual(normal.map(x=>[x.season,x.episode]),[[3,6]],'Next actual progression takes priority over old gap');
 const fromStart=await queue(5555,new Set(),6);
