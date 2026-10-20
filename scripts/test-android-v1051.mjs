@@ -146,12 +146,12 @@ ctx.ct186RealtimeChange('media_overrides',{type:'INSERT',record:{media_id:783}})
 await Promise.resolve();await Promise.resolve();
 assert.equal(ctx.document.documentElement.dataset.ct293Realtime,'local-only');
 assert.equal(ctx.ct186LocalBlocked.has('movie:123'),true);
-const late={
+const lateCtx={
  window:{__ctR293Gate:{}},route:()=> 'discover',discoverState:{tab:'foryou'},
  visible(){throw Error('Legacy TMDB progressive painter reached')},
  console
 };
-vm.createContext(late);
-vm.runInContext(take('function display(s){','\nasync function verify('),late,{timeout:1500});
-late.display({owner:'outdated'});
+vm.createContext(lateCtx);
+vm.runInContext(take('function display(s){','\nasync function verify('),lateCtx,{timeout:1500});
+lateCtx.display({owner:'outdated'});
 console.log('ANDROID_1_0_51_TEST_OK: old captured r279 painter guarded at original DOM sink, 5-second Watchlist snapback blocked, first render allowed, local Trocar and Watchlist mutation retain seven cards/scroll, new navigation resets, login and Web frozen');
