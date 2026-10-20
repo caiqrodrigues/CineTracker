@@ -1,3 +1,10 @@
+## Android 1.0.59 / r301 — estabilidade do Pra Você, WWE e Esportes
+
+- Esportes exibe só **Anteriores** e **Próximos**. Os favoritos continuam funcionando dentro dos eventos, sem uma aba própria; Fórmula 1 intacta.
+- Pra Você elimina o reconciliador temporizado r290 (quatro repinturas concorrentes após ações), impede substituição de cards durante Trocar e estende o histórico de indicações já exibidas aos slots de 100% Novos e Indicação do Dia sem tocar na elegibilidade autenticada v525.
+- Raw e SmackDown podem ser restaurados mesmo quando desaparecem antes da primeira captura de DOM: a inclusão do card depende de linha v527 na biblioteca do usuário, lançamento recente e episódio pendente verificado no progresso v4. O cache é invalidado ao marcar assistido; nenhum item é fabricado.
+- Web e banco de dados congelados, APK TESTE59 independente.
+
 ## Android 1.0.58 / r300 — Esportes, indicações e próximo episódio
 
 - Esportes mostra apenas **Anteriores, Próximos e Favoritos**; F1 Hub, favoritos, filtros e marcação de partidas mantidos.
