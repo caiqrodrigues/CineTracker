@@ -1,3 +1,7 @@
+## Android 1.0 / r304 — ajuste exclusivo de Esportes
+
+A versão comercial continua **CineTracker 1.0** (agora `versionCode 10105`). Na tela **Esportes**, as bordas vermelhas foram neutralizadas, os botões **Ver eventos** e **Marcar como assistido** foram padronizados na mesma barra de ações, e a gravação de assistido passou a confirmar a resposta autenticada do banco e a oferecer rollback imediato em erro, sem reload. Os controles e sincronização da Fórmula 1 permanecem idênticos aos anteriores. Não houve mudanças em Descobrir, Home, Perfil, Web ou Supabase. A atualização oficial é distribuída na mesma tag `android-v1.0` com assinatura compatível com o APK 1.0 anterior.
+
 ## CineTracker Android 1.0 — versão oficial
 
 Versão estável oficial do Android: **CineTracker 1.0**, pacote `com.cinetracker.app` (`versionName=1.0`, `versionCode=10104`). O runtime funcional é idêntico ao da Android 1.0.61/r303. APK não depurável compilado em modo release com identidade de assinatura estável. A assinatura do APK anterior 1.0.61 é diferente: pode ser necessário desinstalar a versão antiga para instalar a 1.0, com risco de perda de dados locais. Confirme a sincronização antes de desinstalar. Publicação no GitHub sob tag `android-v1.0`, com APK `CineTracker-Android-1.0.apk`.
