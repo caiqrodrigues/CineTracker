@@ -10,7 +10,7 @@ App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarc
 - versão funcional: **Android 1.0.61/r303**, sem alterações na lógica;
 - preparação: `scripts/prepare-android-v10-official.mjs`;
 - validação: `scripts/test-android-v10-official.mjs` — compara com APK 1.0.61 publicado;
-- build nativo: **release não depurável**, assinatura compatível com as versões oficiais anteriores;
+- build nativo: **release não depurável**, assinatura estável de release; **não compatível com o certificado do APK oficial 1.0.61** (reinstalação pode ser necessária, com risco para dados locais);
 - pipeline: `.github/workflows/release-android-v10-official.yml`;
 - release GitHub: `android-v1.0`;
 - APK: `CineTracker-Android-1.0.apk`.
@@ -19,7 +19,7 @@ App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarc
 
 ## Contrato funcional congelado
 
-O JavaScript da versão 1.0.61/r303 é preservado, exceto identidade e exibição da versão. Mantidos os sete slots de Pra Você com renderizador único, as duas abas de Esportes, a lógica Raw/SmackDown e a sincronização de Fórmula 1. Web e Supabase intocados.
+O JavaScript da versão 1.0.61/r303 é preservado, exceto identidade e exibição da versão. O novo certificado da release 1.0 é diferente do certificado usado no APK 1.0.61. Quem utiliza a instalação oficial anterior deve conferir a sincronização antes de desinstalar para instalar a 1.0. Mantidos os sete slots de Pra Você com renderizador único, as duas abas de Esportes, a lógica Raw/SmackDown e a sincronização de Fórmula 1. Web e Supabase intocados.
 
 ## Android 1.0.42 / r284
 
