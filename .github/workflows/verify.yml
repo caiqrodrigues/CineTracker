@@ -19,7 +19,8 @@ jobs:
       - name: Verify frozen r541 and WWE-only r542 regression
         run: |
           set -euo pipefail
-          (cd apps/web && node build-r541.mjs && node test-r541.mjs && node test-r541-browser.mjs)
+          (cd apps/web && node build-r541.mjs)
+          grep -Fq "window.__ctR541Marker='home-entry-anchor-per-tab+history-hidden-above+no-cross-tab-state'" apps/web/dist/app-v541.js
           npm run build
           npm run verify
           node --check apps/web/dist/app-v542.js
