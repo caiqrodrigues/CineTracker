@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.56
+# CineTracker Android — 1.0.57
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -113,3 +113,7 @@ Carregamento inicial de Descobrir > Pra Você limita os candidatos a 24 novos + 
 ## Android 1.0.56 / r298
 
 Correção estrita de Descobrir > Pra Você: nenhum botão é recriado por mudança de busy; reconcile mantém a escolha montada mesmo com atualização em segundo plano; Trocar jamais recicla títulos do histórico de indicações do mesmo slot. Testes de regressão em `scripts/test-android-v1056.mjs`, workflow `release-android-v1056.yml`, APK TESTE56 com package independente. Web congelada.
+
+## Android 1.0.57 / r299
+
+Corrige conflito entre r292 (seis callbacks agendados depois de cada toque e carregamento) e r278; r292 mantém apenas bloqueio de repintura antiga, sem novo click listener, dados ou agendamentos. O MutationObserver do protetor r293 observa somente substituições estruturais, não cada alteração interna de cartão. Fluxos v525 e swaps sem repetição mantidos. `scripts/prepare-android-v1057.mjs`, `scripts/test-android-v1057.mjs`, workflow `release-android-v1057.yml`, TESTE57 paralelo. Web congelada.
