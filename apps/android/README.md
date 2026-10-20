@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.57
+# CineTracker Android — 1.0.58
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -117,3 +117,7 @@ Correção estrita de Descobrir > Pra Você: nenhum botão é recriado por mudan
 ## Android 1.0.57 / r299
 
 Corrige conflito entre r292 (seis callbacks agendados depois de cada toque e carregamento) e r278; r292 mantém apenas bloqueio de repintura antiga, sem novo click listener, dados ou agendamentos. O MutationObserver do protetor r293 observa somente substituições estruturais, não cada alteração interna de cartão. Fluxos v525 e swaps sem repetição mantidos. `scripts/prepare-android-v1057.mjs`, `scripts/test-android-v1057.mjs`, workflow `release-android-v1057.yml`, TESTE57 paralelo. Web congelada.
+
+## Android 1.0.58 / r300
+
+Esportes: somente abas Anteriores, Próximos e Favoritos; F1 Hub e estatísticas inalterados. Pra Você: seleção inicial e Trocar aleatorizados com ponderação por nota/votos e lista de já apresentados salva na sessão diária. Séries: fila canônica avança após o último episódio visto e WWE Raw/SmackDown usam o último episódio lançado nos 21 dias anteriores sem percorrer históricos antigos. Preparação `scripts/prepare-android-v1058.mjs`, regressões `scripts/test-android-v1058.mjs`, release `release-android-v1058.yml` e TESTE58 instalável separadamente. Web e SQL congelados.
