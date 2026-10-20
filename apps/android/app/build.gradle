@@ -8,10 +8,29 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10103
-        versionName '1.0.61'
+        versionCode 10104
+        versionName '1.0'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
+    }
+
+
+    // The official 1.0 APK must upgrade the installed 1.0.61 APK.
+    // Reuse its existing dedicated signing identity; do not rotate keys.
+    signingConfigs {
+        official {
+            storeFile file(System.getenv('CINETRACKER_OFFICIAL_KEYSTORE') ?: System.getProperty('user.home') + '/.cinetracker/cinetracker.keystore')
+            storePassword System.getenv('CINETRACKER_OFFICIAL_STORE_PASSWORD') ?: 'android'
+            keyAlias System.getenv('CINETRACKER_OFFICIAL_ALIAS') ?: 'androiddebugkey'
+            keyPassword System.getenv('CINETRACKER_OFFICIAL_KEY_PASSWORD') ?: 'android'
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.official
+            minifyEnabled false
+            shrinkResources false
+        }
     }
 
     buildFeatures { buildConfig true }
@@ -22,4 +41,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Android 1.0.57/r299: one Pra Voce action owner, no r292 retry timers or r293 observer on every button mutation. Web frozen.
+// CineTracker Android 1.0 official: same r303 features as 1.0.61; signed release APK compatible with installed official application.
