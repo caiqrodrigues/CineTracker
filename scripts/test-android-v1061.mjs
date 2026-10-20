@@ -31,6 +31,8 @@ assert.ok(!operation.includes('picked.delete(key);\n reconcile();'),
  'Mark-seen still redraws all seven slots');
 assert.ok(!operation.includes('busy.delete(key);\n  schedule();'),
  'Mutation completion must not rebuild seven slots');
+assert.ok(r278.includes('window.__ctR303SinglePaint?.data?.()||window.__ctR293Gate?.data?.()'),
+ 'Action owner must use pinned audited pool instead of global overwritten by old version');
 assert.ok(r278.includes("if(root===paintedRoot&&paintedAccount===currentUser&&root?.querySelectorAll('[data-ct241-slot-key]').length===7)return;"),
  'Passive callbacks can still rotate the daily and fresh cards');
 assert.ok(r278.includes("if(root.querySelectorAll('[data-ct241-slot-key]').length===7){paintedRoot=root;paintedAccount=currentUser}"),
@@ -85,13 +87,16 @@ api.paint(verified);
 assert.equal(firstPaints,1,'Canonical data must paint exactly once');
 assert.equal(actions,1,'Seven action slots must be attached synchronously');
 assert.equal(commits,1,'DOM protection is committed once');
+assert.equal(api.api.data(),verified,'The authenticated view must pin its own candidate data');
+assert.ok(js.includes('const account=uid(),data=window.__ctR303SinglePaint?.data?.()||ct186ForYouData'),
+ 'Refill must use the same pool as the clicked slot, not a stale network response');
 api.paint({...verified});
 api.paint({});
 api.paint(verified);
 assert.equal(firstPaints,1,'Network/background callbacks must NEVER repaint selected cards');
 assert.equal(actions,1,'Background callbacks must not choose another title');
 assert.equal(oldCalls,0,'No legacy painter may run for Pra Voce');
-page='home';api.paint({});assert.equal(oldCalls,1,'Other pages retain original painters');
+page='home';assert.equal(api.api.data(),null,'Pinned pool must not leak outside Discover');api.paint({});assert.equal(oldCalls,1,'Other pages retain original painters');
 page='discover';liveRoot=root();api.paint(verified);
 assert.equal(firstPaints,2,'A newly mounted view should render normally');
 assert.equal(commits,2);
