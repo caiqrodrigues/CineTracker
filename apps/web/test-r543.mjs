@@ -25,9 +25,10 @@ for(const bad of ['window.location.reload(', 'router.refresh(', 'while(true)'])
 // Execute the exact injected bridge source. Its new Edge method must call
 // the existing authenticated POST helper without copying or exposing a JWT.
 const start=js.indexOf('window.__ctCoreR471=Object.freeze({');
-const end=js.indexOf('});',start);
-assert.ok(start>0&&end>start);
-const fragment=js.slice(start,end+3);
+assert.ok(start>0,'Core bridge not found in app bundle');
+const method='edge:(name,body={},timeout=18000)=>edge(name,body,timeout),';
+assert.ok(js.slice(start,start+2600).includes(method),'Authenticated Edge bridge not in the real r471 closure');
+const fragment='window.__ctCoreR471=Object.freeze({route:()=>route(),authReady:()=>!!session?.access_token,'+method+'});';
 const calls=[];
 const sandbox={
  window:{},
