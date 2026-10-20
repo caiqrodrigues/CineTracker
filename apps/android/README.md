@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.55
+# CineTracker Android — 1.0.56
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -109,3 +109,7 @@ A autenticação de Descobrir/Pra Você valida todos os sete slots e os botões 
 ## Android 1.0.55 / r297
 
 Carregamento inicial de Descobrir > Pra Você limita os candidatos a 24 novos + 16 de Watchlist por tipo antes da auditoria personalizada Supabase v525. Uma Watchlist vazia não provoca nova chamada; uma falha ou conjunto vazio mostra botão de nova tentativa diretamente na aba, sem refazer o app. `scripts/prepare-android-v1055.mjs`, `scripts/test-android-v1055.mjs`, workflow `release-android-v1055.yml` e APK TESTE55 independente. Web congelada.
+
+## Android 1.0.56 / r298
+
+Correção estrita de Descobrir > Pra Você: nenhum botão é recriado por mudança de busy; reconcile mantém a escolha montada mesmo com atualização em segundo plano; Trocar jamais recicla títulos do histórico de indicações do mesmo slot. Testes de regressão em `scripts/test-android-v1056.mjs`, workflow `release-android-v1056.yml`, APK TESTE56 com package independente. Web congelada.
