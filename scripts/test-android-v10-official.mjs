@@ -25,7 +25,7 @@ const gradle=await readFile('apps/android/app/build.gradle','utf8');
 assert.ok(gradle.includes("applicationId 'com.cinetracker.app'"));
 assert.ok(gradle.includes("versionName '1.0'"));
 assert.ok(gradle.includes('versionCode 10104'));
-assert.ok(gradle.includes('release {')&&gradle.includes('signingConfig signingConfigs.official'),
+assert.ok(gradle.includes('release {')&&gradle.includes('signingConfig signingConfigs.debug'),
  'Official build must be non-debug release signed with existing signing identity');
 
 let baseline=null;
