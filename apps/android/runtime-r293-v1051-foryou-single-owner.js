@@ -11,7 +11,11 @@ const findRoot=()=>document.querySelector('[data-discover-content]');
 const slots=root=>root?.querySelectorAll?.('[data-ct241-slot-key]')?.length||0;
 const actions=root=>root?.querySelectorAll?.('[data-ct277-action="swap"]')?.length||0;
 let locked=false,account='',nav=-1,root=null,nodes=[],data=null,observer=null,raf=0,restoreCount=0,paintBlockCount=0,routeBlockCount=0;
-let pending=null,watchBusy=new Set();
+function reset(){
+ observer?.disconnect();observer=null;locked=false;root=null;nodes=[];data=null;account='';nav=-1;
+ if(raf){cancelAnimationFrame(raf);raf=0}
+}
+
 function same(){return active()&&uid()===account&&locked&&root?.isConnected}
 function restoreData(){
  if(!same()||!canonical(data))return;
@@ -55,9 +59,13 @@ function observe(){
 function commit(value,target){
  if(!active()||!canonical(value)||!target?.isConnected||slots(target)<5)return false;
  // r278 installs its real action bars in the next paint frame.
- const commitAt=()=>{
+ const commitAt=(attempt=0)=>{
   if(!active()||!target.isConnected)return;
-  if(actions(target)<5){requestAnimationFrame(()=>{if(actions(target)>=5)commitAt()});return}
+  if(actions(target)<5){
+   if(attempt<10)requestAnimationFrame(()=>commitAt(attempt+1));
+   else document.documentElement.dataset.ct293CommitError='Missing actionable seven slots after 10 frames';
+   return;
+  }
   if(locked&&same())return;
   locked=true;account=uid();nav=navSeq;data=value;root=target;
   nodes=Array.from(target.childNodes);
@@ -82,11 +90,13 @@ function beforeRoute(){
  document.documentElement.dataset.ct293BlockedRouteRenders=String(routeBlockCount);
  return true;
 }
-function afterPaint(value,target){if(!locked)commit(value,target)}
+function afterPaint(value,target){
+ if(locked&&(!same()||root!==target))reset();
+ if(!locked)commit(value,target);
+}
 function clearIfLeaving(){
  if(active()||!locked)return;
- observer?.disconnect();observer=null;locked=false;root=null;nodes=[];data=null;account='';nav=-1;
- if(raf){cancelAnimationFrame(raf);raf=0}
+ reset();
 }
 document.addEventListener('click',event=>{
  if(!active())return;
