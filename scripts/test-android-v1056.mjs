@@ -67,7 +67,7 @@ const bar={
  querySelectorAll:()=>buttons,
  set innerHTML(value){writes++;this.content=value}
 };
-const card={querySelector:()=>null,appendChild(){}};
+const card={querySelector:selector=>selector==='.ct277-actions'?bar:null,appendChild(){}};
 const slot={
  querySelector(selector){return selector==='.discover-card'?card:selector==='.ct277-actions'?bar:null},
  querySelectorAll(){return[]}
