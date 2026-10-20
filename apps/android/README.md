@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.59
+# CineTracker Android — 1.0.60
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -125,3 +125,7 @@ Esportes: somente abas Anteriores, Próximos e Favoritos; F1 Hub e estatísticas
 ## Android 1.0.59 / r301
 
 Esportes: apenas Anteriores e Próximos (remoção somente da aba Favoritos, sem alterar marcação). Pra Você: remove 4 timers de reconciliação r290 remanescentes, mantém o card enquanto Trocar está ocupado, estende memória diária de escolhas entre os slots novos. Raw/SmackDown: reidrata a Home por v527 + estado assistido v4 se a linha nem apareceu no primeiro render, mantém cache autorizado e invalida ao assistir. Não altera Web, SQL, outros esportes ou Fórmula 1. Scripts `scripts/prepare-android-v1059.mjs`, `scripts/test-android-v1059.mjs` e workflow `release-android-v1059.yml`. TESTE59 paralelo.
+
+## Android 1.0.60 / r302
+
+Escopo: somente Descobrir > Pra Você. Elimina callbacks redundantes dos módulos r284, r288 e r293 que disparavam re-renderizações após a escolha do usuário; mantém r278 como controlador de ações e a proteção estrutural dos sete slots do r293. Scripts: `scripts/prepare-android-v1060.mjs`, `scripts/test-android-v1060.mjs`, `.github/workflows/release-android-v1060.yml`. Variante TESTE60 instalável em paralelo. Web, SQL, regras, esportes, F1 e WWE preservados.
