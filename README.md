@@ -1,3 +1,11 @@
+## Android 1.0.53 / r295 — estabilização final do Pra Você e WWE
+
+- **Descobrir > Pra Você:** identificada uma fonte residual de versões antigas: renderizações assíncronas substituíam o conteúdo interno dos slots da Watchlist e escapavam da proteção de página. Os sete slots passam a manter o último elemento autenticado com botões válidos. Um Trocar bem-sucedido torna-se o novo estado estável; uma resposta antiga posterior não o desfaz.
+- **Watchlist e Assistido:** mantida atualização otimista de um único card e gravação autenticada, sem recarregar a página inteira.
+- **Home Séries — Raw e SmackDown:** cards efetivamente visíveis permanecem no lugar durante re-renderizações de Home assíncronas. A recuperação é temporária (três minutos), sem criação de episódios fictícios nem mudanças no banco.
+- **Escopo:** alterações exclusivamente Android. Web e camada Android nativa não alteradas; Esportes, Perfil, NFL, UFC e Fórmula 1 preservados.
+- **Release:** Android 1.0.53 / r295 / versionCode 10095, teste paralelo TESTE53; versão raiz 0.3.83.
+
 ## CineTracker Android 1.0.52 / r294 + Web 0.3.69 / r542 — 20/10/2026
 
 - **Descobrir > Pra Você (Android):** corrigido o último bloqueio quando só 3 ou 4 slots têm recomendações elegíveis na Watchlist. O renderizador r293 agora assume a autoridade mesmo com Watchlist parcialmente vazia; o observador só reconcilia se um renderizador antigo realmente substituiu a DOM, evitando ciclos de renderização e retorno às indicações repetidas. **Trocar**, **Assistido** e **Watchlist** permanecem otimistas e locais, sem reload de página.

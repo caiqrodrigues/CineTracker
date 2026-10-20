@@ -1,3 +1,12 @@
+## Android 1.0.53 — r295 (2026-10-20)
+
+- Corrigida a substituição tardia dos slots internos do Descobrir/Pra Você causada pela reidratação de Watchlist legada. A proteção monitora a subárvore do conteúdo autenticado e restaura somente slots substituídos por HTML sem ações r278.
+- Preservação do último título legitimamente selecionado em Trocar, sem sobrescrever outras categorias nem repetir o mesmo renderizador da Watchlist.
+- Watchlist e Visto continuam mutações locais assíncronas, sem renderização de página inteira.
+- WWE Raw e SmackDown: recuperação temporária de cards existentes na Home após chamadas de rede/redesenhos concorrentes, evitando desaparecimentos repentinos; nenhuma criação ou alteração de episódios.
+- Teste automatizado reproduz troca legítima, substituição assíncrona e retenção da escolha mais recente, além da integridade dos módulos.
+- Escopo Android; Web e projeto Android nativo intactos. Versões: 1.0.53/r295/versionCode 10095 e raiz 0.3.83.
+
 ## Web 0.3.70 / r543 — correção da chamada autenticada dos novos episódios da WWE
 
 - **Causa raiz confirmada:** a rotina Web r542 de Raw/SmackDown chamava `window.__ctCoreR471.edge()`, mas a ponte de funções r471 exportava apenas `route` e `rpc`, não `edge`. Logo, a sincronização automática não podia ser iniciada pelo browser.
