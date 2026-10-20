@@ -98,7 +98,7 @@ scoped('/* r176 —','/* r177 —',section=>{
  " const current=show?.last_episode_to_air,air=String(current?.air_date||'').slice(0,10);",
  " const fresh=air&&air<=today&&Date.parse(today+'T12:00:00Z')-Date.parse(air+'T12:00:00Z')<=21*86400000;",
  ' const latest=episode(current),latestKey=ct176EpisodeKey(latest.season,latest.episode);',
- ' if(isWwe&&fresh&&latest.season>0&&latest.episode>0)return seen.has(latestKey)?[]:[latest];',
+ ' if(isWwe)return fresh&&latest.season>0&&latest.episode>0&&!seen.has(latestKey)?[latest]:[];',
  " const last=[...seen].map(k=>String(k).split(':').map(Number)).filter(v=>v.length===2&&v[0]>0&&v[1]>0).sort((a,b)=>b[0]-a[0]||b[1]-a[1])[0]||null;",
  ' const seasons=(show?.seasons||[]).filter(s=>Number(s.season_number)>0).sort((a,b)=>Number(a.season_number)-Number(b.season_number));',
  ' const out=[];',
