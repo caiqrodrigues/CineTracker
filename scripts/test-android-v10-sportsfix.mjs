@@ -60,7 +60,7 @@ const missingBtn=button(0);
 const all=[watchedBtn,f1Btn,missingBtn];
 function update(id,on){for(const x of events)if(x.id===id)x.is_watched=on;const found=all.filter(x=>Number(x.dataset.sportWatched)===id);for(const x of found){x.dataset.on=on?'1':'0';x.dataset.watched=on?'1':'0'}return found}
 const listeners=new Function('sportsClick271','buttonSelector271','watchState271','sportsLocks271','route','session','setWatch271','rpc','sportsCache','ct163Write','profileCacheObj','localStorage','toast','window',
- newHandler+"return sportsClick304;")(
+ "let profileCache=null;"+newHandler+"return sportsClick304;")(
  ()=>{originalF1++},'[data-sport-watch],[data-sport-watched],[data-ct263-sport-watch]',
  id=>id===710?row:id===711?{id:711,sport_slug:'formula_1',is_watched:false}:null,
  locks,()=> 'sports',userSession,update, (...args)=>{calls.push(args);return Promise.resolve(response)},
