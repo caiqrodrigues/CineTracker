@@ -35,8 +35,7 @@ normalized=normalized.replace("window.__ctWebBuild='1.0';window.__ctOfficialVers
 normalized=normalized.replace("const REVISION='r303-android-official-1.0';","const REVISION='r303-android-official-1.0.61';");
 if(normalized!==original)throw Error('Official promotion would modify functional JavaScript');
 html=html.slice(0,a)+'<script data-ct-android="r303-android-stable-js">'+js+'</script>'+html.slice(b+'</script>'.length);
-html=html.replaceAll('ct-android-v1061','ct-android-v10-official')
- .replaceAll('content="1.0.61"','content="1.0"');
+html=html.replaceAll('content="1.0.61"','content="1.0"');
 if(!html.includes('name="ct-official-version" content="1.0"'))throw Error('Android 1.0 branding missing');
 await writeFile(file,html,'utf8');
 console.log('CINETRACKER_ANDROID_1_0_STABLE_READY: r303 functional JS identical to 1.0.61; stable identity 1.0; versionCode 10104; no Web, DB or feature change.');
