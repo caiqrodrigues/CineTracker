@@ -127,7 +127,17 @@ Deno.serve(async(req:Request)=>{
     output.push({tmdb_id:target.tmdbId,ok:true,
      last_episode_to_air:finalLast,episodes_discovered:recent.length});
    }catch(e){
-    output.push({tmdb_id:target.tmdbId,ok:false,error:String(e).slice(0,130)});
+    // Preserve the existing WWE.com-verified catalog if TMDB is late.
+    const {data:cached,error:cacheError}=await admin.from("episode_catalog_v336")
+     .select("season_number,episode_number,air_date,name_local")
+     .eq("show_tmdb_id",target.tmdbId).lte("air_date",today)
+     .order("air_date",{ascending:false}).order("episode_number",{ascending:false}).limit(1);
+    const last=cacheError?null:preferredLatest(rows(cached),today);
+    output.push({tmdb_id:target.tmdbId,ok:!!last,cached:true,
+     last_episode_to_air:last?{
+      season_number:last.season_number,episode_number:last.episode_number,
+      air_date:last.air_date,name:last.name_local}:null,
+     error:String(e).slice(0,130)});
    }
   }
   return respond({ok:output.some(x=>x.ok),checked:true,shows:output,
