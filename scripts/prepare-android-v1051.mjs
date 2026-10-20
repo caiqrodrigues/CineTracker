@@ -71,6 +71,13 @@ replace(
  "window.addEventListener('cinetracker:data-changed',()=>{\n if(isForYou()&&window.__ctR289DiscoverV1047",
  "window.addEventListener('cinetracker:data-changed',()=>{\n if(window.__ctR293Gate&&isForYou()){historyStamp=0;return;}\n if(isForYou()&&window.__ctR289DiscoverV1047",
  'r284 prevent global recommendation invalidation');
+// The final r284 renderer uses r180's DOM sink and normally bypasses the
+// original r158 paintDiscover. Commit its verified seven-slot DOM DIRECTLY
+// after first r284 paint so the final gate is genuinely active on device.
+replace(
+ "ct291DrawNav=navSeq;ct291DrawOwner=owner();ct291DrawData=data;\n paintDiscover(data);\n document.documentElement.dataset.ct284ForYou",
+ "ct291DrawNav=navSeq;ct291DrawOwner=owner();ct291DrawData=data;\n paintDiscover(data);\n window.__ctR293Gate?.commit?.(data,document.querySelector('[data-discover-content]'));\n document.documentElement.dataset.ct284ForYou",
+ 'r284 commit final v525 DOM owner independent of r158');
 const patch=(await readFile(resolve(root,'apps/android/runtime-r293-v1051-foryou-single-owner.js'),'utf8')).trimEnd();
 new Function(patch);
 for(const forbidden of ['window.location.reload(', 'router.refresh(', 'while(true)'])
