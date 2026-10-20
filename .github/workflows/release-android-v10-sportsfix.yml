@@ -1,14 +1,5 @@
 name: CineTracker Android 1.0 — Sports r304 Patch
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/prepare-android-v10-sportsfix.mjs'
-      - 'scripts/test-android-v10-sportsfix.mjs'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-sportsfix.yml'
-      - 'CHANGELOG.md'
-      - 'VERSIONS.md'
   workflow_dispatch:
 
 permissions:
