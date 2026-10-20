@@ -1,4 +1,4 @@
-name: Verify Web 0.3.69 r542
+name: Verify Web 0.3.70 r543
 on:
   push:
     branches: [main]
@@ -9,26 +9,27 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  web_r542:
+  web_r543:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 24 }
-      - name: Verify frozen r541 and WWE-only r542 regression
+      - name: Verify frozen r541 and WWE-only r543 regression
         run: |
           set -euo pipefail
           (cd apps/web && node build-r541.mjs)
           grep -Fq "window.__ctR541Marker='home-entry-anchor-per-tab+history-hidden-above+no-cross-tab-state'" apps/web/dist/app-v541.js
           npm run build
           npm run verify
-          node --check apps/web/dist/app-v542.js
-          grep -Fq "window.__ctR541Marker='home-entry-anchor-per-tab+history-hidden-above+no-cross-tab-state'" apps/web/dist/app-v542.js
-          grep -Fq 'window.__ctR541HomeAnchorState' apps/web/dist/app-v542.js
-          grep -Fq 'ct537-movie-list' apps/web/dist/app-v542.js
-          grep -Fq 'cinetracker_special_series_counts_v540' apps/web/dist/app-v542.js
-          grep -Fq 'ct-wwe-tv-refresh' apps/web/dist/app-v542.js
+          node --check apps/web/dist/app-v543.js
+          grep -Fq "window.__ctR541Marker='home-entry-anchor-per-tab+history-hidden-above+no-cross-tab-state'" apps/web/dist/app-v543.js
+          grep -Fq 'window.__ctR541HomeAnchorState' apps/web/dist/app-v543.js
+          grep -Fq 'ct537-movie-list' apps/web/dist/app-v543.js
+          grep -Fq 'cinetracker_special_series_counts_v540' apps/web/dist/app-v543.js
+          grep -Fq 'ct-wwe-tv-refresh' apps/web/dist/app-v543.js
+          grep -Fq 'edge:(name,body={},timeout=18000)=>edge(name,body,timeout),' apps/web/dist/app-v543.js
   android:
     runs-on: ubuntu-latest
     steps:
@@ -38,18 +39,18 @@ jobs:
           grep -Fq 'versionCode 10094' apps/android/app/build.gradle
   production_smoke:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web_r542, android]
+    needs: [web_r543, android]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
-      - name: Wait for r542 WWE-only production
+      - name: Wait for r543 WWE-only production
         run: |
           set -euo pipefail
           for i in $(seq 1 240); do
             CT="$(date +%s%N)"
             BODY="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/release.json?ct=$CT" || true)"
-            if grep -Fq '"version": "0.3.69"' <<<"$BODY" && grep -Fq '"revision": "r542-official-0.3.69"' <<<"$BODY"; then
-              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v542.js?ct=$CT" || true)"
+            if grep -Fq '"version": "0.3.70"' <<<"$BODY" && grep -Fq '"revision": "r542-official-0.3.70"' <<<"$BODY"; then
+              JS="$(curl -fsS -H 'Cache-Control: no-cache' "https://mycinetracker.vercel.app/app-v543.js?ct=$CT" || true)"
               if grep -Fq "window.__ctR541Marker='home-entry-anchor-per-tab+history-hidden-above+no-cross-tab-state'" <<<"$JS"; then exit 0; fi
             fi
             [ "$i" -eq 240 ] && exit 1

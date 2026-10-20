@@ -1,3 +1,12 @@
+## Web 0.3.70 / r543 — correção da chamada autenticada dos novos episódios da WWE
+
+- **Causa raiz confirmada:** a rotina Web r542 de Raw/SmackDown chamava `window.__ctCoreR471.edge()`, mas a ponte de funções r471 exportava apenas `route` e `rpc`, não `edge`. Logo, a sincronização automática não podia ser iniciada pelo browser.
+- **Correção estrita:** expor o `edge()` autenticado já existente na ponte de funções, preservando a sessão e sem introduzir chaves ou chamadas não autenticadas. Raw/SmackDown continuam atualizando somente seus cards da Home com o último episódio exibido, sem recarregar a página inteira.
+- **Banco compartilhado:** episódios confirmados SmackDown T28E42 (16/10/2026) e Raw T34E42 (19/10/2026) já estão no catálogo e no campo `last_episode_to_air`. O patch faz a Home conseguir solicitar a atualização na Edge Function `ct-wwe-tv-refresh` e aplicar a novidade localmente.
+- **Android:** r294 / 1.0.52 mantém dono exclusivo dos sete slots autenticados de Descobrir > Pra Você; Watchlist otimista escreve apenas o item selecionado, sem refetch global. Atualização WWE via a mesma Edge Function.
+- **Escopo:** Web r541 continua congelada visualmente; somente a ponte autenticada da rotina Raw/SmackDown é alterada. Não mexer em F1, UFC, Perfil, Descobrir Web nem outras séries.
+- **Validação:** teste executa a chamada do `edge` exportado e verifica os metadados r543, a ausência de reload, versão e preservação do marcador r541.
+
 ## Web 1.0.252 / r462
 - F1 usa `cinetracker_f1_watch_sync_v462` como writer único entre Série, Esportes e F1 Hub.
 - O overload esportivo por `event_id` agora sincroniza a Série e o F1 Hub; Série e F1 Hub sincronizam Esportes.
