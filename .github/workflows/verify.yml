@@ -19,9 +19,7 @@ jobs:
       - name: Verify frozen r541 and WWE-only r542 regression
         run: |
           set -euo pipefail
-          node apps/web/build-r541.mjs
-          node apps/web/test-r541.mjs
-          node apps/web/test-r541-browser.mjs
+          (cd apps/web && node build-r541.mjs && node test-r541.mjs && node test-r541-browser.mjs)
           npm run build
           npm run verify
           node --check apps/web/dist/app-v542.js
