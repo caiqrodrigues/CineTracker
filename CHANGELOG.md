@@ -1,8 +1,8 @@
 ## Android 1.0 — lançamento oficial (2026-10-20)
 
-- **CineTracker 1.0 oficial:** versão Android 1.0 (`versionName=1.0`, `versionCode=10104`), atualização direta do app oficial `com.cinetracker.app`. Este é o runtime mais recente 1.0.61/r303, diferente do lançamento histórico 1.0.0 (`versionCode=10042`).
+- **CineTracker 1.0 oficial:** versão Android 1.0 (`versionName=1.0`, `versionCode=10104`), mantendo o identificador do app oficial `com.cinetracker.app`. Este é o runtime mais recente 1.0.61/r303, diferente do lançamento histórico 1.0.0 (`versionCode=10042`).
 - **Congelamento funcional:** mesmo JavaScript embarcado na versão 1.0.61/r303, com mudanças somente nos metadados de versão. Teste compara o novo bundle com o APK 1.0.61 já publicado.
-- **Pacote de produção:** APK release (`assembleRelease`) não depurável, assinado com a mesma identidade criptográfica das versões oficiais recentes para atualizar sem perder dados. Pipeline verifica `applicationId`, versão, assinatura e certificado compatível.
+- **Pacote de produção:** APK release (`assembleRelease`) não depurável, assinado com uma identidade de release estável. A verificação detectou assinatura diferente da versão 1.0.61; a instalação sobre o APK anterior não é possível sem a chave original. É necessária instalação limpa para esses usuários, com possível perda de dados locais; verificar sincronização antes de desinstalar. O pipeline publica diagnóstico de compatibilidade e não oculta a diferença.
 - **GitHub oficial:** tag `android-v1.0`, APK `CineTracker-Android-1.0.apk`, SHA-256 e notas. Sem APK TESTE nesta entrega.
 - **Escopo:** nenhuma mudança de lógica em Descobrir, Home, Raw/SmackDown, Esportes, F1, Perfil, Web ou Supabase; versão raiz 0.3.92.
 
