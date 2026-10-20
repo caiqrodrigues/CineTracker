@@ -1,3 +1,7 @@
+## Android 1.0.60 / r302 — controlador único para Pra Você
+
+O Android mantém o filtro autenticado de indicações e o controlador local r278. Correção de tremedeira por concorrência de renderizadores: retiradas microtasks de `reconcile()` do r284, repinturas agendadas por r288, callbacks de clique/evento e reconciliação global do r293. A proteção estrutural r293 continua restaurando a grade de sete slots apenas quando um renderizador legado realmente altera o DOM, sem reescolher títulos. Web, banco, WWE, esportes, F1 e regras de recomendação não foram modificados. A versão TESTE60 é independente.
+
 ## Android 1.0.59 / r301 — estabilidade do Pra Você, WWE e Esportes
 
 - Esportes exibe só **Anteriores** e **Próximos**. Os favoritos continuam funcionando dentro dos eventos, sem uma aba própria; Fórmula 1 intacta.
