@@ -1,3 +1,13 @@
+## Android 1.0 / r304 — correção exclusiva de Esportes (2026-10-20)
+
+- **Versão permanece 1.0:** versionName `1.0` mantida; `versionCode` incrementado de 10104 para 10105 para possibilitar atualização do APK 1.0 oficial, sem alterar pacote ou assinatura.
+- **Visual de Esportes:** removido o contorno vermelho/rosa das partidas exibidas como ao vivo, substituído por borda azul neutra; o status real do jogo e a lógica de dados não foram modificados.
+- **Botões consistentes:** Ver eventos e Marcar como assistido ocupam a mesma barra, com largura de 50% cada e altura fixa de 42px; os filtros Anteriores/Próximos mantêm tamanhos simétricos. Evitada a repetição de botões de assistido que renderizadores antigos deixavam em várias linhas.
+- **Assistido:** consolidado um único listener de clique que chama a função autenticada `cinetracker_sport_mark_watched_v1`, valida o `event_id` e o booleano `is_watched` confirmados pelo servidor, atualiza o card otimisticamente, registra o histórico em cache e reverte em caso de falha, com mensagem explicativa. Bloqueia toques rápidos duplicados e não reconstrói toda a tela.
+- **Fórmula 1 preservada:** eventos da categoria `formula_1` continuam exatamente no manipulador anterior; F1 Hub, banco, fórmula de tempo e estatísticas sem alteração.
+- **Escopo:** apenas Esportes no runtime Android. Descobrir, Home, Raw/SmackDown, Perfil, Web e Supabase intocados. API esportiva existente reaproveitada, sem SQL novo.
+- **Validação:** testes de marcação, desmarcação, idempotência de cliques, erros de ID, F1 intocada, bordas e dimensões; build não depurável e validação de certificado compatível com APK 1.0 anterior.
+
 ## Android 1.0 — lançamento oficial (2026-10-20)
 
 - **CineTracker 1.0 oficial:** versão Android 1.0 (`versionName=1.0`, `versionCode=10104`), mantendo o identificador do app oficial `com.cinetracker.app`. Este é o runtime mais recente 1.0.61/r303, diferente do lançamento histórico 1.0.0 (`versionCode=10042`).
