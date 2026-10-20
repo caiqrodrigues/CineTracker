@@ -1,3 +1,13 @@
+## Android 1.0 / r305 — botão único Esportes e Histórico Filmes sempre atual (2026-10-20)
+
+- **Nome comercial mantido:** Android **1.0**, `applicationId com.cinetracker.app`, `versionCode 10106` para atualizar a 1.0/r304 sem desinstalar; certificado e assinatura de produção preservados.
+- **Esportes:** removido somente o botão `Ver eventos` que ficava lado a lado com `Marcar/Desmarcar assistido`. A ação Assistido ocupa agora 100% da barra. Nenhuma mudança de regra, RPC, favoritos, F1 Hub, marcações, contadores ou telas de detalhes.
+- **Home → Filmes → Histórico:** consulta autenticada ao RPC existente `cinetracker_home_movie_history_v542` (somente os 200 mais recentes, sem baixar novamente toda a página), ao abrir a aba, voltar ao primeiro plano e sempre que uma marcação de filme emitir o evento de dados. Enquanto a aba estiver aberta, revalidação pontual a cada dois minutos; chamadas próximas em menos de 20 segundos são coalescidas e uma consulta pendente não duplica RPC.
+- **Fim do histórico preso em Pokémon:** os últimos filmes verificados passam a ter prioridade sobre resultados antigos da cadeia r271/r273/r283/r284, que ainda pode terminar depois e redesenhar dados obsoletos. A grade de histórico aceita as novas entradas sem perder as anteriores, ordenando os filmes assistidos por data, com os mais novos embaixo. Se nenhuma marcação mais recente existir no servidor, não fabrica entradas de hoje.
+- **Resiliência:** erro/timeout mantém o histórico já verificado, sem tela preta, sem recarregar Home; troca de usuário zera apenas o cache desse histórico e impede que respostas anteriores vazem entre contas.
+- **Regressão:** tests exercitam update tardio, nova marcação no mesmo dia, visibilidade, erro de rede, troca de conta, limite de escopo sem refetch da Home, preservação do botão Assistido e regras de F1.
+- **Escopo congelado:** nenhuma alteração de Web, banco, Supabase, Descobrir, Perfil, WWE ou funcionamento de Esportes. Alterações restritas à apresentação de Esportes e à sincronização de Histórico de Filmes no APK Android.
+
 ## Android 1.0 / r304 — correção exclusiva de Esportes (2026-10-20)
 
 - **Versão permanece 1.0:** versionName `1.0` mantida; `versionCode` incrementado de 10104 para 10105 para possibilitar atualização do APK 1.0 oficial, sem alterar pacote ou assinatura.
