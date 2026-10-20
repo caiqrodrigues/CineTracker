@@ -1,3 +1,7 @@
+## Android 1.0.61 / r303 — Pra Você sem múltiplos renderizadores
+
+A versão Android passou a renderizar a grade de Descobrir > Pra Você diretamente uma única vez por montagem autenticada; callbacks tardios do antigo encadeamento de `paintDiscover` não podem mais trocar Indicação do Dia e 100% Novos automaticamente. Os sete slots recebem seus botões antes da primeira apresentação, e Visto/Trocar/Watchlist atualizam somente o card envolvido. Regras personalizadas do Supabase v525 e limites da recomendação permanecem intactos; nenhuma modificação em Web, Home, Esportes, F1 ou Raw/SmackDown. APK de teste independente.
+
 ## Android 1.0.60 / r302 — controlador único para Pra Você
 
 O Android mantém o filtro autenticado de indicações e o controlador local r278. Correção de tremedeira por concorrência de renderizadores: retiradas microtasks de `reconcile()` do r284, repinturas agendadas por r288, callbacks de clique/evento e reconciliação global do r293. A proteção estrutural r293 continua restaurando a grade de sete slots apenas quando um renderizador legado realmente altera o DOM, sem reescolher títulos. Web, banco, WWE, esportes, F1 e regras de recomendação não foram modificados. A versão TESTE60 é independente.
