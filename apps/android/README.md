@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.54
+# CineTracker Android — 1.0.55
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -105,3 +105,7 @@ Estabilização das recomendações autenticadas sem restaurar a Watchlist antig
 ## Android 1.0.54 / r296
 
 A autenticação de Descobrir/Pra Você valida todos os sete slots e os botões finais antes de bloquear atualizações legadas, aceitando Watchlist vazia por categoria. Raw/SmackDown da Home reutilizam os próprios cards confirmados através de atualizações assíncronas, sem clones de três minutos, com limpeza após marcação de assistido. O APK TESTE54 tem applicationId `com.cinetracker.app.teste54`, independente do aplicativo principal. Web congelada. Validação: `node scripts/prepare-android-v1054.mjs && node scripts/test-android-v1054.mjs`.
+
+## Android 1.0.55 / r297
+
+Carregamento inicial de Descobrir > Pra Você limita os candidatos a 24 novos + 16 de Watchlist por tipo antes da auditoria personalizada Supabase v525. Uma Watchlist vazia não provoca nova chamada; uma falha ou conjunto vazio mostra botão de nova tentativa diretamente na aba, sem refazer o app. `scripts/prepare-android-v1055.mjs`, `scripts/test-android-v1055.mjs`, workflow `release-android-v1055.yml` e APK TESTE55 independente. Web congelada.
