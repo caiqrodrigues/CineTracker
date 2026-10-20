@@ -6,7 +6,7 @@ on:
       - 'scripts/prepare-android-v10-sportsfix.mjs'
       - 'scripts/test-android-v10-sportsfix.mjs'
       - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-official.yml'
+      - '.github/workflows/release-android-v10-sportsfix.yml'
       - 'CHANGELOG.md'
       - 'VERSIONS.md'
   workflow_dispatch:
