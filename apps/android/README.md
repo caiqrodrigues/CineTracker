@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.53
+# CineTracker Android — 1.0.54
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -101,3 +101,7 @@ Descobrir Pra Você com dono exclusivo dos sete slots mesmo em Watchlist parcial
 ## Android 1.0.53 / r295
 
 Estabilização das recomendações autenticadas sem restaurar a Watchlist antiga após Trocar. Alterações reais de cards permanecem locais. Raw e SmackDown visíveis são preservados em redesenhos assíncronos de Home com cache temporário de três minutos. Web não alterada.
+
+## Android 1.0.54 / r296
+
+A autenticação de Descobrir/Pra Você valida todos os sete slots e os botões finais antes de bloquear atualizações legadas, aceitando Watchlist vazia por categoria. Raw/SmackDown da Home reutilizam os próprios cards confirmados através de atualizações assíncronas, sem clones de três minutos, com limpeza após marcação de assistido. O APK TESTE54 tem applicationId `com.cinetracker.app.teste54`, independente do aplicativo principal. Web congelada. Validação: `node scripts/prepare-android-v1054.mjs && node scripts/test-android-v1054.mjs`.
