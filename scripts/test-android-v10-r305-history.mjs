@@ -67,7 +67,7 @@ const run=new Function('window','document','route','startRows','rpc','setInterva
  "let session={access_token:'auth-token',user:{id:'user-a'}},user={id:'user-a'},homeActiveTab158='movies';"+
  "let homeCache={history_movies:[...startRows]},paintHome=()=>{pageDraws.push('home');return true};"+
  module+
- "return{state:()=>({homeCache,session,user}),switchUser(id){session={access_token:'auth-token',user:{id}};user={id}},switchTab(v){homeActiveTab158=v},paintHome:()=>paintHome(),bridge};"
+ "return{state:()=>({homeCache,session,user}),switchUser(id){session={access_token:'auth-token',user:{id}};user={id}},switchTab(v){homeActiveTab158=v},paintHome:()=>paintHome()};"
 );
 const oldDate=Date;
 const app=run(windowMock,documentMock,()=>current,previous,
