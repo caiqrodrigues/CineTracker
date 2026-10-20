@@ -105,7 +105,7 @@ assert.equal(root.childNodes[0].children[0].selected,'swapped-51','DOM not resto
 assert.equal(mock.document.documentElement.dataset.ct293Owner,'authenticated-v525-seven-slots');
 assert.ok(reconciles>0);
 assert.ok(gate.stats().paintBlockCount===2);
-assert.ok(gate.stats().routeBlockCount===2,'Route and shell rebuild both blocked');
+assert.ok(gate.stats().routeBlockCount===3,'Both late route calls and shell rebuild blocked');
 // Returning from another route must allow fresh authenticated recommendations
 // to initialize; keeping an old detached root would break new navigation.
 activeRoute='home';root.isConnected=false;gate.clearIfLeaving();
