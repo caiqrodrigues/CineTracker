@@ -1,3 +1,12 @@
+## Android 1.0.51 / r293 — Descobrir Pra Você sem retorno à versão antiga
+
+- **Causa reproduzida no código:** o auditor r279 e os carregadores antigos r282/r284 mantinham referências do renderizador original de Descobrir. Após consultas assíncronas, essas referências redesenhavam todos os cards por fora das correções de versões posteriores, trazendo de volta títulos repetidos (ex.: #Alive e séries numéricas) e botões da Watchlist divergentes.
+- **Correção na origem:** a própria função `paintDiscover` original (r158) agora valida um único controlador de sete slots autenticados v421/v525 antes de alterar o DOM. Chamadas tardias, mesmo usando uma função anterior capturada, não podem substituir a grade já exibida.
+- **Trocar:** mantém card escolhido, botões e histórico local da seleção sem recriar os sete slots, mesmo quando chegam respostas de auditoria concorrentes. Nova entrada em Descobrir pode montar uma nova seleção.
+- **Watchlist / Visto:** após a gravação, atualização otimista acontece no slot afetado. O `renderDiscover` original não recria o shell da página enquanto a visualização atual continua ativa. Dados de autenticação, Perfil, Home e Esportes permanecem preservados.
+- **Resiliência:** protege contra alteração direta do conteúdo por scripts legados retendo nós existentes, sem clonar listeners nem fazer recarga de página; observação reativa apenas durante a sessão autenticada em Pra Você, com limpeza ao sair da tela e limite de 10 frames na inicialização.
+- **Escopo:** apenas Android; Web 0.3.68/r541 congelada. Sem mudanças no Supabase, Perfil, Home, NFL e F1 Hub. Versão Android 1.0.51/r293, versionCode 10093, TESTE51 independente, versão raiz 0.3.80.
+
 ## Android 1.0.50 / r292 — contadores completos e Pra Você estável
 
 - **Home (UFC, WWE e Fórmula 1):** contador mostra episódios históricos assistidos e total da série, usando `cinetracker_special_series_counts_v540`; deixa de comparar os assistidos históricos com somente 35 eventos de 2026. Totais de referência: UFC 793, WWE 567, Fórmula 1 1.166 GPs.

@@ -1,3 +1,12 @@
+## Android 1.0.51 — r293 (2026-10-19)
+
+- **Descobrir > Pra Você (causa raiz):** identificadas referências antigas a `paintDiscover` no r279 que não passavam pelas proteções mais recentes, concluindo uma auditoria assíncrona cerca de cinco segundos depois e substituindo os sete cards por recomendações repetidas da Watchlist. Adicionada proteção ao próprio renderizador original r158.
+- **Trocar:** preservação dos sete títulos auditados v421/v525 e das seleções locais sob respostas antigas/concorrentes; não reinstancia os botões de Watchlist/Visto/Trocar.
+- **Watchlist e Visto:** impede o `renderDiscover` antigo de recriar a página inteira durante mutações; só o card afetado muda. Protege sete nós DOM originais contra atualizações imperativas legadas, sem `location.reload`, `router.refresh` ou refetch bloqueante.
+- **Isolamento:** controlador instalado antes do bootstrap, sem interferir em Home, Perfil, Esportes, F1 Hub, NFL ou abas diferentes de Descobrir; reset de estado por navegação e troca de usuário.
+- **Testes:** validação de JavaScript/escopo, duas chamadas assíncronas tardias, primeiro render permitido, proteção contra recriação do shell, recuperação de DOM e acesso legítimo em nova navegação. APK assinado e TESTE51 side-by-side.
+- **Web:** 0.3.68/r541 preservada. Android 1.0.51/r293/versionCode 10093, package root 0.3.80.
+
 ## Android 1.0.50 — r292 (2026-10-19)
 
 - Corrigidos os contadores históricos de UFC (793), WWE (567) e Fórmula 1 (1.166) diretamente a partir do RPC de totais históricos v540. O card não mistura mais visualizações anuais com totais de outras temporadas.

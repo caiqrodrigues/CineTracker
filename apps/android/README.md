@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.50
+# CineTracker Android — 1.0.51
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -89,3 +89,7 @@ Pra Você mantém a seleção auditada após Trocar durante a mesma navegação;
 ## Android 1.0.50 / r292
 
 Home contadores históricos v540 de UFC/WWE/F1, NFL Super Bowl 120 episódios, antiga Fórmula 1 sem capa oculta apenas na Home e sete recomendações autenticadas estáveis durante o Trocar. TESTE50 package independente. Web r541 congelada.
+
+## Android 1.0.51 / r293
+
+Descobrir > Pra Você: proteção final no renderizador original r158 contra auditorias antigas r279 e respostas assíncronas r282/r284 que substituíam todos os sete cards por itens antigos. Trocar, Visto e Watchlist preservam ações localmente sem refazer a página; TESTE51 independente. Web r541 congelada.
