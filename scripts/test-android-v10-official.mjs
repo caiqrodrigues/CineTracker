@@ -41,6 +41,9 @@ if(baseline){
  normalized=normalized.replace("window.__ctWebBuild='1.0';window.__ctOfficialVersion='1.0';window.__ctAndroidOfficialVersion='1.0';window.__ctAndroidOfficialCode=10104;",
  "window.__ctWebBuild='1.0.61';window.__ctOfficialVersion='1.0.61';window.__ctAndroidOfficialVersion='1.0.61';window.__ctAndroidOfficialCode=10103;");
  normalized=normalized.replace("const REVISION='r303-android-official-1.0';","const REVISION='r303-android-official-1.0.61';");
- assert.equal(normalized,old,'The official 1.0 must NOT modify 1.0.61 JavaScript behavior');
+ if(normalized!==old){
+  let first=0;while(first<Math.min(normalized.length,old.length)&&normalized[first]===old[first])first++;
+  throw Error('Official promotion functional compare failed at offset '+first+' (official len '+normalized.length+', published len '+old.length+'). NEW='+JSON.stringify(normalized.slice(Math.max(0,first-110),first+190))+' OLD='+JSON.stringify(old.slice(Math.max(0,first-110),first+190)));
+ }
 }
 console.log('CINETRACKER_ANDROID_1_0_OFFICIAL_TEST_OK: release signing, unique existing package, upgrade-compatible versionCode, all 1.0.61 capabilities retained, identical functional runtime'+(baseline?' versus published APK':'')+'.');
