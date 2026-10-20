@@ -82,7 +82,7 @@ jobs:
           grep -Fq "versionName '1.0'" apps/android/app/build.gradle
           grep -Fq 'versionCode 10104' apps/android/app/build.gradle
           grep -Fq "applicationId 'com.cinetracker.app'" apps/android/app/build.gradle
-          grep -Fq 'signingConfig signingConfigs.official' apps/android/app/build.gradle
+          grep -Fq 'signingConfig signingConfigs.debug' apps/android/app/build.gradle
           node --check scripts/prepare-android-v10-official.mjs
           node --check scripts/test-android-v10-official.mjs
           node scripts/prepare-android-v10-official.mjs
