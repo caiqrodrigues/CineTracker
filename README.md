@@ -1,3 +1,9 @@
+## CineTracker Android 1.0 — versão oficial
+
+Versão estável oficial do Android: **CineTracker 1.0**, pacote `com.cinetracker.app` (`versionName=1.0`, `versionCode=10104`). O runtime funcional é idêntico ao da Android 1.0.61/r303. APK não depurável compilado em modo release com a identidade de assinatura usada nas versões oficiais, para atualização da instalação existente. Publicação no GitHub sob tag `android-v1.0`, com APK `CineTracker-Android-1.0.apk`.
+
+O release 1.0.0 anterior é histórico e não representa a promoção atual. Pipeline `.github/workflows/release-android-v10-official.yml`; scripts `scripts/prepare-android-v10-official.mjs` e `scripts/test-android-v10-official.mjs`. Web, banco e funcionalidades Android não alteradas.
+
 ## Android 1.0.61 / r303 — Pra Você sem múltiplos renderizadores
 
 A versão Android passou a renderizar a grade de Descobrir > Pra Você diretamente uma única vez por montagem autenticada; callbacks tardios do antigo encadeamento de `paintDiscover` não podem mais trocar Indicação do Dia e 100% Novos automaticamente. Os sete slots recebem seus botões antes da primeira apresentação, e Visto/Trocar/Watchlist atualizam somente o card envolvido. Regras personalizadas do Supabase v525 e limites da recomendação permanecem intactos; nenhuma modificação em Web, Home, Esportes, F1 ou Raw/SmackDown. APK de teste independente.
