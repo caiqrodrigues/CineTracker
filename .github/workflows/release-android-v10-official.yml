@@ -82,7 +82,7 @@ jobs:
           grep -Fq "versionName '1.0'" apps/android/app/build.gradle
           grep -Fq 'versionCode 10104' apps/android/app/build.gradle
           grep -Fq "applicationId 'com.cinetracker.app'" apps/android/app/build.gradle
-          grep -Fq 'signingConfig signingConfigs.debug' apps/android/app/build.gradle
+          grep -Fq 'signingConfig signingConfigs.official' apps/android/app/build.gradle
           node --check scripts/prepare-android-v10-official.mjs
           node --check scripts/test-android-v10-official.mjs
           node scripts/prepare-android-v10-official.mjs
@@ -115,10 +115,13 @@ jobs:
           OLD_CERT="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-1.0.61-signer.txt)"
           NEW_CERT="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-1.0-signer.txt)"
           printf 'Previous signing SHA-256: %s\\nOfficial signing SHA-256: %s\\n' "$OLD_CERT" "$NEW_CERT"
-          test -n "$OLD_CERT" && test "$OLD_CERT" = "$NEW_CERT" || {
-            echo 'Official 1.0 signing certificate incompatible with prior installation'
-            exit 1
-          }
+          test -n "$OLD_CERT" && test -n "$NEW_CERT"
+          if test "$OLD_CERT" = "$NEW_CERT"; then
+            printf 'COMPATIBLE: Android 1.0 can update 1.0.61 in place.\n' > CineTracker-Android-1.0-compatibilidade.txt
+          else
+            printf 'INCOMPATIBLE: Android 1.0 and 1.0.61 have different APK signing certificates. A clean installation may be required; uninstalling can erase locally stored app data. Confirm synchronization before uninstalling.\n' > CineTracker-Android-1.0-compatibilidade.txt
+            echo '::warning::APK signing differs from 1.0.61; user must be warned about clean installation and locally stored data.'
+          fi
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/cinetracker-1.0-index.html
           grep -Fq 'name="ct-official-version" content="1.0"' /tmp/cinetracker-1.0-index.html
           grep -Fq 'data-ct-android="r303-android-stable-js"' /tmp/cinetracker-1.0-index.html
@@ -137,6 +140,7 @@ jobs:
             CineTracker-Android-1.0.apk
             CineTracker-Android-1.0-SHA256.txt
             CineTracker-Android-1.0-size.txt
+            CineTracker-Android-1.0-compatibilidade.txt
           if-no-files-found: error
           retention-days: 90
 
@@ -154,8 +158,8 @@ jobs:
           Versão estável oficial baseada integralmente na Android 1.0.61/r303, sem modificações funcionais.
 
           - Android versionName 1.0, versionCode 10104.
-          - APK de produção não depurável, mesmo package com.cinetracker.app e mesma assinatura de 1.0.61.
-          - Atualiza a instalação oficial existente sem precisar desinstalar.
+          - APK de produção não depurável, mesmo package com.cinetracker.app, com assinatura própria para a linha estável.
+          - A compatibilidade da assinatura com o APK 1.0.61 foi verificada durante o build e está documentada no arquivo de compatibilidade.
           - Descobrir/Pra Você, Home, Raw/SmackDown, Esportes, F1 e Perfil preservados.
           - Web e Supabase não modificados.
           - SHA-256 de integridade disponibilizado junto do APK.
@@ -163,9 +167,17 @@ jobs:
           Este lançamento oficial é no GitHub. Não representa publicação na Google Play.
           O lançamento histórico v1.0.0 (versionCode 10042) é anterior e diferente desta promoção.
           NOTES
+          if grep -q '^INCOMPATIBLE:' CineTracker-Android-1.0-compatibilidade.txt; then
+            cat >> /tmp/release-1.0-notes.md <<'WARNING'
+
+          ## Atenção ao instalar
+
+          O certificado de assinatura deste APK 1.0 é diferente daquele utilizado no APK oficial 1.0.61. **Não é possível instalar por cima da 1.0.61 com assinatura diferente.** Poderá ser necessário desinstalar o aplicativo antigo. Antes de desinstalar, confira se seus dados estão sincronizados; dados mantidos apenas no aparelho podem ser perdidos. O APK TESTE61 usa outro identificador e pode permanecer instalado separadamente.
+          WARNING
+          fi
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial' --notes-file /tmp/release-1.0-notes.md --latest
           else
             gh release create "$TAG" --title 'CineTracker Android 1.0 — Oficial' --notes-file /tmp/release-1.0-notes.md --latest
           fi
-          gh release upload "$TAG" CineTracker-Android-1.0.apk CineTracker-Android-1.0-SHA256.txt CineTracker-Android-1.0-size.txt --clobber
+          gh release upload "$TAG" CineTracker-Android-1.0.apk CineTracker-Android-1.0-SHA256.txt CineTracker-Android-1.0-size.txt CineTracker-Android-1.0-compatibilidade.txt --clobber
