@@ -1,3 +1,12 @@
+## Android 1.0.60 — r302 (2026-10-20)
+
+- **Causa da tremedeira de Descobrir > Pra Você:** módulos históricos sobrepostos ainda forçavam nova reconciliação dos sete cards após a primeira montagem. O r284 disparava reconciliação em microtask toda vez que ignorava uma resposta já vista e renderizava novamente uma resposta forçada; o r288 agendava outro `requestAnimationFrame(reconcile)` após cada render canônico; o protetor r293 também reconciliava toda a grade ao restaurar qualquer fragmento e reagia a cliques/eventos de dados.
+- **Propriedade única das ações:** removidos esses callbacks concorrentes. O r278 faz a preparação inicial e passa a respeitar o compromisso do guardião r293, sem reagendar reconciliação após essa etapa; Trocar, Watchlist e Visto alteram apenas o estado dos cards necessários, sem reconstrução global.
+- **Proteção mantida:** o r293 continua interceptando HTML legado, conserva os sete slots e corrige substituições estruturais reais de DOM. Cliques normais e eventos externos não agendam novo reparo nem seleção aleatória; bloquear uma repintura não agendará nova repintura.
+- **Sem alterações funcionais:** critérios de recomendação v525, filtros por watchlist/vistos, diversidade e inteligência r300/r301, 2 abas de Esportes, Raw/SmackDown, sincronização F1 e Perfil mantidos. Nenhuma alteração na Web ou SQL.
+- **Testes de regressão:** ausência dos agendamentos de r284/r288/r293, zero frames de repaint após bloqueio de HTML legado, render inicial preservado, sete cards e controles auditados, atualização de versão, compilação e assinatura das variantes Android e TESTE60.
+- **Versões:** Android 1.0.60/r302/versionCode 10102; raiz 0.3.90.
+
 ## Android 1.0.59 — r301 (2026-10-20)
 
 - **Esportes:** removida a aba Favoritos do menu superior. Permanecem somente **Anteriores** e **Próximos**. A ação de favoritar times e competições, os dados sincronizados e todo o F1 Hub continuam disponíveis e inalterados.
