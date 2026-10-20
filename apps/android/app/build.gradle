@@ -15,13 +15,19 @@ android {
     }
 
 
-    // The installed 1.0.61 official APK is signed with Android's debug
-    // signingConfig certificate. Use the identical signing config for the
-    // non-debuggable release variant to permit in-place upgrades.
-    // The action independently verifies SHA-256 certificate equivalence.
+    // Stable signing identity for official 1.0 and subsequent releases.
+    // Stored in the existing CineTracker signing-key cache, not regenerated.
+    signingConfigs {
+        official {
+            storeFile file(System.getenv('CINETRACKER_OFFICIAL_KEYSTORE') ?: System.getProperty('user.home') + '/.cinetracker/cinetracker.keystore')
+            storePassword System.getenv('CINETRACKER_OFFICIAL_STORE_PASSWORD') ?: 'android'
+            keyAlias System.getenv('CINETRACKER_OFFICIAL_ALIAS') ?: 'androiddebugkey'
+            keyPassword System.getenv('CINETRACKER_OFFICIAL_KEY_PASSWORD') ?: 'android'
+        }
+    }
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.official
             minifyEnabled false
             shrinkResources false
         }
