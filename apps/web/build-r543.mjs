@@ -19,9 +19,15 @@ function uniqueReplace(source,previous,next,label){
 // window.__ctCoreR471.edge; r471 closure bridge only exported rpc.
 // Expose the EXISTING authenticated edge helper, not a new unauthenticated
 // fetch, and preserve every unrelated r541 behavior byte-for-byte.
-const originalBridge=' route:()=>route(),\n authReady:()=>!!session?.access_token,\n rpc:(name,args={})=>rpc(name,args),';
-const fixedBridge=' route:()=>route(),\n authReady:()=>!!session?.access_token,\n edge:(name,body={},timeout=18000)=>edge(name,body,timeout),\n rpc:(name,args={})=>rpc(name,args),';
-js=uniqueReplace(js,originalBridge,fixedBridge,'r471 edge export');
+const coreAt=js.indexOf('window.__ctCoreR471=Object.freeze({');
+if(coreAt<0||js.indexOf('window.__ctCoreR471=Object.freeze({',coreAt+1)>=0)
+ throw new Error('r471 core declaration absent or ambiguous');
+const near=js.slice(coreAt,coreAt+2600);
+const rpcMethod='rpc:(name,args={})=>rpc(name,args),';
+if(!near.includes(rpcMethod))throw new Error('r471 authenticated RPC method not in expected core declaration: '+near.slice(0,380));
+const fixed=near.replace(rpcMethod,
+ 'edge:(name,body={},timeout=18000)=>edge(name,body,timeout),\\n rpc:(name,args={})=>rpc(name,args),');
+js=js.slice(0,coreAt)+fixed+js.slice(coreAt+near.length);
 js=uniqueReplace(js,"const REVISION='r542-official-0.3.69';","const REVISION='r543-official-0.3.70';",'Web version');
 js=js.replaceAll("version:'0.3.69',scope:'WWE-recent-episodes-only'","version:'0.3.70',scope:'WWE-recent-episodes-only'");
 html=html.replaceAll('app-v542.js','app-v543.js').replaceAll('app-v542.css','app-v543.css')
