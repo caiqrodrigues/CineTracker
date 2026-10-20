@@ -18,6 +18,15 @@ replace("const REVISION='r292-android-official-1.0.50';",
  "const REVISION='r293-android-official-1.0.51';",'version');
 replace("window.__ctWebBuild='1.0.50';window.__ctOfficialVersion='1.0.50';window.__ctAndroidOfficialVersion='1.0.50';window.__ctAndroidOfficialCode=10092;",
  "window.__ctWebBuild='1.0.51';window.__ctOfficialVersion='1.0.51';window.__ctAndroidOfficialVersion='1.0.51';window.__ctAndroidOfficialCode=10093;",'android metadata');
+// The single r278 action handler must not call twenty years of legacy
+// addWatchlist decorators, some of which still issue render() or realtime
+// invalidations that rebuild the entire Discover route after a tap.
+replace('else await addWatchlist(type,id);',
+ 'else await window.__ctR293AddWatchlist(type,id);',
+ 'Pra Voce only direct Watchlist persistence');
+replace('window.__ctR278Test={candidates,validate,contentDetailSafe,expandPool,seenIn,takeSeen,reconcile,operate,slotChoice};',
+ 'window.__ctR278Test={candidates,validate,contentDetailSafe,expandPool,seenIn,takeSeen,reconcile,operate,slotChoice};\\nwindow.__ctR293PickedRefs=()=>new Map(picked);',
+ 'read-only per-slot current picks');
 // ESSENTIAL: the original r158 paintDiscover DOM sink is still reachable via
 // saved originalPaint references in r279, r281 and r282. Wrapping the LATEST
 // paintDiscover alone never intercepted those asynchronous callbacks.
@@ -79,10 +88,12 @@ replace(
  "ct291DrawNav=navSeq;ct291DrawOwner=owner();ct291DrawData=data;\n paintDiscover(data);\n window.__ctR293Gate?.commit?.(data,document.querySelector('[data-discover-content]'));\n document.documentElement.dataset.ct284ForYou",
  'r284 commit final v525 DOM owner independent of r158');
 const patch=(await readFile(resolve(root,'apps/android/runtime-r293-v1051-foryou-single-owner.js'),'utf8')).trimEnd();
+const localWatchlist=(await readFile(resolve(root,'apps/android/runtime-r293-v1051-watchlist-local.js'),'utf8')).trimEnd();
 new Function(patch);
+new Function(localWatchlist);
 for(const forbidden of ['window.location.reload(', 'router.refresh(', 'while(true)'])
- if(patch.includes(forbidden))throw Error('Forbidden full page action '+forbidden);
-replace('\nboot();','\n/* r293 final scoped Discover owner */\ntry{\n'+patch+
+ if(patch.includes(forbidden)||localWatchlist.includes(forbidden))throw Error('Forbidden full page action '+forbidden);
+replace('\nboot();','\n/* r293 final scoped Discover owner */\ntry{\n'+localWatchlist+'\n'+patch+
  '\n}catch(error){document.documentElement.dataset.ct293StartupError=String(error?.message||error);console.error(error)}\nboot();',
  'final owner before boot');
 if(js.indexOf('window.__ctR293Gate=')<js.indexOf('\n})();\n\n/* r264:'))throw Error('r293 final owner injected too early');
