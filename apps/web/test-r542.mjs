@@ -1,10 +1,13 @@
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-const root='apps/web/dist/';
+import {dirname,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const here=dirname(fileURLToPath(import.meta.url));
+const root=resolve(here,'dist')+'/';
 const [js,html,release,runtime]=await Promise.all([
  readFile(root+'app-v542.js','utf8'),readFile(root+'index.html','utf8'),
- readFile(root+'release.json','utf8'),readFile('apps/web/runtime-r542-wwe-episodes.js','utf8')
+ readFile(root+'release.json','utf8'),readFile(resolve(here,'runtime-r542-wwe-episodes.js'),'utf8')
 ]);
 new Function(js);new Function(runtime);
 assert.ok(js.includes("const REVISION='r542-official-0.3.69'"));
