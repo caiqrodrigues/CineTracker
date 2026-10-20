@@ -1,4 +1,4 @@
-# CineTracker Android — 1.0.52
+# CineTracker Android — 1.0.53
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
 
@@ -97,3 +97,7 @@ Descobrir > Pra Você: proteção final no renderizador original r158 contra aud
 ## Android 1.0.52 / r294
 
 Descobrir Pra Você com dono exclusivo dos sete slots mesmo em Watchlist parcialmente vazia, sem renderizações antigas/recursão nem refetch geral em Trocar/Visto/Watchlist. Episódios recentes de Raw/SmackDown sincronizados em segundo plano pela função autenticada, sem full reload. Web r542 limitada a WWE.
+
+## Android 1.0.53 / r295
+
+Estabilização das recomendações autenticadas sem restaurar a Watchlist antiga após Trocar. Alterações reais de cards permanecem locais. Raw e SmackDown visíveis são preservados em redesenhos assíncronos de Home com cache temporário de três minutos. Web não alterada.

@@ -8,8 +8,8 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10094
-        versionName '1.0.52'
+        versionCode 10095
+        versionName '1.0.53'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
     }
@@ -22,4 +22,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// Android 1.0.52/r294: guarded seven-slot ownership and WWE recent episode sync; Web r542 only Raw/SmackDown.
+// Android 1.0.53/r295: stable authenticated Discover slots and retained Raw/SmackDown Home rows.

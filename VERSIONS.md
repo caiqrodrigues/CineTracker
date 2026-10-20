@@ -1,3 +1,4 @@
+- Android **1.0.53 / r295-android-official-1.0.53 / versionCode 10095** — proteção de slots internos do Pra Você contra renderizações antigas, mantendo Trocar, Visto e Watchlist locais; Raw/SmackDown preservados durante redesenhos assíncronos da Home. TESTE53 independente; Web intocada.
 - Web **0.3.70 / r543-official-0.3.70** — ponte `__ctCoreR471.edge` autenticada habilita sincronização automática real de Raw/SmackDown na Home; visual r541 intacto. Android mantém 1.0.52/r294, raiz 0.3.82.
 - Android **1.0.52 / r294 / versionCode 10094** — Pra Você sem substituição assíncrona e sem observer-loop; WWE Raw/SmackDown auto-sync local em Home. TESTE52 independente.
 - Web **0.3.69 / r542** — somente sincronização de episódios Raw/SmackDown; interface r541 preservada.
