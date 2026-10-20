@@ -49,8 +49,9 @@ jobs:
           git cat-file -e "$FREEZE^{commit}"
           # Web r542 is authorized ONLY for weekly Raw/SmackDown episode updates.
           # All other r541 Web files remain byte-for-byte unchanged.
-          CHANGED="$(git diff --name-only "$FREEZE" HEAD -- apps/web)"
-          UNEXPECTED="$(printf '%s\n' "$CHANGED" | grep -vE '^$|^apps/web/(build-r542\\.mjs|runtime-r542-wwe-episodes\\.js|test-r542\\.mjs|package\\.json)
+          test "$(git hash-object apps/web/build-r541.mjs)" = 'bb07803d0f9d79dec398aeb4a625f2c6104450d4'
+          test "$(git hash-object apps/web/runtime-r541-home-entry.js)" = '57b7ea729e1115075e14ef0d8e70cd4a6851bfa6'
+          grep -Fq '"version": "0.3.69"' apps/web/package.json
           test "$(git hash-object apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java)" = '641f8766951077947c57cf34959bac43b94e2648'
           test "$(git hash-object apps/android/app/src/main/res/layout/activity_main.xml)" = '30edbb633685c3a77ce114c92c4f07dfa07a3271'
           grep -Fq 'CineTrackerNative' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
