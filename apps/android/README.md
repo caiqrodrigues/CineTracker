@@ -115,3 +115,7 @@ Substitui bordas vermelhas por estilo neutro e uniformiza as ações dos cards e
 ## Android 1.0 / r305
 
 Remove unicamente o botão `Ver eventos` adjacente a Assistido, mantendo a ação de marcação e F1 intactas. A aba Home → Filmes → Histórico consulta a primeira página de `cinetracker_home_movie_history_v542` ao abrir a aba e retornar ao aplicativo, além de revalidar em marcações e em janela de 2 minutos. O estado recente autorizado é mesclado com a listagem completa anterior e prevalece contra respostas tardias de carregamentos históricos; novas entradas ficam ao final da cronologia. Sem reload, sem mudanças em Web, SQL, Discover, Raw/SmackDown ou Perfil. Preparação `scripts/prepare-android-v10-r305-history.mjs`, testes `scripts/test-android-v10-r305-history.mjs`, pipeline `.github/workflows/release-android-v10-r305.yml`.
+
+## Android 1.0 / r306 — Home Séries, episódios e Históricos
+
+Correção limitada ao APK Android: validação da regra de 30 dias em Séries, identificação de novos episódios Raw/SmackDown, reconciliação do Histórico de Episódios por RPC v391 e manutenção dos filmes recentes v542 mesmo quando renderizadores antigos reconstruírem a Home. Atualiza em abertura, retomada do app e mutação relevante sem full reload, preservando Esportes, F1, Descobrir, Perfil, Web e banco. Build: `scripts/prepare-android-v10-r306-home.mjs`. Testes: `scripts/test-android-v10-r306-home.mjs`. Versão pública `1.0`, code `10107`.
