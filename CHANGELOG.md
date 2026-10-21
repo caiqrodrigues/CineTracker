@@ -1,3 +1,13 @@
+## Android 1.0 / r306 — Home Séries e Filmes confiáveis (2026-10-21)
+
+- **Regra de 30 dias:** séries iniciadas que ainda têm episódios pendentes passam para **Juntando poeira** quando o último episódio assistido está há 30 dias ou mais, mesmo se o banco envia flags antigas de InProgress/UpToDate. Séries realmente em dia permanecem em **Em dia**.
+- **Episódios novos:** a posição da última temporada/episódio lançado é comparada à posição de último episódio assistido e à data real de estreia. Raw/SmackDown continuam no **Continuar assistindo** somente quando existe episódio recente de fato lançado e ainda não visto, sem confundir milhares de episódios históricos com novidades.
+- **Fonte atual de séries:** em cada abertura/retorno à Home, revalida dados autenticados de `cinetracker_home_series_v527` para restabelecer classificação canônica; respostas antigas não substituem progresso mais recente.
+- **Histórico de Séries:** consulta autenticada de `cinetracker_home_history_v391`, incluindo eventos de watch_history e episode_progress, concilia por mídia, temporada e episódio, preservando o horário mais recente confirmado e a ordem cronológica.
+- **Histórico de Filmes:** corrigido retorno intermitente ao Pokémon. O controlador v542 da r305 agora restaura o histórico mais recente validado após **toda reconstrução antiga da Home**, sem depender de que a resposta da rede seja diferente daquela já recebida.
+- **Convergência:** sessões e usuários isolados; verificações após retorno ao primeiro plano e após alterações; nenhum `window.location.reload`, `router.refresh` ou refetch síncrono de página inteira.
+- **Escopo:** somente Home no APK Android. Funcionalidade esportiva r304/r305, Descobrir, Perfil, F1 Hub, Web e SQL inalterados. Versão pública permanece `1.0`, `versionCode=10107`, raiz `0.3.95`.
+
 ## Android 1.0 / r305 — botão único Esportes e Histórico Filmes sempre atual (2026-10-20)
 
 - **Nome comercial mantido:** Android **1.0**, `applicationId com.cinetracker.app`, `versionCode 10106` para atualizar a 1.0/r304 sem desinstalar; certificado e assinatura de produção preservados.
