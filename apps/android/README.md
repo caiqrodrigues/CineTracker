@@ -6,9 +6,9 @@ App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarc
 
 - `applicationId`: `com.cinetracker.app` — preservado para atualizar instalações existentes;
 - `versionName`: **`1.0`**;
-- `versionCode`: **`10104`** (maior que 10103 da 1.0.61);
-- versão funcional: **CineTracker 1.0/r305**, base r304 com alterações exclusivamente em Home/Filmes/Histórico e botão Esportes;
-- preparação: `scripts/prepare-android-v10-official.mjs`;
+- `versionCode`: **`10108`** (release oficial 1.0/r307);
+- versão funcional: **CineTracker 1.0/r307**, preservando r306 com correções visuais de Home e recomendações adaptativas somente Android;
+- preparação: `scripts/prepare-android-v10-r307-taste-home.mjs`;
 - validação: `scripts/test-android-v10-official.mjs` — compara com APK 1.0.61 publicado;
 - build nativo: **release não depurável**, assinatura estável de release; **não compatível com o certificado do APK oficial 1.0.61** (reinstalação pode ser necessária, com risco para dados locais);
 - pipeline: `.github/workflows/release-android-v10-official.yml`;
@@ -119,3 +119,7 @@ Remove unicamente o botão `Ver eventos` adjacente a Assistido, mantendo a açã
 ## Android 1.0 / r306 — Home Séries, episódios e Históricos
 
 Correção limitada ao APK Android: validação da regra de 30 dias em Séries, identificação de novos episódios Raw/SmackDown, reconciliação do Histórico de Episódios por RPC v391 e manutenção dos filmes recentes v542 mesmo quando renderizadores antigos reconstruírem a Home. Atualiza em abertura, retomada do app e mutação relevante sem full reload, preservando Esportes, F1, Descobrir, Perfil, Web e banco. Build: `scripts/prepare-android-v10-r306-home.mjs`. Testes: `scripts/test-android-v10-r306-home.mjs`. Versão pública `1.0`, code `10107`.
+
+### r307 — preferências adaptativas e proteção da Home
+
+Os sete slots do Pra Você usam perfil de gêneros (vistos, Watchlist, favoritos) e feedback local dos botões, com rotação diária, memória de impressões e auditoria v525 na expansão de candidatos. A Home remove apenas barras órfãs de ✓ em Séries e reconcilia visualmente o Histórico de Filmes se o DOM for sobrescrito por cache antigo. Testes em `scripts/test-android-v10-r307-taste-home.mjs`. Nome público 1.0, código 10108, assinatura anterior.
