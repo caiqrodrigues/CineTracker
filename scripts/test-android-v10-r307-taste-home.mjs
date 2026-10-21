@@ -140,5 +140,8 @@ assert.equal(restores,1,'No DOM observer restore loop when latest card is presen
 runtime.changeAccount('b');page='discover';
 assert.equal(taste.stats().account,'b');
 assert.equal(taste.stats().impressions,0,'Do not leak recommendation history between accounts');
-assert.ok(taste.profile().positive.get(28)>0,'Initial preference learns from watched/Watchlist profile independently');
+assert.equal(taste.profile().positive.size,0,'Previous account profile cannot leak before new authentication fetch');
+assert.equal(await taste.warm(),true,'New account must hydrate its own dashboard');
+assert.ok(taste.profile().positive.get(28)>0,'New account learns from its own authenticated dashboard');
+assert.equal(profileCalls,2,'Account switching must request fresh user-specific profile');
 console.log('CINETRACKER_1_0_R307_TEST_OK: official 1.0 intact; orphan check removed; old movie-paint repaired without loops; account-isolated learned affinity and negative swap feedback; next-day non-repeat; authenticated v525 vetted candidate refill; Sports/F1/Home 30-day buckets preserved.');
