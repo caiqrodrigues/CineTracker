@@ -9,7 +9,7 @@ assert.ok(html.includes('name="ct-official-version" content="1.0"'));
 for(const marker of [
  "const REVISION='r307-android-official-1.0'",
  'window.__ctAndroidOfficialCode=10108',
- 'window.__ctR307Taste={choose,shown,feedback,next,refill,profile,stats:tasteStats',
+ 'window.__ctR307Taste={choose,shown,feedback,next,refill,warm,profile,stats:tasteStats',
  'window.__ctR307HomeGuard={scan,cleanOrphans,repairMovies,stats:',
  'window.__ctR305MovieHistory={refresh,merge,latestRows:()=>fresh,restore:',
  'window.__ctR307Taste?.choose?.(key,usable',
@@ -74,23 +74,26 @@ const storage={getItem:k=>stored.get(k)||null,setItem:(k,v)=>stored.set(k,v)};
 const allowedRows=[];
 const setup=new Function('window','document','localStorage','setTimeout','queueMicrotask','safeTmdb','ct186UniqueRows',
  'ct186FreshEligible','ct186ContextValue','genreIds158','ct186Id','ct186Type','ct186Anime','route','localDay','ct186MergeRows',
- 'paintHome','MutationObserver','ct186Quality',
+ 'paintHome','MutationObserver','ct186Quality','rpc',
  "let session={user:{id:'a'},access_token:'token'},user={id:'a'};"+
- "let discoverState={tab:'foryou'},homeActiveTab158='movies';"+
+ "let discoverState={tab:'foryou'},homeActiveTab158='movies',discoverRows=async()=>({});"+
  module+
  "return{taste:window.__ctR307Taste,guard:window.__ctR307HomeGuard,changeAccount(id){session={user:{id},access_token:'token'};user={id}},"+
  "changePage(id){page=id},changeDay(id){date=id},setSection(t){homeActiveTab158=t}};"
 );
-let seenCalls=0;
+let seenCalls=0,profileCalls=0;
 const runtime=setup(win,doc,storage,()=>99,fn=>fn(),async(endpoint,params)=>{
  seenCalls++;assert.ok(endpoint==='/discover/movie');assert.ok(params.page>=1&&params.page<=18);
  return{results:[mk(20,28),mk(21,35)]}
 },rows=>[...new Map(rows.map(x=>[x.media_type+':'+x.id,x])).values()],()=>true,
  {dash:dashboard},x=>x.genre_ids||[],x=>x.id,
  x=>x.media_type,x=>false,()=>page,()=>date,(a,b)=>[...a,...b],
- ()=>true,undefined,()=>true);
+ ()=>true,undefined,()=>true,async(name)=>{assert.equal(name,'cinetracker_profile_media_dashboard_v0991');profileCalls++;return dashboard});
 const taste=runtime.taste,guard=runtime.guard;
 assert.ok(taste&&guard);
+assert.equal(await taste.warm(),true,'Must hydrate actual authenticated profile');
+assert.equal(profileCalls,1,'Dashboard called once for user identity');
+assert.ok(stored.get('ct:r307:genre-profile:a'),'Genre-only user profile cached for fast next entry');
 const prof=taste.profile();
 assert.ok(prof.positive.get(28)>prof.positive.get(35),
  'Watched, favorited and watchlisted genre should rank above generic high-rated titles');
