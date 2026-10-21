@@ -7,8 +7,8 @@ App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarc
 - `applicationId`: `com.cinetracker.app` — preservado para atualizar instalações existentes;
 - `versionName`: **`1.0`**;
 - `versionCode`: **`10108`** (release oficial 1.0/r307);
-- versão funcional: **CineTracker 1.0/r307**, preservando r306 com correções visuais de Home e recomendações adaptativas somente Android;
-- preparação: `scripts/prepare-android-v10-r307-taste-home.mjs`;
+- versão funcional: **CineTracker 1.0/r308**, preservando r306 com correções visuais de Home e recomendações adaptativas somente Android;
+- preparação: `scripts/prepare-android-v10-r308.mjs`;
 - validação: `scripts/test-android-v10-official.mjs` — compara com APK 1.0.61 publicado;
 - build nativo: **release não depurável**, assinatura estável de release; **não compatível com o certificado do APK oficial 1.0.61** (reinstalação pode ser necessária, com risco para dados locais);
 - pipeline: `.github/workflows/release-android-v10-official.yml`;
@@ -123,3 +123,7 @@ Correção limitada ao APK Android: validação da regra de 30 dias em Séries, 
 ### r307 — preferências adaptativas e proteção da Home
 
 Os sete slots do Pra Você usam perfil de gêneros (vistos, Watchlist, favoritos) e feedback local dos botões, com rotação diária, memória de impressões e auditoria v525 na expansão de candidatos. A Home remove apenas barras órfãs de ✓ em Séries e reconcilia visualmente o Histórico de Filmes se o DOM for sobrescrito por cache antigo. Testes em `scripts/test-android-v10-r307-taste-home.mjs`. Nome público 1.0, código 10108, assinatura anterior.
+
+## Home 1.0/r308
+
+Correção restrita à Home do Android: botões de episódio com 52 px, travas contra toques rápidos, cards de altura consistente (inclusive UFC), Histórico com Desmarcar minimalista e RPC autenticada com rollback, e filme recente pinado pela última v542 verificada antes do paint para impedir alternância com Pokémon. Descobrir r307, Esportes e banco intactos.
