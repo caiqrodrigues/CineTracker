@@ -1,13 +1,5 @@
 name: CineTracker Android 1.0 — Home and Taste r307
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/prepare-android-v10-r307-taste-home.mjs'
-      - 'scripts/test-android-v10-r307-taste-home.mjs'
-      - 'apps/android/runtime-r307-taste-home.js'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-r307.yml'
   workflow_dispatch:
 
 permissions:
