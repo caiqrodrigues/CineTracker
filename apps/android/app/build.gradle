@@ -8,7 +8,7 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10106
+        versionCode 10107
         versionName '1.0'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
@@ -41,4 +41,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker Android 1.0/r305: hide Sports Ver eventos; authenticated recent film-history refresh on foreground, with full archive preserved.
+// CineTracker Android 1.0/r306: strict 30-day dust in Home, recent episode freshness, and stable verified movie/series history; other screens unchanged.
