@@ -1,3 +1,13 @@
+## Android 1.0 / r307 — Home visual e recomendações adaptativas (2026-10-21)
+
+- **Escopo Android:** versão pública 1.0 mantida, versionCode 10108, package 0.3.96, certificado de assinatura anterior preservado. Sem mudança de Web, Supabase, Sports, F1 ou regras de episódios r306.
+- **Home Séries:** removidas exclusivamente as barras de ✓ órfãs, sem card de série associado. Controles legítimos de marcar episódio continuam intocados.
+- **Home Filmes:** proteção do DOM contra renderizações antigas que recolocavam Pokémon como último filme, comparando o card mais recente à lista confirmada por v542. Corrige apenas o histórico visível e evita loop de atualização.
+- **Descobrir → Pra Você:** modelo de afinidade local por gêneros inferidos do que foi visto, adicionado à Watchlist e marcado como favorito, com peso adicional para escolhas recentes. Ações Trocar / Visto / Watchlist alimentam sinais positivos ou negativos com decaimento temporal. Uma fração das opções introduz exploração para novos gêneros.
+- **Diversidade:** histórico persistido por conta e slot por até 90 dias, preferência por títulos não mostrados nos últimos 21 dias e rotação diária. Slots da Watchlist consultam exclusivamente itens daquela Watchlist; não são preenchidos por candidatos arbitrários. Trocar procura alternativas e, em categorias novas, pode expandir a busca TMDB por gêneros afins e páginas distintas, sempre passando por elegibilidade existente e auditoria autenticada v525.
+- **Interação:** mantidos sete slots, controles funcionais anteriores e atualizações pontuais; sem repintura total, perda de scroll ou invalidação da Home. No aplicativo o aprendizado por interações é local ao dispositivo; histórico/Watchlist sincronizados são carregados do perfil.
+- **Validação:** testes de maior afinidade por gêneros assistidos/favoritos, rotação no dia seguinte, proteção contra repetição, separação por conta, expansão auditada e remoção de barra órfã; build release, assinatura e SHA-256 exigidos antes de publicação.
+
 ## Android 1.0 / r306 — Home Séries e Filmes confiáveis (2026-10-21)
 
 - **Regra de 30 dias:** séries iniciadas que ainda têm episódios pendentes passam para **Juntando poeira** quando o último episódio assistido está há 30 dias ou mais, mesmo se o banco envia flags antigas de InProgress/UpToDate. Séries realmente em dia permanecem em **Em dia**.
