@@ -180,7 +180,6 @@ const module=[
 "  queueMicrotask(()=>{void refresh(true);if(homeActiveTab158==='movies')void window.__ctR305MovieHistory?.refresh?.(true)});",
 " }",
 "});",
-"const previousMark=markNextEpisode158;",
 "// Actions keep their already-installed controllers. Do not intercept",
 "// markNextEpisode or markSeen, and never perform a full-page reload.",
 "window.__ctR306Home={classify,consolidateSeries,recentEpisodes,refresh,normalize,",
