@@ -62,7 +62,7 @@ windowMock.__ctR271Bridge.getPainter=function(){return this.painter||((rows)=>{p
 const local=new Map(),toastMessages=[],rpcCalls=[];
 const compile=new Function('window','document','localStorage','route','paintHome','markNextEpisode158','homeMovieRow158','homeEpisodeHistory158','getCache','setCache','getAccount','getTab','rpc','toast','setTimeout','queueMicrotask',
  "let session={access_token:'mock',user:{id:'user-a'}},user={id:'user-a'},homeActiveTab158='movies',homeCache=getCache();"+
- "const app=("+module+");"+
+ module+
  "return{api:window.__ctR308Home,paint:()=>paintHome(),get:()=>homeCache,set:x=>{homeCache=x},setTab:x=>{homeActiveTab158=x},changeAccount:x=>{session={access_token:'mock',user:{id:x}};user={id:x}}};"
 );
 const app=compile(windowMock,doc,{getItem:key=>local.get(key)||null,setItem:(key,val)=>local.set(key,val)},
