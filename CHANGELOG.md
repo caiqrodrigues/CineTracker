@@ -1,3 +1,12 @@
+## Android 1.0 / r308 — Home: ação confiável, card UFC, desfazer histórico (2026-10-21)
+
+- Versão pública **1.0**, `versionCode 10109`, raiz `0.3.97`; assinatura e package `com.cinetracker.app` mantidos.
+- **Home Séries:** botão `✓` de marcar o próximo episódio com área real de toque de 52 px, feedback instantâneo, trava síncrona contra vários toques e preservação da autoridade r176 de episódio pendente. Checks soltos sem card deixam de ser exibidos.
+- **UFC:** cards de séries de Esportes na Home têm a mesma altura mínima, largura e grid dos outros cards de Séries, sem alterar a lógica esportiva.
+- **Histórico de Séries e Filmes:** botão minimalista `Desmarcar` ao lado de `Reassistir`, com remoção otimista de apenas a linha escolhida, confirmação RPC autenticada (`cinetracker_unmark_episode_v1` ou `cinetracker_unmark_history_item_v426`), restauração na falha e bloqueio de clique concorrente. Caches recentes são limpos ao confirmar, evitando ressurreição de entradas removidas.
+- **Filmes:** mesclagem dos registros recentes autenticados antes do primeiro paint da Home, snapshot de último resultado v542 com isolamento de conta e sinalização breve enquanto não há dados recentes verificados. Fontes antigas não substituem datas novas no DOM; o histórico permanece cronológico.
+- **Escopo estrito:** somente Home do APK Android. Descobrir > Pra Você adaptativo/auditado r307, aba Esportes, F1, Perfil, Web e Supabase sem alterações. Sem reload de página inteira.
+
 ## Android 1.0 / r307 — Home visual e recomendações adaptativas (2026-10-21)
 
 - **Escopo Android:** versão pública 1.0 mantida, versionCode 10108, package 0.3.96, certificado de assinatura anterior preservado. Sem mudança de Web, Supabase, Sports, F1 ou regras de episódios r306.
