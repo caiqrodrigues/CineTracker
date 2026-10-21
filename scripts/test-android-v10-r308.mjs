@@ -91,11 +91,11 @@ const row={
  parentElement:{isConnected:true,children:[],insertBefore(){}},
  remove(){this.removed=true}
 };
-const b={
+const undoMovieButton={
  dataset:{ct308Undo:'movie',ct308MediaId:'7',ct308TmdbId:'7',ct308Season:'0',ct308Episode:'0'},
  disabled:false,textContent:'Desmarcar',closest:()=>row
 };
-await app.api.undo(b);
+await app.api.undo(undoMovieButton);
 assert.equal(rpcCalls[0].name,'cinetracker_unmark_history_item_v426');
 assert.equal(rpcCalls[0].params.p_media_id,7);
 assert.equal(row.removed,true);
