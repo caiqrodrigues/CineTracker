@@ -74,7 +74,7 @@ jobs:
           test -s /tmp/CineTracker-Android-1.0.apk
           test -s /tmp/CineTracker-Android-1.0.61.apk
 
-      - name: Prepare and test official 1.0 Home and Discover r307
+      - name: Prepare and test official 1.0 Home actions and history r308
         env:
           CINETRACKER_REQUIRE_BASELINE: '1'
         shell: bash
