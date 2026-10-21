@@ -14,10 +14,17 @@ const genre=x=>{try{return [...new Set(genreIds158(x).map(Number).filter(x=>x>0)
 const hash=x=>{let n=2166136261;for(const ch of String(x)){n^=ch.charCodeAt(0);n=Math.imul(n,16777619)}return n>>>0};
 const DAY=86400000,RETENTION=90*DAY,COOLDOWN=21*DAY;
 let account='',history=[],serial=0,prefs=null,prefsAt=0,inflight=new Map(),refills=0,selected=0,learned=0;
+let profileRows=[],profileLoadedAt=0,profileInflight=null;
 function storeKey(id=uid()){return 'ct:r307:taste:'+id}
 function reset(){
  const id=uid();if(id===account)return;
  account=id;history=[];serial=0;prefs=null;prefsAt=0;inflight.clear();
+ profileRows=[];profileLoadedAt=0;profileInflight=null;
+ try{const snapshot=JSON.parse(localStorage.getItem('ct:r307:genre-profile:'+id)||'null');
+  if(snapshot?.at&&now()-snapshot.at<6*60*60*1000&&Array.isArray(snapshot.rows)){
+   profileRows=snapshot.rows.slice(0,1800);profileLoadedAt=snapshot.at;
+  }
+ }catch{}
  try{
   const parsed=JSON.parse(localStorage.getItem(storeKey())||'[]');
   if(Array.isArray(parsed))history=parsed.filter(x=>x&&typeof x.ref==='string'&&
@@ -39,7 +46,7 @@ function record(key,item,action='shown'){
 function profile(){
  reset();if(prefs&&now()-prefsAt<1500)return prefs;
  const positive=new Map(),negative=new Map(),totals={watched:0,watchlist:0,favorites:0};
- const dash=list(ct186ContextValue?.dash);
+ const dash=profileRows.length?profileRows:list(ct186ContextValue?.dash);
  function add(map,ids,w){
   for(const g of ids)map.set(g,(map.get(g)||0)+w);
  }
@@ -176,7 +183,45 @@ function tasteStats(){
 }
 // A new watched/favorite/watchlist state affects the next choice immediately.
 window.addEventListener('cinetracker:data-changed',()=>{prefs=null;prefsAt=0});
-window.__ctR307Taste={choose,shown,feedback,next,refill,profile,stats:tasteStats,
+// r284 may create an empty minimal context before its seven audited slots
+// are ready. Fetch the *real* authenticated dashboard in parallel, rather
+// than scoring suggestions from an empty fake profile.
+async function warm(){
+ reset();const id=account;
+ if(!id||!session?.access_token)return false;
+ if(profileRows.length&&now()-profileLoadedAt<12*60*1000)return true;
+ if(profileInflight)return profileInflight;
+ const task=(async()=>{
+  const result=await Promise.race([
+   rpc('cinetracker_profile_media_dashboard_v0991',{}),
+   new Promise((_,reject)=>setTimeout(()=>reject(new Error('taste-profile-timeout')),9500))
+  ]);
+  if(uid()!==id||!Array.isArray(result))return false;
+  const next=result.map(row=>({
+   genre_ids:genre(row),
+   is_seen:Boolean(row.is_seen),is_completed:Boolean(row.is_completed),
+   is_in_progress:Boolean(row.is_in_progress),is_up_to_date:Boolean(row.is_up_to_date),
+   watched_episodes:Number(row.watched_episodes)||0,
+   last_watched_at:row.last_watched_at||null,
+   is_watchlist:Boolean(row.is_watchlist),
+   is_favorite:Boolean(row.is_favorite||row.is_favorited||row.is_favourite||row.favorite)
+  })).filter(x=>x.genre_ids.length).slice(0,1800);
+  profileRows=next;profileLoadedAt=now();prefs=null;prefsAt=0;
+  try{localStorage.setItem('ct:r307:genre-profile:'+id,
+    JSON.stringify({at:profileLoadedAt,rows:next}))}catch{}
+  return true;
+ })().catch(error=>{
+  document.documentElement.dataset.ct307TasteProfileError=String(error?.message||error);
+  return false;
+ }).finally(()=>{if(uid()===id)profileInflight=null});
+ profileInflight=task;return task;
+}
+const priorTasteRows=discoverRows;
+discoverRows=function(tab,...args){
+ if(String(tab)==='foryou'&&uid())void warm();
+ return priorTasteRows.apply(this,arguments);
+};
+window.__ctR307Taste={choose,shown,feedback,next,refill,warm,profile,stats:tasteStats,
  scope:'Discover Pra Voce only',model:'affinity-genres-plus-local-feedback-and-exploration'};
 })();
 
