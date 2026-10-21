@@ -1,14 +1,5 @@
 name: CineTracker Android 1.0 — Movies History r305
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/prepare-android-v10-r305-history.mjs'
-      - 'scripts/test-android-v10-r305-history.mjs'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-r305.yml'
-      - 'CHANGELOG.md'
-      - 'VERSIONS.md'
   workflow_dispatch:
 
 permissions:
