@@ -46,7 +46,9 @@ function record(key,item,action='shown'){
 function profile(){
  reset();if(prefs&&now()-prefsAt<1500)return prefs;
  const positive=new Map(),negative=new Map(),totals={watched:0,watchlist:0,favorites:0};
- const dash=profileRows.length?profileRows:list(ct186ContextValue?.dash);
+ // Never infer dashboard ownership from a legacy global context: it can
+ // temporarily refer to the previously signed-in account.
+ const dash=profileRows;
  function add(map,ids,w){
   for(const g of ids)map.set(g,(map.get(g)||0)+w);
  }
