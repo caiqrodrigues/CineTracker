@@ -234,5 +234,5 @@ reset();
 if(!savedRows.length)document.documentElement.dataset.ct308MoviesPending='1';
 setTimeout(()=>{document.documentElement.dataset.ct308MoviesPending='0'},13000);
 window.__ctR308Home={mergeMovies,blockedMovie,blockedEpisode,confirmedMovies,undo,tap,normalize,
- stats:()=>({account:userId,movieRows:savedRows.length,lastVerified,moviePaints,undoCount,tapCount,lastError,busy:actionBusy.size})};
+ stats:()=>{reset();return {account:userId,movieRows:savedRows.length,lastVerified,moviePaints,undoCount,tapCount,lastError,busy:actionBusy.size}};
 })();
