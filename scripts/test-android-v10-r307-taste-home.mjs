@@ -65,6 +65,7 @@ const doc={
 const win={
  __ctR279Audit:{auditData:async data=>data,permitted:()=>true},
  __ctR303SinglePaint:{data:()=>data},
+ __ctR278Test:{candidates:(key,current)=>data._ct186_fresh.movie.filter(x=>'movie:'+x.id!==current)},
  __ctR305MovieHistory:{latestRows:()=>[{tmdb_id:9,watched_at:'2026-10-21T18:00:00Z'}],restore(){restores++;lastRow='movie:9'}},
  __ctR265Test:{allowed:()=>true},
  addEventListener(type,fn){(logs[type]??=[]).push(fn)}
