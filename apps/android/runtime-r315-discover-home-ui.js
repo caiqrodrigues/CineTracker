@@ -179,3 +179,18 @@ window.__ctR315DiscoverCards={card,data,details,enrichVisible,schedule,stats:()=
  scope:'Only Home UFC geometry + Discover non-ForYou metadata and actions'
 })};
 })();
+/* r315: align the old taste engine's watchlist namespace with the new
+   r314 Web slots, so watched/favorites versus saved preferences are scored
+   independently. Existing impressions remain bound to the signed-in user. */
+(()=>{
+ 'use strict';
+ if(window.__ctR315TasteAdapter)return;
+ const engine=window.__ctR307Taste;
+ if(!engine)return;
+ const normalize=key=>String(key||'').startsWith('watch:')?'watchlist:'+String(key).slice(6):key;
+ const oldChoose=engine.choose,oldShown=engine.shown,oldFeedback=engine.feedback;
+ engine.choose=function(key,...args){return oldChoose.call(this,normalize(key),...args)};
+ engine.shown=function(key,...args){return oldShown.call(this,normalize(key),...args)};
+ engine.feedback=function(key,...args){return oldFeedback.call(this,normalize(key),...args)};
+ window.__ctR315TasteAdapter={normalize,scope:'Watchlist taste slot names only'};
+})();
