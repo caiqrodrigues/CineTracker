@@ -1,3 +1,11 @@
+## Android 1.0 / r320 — Descobrir: carregadores delimitados (2026-10-22)
+
+- **Escopo estrito:** corrige apenas o carregamento de **Descobrir → Top 10** e de **Pra Você**, conforme vídeo da versão r319. Home, Histórico, Esportes, Perfil, F1 e Web não sofreram alterações.
+- **Top 10:** cancelado o pré-carregamento de três streamings (seis chamadas paralelas) que competia com as consultas do streaming selecionado; busca limitada a 10 segundos para streamings e 12 segundos para os rankings. Em falha, mostra erro e **Tentar novamente**, em vez de permanecer indefinidamente em “Montando Top 10”.
+- **Pra Você:** as consultas ao painel de gostos e ao contexto de legado seguem em paralelo e não bloqueiam mais a renderização das sete recomendações. Os seis pools autenticados v421 e a validação dos candidatos pelo filtro v525 **continuam obrigatórios**; nenhum título é exibido sem auditoria.
+- **Sem loops/reloads:** controladores existentes de abas e botões preservados; fonte de dados, listas, marcadores de assistido e disposição 2:3 mantidos.
+- **Publicação:** mantém `versionName 1.0` / `com.cinetracker.app`, código interno `10121`, assinatura oficial 1.0, teste regressivo automatizado e release assinado no GitHub.
+
 ## Android 1.0 / r319 — Descobrir responsivo e gêneros legíveis (2026-10-22)
 
 - Versão pública **1.0** mantida; versionCode 10120; raiz 0.3.112; mesmo identificador e certificado.
