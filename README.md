@@ -1,3 +1,7 @@
+## CineTracker Android 1.0 / r317 — Pra Você novamente disponível
+
+Corrige a dependência entre exibição das indicações de **Descobrir → Pra Você** e o carregamento lento dos metadados de biblioteca do Android legado. Os seis conjuntos autenticados v421 alimentam os sete slots, com **validação v525 obrigatória** para excluir vistos, watchlist onde não cabe e itens bloqueados. A personalização baseada em histórico, favoritos e Watchlist continua em segundo plano, sem impedir a abertura se a consulta de preferências atrasar. **Top 10 e outras abas r316, Home, Esportes, Perfil, Web e banco não foram alterados.** Versão visível 1.0 mantida (`versionCode 10118`).
+
 ## Android 1.0 / r316 — reparo crítico da aba Descobrir
 
 Corrige o desaparecimento não autorizado do **Top 10** e evita que carregamentos antigos deixem **Descobrir** permanentemente vazio. A navegação de outras abas passa a usar um único controlador com consulta limitada, retry e cache de títulos já carregados. Cards preservam capa 2:3, título truncado, gênero e ações de Watchlist/Visto, enriquecendo a duração real no TMDB inclusive no Top 10 e Pra Você. A lógica personalizada das sete recomendações, Home, UFC, Esportes, Perfil, Web e Supabase não foi alterada. A versão continua **1.0**, com versionCode **10117**, atualizável por cima da linha oficial 1.0.
