@@ -11,7 +11,7 @@ const TABS=[['foryou','Pra você'],['top10','Top 10'],['trending','Em alta'],['p
 const tabs=new Set(TABS.map(x=>x[0]));
 const q=(s,r=document)=>r?.querySelector?.(s)||null;
 const qa=(s,r=document)=>Array.from(r?.querySelectorAll?.(s)||[]);
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;':'&quot;',"'":'&#39;'}[c]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const here=()=>route()==='discover';
 const getTab=()=>tabs.has(discoverState?.tab)?discoverState.tab:'foryou';
 const valid=()=>here()&&getTab()!=='foryou';
@@ -182,7 +182,7 @@ window.addEventListener('click',event=>{
 },true);
 const detailSelector='.ct315-card,.ct314-card,.ct171-top-card';
 let detailTimer=0;
-function scheduleDetails(){clearTimeout(detailTimer);detailTimer=setTimeout(()=>{void detailVisible()},180)}
+function scheduleDetails(){clearTimeout(detailTimer);detailTimer=setTimeout(()=>{detailTimer=0;void detailVisible()},180)}
 function runtimeText(data,type){
  const raw=Number(type==='movie'?data?.runtime:(data?.episode_run_time?.[0]||data?.last_episode_to_air?.runtime||data?.episode_run_time));
  return Number.isFinite(raw)&&raw>=1&&raw<=1440?Math.round(raw)+' min':'Duração indisponível';
