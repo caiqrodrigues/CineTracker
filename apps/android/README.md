@@ -127,3 +127,7 @@ Os sete slots do Pra Você usam perfil de gêneros (vistos, Watchlist, favoritos
 ## Home 1.0/r308
 
 Correção restrita à Home do Android: botões de episódio com 52 px, travas contra toques rápidos, cards de altura consistente (inclusive UFC), Histórico com Desmarcar minimalista e RPC autenticada com rollback, e filme recente pinado pela última v542 verificada antes do paint para impedir alternância com Pokémon. Descobrir r307, Esportes e banco intactos.
+
+## Android 1.0/r309 — primeira marcação de episódio
+
+A compilação mantém a versão pública **1.0** e `versionCode 10110`. Em Home Séries, o toque no botão de episódio é capturado em `window` antes das versões antigas de eventos e bloqueado por ID até a resolução da função de marcação já existente. Permanecem o desmarcar do Histórico de Séries/Filmes, uniformização do UFC (r308) e recomendações adaptativas (r307). Preparação: `scripts/prepare-android-v10-r309.mjs`; teste: `scripts/test-android-v10-r309.mjs`.
