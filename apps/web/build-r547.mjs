@@ -1,0 +1,18 @@
+import {readFile,writeFile,rm} from 'node:fs/promises';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+await import('./build-r546.mjs');
+const root=dirname(fileURLToPath(import.meta.url)),dist=resolve(root,'dist');
+let [html,js,css,sw,releaseRaw,runtime]=await Promise.all(['index.html','app-v546.js','app-v546.css','service-worker.js','release.json','runtime-r547-home-entry.js'].map((f,i)=>readFile(resolve(i===5?root:dist,f),'utf8')));
+new Function(runtime);js+='\n'+runtime+'\n';
+const needle="const REVISION='r546-official-0.3.73';";
+if(js.split(needle).length!==2)throw new Error('r547 revision anchor not unique');
+js=js.replace(needle,"const REVISION='r547-official-0.3.74';");
+html=html.replaceAll('app-v546.js','app-v547.js').replaceAll('app-v546.css','app-v547.css').replaceAll('r546-official-0.3.73','r547-official-0.3.74').replaceAll('v0.3.73','v0.3.74');
+sw=sw.replaceAll('r546','r547').replaceAll('app-v546.js','app-v547.js').replaceAll('app-v546.css','app-v547.css');
+css+='\n/* r547 Home: native scroll-to-section on each navigation entry. */\n';
+const release=JSON.parse(releaseRaw);Object.assign(release,{version:'0.3.74',revision:'r547-official-0.3.74',scope:'Home Web entry only; Android unchanged',home_landing:'Scroll native to Continue on Series / Watchlist on Movies with bounded reflow stabilization'});
+new Function(js);
+await Promise.all([writeFile(resolve(dist,'app-v547.js'),js),writeFile(resolve(dist,'app-v547.css'),css),writeFile(resolve(dist,'index.html'),html),writeFile(resolve(dist,'service-worker.js'),sw),writeFile(resolve(dist,'release.json'),JSON.stringify(release,null,2))]);
+await Promise.all([rm(resolve(dist,'app-v546.js'),{force:true}),rm(resolve(dist,'app-v546.css'),{force:true})]);
+console.log('WEB_R547_READY');
