@@ -184,16 +184,17 @@ jobs:
           - **Home Séries — UFC:** preservados cards com tamanho uniforme, botão de marcação ampliado (52 px) e correção da barra órfã com ✓.
           - **Home Histórico de Séries e Filmes:** preservado o botão minimalista Desmarcar ao lado de Reassistir, confirmação autenticada do banco e reversão visual quando a operação falha.
           - **Histórico de Filmes:** mantido o snapshot dos filmes mais recentes comprovados, antes de renderizar a Home, impedindo a alternância de Pokémon com WWE após sincronização bem-sucedida.
-          - **Descobrir > Pra Você:** preservado o modelo adaptativo r307 que aprende gêneros com filmes/séries assistidos, favoritos e Watchlist, registra Trocar como feedback e impede repetição de candidatos durante um intervalo de exposição.
-          - **Escopo do r310:** apenas primeiro toque da Home no Android. Web, banco de dados, Esportes, Descobrir, Perfil e Fórmula 1 não foram alterados.
+          - **Descobrir > Pra Você:** r310 libera uma nova seleção por visita ou dia, varia a amostragem personalizada entre candidatos elegíveis e auditados, memoriza títulos já mostrados por 21 dias enquanto houver alternativas e atualiza os gostos com o dashboard real, filmes/séries assistidos, Watchlist, favoritos e feedback.
+          - **Perfil → Séries:** biblioteca autenticada v0991 consultada a cada visita e após assistir, com ordenação pelo último episódio assistido e proteção contra repinturas de cache antigo.
+          - **Escopo do r310:** apenas Perfil e Descobrir no APK Android. Home, Esportes, F1, banco de dados e Web foram preservados.
 
           Android versionName 1.0, versionCode 10111; APK de produção assinado e SHA-256 verificado. Download no GitHub, não na Google Play.
 
           **Nota:** o APK experimental 1.0.61 possui assinatura distinta da linha oficial 1.0. Confira a sincronização antes de desinstalar caso esteja nessa edição.
           NOTES
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial (Home r310)' --notes-file /tmp/release-1.0-notes.md --latest
+            gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial (Perfil e Pra Você r310)' --notes-file /tmp/release-1.0-notes.md --latest
           else
-            gh release create "$TAG" --title 'CineTracker Android 1.0 — Oficial (Home r310)' --notes-file /tmp/release-1.0-notes.md --latest
+            gh release create "$TAG" --title 'CineTracker Android 1.0 — Oficial (Perfil e Pra Você r310)' --notes-file /tmp/release-1.0-notes.md --latest
           fi
           gh release upload "$TAG" CineTracker-Android-1.0.apk CineTracker-Android-1.0-SHA256.txt CineTracker-Android-1.0-size.txt CineTracker-Android-1.0-compatibilidade.txt --clobber
