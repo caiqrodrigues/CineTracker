@@ -1,3 +1,7 @@
+### Android 1.0/r318 — navegação recuperada
+
+Correção crítica da referência circular em `discoverRows` que fazia as abas de Descobrir falharem com `Maximum call stack size exceeded`. A referência ao renderizador anterior é capturada antes de sobrescrever a função, com teste das oito abas não personalizadas e preservação de Pra Você. APK continua **1.0**, atualização interna `10119`; Home, Esportes, Perfil, F1, Web e Supabase não foram modificados.
+
 ## CineTracker Android 1.0 / r317 — Pra Você novamente disponível
 
 Corrige a dependência entre exibição das indicações de **Descobrir → Pra Você** e o carregamento lento dos metadados de biblioteca do Android legado. Os seis conjuntos autenticados v421 alimentam os sete slots, com **validação v525 obrigatória** para excluir vistos, watchlist onde não cabe e itens bloqueados. A personalização baseada em histórico, favoritos e Watchlist continua em segundo plano, sem impedir a abertura se a consulta de preferências atrasar. **Top 10 e outras abas r316, Home, Esportes, Perfil, Web e banco não foram alterados.** Versão visível 1.0 mantida (`versionCode 10118`).
