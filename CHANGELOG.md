@@ -1,3 +1,11 @@
+## Android 1.0 / r318 — correção crítica de navegação em Descobrir (22/10/2026)
+
+- Corrigida a recursão infinita que gerava `Maximum call stack size exceeded` e impedia abrir abas como Populares, Em alta, Novidades, Lançamentos e outras categorias de Descobrir. A origem foi localizada na referência `previousDiscoverRows270`: ela apontava para a própria função que deveria delegar para o renderizador anterior. A referência agora é salva antes da substituição.
+- Reprodução local do erro com o runtime real do APK 1.0/r317: antes da mudança, Populares, Em alta e Novidades exibiam o mesmo erro do vídeo. Após a mudança, renderizaram a seção de resultados sem estouro de pilha (ambiente de testes com respostas vazias simuladas).
+- Incluídos testes de regressão Node para oito abas, preservando o controlador personalizado de Pra Você e todos os fluxos de autenticação existentes.
+- Mantida a versão pública `1.0`, com `versionCode 10119` para atualização por cima da oficial anterior e APK assinado com a identidade estável.
+- Escopo estrito: somente a referência recursiva no runtime Android; não altera regras de recomendação, Home, Esportes, F1, Perfil, Web ou banco.
+
 ## CineTracker Android 1.0 — r317: desbloqueio auditado de Pra Você (2026-10-22)
 
 - **Falha confirmada pelo vídeo:** Descobrir → Pra Você alternava entre carregamento e “Não foi possível confirmar sua biblioteca para filtrar as indicações”. A revisão r316 já recuperava navegação/Top 10, mas ainda preservava esta falha do módulo r314.
