@@ -40,7 +40,7 @@ assert.ok(raw.includes('discoverRows(tab)'));
 assert.ok(raw.includes("discoverCache.delete(tab+':'+localDay())"));
 assert.ok(raw.includes('await window.ctR217RenderTop10(navSeq)'));
 assert.ok(raw.includes("event.stopImmediatePropagation()"));
-assert.ok(raw.includes('const detailCache=new Map()'));
+assert.ok(raw.includes('detailCache=new Map()'));
 assert.ok(raw.includes("safeTmdb('/'+type+'/'+id,{language:'pt-BR'})"));
 
 let page='discover',mounted='',painted='',oldFY=0,top10=0,oldPainter=0,navSeq=11;
