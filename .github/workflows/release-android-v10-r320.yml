@@ -210,7 +210,7 @@ jobs:
 
           ## Correções incluídas
           - Descobrir → Top 10: eliminadas as seis requisições de pré-carregamento de outros streamings que concorriam com o selecionado. Os serviços têm prazos máximos (10s para provedores, 12s para Top 10); falhas exibem explicação e **Tentar novamente**.
-          - Descobrir → Pra Você: o perfil de gostos e o contexto legado são carregados independentemente e não atrasam os sete slots. Os seis pools autenticados da v421 e a verificação obrigatória de vistos, Watchlist, itens bloqueados e aliases pela função v525 foram mantidos.
+          - Descobrir → Pra Você: o perfil de gostos inicia em paralelo às seis consultas autenticadas da v421 para que a afinidade esteja pronta mais cedo, sem atrasar os sete slots. O contexto legado já havia deixado de ser obrigatório na r317. A verificação obrigatória de vistos, Watchlist, bloqueados e aliases pela função v525 foi mantida.
           - Todos os demais controladores, filtros, cartões, ações de assistido, histórico, Home, Esportes, Perfil, F1 Hub e todas as telas de detalhe são preservados do r319.
 
           O APK é release de produção, não depurável, com a mesma assinatura da versão 1.0 anterior e SHA-256 verificado. Pode instalar por cima da 1.0 anterior.
