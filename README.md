@@ -1,3 +1,7 @@
+## CineTracker Android 1.0 / r312 — autenticação e séries
+
+A versão Android **1.0** mantém as correções visuais e funcionais r311 e resolve a origem confirmada do erro `TMDB 401`: a WebView reaproveitava JWT expirado para consultar a API. Agora renova a sessão antes da consulta à Home, ao Detalhe de Séries/Filmes, à lista de Filmes recentes ou aos candidatos de Descobrir; bloqueia cliques/consultas sem sessão válida, sem recarregar a página. Quatro chamadas TMDB no máximo ao mesmo tempo; abertura de detalhe tem prioridade. A nova revisão interna é **r312**, `versionCode 10113`. Nada alterado na versão Web, Supabase ou APK de outras áreas.
+
 ## CineTracker Android 1.0 / r311
 
 Esta atualização permanece **versão 1.0** (código interno 10112), com correções exclusivas do runtime Android: UFC/WWE PPV/F1 na Home Séries consultam novamente os dados reais, o Histórico de Filmes não deve recuar para Pokémon após uma resposta de cache antiga, e Descobrir > Pra Você pode recuperar candidatos elegíveis variados e personalizados com auditoria v525. O restante, incluindo Web e Supabase, está congelado.
