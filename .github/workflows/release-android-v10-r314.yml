@@ -1,5 +1,13 @@
 name: CineTracker Android 1.0 — Web Pra Voce r314
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/prepare-android-v10-r314.mjs'
+      - 'scripts/test-android-v10-r314.mjs'
+      - 'apps/android/runtime-r314-web-foryou.js'
+      - 'apps/android/app/build.gradle'
+      - '.github/workflows/release-android-v10-r314.yml'
   workflow_dispatch:
 
 permissions:
