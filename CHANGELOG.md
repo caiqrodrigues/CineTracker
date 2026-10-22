@@ -1,3 +1,13 @@
+## Android 1.0 / r313 — recuperação da sessão bloqueada (2026-10-22)
+
+- **Diagnóstico reproduzido:** vídeo r312 e logs do Supabase Auth indicam HTTP 400 com `refresh_token_already_used` no dispositivo; a inicialização legada retornava `true` mesmo após falha do refresh, deixando Home, detalhe e recomendações sem autenticação real.
+- **Bootstrap autenticado:** a inicialização delega exclusivamente ao transporte r312 a renovação antes da verificação de usuário, eliminando a segunda tentativa concorrente que consumia o mesmo token rotativo.
+- **Recuperação confiável:** a resposta 400/401 definitiva invalida apenas `cinetracker_session` da tentativa atual, preserva Watchlist, progresso, preferências e histórico persistido e abre o formulário de login sem reload. Um novo login retoma os fluxos; nenhum dado de outra conta é exibido nos caches em memória.
+- **Segurança de concorrência:** se outra tentativa gravou uma sessão nova válida, ela prevalece e não é removida pelo erro antigo. Falhas temporárias de rede não apagam o acesso salvo. Requisições paralelas continuam sob o mesmo refresh em voo.
+- **Escopo estrito:** código da Home, cards UFC/WWE/F1, Desmarcar/Reassistir, Esportes, Descobrir/Pra Você, Perfil, Web, SQL e Edge Functions inalterado. Correção somente de inicialização e expiração da sessão no Android.
+- **Versão:** mantém `versionName 1.0`, pacote `com.cinetracker.app` e assinatura oficial; incrementa `versionCode 10114`, raiz `0.3.106`.
+- **Verificação:** regressão reproduz 400 de token usado, exibe login uma vez, comprova login subsequente, uma renovação para chamadas simultâneas, respeito à sessão concorrente e não exclusão de credenciais em falha de rede.
+
 ## Android 1.0 / r312 — erro TMDB 401 / sessão expirada (2026-10-22)
 
 - **Falha confirmada nos logs do Supabase:** o WebView Android reutilizava token JWT expirado em 21/10/2026 nas consultas de 22/10/2026, causando milhares de HTTP 401 mesmo quando requisições novas funcionavam. Isso impedia abrir detalhes de séries, bloqueava parte da Home UFC/WWE/F1, filmes e deixava os pools de Descobrir vazios.
