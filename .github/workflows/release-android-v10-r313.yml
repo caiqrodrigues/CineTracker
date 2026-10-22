@@ -1,13 +1,5 @@
 name: CineTracker Android 1.0 — Session Recovery r313
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/prepare-android-v10-r313.mjs'
-      - 'scripts/test-android-v10-r313.mjs'
-      - 'apps/android/runtime-r313-session-recovery.js'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-r313.yml'
   workflow_dispatch:
 
 permissions:
