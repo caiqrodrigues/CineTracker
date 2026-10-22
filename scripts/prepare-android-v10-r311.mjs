@@ -44,8 +44,8 @@ once(
 // The legacy detail filter accidentally excluded genre ID 18 (Drama), a
 // broad legitimate genre; preserve bans on documentary, reality, short
 // movies, YouTube-origin content, stand-up and wrestling.
-once("g.includes(10766)||g.includes(18))return false;",
- "g.includes(10766))return false;",'allow legitimate drama');
+once("function badGenre113(x){const g=genres113(x);return g.includes(99)||g.includes(18)||g.includes(10766)}",
+ "function badGenre113(x){const g=genres113(x);return g.includes(99)||g.includes(10766)}",'allow legitimate drama');
 const module=await readFile(resolve(root,'apps/android/runtime-r311-home-discover.js'),'utf8');
 if(!module.includes('window.__ctR311Special=')||
  !module.includes('window.__ctR311Movies=')||
