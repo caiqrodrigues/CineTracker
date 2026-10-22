@@ -1,3 +1,10 @@
+## Web 0.3.71 / r544 — Home Filmes, Séries e UFC (2026-10-22)
+
+- Home Filmes: renderizador antigo não permanece indefinidamente em Carregando Watchlist quando não recebe títulos; fornece repetição explícita e recuperação assíncrona via controlador existente, sem recarregar página.
+- Home Séries: alinhamento de entrada não repete a rolagem após o primeiro posicionamento; Histórico permanece acima de Continuar assistindo.
+- UFC: controlador especial deixa de inserir o card obrigatoriamente na primeira posição; usa timestamp verificável de evento/atividade quando disponível, exibe data do último evento e não inventa data quando ausente.
+- Testes estáticos incluídos em `apps/web/test-r544.mjs`. Build `apps/web/build-r544.mjs` baseado em r543. Apenas Web alterada; APK e Supabase preservados.
+
 ## Android 1.0/r310 — Perfil séries recentes e personalização não repetitiva (2026-10-22)
 
 - **Versão pública 1.0:** `versionCode 10110 → 10111`, identificador `com.cinetracker.app` e assinatura oficial mantidos para instalação sobre a versão 1.0 anterior.
