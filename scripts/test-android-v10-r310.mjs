@@ -74,7 +74,7 @@ assert.equal(await app.profile.refresh(true),true);
 assert.equal(windowMock.__lastPaint.dashboard[0].media_id,77,'Same-day newer watched series must move to front');
 assert.ok(local.get('ct:r310:confirmed-profile:alpha')?.includes('2026-10-22'));
 app.changeUser('beta');
-assert.equal(app.profile.combine([]).length,0,'Previous account's watched series must not leak');
+assert.equal(app.profile.combine([]).length,0,'Previous account watched series must not leak');
 assert.equal(app.profile.stats().verified,0);
 assert.equal(app.discover.begin('42:2026-10-22'),true);
 assert.equal(app.discover.begin('42:2026-10-22'),false,'Single visit must not reroll repeatedly');
