@@ -174,4 +174,4 @@ Versão pública 1.0 e pacote com.cinetracker.app, versionCode 10120. Preparador
 
 ## Android 1.0/r320 (Descobrir)
 
-Atualização exclusivamente na tela Descobrir, com prioridade para Top 10 do provedor selecionado, deadlines de consulta e erro/retry visíveis. Pra Você não aguarda perfil ou contexto legado, mas segue exigindo pools autenticados v421 e auditoria v525. Runtime preparado por `scripts/prepare-android-v10-r320.mjs`, verificado por `scripts/test-android-v10-r320.mjs`, publicado na release `android-v1.0` com assinatura compatível. Código interno 10121; versão pública 1.0.
+Atualização exclusivamente na tela Descobrir, com prioridade para Top 10 do provedor selecionado, deadlines de consulta e erro/retry visíveis. Pra Você inicia a consulta opcional de gostos em paralelo aos pools autenticados v421 (a r317 já havia removido o contexto legado como dependência rígida) e continua exigindo auditoria v525. Runtime preparado por `scripts/prepare-android-v10-r320.mjs`, verificado por `scripts/test-android-v10-r320.mjs`, publicado na release `android-v1.0` com assinatura compatível. Código interno 10121; versão pública 1.0.
