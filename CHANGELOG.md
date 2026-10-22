@@ -1,3 +1,9 @@
+## Web 0.3.74 / r547 — Home inicial abre na seção principal (2026-10-22)
+
+- Substitui tentativa de adivinhar o elemento de rolagem pelo `scrollIntoView` nativo na seção selecionada: Séries = Continuar assistindo, Filmes = Assistir a seguir/Watchlist.
+- Reposicionamento limitado à entrada de aba/rota e estabilização curta de montagem assíncrona; interação manual de rolagem cancela a atuação.
+- Mantém Histórico acessível acima, sem recarregar a página, e não modifica APK/Supabase.
+
 ## Web 0.3.73 / r546 — entrada Home (2026-10-22)
 
 - Corrige a guarda de estado que impedia reinicializar a âncora quando um acesso explícito à Home solicitava reset.
