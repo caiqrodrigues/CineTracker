@@ -1,3 +1,7 @@
+## Android 1.0 / r315 — Home UFC e Descobrir completo
+
+Mantém a versão **1.0** (`versionCode 10116`) e o certificado oficial. Corrige somente o alinhamento da célula de ação UFC na Home Séries; devolve ano, duração quando disponível, gênero, nota e ações com tamanho consistente aos cards de Novidades, Lançamentos, Populares, Em alta, Mais Aguardados, Mais bem avaliados e Calendário. Ação **Visto** usa `markSeen` autenticado com trava e sem recarregamento. Pra Você r314 mantém os sete espaços e as fontes v421/v525; traduz apenas o namespace do feedback de Watchlist para r307. Testes/preparador: `scripts/test-android-v10-r315.mjs`, `scripts/prepare-android-v10-r315.mjs`. Web e Supabase não alterados.
+
 ## Android 1.0 / r313 — recuperação de refresh token
 
 A abertura do APK agora usa um só controlador para a renovação Supabase; `refresh_token_already_used` (400) provoca um login seguro, sem preservar uma Home com autenticação falsa. Não apaga Watchlist, histórico ou preferências armazenados localmente; não reutiliza o token rotativo já consumido. Em caso de aviso de sessão expirada, entre novamente na mesma conta. Pacote e assinatura preservados, versionName 1.0, versionCode 10114. Código de tela r312 mantido. Testes e preparador: `scripts/test-android-v10-r313.mjs` e `scripts/prepare-android-v10-r313.mjs`.
