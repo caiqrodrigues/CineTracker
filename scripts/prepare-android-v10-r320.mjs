@@ -50,20 +50,15 @@ scoped("async function renderTop217()","window.ctR217RenderTop10=renderTop217;",
      "h.innerHTML='<div class=\"empty\">Falha ao carregar streamings: '+esc(String(e?.message||e))+' <button type=\"button\" class=\"chip\" data-ct316-retry>Tentar novamente</button></div>';",
      'Top10 explicit retry for providers');
 
-// Seven ForYou slots are already authorized by v421 + v525. A 9.5-second
-// profile dashboard call and 18-second generic context are OPTIONAL inputs
-// to ranking, not permission checks. They MUST NOT block rendering or audit.
-const oldWait=" const results=await Promise.allSettled([\n  ...keys.map(([group,kind])=>fetchPool(group,kind)),\n  timebox(ct186Context(true),18000),\n  timebox(taste()?.warm?.(true)||Promise.resolve(true),18000)\n ]);";
-const newWait=" // Rank affinity and legacy context warm asynchronously; eligibility\n"+
-" // is checked below by v525, which is the authenticated authority.\n"+
-" try{void Promise.resolve(taste()?.warm?.(true)).catch(()=>{})}catch{}\n"+
-" try{void timebox(ct186Context(true),18000).catch(()=>{})}catch{}\n"+
-" const results=await Promise.allSettled([\n"+
-"  ...keys.map(([group,kind])=>fetchPool(group,kind)),\n"+
-"  Promise.resolve({dash:true}),\n"+
-"  Promise.resolve(true)\n"+
-" ]);";
-once(oldWait,newWait,'optional user-profile waits removed from recommendation critical path');
+// r317 correctly retired the legacy dashboard prerequisite already. Do NOT
+// recreate it. Improve personalization by starting the nonblocking taste
+// fetch before the six authenticated pools instead of after they finish.
+once('const results=await Promise.allSettled(keys.map(([group,kind])=>fetchPool(group,kind)));',
+     'void Promise.resolve().then(()=>taste()?.warm?.(false)).catch(()=>{});\n const results=await Promise.allSettled(keys.map(([group,kind])=>fetchPool(group,kind)));'.replaceAll('\n','\n'),
+     'start optional user taste in parallel with 6 v421 pools');
+once(' // Personal taste learning is independent from user-state exclusion.\n // A failed/slow dashboard may not prevent server-audited cards from loading.\n void Promise.resolve().then(()=>taste()?.warm?.(false)).catch(()=>{});'.replaceAll('\n','\n'),
+     ' // Taste warm started independently before the six pools; all displayed candidates still require the strict v525 audit.',
+     'remove duplicate post-query taste warm');
 const module=await readFile(resolve(root,'apps/android/runtime-r320-discover-loading.js'),'utf8');
 for(const marker of [
  'window.__ctR320Discover={providers,topRows,stats:',
