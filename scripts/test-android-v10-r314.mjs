@@ -146,4 +146,56 @@ const bootstrap=[
 Object.assign(context,{
  routeNow:'discover',server,marked,toasts:[],renderCount:0,nonForyouRenders:0,nonForyouPaints:0
 });
-vm.runInNewContext(bootstrap+module+
+vm.runInNewContext(bootstrap+module+[
+"globalThis.test={",
+"render:async()=>{await renderDiscover(navSeq);await window.__ctR314ForYou.load(false)},",
+"paint:()=>paintDiscover({}),",
+"swap:x=>window.__ctR314ForYou.swap(x),",
+"action:(a,s)=>window.__ctR314ForYou.action(a,s),",
+"choose:x=>window.__ctR314ForYou.choose(x),",
+"stats:()=>window.__ctR314ForYou.stats(),",
+"setTab:x=>discoverState.tab=x,",
+"enter:async()=>{navSeq++;await renderDiscover(navSeq);await window.__ctR314ForYou.load(false)}",
+"};"
+].join('\n'),context,{filename:'r314-web-foryou-regression'});
+await context.test.render();
+assert.equal(audits,1,'Every seven-slot pool must pass the authenticated v525 audit');
+assert.equal(requests.length,6,'Must use six Web v421 pool RPCs');
+assert.ok(requests.every(x=>x.name.endsWith('_v421')));
+assert.deepEqual(JSON.parse(JSON.stringify(requests.filter(x=>x.name==='cinetracker_discover_fresh_v421').map(x=>x.args))),
+ [{p_kind:'movie',p_limit:48},{p_kind:'series',p_limit:48},{p_kind:'anime',p_limit:48}]);
+assert.equal(context.test.stats().slots,7,'Seven Web slots required');
+assert.equal((root.innerHTML.match(/data-ct314-action="swap"/g)||[]).length,7);
+assert.equal((root.innerHTML.match(/data-ct314-action="seen"/g)||[]).length,7);
+assert.equal((root.innerHTML.match(/data-ct314-action="watchlist"/g)||[]).length,4);
+assert.equal((root.innerHTML.match(/data-ct314-slot="watch:/g)||[]).length,3);
+assert.equal((root.innerHTML.match(/data-ct314-slot="fresh:/g)||[]).length,3);
+assert.ok(!root.innerHTML.includes('BANNED'));
+assert.ok(!root.innerHTML.includes('Title 108'),'v525 blocked candidate must not render');
+assert.equal(context.renderCount,1,'Only the ForYou route shell is rendered');
+assert.ok(document.head.style.textContent.includes('aspect-ratio:2/3'),'2:3 posters preserved');
+const impressionsBefore=impressions.filter(x=>x.slot==='watch:anime').map(x=>x.id);
+assert.equal(impressionsBefore.length,1);
+assert.equal(await context.test.swap('watch:anime'),true);
+assert.equal(impressions.filter(x=>x.slot==='watch:anime').length,2);
+assert.notEqual(impressions.at(-1).id,impressionsBefore[0],'Swap cannot return immediately to original item');
+assert.equal(context.test.stats().swaps,1);
+assert.equal(feedback.at(-1).action,'swap');
+await context.test.action('seen','fresh:series');
+assert.equal(marked.length,1,'Existing seen mutation must be used');
+assert.equal(marked[0].type,'tv');
+await context.test.action('watchlist','fresh:movie');
+assert.equal(saved.length,1,'Existing authenticated Watchlist mutation must be used');
+assert.equal(saved[0].type,'movie');
+assert.ok(context.toasts.some(x=>x.includes('Watchlist')));
+context.test.setTab('trending');await context.test.render();context.test.paint();
+assert.equal(context.nonForyouRenders,1,'Other Discover tab renderer unchanged');
+assert.equal(context.nonForyouPaints,1,'Other Discover tab painter unchanged');
+assert.equal(context.renderCount,1,'Other tab must not trigger custom seven-slot mount');
+context.test.setTab('foryou');await context.test.enter();
+assert.equal(context.test.stats().slots,7);
+assert.ok(impressions.filter(x=>x.slot==='watch:anime').length>=3,
+ 'On reentry, recommendation ownership must change');
+assert.ok(context.test.stats().loaded>=2);
+assert.equal(requests.length,12,'A fresh visit must revalidate the six web source RPCs');
+console.log('CINETRACKER_1_0_R314_TEST_OK: six authenticated Web v421 pools; verified v525 7 slots; 7 swap, 7 seen and 4 Watchlist actions; diversity across visits; other tabs untouched.');
