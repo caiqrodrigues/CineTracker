@@ -19,9 +19,8 @@ for(const marker of [
  'const providers=await window.__ctR320Discover.providers();',
  'data-ct316-retry',
  "const results=await Promise.allSettled([",
- 'Promise.resolve({dash:true})',
- 'void Promise.resolve(taste()?.warm?.(true)).catch(()=>{})',
- 'void timebox(ct186Context(true),18000).catch(()=>{})',
+ 'void Promise.resolve().then(()=>taste()?.warm?.(false)).catch(()=>{});',
+ 'const results=await Promise.allSettled(keys.map(([group,kind])=>fetchPool(group,kind)));',
  "window.__ctR314ForYou={load,mount,swap,action,choose,paint,poolFor,stats:",
  "window.__ctR319Discover={rows,stats:",
  "window.__ctR316Discover={show,ensureTop10,restore,detailVisible,",
@@ -50,11 +49,14 @@ assert.ok(block.includes("for(let i=0;i<6;i++)if(results[i].status==='fulfilled'
 assert.ok(block.includes("if(!verifyData(audited))throw Error("));
 assert.ok(block.includes("clean.watch[kind]=arr(audited._ct186_watchlist[kind])"));
 assert.ok(block.includes("clean.fresh[kind]=arr(audited._ct186_fresh[kind])"));
-assert.ok(block.includes('Promise.resolve({dash:true})'));
-assert.ok(block.includes('Promise.resolve(true)'));
+assert.ok(block.includes('const results=await Promise.allSettled(keys.map(([group,kind])=>fetchPool(group,kind)));'));
+assert.ok(block.includes('void Promise.resolve().then(()=>taste()?.warm?.(false)).catch(()=>{});'));
+assert.ok(block.indexOf('void Promise.resolve().then(()=>taste()?.warm?.(false)).catch(()=>{});') <
+ block.indexOf('const results=await Promise.allSettled(keys.map(([group,kind])=>fetchPool(group,kind)));'),
+ 'Optional profile warm must start before pools instead of delaying all 7 slots');
+assert.ok(!block.includes('timebox(ct186Context(true),18000)'),
+ 'r317 removed legacy context as a hard gate; do not reintroduce it');
 assert.ok(!block.includes('timebox(taste()?.warm?.(true)||Promise.resolve(true),18000)'));
-assert.ok(!block.includes('  timebox(ct186Context(true),18000),'));
-
 const module=await readFile('apps/android/runtime-r320-discover-loading.js','utf8');
 assert.ok(js.includes(module),'r320 must install the reviewed module unchanged');
 assert.ok(!module.includes('window.location.reload(')&&!module.includes('router.refresh('));
