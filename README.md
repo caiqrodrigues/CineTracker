@@ -1,6 +1,6 @@
 ## Android 1.0 / r320 — correção de Descobrir
 
-A atualização oficial mantém **1.0** (`versionCode 10121`). O Top 10 deixa de pré-carregar outros streamings enquanto monta o selecionado; as chamadas têm limites de tempo e exibem **Tentar novamente** quando falham. No **Pra Você**, a análise de gostos e o contexto legado continuam em segundo plano, sem travar os sete slots. Os resultados continuam vindo das fontes autenticadas e só são exibidos após a verificação obrigatória `cinetracker_recommendation_filter_v525`. O restante do Android e toda a Web e o banco permanecem intocados.
+A atualização oficial mantém **1.0** (`versionCode 10121`). O Top 10 deixa de pré-carregar outros streamings enquanto monta o selecionado; as chamadas têm limites de tempo e exibem **Tentar novamente** quando falham. No **Pra Você**, o perfil de gostos começa a ser consultado antes das seis fontes autenticadas, em paralelo, para permitir uma seleção mais personalizada quando os candidatos forem validados. A r317 já havia removido a dependência rígida do contexto legado. Os resultados continuam vindo das fontes autenticadas e só são exibidos após a verificação obrigatória `cinetracker_recommendation_filter_v525`. O restante do Android e toda a Web e o banco permanecem intocados.
 
 ## Android 1.0 / r319 — Descobrir estável e gêneros com quebra de linha
 
