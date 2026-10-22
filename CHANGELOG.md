@@ -1,3 +1,12 @@
+## Android 1.0/r310 — Perfil séries recentes e personalização não repetitiva (2026-10-22)
+
+- **Versão pública 1.0:** `versionCode 10110 → 10111`, identificador `com.cinetracker.app` e assinatura oficial mantidos para instalação sobre a versão 1.0 anterior.
+- **Perfil — Séries:** em cada acesso ao Perfil e retorno ao app, consulta autenticada `cinetracker_profile_media_dashboard_v0991`; ordena a biblioteca por `last_watched_at` real; mantém dados recentes e contagens verificadas mesmo quando um controlador antigo repinta biblioteca desatualizada; atualiza após marcações, protege contra troca de usuário, preserva contadores, favoritos, listas e telas de detalhe. Se a chamada falhar, não elimina uma coleção previamente confirmada.
+- **Descobrir — Pra Você:** troca o critério estático de primeiro item por amostragem ponderada pela afinidade de gêneros observada em episódios/filmes assistidos, Watchlist, favoritos e feedback das ações. No início de uma nova visita/dia, libera apenas a seleção fixada da visita anterior; mantém a trava contra repintura durante a mesma visita.
+- **Diversidade:** registra impressões por conta para evitar repetir recomendações nas próximas visitas por até 21 dias enquanto houver alternativas elegíveis; seleção aleatória ponderada entre 12 candidatos em vez de retornar sempre o mesmo máximo determinístico. Expande em segundo plano pools novos pequenos, mantendo auditoria v525. Watchlist continua restrita estritamente às entradas reais elegíveis da conta (não inventa conteúdo).
+- **Dados pessoais recentes:** revalida o dashboard de afinidade do usuário ao voltar a descobrir e após ações. Não muda o banco, o serviço TMDB ou os critérios de restrição de curtas, YouTube, stand-up, realities, WWE, itens vistos e Watchlist.
+- **Escopo estrito APK:** não altera Home, Esportes, UFC, F1 Hub, Histórico, Web, SQL ou o resto do aplicativo. Nenhuma atualização global, reload ou substituição de controles existentes.
+
 ## Android 1.0/r309 — toque único confiável na Home (2026-10-22)
 
 - Nome público **1.0** preservado. Código Android incrementado **10109 → 10110**; assinatura oficial idêntica à versão instalada anteriormente.
