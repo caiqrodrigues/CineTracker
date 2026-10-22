@@ -8,7 +8,7 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10114
+        versionCode 10115
         versionName '1.0'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
@@ -41,4 +41,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker Android 1.0/r313: recover from already-used Supabase refresh tokens with a single re-login prompt; other modules unchanged.
+// CineTracker Android 1.0/r314: Discover Pra Voce only — Web v421 pools, v525 verification, seven independent slots; r313 Home/Auth and all other screens unchanged.
