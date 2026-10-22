@@ -1,3 +1,7 @@
+## CineTracker Android 1.0 / r313 — restauração segura de acesso
+
+Corrige a falha da r312 em que o Supabase rejeitava a renovação com `refresh_token_already_used` (HTTP 400), mas o aplicativo continuava exibindo abas sem autorização. A tela de inicialização agora compartilha o mesmo controlador de sessão e, se a credencial já estiver inválida, apresenta **Entrar** uma única vez, sem recarregar a página ou remover dados sincronizados. Se surgir o login após a atualização, informe as credenciais da mesma conta; um token de renovação já consumido não pode ser reutilizado com segurança. A versão exibida permanece **1.0** (`versionCode 10114`). Home, Descobrir, Esportes, Perfil, Web e Supabase continuam exatamente como na r312.
+
 ## CineTracker Android 1.0 / r312 — autenticação e séries
 
 A versão Android **1.0** mantém as correções visuais e funcionais r311 e resolve a origem confirmada do erro `TMDB 401`: a WebView reaproveitava JWT expirado para consultar a API. Agora renova a sessão antes da consulta à Home, ao Detalhe de Séries/Filmes, à lista de Filmes recentes ou aos candidatos de Descobrir; bloqueia cliques/consultas sem sessão válida, sem recarregar a página. Quatro chamadas TMDB no máximo ao mesmo tempo; abertura de detalhe tem prioridade. A nova revisão interna é **r312**, `versionCode 10113`. Nada alterado na versão Web, Supabase ou APK de outras áreas.
