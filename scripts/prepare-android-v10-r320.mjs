@@ -34,7 +34,8 @@ function scoped(startMarker,endMarker,from,to,label){
 once("setTimeout(()=>{void Promise.allSettled(ct171ProviderList.slice(0,3).map(p=>ct171TopRows(Number(p.provider_id))))},0);",
      '/* r320: prioritize the selected provider, no speculative prefetch */',
      'retire Top 10 competing provider prefetch');
-scoped("async function paintTop217(","async function renderTop217()",\n     "content.innerHTML=loading('Montando Top 10...');\n  try{\n    const data=await ct171TopRows(Number(provider));",
+scoped("async function paintTop217(","async function renderTop217()",
+     "content.innerHTML=loading('Montando Top 10...');\n  try{\n    const data=await ct171TopRows(Number(provider));",
      "content.innerHTML=loading('Montando Top 10...');\n  try{\n    const data=await window.__ctR320Discover.topRows(Number(provider));",
      'selected-provider Top10 timeout');
 scoped('async function renderTop217()','window.ctR217RenderTop10=renderTop217;',
