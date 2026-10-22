@@ -84,5 +84,5 @@ assert.equal(render.filter(x=>x[0]==='warm'&&x[1]).length,3);
 assert.ok(js.includes("if(!force&&profileRows.length&&now()-profileLoadedAt<12*60*1000)return true;"));
 assert.ok(js.includes("if(p.length<=2&&!key.startsWith('watchlist:'))void refill(key);"));
 assert.ok(js.includes("now()-(lastByRef.get(ref(x))||0)>COOLDOWN"),'Cross-day repeated recommendations must be blocked within 21-day impressions');
-assert.ok(js.includes("if(key.startsWith('watchlist:')"),'Watchlist pool must remain from true user entries only');
+assert.ok(js.includes("key.startsWith('watchlist:')||"),'Watchlist pool must remain from true user entries only');
 console.log('CINETRACKER_1_0_R310_TEST_OK: official version retained; Profile latest series confirmed + stale overwrite protected + account isolation; discover per-visit/day restart with stochastic nonrepeat & real-profile affinity; r309 Home + Sports retained.');
