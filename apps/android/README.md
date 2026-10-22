@@ -147,3 +147,7 @@ Preparador: `scripts/prepare-android-v10-r311.mjs`. Validação: `scripts/test-a
 ## 1.0 / r312 — conexão Android autenticada
 
 Quando o token do usuário vence, a Activity WebView não reutiliza a sessão antiga ao chamar o Supabase. REST, RPC, Edge e proxy TMDB aguardam um único refresh; se ocorrer erro, a requisição falha visivelmente em vez de inundar o servidor com 401. A consulta de detalhe da série é priorizada e o transporte TMDB fica limitado a quatro requisições concorrentes. Nenhuma mudança na Web, nas funções Edge, SQL ou estrutura do APK. Continua versão pública 1.0, versionCode 10113.
+
+## Android oficial 1.0/r314 — Pra Você (22/10/2026)
+
+A versão pública continua 1.0, `versionCode 10115`, identificador `com.cinetracker.app` e assinatura oficial preservados. A tela Descobrir > Pra Você passa a consultar as mesmas seis funções `cinetracker_discover_*_v421` da Web, com auditoria de vistos/Watchlist v525; 7 slots (Indicação do Dia, Watchlist 3, 100% Novos 3), controles Trocar/Visto/Watchlist e preferência de gêneros aprendida a partir de atividade autenticada. A camada anterior r313 permanece integralmente intacta fora da nova função de renderização de Pra Você. Preparador `scripts/prepare-android-v10-r314.mjs`; teste `scripts/test-android-v10-r314.mjs`. A distribuição atualiza a release oficial `android-v1.0`.
