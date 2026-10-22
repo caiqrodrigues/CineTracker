@@ -103,7 +103,7 @@ await api.show('foryou');
 assert.equal(oldFY,1,'The existing seven-slot ForYou owner must remain in charge');
 assert.ok(mounted.includes('data-discover-tab="top10"'),'Top 10 must also appear in ForYou rail');
 assert.equal(api.stats().tab,'foryou');
-const btn={dataset:{discoverTab:'popular'},closest(s){return s==='[data-discover]'?{}:this}};
+const btn={dataset:{discoverTab:'popular'},hasAttribute(s){return s==='data-discover-tab'},closest(s){return s==='[data-discover]'?{}:this}};
 const click={target:{closest:()=>btn},preventDefault(){this.prevented=true},
  stopImmediatePropagation(){this.stopped=true}};
 clicks.at(-1)(click);
