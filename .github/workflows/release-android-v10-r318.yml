@@ -1,13 +1,5 @@
 name: CineTracker Android 1.0 — Restore all tabs r318
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/android/runtime-r270-v1028-profile-foryou-history.js'
-      - 'scripts/prepare-android-v10-r318.mjs'
-      - 'scripts/test-android-v10-r318.mjs'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-r318.yml'
   workflow_dispatch:
 
 permissions:
