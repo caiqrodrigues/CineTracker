@@ -1,3 +1,7 @@
+## Web 0.3.73 / r546
+
+A Home Web reposiciona a entrada em Continuar assistindo (Séries) ou Assistir a seguir/Watchlist (Filmes), preservando Histórico acima. Android congelado.
+
 ## Web r545 / 0.3.72
 
 Home Web: evita solicitação repetida de âncora na mesma aba e consome a data de evento UFC existente na resposta autenticada. Build `cd apps/web && npm run build`. APK preservado.
