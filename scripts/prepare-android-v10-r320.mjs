@@ -22,15 +22,23 @@ once("const REVISION='r319-android-official-1.0';",
 once('window.__ctAndroidOfficialCode=10120;',
      'window.__ctAndroidOfficialCode=10121;','internal update number');
 
+function scoped(startMarker,endMarker,from,to,label){
+ const start=js.indexOf(startMarker),end=start<0?-1:js.indexOf(endMarker,start+startMarker.length);
+ if(start<0||end<start)throw Error('r320 '+label+': expected handler boundary is absent');
+ const block=js.slice(start,end),count=block.split(from).length-1;
+ if(count!==1)throw Error('r320 '+label+': expected one match in current handler, got '+count);
+ js=js.slice(0,start)+block.replace(from,to)+js.slice(end);
+}
 // Top 10 has its own working renderer. Remove six speculative background TMDB
 // calls which compete against the two requests for the selected provider.
 once("setTimeout(()=>{void Promise.allSettled(ct171ProviderList.slice(0,3).map(p=>ct171TopRows(Number(p.provider_id))))},0);",
      '/* r320: prioritize the selected provider, no speculative prefetch */',
      'retire Top 10 competing provider prefetch');
-once("content.innerHTML=loading('Montando Top 10...');\n  try{\n    const data=await ct171TopRows(Number(provider));",
+scoped("async function paintTop217(","async function renderTop217()",\n     "content.innerHTML=loading('Montando Top 10...');\n  try{\n    const data=await ct171TopRows(Number(provider));",
      "content.innerHTML=loading('Montando Top 10...');\n  try{\n    const data=await window.__ctR320Discover.topRows(Number(provider));",
      'selected-provider Top10 timeout');
-once('ct171ProviderList=null;\n    const providers=await ct171Providers();',
+scoped('async function renderTop217()','window.ctR217RenderTop10=renderTop217;',
+     'ct171ProviderList=null;\n    const providers=await ct171Providers();',
      'ct171ProviderList=null;\n    const providers=await window.__ctR320Discover.providers();',
      'Top10 provider source timeout');
 once("content.innerHTML=fail('Falha ao carregar Top 10: '+(e?.message||e),'discover');",
