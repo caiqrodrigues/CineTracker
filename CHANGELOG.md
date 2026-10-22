@@ -1,3 +1,13 @@
+## Android 1.0 / r312 — erro TMDB 401 / sessão expirada (2026-10-22)
+
+- **Falha confirmada nos logs do Supabase:** o WebView Android reutilizava token JWT expirado em 21/10/2026 nas consultas de 22/10/2026, causando milhares de HTTP 401 mesmo quando requisições novas funcionavam. Isso impedia abrir detalhes de séries, bloqueava parte da Home UFC/WWE/F1, filmes e deixava os pools de Descobrir vazios.
+- **Transporte autenticado unificado:** antes de Supabase REST/RPC, Edge Functions e TMDB, verifica prazo de validade e renova uma única vez para solicitações simultâneas. Requisições só começam depois do refresh bem-sucedido, inclusive ao retornar do segundo plano.
+- **Segurança e estabilidade:** evita enviar o bearer vencido ao endpoint de renovação, confirma identidade antes de instalar tokens rotativos, não mistura sessões de contas, interrompe temporariamente consultas sem autenticação em vez de disparar milhares de 401.
+- **TMDB:** 4 consultas simultâneas no máximo, remoção automática de solicitações concluídas, prioridade para detalhes /tv/:id e /movie/:id, deduplicação das consultas idênticas e apenas uma segunda tentativa após renovar credenciais. Caso o proxy ainda retorne 401, sinaliza a indisponibilidade e bloqueia a tempestade de requisições.
+- **Escopo:** somente runtime HTTP autenticado do Android. Conserva r311: cards UFC/WWE/F1 confirmados pelas RPCs, proteção dos últimos filmes do Histórico e Descobrir com candidatos reais auditados v525. Web, Supabase SQL/Edge e demais módulos intocados.
+- **Versão:** nome público **1.0** mantido, `versionCode 10113`, raiz `0.3.105`. Mesmo pacote e assinatura para atualizar sobre o APK oficial 1.0.
+- **Teste de regressão:** 20 chamadas simultâneas de abertura de séries, Home e Descobrir compartilham 1 refresh; nenhuma recebe token vencido; máximo 4 chamadas TMDB ativas; sessão inválida causa bloqueio e mensagem sem repetir tráfego.
+
 ## Android 1.0 / r311 — Home Séries, Filmes e Descobrir (2026-10-22)
 
 - Mantido `versionName 1.0`, pacote Android e assinatura oficial; código interno `10112`.
