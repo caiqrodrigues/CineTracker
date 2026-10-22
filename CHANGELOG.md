@@ -1,3 +1,12 @@
+## CineTracker Android 1.0 — r316: correção crítica de Descobrir e Top 10 (2026-10-22)
+
+- **Correção de regressão:** restaurada a aba **Top 10**, usando o renderizador original dos streamings e dos respectivos rankings de filmes e séries. Top 10 fica visível também em Pra Você.
+- **Descobrir não abre:** um único controlador final de navegação assume exclusivamente abas que não são Pra Você; respostas atrasadas dos renderizadores antigos não podem voltar a colocar “Carregando títulos...” sobre cards confirmados. Consulta assíncrona tem limite de 14 segundos e opção Tentar novamente, com fallback para última lista válida da mesma aba.
+- **Cards:** preservados botões Watchlist e Visto, e layout 2:3 com tamanho e alinhamento uniformes. Duração verdadeira consultada no TMDB em segundo plano com cache e limites, inclusive cards do Top 10 e Pra Você. Quando TMDB não informar duração, a interface mostra “Duração indisponível”, sem estimar valores.
+- **Isolamento:** o seletor de abas intercepta toques antes dos listeners antigos, sem alterar as ações internas de cards ou a lógica das sete indicações Pra Você r314. Sem reload da página ou alterações em Home, UFC, outros Esportes, Perfil, banco ou Web.
+- **Publicação:** versão pública 1.0, versionCode 10117, appId e assinatura anteriores. Teste automatizado de aba Top 10, conflitos assíncronos, cards e preservação do Pra Você; APK de produção verificado via GitHub Actions.
+- Os ajustes de Home, histórico, mark-watched e recomendação personalizada anteriores foram preservados; esta entrega não altera algoritmos do Pra Você.
+
 ## CineTracker Android 1.0 — r315: Home UFC e cards de Descobrir (2026-10-22)
 
 - Nome de versão preservado: **1.0**, versionCode **10116**, pacote e certificado de assinatura oficial inalterados; raiz **0.3.108**.
