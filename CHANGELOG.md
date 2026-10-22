@@ -1,3 +1,12 @@
+## CineTracker Android 1.0 — r317: desbloqueio auditado de Pra Você (2026-10-22)
+
+- **Falha confirmada pelo vídeo:** Descobrir → Pra Você alternava entre carregamento e “Não foi possível confirmar sua biblioteca para filtrar as indicações”. A revisão r316 já recuperava navegação/Top 10, mas ainda preservava esta falha do módulo r314.
+- **Causa corrigida:** a montagem de sete recomendações esperava obrigatoriamente `ct186Context(true)`, uma cadeia antiga que também executava enriquecimentos TMDB de watchlist (r114/r115) e podia estourar 18 segundos. A confirmação de elegibilidade já é feita separadamente pelo banco, com v421 e v525. Esse trabalho desnecessário não pode bloquear a abertura.
+- **Segurança de estado:** cada candidato de Filme, Série e Anime, tanto de `100% Novos` quanto de `Da sua Watchlist` e `Indicação do Dia`, continua sujeito a auditoria de usuário no servidor `cinetracker_recommendation_filter_v525`. Auditoria parcial ou falha rejeita recomendações; nunca mostra filmes já vistos como se fossem novos por omissão.
+- **Personalização:** o treinamento com histórico/favoritos/watchlist r307 continua em segundo plano; atraso/erro do dashboard não impossibilita exibir candidatos já verificados.
+- **Regressão:** testes automatizados garantem que todos os seis pools v421 são consultados, que resposta parcial v525 bloqueia os cartões e que um aprendizado em segundo plano indefinidamente pendente não bloqueia a renderização.
+- **Isolamento:** somente o fluxo `Descobrir → Pra Você` do APK foi modificado. Controlador r316 das outras abas, Top 10, Home/UFC, Perfil, Esportes, bancos de dados e Web intocados. `versionName 1.0`, `versionCode 10118` e identidade oficial preservados.
+
 ## CineTracker Android 1.0 — r316: correção crítica de Descobrir e Top 10 (2026-10-22)
 
 - **Correção de regressão:** restaurada a aba **Top 10**, usando o renderizador original dos streamings e dos respectivos rankings de filmes e séries. Top 10 fica visível também em Pra Você.
