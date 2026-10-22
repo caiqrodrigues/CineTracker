@@ -1,5 +1,12 @@
-name: CineTracker Android 1.0 — Home Discover r311
+name: CineTracker Android 1.0 — Authenticated Transport r312
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/prepare-android-v10-r312.mjs'
+      - 'scripts/test-android-v10-r312.mjs'
+      - 'apps/android/runtime-r312-auth-transport.js'
+      - '.github/workflows/release-android-v10-r311.yml'
   workflow_dispatch:
 
 permissions:
@@ -73,16 +80,17 @@ jobs:
         run: |
           set -euo pipefail
           grep -Fq "versionName '1.0'" apps/android/app/build.gradle
-          grep -Fq 'versionCode 10112' apps/android/app/build.gradle
+          grep -Fq 'versionCode 10113' apps/android/app/build.gradle
           grep -Fq "applicationId 'com.cinetracker.app'" apps/android/app/build.gradle
           grep -Fq 'signingConfig signingConfigs.official' apps/android/app/build.gradle
           node --check apps/android/runtime-r310-profile-discover.js
           node --check apps/android/runtime-r311-home-discover.js
+          node --check apps/android/runtime-r312-auth-transport.js
           node --check apps/android/runtime-r308-home-actions.js
-          node --check scripts/prepare-android-v10-r311.mjs
-          node --check scripts/test-android-v10-r311.mjs
-          node scripts/prepare-android-v10-r311.mjs
-          node scripts/test-android-v10-r311.mjs
+          node --check scripts/prepare-android-v10-r312.mjs
+          node --check scripts/test-android-v10-r312.mjs
+          node scripts/prepare-android-v10-r312.mjs
+          node scripts/test-android-v10-r312.mjs
 
       - name: Build production release APK, not debug
         working-directory: apps/android
@@ -104,7 +112,7 @@ jobs:
           BADGING="$("$AAPT" dump badging "$OUT")"
           grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
           grep -Fq "versionName='1.0'" <<<"$BADGING"
-          grep -Fq "versionCode='10112'" <<<"$BADGING"
+          grep -Fq "versionCode='10113'" <<<"$BADGING"
           if grep -Fq 'application-debuggable' <<<"$BADGING"; then echo 'Refusing debuggable APK'; exit 1; fi
           "$APKSIGNER" verify --print-certs "$OUT" > /tmp/cinetracker-1.0-signer.txt
           "$APKSIGNER" verify --print-certs /tmp/CineTracker-Android-1.0.apk > /tmp/cinetracker-previous-1.0-signer.txt
@@ -121,8 +129,8 @@ jobs:
           fi
           unzip -p "$OUT" assets/hotfix5/index.html > /tmp/cinetracker-1.0-index.html
           grep -Fq 'name="ct-official-version" content="1.0"' /tmp/cinetracker-1.0-index.html
-          grep -Fq 'data-ct-android="r311-android-stable-js"' /tmp/cinetracker-1.0-index.html
-          grep -Fq 'window.__ctAndroidOfficialCode=10112' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'data-ct-android="r312-android-stable-js"' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctAndroidOfficialCode=10113' /tmp/cinetracker-1.0-index.html
           grep -Fq 'window.__ctR303SinglePaint' /tmp/cinetracker-1.0-index.html
           grep -Fq 'window.__ctR296WweHome' /tmp/cinetracker-1.0-index.html
           grep -Fq 'cinetracker_recommendation_filter_v525' /tmp/cinetracker-1.0-index.html
@@ -152,7 +160,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: cinetracker-android-official-1.0-r311
+          name: cinetracker-android-official-1.0-r312
           path: |
             CineTracker-Android-1.0.apk
             CineTracker-Android-1.0-SHA256.txt
@@ -170,20 +178,20 @@ jobs:
           set -euo pipefail
           TAG='android-v1.0'
           cat > /tmp/release-1.0-notes.md <<'NOTES'
-          # CineTracker Android 1.0 — Oficial (Home e Descobrir r311)
+          # CineTracker Android 1.0 — Oficial r312
 
-          A versão pública continua **1.0** e o `versionCode` aumenta para **10112**, com a mesma assinatura oficial para instalar sobre a anterior.
+          Corrige a causa confirmada nos logs do erro TMDB 401: sessão JWT vencida reutilizada pela WebView Android em detalhes de séries, Home e Descobrir.
 
-          - **Home Séries — UFC, WWE Pay-Per-View e Fórmula 1:** consulta autenticada direta dos eventos e progresso (v518, v519 e v512) quando o controlador anterior está sem dados. Os resultados verdadeiros são usados no componente original; a marcação de eventos e o F1 Hub não são alterados.
-          - **Home Filmes — Histórico recente:** quando uma resposta antiga apaga o último filme da lista e volta ao Pokémon, o aplicativo repõe o último histórico autenticado confirmado. Novas entradas seguem as datas reais, preservando a biblioteca completa.
-          - **Descobrir > Pra Você:** pools insuficientes recebem candidatos variados, ajustados às preferências verificadas de gêneros vistos, favoritos e Watchlist. Nunca ignora o filtro de vistos ou Watchlist nem a auditoria autenticada v525. Corrigido filtro que excluía erroneamente o gênero Drama.
-          - Preservadas marcação/desmarcação em Home, regra dos 30 dias, Perfil, Esportes, Raw/SmackDown, F1 Hub e demais funcionalidades r310.
-          - Nenhuma modificação em Web, SQL, banco de dados ou Edge Functions. Sem recarregamento completo.
-          - APK de produção não depurável, pacote `com.cinetracker.app`, assinatura verificada contra o APK oficial 1.0 anterior, integridade SHA-256.
+          - Renovação de autenticação única e anterior às consultas REST/RPC e TMDB.
+          - UFC, WWE e F1 na Home voltam a receber consultas autenticadas; preservam os dados reais e as regras r311.
+          - Histórico recente de Filmes mantém a restauração de dados mais novos da r311; consultas antigas não devem substituir o histórico.
+          - Descobrir > Pra Você conserva os candidatos personalizados, alternância e filtros auditados por v525; proxy TMDB agora recebe sessão válida.
+          - Máximo de quatro consultas TMDB simultâneas; detalhes das séries recebem prioridade e tempestades de HTTP 401 são bloqueadas.
+          - VersionName 1.0; versionCode 10113; assinatura e pacote compatíveis com APK oficial 1.0 anterior.
+          - Web, banco de dados, funções Edge, Esportes, F1 Hub e Perfil inalterados.
 
-          **Atenção:** APKs experimentais 1.0.61 e anteriores podem usar outra assinatura. Confirme a sincronização antes de considerar uma reinstalação limpa.
-
-          Esta publicação é pelo GitHub, não pela Google Play.
+          Usuários da APK experimental 1.0.61 podem precisar de reinstalação devido à assinatura diferente; confirmem antes a sincronização.
+          Publicação no GitHub, não na Google Play.
           NOTES
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial (Home e Descobrir r311)' --notes-file /tmp/release-1.0-notes.md --latest
