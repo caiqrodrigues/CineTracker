@@ -1,3 +1,9 @@
+## Web 0.3.73 / r546 — entrada Home (2026-10-22)
+
+- Corrige a guarda de estado que impedia reinicializar a âncora quando um acesso explícito à Home solicitava reset.
+- Adiciona alinhamento limitado à entrada da rota ou seleção de Séries/Filmes: início em Continuar assistindo para Séries e Assistir a seguir/Watchlist para Filmes.
+- Histórico continua acima, acessível por rolagem; não altera APK nem banco.
+
 ## Web 0.3.72 / r545 — Home sem reancoragem e data do UFC (2026-10-22)
 
 - Impede que renderizações posteriores da mesma aba reiniciem o alinhamento/rolagem já realizado em Home.
