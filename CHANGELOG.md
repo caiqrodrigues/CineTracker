@@ -1,3 +1,13 @@
+## Android 1.0 / r311 — Home Séries, Filmes e Descobrir (2026-10-22)
+
+- Mantido `versionName 1.0`, pacote Android e assinatura oficial; código interno `10112`.
+- Home Séries: valida UFC, WWE Pay-Per-View e Fórmula 1 via RPCs autenticados v518, v519 e v512, consumidos no controlador original de cards, sem inventar estatísticas nem alterar botões de marcar.
+- Home Filmes: revalidação do Histórico recente pela fonte autenticada v542; preserva último conjunto confiável e recupera somente a lista quando renderizadores antigos tentam substituir WWE por Pokémon.
+- Descobrir > Pra Você: recuperação de alternativas dos gêneros preferidos quando os pools atuais vêm vazios, consultando páginas variadas de filmes, séries e animes com checagem de conteúdo permitido, histórico e Watchlist. A auditoria autenticada v525 continua obrigatória antes da exibição; preferências reais e prevenção de repetições existentes permanecem operacionais.
+- Corrigida exclusão errada de Drama (gênero 18) por filtro legado; continuam proibidos documentários, realities, curtas, produções originárias do YouTube, stand-up e wrestling nas recomendações.
+- Nenhuma alteração em Web, banco de dados, Perfil, Esportes ou F1 Hub. Sem reload completo.
+- Testes, assinatura e APK de produção via GitHub Actions r311.
+
 ## Web 0.3.74 / r547 — Home inicial abre na seção principal (2026-10-22)
 
 - Substitui tentativa de adivinhar o elemento de rolagem pelo `scrollIntoView` nativo na seção selecionada: Séries = Continuar assistindo, Filmes = Assistir a seguir/Watchlist.
