@@ -88,6 +88,11 @@ await assert.rejects(()=>test.run('user-a'),/servidor não conseguiu confirmar/i
 // Reproduce the original crash in an isolated runtime, not only a grep.
 // r270 had previousDiscoverRows270 declared AFTER the override, making
 // Populares/Em alta/Novidades/etc invoke the override recursively forever.
+// Restore-only bug: the old r181 cache uses one key for all Discover tabs.
+assert.ok(js.includes("const r=route(),page=ct181Page();if(r==='discover'||!ct181CanSnapshot(r)||!page)return;"),
+ 'Do not cache one Discover subtab as another');
+assert.ok(js.includes("const r=route(),page=ct181Page();if(r==='discover'||!ct181CanSnapshot(r)||!page)return false;"),
+ 'Do not restore a stale ForYou snapshot over Top 10 or non-ForYou tab shell');
 const capture="const previousDiscoverRows270=discoverRows;";
 const delegate="discoverRows=async function(tab){return String(tab)==='foryou'?startRec(false):previousDiscoverRows270(tab)};";
 const at=js.indexOf(capture),isAt=js.indexOf(delegate);
