@@ -204,6 +204,10 @@ function startRec(force=false){
  return Promise.resolve(data);
 }
 ct186LoadForYou=async function(force=false){return startRec(force)};
+// Capture the PREVIOUS non-ForYou delegate before replacing discoverRows.
+// Declaring this after replacement captures the new function itself and
+// triggers "Maximum call stack size exceeded" for every other Discover tab.
+const previousDiscoverRows270=discoverRows;
 discoverRows=async function(tab){return String(tab)==='foryou'?startRec(false):previousDiscoverRows270(tab)};
 ct186RefreshVisible=async function(){
  if(route()!=='discover'||discoverState?.tab!=='foryou')return null;
@@ -212,7 +216,6 @@ ct186RefreshVisible=async function(){
 };
 // Initial cache may have been written by a broken Android version: never display it
 // without running the current selection and detailed eligibility audit.
-const previousDiscoverRows270=discoverRows;
 const oldRecPaint=paintDiscover;
 paintDiscover=function(data){
  if(discoverState?.tab==='foryou'&&recValidate(data)){
