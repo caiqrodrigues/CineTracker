@@ -225,6 +225,7 @@ async function action(type,slot){
  const old=current(slot),key=identity(old);if(!old||!key)return false;
  const uid=userId();locks.add(slot);clicks++;
  const original={watch:model.watch,fresh:model.fresh,selected:new Map(model.selected)};
+ model.fresh={...model.fresh};
  const[g]=slot.split(':');
  const buttons=root()?.querySelectorAll('[data-ct314-slot="'+slot+'"] [data-ct314-action]')||[];
  for(const b of buttons)b.disabled=true;
