@@ -208,8 +208,8 @@ jobs:
           Publicação oficial pelo GitHub, não pela Google Play.
           NOTES
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial (UFC e Descobrir r315)' --notes-file /tmp/release-1.0-notes.md --latest
+            gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial (Top 10 e Descobrir r316)' --notes-file /tmp/release-1.0-notes.md --latest
           else
-            gh release create "$TAG" --title 'CineTracker Android 1.0 — Oficial (Pra Você r314)' --notes-file /tmp/release-1.0-notes.md --latest
+            gh release create "$TAG" --title 'CineTracker Android 1.0 — Oficial (Top 10 e Descobrir r316)' --notes-file /tmp/release-1.0-notes.md --latest
           fi
           gh release upload "$TAG" CineTracker-Android-1.0.apk CineTracker-Android-1.0-SHA256.txt CineTracker-Android-1.0-size.txt CineTracker-Android-1.0-compatibilidade.txt --clobber
