@@ -1,3 +1,7 @@
+### Android 1.0/r318 — recuperação das abas de Descobrir
+
+A falha `Maximum call stack size exceeded` não era uma simples demora: a antiga função `previousDiscoverRows270` era definida após a substituição de `discoverRows`, apontando para a nova função e entrando em recursão infinita. A captura foi reposicionada antes da sobrescrita. Testes de regressão de todas as abas não Pra Você protegem a correção. Versão `1.0`, código `10119`, assinatura estável. Nenhuma alteração na Web, banco ou demais telas.
+
 ## CineTracker Android 1.0 / r317 — Desbloqueio de Descobrir → Pra Você
 
 Corrigida a falha “Não foi possível confirmar sua biblioteca para filtrar as indicações”: a busca de preferências/detalhes de biblioteca legado (r114/r115, 18s) deixa de ser pré-requisito para os seis pools v421. A verificação autenticada **v525 permanece obrigatória** antes de mostrar qualquer recomendação. Histórico, favoritos e Watchlist continuam alimentando a inteligência r307 independentemente, sem travar a tela. Mantém sete slots, Top 10 e outras abas de Descobrir r316; módulos externos intactos. Validar com `node scripts/prepare-android-v10-r317.mjs` e `node scripts/test-android-v10-r317.mjs`. APK versão 1.0, code 10118, mesma assinatura oficial.
