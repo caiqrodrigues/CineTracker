@@ -171,3 +171,7 @@ A versão pública continua 1.0, `versionCode 10115`, identificador `com.cinetra
 ## Android 1.0/r319 — Descobrir mobile
 
 Versão pública 1.0 e pacote com.cinetracker.app, versionCode 10120. Preparador scripts/prepare-android-v10-r319.mjs e testes scripts/test-android-v10-r319.mjs. Sete abas regulares de Descobrir usam fontes TMDB com timeout e filtro servidor v525, cards verticais compactos e gêneros com quebra de linha. Pra Você, Top 10 e demais telas permanecem nos seus controladores originais.
+
+## Android 1.0/r320 (Descobrir)
+
+Atualização exclusivamente na tela Descobrir, com prioridade para Top 10 do provedor selecionado, deadlines de consulta e erro/retry visíveis. Pra Você não aguarda perfil ou contexto legado, mas segue exigindo pools autenticados v421 e auditoria v525. Runtime preparado por `scripts/prepare-android-v10-r320.mjs`, verificado por `scripts/test-android-v10-r320.mjs`, publicado na release `android-v1.0` com assinatura compatível. Código interno 10121; versão pública 1.0.
