@@ -8,7 +8,7 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10119
+        versionCode 10120
         versionName '1.0'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
@@ -41,4 +41,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker Android 1.0/r318: repair recursive Discover non-ForYou delegation; stable 1.0 package/signature.
+// CineTracker Android 1.0/r319: independently bounded Discover tabs, compact 2:3 cards and wrapped detail genres; all other screens frozen.
