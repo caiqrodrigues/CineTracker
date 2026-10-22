@@ -1,13 +1,5 @@
 name: CineTracker Android 1.0 — Home controls & history r308
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/prepare-android-v10-r308.mjs'
-      - 'scripts/test-android-v10-r308.mjs'
-      - 'apps/android/runtime-r308-home-actions.js'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-r308.yml'
   workflow_dispatch:
 
 permissions:
