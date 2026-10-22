@@ -136,6 +136,7 @@ async function show(tab){
   }}
   return true;
  }
+ if(lastTab!==wanted){lastRows=null;lastTab=''}
  putShell(wanted);
  const saved=goodRows.get(wanted);
  if(saved?.rows?.length)present(saved.rows,wanted);
