@@ -1,3 +1,7 @@
+## Android 1.0 / r313 — recuperação de refresh token
+
+A abertura do APK agora usa um só controlador para a renovação Supabase; `refresh_token_already_used` (400) provoca um login seguro, sem preservar uma Home com autenticação falsa. Não apaga Watchlist, histórico ou preferências armazenados localmente; não reutiliza o token rotativo já consumido. Em caso de aviso de sessão expirada, entre novamente na mesma conta. Pacote e assinatura preservados, versionName 1.0, versionCode 10114. Código de tela r312 mantido. Testes e preparador: `scripts/test-android-v10-r313.mjs` e `scripts/prepare-android-v10-r313.mjs`.
+
 # CineTracker Android — 1.0
 
 App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarcado no APK e backend Supabase compartilhado com a Web.
