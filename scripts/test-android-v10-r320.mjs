@@ -33,8 +33,12 @@ for(const marker of [
  "window.addEventListener('click',sportsClick304,true)",
  "if(events)events.remove();"
 ])assert.ok(js.includes(marker),'Lost required feature: '+marker);
-assert.ok(!js.includes('const data=await ct171TopRows(Number(provider));'));
-assert.ok(!js.includes('const providers=await ct171Providers();'));
+const topBlock=js.slice(js.indexOf('async function paintTop217('),js.indexOf('window.ctR217RenderTop10=renderTop217;'));
+assert.ok(topBlock.includes('async function renderTop217()'));
+assert.ok(!topBlock.includes('const data=await ct171TopRows(Number(provider));'));
+assert.ok(!topBlock.includes('const providers=await ct171Providers();'));
+assert.ok(topBlock.includes('const data=await window.__ctR320Discover.topRows(Number(provider));'));
+assert.ok(topBlock.includes('const providers=await window.__ctR320Discover.providers();'));
 assert.ok(!js.includes('ct171ProviderList.slice(0,3).map(p=>ct171TopRows('));
 assert.equal(js.split('window.__ctR320Discover={providers,topRows,stats:').length-1,1);
 assert.equal(js.split('const data=await window.__ctR320Discover.topRows(Number(provider));').length-1,1);
