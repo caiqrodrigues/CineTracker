@@ -73,7 +73,7 @@ jobs:
           test -s /tmp/CineTracker-Android-1.0.apk
           test -s /tmp/CineTracker-Android-1.0.61.apk
 
-      - name: Prepare and test official 1.0 Home and Discover corrections r311
+      - name: Prepare and test official Android 1.0 r312 authenticated transport
         env:
           CINETRACKER_REQUIRE_BASELINE: '1'
         shell: bash
@@ -194,8 +194,8 @@ jobs:
           Publicação no GitHub, não na Google Play.
           NOTES
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial (Home e Descobrir r311)' --notes-file /tmp/release-1.0-notes.md --latest
+            gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial (Autenticação r312)' --notes-file /tmp/release-1.0-notes.md --latest
           else
-            gh release create "$TAG" --title 'CineTracker Android 1.0 — Oficial (Home e Descobrir r311)' --notes-file /tmp/release-1.0-notes.md --latest
+            gh release create "$TAG" --title 'CineTracker Android 1.0 — Oficial (Autenticação r312)' --notes-file /tmp/release-1.0-notes.md --latest
           fi
           gh release upload "$TAG" CineTracker-Android-1.0.apk CineTracker-Android-1.0-SHA256.txt CineTracker-Android-1.0-size.txt CineTracker-Android-1.0-compatibilidade.txt --clobber
