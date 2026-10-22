@@ -1,3 +1,14 @@
+## CineTracker Android 1.0 — r314: paridade Descobrir → Pra Você com Web (2026-10-22)
+
+- A versão pública continua **1.0**; código Android **10115**, raiz **0.3.107**.
+- **Paridade de dados com a Web:** o APK usa seis RPCs v421 por categoria (Watchlist/Fresh de Filme, Série, Anime), os mesmos conjuntos da Web r464, com auditoria autenticada v525 contra histórico, vistos, Watchlist e títulos bloqueados, além dos filtros existentes de curtas, YouTube, stand-up e realities.
+- **Sete espaços estáveis:** Indicação do Dia; Da sua Watchlist (3); 100% Novos (3). Cada um tem Trocar; espaços novos e indicação do dia também têm +Watchlist e +Visto. Cartazes 2:3, títulos truncados e botões padronizados.
+- **Trocar não repetitivo:** seleção baseada em afinidade a gêneros assistidos, Watchlist e favoritos, com memória de exposições por usuário e exploração aleatória; novas visitas consultam candidatos recentes, sem posição fixa por data. Sem reciclagem imediata de uma mesma lista esgotada.
+- **Persistência:** +Visto e +Watchlist reutilizam handlers autenticados do Android r313 e atualizam apenas o espaço em questão, com rollback se falhar.
+- **Correção estrutural:** somente Descobrir → Pra Você recebe um controlador de renderização; os módulos antigos não assumem novamente a seção após resposta tardia. Outras abas de Descobrir delegam ao controlador r313 sem mudanças.
+- **Preservação:** scripts de preparação comparam byte a byte todo o runtime r313 (exceto metadata + adição final). Home, Histórico, Esportes, F1, Perfil, sessões/autenticação, Web e banco de dados não foram alterados.
+- **Validação:** testes de seis pools v421, auditoria v525, sete slots, troca não repetida, dois tipos de persistência, isolamento dos demais tabs, build Android release assinado e compatível com 1.0 anterior.
+
 ## Android 1.0 / r313 — recuperação da sessão bloqueada (2026-10-22)
 
 - **Diagnóstico reproduzido:** vídeo r312 e logs do Supabase Auth indicam HTTP 400 com `refresh_token_already_used` no dispositivo; a inicialização legada retornava `true` mesmo após falha do refresh, deixando Home, detalhe e recomendações sem autenticação real.
