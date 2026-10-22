@@ -1,3 +1,12 @@
+## Android 1.0 / r319 — Descobrir responsivo e gêneros legíveis (2026-10-22)
+
+- Versão pública **1.0** mantida; versionCode 10120; raiz 0.3.112; mesmo identificador e certificado.
+- **Descobrir:** sete abas regulares deixam de depender da cadeia legada com mais de 20 wrappers e usam fontes TMDB com timeout. Cada item exige confirmação autenticada pela auditoria v525 (vistos, Watchlist, desinteressados e aliases). Falha mostra retry, não loader eterno.
+- **Cards:** largura de 130-172px, proporção 2:3, rolagem horizontal; títulos truncados e meta com até duas linhas.
+- **Detalhes de filmes e séries:** gêneros e demais informações podem quebrar linha sem extrapolar a largura do celular.
+- **Escopo:** Top 10 e Pra Você permanecem nos controladores existentes; demais abas, Home, Esportes, Perfil, F1, Web e Supabase sem alterações.
+- **Validação:** testes para as sete abas, exclusões pessoais, cache isolado por conta, falhas de rede, layout e regressões Android; APK release assinado compatível com 1.0 anterior.
+
 ## Android 1.0 / r318 — correção crítica de navegação em Descobrir (22/10/2026)
 
 - Corrigida a recursão infinita que gerava `Maximum call stack size exceeded` e impedia abrir abas como Populares, Em alta, Novidades, Lançamentos e outras categorias de Descobrir. A origem foi localizada na referência `previousDiscoverRows270`: ela apontava para a própria função que deveria delegar para o renderizador anterior. A referência agora é salva antes da substituição.
