@@ -135,3 +135,7 @@ A compilação mantém a versão pública **1.0** e `versionCode 10110`. Em Home
 ## Android oficial 1.0/r310 — Perfil e Pra Você
 
 Perfil sincroniza a biblioteca de Séries pelo RPC autenticado v0991, combina resultados de forma que uma pintura de cache antiga não remova `last_watched_at` recente e sincroniza sempre na entrada e após marcações. Pra Você agora cria uma seleção nova em cada visita, carrega novamente os pesos de gêneros assistidos/Watchlist/favoritos, varia a amostragem e retém memória de exposições por 21 dias quando há alternativas. Mantém filtros v525, slot real da Watchlist e os sete cards. Nenhuma alteração em Home, Sports, F1, Web ou banco.
+
+## Android 1.0/r311 — recuperação de Home e Descobrir
+
+Preparador: `scripts/prepare-android-v10-r311.mjs`. Validação: `scripts/test-android-v10-r311.mjs`. CI e distribuição: `.github/workflows/release-android-v10-r311.yml`. `versionCode 10112`, certificado compatível com a versão oficial anterior. As mudanças ficam restritas ao runtime Android; Web e banco não foram modificados.
