@@ -1,3 +1,12 @@
+## CineTracker Android 1.0 — r315: Home UFC e cards de Descobrir (2026-10-22)
+
+- Nome de versão preservado: **1.0**, versionCode **10116**, pacote e certificado de assinatura oficial inalterados; raiz **0.3.108**.
+- **Home Séries:** célula de marcação do UFC padronizada na mesma coluna de **52px** e mesmo grid das demais séries. Sem alteração no evento, contagem, lógica de assistir ou cards das outras séries.
+- **Descobrir, exceto Pra Você:** cards em Novidades, Lançamentos, Populares, Em alta, Mais Aguardados, Mais bem avaliados e Calendário com títulos legíveis, proporção 2:3 e dados de **ano, gênero, duração e nota** quando disponíveis. Complemento de duração via detalhes do TMDB somente para cards visíveis, limitado e cacheado, sem atrasar a primeira pintura da aba; dados ausentes são explicitamente informados, nunca inventados.
+- **Ações dos cards:** **+ Watchlist** original preservado; novo botão compacto **✓ Visto** usa a marcação autenticada `markSeen`, trava contra duplo toque e feedback em erro, atualizando só o card marcado. Não há reload integral.
+- **Pra Você:** código do controlador r314, seis RPCs v421 e auditoria v525 preservados integralmente. Adaptados os identificadores `watch:*` aos identificadores `watchlist:*` do motor r307, preservando o aprendizado e evitando que a Watchlist compartilhe memória de exposição com a categoria de novos.
+- **Escopo estrito:** nada alterado no Web, Supabase, Perfil, Esportes, Fórmula 1, Home Filmes ou demais telas. Testes de marcação, isolamento do Pra Você e formatação de cards adicionados.
+
 ## CineTracker Android 1.0 — r314: paridade Descobrir → Pra Você com Web (2026-10-22)
 
 - A versão pública continua **1.0**; código Android **10115**, raiz **0.3.107**.
