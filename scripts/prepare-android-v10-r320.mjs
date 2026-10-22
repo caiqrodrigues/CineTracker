@@ -27,11 +27,11 @@ once('window.__ctAndroidOfficialCode=10120;',
 once("setTimeout(()=>{void Promise.allSettled(ct171ProviderList.slice(0,3).map(p=>ct171TopRows(Number(p.provider_id))))},0);",
      '/* r320: prioritize the selected provider, no speculative prefetch */',
      'retire Top 10 competing provider prefetch');
-once('const data=await ct171TopRows(Number(provider));',
-     'const data=await window.__ctR320Discover.topRows(Number(provider));',
+once("content.innerHTML=loading('Montando Top 10...');\n  try{\n    const data=await ct171TopRows(Number(provider));",
+     "content.innerHTML=loading('Montando Top 10...');\n  try{\n    const data=await window.__ctR320Discover.topRows(Number(provider));",
      'selected-provider Top10 timeout');
-once('const providers=await ct171Providers();',
-     'const providers=await window.__ctR320Discover.providers();',
+once('ct171ProviderList=null;\n    const providers=await ct171Providers();',
+     'ct171ProviderList=null;\n    const providers=await window.__ctR320Discover.providers();',
      'Top10 provider source timeout');
 once("content.innerHTML=fail('Falha ao carregar Top 10: '+(e?.message||e),'discover');",
      "content.innerHTML='<div class=\"empty\">Falha ao carregar Top 10: '+esc(String(e?.message||e))+' <button type=\"button\" class=\"chip\" data-ct316-retry>Tentar novamente</button></div>';",
