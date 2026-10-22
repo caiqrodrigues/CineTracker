@@ -1,3 +1,7 @@
+## Android 1.0 / r321 — correção de Descobrir
+
+Atualização interna **10122** sem alteração da Web: o card de Indicação do Dia passa a ter o mesmo tamanho das três categorias, a reentrada em Pra Você não reutiliza carregamentos obsoletos e o Top 10 consulta somente o provedor selecionado com prazos limitados e filtro autenticado v525. Teste `node scripts/test-android-v10-r321.mjs` após preparar com `node scripts/prepare-android-v10-r321.mjs`. Identidade e versão pública **1.0** preservadas.
+
 ## Android 1.0 / r320 — correção de Descobrir
 
 A atualização oficial mantém **1.0** (`versionCode 10121`). O Top 10 deixa de pré-carregar outros streamings enquanto monta o selecionado; as chamadas têm limites de tempo e exibem **Tentar novamente** quando falham. No **Pra Você**, o perfil de gostos começa a ser consultado antes das seis fontes autenticadas, em paralelo, para permitir uma seleção mais personalizada quando os candidatos forem validados. A r317 já havia removido a dependência rígida do contexto legado. Os resultados continuam vindo das fontes autenticadas e só são exibidos após a verificação obrigatória `cinetracker_recommendation_filter_v525`. O restante do Android e toda a Web e o banco permanecem intocados.

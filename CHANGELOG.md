@@ -1,3 +1,12 @@
+## Android 1.0 / r321 — Descobrir: carregamento e cards corrigidos (2026-10-22)
+
+- **Pra Você:** corrige a condição de corrida ao voltar à aba enquanto uma busca anterior ainda está em andamento. Cada visita invalida a geração antiga e inicia sua própria consulta, evitando o carregamento permanente. Mantém sete slots, operações por card e bloqueio de títulos já vistos e na Watchlist por auditoria autenticada v525.
+- **Pra Você / Indicação do Dia:** a largura passa a ocupar exatamente uma das três colunas de Filmes/Séries/Animes; card 2:3, texto truncado e botões permanecem padronizados, sem pôster gigante.
+- **Descobrir regular:** prazo do controlador alinhado à soma dos prazos das fontes TMDB e da auditoria, evitando descartar respostas verificadas ainda em trânsito.
+- **Top 10:** substituída a antiga cascata de até dez páginas por tipo por até duas páginas para Filme e Série do **streaming selecionado**, com limite total, cache temporário isolado por conta e invalidação após mudança de estado. Cada resultado é validado pela auditoria v525 para excluir vistos e Watchlist; falhas apresentam retry, sem deixar consultas antigas monopolizarem a fila do APK.
+- **Escopo:** somente runtime de Descobrir no Android, testes, versão e documentação. Web, Supabase, Home, UFC, Esportes, Perfil e F1 preservados.
+- **Publicação:** mantém versão comercial Android **1.0**, `versionCode 10122`, pacote e identidade de assinatura oficial; preparador `scripts/prepare-android-v10-r321.mjs`, teste `scripts/test-android-v10-r321.mjs`.
+
 ## Android 1.0 / r320 — Descobrir: carregadores delimitados (2026-10-22)
 
 - **Escopo estrito:** corrige apenas o carregamento de **Descobrir → Top 10** e de **Pra Você**, conforme vídeo da versão r319. Home, Histórico, Esportes, Perfil, F1 e Web não sofreram alterações.

@@ -1,3 +1,7 @@
+## Android 1.0 / r321 — Descobrir revisado
+
+Pra Você invalida a requisição anterior quando a aba é reaberta, para não permanecer indefinidamente em “Buscando indicações personalizadas”. Os seis pools autenticados v421 continuam sujeitos à auditoria v525 obrigatória, com prazos de fonte e auditoria definidos. Indicação do Dia ocupa uma coluna igual à de Filme/Série/Anime, com pôster 2:3 e botões na mesma largura. Top 10 usa somente até quatro páginas TMDB por streaming selecionado (duas para filmes e duas para séries), executa auditoria pessoal v525, mantém cache curto por conta e apresenta falhas com retry. As demais abas de Descobrir usam prazo compatível com suas duas fases de consulta. Publicação **1.0**, código interno **10122**, certificado oficial preservado, Web inalterada. Preparação: `scripts/prepare-android-v10-r321.mjs`; testes: `scripts/test-android-v10-r321.mjs`.
+
 ### Android 1.0/r318 — recuperação das abas de Descobrir
 
 A falha `Maximum call stack size exceeded` não era uma simples demora: a antiga função `previousDiscoverRows270` era definida após a substituição de `discoverRows`, apontando para a nova função e entrando em recursão infinita. A captura foi reposicionada antes da sobrescrita. Testes de regressão de todas as abas não Pra Você protegem a correção. Versão `1.0`, código `10119`, assinatura estável. Nenhuma alteração na Web, banco ou demais telas.
