@@ -1,3 +1,7 @@
+## Android 1.0 / r320 — correção de Descobrir
+
+A atualização oficial mantém **1.0** (`versionCode 10121`). O Top 10 deixa de pré-carregar outros streamings enquanto monta o selecionado; as chamadas têm limites de tempo e exibem **Tentar novamente** quando falham. No **Pra Você**, a análise de gostos e o contexto legado continuam em segundo plano, sem travar os sete slots. Os resultados continuam vindo das fontes autenticadas e só são exibidos após a verificação obrigatória `cinetracker_recommendation_filter_v525`. O restante do Android e toda a Web e o banco permanecem intocados.
+
 ## Android 1.0 / r319 — Descobrir estável e gêneros com quebra de linha
 
 A versão pública permanece **1.0** (versionCode 10120). As abas regulares de Descobrir usam fontes limitadas por tempo e auditoria pessoal v525, sem uma cadeia antiga de carregamento; carrosséis de cards 2:3 limitados em largura mobile. Gêneros na página de detalhes quebram linha naturalmente. Pra Você, Top 10, Home, Esportes, Perfil, F1, Web e Supabase preservados. APK oficial assinado com a mesma identidade da linha 1.0.
