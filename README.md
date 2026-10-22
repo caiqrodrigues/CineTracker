@@ -1,3 +1,7 @@
+## Android 1.0 / r316 — reparo crítico da aba Descobrir
+
+Corrige o desaparecimento não autorizado do **Top 10** e evita que carregamentos antigos deixem **Descobrir** permanentemente vazio. A navegação de outras abas passa a usar um único controlador com consulta limitada, retry e cache de títulos já carregados. Cards preservam capa 2:3, título truncado, gênero e ações de Watchlist/Visto, enriquecendo a duração real no TMDB inclusive no Top 10 e Pra Você. A lógica personalizada das sete recomendações, Home, UFC, Esportes, Perfil, Web e Supabase não foi alterada. A versão continua **1.0**, com versionCode **10117**, atualizável por cima da linha oficial 1.0.
+
 ## Android 1.0 / r315 — UFC e cartões completos em Descobrir
 
 A atualização oficial 1.0/r315 uniformiza a ação de marcar assistido do **UFC** na Home Séries e restaura, nas outras abas de **Descobrir**, cards com proporção 2:3, ano, gênero, duração (quando disponível), nota, botão **+ Watchlist** e **✓ Visto**. A informação de duração que não está na lista TMDB é enriquecida sem bloquear a abertura da aba e sem extrapolar o escopo. O controlador **Pra Você** r314 com sete slots, seis fontes da Web v421 e auditoria v525 é preservado; os sinais de gosto da Watchlist usam a identidade esperada pelo motor r307. O Web, SQL e demais telas não foram alterados. Preparação: `node scripts/prepare-android-v10-r315.mjs`. Testes: `node scripts/test-android-v10-r315.mjs`.
