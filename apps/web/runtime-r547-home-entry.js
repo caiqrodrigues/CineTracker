@@ -47,7 +47,7 @@ function enter(k=kind()){
    if(!Number.isFinite(lastTop)||Math.abs(top-lastTop)>2){stable=0;lastTop=top}else stable++;
    // Only correct on a new mount/layout shift; do not continuously fight the user or trigger a render.
    if(stable===0||!document.documentElement.dataset.ct547HomeLanding)place(k);
-   if(stable>=5){stop();return}
+   // Keep watching briefly for late legacy renderers; do not end after the first five frames.
   }
   frame=requestAnimationFrame(run);
  };
@@ -56,7 +56,7 @@ function enter(k=kind()){
   observer=new MutationObserver(()=>{stable=0});
   observer.observe(view,{childList:true,subtree:true});
  }
- interval=setInterval(()=>{if(!userMoved&&id===generation&&home()&&kind()===k)place(k)},700);
+ interval=setInterval(()=>{if(userMoved||id!==generation||!home()||kind()!==k)return;const target=findTarget(k);if(!target)return;const tabs=document.querySelector('[data-home] .home-tabs');const search=document.querySelector('[data-page="home"] .search-global')||document.querySelector('.content .search-global');const expected=Math.max(60,tabs?.getBoundingClientRect().bottom||0,search?.getBoundingClientRect().bottom||0)+8;if(Math.abs(target.getBoundingClientRect().top-expected)>30)place(k)},500);
  frame=requestAnimationFrame(run);
 }
 document.addEventListener('click',event=>{
