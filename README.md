@@ -1,3 +1,7 @@
+## Web r547 / 0.3.74
+
+A entrada da Home busca o contêiner real de rolagem do navegador para chegar a Continuar assistindo (Séries) ou Watchlist (Filmes). Histórico acima preservado. APK congelado.
+
 ## Web 0.3.73 / r546
 
 A Home Web reposiciona a entrada em Continuar assistindo (Séries) ou Assistir a seguir/Watchlist (Filmes), preservando Histórico acima. Android congelado.
