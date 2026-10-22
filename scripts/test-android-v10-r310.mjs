@@ -4,7 +4,7 @@ const html=await readFile('apps/android/app/src/main/assets/hotfix5/index.html',
 const start=html.indexOf('<script data-ct-android="r310-android-stable-js">');
 const end=html.indexOf('</script>',start);
 assert.ok(start>0&&end>start,'r310 official 1.0 HTML runtime not present');
-const js=html.slice(start,end);
+const js=html.slice(start+'<script data-ct-android="r310-android-stable-js">'.length,end);
 new Function(js);
 for(const s of [
  "const REVISION='r310-android-official-1.0'",
