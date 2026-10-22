@@ -114,7 +114,8 @@ globalThis.test={
 // Reproduces user video and real Supabase error refresh_token_already_used.
 // The old bootstrap returned true and showed a broken Home; r313 must not.
 local.set('cinetracker_session',JSON.stringify(session('expired-access','already-consumed')));
-assert.equal(await ctx.test.restore(),false);
+let firstRestore;try{firstRestore=await ctx.test.restore();console.log('R313_FIRST_RESULT',firstRestore,JSON.stringify(ctx.test.state()),ctx.test.recovery())}catch(e){throw new Error('r313 restore rejected rather than showing login: '+String(e?.message||e))}
+assert.equal(firstRestore,false);
 await Promise.resolve();await Promise.resolve();
 assert.equal(local.has('cinetracker_session'),false,'Invalid rotating refresh token must be discarded');
 assert.equal(ctx.test.state().session,null);
