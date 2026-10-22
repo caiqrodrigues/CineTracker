@@ -1,3 +1,7 @@
+### APK oficial 1.0 — r310
+
+Atualização apenas do **Perfil** (séries recentes agora sincronizadas e ordenadas a partir da biblioteca autenticada v0991, sem retrocesso por cache) e de **Descobrir → Pra Você** (escolhas novas por visita/dia, variabilidade por afinidade pessoal e memória anti-repetição de 21 dias enquanto houver outras opções reais elegíveis). As indicações continuam sujeitas aos filtros v525 e às sete categorias. Mantém Home/Séries, Filmes, Histórico e ações de Esportes das versões r309/r308. A versão exibida continua **1.0**, com `versionCode 10111`. Compilar com `node scripts/prepare-android-v10-r310.mjs` e validar com `node scripts/test-android-v10-r310.mjs`. Web e Supabase não modificados.
+
 ### APK oficial 1.0 — r309
 
 O CineTracker continua na versão pública **1.0** (`versionCode 10110`). A atualização Android r309 impede que os controles legados da Home recebam o mesmo toque de **marcar episódio**: a captura ocorre antes dos ouvintes antigos e uma trava síncrona impede repetições. Preserva o Histórico recente estável, o botão **Desmarcar** em filmes e episódios, o tamanho padronizado do UFC (r308) e o sistema adaptativo de recomendações de gosto pessoal do Descobrir (r307). Web e banco sem alterações.
