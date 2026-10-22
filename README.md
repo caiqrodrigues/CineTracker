@@ -1,3 +1,7 @@
+## CineTracker Android 1.0 / r311
+
+Esta atualização permanece **versão 1.0** (código interno 10112), com correções exclusivas do runtime Android: UFC/WWE PPV/F1 na Home Séries consultam novamente os dados reais, o Histórico de Filmes não deve recuar para Pokémon após uma resposta de cache antiga, e Descobrir > Pra Você pode recuperar candidatos elegíveis variados e personalizados com auditoria v525. O restante, incluindo Web e Supabase, está congelado.
+
 ## Web r547 / 0.3.74
 
 A entrada da Home busca o contêiner real de rolagem do navegador para chegar a Continuar assistindo (Séries) ou Watchlist (Filmes). Histórico acima preservado. APK congelado.
