@@ -1,3 +1,7 @@
+## Android 1.0 / r319 — Descobrir estável e gêneros com quebra de linha
+
+A versão pública permanece **1.0** (versionCode 10120). As abas regulares de Descobrir usam fontes limitadas por tempo e auditoria pessoal v525, sem uma cadeia antiga de carregamento; carrosséis de cards 2:3 limitados em largura mobile. Gêneros na página de detalhes quebram linha naturalmente. Pra Você, Top 10, Home, Esportes, Perfil, F1, Web e Supabase preservados. APK oficial assinado com a mesma identidade da linha 1.0.
+
 ### Android 1.0/r318 — navegação recuperada
 
 Correção crítica da referência circular em `discoverRows` que fazia as abas de Descobrir falharem com `Maximum call stack size exceeded`. A referência ao renderizador anterior é capturada antes de sobrescrever a função, com teste das oito abas não personalizadas e preservação de Pra Você. APK continua **1.0**, atualização interna `10119`; Home, Esportes, Perfil, F1, Web e Supabase não foram modificados.
