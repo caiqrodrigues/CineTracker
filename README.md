@@ -1,3 +1,7 @@
+## Web r545 / 0.3.72
+
+Home Web: evita solicitação repetida de âncora na mesma aba e consome a data de evento UFC existente na resposta autenticada. Build `cd apps/web && npm run build`. APK preservado.
+
 ## Web 0.3.71 / r544 — Home Web
 
 Correções limitadas à Web: Watchlist com recuperação e tentativa manual se uma consulta não retornar filmes; alinhamento inicial das seções da Home sem piscar; UFC sem preferência artificial pela primeira posição e com data do último evento quando confirmada. Build: `cd apps/web && npm run build`; verificação: `npm run verify`. APK 1.0 congelado.
