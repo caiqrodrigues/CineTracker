@@ -1,3 +1,7 @@
+## Web 0.3.71 / r544 — Home Web
+
+Correções limitadas à Web: Watchlist com recuperação e tentativa manual se uma consulta não retornar filmes; alinhamento inicial das seções da Home sem piscar; UFC sem preferência artificial pela primeira posição e com data do último evento quando confirmada. Build: `cd apps/web && npm run build`; verificação: `npm run verify`. APK 1.0 congelado.
+
 ### APK oficial 1.0 — r310
 
 Atualização apenas do **Perfil** (séries recentes agora sincronizadas e ordenadas a partir da biblioteca autenticada v0991, sem retrocesso por cache) e de **Descobrir → Pra Você** (escolhas novas por visita/dia, variabilidade por afinidade pessoal e memória anti-repetição de 21 dias enquanto houver outras opções reais elegíveis). As indicações continuam sujeitas aos filtros v525 e às sete categorias. Mantém Home/Séries, Filmes, Histórico e ações de Esportes das versões r309/r308. A versão exibida continua **1.0**, com `versionCode 10111`. Compilar com `node scripts/prepare-android-v10-r310.mjs` e validar com `node scripts/test-android-v10-r310.mjs`. Web e Supabase não modificados.
