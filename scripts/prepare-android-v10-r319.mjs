@@ -31,7 +31,7 @@ once('const promise=discoverRows(tab);',
 const patch=await readFile(resolve(root,'apps/android/runtime-r319-discover-direct.js'),'utf8');
 for(const marker of [
  'window.__ctR319Discover={rows,stats:',
- 'cinetracker',
+ 'const tabs=new Set',
  'window.__ctR279Audit',
  "style.id='ct319-discover-sized-genres'",
  "'[data-detail] .ct169-meta",
