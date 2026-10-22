@@ -7,9 +7,9 @@ App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarc
 - `applicationId`: `com.cinetracker.app` — preservado para atualizar instalações existentes;
 - `versionName`: **`1.0`**;
 - `versionCode`: **`10111`** (release oficial 1.0/r310);
-- versão funcional: **CineTracker 1.0/r310**; Perfil: últimas séries vistas; Descobrir: indicações personalizadas sem ciclo fixo; Home r309 intacta.
-- preparação: `scripts/prepare-android-v10-r310.mjs`;
-- validação específica: `scripts/test-android-v10-r310.mjs` — últimas séries, estado contra dados antigos, seleção personalizada por visita, isolamento da conta e manutenção do resto do app.
+- versão funcional: **CineTracker 1.0/r312**; r311 Home UFC/WWE/F1 + Filmes + Descobrir preservado; renovação correta do token JWT ao abrir Séries e realizar consultas.
+- preparação: `scripts/prepare-android-v10-r312.mjs`;
+- validação específica: `scripts/test-android-v10-r312.mjs` — 401 JWT vencido, renovação concorrente única, REST/RPC e TMDB sem bearer antigo, limite e prioridade da fila, isolamento da conta e r311 preservada.
 - build nativo: **release não depurável**, assinatura estável de release; **não compatível com o certificado do APK oficial 1.0.61** (reinstalação pode ser necessária, com risco para dados locais);
 - pipeline: `.github/workflows/release-android-v10-official.yml`;
 - release GitHub: `android-v1.0`;
@@ -139,3 +139,7 @@ Perfil sincroniza a biblioteca de Séries pelo RPC autenticado v0991, combina re
 ## Android 1.0/r311 — recuperação de Home e Descobrir
 
 Preparador: `scripts/prepare-android-v10-r311.mjs`. Validação: `scripts/test-android-v10-r311.mjs`. CI e distribuição: `.github/workflows/release-android-v10-r311.yml`. `versionCode 10112`, certificado compatível com a versão oficial anterior. As mudanças ficam restritas ao runtime Android; Web e banco não foram modificados.
+
+## 1.0 / r312 — conexão Android autenticada
+
+Quando o token do usuário vence, a Activity WebView não reutiliza a sessão antiga ao chamar o Supabase. REST, RPC, Edge e proxy TMDB aguardam um único refresh; se ocorrer erro, a requisição falha visivelmente em vez de inundar o servidor com 401. A consulta de detalhe da série é priorizada e o transporte TMDB fica limitado a quatro requisições concorrentes. Nenhuma mudança na Web, nas funções Edge, SQL ou estrutura do APK. Continua versão pública 1.0, versionCode 10113.
