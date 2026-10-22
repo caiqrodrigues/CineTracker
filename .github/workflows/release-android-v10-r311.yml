@@ -1,12 +1,5 @@
-name: CineTracker Android 1.0 — Authenticated Transport r312
+name: CineTracker Android 1.0 — Legacy r312 (manual only)
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/prepare-android-v10-r312.mjs'
-      - 'scripts/test-android-v10-r312.mjs'
-      - 'apps/android/runtime-r312-auth-transport.js'
-      - '.github/workflows/release-android-v10-r311.yml'
   workflow_dispatch:
 
 permissions:
