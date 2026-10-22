@@ -131,6 +131,7 @@ const bootstrap=[
  "let discoverState={tab:'foryou',type:'all'},navSeq=21;",
  "const route=()=>globalThis.routeNow;",
  "const rpc=(...args)=>globalThis.server(...args);",
+ "let ct186ForYouData=null,ct166ForYouData=null;",
  "let ct186ContextValue={dash:[{media_id:1}],historyMovieIds:new Set(),historyTvIds:new Set(),watchMovieIds:new Set(),watchTvIds:new Set()};",
  "async function ct186Context(){return ct186ContextValue}",
  "const ct186LocalBlocked=new Set();",
@@ -164,7 +165,7 @@ assert.equal(requests.length,6,'Must use six Web v421 pool RPCs');
 assert.ok(requests.every(x=>x.name.endsWith('_v421')));
 assert.deepEqual(JSON.parse(JSON.stringify(requests.filter(x=>x.name==='cinetracker_discover_fresh_v421').map(x=>x.args))),
  [{p_kind:'movie',p_limit:48},{p_kind:'series',p_limit:48},{p_kind:'anime',p_limit:48}]);
-assert.equal(context.test.stats().slots,7,'Seven Web slots required');
+assert.equal(context.test.stats().slots,7,'Seven Web slots required: '+JSON.stringify(context.test.stats())+'; DOM='+root.innerHTML.slice(0,360));
 assert.equal((root.innerHTML.match(/data-ct314-action="swap"/g)||[]).length,7);
 assert.equal((root.innerHTML.match(/data-ct314-action="seen"/g)||[]).length,7);
 assert.equal((root.innerHTML.match(/data-ct314-action="watchlist"/g)||[]).length,4);
