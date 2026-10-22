@@ -1,3 +1,7 @@
+### APK oficial 1.0 — r309
+
+O CineTracker continua na versão pública **1.0** (`versionCode 10110`). A atualização Android r309 impede que os controles legados da Home recebam o mesmo toque de **marcar episódio**: a captura ocorre antes dos ouvintes antigos e uma trava síncrona impede repetições. Preserva o Histórico recente estável, o botão **Desmarcar** em filmes e episódios, o tamanho padronizado do UFC (r308) e o sistema adaptativo de recomendações de gosto pessoal do Descobrir (r307). Web e banco sem alterações.
+
 ## CineTracker Android 1.0 / r308 — Correções na Home
 
 A versão oficial **1.0** agora usa `versionCode 10109`. A área de toque do botão de assistir episódio foi ampliada com bloqueio de toques repetidos; os cards da Home Séries, inclusive UFC, mantêm tamanho consistente. Em **Histórico de Séries e Filmes**, `Desmarcar` aparece ao lado de `Reassistir`, usando funções autenticadas já existentes e revertendo a remoção se não for confirmada. O Histórico de Filmes combina a lista mais recente confirmada antes de pintar, evitando alternância visível com o histórico antigo de Pokémon. **Descobrir → Pra Você adaptativo r307 continua inalterado.** Apenas o Android foi alterado, sem SQL ou deploy Web.
