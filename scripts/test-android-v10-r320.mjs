@@ -18,7 +18,7 @@ for(const marker of [
  'const data=await window.__ctR320Discover.topRows(Number(provider));',
  'const providers=await window.__ctR320Discover.providers();',
  'data-ct316-retry',
- "const results=await Promise.allSettled([",
+ "const results=await Promise.allSettled(keys.map(([group,kind])=>fetchPool(group,kind)));",
  'void Promise.resolve().then(()=>taste()?.warm?.(false)).catch(()=>{});',
  'const results=await Promise.allSettled(keys.map(([group,kind])=>fetchPool(group,kind)));',
  "window.__ctR314ForYou={load,mount,swap,action,choose,paint,poolFor,stats:",
