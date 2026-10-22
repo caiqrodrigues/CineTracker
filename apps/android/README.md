@@ -1,3 +1,7 @@
+## Android 1.0 / r316 — Descobrir (Top 10 e carregamento)
+
+Atualização de correção crítica exclusiva para **Descobrir**. O Top 10 original por streaming voltou à navegação em todas as abas e continua usando seu renderer histórico. As abas Em alta/Populares/Novidades/Lançamentos/Mais Aguardados/Mais bem avaliados/Calendário não podem mais ser substituídas por paints antigos após a resposta nova; falhas exibem retry e últimos dados válidos. As capas seguem 2:3, ações preservadas; duração vem do TMDB em segundo plano com limite/caching, nunca por estimativa. Pra Você mantém os sete slots e sua lógica atual, apenas acrescentando acesso à aba Top 10 e duração nos cards. Scripts: `scripts/prepare-android-v10-r316.mjs`, `scripts/test-android-v10-r316.mjs`. Sem alterações em Home, Sports, UFC, Perfil, Web ou banco. Versão visível 1.0, versionCode 10117.
+
 ## Android 1.0 / r315 — Home UFC e Descobrir completo
 
 Mantém a versão **1.0** (`versionCode 10116`) e o certificado oficial. Corrige somente o alinhamento da célula de ação UFC na Home Séries; devolve ano, duração quando disponível, gênero, nota e ações com tamanho consistente aos cards de Novidades, Lançamentos, Populares, Em alta, Mais Aguardados, Mais bem avaliados e Calendário. Ação **Visto** usa `markSeen` autenticado com trava e sem recarregamento. Pra Você r314 mantém os sete espaços e as fontes v421/v525; traduz apenas o namespace do feedback de Watchlist para r307. Testes/preparador: `scripts/test-android-v10-r315.mjs`, `scripts/prepare-android-v10-r315.mjs`. Web e Supabase não alterados.
