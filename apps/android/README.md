@@ -6,10 +6,10 @@ App Android leve baseado em `Activity + WebView`, com runtime CineTracker embarc
 
 - `applicationId`: `com.cinetracker.app` — preservado para atualizar instalações existentes;
 - `versionName`: **`1.0`**;
-- `versionCode`: **`10108`** (release oficial 1.0/r307);
-- versão funcional: **CineTracker 1.0/r308**, preservando r306 com correções visuais de Home e recomendações adaptativas somente Android;
-- preparação: `scripts/prepare-android-v10-r308.mjs`;
-- validação: `scripts/test-android-v10-official.mjs` — compara com APK 1.0.61 publicado;
+- `versionCode`: **`10111`** (release oficial 1.0/r310);
+- versão funcional: **CineTracker 1.0/r310**; Perfil: últimas séries vistas; Descobrir: indicações personalizadas sem ciclo fixo; Home r309 intacta.
+- preparação: `scripts/prepare-android-v10-r310.mjs`;
+- validação específica: `scripts/test-android-v10-r310.mjs` — últimas séries, estado contra dados antigos, seleção personalizada por visita, isolamento da conta e manutenção do resto do app.
 - build nativo: **release não depurável**, assinatura estável de release; **não compatível com o certificado do APK oficial 1.0.61** (reinstalação pode ser necessária, com risco para dados locais);
 - pipeline: `.github/workflows/release-android-v10-official.yml`;
 - release GitHub: `android-v1.0`;
@@ -131,3 +131,7 @@ Correção restrita à Home do Android: botões de episódio com 52 px, travas c
 ## Android 1.0/r309 — primeira marcação de episódio
 
 A compilação mantém a versão pública **1.0** e `versionCode 10110`. Em Home Séries, o toque no botão de episódio é capturado em `window` antes das versões antigas de eventos e bloqueado por ID até a resolução da função de marcação já existente. Permanecem o desmarcar do Histórico de Séries/Filmes, uniformização do UFC (r308) e recomendações adaptativas (r307). Preparação: `scripts/prepare-android-v10-r309.mjs`; teste: `scripts/test-android-v10-r309.mjs`.
+
+## Android oficial 1.0/r310 — Perfil e Pra Você
+
+Perfil sincroniza a biblioteca de Séries pelo RPC autenticado v0991, combina resultados de forma que uma pintura de cache antiga não remova `last_watched_at` recente e sincroniza sempre na entrada e após marcações. Pra Você agora cria uma seleção nova em cada visita, carrega novamente os pesos de gêneros assistidos/Watchlist/favoritos, varia a amostragem e retém memória de exposições por 21 dias quando há alternativas. Mantém filtros v525, slot real da Watchlist e os sete cards. Nenhuma alteração em Home, Sports, F1, Web ou banco.
