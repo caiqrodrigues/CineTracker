@@ -1,0 +1,215 @@
+name: CineTracker Android 1.0 — Discover recovery r316
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/android/runtime-r316-discover-critical.js'
+      - 'scripts/prepare-android-v10-r316.mjs'
+      - 'scripts/test-android-v10-r316.mjs'
+      - 'apps/android/app/build.gradle'
+      - '.github/workflows/release-android-v10-r316.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cinetracker-android-official-1-0-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  official_release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Verify Android-only source changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          FREEZE='43f5f0c5d87802fac80365c62388276c0b2d7255'
+          git cat-file -e "$FREEZE^{commit}"
+          git diff --exit-code HEAD^ HEAD -- apps/web
+          test "$(git hash-object apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java)" = '641f8766951077947c57cf34959bac43b94e2648'
+          test "$(git hash-object apps/android/app/src/main/res/layout/activity_main.xml)" = '30edbb633685c3a77ce114c92c4f07dfa07a3271'
+          grep -Fq 'CineTrackerNative' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -Fq 'onShowFileChooser' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -Fq 'requestNotificationPermission' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+          grep -Fq 'bindNativeNavigation' apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java
+
+      - name: Restore dedicated signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Require unchanged signing identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s "$HOME/.cinetracker/cinetracker.keystore" || {
+            echo 'Original signing key unavailable. Refusing to rotate the official certificate.'
+            exit 1
+          }
+          keytool -list -keystore "$HOME/.cinetracker/cinetracker.keystore" -storepass android -alias androiddebugkey >/dev/null
+
+      - name: Download previous official Android 1.0 and r303 baseline
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release download android-v1.0.61 --pattern 'CineTracker-Android-1.0.61.apk' --dir /tmp --clobber
+          gh release download android-v1.0 --pattern 'CineTracker-Android-1.0.apk' --dir /tmp --clobber
+          test -s /tmp/CineTracker-Android-1.0.apk
+          test -s /tmp/CineTracker-Android-1.0.61.apk
+
+      - name: Prepare and test official 1.0 r316 Discover recovery
+        env:
+          CINETRACKER_REQUIRE_BASELINE: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10117' apps/android/app/build.gradle
+          grep -Fq "applicationId 'com.cinetracker.app'" apps/android/app/build.gradle
+          grep -Fq 'signingConfig signingConfigs.official' apps/android/app/build.gradle
+          node --check apps/android/runtime-r310-profile-discover.js
+          node --check apps/android/runtime-r311-home-discover.js
+          node --check apps/android/runtime-r312-auth-transport.js
+          node --check apps/android/runtime-r313-session-recovery.js
+          node --check apps/android/runtime-r314-web-foryou.js
+          node --check apps/android/runtime-r316-discover-critical.js
+          node --check apps/android/runtime-r308-home-actions.js
+          node --check scripts/prepare-android-v10-r316.mjs
+          node --check scripts/test-android-v10-r316.mjs
+          node scripts/prepare-android-v10-r316.mjs
+          node scripts/test-android-v10-r316.mjs
+
+      - name: Build production release APK, not debug
+        working-directory: apps/android
+        shell: bash
+        run: |
+          set -euo pipefail
+          gradle assembleRelease --stacktrace
+
+      - name: Validate production APK and certificate compatibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK='apps/android/app/build/outputs/apk/release/app-release.apk'
+          OUT='CineTracker-Android-1.0.apk'
+          test -s "$APK"
+          cp "$APK" "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$("$AAPT" dump badging "$OUT")"
+          grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
+          grep -Fq "versionName='1.0'" <<<"$BADGING"
+          grep -Fq "versionCode='10117'" <<<"$BADGING"
+          if grep -Fq 'application-debuggable' <<<"$BADGING"; then echo 'Refusing debuggable APK'; exit 1; fi
+          "$APKSIGNER" verify --print-certs "$OUT" > /tmp/cinetracker-1.0-signer.txt
+          "$APKSIGNER" verify --print-certs /tmp/CineTracker-Android-1.0.apk > /tmp/cinetracker-previous-1.0-signer.txt
+          OLD_CERT="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-previous-1.0-signer.txt)"
+          NEW_CERT="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-1.0-signer.txt)"
+          printf 'Previous signing SHA-256: %s\\nOfficial signing SHA-256: %s\\n' "$OLD_CERT" "$NEW_CERT"
+          test -n "$OLD_CERT" && test -n "$NEW_CERT"
+          test "$OLD_CERT" = "$NEW_CERT" || { echo 'Refusing incompatible official signing identity'; exit 1; }
+          if test "$OLD_CERT" != "$NEW_CERT"; then
+            echo '::error::Official 1.0 signing identity changed unexpectedly; refuse APK release.'
+            exit 1
+          fi
+          printf 'COMPATIBLE: APK 1.0/r316 updates the previous official APK 1.0 in place.\n' > CineTracker-Android-1.0-compatibilidade.txt
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/cinetracker-1.0-index.html
+          grep -Fq 'name="ct-official-version" content="1.0"' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'data-ct-android="r316-android-stable-js"' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctAndroidOfficialCode=10117' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'restoreSession=async function restoreSession313' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR314ForYou=' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR315DiscoverCards=' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR316Discover=' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'data-ct316-results' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR315TasteAdapter=' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'cinetracker_discover_watch_unseen_v421' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'cinetracker_discover_fresh_v421' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'data-ct314-slot' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'error.ctAuthRejected=r.status===400||r.status===401;' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR303SinglePaint' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR296WweHome' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'cinetracker_recommendation_filter_v525' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR305MovieHistory=' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR306Home=' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR307Taste=' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR308Home=' /tmp/cinetracker-1.0-index.html
+          grep -Fq "window.addEventListener('click',tap,true);" /tmp/cinetracker-1.0-index.html
+          if grep -Fq "document.addEventListener('click',tap,true);" /tmp/cinetracker-1.0-index.html; then
+            echo 'Unsafe legacy document click owner still registered'
+            exit 1
+          fi
+          grep -Fq 'cinetracker_unmark_episode_v1' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'data-ct308-undo' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'window.__ctR307HomeGuard=' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'paintedVisit=visit' /tmp/cinetracker-1.0-index.html
+          grep -Fq "cinetracker_home_history_v391" /tmp/cinetracker-1.0-index.html
+          grep -Fq 'restore:()=>{if(active()&&fresh.length)' /tmp/cinetracker-1.0-index.html
+          grep -Fq 'grid-template-columns:minmax(0,1fr)!important' /tmp/cinetracker-1.0-index.html
+          if grep -Fq 'if(events)bar.appendChild(events);' /tmp/cinetracker-1.0-index.html; then
+            echo 'Old Ver eventos action is still present in Sports'
+            exit 1
+          fi
+          sha256sum "$OUT" | tee CineTracker-Android-1.0-SHA256.txt
+          stat -c '%s' "$OUT" | tee CineTracker-Android-1.0-size.txt
+          echo 'ANDROID_OFFICIAL_1_0_R315_UFC_DISCOVER_VERIFIED'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-official-1.0-r316
+          path: |
+            CineTracker-Android-1.0.apk
+            CineTracker-Android-1.0-SHA256.txt
+            CineTracker-Android-1.0-size.txt
+            CineTracker-Android-1.0-compatibilidade.txt
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish Android 1.0 official GitHub release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG='android-v1.0'
+          cat > /tmp/release-1.0-notes.md <<'NOTES'
+          # CineTracker Android 1.0 — Oficial (Descobrir / Top 10 r316)
+
+          Versão pública **1.0** mantida. Correção crítica da regressão de Descobrir, sem modificar Web ou banco.
+
+          - **Top 10 voltou:** a aba reaparece na navegação de todas as seções, inclusive Pra Você; os rankings e streamings continuam usando o módulo original.
+          - **Descobrir abre novamente:** Em alta, Populares, Novidades, Lançamentos, Mais Aguardados, Mais bem avaliados e Calendário mantêm os cards mesmo quando uma resposta antiga termina depois. Há limite de espera de 14s, tentativa novamente e cache da última lista válida por aba.
+          - **Cards padronizados:** capa 2:3, título truncado, campos e ações anteriores preservados. Duração verdadeira enriquecida com TMDB em segundo plano no Top 10 e demais abas; se o provedor não disponibilizar duração, é indicada como indisponível, sem inventar minutos.
+          - **Pra Você:** permanece com os sete slots e a lógica personalizada anterior; sem mudança nos algoritmos de escolha ou nos filtros.
+          - Home, séries, histórico, UFC, Esportes, Perfil, F1, Web e Supabase preservados.
+          - APK de produção assinado e não depurável, SHA-256 verificado.
+          - Identificador **com.cinetracker.app**, versionName **1.0** e versionCode **10117**. Assinatura igual à versão oficial anterior para instalar por cima.
+
+          Quem ainda usa um APK experimental 1.0.61 pode ter assinatura diferente: confirme a sincronização dos dados antes de desinstalar.
+
+          Publicação oficial pelo GitHub, não pela Google Play.
+          NOTES
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title 'CineTracker Android 1.0 — Oficial (UFC e Descobrir r315)' --notes-file /tmp/release-1.0-notes.md --latest
+          else
+            gh release create "$TAG" --title 'CineTracker Android 1.0 — Oficial (Pra Você r314)' --notes-file /tmp/release-1.0-notes.md --latest
+          fi
+          gh release upload "$TAG" CineTracker-Android-1.0.apk CineTracker-Android-1.0-SHA256.txt CineTracker-Android-1.0-size.txt CineTracker-Android-1.0-compatibilidade.txt --clobber
