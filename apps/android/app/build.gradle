@@ -8,7 +8,7 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10112
+        versionCode 10113
         versionName '1.0'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
@@ -41,4 +41,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker Android 1.0/r311: real UFC/WWE/F1 Home data, monotonic movie history, v525-audited personalized Discover; other screens frozen.
+// CineTracker Android 1.0/r312: single-flight auth refresh fixes stale JWT 401 for series detail, Home special series, movies and audited Discover; previous r311 logic unchanged.
