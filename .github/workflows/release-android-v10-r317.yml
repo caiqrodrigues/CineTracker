@@ -1,12 +1,5 @@
 name: CineTracker Android 1.0 — ForYou verified recovery r317
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/prepare-android-v10-r317.mjs'
-      - 'scripts/test-android-v10-r317.mjs'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-r317.yml'
   workflow_dispatch:
 
 permissions:
