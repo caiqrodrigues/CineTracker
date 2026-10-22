@@ -8,7 +8,7 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10109
+        versionCode 10110
         versionName '1.0'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
@@ -41,4 +41,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker Android 1.0/r308: Home-only watched tap targets, UFC card parity and history undo, stable movie first paint.
+// CineTracker Android 1.0/r309: window-capture first-tap Home marking; retains r308 history undo, UFC parity, r307 adaptive recommendations.
