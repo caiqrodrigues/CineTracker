@@ -1,13 +1,5 @@
 name: CineTracker Android 1.0 — Discover loading and genres r319
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/android/runtime-r319-discover-direct.js'
-      - 'scripts/prepare-android-v10-r319.mjs'
-      - 'scripts/test-android-v10-r319.mjs'
-      - 'apps/android/app/build.gradle'
-      - '.github/workflows/release-android-v10-r319.yml'
   workflow_dispatch:
 
 permissions:
