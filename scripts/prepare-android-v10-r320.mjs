@@ -45,7 +45,8 @@ scoped('async function renderTop217()','window.ctR217RenderTop10=renderTop217;',
 once("content.innerHTML=fail('Falha ao carregar Top 10: '+(e?.message||e),'discover');",
      "content.innerHTML='<div class=\"empty\">Falha ao carregar Top 10: '+esc(String(e?.message||e))+' <button type=\"button\" class=\"chip\" data-ct316-retry>Tentar novamente</button></div>';",
      'Top 10 explicit retry for provider rows');
-once("h.innerHTML=fail('Falha ao carregar streamings: '+(e?.message||e),'discover');",
+scoped("async function renderTop217()","window.ctR217RenderTop10=renderTop217;",
+     "h.innerHTML=fail('Falha ao carregar streamings: '+(e?.message||e),'discover');",
      "h.innerHTML='<div class=\"empty\">Falha ao carregar streamings: '+esc(String(e?.message||e))+' <button type=\"button\" class=\"chip\" data-ct316-retry>Tentar novamente</button></div>';",
      'Top10 explicit retry for providers');
 
