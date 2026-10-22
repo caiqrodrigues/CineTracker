@@ -1,3 +1,12 @@
+## Android 1.0/r309 — toque único confiável na Home (2026-10-22)
+
+- Nome público **1.0** preservado. Código Android incrementado **10109 → 10110**; assinatura oficial idêntica à versão instalada anteriormente.
+- O botão **✓** de marcar o próximo episódio estava registrado em um delegado de `document` depois de controladores legados. A captura agora ocorre na `window`, antes das ações antigas, com `stopImmediatePropagation` e trava síncrona por media ID: um toque dispara apenas uma operação, sem duplo clique e sem reload.
+- Mantidos integralmente os recursos da r308: card UFC de tamanho uniforme, remoção de checks órfãos, Histórico de Filmes sem alternância de dados obsoletos após primeiro registro verificado e botão minimalista **Desmarcar** no Histórico de Séries e Filmes com rollback em erro.
+- Mantidas as recomendações adaptativas v525/r307: afinidade de gêneros conforme assistidos, favoritos e Watchlist; feedback de Trocar; exploração e exposição persistente por usuário, sem apresentar conteúdo proibido.
+- **Escopo:** apenas controlador de Home no runtime Android. Esportes, Descobrir, Perfil, Fórmula 1, Web e Supabase inalterados em r309.
+- Regressões automatizadas e integridade da assinatura verificados no pipeline oficial.
+
 ## Android 1.0 / r308 — Home: ação confiável, card UFC, desfazer histórico (2026-10-21)
 
 - Versão pública **1.0**, `versionCode 10109`, raiz `0.3.97`; assinatura e package `com.cinetracker.app` mantidos.
