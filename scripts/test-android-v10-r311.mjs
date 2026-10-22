@@ -62,7 +62,8 @@ const w={
  __ctR308Home:{mergeMovies(rows){return [...rows,...movieItems].filter(x=>Number(x.tmdb_id)>0).sort((a,b)=>Date.parse(a.watched_at)-Date.parse(b.watched_at))}},
  __ctR305MovieHistory:{refresh(){return Promise.resolve({})}},
  __ctR271Bridge:{getPainter(){return rows=>{painterCalls.push(['movie',rows.length]);return true}}},
- __ctR307Taste:{warm(){return Promise.resolve(true)},profile(){return{positive:new Map([[28,10]])}}}
+ __ctR307Taste:{warm(){return Promise.resolve(true)},profile(){return{positive:new Map([[28,10]])}}},
+ __ctR265Test:{allowed(){return true}}
 };
 const calls=[];
 const ctx={dash:[{title:'Watchlist',media_type:'movie',tmdb_id:777,is_watchlist:true}],watchMovieIds:new Set([777]),historyMovieIds:new Set(),watchTvIds:new Set(),historyTvIds:new Set()};
