@@ -8,7 +8,7 @@ android {
         applicationId 'com.cinetracker.app'
         minSdk 26
         targetSdk 34
-        versionCode 10118
+        versionCode 10119
         versionName '1.0'
         def webUrl = project.findProperty('CINETRACKER_WEB_URL') ?: 'https://mycinetracker.vercel.app'
         buildConfigField 'String', 'WEB_URL', '"' + webUrl + '"'
@@ -41,4 +41,4 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.9.1'
 }
 
-// CineTracker Android 1.0/r317: do not block authenticated ForYou on legacy dashboard enrichment; preserve mandatory v525 server audit and all other modules.
+// CineTracker Android 1.0/r318: repair recursive Discover non-ForYou delegation; stable 1.0 package/signature.
