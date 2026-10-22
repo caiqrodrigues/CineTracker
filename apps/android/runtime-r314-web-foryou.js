@@ -28,7 +28,7 @@ const complete=()=>KINDS.some(k=>model.watch[k].length||model.fresh[k].length);
 const taste=()=>window.__ctR307Taste;
 const blocked=x=>ct186LocalBlocked.has(identity(x));
 const canUse=(x,kind,watch)=>Boolean(
- identity(x)&&x?.__ct421_eligible===true&&kindMatch(x,kind)&&
+ identity(x)&&(x?.__ct421_eligible===true||x?.__ct314ServerAudited===true)&&kindMatch(x,kind)&&
  window.__ctR265Test?.allowed?.(x)===true&&!blocked(x)&&
  window.__ctR279Audit?.permitted?.(x,watch)===true);
 const verifyData=x=>x&&!x._ct280AuditPartial&&
@@ -164,7 +164,7 @@ async function auditedPools(id){
 async function load(force=false,preserve=false){
  reset();
  if(!active()||!session?.access_token)return false;
- if(request&&!force)return request;
+ if(request)return request;
  const id=userId(),ticket=++serial;
  if(!preserve&&!complete())message('Buscando indicações personalizadas…');
  const job=(async()=>{
@@ -210,8 +210,16 @@ async function swap(slot){
    const added=await timebox(taste()?.refill?.(refill)||Promise.resolve(false),12000).catch(()=>false);
    if(added&&active()){
     const kind=refill.split(':')[1],source=arr(ct186ForYouData?._ct186_fresh?.[kind]);
-    for(const item of source)if(canUse(item,kind,false)&&!model.fresh[kind].some(x=>identity(x)===identity(item)))
-     model.fresh[kind].push(item);
+    for(const item of source){
+     // The extended TMDB pool was verified by r307 against v525;
+     // distinguish it from direct v421 results rather than claiming v421 did the check.
+     if(window.__ctR279Audit?.permitted?.(item,false)===true&&
+        window.__ctR265Test?.allowed?.(item)===true){
+      item.__ct314ServerAudited=true;
+      if(canUse(item,kind,false)&&!model.fresh[kind].some(x=>identity(x)===identity(item)))
+       model.fresh[kind].push(item);
+     }
+    }
     next=choose(slot,oldKey);
    }
   }
