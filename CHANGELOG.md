@@ -1,3 +1,10 @@
+## Web 0.3.72 / r545 — Home sem reancoragem e data do UFC (2026-10-22)
+
+- Impede que renderizações posteriores da mesma aba reiniciem o alinhamento/rolagem já realizado em Home.
+- UFC utiliza `next_episode_air_date` fornecido pelo RPC autenticado v512 quando o último evento não está materializado em `events`, incluindo a data no subtítulo e critério de inserção.
+- Aprimorada a leitura de datas de linhas já renderizadas para ordenação relativa.
+- Mantidos os arquivos Android e a integração Supabase sem alterações.
+
 ## Web 0.3.71 / r544 — Home Filmes, Séries e UFC (2026-10-22)
 
 - Home Filmes: renderizador antigo não permanece indefinidamente em Carregando Watchlist quando não recebe títulos; fornece repetição explícita e recuperação assíncrona via controlador existente, sem recarregar página.
