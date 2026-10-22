@@ -67,6 +67,8 @@ const context={
  setTimeout,clearTimeout,Date,console
 };
 const init=`
+const SUPABASE_URL='https://test.invalid';
+const SUPABASE_KEY='test-publishable-key';
 let session={access_token:'expired.jwt',refresh_token:'old-refresh',expires_at:${previousDate},user:{id:'same-user'}};
 let user={id:'same-user'};
 let api=async function(path,options){globalThis.postgrestTokens.push(session.access_token);return {path,options,success:true}};
