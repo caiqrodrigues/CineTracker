@@ -1,3 +1,7 @@
+## Android 1.0 / r315 — UFC e cartões completos em Descobrir
+
+A atualização oficial 1.0/r315 uniformiza a ação de marcar assistido do **UFC** na Home Séries e restaura, nas outras abas de **Descobrir**, cards com proporção 2:3, ano, gênero, duração (quando disponível), nota, botão **+ Watchlist** e **✓ Visto**. A informação de duração que não está na lista TMDB é enriquecida sem bloquear a abertura da aba e sem extrapolar o escopo. O controlador **Pra Você** r314 com sete slots, seis fontes da Web v421 e auditoria v525 é preservado; os sinais de gosto da Watchlist usam a identidade esperada pelo motor r307. O Web, SQL e demais telas não foram alterados. Preparação: `node scripts/prepare-android-v10-r315.mjs`. Testes: `node scripts/test-android-v10-r315.mjs`.
+
 ## Android 1.0 / r314 — Descobrir → Pra Você igual à Web
 
 O **APK oficial CineTracker 1.0** usa, nesta tela, as mesmas seis fontes autenticadas v421 da Web para Filme/Série/Anime da Watchlist e 100% Novos, filtradas pela auditoria v525. São 7 espaços com Trocar individual e ações +Watchlist/+Visto equivalentes às da Web. As escolhas aproveitam histórico e preferências autenticadas, com memória de exposições para reduzir repetição; se a lista realmente acabar, não recicla os mesmos itens automaticamente. Para compor o APK, execute `node scripts/prepare-android-v10-r314.mjs`; execute `node scripts/test-android-v10-r314.mjs` para verificar o módulo. Web, SQL e as demais telas permanecem sem alterações.
