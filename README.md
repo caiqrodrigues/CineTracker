@@ -1,3 +1,7 @@
+## Android 1.0 / r314 — Descobrir → Pra Você igual à Web
+
+O **APK oficial CineTracker 1.0** usa, nesta tela, as mesmas seis fontes autenticadas v421 da Web para Filme/Série/Anime da Watchlist e 100% Novos, filtradas pela auditoria v525. São 7 espaços com Trocar individual e ações +Watchlist/+Visto equivalentes às da Web. As escolhas aproveitam histórico e preferências autenticadas, com memória de exposições para reduzir repetição; se a lista realmente acabar, não recicla os mesmos itens automaticamente. Para compor o APK, execute `node scripts/prepare-android-v10-r314.mjs`; execute `node scripts/test-android-v10-r314.mjs` para verificar o módulo. Web, SQL e as demais telas permanecem sem alterações.
+
 ## CineTracker Android 1.0 / r313 — restauração segura de acesso
 
 Corrige a falha da r312 em que o Supabase rejeitava a renovação com `refresh_token_already_used` (HTTP 400), mas o aplicativo continuava exibindo abas sem autorização. A tela de inicialização agora compartilha o mesmo controlador de sessão e, se a credencial já estiver inválida, apresenta **Entrar** uma única vez, sem recarregar a página ou remover dados sincronizados. Se surgir o login após a atualização, informe as credenciais da mesma conta; um token de renovação já consumido não pode ser reutilizado com segurança. A versão exibida permanece **1.0** (`versionCode 10114`). Home, Descobrir, Esportes, Perfil, Web e Supabase continuam exatamente como na r312.
