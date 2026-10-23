@@ -1,3 +1,9 @@
+## Android 1.0 / r324 — temporadas novas aparecem automaticamente em Continuar assistindo
+
+Ao abrir ou retomar **Home → Séries**, o APK verifica no TMDB os episódios realmente lançados de séries já acompanhadas ou concluídas. Se surgir uma temporada nova após você ficar em dia, a série retorna automaticamente a **Continuar assistindo**, mesmo que tenha terminado a temporada anterior há meses. Exemplo: Lupin concluído em S3E7 e parte 4 lançada → o card volta com **S4E1** como próximo, sem marcar episódios vistos artificialmente.
+
+Só entram episódios já disponíveis e ainda não vistos; **Juntando poeira** continua respeitando 30 dias para séries abandonadas. WWE, UFC e F1 mantêm suas regras. Web e outras abas Android não foram modificadas. Versão pública **1.0**, código interno **10125**. Preparar: `node scripts/prepare-android-v10-r324.mjs`; validar: `node scripts/test-android-v10-r324.mjs`.
+
 ## Android 1.0 / r323 — Pra Você com os mesmos dados da Web atual
 
 O APK agora consulta `cinetracker_foryou_payload_v498`, a fonte principal da Web atual, e recupera categorias vazias via `v485` e `v421` com auditoria pessoal `v525`. Corrige a divergência da r322, que só sorteava sobre os pools antigos, mantendo os sete cards 2:3, rotação sem repetição imediata e atualizações locais. A Web, Top 10 e demais abas Android permanecem congeladas. Android 1.0 (`versionCode 10124`). Preparar: `node scripts/prepare-android-v10-r323.mjs`; testar: `node scripts/test-android-v10-r323.mjs`.

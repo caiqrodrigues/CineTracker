@@ -1,3 +1,13 @@
+## Android 1.0 / r324 — novas temporadas reativam Continuar assistindo (2026-10-23)
+
+- **Causa-raiz Android:** o reconciliador r306 apenas usava a verificação de estreia recente para Raw/SmackDown. As séries comuns com novas temporadas permaneciam indevidamente em Em dia/Concluídas ou eram movidas para Juntando poeira por terem sido vistas há mais de 30 dias.
+- **Detecção genérica e automática:** ao abrir/retomar a Home Séries, o APK consulta a fronteira de episódios realmente lançados no TMDB para títulos previamente acompanhados ou concluídos. Com estreia nova ainda não assistida, move a série para Continuar assistindo sem criar qualquer marcação de visto ou reassistido.
+- **Estreias em lote:** se a série recebeu uma temporada inteira, o próximo episódio sugerido começa no primeiro episódio ainda não visto; a verificação recorre aos detalhes da temporada quando os metadados gerais ainda não refletem os lançamentos do dia.
+- **Critérios preservados:** episódios futuros não ativam o card; histórico antigo de episódios não obriga retorno; títulos abandonados continuam em Juntando poeira após 30 dias; WWE, UFC e Fórmula 1 mantêm seus controladores específicos.
+- **Atualização local sem reload:** checagem autenticada em segundo plano, limite de quatro consultas concorrentes, cache curto por conta, estados locais atualizados e repintura controlada somente da Home Séries; nenhuma alteração em episódios assistidos ou em dados do usuário.
+- **Regressão validada:** cenários Lupin S3E7 → S4E1, temporada recém-lançada com dados TMDB atrasados, Concluídas importadas, Reassistir sem falso desbloqueio, episódios futuros, Em dia sem novidades, Juntando poeira e exclusão de Raw.
+- **Escopo e versão:** somente APK Android; versão pública **1.0** mantida, `versionCode 10125`, raiz `0.3.117`. Web, Supabase, Descobrir, Top 10, Esportes e Perfil sem alterações. Build e testes `r324` com certificado oficial existente.
+
 ## Android 1.0 / r323 — Pra Você sincronizado com a fonte atual da Web (2026-10-23)
 
 - **Causa-raiz:** o APK r322 ainda usava seis conjuntos antigos `v421`; a Web atual usa `cinetracker_foryou_payload_v498`. Alterar somente o sorteio não ampliava os candidatos.

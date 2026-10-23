@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   official_release:
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, 'r323') }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
