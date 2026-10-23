@@ -1,3 +1,7 @@
+## Android 1.0 / r322 — rotação de Pra Você e Top 10
+
+No APK, o botão **Trocar** e a indicação inicial passam a escolher aleatoriamente entre os candidatos elegíveis das mesmas seis fontes v421 da Web. O aparelho memoriza títulos já sugeridos por conta e por slot para reduzir repetições; só recicla quando as alternativas auditadas acabam. O **Top 10** consulta páginas adicionais do streaming selecionado até alcançar 10 filmes e 10 séries elegíveis ou o limite de 15 páginas por categoria, sempre com auditoria v525. Nenhuma alteração na Web, no banco ou em outras abas. Android 1.0 (`versionCode 10123`). Preparar: `node scripts/prepare-android-v10-r322.mjs`; validar: `node scripts/test-android-v10-r322.mjs`.
+
 ## Android 1.0 / r321 — correção de Descobrir
 
 Atualização interna **10122** sem alteração da Web: o card de Indicação do Dia passa a ter o mesmo tamanho das três categorias, a reentrada em Pra Você não reutiliza carregamentos obsoletos e o Top 10 consulta somente o provedor selecionado com prazos limitados e filtro autenticado v525. Teste `node scripts/test-android-v10-r321.mjs` após preparar com `node scripts/prepare-android-v10-r321.mjs`. Identidade e versão pública **1.0** preservadas.
