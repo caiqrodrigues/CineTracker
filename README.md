@@ -1,3 +1,7 @@
+## Android 1.0 / r323 — Pra Você com os mesmos dados da Web atual
+
+O APK agora consulta `cinetracker_foryou_payload_v498`, a fonte principal da Web atual, e recupera categorias vazias via `v485` e `v421` com auditoria pessoal `v525`. Corrige a divergência da r322, que só sorteava sobre os pools antigos, mantendo os sete cards 2:3, rotação sem repetição imediata e atualizações locais. A Web, Top 10 e demais abas Android permanecem congeladas. Android 1.0 (`versionCode 10124`). Preparar: `node scripts/prepare-android-v10-r323.mjs`; testar: `node scripts/test-android-v10-r323.mjs`.
+
 ## Android 1.0 / r322 — rotação de Pra Você e Top 10
 
 No APK, o botão **Trocar** e a indicação inicial passam a escolher aleatoriamente entre os candidatos elegíveis das mesmas seis fontes v421 da Web. O aparelho memoriza títulos já sugeridos por conta e por slot para reduzir repetições; só recicla quando as alternativas auditadas acabam. O **Top 10** consulta páginas adicionais do streaming selecionado até alcançar 10 filmes e 10 séries elegíveis ou o limite de 15 páginas por categoria, sempre com auditoria v525. Nenhuma alteração na Web, no banco ou em outras abas. Android 1.0 (`versionCode 10123`). Preparar: `node scripts/prepare-android-v10-r322.mjs`; validar: `node scripts/test-android-v10-r322.mjs`.

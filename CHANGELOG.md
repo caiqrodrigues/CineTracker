@@ -1,3 +1,11 @@
+## Android 1.0 / r323 — Pra Você sincronizado com a fonte atual da Web (2026-10-23)
+
+- **Causa-raiz:** o APK r322 ainda usava seis conjuntos antigos `v421`; a Web atual usa `cinetracker_foryou_payload_v498`. Alterar somente o sorteio não ampliava os candidatos.
+- **Fonte e fallback iguais à Web:** consulta principal ao payload autenticado `v498` (30 itens por Watchlist e 48 por 100% Novos); categorias vazias consultam primeiro `v485` e depois `v421`, com limite de tempo e sem substituir resultados válidos.
+- **Segurança dos resultados:** auditoria pessoal `cinetracker_recommendation_filter_v525` em todas as sugestões, rejeitando vistos, títulos equivalentes por apelidos, Watchlist fora do bloco permitido e conteúdos bloqueados. Sem exibir itens sem auditoria.
+- **Interação preservada:** sete slots, rotação aleatória com memória local por conta, cards 2:3, ações otimistas e sem reload. Nenhuma mudança em Top 10, Home, Esportes, UFC/WWE/F1, Perfil, Web ou Supabase.
+- **Versões e testes:** Android 1.0, `versionCode 10124`, raiz `0.3.116`; `scripts/prepare-android-v10-r323.mjs` e `scripts/test-android-v10-r323.mjs`.
+
 ## Android 1.0 / r322 — Descobrir: rotação e Top 10 completos (2026-10-22)
 
 - **Causa de repetições em Pra Você:** o código Android r314, apesar de consultar as seis funções autenticadas v421 da Web, escolhia o primeiro item de uma classificação quase determinística da camada de preferências r307. A escolha agora segue a rotação aleatória da Web r464 dentro dos candidatos elegíveis, sem favorecer artificialmente os mesmos títulos.
