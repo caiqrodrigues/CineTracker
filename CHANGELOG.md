@@ -1,3 +1,12 @@
+## Web 0.3.75 / r548 — Raw, SmackDown e Lupin em Continuar assistindo; temporadas WWE (2026-10-26)
+
+- **Escopo:** somente a versão Web; código Android, APK e workflows Android permanecem inalterados.
+- **Raw e SmackDown:** corrige a incompatibilidade entre os rótulos `Continuar assistindo`/`Assistir a seguir` e o sincronizador anterior, que não conseguia reinserir um card ausente. Usa o estado autenticado e episódios efetivamente lançados para mostrar o próximo evento recente ainda não visto. Eventos anteriores ao recorte de 16 dias não reativam a série; episódios da mesma noite não entram antes das 23h de São Paulo.
+- **Lupin:** reconhece automaticamente a estreia oficial da parte 4 na Netflix em 23/10/2026 (8 capítulos). Enquanto TMDB/Supabase ainda informam o último capítulo de 2023, usa exclusivamente para essa estreia um registro verificável de lançamento, mapeado para a temporada 3 do TMDB; não confunde reimportações antigas de `T3E7` com visualização de 2026. Começa no primeiro capítulo pendente e avança quando os capítulos forem marcados.
+- **Home Web:** consulta `cinetracker_home_series_v527` e `cinetracker_home_series_watch_state_v4`, preserva séries já acompanhadas, reinsere pontualmente cards omitidos e atualiza buckets no estado local sem recarregar a página. Séries fora do escopo e a regra de 30 dias de séries abandonadas ficam intactas.
+- **Detalhes de Raw e SmackDown:** substitui somente nessas duas séries a consulta direta de histórico volumoso pelo conjunto consolidado autenticado; carrega gráficos de temporadas sob demanda para não impedir a abertura do painel. Botões `Marcar visto`/`Desmarcar` usam atualização imediata otimista, trava contra cliques concorrentes, rollback em erro e RPCs existentes, inclusive para aliases de mídia.
+- **Validação:** `npm run build` gera `r548-official-0.3.75`; `npm run verify` cobre estreia de Lupin, mapeamento de título legado, exclusão de episódios assistidos, prevenção de episódio WWE futuro e integração do painel da temporada. Sem migração de banco e sem `window.location.reload()`/`router.refresh()`.
+
 ## Android 1.0 / r324 — novas temporadas reativam Continuar assistindo (2026-10-23)
 
 - **Causa-raiz Android:** o reconciliador r306 apenas usava a verificação de estreia recente para Raw/SmackDown. As séries comuns com novas temporadas permaneciam indevidamente em Em dia/Concluídas ou eram movidas para Juntando poeira por terem sido vistas há mais de 30 dias.

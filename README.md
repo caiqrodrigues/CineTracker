@@ -1,3 +1,13 @@
+## Web 0.3.75 / r548 — Raw, SmackDown e Lupin (somente Web)
+
+Na Home → Séries, **Raw** e **SmackDown** retornam automaticamente a **Continuar assistindo** quando existir episódio recente realmente lançado e ainda não assistido. Episódios históricos anteriores ao recorte semanal não reativam a série. O sincronizador atualiza e, se necessário, reinsere o card diretamente no estado local sem recarregar a página.
+
+**Lupin — Parte 4:** os oito capítulos estrearam em 23/10/2026 (Netflix). Enquanto TMDB e o cache Supabase ainda estiverem em 2023, a Web reconhece essa estreia, apresenta o capítulo da temporada 3 do TMDB ainda pendente e desconsidera marcações antigas indevidamente associadas à nova temporada. A regra de 30 dias continua valendo para séries abandonadas.
+
+Em **Raw** e **SmackDown**, clicar na temporada abre a lista de episódios; o histórico visto é consultado por estado consolidado e os gráficos de outras temporadas são carregados quando entram na tela. Os episódios podem ser marcados e desmarcados com atualização local e reversão em caso de falha. Só os arquivos Web mudaram; APK/Android congelados.
+
+Executar: `cd apps/web && npm run build && npm run verify`. Versão da Web: `0.3.75` (`r548`).
+
 ## Android 1.0 / r324 — temporadas novas aparecem automaticamente em Continuar assistindo
 
 Ao abrir ou retomar **Home → Séries**, o APK verifica no TMDB os episódios realmente lançados de séries já acompanhadas ou concluídas. Se surgir uma temporada nova após você ficar em dia, a série retorna automaticamente a **Continuar assistindo**, mesmo que tenha terminado a temporada anterior há meses. Exemplo: Lupin concluído em S3E7 e parte 4 lançada → o card volta com **S4E1** como próximo, sem marcar episódios vistos artificialmente.
