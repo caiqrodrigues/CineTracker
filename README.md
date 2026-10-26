@@ -1,3 +1,11 @@
+## Web 0.3.76 / r549 — Home de séries e temporadas WWE (somente Web)
+
+- Corrigida a ordem de execução: a função final de episódios/temporadas de **Raw** e **SmackDown** passa a ser instalada depois dos antigos donos r171, r174 e r181, que anulavam a correção anterior.
+- No painel de temporadas WWE, o histórico de assistidos é consultado para **todas** as temporadas; marcação/desmarcação é otimista, com bloqueio de cliques concorrentes, retorno do estado em caso de falha e sem recarregar a página. A busca de detalhes por temporada ocorre somente para os cartões visíveis, com duas consultas concorrentes.
+- **Home → Séries:** a verificação de episódio novo de **Raw**, **SmackDown** e **Lupin** agora atualiza também a lista efetivamente exibida pelo renderizador r404. O carregamento aguarda autenticação, com tentativas limitadas, e restaura o bloco original ao marcar o episódio como visto.
+- A regra de WWE é mantida: uma série em dia só volta a **Continuar assistindo** depois de estrear episódio recente que esteja **não assistido**. Em 26/10 pela manhã, Raw 19/10 e SmackDown 23/10 estavam registrados como assistidos, portanto o bloco correto era **Em dia**.
+- Testes: `cd apps/web && npm run build && npm run verify`. **APK/Android não foram alterados.**
+
 ## Web 0.3.75 / r548 — Raw, SmackDown e Lupin (somente Web)
 
 Na Home → Séries, **Raw** e **SmackDown** retornam automaticamente a **Continuar assistindo** quando existir episódio recente realmente lançado e ainda não assistido. Episódios históricos anteriores ao recorte semanal não reativam a série. O sincronizador atualiza e, se necessário, reinsere o card diretamente no estado local sem recarregar a página.

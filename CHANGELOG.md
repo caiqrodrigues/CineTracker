@@ -1,3 +1,13 @@
+## Web 0.3.76 / r549 — Correção de execução efetiva na Home e WWE (2026-10-26)
+
+- **Escopo estrito:** Web; APK e código Android congelados.
+- **Causa-raiz encontrada:** o hook r548 de episódios WWE era registrado antes de substituições posteriores das funções `ct169WatchedSet` (r171/r172), `ct169DrawerEpisode` (r174) e `ct169OpenSeasonDrawer` (r181). A compilação válida não garantia que o hook sobrevivesse à inicialização. O hook r549 é instalado após o último dono dessas funções.
+- **Abertura de temporadas Raw/SmackDown:** evita aguardar a segunda consulta de controle de temporada no percurso crítico do painel. O controle é atualizado em segundo plano. Consulta de vistos inclui todas as temporadas e aliases de mídia; decoração de temporadas só carrega cartões visíveis, com duas requisições paralelas no máximo.
+- **Marcar/desmarcar episódios WWE:** renderizador final r174 recebe o toggle com estado otimista e trava física de cliques concorrentes; sincronização usa RPCs existentes, considera mídias canônicas e legadas, restaura em erro e dispara evento de dados sem reload.
+- **Novos episódios na Home:** r548 apenas alterava `hSeries` (Home r388), enquanto o renderizador efetivo r404 usa `series404`. r549 reconcilia o estado nesse renderizador, preserva o bucket original e remove inserções temporárias quando o novo episódio é visto. Retenta somente após disponibilidade da sessão, dentro de prazos delimitados.
+- **Dados de negócio auditados:** na manhã de 26/10, Raw de 19/10 e SmackDown de 23/10 já constavam assistidos; permanecem em **Em dia** até a estreia efetiva de capítulo ainda não visto. Lupin respeita a nova temporada sem remarcação do episódio antigo.
+- **Validação local:** `npm run build` e `npm run verify` passaram; novo teste r549 confere ordem real das funções no pacote, estados de temporadas distintas, botões e mutação/restauração da lista exibida. Teste autenticado de produção requer sessão de usuário válida.
+
 ## Web 0.3.75 / r548 — Raw, SmackDown e Lupin em Continuar assistindo; temporadas WWE (2026-10-26)
 
 - **Escopo:** somente a versão Web; código Android, APK e workflows Android permanecem inalterados.
