@@ -70,7 +70,7 @@ function buildFiles(media,overrides,progress,history){
   const value=String(entry.state||'').toLowerCase();
   if(!states.has(id))states.set(id,new Set());states.get(id).add(value);
   if(entry.watched_at&&(!last.has(id)||String(entry.watched_at)>last.get(id)))last.set(id,String(entry.watched_at));
-  if(['seen','watched'].includes(value)&&byId.get(id).media_type==='movie')watchedMovie.add(id);
+  if(['seen','alreadyseen','watched','completed'].includes(value)&&byId.get(id).media_type==='movie')watchedMovie.add(id);
  }
  const episodes=list(progress).filter(e=>byId.get(n(e.media_id))?.media_type==='tv')
   .map(e=>({...e,media:byId.get(n(e.media_id))}));
@@ -89,7 +89,7 @@ function buildFiles(media,overrides,progress,history){
  const watchedMedia=[...byId.values()].sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),'pt-BR'));
  const listed=(m,key)=>states.get(n(m.id))?.has(key)||false;
  const favorites=m=>listed(m,'liked')||listed(m,'favorite')||listed(m,'favourite');
- const watchlist=m=>listed(m,'watchlist');
+ const watchlist=m=>listed(m,'watchlist')||listed(m,'addedtowatchlist')||listed(m,'watchlater');
  const movies=watchedMedia.filter(m=>m.media_type==='movie').map(m=>({
   tmdb_id:m.tmdb_id,media_id:m.id,title:m.title,year:m.release_year,
   status:watchedMovie.has(n(m.id))?'watched':watchlist(m)?'watchlist':'library',
@@ -99,7 +99,7 @@ function buildFiles(media,overrides,progress,history){
  const series=watchedMedia.filter(m=>m.media_type==='tv').map(m=>{
   const keys=states.get(n(m.id))||new Set();
   const status=keys.has('completed')?'completed':keys.has('uptodate')||keys.has('up_to_date')?'up_to_date':
-   (watchedCount.get(n(m.id))||0)>0?'in_progress':watchlist(m)?'watchlist':'library';
+   keys.has('inprogress')||(watchedCount.get(n(m.id))||0)>0?'in_progress':watchlist(m)?'watchlist':'library';
   return{tmdb_id:m.tmdb_id,media_id:m.id,title:m.title,year:m.release_year,status,
    watched_episodes:watchedCount.get(n(m.id))||0,total_episodes:m.total_episodes,
    watchlist:watchlist(m),favorite:favorites(m),last_watched_at:last.get(n(m.id))||''};

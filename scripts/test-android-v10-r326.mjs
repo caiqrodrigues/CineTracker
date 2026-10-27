@@ -13,13 +13,16 @@ for(const forbidden of ['window.location.reload(', 'router.refresh(', 'while(tru
 const media=[
  {id:1,tmdb_id:101,media_type:'movie',media_kind:'movie',title:'O Filme, Especial',release_year:2025},
  {id:2,tmdb_id:202,media_type:'tv',media_kind:'anime',title:'Dragon Ball',release_year:2026,total_episodes:20},
- {id:3,tmdb_id:303,media_type:'sport',media_kind:'event',title:'F1 GP',release_year:2026}
+ {id:3,tmdb_id:303,media_type:'sport',media_kind:'event',title:'F1 GP',release_year:2026},
+ {id:4,tmdb_id:404,media_type:'movie',media_kind:'movie',title:'Filme visto importado',release_year:2024}
 ];
 const overrides=[
  {id:1,media_id:1,state:'Seen',watched_at:'2026-10-20T18:00:00Z'},
  {id:2,media_id:1,state:'Liked'},
- {id:3,media_id:2,state:'Watchlist'},
- {id:4,media_id:3,state:'Liked'}
+ {id:3,media_id:2,state:'WatchLater'},
+ {id:4,media_id:3,state:'Liked'},
+ {id:5,media_id:4,state:'AlreadySeen'},
+ {id:6,media_id:1,state:'AddedToWatchlist'}
 ];
 const progress=[
  {id:1,media_id:2,season_number:1,episode_number:1,watched:true,watched_at:'2026-10-11T18:00:00Z'},
@@ -80,12 +83,16 @@ assert.equal(names.size,8,'CSV ZIP has six data files plus manifest and document
 for(const name of ['filmes.csv','series.csv','episodios.csv','historico.csv','watchlist.csv','favoritos.csv'])
  assert.ok(names.has(name),name);
 assert.match(names.get('filmes.csv'),/"O Filme, Especial"/,'CSV commas are escaped');
+assert.match(names.get('filmes.csv'),/Filme visto importado,2024,watched,true/,
+ 'AlreadySeen import state is exported as watched even without a watch_history row');
+assert.match(names.get('watchlist.csv'),/Dragon Ball/,'WatchLater status must be included');
+assert.match(names.get('watchlist.csv'),/"O Filme, Especial"/,'AddedToWatchlist status must be included');
 assert.match(names.get('episodios.csv'),/2026-10-27T21:54:50Z/,'Dragon Ball episode progress is included');
 assert.match(names.get('historico.csv'),/2026-10-27T21:54:50Z/,'Individual history timestamps are included');
 assert.ok(![...names.values()].join(' ').includes('F1 GP'),'No sport items in export');
 assert.ok(!names.has('esportes.csv'));
 const manifest=JSON.parse(names.get('manifest.json'));
-assert.equal(manifest.counts.movies,1);
+assert.equal(manifest.counts.movies,2);
 assert.equal(manifest.counts.series,1);
 assert.equal(manifest.counts.episodes,3);
 assert.equal(manifest.sports_included,false);
