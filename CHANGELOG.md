@@ -1,3 +1,13 @@
+## Android 1.0 / r326 — Exportação ZIP de filmes e séries, sem esportes (2026-10-27)
+
+- **Escopo estrito:** exclusivamente APK Android, tela Configurações. Web, Supabase, código nativo Java, Descobrir, Esportes, Home e Perfil r325 não modificados.
+- **Exportação anterior:** o botão de Configurações salvava apenas um JSON de resumo e incluía dados esportivos; o resultado não correspondia ao pedido de exportação ZIP de biblioteca no estilo Bingers.
+- **Novo ZIP de CSV:** o botão passa a gerar `CineTracker-series-filmes-AAAA-MM-DD.zip` com `filmes.csv` (estados de assistido, watchlist, favorito), `series.csv` (progresso e totais), `episodios.csv` (temporada/episódio, marcação real e data), `historico.csv` (todas as ocorrências e datas), `watchlist.csv`, `favoritos.csv`, `manifest.json` e `LEIA-ME.txt`. Exclui registros que não sejam mídia de tipo filme ou série, inclusive esportes/eventos esportivos. Não envia dados a serviços externos.
+- **Sem cortes de dados:** lê `media_overrides`, `episode_progress` e `watch_history` em páginas autenticadas de 1.000 registros, recupera os títulos `media` em blocos de 75 IDs e interrompe com erro explícito se atingir o limite seguro, nunca salva backup silenciosamente incompleto. IDs TMDB, datas e textos CSV são preservados, com escape de aspas e vírgulas e BOM UTF-8.
+- **Entrega no Android:** ZIP padrão STORE com diretório central e CRC32 validado pelo comando real `unzip -t`; usa exclusivamente a ponte nativa já existente `CineTrackerNative.exportBackup` e o seletor de documentos Android. Trava síncrona impede exportações concorrentes; mantém UI sem recarregar.
+- **Validação:** `scripts/test-android-v10-r326.mjs` cobre integridade de ZIP, seis CSVs, dados reais de progresso e histórico, exclusão de esportes, escaping, manifesto e a exportação via ponte Android, além de presença dos módulos r325 da Home/Perfil. O workflow valida assinatura oficial e atualização sobre a versão 1.0 anterior.
+- **Versão:** raiz `0.3.121`, `versionName 1.0`, `versionCode 10127`. Mantém a assinatura oficial e publica APK na release Android 1.0. A exportação segue o estilo de arquivo Bingers (ZIP de CSV), sem declarar compatibilidade de importação de terceiros não verificada.
+
 ## Android 1.0 / r325 — Home Séries e Perfil sem estados obsoletos (2026-10-27)
 
 - **Escopo:** exclusivamente APK Android. Nenhuma alteração em `apps/web`, Supabase, backend, Descobrir ou outras áreas do Android.

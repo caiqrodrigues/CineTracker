@@ -1,0 +1,139 @@
+name: CineTracker Android 1.0 — ZIP Séries e Filmes r326
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/android/runtime-r326-media-export.js'
+      - 'scripts/prepare-android-v10-r326.mjs'
+      - 'scripts/test-android-v10-r326.mjs'
+      - 'apps/android/app/build.gradle'
+      - '.github/workflows/release-android-v10-r326.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cinetracker-android-official-1-0-r326-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  official_release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Enforce Web and native Android freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code HEAD^ HEAD -- apps/web supabase
+          test "$(git hash-object apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java)" = '641f8766951077947c57cf34959bac43b94e2648'
+          test "$(git hash-object apps/android/app/src/main/res/layout/activity_main.xml)" = '30edbb633685c3a77ce114c92c4f07dfa07a3271'
+
+      - name: Restore official signing certificate
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Reject a new signing identity
+        run: |
+          set -euo pipefail
+          test -s "$HOME/.cinetracker/cinetracker.keystore"
+          keytool -list -keystore "$HOME/.cinetracker/cinetracker.keystore" -storepass android -alias androiddebugkey >/dev/null
+
+      - name: Retrieve previous official APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release download android-v1.0 --pattern 'CineTracker-Android-1.0.apk' --dir /tmp --clobber
+          test -s /tmp/CineTracker-Android-1.0.apk
+
+      - name: Regression Home and Profile, assemble and test media ZIP
+        env:
+          CINETRACKER_REQUIRE_BASELINE: '1'
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10127' apps/android/app/build.gradle
+          grep -Fq "applicationId 'com.cinetracker.app'" apps/android/app/build.gradle
+          grep -Fq 'signingConfig signingConfigs.official' apps/android/app/build.gradle
+          node --check apps/android/runtime-r326-media-export.js
+          node --check scripts/prepare-android-v10-r326.mjs
+          node --check scripts/test-android-v10-r326.mjs
+          node scripts/prepare-android-v10-r326.mjs
+          node scripts/test-android-v10-r326.mjs
+
+      - name: Produce signed production APK
+        working-directory: apps/android
+        run: gradle assembleRelease --stacktrace
+
+      - name: Verify signed upgrade, media ZIP and preserved Home/Profile
+        run: |
+          set -euo pipefail
+          OUT='CineTracker-Android-1.0.apk'
+          cp apps/android/app/build/outputs/apk/release/app-release.apk "$OUT"
+          test -s "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$("$AAPT" dump badging "$OUT")"
+          grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
+          grep -Fq "versionName='1.0'" <<<"$BADGING"
+          grep -Fq "versionCode='10127'" <<<"$BADGING"
+          if grep -Fq 'application-debuggable' <<<"$BADGING"; then exit 1; fi
+          "$APKSIGNER" verify --print-certs "$OUT" > /tmp/cinetracker-current-cert.txt
+          "$APKSIGNER" verify --print-certs /tmp/CineTracker-Android-1.0.apk > /tmp/cinetracker-previous-cert.txt
+          OLD="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-previous-cert.txt)"
+          NEW="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-current-cert.txt)"
+          test -n "$OLD" && test "$OLD" = "$NEW"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/cinetracker-index.html
+          grep -Fq 'data-ct-android="r326-android-stable-js"' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctAndroidOfficialCode=10127' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR326MediaExport=' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR325Series=' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR325Profile=' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR324Premieres=' /tmp/cinetracker-index.html
+          grep -Fq 'cinetracker_foryou_payload_v498' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR322Top10=' /tmp/cinetracker-index.html
+          sha256sum "$OUT" > CineTracker-Android-1.0-SHA256.txt
+          stat -c '%s' "$OUT" > CineTracker-Android-1.0-size.txt
+          printf 'APK 1.0/r326: assinatura oficial anterior verificada; instala sobre a 1.0 existente.\n' > CineTracker-Android-1.0-compatibilidade.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-official-1.0-r326
+          path: |
+            CineTracker-Android-1.0.apk
+            CineTracker-Android-1.0-SHA256.txt
+            CineTracker-Android-1.0-size.txt
+            CineTracker-Android-1.0-compatibilidade.txt
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish signed Android 1.0 APK
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG='android-v1.0'
+          printf '%s\n' '# CineTracker Android 1.0 — séries, filmes e exportação ZIP r326' '' 'Em Configurações, Exportar séries e filmes (.ZIP) gera seis arquivos CSV: filmes, séries, episódios, histórico com datas, Watchlist e favoritos, além do manifesto. Sem dados esportivos. O Android usa o seletor nativo para salvar no celular. Mantém as correções r325 do próximo episódio visto, Home estável e Perfil com sincronização rápida.' '' 'Web e Supabase congelados. Versão pública 1.0, interna 10127, assinatura oficial compatível com a instalação anterior.' > /tmp/cinetracker-r326-notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title 'CineTracker Android 1.0 — ZIP de Séries e Filmes r326' --notes-file /tmp/cinetracker-r326-notes.md --latest
+          else
+            gh release create "$TAG" --title 'CineTracker Android 1.0 — ZIP de Séries e Filmes r326' --notes-file /tmp/cinetracker-r326-notes.md --latest
+          fi
+          gh release upload "$TAG" CineTracker-Android-1.0.apk CineTracker-Android-1.0-SHA256.txt CineTracker-Android-1.0-size.txt CineTracker-Android-1.0-compatibilidade.txt --clobber
