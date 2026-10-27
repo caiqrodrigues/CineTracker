@@ -1,3 +1,7 @@
+## Android 1.0 / r325 — Home Séries estável e Perfil sincronizado (somente APK)
+
+A Home Séries do APK passa a validar a progressão real de episódios pela fonte autenticada `cinetracker_home_series_watch_state_v4`. A confirmação S01E03 de Dragon Ball Super: Beerus prevalece sobre um cursor antigo que sugeria o mesmo episódio como próximo; somente episódios efetivamente lançados pelo TMDB podem entrar em Continuar assistindo. O Android mantém uma única renderização estável da lista e evita substituir mudanças locais com respostas obsoletas de Home. O Perfil atualiza sem recarregar listas, contadores, biblioteca e gráfico diário ao registrar/desmarcar assistidos, com reconciliação paralela das RPCs oficiais. Web, Supabase, Descobrir, Esportes e telas nativas Android intactos. Versão pública 1.0, código interno **10126**, versão raiz **0.3.120**. Preparação `node scripts/prepare-android-v10-r325.mjs`; teste `node scripts/test-android-v10-r325.mjs`.
+
 ## Web 0.3.76 / r549 — Home de séries e temporadas WWE (somente Web)
 
 - Corrigida a ordem de execução: a função final de episódios/temporadas de **Raw** e **SmackDown** passa a ser instalada depois dos antigos donos r171, r174 e r181, que anulavam a correção anterior.

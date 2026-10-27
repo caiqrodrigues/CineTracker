@@ -1,3 +1,13 @@
+## Android 1.0 / r325 — Home Séries e Perfil sem estados obsoletos (2026-10-27)
+
+- **Escopo:** exclusivamente APK Android. Nenhuma alteração em `apps/web`, Supabase, backend, Descobrir ou outras áreas do Android.
+- **Causa-raiz / Dragon Ball:** `cinetracker_home_series_v527` e `cinetracker_home_live_v0997_r4` podiam retornar próximos episódios calculados sobre uma foto anterior ao histórico real. Dragon Ball Super: Beerus S01E03 já estava gravado como assistido, mas o Android ainda mostrava 2/19 e recomendava E03. A r325 consulta `cinetracker_home_series_watch_state_v4` da conta autenticada e confere chaves exatas (temporada, episódio), substituindo a contagem e invalidando próximos episódios já vistos. Um episódio futuro não é artificialmente promovido a disponível: a temporada é confirmada pelo TMDB com data de exibição, somente episódios já lançados são candidatos.
+- **Home estável:** a lista Séries aguarda a primeira fotografia autenticada, preserva o estado local ao marcar assistido, não sobrescreve resultados otimistas com a RPC legada r4 e evita redesenhos quando a assinatura semântica da lista e do Histórico não mudou. Restabelece a posição relativa do scroll e impede a troca de cards causada por respostas de versões concorrentes.
+- **Histórico e atualização local:** as alterações de episódios confirmadas são integradas ao conjunto de chaves assistidas antes de consultar o servidor novamente. Histórico cronológico permanece como implementado e as séries esportivas WWE/F1/UFC mantêm suas regras dedicadas.
+- **Perfil:** o evento de episódio assistido informa mídia/temporada/episódio, atualiza imediatamente o cache local de episódios vistos, biblioteca e atividade do dia, e reconcilia assíncrona e independentemente estatísticas, biblioteca (`cinetracker_profile_media_dashboard_v0991`) e gráfico (`cinetracker_activity_by_day_v1`). Desmarcações e filmes provocam a sincronização de dados por evento, sem reload ou renderização total de página.
+- **Regressão:** teste automatizado reproduz S01E03 visto vs. cursor obsoleto, verifica a temporada com E04 futuro, não-repetição de pintura sem mudança e atualização imediata + confirmação de Perfil. `scripts/prepare-android-v10-r325.mjs` injeta somente os dois módulos Android no runtime r324.
+- **Versões/release:** `package.json` 0.3.120, Android `versionName 1.0` e `versionCode 10126`. Workflow dedicado assina a release com o certificado existente, verifica o SHA-256 do certificado e o pacote, publica APK 1.0 no GitHub. Web congelada.
+
 ## Web 0.3.76 / r549 — Correção de execução efetiva na Home e WWE (2026-10-26)
 
 - **Escopo estrito:** Web; APK e código Android congelados.
