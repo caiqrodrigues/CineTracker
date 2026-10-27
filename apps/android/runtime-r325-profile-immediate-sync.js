@@ -109,20 +109,29 @@ async function prewarm(force=false){
    timeout(rpc('cinetracker_profile_media_dashboard_v0991',{}),15000),
    timeout(rpc('cinetracker_activity_by_day_v1',{p_days:15,p_tz:tz()}),10500)
   ];
-  const responses=await Promise.allSettled(requests);
+  // Each source paints as soon as it returns. Waiting for the slowest
+  // library request used to delay a fast statistic for up to 15 seconds.
+  const applyPart=(index,value)=>{
+   if(who()!==id)return;
+   const prior=current();let next={...prior};
+   if(index===0&&value&&typeof value==='object')next=ct168MergeQuick(next,value);
+   else if(index===1&&Array.isArray(value))next.dashboard=value;
+   else if(index===2&&Array.isArray(value))next.activity=value;
+   else return;
+   save(next);
+   if(index===0)metrics(next);
+   else if(index===1)updateDashboard(next);
+   else updateActivity(next);
+  };
+  const responses=await Promise.allSettled(requests.map((p,i)=>p.then(value=>{
+   applyPart(i,value);return value;
+  })));
   if(who()!==id)return false;
   const [summary,dashboard,activity]=responses;
-  const prior=current();let next={...prior};let good=false;
-  if(summary.status==='fulfilled'&&summary.value&&typeof summary.value==='object'){
-   next=ct168MergeQuick(next,summary.value);good=true;
-  }
-  if(dashboard.status==='fulfilled'&&Array.isArray(dashboard.value)){
-   next.dashboard=dashboard.value;good=true;
-  }
-  if(activity.status==='fulfilled'&&Array.isArray(activity.value)){
-   next.activity=activity.value;good=true;
-  }
-  if(good){save(next);metrics(next);updateDashboard(next);updateActivity(next);successes++}
+  const good=(summary.status==='fulfilled'&&!!summary.value)||
+   (dashboard.status==='fulfilled'&&Array.isArray(dashboard.value))||
+   (activity.status==='fulfilled'&&Array.isArray(activity.value));
+  if(good){successes++}
   else{failures++;error=responses.filter(x=>x.status==='rejected').map(x=>String(x.reason?.message||x.reason)).join(' | ')}
   return good;
  })().catch(err=>{failures++;error=String(err?.message||err);return false})

@@ -91,6 +91,28 @@ assert.equal(manifest.counts.episodes,3);
 assert.equal(manifest.sports_included,false);
 assert.equal(module.stats().successes,1);
 assert.equal(button.disabled,false);
+// The Profile's quick counter must settle before a slow library request.
+const profileSource=await readFile('apps/android/runtime-r325-profile-immediate-sync.js','utf8');
+let releaseDashboard;
+const delayedDashboard=new Promise(resolve=>{releaseDashboard=resolve});
+const profileCtx={
+ window:{addEventListener(){}},document:{addEventListener(){},querySelector:()=>null},
+ session:ctx.session,user:ctx.user,route:()=> 'home',homeCache:null,
+ profileCache:{stats:{episodes_watched:4},dashboard:[{media_id:1}]},
+ ct163Read:()=>null,ct163Write:()=>{},ct168MergeQuick:(base,quick)=>({...base,...quick}),
+ syncProfile263:()=>{},ct169RenderActivity:()=>{},tz:()=> 'America/Sao_Paulo',
+ rpc:async name=>name==='cinetracker_profile_quick_stats_v1'?{stats:{episodes_watched:5}}:
+  name==='cinetracker_profile_media_dashboard_v0991'?delayedDashboard:[],
+ setTimeout,clearTimeout
+};
+new Function('ctx','with(ctx){'+profileSource+'}')(profileCtx);
+const profileJob=profileCtx.window.__ctR325Profile.prewarm(true);
+await new Promise(resolve=>setTimeout(resolve,20));
+assert.equal(profileCtx.profileCache.stats.episodes_watched,5,
+ 'Fast Profile stats must not wait for a 15-second dashboard RPC');
+releaseDashboard([{media_id:1,watched_episodes:3}]);
+await profileJob;
+assert.equal(profileCtx.profileCache.dashboard[0].watched_episodes,3);
 const built=await readFile('apps/android/app/src/main/assets/hotfix5/index.html','utf8');
 assert.ok(built.includes('data-ct-android="r326-android-stable-js"'));
 assert.ok(built.includes('window.__ctR326MediaExport='));
