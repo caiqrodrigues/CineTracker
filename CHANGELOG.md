@@ -1,3 +1,13 @@
+## Android 1.0 / r327 — Busca Home funcional e resposta tátil (2026-10-29)
+
+- **Escopo:** somente APK Android. Web e Supabase congelados, sem alterações em tabelas, rotas, regras de negócio, exportação ZIP, séries assistidas ou Perfil.
+- **Busca da Home:** resultados imediatos do cache de séries, filmes na Watchlist e histórico, com normalização de acentos, ranking simples e deduplicação por TMDB ID. Filmes/séries/pessoas do TMDB chegam em três requisições independentes e entram na lista assim que cada resposta chega, sem bloqueio por uma consulta lenta. Reduz de cinco requisições globais simultâneas para três.
+- **Estabilidade:** sequência por consulta cancela atualizações obsoletas, mantém o termo digitado, protege contra respostas antigas e memoriza até 26 consultas brevemente; saída limpa ao apagar a busca, tocar fora ou usar Escape. Resultados têm alvo de toque de pelo menos 58px, teclado acessível e painel fixo no primeiro plano.
+- **Fluidez:** feedback imediato da biblioteca, menor congestionamento do proxy, rolagem da Home em modo nativo sem animação/snap e alvos de toque com `touch-action: manipulation`. Nenhum `reload`, `router.refresh` ou refetch de página inteira.
+- **Verificação:** testes reproduzem busca local instantânea, retorno progressivo do servidor, descarte de respostas atrasadas, navegação dos resultados e preservação das correções r325/r326.
+- **Versões:** mantém Android 1.0, incrementa `versionCode` para 10128 e `package.json` para 0.3.122; publicação assinada via fluxo r327.
+
+
 ## Android 1.0 / r326 — Exportação ZIP de filmes e séries, sem esportes (2026-10-27)
 
 - **Escopo estrito:** exclusivamente APK Android, tela Configurações. Web, Supabase, código nativo Java, Descobrir, Esportes, Home e Perfil r325 não modificados.

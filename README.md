@@ -1,3 +1,10 @@
+## Android 1.0 / r327 — Busca da Home e fluidez (somente APK)
+
+A busca da Home responde imediatamente com filmes e séries da biblioteca local e consulta o catálogo TMDB por filme, série e pessoa sem esperar todas as respostas para exibir resultados. A lista é atualizada progressivamente, impede respostas antigas de substituírem uma pesquisa nova, reduz o volume simultâneo de requisições de cinco para três, mantém a barra e os resultados clicáveis acima da Home e corrige o fechamento da busca pelo botão limpar ou Escape. Os resultados abrem a tela de detalhes existente. As áreas de rolagem da Home no Android não usam scroll suave/snap que possa disputar o gesto do usuário; cards e controles conservam seus tamanhos e estado.
+
+Somente Android: Web, Supabase, exportação ZIP, progresso de séries e Perfil permanecem intactos. Versão pública 1.0, `versionCode 10128`, raiz `0.3.122`. Preparar: `node scripts/prepare-android-v10-r327.mjs`; testar: `node scripts/test-android-v10-r327.mjs`.
+
+
 ## Android 1.0 / r326 — Exportar séries e filmes (.ZIP), estilo Bingers (somente APK)
 
 Em **Configurações → Dados**, a exportação passa a salvar no Android um arquivo `CineTracker-series-filmes-AAAA-MM-DD.zip`, organizado em CSVs no estilo de exportação do Bingers: `filmes.csv`, `series.csv`, `episodios.csv`, `historico.csv`, `watchlist.csv` e `favoritos.csv`, com `manifest.json` e `LEIA-ME.txt`. Contém IDs TMDB, progresso exato de episódios, datas de histórico e estados pessoais, sem eventos nem estatísticas esportivas. Reconhece os estados reais `AddedToWatchlist`, `WatchLater`, `AlreadySeen`, `InProgress`, `UpToDate`, `Completed` e `Liked` na exportação. Exporta o conjunto completo da conta autenticada em páginas e usa o seletor nativo de arquivos para escolher onde salvar. A estrutura é inspirada no ZIP de CSV do Bingers; não há promessa de importação automática em apps terceiros sem mapeamento de schema. Mantém integralmente as correções r325 de Home/Perfil; Web e Supabase congelados. Android 1.0, `versionCode 10127`, raiz `0.3.121`. Preparar: `node scripts/prepare-android-v10-r326.mjs`; testar: `node scripts/test-android-v10-r326.mjs`.
