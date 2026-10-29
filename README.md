@@ -1,3 +1,11 @@
+## Android 1.0 / r329 — Carregamentos por prioridade (somente APK)
+
+A tela de detalhes de filmes e séries exibe título, sinopse, elenco e temporadas assim que a ficha principal do TMDB chega. Disponibilidade de streamings, recomendações filtradas e gráficos de temporadas são carregados separadamente, sem bloquear todo o conteúdo. Ações Assistido e Watchlist ficam temporariamente bloqueadas até conferir o estado da conta e são restauradas com os dados efetivos.
+
+Em Descobrir, Em alta, Populares, Novidades e outras listas podem mostrar o primeiro grupo de filmes/séries aprovado pela auditoria de vistos e Watchlist (`v525`) enquanto a outra fonte TMDB ainda responde. Ao concluir as chamadas, ambas as categorias autorizadas continuam presentes. O Top 10 reutiliza por até 14 dias a lista de streamings já confirmada pelo TMDB no Brasil, evitando repetir requisições lentas a cada entrada. Busca, Pra Você, ZIP, Perfil, Home visual e Esportes mantidos; Web e Supabase congelados.
+
+Android público 1.0, `versionCode 10130`, raiz `0.3.124`. Preparar: `node scripts/prepare-android-v10-r329.mjs`; testar: `node scripts/test-android-v10-r329.mjs`.
+
 ## Android 1.0 / r328 — Anime válido e carregamento sem repetição (somente APK)
 
 O APK corrige **Descobrir → Pra Você → Anime**: episódios de anime com 24 minutos são séries de TV válidas. A exclusão de produções com menos de 40 minutos permanece para **filmes**, preservando vedação de stand-up, reality shows e produções do YouTube. Todos os candidatos continuam passando pela auditoria autenticada de vistos e Watchlist (`v525`).

@@ -1,3 +1,13 @@
+## Android 1.0 / r329 — Primeiro conteúdo sem esperar chamadas secundárias (2026-10-29)
+
+- **Escopo:** somente APK Android. Web, Supabase, Java nativo, regras da Home, Perfil, Esportes e ZIP preservados. Versão pública 1.0, código interno 10130.
+- **Tela de detalhes:** removida a espera combinada pelas consultas de streamings, recomendações, semelhantes e contexto pessoal antes do primeiro conteúdo. Ficha principal do TMDB aparece primeiro; demais seções são atualizadas assincronamente, com proteção por token de navegação.
+- **Estado pessoal:** ações Assistido/Watchlist ficam bloqueadas até conferência do histórico; ao finalizar, badges e botões refletem a conta autenticada. Contexto indisponível mantém o tratamento pré-existente.
+- **Descobrir:** a primeira categoria de filmes ou séries auditada por `v525` pode ser exibida antes da segunda resposta TMDB, sem mostrar títulos não verificados, sem perder a lista final e sem pintar respostas de navegação antiga.
+- **Top 10:** provedores brasileiros realmente retornados pelo TMDB são reutilizados por até 14 dias, evitando falha na consulta repetida de streamings; conteúdos continuam auditados e limitados a dez por seção.
+- **Verificação:** simulação com segunda fonte TMDB retida, autenticação de sugestões antes do primeiro paint, etapas da ficha principal e integridade dos módulos Android anteriores. Workflow de produção compara certificado de assinatura com APK anterior.
+- **Documentação:** versão raiz 0.3.124, README e CHANGELOG atualizados.
+
 ## Android 1.0 / r328 — Anime da recomendação e velocidade de carregamento (2026-10-29)
 
 - **Somente APK Android:** Web, Supabase, Java nativo, Esportes e exportação ZIP congelados. Versão pública 1.0, código interno 10129.
