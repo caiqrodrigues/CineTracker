@@ -1,0 +1,135 @@
+name: CineTracker Android 1.0 — Anime e carregamento r328
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/prepare-android-v10-r328.mjs'
+      - 'scripts/test-android-v10-r328.mjs'
+      - 'apps/android/app/build.gradle'
+      - '.github/workflows/release-android-v10-r328.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cinetracker-android-official-1-0-r328-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  official_release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Enforce Web/Supabase/native freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code HEAD^ HEAD -- apps/web supabase
+          test "$(git hash-object apps/android/app/src/main/java/com/cinetracker/app/MainActivity.java)" = '641f8766951077947c57cf34959bac43b94e2648'
+          test "$(git hash-object apps/android/app/src/main/res/layout/activity_main.xml)" = '30edbb633685c3a77ce114c92c4f07dfa07a3271'
+
+      - name: Restore official signing certificate
+        uses: actions/cache@v4
+        with:
+          path: ~/.cinetracker/cinetracker.keystore
+          key: cinetracker-signing-v2
+      - name: Verify signing identity exists
+        run: |
+          set -euo pipefail
+          test -s "$HOME/.cinetracker/cinetracker.keystore"
+          keytool -list -keystore "$HOME/.cinetracker/cinetracker.keystore" -storepass android -alias androiddebugkey >/dev/null
+
+      - name: Fetch previous official APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release download android-v1.0 --pattern 'CineTracker-Android-1.0.apk' --dir /tmp --clobber
+          test -s /tmp/CineTracker-Android-1.0.apk
+
+      - name: Compile and validate Android-only performance fix
+        run: |
+          set -euo pipefail
+          grep -Fq "versionName '1.0'" apps/android/app/build.gradle
+          grep -Fq 'versionCode 10129' apps/android/app/build.gradle
+          grep -Fq "applicationId 'com.cinetracker.app'" apps/android/app/build.gradle
+          grep -Fq 'signingConfig signingConfigs.official' apps/android/app/build.gradle
+          node --check scripts/prepare-android-v10-r328.mjs
+          node --check scripts/test-android-v10-r328.mjs
+          node scripts/prepare-android-v10-r328.mjs
+          node scripts/test-android-v10-r328.mjs
+
+      - name: Assemble signed production APK
+        working-directory: apps/android
+        run: gradle assembleRelease --stacktrace
+
+      - name: Verify APK signing and prior functionality
+        run: |
+          set -euo pipefail
+          OUT='CineTracker-Android-1.0.apk'
+          cp apps/android/app/build/outputs/apk/release/app-release.apk "$OUT"
+          test -s "$OUT"
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
+          BADGING="$("$AAPT" dump badging "$OUT")"
+          grep -Fq "package: name='com.cinetracker.app'" <<<"$BADGING"
+          grep -Fq "versionName='1.0'" <<<"$BADGING"
+          grep -Fq "versionCode='10129'" <<<"$BADGING"
+          if grep -Fq 'application-debuggable' <<<"$BADGING"; then exit 1; fi
+          "$APKSIGNER" verify --print-certs "$OUT" > /tmp/cinetracker-current-cert.txt
+          "$APKSIGNER" verify --print-certs /tmp/CineTracker-Android-1.0.apk > /tmp/cinetracker-previous-cert.txt
+          OLD="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-previous-cert.txt)"
+          NEW="$(awk '/certificate SHA-256 digest:/ {print $NF;exit}' /tmp/cinetracker-current-cert.txt)"
+          test -n "$OLD" && test "$OLD" = "$NEW"
+          unzip -p "$OUT" assets/hotfix5/index.html > /tmp/cinetracker-index.html
+          grep -Fq 'data-ct-android="r328-android-stable-js"' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctAndroidOfficialCode=10129' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR327HomeSearch=' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR326MediaExport=' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR325Series=' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR325Profile=' /tmp/cinetracker-index.html
+          grep -Fq 'window.__ctR314ForYou=' /tmp/cinetracker-index.html
+          grep -Fq 'cinetracker_recommendation_filter_v525' /tmp/cinetracker-index.html
+          sha256sum "$OUT" > CineTracker-Android-1.0-SHA256.txt
+          stat -c '%s' "$OUT" > CineTracker-Android-1.0-size.txt
+          printf 'Android 1.0/r328 usa o mesmo pacote e certificado oficial para atualizar a versão anterior.\n' > CineTracker-Android-1.0-compatibilidade.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cinetracker-android-official-1.0-r328
+          path: |
+            CineTracker-Android-1.0.apk
+            CineTracker-Android-1.0-SHA256.txt
+            CineTracker-Android-1.0-size.txt
+            CineTracker-Android-1.0-compatibilidade.txt
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish signed Android 1.0 APK
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG='android-v1.0'
+          printf '%s\n' '# CineTracker Android 1.0 — Anime e carregamento r328' '' 'Pra Você agora aceita séries anime com episódios de 24 minutos; apenas filmes com duração abaixo de 40 minutos são excluídos. Os filtros pessoais autenticados v525, vedação de YouTube, realities e stand-up permanecem. Reentrada na aba reutiliza por dois minutos recomendações já auditadas da mesma conta e dia; mutações invalidam cache. Home reduz consultas de verificação de estreias em segundo plano e adia o pré-carregamento de outras telas. Exportação ZIP, Perfil e busca r327 preservados.' '' 'Web e Supabase congelados. Android 1.0, versionCode 10129, assinatura oficial compatível.' > /tmp/cinetracker-r328-notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title 'CineTracker Android 1.0 — Anime e carregamento r328' --notes-file /tmp/cinetracker-r328-notes.md --latest
+          else
+            gh release create "$TAG" --title 'CineTracker Android 1.0 — Anime e carregamento r328' --notes-file /tmp/cinetracker-r328-notes.md --latest
+          fi
+          gh release upload "$TAG" CineTracker-Android-1.0.apk CineTracker-Android-1.0-SHA256.txt CineTracker-Android-1.0-size.txt CineTracker-Android-1.0-compatibilidade.txt --clobber

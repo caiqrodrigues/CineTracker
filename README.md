@@ -1,3 +1,11 @@
+## Android 1.0 / r328 — Anime válido e carregamento sem repetição (somente APK)
+
+O APK corrige **Descobrir → Pra Você → Anime**: episódios de anime com 24 minutos são séries de TV válidas. A exclusão de produções com menos de 40 minutos permanece para **filmes**, preservando vedação de stand-up, reality shows e produções do YouTube. Todos os candidatos continuam passando pela auditoria autenticada de vistos e Watchlist (`v525`).
+
+Ao retornar para Pra Você em até 120 segundos, com a mesma conta e no mesmo dia, o aplicativo reutiliza candidatos já auditados e sorteia outras opções elegíveis, evitando repetir as consultas `v498/v525`. Marcar assistido/Watchlist invalida esse cache. A verificação de novas temporadas na Home é limitada a duas consultas TMDB simultâneas em segundo plano, e o pré-carregamento de outras abas é adiado para 1,7 segundo, reduzindo a competição com o carregamento inicial. A navegação, o visual e as regras da Home, Perfil, Esportes e ZIP estão preservados. Web e Supabase congelados.
+
+Android público 1.0, `versionCode 10129`, raiz `0.3.123`. Preparar: `node scripts/prepare-android-v10-r328.mjs`; testar: `node scripts/test-android-v10-r328.mjs`.
+
 ## Android 1.0 / r327 — Busca da Home e fluidez (somente APK)
 
 A busca da Home responde imediatamente com filmes e séries da biblioteca local e consulta o catálogo TMDB por filme, série e pessoa sem esperar todas as respostas para exibir resultados. A lista é atualizada progressivamente, impede respostas antigas de substituírem uma pesquisa nova, reduz o volume simultâneo de requisições de cinco para três, mantém a barra e os resultados clicáveis acima da Home e corrige o fechamento da busca pelo botão limpar ou Escape. Os resultados abrem a tela de detalhes existente. As áreas de rolagem da Home no Android não usam scroll suave/snap que possa disputar o gesto do usuário; cards e controles conservam seus tamanhos e estado.

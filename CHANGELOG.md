@@ -1,3 +1,12 @@
+## Android 1.0 / r328 — Anime da recomendação e velocidade de carregamento (2026-10-29)
+
+- **Somente APK Android:** Web, Supabase, Java nativo, Esportes e exportação ZIP congelados. Versão pública 1.0, código interno 10129.
+- **Correção do anime:** o filtro r265 aplicava indevidamente o limite de 40 minutos também a animes de TV com episódios de 24 minutos, eliminando as recomendações válidas do payload `v498`. O limite fica restrito a filmes; exclusões YouTube, reality e stand-up e auditoria individual de vistos/Watchlist `v525` preservadas.
+- **Pra Você mais rápido:** mantém por até 120 segundos apenas pools já auditados da mesma conta e dia, reamostrando cards na reentrada sem consultas duplicadas; ações assistido/Watchlist invalidam o cache. Primeira abertura e mudanças continuam usando o fluxo autenticado.
+- **Home menos congestionada:** no máximo duas verificações TMDB de estreias em paralelo (antes quatro) e pré-carregamento em segundo plano adiado para 1.700 ms (antes 650 ms), sem remover funcionalidades.
+- **Testes:** elegibilidade de anime de TV de 24 minutos, proibição de curta-metragem, YouTube, reality e stand-up, isolamento/invalidação do cache, controle de carga, integridade das correções Android anteriores e APK assinado com certificado oficial preservado.
+- **Documentação:** versão do package.json para 0.3.123; README e CHANGELOG atualizados.
+
 ## Android 1.0 / r327 — Busca Home funcional e resposta tátil (2026-10-29)
 
 - **Escopo:** somente APK Android. Web e Supabase congelados, sem alterações em tabelas, rotas, regras de negócio, exportação ZIP, séries assistidas ou Perfil.
